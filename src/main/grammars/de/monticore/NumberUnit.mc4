@@ -1,0 +1,199 @@
+package de.monticore;
+/***************************************************************************************
+ *                          NUMBERUNIT GRAMMAR
+ *
+ * this grammar is written by: Michael von Wenckstern
+ * the grammar exports the following non-terminals:
+ *      + ComplexNumber: "2 + 5i"
+ *
+ *      + UnitNumber: "8 km/h" or "- 7/9 kg*m*s^-2" (see JScience Unit)
+ *                     the unit number does NOT allow complex numbers
+ *
+ *      + NumberWithUnit: is a either a complex number or a unit number or infinity
+ *
+ ***************************************************************************************/
+
+grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Literals {
+   NumberWithUnit =
+      number:NumberWithInf Unit? |
+      ComplexNumber
+   ;
+
+   NumberWithInf =
+     number:SignedNumericLiteral |
+     "+"? posInf:"oo" |
+     "-" negInf:"oo"
+   ;
+
+   ComplexNumber =
+     // real:SignedNumericLiteral ("+" | negIm:"-") im:NumericLiteral "i"
+     // use Name instead of i, otherwise no variable can be named i again
+     real:SignedNumericLiteral ("+" | negIm:"-") im:NumericLiteral I
+   ;
+
+   I = { _input.LT(1).getText().equals("i") && !_input.LT(2).getText().matches("[a-zA-Z]") }? Name;
+
+   Unit =
+       SIUnit |
+       ImperialUnit
+   ;
+
+    // see https://en.wikipedia.org/wiki/Imperial_units
+   /*ImperialUnit =
+       "th" | // thou
+       "in" | // inch
+       "ft" | // foot
+       "yd" | // yard
+       "ch" | // chain
+       "fur" | // furlong
+       "ml" | // mile
+       "lea" | // league
+       "ftm" | // fathom
+       "fl oz" | // fluid ounce --> missing zu long
+       "gi" | // gill
+       "pt" | // pint
+       "qt" | // quart
+       "gal" | // gallon
+       "gr" | // grain
+       "dr" | // drachm
+       "oz" | // ounce
+       "lb" | // pound
+       "st" | // stone
+       "qr" | // quarter
+       "qtr" | // quarter
+       "cwt" | // hundredweight
+       // "t" | // imperial ton // conflict with metric tonne
+       "slug" | // slug
+       "\u00B0F"  // degree Fahrenheit
+    ;*/
+    // we use Name again to avoid adding too many tokens which destroy the rules in other grammars
+    ImperialUnit =
+     { (_input.LT(1).getText().equals("t") && _input.LT(2).getText().equals("h") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("i") && _input.LT(2).getText().equals("n") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("f") && _input.LT(2).getText().equals("t") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("y") && _input.LT(2).getText().equals("d") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("c") && _input.LT(2).getText().equals("h") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("f") && _input.LT(2).getText().equals("u") && _input.LT(3).getText().equals("r") && !_input.LT(4).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("m") && _input.LT(2).getText().equals("l") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("l") && _input.LT(2).getText().equals("e") && _input.LT(3).getText().equals("a") && !_input.LT(4).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("f") && _input.LT(2).getText().equals("t") && _input.LT(3).getText().equals("m") && !_input.LT(4).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("g") && _input.LT(2).getText().equals("i") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("p") && _input.LT(2).getText().equals("t") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("q") && _input.LT(2).getText().equals("t") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("g") && _input.LT(2).getText().equals("a") && _input.LT(3).getText().equals("l") && !_input.LT(4).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("g") && _input.LT(2).getText().equals("r") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("d") && _input.LT(2).getText().equals("r") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("o") && _input.LT(2).getText().equals("z") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("l") && _input.LT(2).getText().equals("b") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("s") && _input.LT(2).getText().equals("t") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("q") && _input.LT(2).getText().equals("r") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("q") && _input.LT(2).getText().equals("t") && _input.LT(3).getText().equals("r") && !_input.LT(4).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("c") && _input.LT(2).getText().equals("w") && _input.LT(3).getText().equals("t") && !_input.LT(4).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("s") && _input.LT(2).getText().equals("l") && _input.LT(3).getText().equals("u") && _input.LT(4).getText().equals("g") && !_input.LT(5).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
+       (_input.LT(1).getText().equals("°") && _input.LT(2).getText().equals("F") && !_input.LT(3).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]"))  }?
+      Name | "°F"
+    ;
+
+    SIUnitBasic =
+      ((UnitPrefix? SiUnitBaseDimension) |
+           OfficallyAcceptedUnit)
+      ("^" /* SignedNatLiteral */ SignedIntLiteral)?
+    ;
+
+    SIUnit =
+        SIUnitBasic (("/" | "*") SIUnitBasic)* |
+        SiUnitDimensionless
+     ;
+
+      // see https://en.wikipedia.org/wiki/Metric_prefix
+      UnitPrefix =
+        "Y" | // yotta: 10^24
+        "Z" | // zetta: 10^21
+        "E" | // exa: 10^18
+        "P" | // peta: 10^15
+        "T" | // tera: 10^12
+        "G" | // giga: 10^9
+        "M" | // mega: 10^6
+        "K" | // kilo: 10^3
+        "k" | // kilo: 10^3
+        "H" | // hecto: 10^2
+        "da" | // deca: 10^1
+        "d" | // deci: 10^-1
+        "c" | // centi: 10^-2
+        "m" | // milli: 10^-3
+        // "μ" | // micro: 10^-6 // ToDo: Not working because of character encoding ??
+        "n" | // nano: 10^-9
+        "p" | // pico: 10^-12
+        "f" | // femto: 10^-15
+        "a" | // atto: 10^-18
+        "z" | // zepto: 10^-21
+        "y"  // yocto: 10^-24
+      ;
+
+      // see https://en.wikipedia.org/wiki/Non-SI_units_mentioned_in_the_SI
+      OfficallyAcceptedUnit =
+        "min" | // minute
+        "h" | // hour
+        "d" | // day
+        "\u00B0" | // degree
+
+        /* Problems with String encoding in Literals
+        "\\'" | // minute
+        "\\"" | // second
+        */
+
+        "ha" | // hectare
+        "l" | // litre
+        "L" | // litre
+        // "t" | // metric tonne // Deactivated because of collisions with other language
+        "au" | // astronomical unit
+        "AU" | // astronomical unit
+        "Np" | // neper
+        "B" | // bel
+        "dB" | // decibel
+        "eV" | // electronvolt
+        "u"  // unified atomic mass unit
+        // ToDo: Natural and Atomic units
+      ;
+
+      // see https://en.wikipedia.org/wiki/SI_base_unit
+      // see https://en.wikipedia.org/wiki/SI_derived_unit
+      SiUnitBaseDimension =
+        // Base Units
+        "m" | // metre
+        "g" | // gramm
+        "s" | // second
+        "A" | // ampere
+        "K" | // kelvin
+        "mol" | // mole
+        "cd" | // candela
+
+        // Derived Units
+        "Hz" | // hertz
+        "N" | // newton
+        "Pa" | // pascal
+        "J" | // joule
+        "W" | // watt
+        "C" | // coulomb
+        "V" | // volt
+        "F" | // farad
+        "Ω" | // ohm
+        "S" | // siemens
+        "Wb" | // weber
+        "T" | // tesla
+        "H" | // henry
+        "\u00B0C" | // degree Celsius
+        "lm" | // lumen
+        "lx" | // lux
+        "Bq" | // becquerel
+        "Gy" | // gray
+        "Sv" | // sievert
+        "kat"  // katal
+      ;
+
+      // see https://en.wikipedia.org/wiki/SI_derived_unit
+      SiUnitDimensionless =
+        "rad" | // radian
+        "sr"  // steradian
+      ;
+}
