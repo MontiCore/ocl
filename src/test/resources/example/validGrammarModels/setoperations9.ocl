@@ -1,0 +1,4 @@
+ocl setoperations9 {
+  context Auction a inv:
+    !("BAD" isin a.bidder.company.name);
+}

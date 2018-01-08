@@ -1,0 +1,5 @@
+ocl prepost3 {
+  context <<isStatic>> StatusMessage MessageFactory.createStatusMessage(Time time, Auction auction, int newStatus)
+  pre: true;
+  post: result.time == time && result.auction == auction && result.newStatus == newStatus;
+}

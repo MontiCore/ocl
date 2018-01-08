@@ -1,0 +1,11 @@
+package ocl;
+
+import cd.MontiArc.*;
+import cd.DefaultTypes.*;
+
+ocl exampleNonValidType {
+  context Cmppp cmp inv:
+    true;
+}
+
+

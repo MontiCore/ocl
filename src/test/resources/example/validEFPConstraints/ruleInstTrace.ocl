@@ -1,0 +1,10 @@
+import CnCExt;
+import EFPExt.*;
+ocl ruleInstTrace {
+  context Cmp cmp inv:
+    let
+      selectedValue = cmp.ctype;
+      aggregatedValue = selectedValue.traceable;
+    in
+      aggregatedValue implies cmp.traceable;
+}

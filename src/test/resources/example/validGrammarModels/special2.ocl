@@ -1,0 +1,7 @@
+ocl special2 {
+  inv Summe:
+    let
+      int total = iterate {elem in Auction; int acc = 0: acc = acc + elem.numberOfBids};
+    in
+      this;
+}

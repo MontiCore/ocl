@@ -1,0 +1,9 @@
+ocl prepost4 {
+  context List<Message> Person.getMsgOfAuction(Auction a)
+  pre:
+    defined(a);
+    a instanceof Auction;
+  post:
+    defined(result);
+    result == List{m in p.message | m.isAuctionSpecific() && m.getAuction() == a};  
+}

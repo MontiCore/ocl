@@ -1,0 +1,7 @@
+ocl quantifiers13 {
+  inv:
+    let
+      Set<Integer> squares = {y * y | y in Set{1..20}};
+    in
+      this;
+}

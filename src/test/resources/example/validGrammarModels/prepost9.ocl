@@ -1,0 +1,5 @@
+ocl prepost9 {
+  context void Person.changeCompany(String name)
+  pre CC2pre: company.name != name && (exists Company co: co.name == name);
+  post CC2post: company.name == name && company.employees == company.employees@pre + 1 && company@pre.employees == company@pre.employees@pre - 1;
+}

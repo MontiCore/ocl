@@ -1,0 +1,4 @@
+ocl transitiveclosure2 {
+  context <<query>> Set<Person> Person.ancestorsUpToN(int n)
+  post: result == (if (n <= 1) then parents else parents.addAll(parents.ancestorsUpToN(n - 1)));
+}

@@ -1,0 +1,48 @@
+package example.CDs;
+
+classdiagram AuctionCD {
+
+  public class AllData {
+  }
+  public class Time {
+    boolean lessThan(Time that);
+  }
+  public class Name {}
+
+
+  public class Company {
+    String name;
+  }
+
+  public class Auction {
+  }
+
+  public class Message {
+    Time time;
+  }
+
+
+  public class Person {
+    boolean lessThan(Person that);
+  }
+
+  public class Student extends Person {
+  }
+
+  public class Betreuer extends Person{
+  }
+
+  association AllData <-> Auction [*];
+  association AllData <-> Person [*];
+  association participants [*] Auction (auctions) <-> (bidder) Person [*];
+  association [*] Person <-> Company [1];
+  association Person (bidder) <-> Message [*] <<ordered>>;
+  association Auction <-> Message [*] <<ordered>>;
+
+
+
+
+
+
+
+}

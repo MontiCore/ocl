@@ -1,0 +1,4 @@
+ocl sor3 {
+  inv:
+    {a | b}.size != 0;
+}

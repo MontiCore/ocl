@@ -1,0 +1,18 @@
+package example.typeInferringModels;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl qualifiedPrimaries {
+  context Auction inv test:
+    let
+        m = this.message.addAll(Person.message);
+        s = this.message.addAll(Person.message).size;
+        b = this.message.addAll(Person.message).isEmpty();
+        m2 = this.message[1];
+        t = this.message[1].time;
+    in
+        true;
+}
+
+

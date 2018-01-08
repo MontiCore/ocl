@@ -1,0 +1,12 @@
+package example.symbolTableTestFiles;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl test10 {
+   import Betreuer b,a inv Betreuung:
+    let
+      HelpFunction1 bewertung(int k , int l) = a.lessThan(b) ? a : b ;
+    in
+      this;
+}

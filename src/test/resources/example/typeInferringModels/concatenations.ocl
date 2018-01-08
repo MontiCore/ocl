@@ -1,0 +1,18 @@
+package example.typeInferringModels;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl concatenations {
+  context Auction a inv test:
+    let
+        p = a.participants;
+        p2 = a.bidder;
+        m = a.message;
+        i = p.size;
+        i2 = a.bidder.size;
+    in
+        true;
+}
+
+

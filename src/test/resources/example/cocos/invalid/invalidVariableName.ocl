@@ -1,0 +1,9 @@
+ocl invalidVariableName {
+  context boolean Person.changeCompany(String name)
+  let 
+   min = a.startTime.lessThan(a.closingTime)
+              ? a.startTime : a.closingTime; 
+  pre Test : true;
+  post Test : false;
+  
+}

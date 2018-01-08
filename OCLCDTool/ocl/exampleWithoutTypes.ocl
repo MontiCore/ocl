@@ -1,0 +1,19 @@
+package ocl;
+
+import cd.MontiArc.*;
+import cd.DefaultTypes.*;
+
+ocl exampleWithoutTypes {
+  context Cmp cmp inv:
+    let
+        numberUnit = 0 W;
+        number = 0.4;
+        cmp2 = cmp;
+        ports = cmp.ports;
+
+    in
+        forall p3 in ports :
+                true;
+}
+
+

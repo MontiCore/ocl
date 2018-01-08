@@ -1,0 +1,4 @@
+ocl transitiveclosure4 {
+  context Person inv Transitiv:
+    this.ancestors == this.parents**;
+}

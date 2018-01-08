@@ -1,0 +1,11 @@
+import CnCExt;
+import EFPExt.*;
+
+ocl ruleCompEncryption {
+  context PortDef pd inv:
+    let
+      selectedValues ={pd2 | exist cd in ConDefs: (pt2 == cd.src && pt == cd.tgt)};
+      aggregatedValue = intersection {pd.encryption | pd in selectedValues };
+    in
+      aggregatedValue intersection pd.encryption != {};
+}

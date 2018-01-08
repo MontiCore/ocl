@@ -1,0 +1,8 @@
+ocl unit2 {
+    inv:
+        let
+            Duration a = 2 s;
+            Duration b = 300 ms;
+        in
+            (a + b) == 2300 ms;
+}

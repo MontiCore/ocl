@@ -1,0 +1,12 @@
+package example.symbolTableTestFiles;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl test4 {
+   context Message m inv Name:
+    let
+      Person p = typeif m instanceof BidMessage then m.bidder else null;
+    in
+      this;
+}

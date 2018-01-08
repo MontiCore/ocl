@@ -1,0 +1,4 @@
+ocl quantifiers6 {
+  context Auction a, Person p inv Nachrichten4:
+    forall m in a.message: p isin a.bidder implies m isin p.message;
+}

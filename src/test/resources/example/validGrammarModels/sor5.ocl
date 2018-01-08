@@ -1,0 +1,4 @@
+ocl sor5 {
+  inv:
+    {a in B | (a | c)}.size == 0;
+}

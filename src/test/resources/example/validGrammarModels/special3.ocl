@@ -1,0 +1,7 @@
+ocl special3 {
+  context Auction a inv:
+    let
+      Message mess = a.person.message[0];
+    in
+      defined(mess) implies true;
+}

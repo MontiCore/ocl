@@ -1,0 +1,7 @@
+ocl cases1 {
+  context Message m inv:
+    let
+      Person p = typeif m instanceof BidMessage then m.bidder else null;
+    in
+      this;
+}

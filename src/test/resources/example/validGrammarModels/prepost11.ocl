@@ -1,0 +1,5 @@
+ocl prepost11 {
+  context void Person.changeCompany(String name)
+  pre CC3pre: company.name == name;
+  post CC3post: company == company@pre && company.employees == company.employees@pre;
+}

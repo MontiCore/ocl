@@ -1,0 +1,5 @@
+ocl prepost2 {
+  context Auction Message.getAuction()
+  pre: isAuctionSpecific();
+  post: exists p in result.bidder: Message isin p.message;
+}

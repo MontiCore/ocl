@@ -1,0 +1,4 @@
+ocl comprehension8 {
+  inv:
+    List{z + "?" | x in List{"Spiel", "Feuer", "Flug"}, y in List{"zeug", "platz"}, String z = x + y, z != "Feuerplatz"} == List{"Spielzeug?", "Spielplatz?", "Feuerzeug?", "Flugzeug?", "Flugplatz?"};
+}

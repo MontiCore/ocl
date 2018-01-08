@@ -1,0 +1,12 @@
+package example.symbolTableTestFiles;
+
+ocl test8 {
+  context int Testing.testMethodSignature(double d) 
+  let
+  	HelpFunction function(float a, float b) = a.lessThan(b) ? a : b;
+  
+  
+  
+}
+
+

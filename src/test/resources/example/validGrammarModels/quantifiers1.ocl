@@ -1,0 +1,4 @@
+ocl quantifiers1 {
+  inv:
+    forall a in Auction: Time.now().lessThan(a.startTime) implies a.numberOfBids == 0;
+}

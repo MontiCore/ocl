@@ -1,0 +1,8 @@
+ocl unit3 {
+    inv:
+        let
+            Speed a = 2 m/s;
+            Duration b = 300 ms;
+        in
+            (a * b) == 3/5 m;
+}

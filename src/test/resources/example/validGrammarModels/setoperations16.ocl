@@ -1,0 +1,7 @@
+ocl setoperations16 {
+  context AllData ad inv:
+    let
+      Set<List<Message> > slm = {a.message | a in ad.auction};
+    in
+      ad.auction.message == slm.flatten;
+}

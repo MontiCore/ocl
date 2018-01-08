@@ -1,0 +1,4 @@
+ocl context8 {
+  context Auction inv:
+    this.startTime.lessThan(Time.now()) implies this.numberOfBids == 0;
+}

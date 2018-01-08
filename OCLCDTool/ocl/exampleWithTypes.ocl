@@ -1,0 +1,17 @@
+package ocl;
+
+import cd.MontiArc.*;
+import cd.DefaultTypes.*;
+
+ocl exampleWithTypes {
+  context Cmp cmp inv:
+    let
+        List<Port> ports = cmp.ports;
+        List<List<Port> > ports2 = List{ports};
+        int i = 0;
+    in
+        forall Port p2 in ports :
+                true;
+}
+
+

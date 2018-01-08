@@ -1,0 +1,7 @@
+ocl quantifiers12 {
+  inv:
+    let
+      Set<Integer> squares = {int x | exists y in Integer: y * y == x && x <= 400};
+    in
+      this;
+}

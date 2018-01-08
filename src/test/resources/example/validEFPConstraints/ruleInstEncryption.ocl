@@ -1,0 +1,11 @@
+import CnCExt;
+import EFPExt.*;
+
+ocl ruleInstEncryption {
+  context Port p inv:
+    let
+      selectedValue = p.ptype;
+      aggregatedValues = pt.encryption;
+    in
+      p.encryption in aggregatedValue;
+}

@@ -1,0 +1,7 @@
+ocl special4 {
+  context Auction a inv:
+    let
+      BidMessage bm = (BidMessage)a.person.message[2];
+    in
+      defined(bm) implies true;
+}

@@ -1,0 +1,4 @@
+ocl transitiveclosure3 {
+  context Person inv Transitiv:
+    ancestors == ancestorsUpToN(Person.size);
+}

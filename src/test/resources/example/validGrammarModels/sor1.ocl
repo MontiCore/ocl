@@ -1,0 +1,4 @@
+ocl sor1 {
+  inv:
+    a | b;
+}

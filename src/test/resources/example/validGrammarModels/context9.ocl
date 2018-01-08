@@ -1,0 +1,4 @@
+ocl context9 {
+  inv:
+    forall a in Auction: a.startTime.lessThan(Time.now()) implies a.numberOfBids == 0;
+}

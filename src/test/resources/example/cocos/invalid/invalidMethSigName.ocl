@@ -1,0 +1,5 @@
+ocl invalidMethSigName {
+  context boolean Person.PersonalMsg()
+  pre Test: true;
+  post Test: result == List{m in p.message | !m.isAuctionSpecific()};
+}

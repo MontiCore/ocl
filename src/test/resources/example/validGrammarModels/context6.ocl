@@ -1,0 +1,4 @@
+ocl context6 {
+  context Auction a inv Bidders2:
+    a.activeParticipants == {p in a.bidder | p.isActive}.size;
+}

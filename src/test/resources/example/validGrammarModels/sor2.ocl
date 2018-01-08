@@ -1,0 +1,4 @@
+ocl sor2 {
+  inv:
+    a | b isin {a in B | a == true};
+}

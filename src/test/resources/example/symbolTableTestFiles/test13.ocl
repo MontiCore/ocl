@@ -1,0 +1,17 @@
+package example.symbolTableTestFiles;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl test13 {
+  context double Arbeit.testing(boolean b) 
+  let
+  	VariableClass helpVariable = var ; 
+  	Help1 f1(int e, float f, double g) = formula;
+  	
+  
+  
+  
+}
+
+

@@ -1,0 +1,5 @@
+ocl numbers2 {
+  context Object o inv:
+    o.heigth() < 0xcaffee;
+    o.width() == 0xcaffee;
+}

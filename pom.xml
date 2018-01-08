@@ -1,0 +1,393 @@
+<!--
+
+    ******************************************************************************
+     MontiCAR Modeling Family, www.se-rwth.de
+     Copyright (c) 2017, Software Engineering Group at RWTH Aachen,
+     All rights reserved.
+
+     This project is free software; you can redistribute it and/or
+     modify it under the terms of the GNU Lesser General Public
+     License as published by the Free Software Foundation; either
+     version 3.0 of the License, or (at your option) any later version.
+     This library is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+     Lesser General Public License for more details.
+
+     You should have received a copy of the GNU Lesser General Public
+     License along with this project. If not, see <http://www.gnu.org/licenses/>.
+    *******************************************************************************
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+
+  <!-- == PROJECT COORDINATES ============================================= -->
+
+  <groupId>de.monticore.lang</groupId>
+  <artifactId>ocl</artifactId>
+  <version>1.1.0-SNAPSHOT</version>
+
+  <!-- == PROJECT DEPENDENCIES ============================================= -->
+
+  <properties>
+
+    <!-- .. SE-Libraries .................................................. -->
+    <monticore.version>4.5.5-SNAPSHOT</monticore.version>
+    <se-commons.version>1.7.7</se-commons.version>
+    <mc.grammars.assembly.version>0.0.6</mc.grammars.assembly.version>
+    <NumberUnit.version>0.0.10-SNAPSHOT</NumberUnit.version>
+    <cd4analysis.version>1.3.12-SNAPSHOT</cd4analysis.version>
+
+    <!-- .. Libraries .................................................. -->
+    <guava.version>18.0</guava.version>
+    <junit.version>4.12</junit.version>
+    <logback.version>1.1.2</logback.version>
+
+    <!-- .. Plugins ....................................................... -->
+    <monticore.plugin>4.5.5-SNAPSHOT</monticore.plugin>
+    <assembly.plugin>2.5.4</assembly.plugin>
+    <compiler.plugin>3.3</compiler.plugin>
+    <source.plugin>2.4</source.plugin>
+    <shade.plugin>2.4.3</shade.plugin>
+
+    <!-- Classifiers -->
+    <grammars.classifier>grammars</grammars.classifier>
+    <cli.classifier>cli</cli.classifier>
+
+    <!-- .. Misc .......................................................... -->
+    <java.version>1.8</java.version>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	<github.global.server>github</github.global.server>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <version>1.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.se_rwth.commons</groupId>
+      <artifactId>se-commons-logging</artifactId>
+      <version>${se-commons.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+    </dependency>
+
+    <!-- MontiCore Dependencies -->
+    <dependency>
+      <groupId>de.monticore.lang</groupId>
+      <artifactId>cd4analysis</artifactId>
+      <version>${cd4analysis.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-runtime</artifactId>
+      <version>${monticore.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-grammar</artifactId>
+      <version>${monticore.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-grammar</artifactId>
+      <version>${monticore.version}</version>
+      <classifier>${grammars.classifier}</classifier>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>de.monticore.lang</groupId>
+      <artifactId>NumberUnit</artifactId>
+      <version>${NumberUnit.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>de.monticore.lang</groupId>
+      <artifactId>NumberUnit</artifactId>
+      <version>${NumberUnit.version}</version>
+      <classifier>${grammars.classifier}</classifier>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- .. Test Libraries ............................................... -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>de.monticore</groupId>
+      <artifactId>monticore-runtime</artifactId>
+      <version>${monticore.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!-- == PROJECT BUILD SETTINGS =========================================== -->
+
+  <!-- Deploy Configuration -->
+  <build>
+    <plugins>
+	<plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.1</version>
+        <configuration>
+          <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/external-dependencies</altDeploymentRepository>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.github.github</groupId>
+        <artifactId>site-maven-plugin</artifactId>
+        <version>0.12</version>
+        <configuration>
+          <server>github</server>
+          <message>Maven artifacts for ${project.version} ${project.artifactId}</message>  <!-- git commit message -->
+          <noJekyll>true</noJekyll>                                  <!-- disable webpage processing -->
+          <outputDirectory>${project.build.directory}/external-dependencies</outputDirectory> <!-- matches distribution management repository url above -->
+          <branch>refs/heads/master</branch>                       <!-- remote branch name -->
+          <includes><include>**/*</include></includes>
+          <repositoryName>external-dependencies</repositoryName>      <!-- github repo name -->
+          <repositoryOwner>EmbeddedMontiArc</repositoryOwner>    <!-- github username  -->
+          <merge>true</merge>
+        </configuration>
+        <executions>
+          <!-- run site-maven-plugin's 'site' target as part of the build's normal 'deploy' phase -->
+          <execution>
+            <goals>
+              <goal>site</goal>
+            </goals>
+            <phase>deploy</phase>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <!-- MontiCore Generation -->
+      <plugin>
+        <groupId>de.monticore.mojo</groupId>
+        <artifactId>monticore-maven-plugin</artifactId>
+        <version>${monticore.plugin}</version>
+        <configuration>
+          <skip>false</skip>
+          <script>de/monticore/monticore_noemf.groovy</script>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Other Configuration -->
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${compiler.plugin}</version>
+        <configuration>
+          <useIncrementalCompilation>true</useIncrementalCompilation>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>${assembly.plugin}</version>
+        <dependencies>
+          <dependency>
+            <groupId>de.monticore</groupId>
+            <artifactId>mc-assemblies</artifactId>
+            <version>${mc.grammars.assembly.version}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>grammars</id>
+            <configuration>
+              <finalName>${project.artifactId}-${project.version}</finalName>
+              <descriptorRefs>
+                <descriptorRef>grammars-assembly</descriptorRef>
+              </descriptorRefs>
+              <formats>
+                <format>jar</format>
+              </formats>
+            </configuration>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Build old OCLCLITool -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${shade.plugin}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+              <shadedArtifactAttached>true</shadedArtifactAttached>
+              <shadedClassifierName>${cli.classifier}</shadedClassifierName>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <transformers>
+                <transformer
+                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>ocl.cli.OCLCLI</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Source Jar Configuration -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${source.plugin}</version>
+        <executions>
+          <execution>
+            <id>create source jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+            <configuration>
+              <excludeResources>false</excludeResources>
+              <includes>
+                <include>**/*.java</include>
+                <include>**/*.ftl</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- to add copyright information automatically-->
+      <plugin>
+        <groupId>com.mycila</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>3.0</version>
+        <configuration>
+          <header>${project.baseUri}/src/license/se/license.txt</header>
+          <properties>
+            <owner>Michael von Wenckstern</owner>
+            <email>vonwenckstern@se-rwth.de</email>
+          </properties>
+          <excludes>
+            <exclude>**/README</exclude>
+            <exclude>src/test/resources/**</exclude>
+            <exclude>src/main/resources/**</exclude>
+            <exclude>src/license/**</exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>format</goal>
+            </goals>
+            <phase>process-sources</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.19.1</version>
+          <configuration>
+          </configuration>
+      </plugin>
+      <plugin>
+          <groupId>org.eluder.coveralls</groupId>
+          <artifactId>coveralls-maven-plugin</artifactId>
+          <version>4.3.0</version>
+          <configuration>
+          </configuration>
+      </plugin>
+      <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>cobertura-maven-plugin</artifactId>
+          <version>2.7</version>
+          <configuration>
+              <format>xml</format>
+              <maxmem>256m</maxmem>
+              <!-- aggregated reports for multi-module projects -->
+              <aggregate>true</aggregate>
+          </configuration>
+    </plugin>
+
+    <!-- Build OCLCDTool -->
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-assembly-plugin</artifactId>
+      <version>2.6</version>
+      <configuration>
+        <descriptorRefs>
+          <descriptorRef>jar-with-dependencies</descriptorRef>
+        </descriptorRefs>
+        <archive>
+          <manifest>
+            <mainClass>ocl.monticoreocl.ocl.OCLCDTool</mainClass>
+          </manifest>
+        </archive>
+      </configuration>
+      <executions>
+        <execution>
+          <id>assemble-all</id>
+          <phase>package</phase>
+          <goals>
+            <goal>single</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+    </plugins>
+  </build>
+
+  <distributionManagement>
+    <repository>
+      <id>internal.repo</id>
+      <name>Temporary Staging Repository</name>
+      <url>file://${project.build.directory}/external-dependencies</url>
+    </repository>
+    <snapshotRepository>
+      <id>internal.repo</id>
+      <url>file://${project.build.directory}/external-dependencies</url>
+    </snapshotRepository>
+  </distributionManagement>
+</project>

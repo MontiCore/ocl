@@ -1,0 +1,4 @@
+ocl association2 {
+  context AllData ad inv WelcomeMessage2:
+    forall a in ad.auction: (a.message.size > 0) implies a.message[0] == WelcomeMessage;
+}

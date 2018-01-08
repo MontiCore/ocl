@@ -1,0 +1,4 @@
+ocl setoperations3 {
+  inv(Set<X> sa, Set<X> sb):
+    sa == sb <=> (forall a in sa: exists b in sb: a.equals(b)) && (forall b in sb: exists a in sa: a.equals(b));
+}

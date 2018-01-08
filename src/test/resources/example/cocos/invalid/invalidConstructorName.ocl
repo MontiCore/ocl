@@ -1,0 +1,5 @@
+ocl invalidConstructorName {
+  context new auction(Policy p)
+  pre Test: p != null;
+  post Test: policy == p && status == INITIAL && messages.isEmpty;
+}

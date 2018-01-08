@@ -1,0 +1,7 @@
+ocl let5 {
+  context TestClass c inv:
+    let
+        Map<String, Set<String, Port> > map = c.getTestMap;
+    in
+        true;
+}

@@ -1,0 +1,9 @@
+ocl prepost12 {
+  context void Person.changeCompany(String name)
+  let 
+    oldCo = company;
+    newCos = {co in Company | co.name == name};
+    newCo = any newCos;
+  pre: oldCo.name != name && newCos.size == 1;
+  post: newCo.employees == newCo.employees@pre + 1 && oldCo.employees == oldCo.employees@pre - 1;
+}

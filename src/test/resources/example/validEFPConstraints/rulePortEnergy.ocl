@@ -1,0 +1,16 @@
+import CnCExt;
+import EFPExt.*;
+import Encryption.encEn; // function returns energy for encryption of data with a given algorithm
+import Encryption.decEn; // function returns energy for decryption of data with a given algorithm
+
+ocl rulePortEnergy {
+  context Cmp cmp inv:
+    let
+      selectedValues1 ={subs | name in cmp.type.subDefs};
+      selectedValues2 = {p | p.encryption != NONE && p in cmp.ports union {p2 | sc in cmp.subs && p2 in sc.ports}};
+      aggregatedValue = sum( {s.energy | s in selectedValues1 } ) +
+                                        sum( {encEn(p.encryption) | p in P intersection OutputPorts} )+
+                                        sum( {decEn(p.encryption) | p in P intersection InPorts} );
+    in
+      aggregatedValue <= cmp.energy;
+}

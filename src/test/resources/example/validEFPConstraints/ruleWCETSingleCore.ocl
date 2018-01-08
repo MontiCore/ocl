@@ -1,0 +1,11 @@
+import CnCExt;
+import EFPExt.*;
+
+ocl ruleWCETSingleCore {
+  context Cmp cmp inv:
+    let
+      selectedValues = cmp.subs;
+      aggregatedValue = sum( {sc.wcet | sc in selectedValues} );
+    in
+      aggregatedValue <= cmp.wcet;
+}

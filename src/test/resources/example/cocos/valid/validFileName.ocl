@@ -1,0 +1,7 @@
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl association1 {
+  context AllData _ad, Auction a inv Test :
+     _ad.auction[a.auctionIdent] == a;
+}

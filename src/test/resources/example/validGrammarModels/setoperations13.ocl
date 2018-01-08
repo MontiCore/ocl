@@ -1,0 +1,12 @@
+ocl setoperations13 {
+  context AllData ad, Person p inv:
+    let
+      Company c = p.company;
+      Set<Auction> sa = p.auctions;
+      Set<Person> competitors = p.auctions.bidder;
+      List<Message> lpm = p.message;
+      List<Message> lam = p.auctions.mnessges;
+      List<Auction> lma = p.messages.auctions;
+    in
+      this;
+}

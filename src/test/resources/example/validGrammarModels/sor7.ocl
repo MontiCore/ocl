@@ -1,0 +1,4 @@
+ocl sor7 {
+  inv:
+  {a in {a | b} | a == true}.size == 0;
+}

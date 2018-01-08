@@ -1,0 +1,4 @@
+ocl container2 {
+  inv:
+    Auction.size < 1700;
+}

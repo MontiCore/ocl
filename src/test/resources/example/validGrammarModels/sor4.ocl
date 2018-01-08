@@ -1,0 +1,4 @@
+ocl sor4 {
+  inv:
+    {(a | b)}.size == 1;
+}

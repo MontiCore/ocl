@@ -1,0 +1,4 @@
+ocl sor6 {
+  inv:
+    {(a | b) | a in {(a | b)}, b isin {b}}.size > 0;
+}

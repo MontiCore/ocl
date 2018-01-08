@@ -1,0 +1,7 @@
+ocl let1 {
+  context Auction a inv Time1:
+    let
+      min = startTime.lessThan(closingTime) ? startTime : closingTime;
+    in
+      min == startTime;
+}

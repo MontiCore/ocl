@@ -1,0 +1,5 @@
+ocl numbers4 {
+  context Object o inv:
+    o.heigth() < 123456789098;
+    o.width() == -1;
+}

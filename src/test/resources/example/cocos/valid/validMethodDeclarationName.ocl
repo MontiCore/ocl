@@ -1,0 +1,10 @@
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl validMethodDeclarationName {
+  context Auction a inv Time3:
+    let
+      Time min(Time x, Time y) = x.lessThan(y) ? x : y;
+    in
+      min(a.startTime, min(a.closingTime, a.finishTime)) == a.startTime;
+}

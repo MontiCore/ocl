@@ -1,0 +1,4 @@
+ocl context3 {
+  context Auction a inv Bidders1:
+    a.activeParticipants <= a.bidder.size;
+}

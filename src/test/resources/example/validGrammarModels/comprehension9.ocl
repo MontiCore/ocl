@@ -1,0 +1,7 @@
+ocl comprehension9 {
+  inv:
+    let
+      la = List{a | a in Set{1, 2}};
+    in
+      la == List{1, 2} || la == List{2, 1};
+}

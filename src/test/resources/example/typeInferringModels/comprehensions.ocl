@@ -1,0 +1,18 @@
+package example.typeInferringModels;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl comprehensions {
+  context Auction a inv test:
+    let
+        comp = List{p.company.name | p in a.bidder};
+        comp2 = Set{1, 3, 2..10};
+        comp3 = {p in a.bidder | p.company.name == "myCompany"};
+        s = {"one", "two"}.size;
+        comp4 = {"one", "two"}.addAll({"three", "four"});
+    in
+        true;
+}
+
+

@@ -1,0 +1,11 @@
+import CnCExt;
+import EFPExt.*;
+
+ocl ruleInstAuthentication {
+  context ConDef cd inv:
+    let
+      selectedValues = {con | con in Cons, con.condef == cd};
+      aggregatedValue = union( {con.authentication | con in selectedValues } );
+    in
+      subseteq(aggregatedValue,  cd.authentication);
+}

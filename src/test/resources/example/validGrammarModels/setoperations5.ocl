@@ -1,0 +1,7 @@
+ocl setoperations5 {
+  inv:
+    let
+      Collection<Integer> ci = List{1, 2, 1};
+    in
+      ci.asSet == {1, 2} && ci.asList == List{1, 2, 1} && ci.asSet.asList.size == 2 && (List<Integer>)ci == List{1, 2, 1} && !((Set<Integer>)ci == {1, 2});
+}

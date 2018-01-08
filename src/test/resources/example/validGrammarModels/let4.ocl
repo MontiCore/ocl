@@ -1,0 +1,7 @@
+ocl let4 {
+  inv:
+    5 == (let
+      x = 1 / 0;
+    in
+      true);
+}

@@ -1,0 +1,7 @@
+ocl comprehension5 {
+  context Auction a inv MessageTimes:
+    let
+      List<Long> tlist = List{m.time.asMsec() | m in a.message, m.time.lessThan(a.startTime)};
+    in
+      this;
+}

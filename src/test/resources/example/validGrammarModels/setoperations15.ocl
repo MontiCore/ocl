@@ -1,0 +1,7 @@
+ocl setoperations15 {
+  context AllData ad inv WelcomeMessage1:
+    forall a in ad.auction: let
+      List<Message> lmsg = a.message;
+    in
+      lmsg.isEmpty || lmsg.get(0) == WelcomeMessage;
+}

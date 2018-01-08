@@ -1,0 +1,7 @@
+ocl setoperations7 {
+  inv:
+    let
+      Collection<Integer> ci = List{1, 2, 1};
+    in
+      result == (typeif ci instanceof List<Integer> then ci.get(0) else -42);
+}

@@ -1,0 +1,7 @@
+ocl setoperations6 {
+  inv:
+    let
+      Collection<Integer> ci = List{1, 2, 1};
+    in
+      (ci instanceof Set<Integer> <=> false) && (ci instanceof List<Integer> <=> true) && (ci instanceof Collection<Integer> <=> true);
+}

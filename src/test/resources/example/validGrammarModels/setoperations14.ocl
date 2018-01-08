@@ -1,0 +1,4 @@
+ocl setoperations14 {
+  context Person p inv:
+    p.auctions.messages == p.auctions.asList.messages;
+}

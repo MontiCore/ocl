@@ -1,0 +1,11 @@
+import CnCExt;
+import EFPExt.*;
+
+ocl ruleInstCertificates {
+  context Cmp cmp inv:
+    let
+      selectedValues =cmp.ctype.ports;
+      aggregatedValue = intersection( {pd.cert | pd in selectedValues } );
+    in
+      superseteq(aggregatedValue,  cmp.cert);
+}

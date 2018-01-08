@@ -1,0 +1,4 @@
+ocl query2 {
+  context Auction a inv:
+    forall p in a.bidder: a.message == {m in p.message | m.getAuction() == a};
+}

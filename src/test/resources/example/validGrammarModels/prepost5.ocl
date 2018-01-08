@@ -1,0 +1,5 @@
+ocl prepost5 {
+  context Name Person.personalMsg()
+  pre: true;
+  post: result == List{m in p.message | !m.isAuctionSpecific()};
+}

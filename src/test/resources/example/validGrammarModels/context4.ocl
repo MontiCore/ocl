@@ -1,0 +1,4 @@
+ocl context4 {
+  context Auction a inv:
+    a.startTime.lessThan(a.closingTime);
+}
