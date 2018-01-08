@@ -31,9 +31,9 @@ import de.monticore.prettyprint.IndentPrinter;
  */
 public class ASTComplexNumber extends ASTComplexNumberTOP {
   public  ASTComplexNumber (
-      de.monticore.literals.literals._ast.ASTSignedNumericLiteral real,  de.monticore.literals.literals._ast.ASTNumericLiteral im,
-      de.monticore.numberunit._ast.ASTI i, String negIm) {
-   super(real, im, i, negIm);
+      de.monticore.literals.literals._ast.ASTNumericLiteral real,  de.monticore.literals.literals._ast.ASTNumericLiteral im,
+      de.monticore.numberunit._ast.ASTI i, String negRe, String negIm) {
+   super(real, im, i, negRe, negIm);
   }
 
   public ASTComplexNumber() {
@@ -47,8 +47,12 @@ public class ASTComplexNumber extends ASTComplexNumberTOP {
   }
 
   public double getRealNumber() {
-
-    return Double.parseDouble(print(this.getReal()));
+    if (this.negReIsPresent()) {
+      return -1*Double.parseDouble(print(this.getReal()));
+    }
+    else {
+      return Double.parseDouble(print(this.getReal()));
+    }
   }
 
   public double getImagineNumber() {

@@ -21,21 +21,30 @@ grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Lit
 
    NumberWithInf =
      number:SignedNumericLiteral |
-     "+"? posInf:"oo" |
-     "-" negInf:"oo"
+     "+"? posInf:Inf |
+     "-" negInf:Inf
    ;
+
+   // Inf = "oo"; (use Name to not generate a "oo" token which would clash with other tokens later)
+   Inf =
+      { (_input.LT(1).getText().equals("oo") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) }?
+      Name
+   ;
+
 
    ComplexNumber =
      // real:SignedNumericLiteral ("+" | negIm:"-") im:NumericLiteral "i"
      // use Name instead of i, otherwise no variable can be named i again
-     real:SignedNumericLiteral ("+" | negIm:"-") im:NumericLiteral I
+     (negRe:"-")? real:NumericLiteral ("+" | negIm:"-") im:NumericLiteral I
    ;
 
-   I = { _input.LT(1).getText().equals("i") && !_input.LT(2).getText().matches("[a-zA-Z]") }? Name;
+   I = { _input.LT(1).getText().equals("i") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]") }? Name;
 
    Unit =
        SIUnit |
-       ImperialUnit
+       ImperialUnit |
+       degCelsius:"°C" |
+       degFahrenheit:"°F"
    ;
 
     // see https://en.wikipedia.org/wiki/Imperial_units
@@ -94,8 +103,9 @@ grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Lit
     ;
 
     SIUnitBasic =
-      ((UnitPrefix? SiUnitBaseDimension) |
-           OfficallyAcceptedUnit)
+      (UnitBaseDimWithPrefix |
+           OfficallyAcceptedUnit |
+           deg:"°")
       ("^" /* SignedNatLiteral */ SignedIntLiteral)?
     ;
 
@@ -104,7 +114,48 @@ grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Lit
         SiUnitDimensionless
      ;
 
+   /*  UnitBaseDimWithPrefix =
+         UnitPrefix?
+         SiUnitBaseDimension
+     ;
+
+      // see https://en.wikipedia.org/wiki/SI_base_unit
+     SiUnitBaseDimension =
+       // Base Units
+       "m" | // metre
+       "g" | // gramm
+       "s" | // second
+       "A" | // ampere
+       "K" | // kelvin
+       "mol" | // mole
+       "cd" | // candela
+
+      // see https://en.wikipedia.org/wiki/SI_derived_unit
+      // Derived Units
+      "Hz" | // hertz
+      "N" | // newton
+      "Pa" | // pascal
+      "J" | // joule
+      "W" | // watt
+      "C" | // coulomb
+      "V" | // volt
+      "F" | // farad
+      "Ω" | // ohm
+      "S" | // siemens
+      "Wb" | // weber
+      "T" | // tesla
+      "H" | // henry
+      "\u00B0C" | // degree Celsius --> must be extra
+      "lm" | // lumen
+      "lx" | // lux
+      "Bq" | // becquerel
+      "Gy" | // gray
+      "Sv" | // sievert
+      "kat"  // katal
+    ;
+
       // see https://en.wikipedia.org/wiki/Metric_prefix
+
       UnitPrefix =
         "Y" | // yotta: 10^24
         "Z" | // zetta: 10^21
@@ -129,17 +180,26 @@ grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Lit
         "y"  // yocto: 10^-24
       ;
 
+      */
+
+      // we create UnitBaseDimWithPrefix as Name without introducing tokens
+      UnitBaseDimWithPrefix =
+         { !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]") &&
+           _input.LT(1).getText().matches("(Y|Z|E|P|T|G|M|K|k|H|da|d|c|m|n|p|f|a|z|y)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|Ohm|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat)") }?
+        Name;
+
+     /*
       // see https://en.wikipedia.org/wiki/Non-SI_units_mentioned_in_the_SI
       OfficallyAcceptedUnit =
         "min" | // minute
         "h" | // hour
-        "d" | // day
-        "\u00B0" | // degree
+        "d" | // day --> make day to avoid collision with 7d and 7f float and double in Java type system
+        "\u00B0" | // degree --> must be treated extra
 
-        /* Problems with String encoding in Literals
-        "\\'" | // minute
-        "\\"" | // second
-        */
+        // Problems with String encoding in Literals
+        // "\\'" | // minute
+        // "\\"" | // second
+        //
 
         "ha" | // hectare
         "l" | // litre
@@ -154,46 +214,22 @@ grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Lit
         "u"  // unified atomic mass unit
         // ToDo: Natural and Atomic units
       ;
+      */
+      OfficallyAcceptedUnit =
+         { !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]") &&
+            _input.LT(1).getText().matches("min|h|day|ha|l|L|t|au|Au|Np|B|B|db|eV|u") }?
+          Name;
 
-      // see https://en.wikipedia.org/wiki/SI_base_unit
-
-      SiUnitBaseDimension =
-        // Base Units
-        "m" | // metre
-        "g" | // gramm
-        "s" | // second
-        "A" | // ampere
-        "K" | // kelvin
-        "mol" | // mole
-        "cd" | // candela
-
-        // see https://en.wikipedia.org/wiki/SI_derived_unit
-        // Derived Units
-        "Hz" | // hertz
-        "N" | // newton
-        "Pa" | // pascal
-        "J" | // joule
-        "W" | // watt
-        "C" | // coulomb
-        "V" | // volt
-        "F" | // farad
-        "Ω" | // ohm
-        "S" | // siemens
-        "Wb" | // weber
-        "T" | // tesla
-        "H" | // henry
-        "\u00B0C" | // degree Celsius
-        "lm" | // lumen
-        "lx" | // lux
-        "Bq" | // becquerel
-        "Gy" | // gray
-        "Sv" | // sievert
-        "kat"  // katal
-      ;
-
+      /*
       // see https://en.wikipedia.org/wiki/SI_derived_unit
       SiUnitDimensionless =
+        "deg" | // degree
         "rad" | // radian
         "sr"  // steradian
       ;
+      */
+      SiUnitDimensionless =
+        { !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]") &&
+          _input.LT(1).getText().matches("deg|rad|sr") }?
+        Name;
 }

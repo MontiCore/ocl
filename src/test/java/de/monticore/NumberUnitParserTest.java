@@ -85,7 +85,7 @@ import static org.junit.Assert.*;
     @Test
     public void test0() throws IOException {
       NumberUnitParser parser = new NumberUnitParser();
-      ASTNumberWithUnit ast = parser.parse_String("8/3 kg*m^2/s^3").orElse(null);
+      ASTNumberWithUnit ast = parser.parse_String("8.3 kg*m^2/s^3").orElse(null);
       assertNotNull(ast);
 
 //      assertEquals(Rational.valueOf(8, 3), ast.getNumber().get());
@@ -183,6 +183,45 @@ import static org.junit.Assert.*;
       NumberUnitParser parser = new NumberUnitParser();
       ASTNumberWithUnit ast = parser.parse_String("7 th").orElse(null);
       assertNotNull(ast);
+    }
+
+    @Test
+    public void testUnitBaseDimWithPrefix()  throws IOException {
+      Log.enableFailQuick(false);
+
+      NumberUnitParser parser = new NumberUnitParser();
+      ASTNumberWithUnit ast = parser.parse_String("-3 mm").orElse(null);
+      assertNotNull(ast);
+
+      ast = parser.parse_String("3 kg").orElse(null);
+      assertNotNull(ast);
+
+      ast = parser.parse_String("0.5 lm").orElse(null);
+      assertNotNull(ast);
+
+      ast = parser.parse_String("0.5 implies").orElse(null);
+      assertNull(ast);
+    }
+
+    @Test
+    public void testOfficallyAcceptedUnit()  throws IOException {
+      Log.enableFailQuick(false);
+
+      NumberUnitParser parser = new NumberUnitParser();
+      ASTNumberWithUnit ast = parser.parse_String("7 min").orElse(null);
+      assertNotNull(ast);
+
+      ast = parser.parse_String("3 h").orElse(null);
+      assertNotNull(ast);
+
+      ast = parser.parse_String("4 ha").orElse(null);
+      assertNotNull(ast);
+
+      ast = parser.parse_String("0.25 day").orElse(null);
+      assertNotNull(ast);
+
+      ast = parser.parse_String("0.5 hektar").orElse(null);
+      assertNull(ast);
     }
 
     @Test
