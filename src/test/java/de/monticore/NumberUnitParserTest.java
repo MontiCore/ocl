@@ -28,7 +28,10 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-  /**
+import javax.measure.unit.NonSI;
+import javax.measure.unit.Unit;
+
+/**
    * Created by Michael von Wenckstern on 10.02.2017.
    */
   public class NumberUnitParserTest {
@@ -58,8 +61,8 @@ import static org.junit.Assert.*;
       assertNotNull(ast);
       ast = parser.parse_String("-9°C").orElse(null);
       assertNotNull(ast);
-     // assertEquals(Rational.valueOf(-9,1), ast.getUnitNumber().get().getNumber().get());
-     // assertEquals(Unit.valueOf("°C"), ast.getUnitNumber().get().getUnit().get());
+      assertEquals(-9, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.valueOf("°C"), ast.getUnit());
     }
 
     @Test
@@ -68,8 +71,8 @@ import static org.junit.Assert.*;
       ASTNumberWithUnit ast = parser.parse_String("-0.9").orElse(null);
       assertNotNull(ast);
 
-      // assertEquals(Rational.valueOf(-9, 10), ast.getNumber().get());
-      // assertEquals(Unit.ONE, ast.getUnit().get());
+      assertEquals(-0.9, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.ONE, ast.getUnit());
     }
 
     @Test
@@ -78,8 +81,8 @@ import static org.junit.Assert.*;
       ASTNumberWithUnit ast = parser.parse_String("-0.5 kg*m^2/s^3").orElse(null);
       assertNotNull(ast);
 
-      // assertEquals(Rational.valueOf(-1, 2), ast.getNumber().get());
-      // assertEquals(Unit.valueOf("kg*m^2/s^3"), ast.getUnit().get());
+      assertEquals(-0.5, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.valueOf("kg*m^2/s^3"), ast.getUnit());
     }
 
     @Test
@@ -88,8 +91,8 @@ import static org.junit.Assert.*;
       ASTNumberWithUnit ast = parser.parse_String("8.3 kg*m^2/s^3").orElse(null);
       assertNotNull(ast);
 
-//      assertEquals(Rational.valueOf(8, 3), ast.getNumber().get());
-//      assertEquals(Unit.valueOf("kg*m^2/s^3"), ast.getUnit().get());
+      assertEquals(8.3, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.valueOf("kg*m^2/s^3"), ast.getUnit());
     }
 
     @Test
@@ -98,8 +101,8 @@ import static org.junit.Assert.*;
       ASTNumberWithUnit ast = parser.parse_String("8 kg*m^2/s^3").orElse(null);
       assertNotNull(ast);
 
-//      assertEquals(Rational.valueOf(8, 1), ast.getNumber().get());
-//      assertEquals(Unit.valueOf("kg*m^2/s^3"), ast.getUnit().get());
+      assertEquals(8, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.valueOf("kg*m^2/s^3"), ast.getUnit());
     }
 
     @Test
@@ -108,8 +111,8 @@ import static org.junit.Assert.*;
       ASTNumberWithUnit ast = parser.parse_String("0.3e-7").orElse(null);
       assertNotNull(ast);
 
-      //      assertEquals(Rational.valueOf(8, 1), ast.getNumber().get());
-      //      assertEquals(Unit.valueOf("kg*m^2/s^3"), ast.getUnit().get());
+      assertEquals(0.3e-7, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.ONE, ast.getUnit());
     }
 
     @Test
@@ -127,10 +130,9 @@ import static org.junit.Assert.*;
       ASTNumberWithUnit ast = parser.parse_String("-7.3 +0.5i").orElse(null);
       assertNotNull(ast);
 
-      assertTrue(ast.complexNumberIsPresent());
-      assertTrue(ast.complexNumberIsPresent());
-      assertEquals(-7.3, ast.getComplexNumber().getRealNumber(), 0.0001);
-      assertEquals(0.5, ast.getComplexNumber().getImagineNumber(), 0.0001);
+      assertTrue(ast.isComplexNumber());
+      assertEquals(-7.3, ast.getComplexNumber().get().getRealNumber(), 0.0001);
+      assertEquals(0.5, ast.getComplexNumber().get().getImagineNumber(), 0.0001);
     }
 
     @Test
@@ -139,9 +141,9 @@ import static org.junit.Assert.*;
       ASTNumberWithUnit ast = parser.parse_String("1-2i").orElse(null);
       assertNotNull(ast);
 
-      assertTrue(ast.complexNumberIsPresent());
-      assertEquals(1, ast.getComplexNumber().getRealNumber(), 0.0001);
-      assertEquals(-2, ast.getComplexNumber().getImagineNumber(), 0.0001);
+      assertTrue(ast.isComplexNumber());
+      assertEquals(1, ast.getComplexNumber().get().getRealNumber(), 0.0001);
+      assertEquals(-2, ast.getComplexNumber().get().getImagineNumber(), 0.0001);
     }
 
     @Test
@@ -150,9 +152,9 @@ import static org.junit.Assert.*;
       ASTNumberWithUnit ast = parser.parse_String("1 -2i").orElse(null);
       assertNotNull(ast);
 
-      assertTrue(ast.complexNumberIsPresent());
-      assertEquals(1, ast.getComplexNumber().getRealNumber(), 0.0001);
-      assertEquals(-2, ast.getComplexNumber().getImagineNumber(), 0.0001);
+      assertTrue(ast.isComplexNumber());
+      assertEquals(1, ast.getComplexNumber().get().getRealNumber(), 0.0001);
+      assertEquals(-2, ast.getComplexNumber().get().getImagineNumber(), 0.0001);
     }
 
     @Test
@@ -161,9 +163,9 @@ import static org.junit.Assert.*;
       ASTNumberWithUnit ast = parser.parse_String("1  -  2i").orElse(null);
       assertNotNull(ast);
 
-      assertTrue(ast.complexNumberIsPresent());
-      assertEquals(1, ast.getComplexNumber().getRealNumber(), 0.0001);
-      assertEquals(-2, ast.getComplexNumber().getImagineNumber(), 0.0001);
+      assertTrue(ast.isComplexNumber());
+      assertEquals(1, ast.getComplexNumber().get().getRealNumber(), 0.0001);
+      assertEquals(-2, ast.getComplexNumber().get().getImagineNumber(), 0.0001);
     }
 
 
@@ -173,9 +175,9 @@ import static org.junit.Assert.*;
       ASTNumberWithUnit ast = parser.parse_String("-0.5-0.5i").orElse(null);
       assertNotNull(ast);
 
-      assertTrue(ast.complexNumberIsPresent());
-      assertEquals(-0.5, ast.getComplexNumber().getRealNumber(), 0.0001);
-      assertEquals(-0.5, ast.getComplexNumber().getImagineNumber(), 0.0001);
+      assertTrue(ast.isComplexNumber());
+      assertEquals(-0.5, ast.getComplexNumber().get().getRealNumber(), 0.0001);
+      assertEquals(-0.5, ast.getComplexNumber().get().getImagineNumber(), 0.0001);
     }
 
     @Test
@@ -183,6 +185,9 @@ import static org.junit.Assert.*;
       NumberUnitParser parser = new NumberUnitParser();
       ASTNumberWithUnit ast = parser.parse_String("7 th").orElse(null);
       assertNotNull(ast);
+
+      assertEquals(7*0.0254, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.valueOf("mm"), ast.getUnit());
     }
 
     @Test
@@ -192,12 +197,18 @@ import static org.junit.Assert.*;
       NumberUnitParser parser = new NumberUnitParser();
       ASTNumberWithUnit ast = parser.parse_String("-3 mm").orElse(null);
       assertNotNull(ast);
+      assertEquals(-3, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.valueOf("mm"), ast.getUnit());
 
       ast = parser.parse_String("3 kg").orElse(null);
       assertNotNull(ast);
+      assertEquals(3, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.valueOf("kg"), ast.getUnit());
 
       ast = parser.parse_String("0.5 lm").orElse(null);
       assertNotNull(ast);
+      assertEquals(0.5, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.valueOf("lm"), ast.getUnit());
 
       ast = parser.parse_String("0.5 implies").orElse(null);
       assertNull(ast);
@@ -210,15 +221,23 @@ import static org.junit.Assert.*;
       NumberUnitParser parser = new NumberUnitParser();
       ASTNumberWithUnit ast = parser.parse_String("7 min").orElse(null);
       assertNotNull(ast);
+      assertEquals(7, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.valueOf("min"), ast.getUnit());
 
       ast = parser.parse_String("3 h").orElse(null);
       assertNotNull(ast);
+      assertEquals(3, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.valueOf("h"), ast.getUnit());
 
       ast = parser.parse_String("4 ha").orElse(null);
       assertNotNull(ast);
+      assertEquals(4, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.valueOf("ha"), ast.getUnit());
 
       ast = parser.parse_String("0.25 day").orElse(null);
       assertNotNull(ast);
+      assertEquals(0.25, ast.getNumber().get(), 0.0001);
+      assertEquals(NonSI.DAY, ast.getUnit());
 
       ast = parser.parse_String("0.5 hektar").orElse(null);
       assertNull(ast);
@@ -229,9 +248,8 @@ import static org.junit.Assert.*;
       NumberUnitParser parser = new NumberUnitParser();
       ASTNumberWithUnit ast = parser.parse_String("-oo km/h").orElse(null);
       assertNotNull(ast);
-//      System.out.println(ast);
-//      System.out.println(ast.getUnitNumber().get().tUnitInfIsPresent());
-//      System.out.println(ast.getUnitNumber().get().getUnit());
+      assertTrue(ast.isMinusInfinite());
+      assertEquals(Unit.valueOf("km/h"), ast.getUnit());
     }
 
     @Test
@@ -239,7 +257,8 @@ import static org.junit.Assert.*;
       NumberUnitParser parser = new NumberUnitParser();
       ASTNumberWithUnit ast = parser.parse_String("-90 °").orElse(null);
       assertNotNull(ast);
-//      System.out.println(ast);
+      assertEquals(-90, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.valueOf("°"), ast.getUnit());
 
     }
 
@@ -248,7 +267,7 @@ import static org.junit.Assert.*;
       NumberUnitParser parser = new NumberUnitParser();
       ASTNumberWithUnit ast = parser.parse_String("-90 deg").orElse(null);
       assertNotNull(ast);
-//      System.out.println(ast);
-
+      assertEquals(-90, ast.getNumber().get(), 0.0001);
+      assertEquals(Unit.valueOf("°"), ast.getUnit());
     }
 }

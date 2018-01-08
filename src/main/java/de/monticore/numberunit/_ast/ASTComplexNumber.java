@@ -19,12 +19,7 @@
  */
 package de.monticore.numberunit._ast;
 
-import de.monticore.ast.ASTNode;
-import de.monticore.literals.literals._ast.ASTLiteralsNode;
-import de.monticore.literals.literals._ast.ASTSignedNumericLiteral;
-import de.monticore.literals.prettyprint.LiteralsPrettyPrinterConcreteVisitor;
-
-import de.monticore.prettyprint.IndentPrinter;
+import static de.monticore.numberunit.PrintHelper.print;
 
 /**
  * Created by MichaelvonWenckstern on 08.01.2018.
@@ -38,12 +33,6 @@ public class ASTComplexNumber extends ASTComplexNumberTOP {
 
   public ASTComplexNumber() {
     super();
-  }
-
-  protected String print(ASTLiteralsNode ast) {
-    IndentPrinter ip = new IndentPrinter();
-    LiteralsPrettyPrinterConcreteVisitor visitor = new LiteralsPrettyPrinterConcreteVisitor(ip);
-    return visitor.prettyprint(ast);
   }
 
   public double getRealNumber() {

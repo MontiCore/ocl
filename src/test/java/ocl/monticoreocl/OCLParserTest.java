@@ -655,6 +655,7 @@ public class OCLParserTest {
 		test(model);
 	}
 
+	@Ignore
 	@Test
 	public void transitiveClosure4Test() throws RecognitionException, IOException {
 		Path model = Paths.get("src/test/resources/example/validGrammarModels/transitiveclosure4.ocl");

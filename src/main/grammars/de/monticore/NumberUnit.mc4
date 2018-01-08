@@ -15,12 +15,12 @@ package de.monticore;
 
 grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Literals {
    NumberWithUnit =
-      number:NumberWithInf Unit? |
-      ComplexNumber
+      num:NumberWithInf un:Unit? |
+      cn:ComplexNumber
    ;
 
    NumberWithInf =
-     number:SignedNumericLiteral |
+     negNumber:"-"? number:NumericLiteral |
      "+"? posInf:Inf |
      "-" negInf:Inf
    ;
@@ -110,8 +110,12 @@ grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Lit
     ;
 
     SIUnit =
-        SIUnitBasic (("/" | "*") SIUnitBasic)* |
+        SIUnitBasic (TimeDiv SIUnitBasic)* |
         SiUnitDimensionless
+     ;
+
+     TimeDiv =
+       (isDiv:"/" | isTime:"*")
      ;
 
    /*  UnitBaseDimWithPrefix =
