@@ -19,29 +19,31 @@
  */
 package ocl.monticoreocl.ocl;
 
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.Optional;
 
 import de.monticore.ModelingLanguageFamily;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolvingConfiguration;
-import de.monticore.symboltable.Scope;
 import de.monticore.umlcd4a.CD4AnalysisLanguage;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
-import jline.internal.Log;
+import de.se_rwth.commons.logging.Log;
 import ocl.LogConfig;
 import ocl.monticoreocl.ocl._ast.ASTCompilationUnit;
-import ocl.monticoreocl.ocl._parser.OCLParser;
 import ocl.monticoreocl.ocl._symboltable.OCLLanguage;
 import ocl.monticoreocl.ocl._symboltable.OCLSymbolTableCreator;
 import org.antlr.v4.runtime.RecognitionException;
-
-import org.apache.commons.cli.*;
-
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.util.Optional;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 
 public class OCLCDTool {
 
