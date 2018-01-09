@@ -83,7 +83,7 @@ public class ASTNumberWithUnit extends ASTNumberWithUnitTOP {
   }
 
   public Optional<ASTComplexNumber> getComplexNumber() {
-    return this.getOptCn();
+    return this.getCnOpt();
   }
 
   public Unit getUnit() {
