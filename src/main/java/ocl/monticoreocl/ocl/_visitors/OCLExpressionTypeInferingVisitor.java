@@ -23,11 +23,14 @@ import de.monticore.ast.ASTNode;
 
 
 import de.monticore.expressionsbasis._ast.ASTExpression;
+import de.monticore.literals.literals._ast.ASTCharLiteral;
+import de.monticore.literals.literals._ast.ASTDoubleLiteral;
+import de.monticore.literals.literals._ast.ASTIntLiteral;
 import de.monticore.literals.literals._ast.ASTStringLiteral;
+import de.monticore.numberunit._ast.ASTNumberWithUnit;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
-import de.monticore.types.TypesPrinter;
 import de.monticore.umlcd4a.symboltable.*;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
@@ -84,43 +87,34 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
      *  ********** traverse methods **********
      */
 
- /*   @Override
-    public void traverse(ASTOCLPrefixExpression node) {
-        if(node.getOperator() != 0) { // operator:["-" | "+" | "~" | "!"]
-            returnTypeRef = createTypeRef("Boolean", node);
-        } else if (node.oCLPrimaryIsPresent()) {
-            node.getOCLPrimary().get().accept(realThis);
-        } else if (node.oCLTypeCastExpressionIsPresent()) {
-            // Todo ?
+    @Override
+    public void traverse(ASTIntLiteral node) {
+        returnTypeRef = createTypeRef("int", node);
+    }
+
+    @Override
+    public void traverse(ASTDoubleLiteral node) {
+        returnTypeRef = createTypeRef("double", node);
+    }
+
+    @Override
+    public void traverse(ASTNumberWithUnit node) {
+        if (node.unIsPresent()) {
+            returnTypeRef = createTypeRef("Amount", node);
         }
     }
 
     @Override
-    public void traverse(ASTOCLNumberLiteral node) {
-        ASTNumber astNumber = node.getValue();
-        if(astNumber.unitNumberIsPresent()) {
-            ASTUnitNumber unitNumber = astNumber.getUnitNumber().get();
-            String unitString = unitNumber.getUnit().get().toString();
-            if (unitString.equals("")) {
-                if (unitNumber.getNumber().get().getDivisor().equals(1))
-                    returnTypeRef = createTypeRef("int", node);
-                else
-                    returnTypeRef = createTypeRef("double", node);
-            } else {
-                returnTypeRef = createTypeRef("Amount", node); // From the jscience library
-                // Todo: some method to get the unit class and add as an argument or Amount:  mW -> Amount<Power>
-            }
-        }
+    public void traverse(ASTStringLiteral node) {
+        returnTypeRef = createTypeRef("String", node);
     }
 
     @Override
-    public void traverse(ASTOCLNonNumberLiteral node) {
-        if (node.getValue() instanceof ASTStringLiteral)
-            returnTypeRef = createTypeRef("String", node);
-        else
-            returnTypeRef = createTypeRef("char", node);
+    public void traverse(ASTCharLiteral node) {
+        returnTypeRef = createTypeRef("char", node);
     }
 
+/*
     @Override
     public void traverse(ASTOCLParenthizedExpr node) {
         returnTypeRef = getTypeFromExpression(node.getOCLExpression(), scope);

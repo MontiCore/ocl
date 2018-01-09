@@ -193,7 +193,7 @@ public class OCLSymbolTableCreatorTest {
 		final OCLMethodDeclarationSymbol methDeclSymbol = methSigSymbol2.getOCLMethodDecl("min").orElse(null);
 		assertNotNull(methDeclSymbol);
 
-		assertEquals("Class", methDeclSymbol.getReturnType());
+		assertEquals("Class", methDeclSymbol.getReturnType().getClass().getName());
 
 		final OCLParameterDeclarationSymbol parameterDeclarationOfMethodDecl1 = methDeclSymbol.getOCLParamDecl("x").orElse(null);
 		assertNotNull(parameterDeclarationOfMethodDecl1);
