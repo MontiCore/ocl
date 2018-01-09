@@ -36,21 +36,6 @@ import javax.measure.unit.Unit;
    */
   public class NumberUnitParserTest {
 
-    static boolean failQuick;
-
-    @BeforeClass
-    public static void startUp() {
-      failQuick = Log.isFailQuickEnabled();
-      Log.enableFailQuick(false);
-      Log.getFindings().clear();
-    }
-
-    @AfterClass
-    public static void tearDown() {
-      Log.enableFailQuick(failQuick);
-      Log.getFindings().clear();
-    }
-
     @Before
     public void clear() {
       Log.getFindings().clear();
