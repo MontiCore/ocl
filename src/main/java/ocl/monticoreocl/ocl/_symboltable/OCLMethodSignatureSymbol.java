@@ -25,13 +25,13 @@ import java.util.Collection;
 import java.util.Optional;
 
 import de.monticore.symboltable.CommonScopeSpanningSymbol;
-import de.monticore.types.types._ast.ASTType;
+import de.monticore.types.types._ast.ASTReturnType;
 
 public class OCLMethodSignatureSymbol extends CommonScopeSpanningSymbol {
 
 	public static final OCLMethodSignatureKind KIND = OCLMethodSignatureKind.INSTANCE;
 
-	protected ASTType returnType;
+	protected ASTReturnType returnType;
 	protected String className;
 	protected String methodSignatureName;
 
@@ -47,11 +47,11 @@ public class OCLMethodSignatureSymbol extends CommonScopeSpanningSymbol {
 		return methodSignatureName;
 	}
 
-	public void setReturnType(ASTType returnType){
+	public void setReturnType(ASTReturnType returnType){
 		this.returnType = returnType;
 	}
 
-	public ASTType getReturnType(){
+	public ASTReturnType getReturnType(){
 		return returnType;	 
 	}
 

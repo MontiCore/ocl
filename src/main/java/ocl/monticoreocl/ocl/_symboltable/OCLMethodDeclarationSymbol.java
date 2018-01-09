@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import de.monticore.symboltable.CommonScopeSpanningSymbol;
+import de.monticore.types.types._ast.ASTReturnType;
 
 public class OCLMethodDeclarationSymbol extends CommonScopeSpanningSymbol {
 
@@ -34,14 +35,14 @@ public class OCLMethodDeclarationSymbol extends CommonScopeSpanningSymbol {
 		super(name, KIND);
 	}
 
-	protected String returnType;
+	protected ASTReturnType returnType;
 
-	public void setReturnType(String returnType){
+	public void setReturnType(ASTReturnType returnType){
 		this.returnType = returnType; 
 
 	}
 
-	public String getReturnType(){
+	public ASTReturnType getReturnType(){
 		return returnType;
 	}
 

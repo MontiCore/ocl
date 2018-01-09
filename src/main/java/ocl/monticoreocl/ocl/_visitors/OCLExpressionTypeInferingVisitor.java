@@ -22,6 +22,7 @@ package ocl.monticoreocl.ocl._visitors;
 import de.monticore.ast.ASTNode;
 
 
+import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.literals._ast.ASTStringLiteral;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
@@ -51,7 +52,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         this.scope = scope;
     }
 
-    public static CDTypeSymbolReference getTypeFromExpression(ASTOCLNode node, MutableScope scope) {
+    public static CDTypeSymbolReference getTypeFromExpression(ASTExpression node, MutableScope scope) {
         OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
         node.accept(exprVisitor);
         CDTypeSymbolReference typeReference = exprVisitor.getReturnTypeReference();

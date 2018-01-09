@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import de.monticore.ast.ASTNode;
+import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.monticore.oclexpressions._ast.ASTInExpr;
 import de.monticore.symboltable.*;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
@@ -72,42 +73,29 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
 	@Override
 	public void visit(final ASTOCLFile astFile) {
-		final String oclName = astFile.getFileName();
+		final String oclName = astFile.fileNameIsPresent() ? astFile.getFileName() : "oclFile";
 		final OCLFileSymbol oclSymbol = new OCLFileSymbol(oclName);
-
 		addToScopeAndLinkWithNode(oclSymbol, astFile);
 	}
 
 	@Override
 	public void endVisit(final ASTOCLFile astFile) {
 		Log.debug("Finished build of symboltable for OCL: " + astFile.getFileName(), OCLSymbolTableCreator.class.getSimpleName());
-
 		removeCurrentScope();
 	}
 
 	@Override
 	public void visit(final ASTOCLMethodSignature astMethSig) {
-		/*final OCLMethodSignatureSymbol methSigSymbol = new OCLMethodSignatureSymbol(astMethSig.getMethodName());
+		String methodName = Joiners.DOT.join(astMethSig.getMethodName().getParts());
+		final OCLMethodSignatureSymbol methSigSymbol = new OCLMethodSignatureSymbol(methodName);
 
-		methSigSymbol.setMethodSignatureName(astMethSig.getMethodName());
-		setClassNameOfMethodSignature(methSigSymbol, astMethSig);
-		setReturnTypeOfMethodSignature(methSigSymbol, astMethSig);
-
-		addToScopeAndLinkWithNode(methSigSymbol, astMethSig);*/
-	}
-
-	protected void setClassNameOfMethodSignature(final OCLMethodSignatureSymbol methSigSymbol, final ASTOCLMethodSignature astMethSig) {
-	/*	String className = astMethSig.getClassName().get();
-		if (className != null) {
-			methSigSymbol.setClassName(className);
-		}*/
-	}
-
-	protected void setReturnTypeOfMethodSignature(final OCLMethodSignatureSymbol methSigSymbol, final ASTOCLMethodSignature astMethSig) {
-	/*	ASTType returnType = astMethSig.getType().get();
-		if (returnType != null) {
+		methSigSymbol.setMethodSignatureName(methodName);
+		if(astMethSig.returnTypeIsPresent()) {
+			ASTReturnType returnType = astMethSig.getReturnType();
 			methSigSymbol.setReturnType(returnType);
-		}*/
+			methSigSymbol.setClassName(returnType.getClass().getName());
+		}
+		addToScopeAndLinkWithNode(methSigSymbol, astMethSig);
 	}
 
 	@Override
@@ -134,26 +122,13 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
 	@Override
 	public void visit(final ASTOCLParameterDeclaration astParamDecl) {
-		/*final OCLParameterDeclarationSymbol paramDeclSymbol = new OCLParameterDeclarationSymbol(astParamDecl.getVarName().get());
+		final OCLParameterDeclarationSymbol paramDeclSymbol = new OCLParameterDeclarationSymbol(astParamDecl.getName());
 
-		setTypeOfParameter(paramDeclSymbol, astParamDecl);
-		setNameOfParameter(paramDeclSymbol, astParamDecl);
+		paramDeclSymbol.setName(astParamDecl.getName());
+		paramDeclSymbol.setType(astParamDecl.getType());
+		paramDeclSymbol.setClassName(astParamDecl.getType().getClass().getName());
 
-		addToScopeAndLinkWithNode(paramDeclSymbol, astParamDecl);*/
-	}
-
-	protected void setTypeOfParameter(final OCLParameterDeclarationSymbol paramDeclSymbol, final ASTOCLParameterDeclaration astParamDecl) {
-/*		if (astParamDecl != null) {
-			if (astParamDecl.typeIsPresent()) {
-				paramDeclSymbol.setType(astParamDecl.getType().get());
-			}
-		}*/
-	}
-
-	protected void setNameOfParameter(final OCLParameterDeclarationSymbol paramDeclSymbol, final ASTOCLParameterDeclaration astParamDecl) {
-	/*	if (astParamDecl != null) {
-			paramDeclSymbol.setName(astParamDecl.getVarName().get());
-		}*/
+		addToScopeAndLinkWithNode(paramDeclSymbol, astParamDecl);
 	}
 
 	@Override
@@ -181,23 +156,21 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 	}
 
 	protected void setClassName(final OCLInvariantSymbol invSymbol, final ASTOCLInvariant astInvariant) {
-/*		if (astInvariant.oCLClassContextIsPresent()) {
-			ASTOCLContextDefinition astContext = astInvariant.getOCLClassContext().get().getContextDefinitions(0);
-			if(astContext.classNameIsPresent()) {
-				invSymbol.setClassN(astContext.getClassName().get().toString());
-			} else {
-				invSymbol.setClassN(TypesPrinter.printType(astContext.getType().get()));
+		if (astInvariant.oCLClassContextIsPresent()) {
+			ASTOCLContextDefinition astContext = astInvariant.getOCLClassContext().getOCLContextDefinitions(0);
+			if(astContext.typeIsPresent()) {
+				invSymbol.setClassN(astContext.getType().getClass().getName());
 			}
-		}*/
+		}
 	}
 
 	protected void setClassObject(final OCLInvariantSymbol invSymbol, final ASTOCLInvariant astInvariant) {
-/*		if (astInvariant.oCLClassContextIsPresent()) {
-			ASTOCLContextDefinition astContext = astInvariant.getOCLClassContext().get().getContextDefinitions(0);
-			if(!astContext.getVarNames().isEmpty()) {
-				invSymbol.setClassO(astContext.getVarNames().get(0));
+		if (astInvariant.oCLClassContextIsPresent()) {
+			ASTOCLContextDefinition astContext = astInvariant.getOCLClassContext().getOCLContextDefinitions(0);
+			if(astContext.inExprIsPresent()) {
+				invSymbol.setClassO(astContext.getInExpr().getVarNames().toString());
 			}
-		}*/
+		}
 	}
 
 	@Override
@@ -208,15 +181,14 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
 	@Override
 	public void visit(final ASTOCLMethodDeclaration astMethodDeclaration) {
-		/*final OCLMethodDeclarationSymbol methDeclSymbol = new OCLMethodDeclarationSymbol(astMethodDeclaration.getName().get());
+		final OCLMethodDeclarationSymbol methDeclSymbol = new OCLMethodDeclarationSymbol(astMethodDeclaration.getName());
 		setReturnTypeOfMethodDecl(methDeclSymbol, astMethodDeclaration);
-		addToScopeAndLinkWithNode(methDeclSymbol, astMethodDeclaration);*/
+		addToScopeAndLinkWithNode(methDeclSymbol, astMethodDeclaration);
 	}
 
 	public void setReturnTypeOfMethodDecl(final OCLMethodDeclarationSymbol methDeclSymbol, final ASTOCLMethodDeclaration astMethodDeclaration) {
-	/*	if (astMethodDeclaration != null) {
-			methDeclSymbol.setReturnType(astMethodDeclaration.getReturnType().get());
-		}*/
+		if (astMethodDeclaration.returnTypeIsPresent())
+			methDeclSymbol.setReturnType(astMethodDeclaration.getReturnType());
 	}
 
 	@Override
@@ -244,143 +216,64 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
 	@Override
 	public void visit(final ASTOCLClassContext astClassContext) {
-/*		if (astClassContext.getContextDefinitions().size() == 1) {
-			ASTOCLContextDefinition astContext = astClassContext.getContextDefinitions(0);
+		if (astClassContext.getOCLContextDefinitions().size() == 1) {
+			ASTOCLContextDefinition astContext = astClassContext.getOCLContextDefinitions(0);
 			if (astContext.typeIsPresent()) {
-				ASTType astType = astContext.getType().get();
+				ASTType astType = astContext.getType();
 				addVarDeclSymbol("this", astType, astContext);
-			} else if (astContext.classNameIsPresent()) {
-				String typeName = astContext.getClassName().get().toString();
-				OCLVariableDeclarationSymbol varDecl = addVarDeclSymbol("this", typeName, astContext);
-				Optional<CDTypeSymbolReference> superTypeRef = varDecl.getType().getSuperClass();
-				if(superTypeRef.isPresent()) {
-					addVarDeclSymbol("super", superTypeRef.get(), astContext);
+			}
+			else if (astContext.inExprIsPresent()) {
+				ASTInExpr astInExpr = astContext.getInExpr();
+				List<String> varNames = astInExpr.getVarNames();
+				if (varNames.size() == 1) {
+					if (astInExpr.typeIsPresent()) {
+						ASTType astType = astInExpr.getType().get();
+						addVarDeclSymbol("this", astType, astContext);
+					}
+					else if (astInExpr.expressionIsPresent()) {
+						CDTypeSymbolReference typeReference = OCLExpressionTypeInferingVisitor.getTypeFromExpression(astInExpr.getExpression().get(), currentScope().get());
+						addVarDeclSymbol("this", typeReference, astContext);
+					}
 				}
 			}
-		}*/
+		}
 	}
 
 	@Override
-	public void visit(final ASTOCLContextDefinition astContext) {
-/*		if(!astContext.getVarNames().isEmpty()) {
-			if (astContext.typeIsPresent()) {
-				ASTType astType = astContext.getType().get();
-				astContext.getVarNames().forEach(name -> addVarDeclSymbol(name, astType, astContext));
-			} else if (astContext.classNameIsPresent()) {
-				String typeName = astContext.getClassName().get().toString();
-				astContext.getVarNames().forEach(name -> addVarDeclSymbol(name, typeName, astContext));
-			}
-		}*/
+	public void visit(final ASTInExpr astInExpr) {
+		List<String> varNames = astInExpr.getVarNames();
+		if (astInExpr.typeIsPresent()) {
+			ASTType astType = astInExpr.getType().get();
+			varNames.forEach(name -> addVarDeclSymbol(name, astType, astInExpr));
+		}
 	}
 
 	@Override
-	public void endVisit(final ASTInExpr inExpr) {
-/*		if (inExpr.oCLInWithTypeIsPresent()) {
-			ASTOCLInWithType inWithType = inExpr.getOCLInWithType().get();
-			String name = inWithType.getVarName();
-			String typeName ;
-			if(inWithType.classNameIsPresent()) {
-				typeName = inWithType.getClassName().get();
-			} else { //Type is present
-				typeName = TypesPrinter.printType(inWithType.getType().get());
-			}
-			addVarDeclSymbol(name, typeName, inExpr);
-		} else if (inExpr.oCLInWithOutTypeIsPresent()) {
-			ASTOCLInWithOutType inWithOutType = inExpr.getOCLInWithOutType().get();
-			String name = inWithOutType.getName();
-			CDTypeSymbolReference type = OCLExpressionTypeInferingVisitor.getTypeFromExpression(inExpr, currentScope().get());
-			addVarDeclSymbol(name, type, inExpr);
-		}*/
+	public void endVisit(final ASTInExpr astInExpr) {
+		List<String> varNames = astInExpr.getVarNames();
+		if (astInExpr.expressionIsPresent()) {
+			ASTExpression astExpression = astInExpr.getExpression().get();
+			CDTypeSymbolReference typeReference = OCLExpressionTypeInferingVisitor.getTypeFromExpression(astExpression, currentScope().get());
+			varNames.forEach(name -> addVarDeclSymbol(name, typeReference, astInExpr));
+		}
 	}
 
 	@Override
 	public void endVisit(final ASTOCLVariableDeclaration astVariableDeclaration) {
-	/*	if (astVariableDeclaration.oCLNestedContainerIsPresent()) { // List<..> myVar = ..
-			handleNestedContainer(astVariableDeclaration);
-		} else if (astVariableDeclaration.classNameIsPresent()) { // MyClass myVar = ..
-			handleVarClassName(astVariableDeclaration);
-		} else if (astVariableDeclaration.typeIsPresent()) { // int myVar = ..
-			handleVarType(astVariableDeclaration);
-		} else { // myVar = ..
-			handleTypeNotPresent(astVariableDeclaration);
-		}*/
-	}
-
-	protected void handleNestedContainer(ASTOCLVariableDeclaration astVariableDeclaration) {
-/*		ASTOCLNestedContainer nestedContainer = astVariableDeclaration.getOCLNestedContainer().get();
-		String name = astVariableDeclaration.getVarName().get();
-		CDTypeSymbolReference typeReference = getTypeRefFromNestedContainer(nestedContainer);
-		addVarDeclSymbol(name, typeReference, astVariableDeclaration);
-		*/// Todo: cross-check with expression?
-	}
-
-	protected void handleVarClassName(ASTOCLVariableDeclaration astVariableDeclaration) {
-	/*	String name = astVariableDeclaration.getVarName().get();
-		String typeName = astVariableDeclaration.getClassName().get();
-		addVarDeclSymbol(name, typeName, astVariableDeclaration);
-		*/// Todo: cross-check with expression?
-	}
-
-	protected void handleVarType(ASTOCLVariableDeclaration astVariableDeclaration) {
-	/*	String name = astVariableDeclaration.getVarName().get();
-		ASTType astType = astVariableDeclaration.getType().get();
-		addVarDeclSymbol(name, astType, astVariableDeclaration);
-		*/// Todo: cross-check with expression?
-	}
-
-	protected void handleTypeNotPresent(ASTOCLVariableDeclaration astVariableDeclaration) {
-		/*ASTOCLExpression oclExpr = astVariableDeclaration.getOCLExpression().get();
-		CDTypeSymbolReference typeReference = OCLExpressionTypeInferingVisitor.getTypeFromExpression(oclExpr, currentScope().get());
-		String name = astVariableDeclaration.getVarName().get();
-		addVarDeclSymbol(name, typeReference, astVariableDeclaration);*/
+		if (astVariableDeclaration.typeIsPresent()) {
+			ASTType astType = astVariableDeclaration.getType();
+			addVarDeclSymbol(astVariableDeclaration.getName(), astType, astVariableDeclaration);
+			//Todo: cross check with expression Type?
+		} else {
+			ASTExpression astExpression = astVariableDeclaration.getExpression();
+			CDTypeSymbolReference typeReference = OCLExpressionTypeInferingVisitor.getTypeFromExpression(astExpression, currentScope().get());
+			addVarDeclSymbol(astVariableDeclaration.getName(), typeReference, astVariableDeclaration);
+		}
 	}
 
 	/**
 	 *  ********** Helper Methods **********
 	 */
-
-/*	private CDTypeSymbolReference getTypeRefFromNestedContainer(ASTOCLNestedContainer astoclNestedContainer) {
-		ASTOCLContainerOrName containerOrName = astoclNestedContainer.getOCLContainerOrName();
-		CDTypeSymbolReference typeReference;
-
-		if (containerOrName.nameIsPresent()) {
-			typeReference = createTypeRef(containerOrName.getName().get(), astoclNestedContainer);
-		} else {
-			int container = containerOrName.getContainer();
-			String typeName;
-			if (container == 20) {
-				typeName = "Set";
-			} else if (container == 12) {
-				typeName = "List";
-			} else {    //if(container == 1) {
-				typeName = "Collection";
-			}
-			typeReference = createTypeRef(typeName, astoclNestedContainer);
-			addActualArguments(typeReference, astoclNestedContainer);
-		}
-
-		return typeReference;
-	}*/
-
-/*	private void addActualArguments(CDTypeSymbolReference typeReference, ASTOCLNestedContainer astoclNestedContainer) {
-		if (astoclNestedContainer.getArguments().size() > 0) {
-			String stringRepresentation = typeReference.getStringRepresentation() + "<";
-			List<ActualTypeArgument> actualTypeArguments = new ArrayList<>();
-			for (ASTOCLNestedContainer container: astoclNestedContainer.getArguments()) {
-				CDTypeSymbolReference argumentReferenceType = getTypeRefFromNestedContainer(container);
-				ActualTypeArgument actualTypeArgument = new ActualTypeArgument(argumentReferenceType);
-				actualTypeArguments.add(actualTypeArgument);
-				stringRepresentation += ", " + argumentReferenceType.getStringRepresentation();
-			}
-			stringRepresentation += ">";
-			stringRepresentation = stringRepresentation.replace("<, ", "<");
-			typeReference.setStringRepresentation(stringRepresentation);
-			typeReference.setActualTypeArguments(actualTypeArguments);
-		}
-	}*/
-
-
-
 
 	private OCLVariableDeclarationSymbol addVarDeclSymbol(String name, CDTypeSymbolReference typeReference, ASTNode node){
 		// Check if an Variable with name already exists
@@ -391,11 +284,6 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 		OCLVariableDeclarationSymbol newVarDecl = new OCLVariableDeclarationSymbol(name, typeReference);
 		addToScopeAndLinkWithNode(newVarDecl, node);
 		return newVarDecl;
-	}
-
-	private OCLVariableDeclarationSymbol addVarDeclSymbol(String name, String typeName, ASTNode node) {
-		CDTypeSymbolReference typeReference = createTypeRef(typeName, node);
-		return addVarDeclSymbol(name, typeReference, node);
 	}
 
 	private OCLVariableDeclarationSymbol addVarDeclSymbol(String name, ASTType astType, ASTNode node) {
