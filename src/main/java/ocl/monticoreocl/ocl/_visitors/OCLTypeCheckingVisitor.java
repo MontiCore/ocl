@@ -19,6 +19,10 @@
  */
 package ocl.monticoreocl.ocl._visitors;
 
+import de.monticore.expressionsbasis._ast.ASTExpression;
+import de.monticore.oclexpressions._ast.ASTOCLComprehensionPrimary;
+import de.monticore.oclexpressions._ast.ASTOCLQualifiedPrimary;
+import de.monticore.oclexpressions._ast.ASTParenthizedExpression;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
@@ -45,17 +49,12 @@ public class OCLTypeCheckingVisitor implements OCLVisitor{
     public static void checkInvariants(ASTOCLInvariant node, MutableScope scope) {
         OCLTypeCheckingVisitor checkingVisitor = new OCLTypeCheckingVisitor(scope);
 
-/*        for(ASTOCLExpression expr : node.getStatements()){
+        for(ASTExpression expr : node.getStatements()){
             expr.accept(checkingVisitor);
             if(!checkingVisitor.isTypeCorrect()) {
-                Log.warn("Something went wrong in this Invariant", expr.get_SourcePositionStart());
+                Log.warn("0xOCLI0 Could not infer type from this expression:" + expr.get_SourcePositionStart());
             }
-        }*/
-    }
-
- /*   @Override
-    public void traverse(ASTOCLIsin node){
-        Log.warn("Todo: implement type checking for isIn nodes.");
+        }
     }
 
     @Override
@@ -64,12 +63,7 @@ public class OCLTypeCheckingVisitor implements OCLVisitor{
     }
 
     @Override
-    public void traverse(ASTOCLParenthizedExpr node){
-        OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
-    }
-
-    @Override
-    public void traverse(ASTOCLConcatenation node){
+    public void traverse(ASTParenthizedExpression node){
         OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
     }
 
@@ -77,4 +71,4 @@ public class OCLTypeCheckingVisitor implements OCLVisitor{
     public void traverse(ASTOCLQualifiedPrimary node){
         OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
     }
-*/}
+}
