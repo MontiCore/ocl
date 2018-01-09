@@ -27,7 +27,7 @@ grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Lit
 
    // Inf = "oo"; (use Name to not generate a "oo" token which would clash with other tokens later)
    Inf =
-      { (_input.LT(1).getText().equals("oo") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) }?
+      { _input.LT(1).getText().equals("oo") }?
       Name
    ;
 
@@ -38,7 +38,7 @@ grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Lit
      (negRe:"-")? real:NumericLiteral ("+" | negIm:"-") im:NumericLiteral I
    ;
 
-   I = { _input.LT(1).getText().equals("i") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]") }? Name;
+   I = { _input.LT(1).getText().equals("i") }? Name;
 
    Unit =
        SIUnit |
@@ -77,28 +77,7 @@ grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Lit
     ;*/
     // we use Name again to avoid adding too many tokens which destroy the rules in other grammars
     ImperialUnit =
-      { (_input.LT(1).getText().equals("th") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("in") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("ft") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("yd") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("ch") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("fur") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("ml") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("lea") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("ftm") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("gi") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("pt") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("qt") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("gal") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("gr") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("dr") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("oz") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("lb") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("st") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("qr") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("qtr") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("cwt") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) ||
-        (_input.LT(1).getText().equals("slug") && !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]")) }?
+      { _input.LT(1).getText().matches("th|in|ft|yd|ch|fur|ml|lea|ftm|gi|pt|qt|gal|gr|dr|oz|lb|st|qr|qtr|cwt|slug") }?
       Name
     ;
 
@@ -188,8 +167,7 @@ grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Lit
 
       // we create UnitBaseDimWithPrefix as Name without introducing tokens
       UnitBaseDimWithPrefix =
-         { !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]") &&
-           _input.LT(1).getText().matches("(Y|Z|E|P|T|G|M|K|k|H|da|d|c|m|n|p|f|a|z|y)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|Ohm|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat)") }?
+         { _input.LT(1).getText().matches("(Y|Z|E|P|T|G|M|K|k|H|da|d|c|m|n|p|f|a|z|y)?(m|g|s|A|K|mol|cd|Hz|N|Pa|J|W|C|V|F|Ohm|S|Wb|T|H|lm|lx|Bq|Gy|Sv|kat)") }?
         Name;
 
      /*
@@ -220,8 +198,7 @@ grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Lit
       ;
       */
       OfficallyAcceptedUnit =
-         { !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]") &&
-            _input.LT(1).getText().matches("min|h|day|ha|l|L|t|au|Au|Np|B|B|db|eV|u") }?
+         { _input.LT(1).getText().matches("min|h|day|ha|l|L|t|au|Au|Np|B|B|db|eV|u") }?
           Name;
 
       /*
@@ -233,7 +210,6 @@ grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Lit
       ;
       */
       SiUnitDimensionless =
-        { !_input.LT(2).getText().matches("[a-zA-Z]") && !_input.LT(-1).getText().matches("[a-zA-Z]") &&
-          _input.LT(1).getText().matches("deg|rad|sr") }?
+        { _input.LT(1).getText().matches("deg|rad|sr") }?
         Name;
 }

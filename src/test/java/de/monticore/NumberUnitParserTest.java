@@ -214,6 +214,9 @@ import javax.measure.unit.Unit;
 
       ast = parser.parse_String("0.5 implies").orElse(null);
       assertNull(ast);
+
+      ast = parser.parse_String("m/s").orElse(null);
+      assertNull(ast);
     }
 
     @Test
