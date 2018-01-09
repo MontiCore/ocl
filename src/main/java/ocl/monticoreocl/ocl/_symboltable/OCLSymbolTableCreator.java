@@ -86,14 +86,13 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
 	@Override
 	public void visit(final ASTOCLMethodSignature astMethSig) {
-		String methodName = Joiners.DOT.join(astMethSig.getMethodName().getParts());
-		final OCLMethodSignatureSymbol methSigSymbol = new OCLMethodSignatureSymbol(methodName);
+		final OCLMethodSignatureSymbol methSigSymbol =
+                new OCLMethodSignatureSymbol(astMethSig.getMethodName().getParts().get(1));
+        methSigSymbol.setClassName(astMethSig.getMethodName().getParts().get(0));
 
-		methSigSymbol.setMethodSignatureName(methodName);
-		if(astMethSig.returnTypeIsPresent()) {
+        if(astMethSig.returnTypeIsPresent()) {
 			ASTReturnType returnType = astMethSig.getReturnType();
 			methSigSymbol.setReturnType(returnType);
-			methSigSymbol.setClassName(returnType.getClass().getName());
 		}
 		addToScopeAndLinkWithNode(methSigSymbol, astMethSig);
 	}
