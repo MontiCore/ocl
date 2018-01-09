@@ -49,7 +49,7 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions {
         OCLConstraint*
         "}"
         |
-        OCLConstraint*
+        OCLConstraint+
         ;
 
 
@@ -102,9 +102,9 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions {
         OCLClassContext?
         "inv" Name?
         OCLParameters?
-         ":"
-         //Todo remove ";"
-        (statements:Expression ";")+
+        ":"
+        (statements:Expression || ";")+
+        ";"?
         ;
 
     /** ASTOCLClassContext represents the OCL-Context-Clause of an invariant.
