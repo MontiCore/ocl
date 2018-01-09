@@ -98,14 +98,14 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions {
         @attribute statements
                    List of boolean expressions.
     */
-	OCLInvariant implements OCLConstraint =
+    OCLInvariant implements OCLConstraint =
         OCLClassContext?
         "inv" Name?
         OCLParameters?
         ":"
-        (statements:Expression || ";")+
-        ";"?
-        ;
+        statements:(Expression || ";")+
+        ";"? // is only here to be backward compatible to Stevens version (but in BRs books are no ; at the end)
+    ;
 
     /** ASTOCLClassContext represents the OCL-Context-Clause of an invariant.
         @attribute contextType
