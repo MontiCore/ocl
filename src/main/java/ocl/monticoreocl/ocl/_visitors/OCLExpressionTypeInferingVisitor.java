@@ -35,6 +35,7 @@ import de.monticore.oclexpressions._ast.*;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
+import de.monticore.types.TypesPrinter;
 import de.monticore.umlcd4a.symboltable.*;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
@@ -60,6 +61,18 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     }
 
     public static CDTypeSymbolReference getTypeFromExpression(ASTExpression node, MutableScope scope) {
+        OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
+        node.accept(exprVisitor);
+        CDTypeSymbolReference typeReference = exprVisitor.getReturnTypeReference();
+        if (typeReference==null) {
+            Log.error("0xOCLI0 The variable type could not be resolved from this expression: " + node.get_SourcePositionStart());
+            return new CDTypeSymbolReference("DefaultClass", exprVisitor.scope);
+        } else {
+            return typeReference;
+        }
+    }
+
+    public static CDTypeSymbolReference getTypeFromExpression(ASTOCLComprehensionExpr node, MutableScope scope) {
         OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
         node.accept(exprVisitor);
         CDTypeSymbolReference typeReference = exprVisitor.getReturnTypeReference();
@@ -136,16 +149,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     public void traverse(ASTConditionalExpression node) {
         node.getTrueExpression().accept(realThis);
     }
-/*
-    @Override
-    public void traverse(ASTOCLConcatenation node) {
-        LinkedList<String> names = new LinkedList<>(node.getNames());
-        String prefixName = node.getNames().get(0);
 
-        CDTypeSymbolReference typeRef = handlePrefixName(node, names, prefixName);
-        returnTypeRef = handleNames(names, typeRef, node);
-    }
-*/
     @Override
     public void traverse(ASTOCLQualifiedPrimary node) {
         LinkedList<String> names = new LinkedList<>(node.getNames());
@@ -175,23 +179,21 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
     @Override
     public void traverse(ASTOCLArgumentQualification node) {}
-/*
+
     @Override
     public void traverse(ASTOCLComprehensionPrimary node) {
-        String typeName = "";
-        int container = node.getContainer();
-        if(container == 20) {
-            typeName += "Set";
-        } else if(container == 12) {
-            typeName += "List";
-        } else if(container == 1 || container == 0) {
-            typeName += "Collection";
+        String typeName;
+        if (node.typeIsPresent()) {
+            typeName = TypesPrinter.printType(node.getType().get());
+        } else {
+            typeName = "Collection";
         }
         returnTypeRef = createTypeRef(typeName, node);
 
-        CDTypeSymbolReference innerType = getTypeFromExpression(node.getExpression().get(), scope);
-        if (!innerType.getName().equals("Object")) {
+        if (node.expressionIsPresent()) {
+            CDTypeSymbolReference innerType = getTypeFromExpression(node.getExpression().get(), scope);
             addActualArgument(returnTypeRef, innerType);
+            returnTypeRef = flattenType(returnTypeRef);
         }
 
         if (node.qualificationIsPresent()) {
@@ -201,51 +203,31 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
     @Override
     public void traverse(ASTOCLComprehensionExpressionStyle node) {
-        node.getOCLExpression().accept(realThis);
+        node.getExpression().accept(realThis);
     }
 
     @Override
     public void traverse(ASTOCLComprehensionEnumerationStyle node) {
-        if (node.getOCLCollectionItems().isEmpty()) {
-            returnTypeRef = createTypeRef("Object", node);
-        } else {
-            node.getOCLCollectionItems(0).getOCLExpressions(0).accept(realThis);
-        }
+        node.getOCLCollectionItems().get(0).getExpressions().get(0).accept(realThis);
     }
 
     @Override
-    public void traverse(ASTOCLComprehensionVarDeclaratorStyle node) {
-        node.getGenerator().getOCLInExpr().get().accept(realThis);
-    }
-
-    @Override
-    public void traverse(ASTOCLInExpr node) {
-        if (node.oCLInWithTypeIsPresent()) {
-            ASTOCLInWithType inWithType = node.getOCLInWithType().get();
-            String typeName;
-            if(inWithType.classNameIsPresent()) {
-                typeName = inWithType.getClassName().get();
-            } else {
-                typeName = TypesPrinter.printType(inWithType.getType().get());
-            }
+    public void traverse(ASTInExpr node) {
+        if(node.typeIsPresent()) {
+            String typeName = TypesPrinter.printType(node.getType().get());
             returnTypeRef = createTypeRef(typeName, node);
-        } else if (node.oCLInWithOutTypeIsPresent()) {
-            ASTOCLInWithOutType inWithOutType = node.getOCLInWithOutType().get();
-            CDTypeSymbolReference containerType = null;
-            if(inWithOutType.oCLPrimaryIsPresent()) {
-                containerType = getTypeFromExpression(inWithOutType.getOCLPrimary().get(), scope);
-            } else if(inWithOutType.expressionIsPresent()) {
-                containerType = getTypeFromExpression(inWithOutType.getExpression().get(), scope);
-            }
+        }
+        else if(node.expressionIsPresent()) {
+            CDTypeSymbolReference containerType = getTypeFromExpression(node.getExpression().get(), scope);
             if (containerType.getActualTypeArguments().size() == 0) {
-                Log.error("Could not resolve type from InExpression, " + inWithOutType.getName() +
-                        " in " + containerType, node.get_SourcePositionStart());
+                Log.error("0xOCLI5 Could not resolve type from InExpression, " + node.getVarNames() +
+                        " in " + containerType + " at " +  node.get_SourcePositionStart());
             }
             returnTypeRef = (CDTypeSymbolReference) containerType.getActualTypeArguments().get(0).getType();
         }
     }
 
-    *//**
+    /**
      *  ********** boolean expressions **********
      */
 

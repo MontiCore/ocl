@@ -228,7 +228,6 @@ public class OCLDeclarationTypeInferringTest extends AbstractOCLTest {
         assertEquals("Time", declVarSymbol5.getVarTypeName());
     }
 
-    @Ignore
     @Test
     public void comprehensionsTest() {
         final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/");
@@ -241,8 +240,8 @@ public class OCLDeclarationTypeInferringTest extends AbstractOCLTest {
 
         OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("comp").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("List", declVarSymbol.getVarTypeName());
-        assertEquals("List<String>", declVarSymbol.getType().getStringRepresentation());
+        assertEquals("Set", declVarSymbol.getVarTypeName());
+        assertEquals("Set<String>", declVarSymbol.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol.getType().getActualTypeArguments().size());
         assertEquals("String", declVarSymbol.getType().getActualTypeArguments().get(0).getType().toString());
 

@@ -160,7 +160,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 		if (astInvariant.oCLClassContextIsPresent()) {
 			ASTOCLContextDefinition astContext = astInvariant.getOCLClassContext().getOCLContextDefinitions(0);
 			if(astContext.typeIsPresent()) {
-				invSymbol.setClassN(astContext.getType().getClass().getName());
+				invSymbol.setClassN(TypesPrinter.printType(astContext.getType()));
 			}
 		}
 	}
@@ -168,8 +168,10 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 	protected void setClassObject(final OCLInvariantSymbol invSymbol, final ASTOCLInvariant astInvariant) {
 		if (astInvariant.oCLClassContextIsPresent()) {
 			ASTOCLContextDefinition astContext = astInvariant.getOCLClassContext().getOCLContextDefinitions(0);
-			if(astContext.inExprIsPresent()) {
-				invSymbol.setClassO(astContext.getInExpr().getVarNames().toString());
+			if (astContext.getVarNames().size() == 0) {
+				invSymbol.setClassO("this");
+			} else {
+				invSymbol.setClassO(astContext.getVarNames().get(0));
 			}
 		}
 	}
@@ -219,24 +221,35 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 	public void visit(final ASTOCLClassContext astClassContext) {
 		if (astClassContext.getOCLContextDefinitions().size() == 1) {
 			ASTOCLContextDefinition astContext = astClassContext.getOCLContextDefinitions(0);
-			if (astContext.typeIsPresent()) {
-				ASTType astType = astContext.getType();
-				addVarDeclSymbol("this", astType, astContext);
-			}
-			else if (astContext.inExprIsPresent()) {
-				ASTInExpr astInExpr = astContext.getInExpr();
-				List<String> varNames = astInExpr.getVarNames();
-				if (varNames.size() == 1) {
-					if (astInExpr.typeIsPresent()) {
-						ASTType astType = astInExpr.getType().get();
-						addVarDeclSymbol("this", astType, astContext);
-					}
-					else if (astInExpr.expressionIsPresent()) {
-						CDTypeSymbolReference typeReference = OCLExpressionTypeInferingVisitor.getTypeFromExpression(astInExpr.getExpression().get(), currentScope().get());
-						addVarDeclSymbol("this", typeReference, astContext);
-					}
+			if (astContext.getVarNames().size() < 2) {
+				if (astContext.typeIsPresent()) {
+					ASTType astType = astContext.getType();
+					addVarDeclSymbol("this", astType, astContext);
+				}
+				else if (astContext.expressionIsPresent()) {
+					CDTypeSymbolReference typeReference = OCLExpressionTypeInferingVisitor.getTypeFromExpression(astContext.getExpression(), currentScope().get());
+					addVarDeclSymbol("this", typeReference, astContext);
 				}
 			}
+		}
+	}
+
+	@Override
+	public void visit(final ASTOCLContextDefinition astContextDef) {
+		List<String> varNames = astContextDef.getVarNames();
+		if (astContextDef.typeIsPresent()) {
+			ASTType astType = astContextDef.getType();
+			varNames.forEach(name -> addVarDeclSymbol(name, astType, astContextDef));
+		}
+	}
+
+	@Override
+	public void endVisit(final ASTOCLContextDefinition astContextDef) {
+		List<String> varNames = astContextDef.getVarNames();
+		if (astContextDef.expressionIsPresent() && !astContextDef.typeIsPresent()) {
+			ASTExpression astExpression = astContextDef.getExpression();
+			CDTypeSymbolReference typeReference = OCLExpressionTypeInferingVisitor.getTypeFromExpression(astExpression, currentScope().get());
+			varNames.forEach(name -> addVarDeclSymbol(name, typeReference, astContextDef));
 		}
 	}
 

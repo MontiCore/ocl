@@ -28,6 +28,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
+import de.monticore.types.TypesPrinter;
+import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -193,7 +195,7 @@ public class OCLSymbolTableCreatorTest {
 		final OCLMethodDeclarationSymbol methDeclSymbol = methSigSymbol2.getOCLMethodDecl("min").orElse(null);
 		assertNotNull(methDeclSymbol);
 
-		assertEquals("Class", methDeclSymbol.getReturnType().getClass().getName());
+		assertEquals("Class", ((ASTSimpleReferenceType)methDeclSymbol.getReturnType()).getNames().get(0));
 
 		final OCLParameterDeclarationSymbol parameterDeclarationOfMethodDecl1 = methDeclSymbol.getOCLParamDecl("x").orElse(null);
 		assertNotNull(parameterDeclarationOfMethodDecl1);
@@ -382,7 +384,7 @@ public class OCLSymbolTableCreatorTest {
 		final OCLMethodDeclarationSymbol methDeclSymbol2 = methSigSymbol6.getOCLMethodDecl("function").orElse(null);
 		assertNotNull(methDeclSymbol2);
 
-		assertEquals("HelpFunction", methDeclSymbol2.getReturnType());
+		assertEquals("HelpFunction", TypesPrinter.printReturnType(methDeclSymbol2.getReturnType()));
 
 		// AST assertions of methDeclSymbol2
 		assertTrue(methDeclSymbol2.getAstNode().isPresent());
@@ -437,7 +439,7 @@ public class OCLSymbolTableCreatorTest {
 		final OCLMethodDeclarationSymbol methDeclSymbol3 = methSigSymbol7.getOCLMethodDecl("f1").orElse(null);
 		assertNotNull(methDeclSymbol3);
 
-		assertEquals("Help1", methDeclSymbol3.getReturnType());
+		assertEquals("Help1", TypesPrinter.printReturnType(methDeclSymbol3.getReturnType()));
 
 		// AST assertions of methDeclSymbol3
 		assertTrue(methDeclSymbol3.getAstNode().isPresent());
