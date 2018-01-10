@@ -95,13 +95,15 @@
     <dependency>
       <groupId>de.monticore.lang</groupId>
       <artifactId>cd4analysis</artifactId>
-      <version>${cd4analysis.version}</version>
+      <!-- <version>${cd4analysis.version}</version> -->
+      <version>1.3.12-20180110.185018-39</version>
     </dependency>
 
     <dependency>
       <groupId>de.monticore</groupId>
       <artifactId>monticore-runtime</artifactId>
-      <version>${monticore.version}</version>
+      <!-- <version>${monticore.version}</version> -->
+      <version>4.5.5-20180110.184627-11</version>
     </dependency>
 
     <dependency>
