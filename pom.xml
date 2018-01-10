@@ -107,13 +107,15 @@
     <dependency>
       <groupId>de.monticore</groupId>
       <artifactId>monticore-grammar</artifactId>
-      <version>${monticore.version}</version>
+      <version>4.5.5-20180110.184626-11</version>
+      <!-- <version>${monticore.version}</version> -->
     </dependency>
 
     <dependency>
       <groupId>de.monticore</groupId>
       <artifactId>monticore-grammar</artifactId>
-      <version>${monticore.version}</version>
+      <version>4.5.5-20180110.184626-11</version>
+      <!-- <version>${monticore.version}</version> -->
       <classifier>${grammars.classifier}</classifier>
       <scope>provided</scope>
     </dependency>
