@@ -288,22 +288,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 	}
 
 	private OCLVariableDeclarationSymbol addVarDeclSymbol(String name, ASTType astType, ASTNode node) {
-		//Todo clean code here
-		CDTypeSymbolReference typeReference = null;
-		if (astType instanceof  ASTPrimitiveType) {
-			String typeName = CDTypes.primitiveToWrapper(astType.toString());
-			typeReference = createTypeRef(typeName, node);
-			typeReference.setAstNode(astType);
-			typeReference.setStringRepresentation(typeName);
-		}
-		if (astType instanceof  ASTSimpleReferenceType) {
-			String typeName = Joiners.DOT.join(((ASTSimpleReferenceType) astType).getNames());
-			typeReference = createTypeRef(typeName, node);
-			typeReference.setAstNode(astType);
-			//typeReference.setActualTypeArguments(((ASTSimpleReferenceType) astType).getTypeArguments().get().);
-			typeReference.setStringRepresentation(TypesPrinter.printSimpleReferenceType((ASTSimpleReferenceType)astType));
-		}
-
+		CDTypeSymbolReference typeReference = createTypeRef(astType, node);
 		return addVarDeclSymbol(name, typeReference, node);
 	}
 
@@ -311,9 +296,46 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 		CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName, this.getFirstCreatedScope());
 		// Check if type was found in CD loaded CD models
 		if (!typeReference.existsReferencedSymbol()) {
-			Log.error("This type could not be found: " + typeName, node.get_SourcePositionStart());
+			Log.error("Error 0xOCLS2 This type could not be found: " + typeName + " at " + node.get_SourcePositionStart());
 		}
 		return typeReference;
 	}
 
+	private CDTypeSymbolReference createTypeRef(ASTType astType, ASTNode node) {
+		CDTypeSymbolReference typeReference = null;
+		if (astType instanceof  ASTPrimitiveType) {
+			String typeName = CDTypes.primitiveToWrapper(astType.toString());
+			typeReference = createTypeRef(typeName, node);
+			typeReference.setStringRepresentation(typeName);
+		}
+		if (astType instanceof  ASTSimpleReferenceType) {
+			ASTSimpleReferenceType astSimpleType = (ASTSimpleReferenceType) astType;
+			String typeName = Joiners.DOT.join(astSimpleType.getNames());
+			typeReference = createTypeRef(typeName, node);
+			typeReference.setStringRepresentation(TypesPrinter.printSimpleReferenceType(astSimpleType));
+			addActualArguments(typeReference, astSimpleType, node);
+		}
+
+		if (typeReference == null) {
+			Log.error("Error 0xOCLS1 No type reference could be created for: " + astType + " at " + node.get_SourcePositionStart());
+		}
+		return typeReference;
+	}
+
+	private CDTypeSymbolReference addActualArguments(CDTypeSymbolReference typeReference,
+													 ASTSimpleReferenceType astType, ASTNode node) {
+		if (astType.typeArgumentsIsPresent()) {
+			List<ASTTypeArgument> arguments = astType.getTypeArguments().get().getTypeArguments();
+			List<ActualTypeArgument> actualTypeArguments = new ArrayList<>();
+
+			for (ASTTypeArgument argument : arguments) {
+				CDTypeSymbolReference argumentReferenceType = createTypeRef((ASTType) argument, node);
+				ActualTypeArgument actualTypeArgument = new ActualTypeArgument(argumentReferenceType);
+				actualTypeArguments.add(actualTypeArgument);
+			}
+
+			typeReference.setActualTypeArguments(actualTypeArguments);
+		}
+		return typeReference;
+	}
 }
