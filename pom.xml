@@ -179,7 +179,8 @@
       <plugin>
         <groupId>de.monticore.mojo</groupId>
         <artifactId>monticore-maven-plugin</artifactId>
-        <version>${monticore.plugin}</version>
+        <!-- <version>${monticore.plugin}</version> -->
+        <version>4.5.5-20180110.184629-11</version>
         <configuration>
           <skip>false</skip>
           <script>de/monticore/monticore_noemf.groovy</script>
