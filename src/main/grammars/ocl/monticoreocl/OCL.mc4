@@ -19,7 +19,8 @@
 
 package ocl.monticoreocl;
 
-grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions {
+grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
+                        de.monticore.CommonExpressions, de.monticore.SetExpressions {
 
 	/*========================================================================*/
     /*============================ PRODUCTIONS  ==============================*/

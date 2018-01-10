@@ -296,7 +296,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 		CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName, this.getFirstCreatedScope());
 		// Check if type was found in CD loaded CD models
 		if (!typeReference.existsReferencedSymbol()) {
-			Log.error("Error 0xOCLS2 This type could not be found: " + typeName + " at " + node.get_SourcePositionStart());
+			Log.error("This type could not be found: " + typeName + " at " + node.get_SourcePositionStart());
 		}
 		return typeReference;
 	}

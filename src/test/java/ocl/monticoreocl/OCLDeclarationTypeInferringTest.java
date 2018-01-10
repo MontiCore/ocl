@@ -197,22 +197,6 @@ public class OCLDeclarationTypeInferringTest extends AbstractOCLTest {
         assertEquals("Integer", declVarSymbol4.getVarTypeName());
     }
 
-    @Ignore
-    @Test
-    public void overwriteVariablesTest() {
-        final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/");
-
-        final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("example.typeInferringModels.overwriteVariables", OCLFileSymbol.KIND).orElse(null);
-        assertNotNull(oclFileSymbol);
-        assertEquals(3, globalScope.getSubScopes().size());
-        OCLInvariantSymbol oclInvariantSymbol = oclFileSymbol.getOCLInvariant("test").orElse(null);
-        assertNotNull(oclInvariantSymbol);
-
-        OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("var").orElse(null);
-        assertNotNull(declVarSymbol);
-        assertEquals("String", declVarSymbol.getVarTypeName());
-    }
-
     @Test
     public void qualifiedPrimariesTest() {
         final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/");
@@ -244,6 +228,7 @@ public class OCLDeclarationTypeInferringTest extends AbstractOCLTest {
         assertEquals("Time", declVarSymbol5.getVarTypeName());
     }
 
+    @Ignore
     @Test
     public void comprehensionsTest() {
         final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/");

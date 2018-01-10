@@ -22,12 +22,16 @@ package ocl.monticoreocl.ocl._visitors;
 import de.monticore.ast.ASTNode;
 
 
+import de.monticore.commonexpressions._ast.ASTCallExpression;
+import de.monticore.commonexpressions._ast.ASTConditionalExpression;
+import de.monticore.commonexpressions._ast.ASTEqualsExpression;
 import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.literals._ast.ASTCharLiteral;
 import de.monticore.literals.literals._ast.ASTDoubleLiteral;
 import de.monticore.literals.literals._ast.ASTIntLiteral;
 import de.monticore.literals.literals._ast.ASTStringLiteral;
 import de.monticore.numberunit._ast.ASTNumberWithUnit;
+import de.monticore.oclexpressions._ast.*;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
@@ -60,7 +64,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         node.accept(exprVisitor);
         CDTypeSymbolReference typeReference = exprVisitor.getReturnTypeReference();
         if (typeReference==null) {
-            Log.error("The variable type could not be resolved from the expression", node.get_SourcePositionStart());
+            Log.error("0xOCLI0 The variable type could not be resolved from this expression: " + node.get_SourcePositionStart());
             return new CDTypeSymbolReference("DefaultClass", exprVisitor.scope);
         } else {
             return typeReference;
@@ -114,29 +118,25 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         returnTypeRef = createTypeRef("char", node);
     }
 
-/*
+
     @Override
-    public void traverse(ASTOCLParenthizedExpr node) {
-        returnTypeRef = getTypeFromExpression(node.getOCLExpression(), scope);
+    public void traverse(ASTParenthizedExpression node) {
+        returnTypeRef = getTypeFromExpression(node.getExpression(), scope);
         if (node.qualificationIsPresent()) {
             node.getQualification().get().accept(realThis);
         }
     }
 
     @Override
-    public void traverse(ASTOCLIfThenElseExpr node) {
-        if (node.thenExpressionIsPresent()) {
-            node.getThenExpression().get().accept(realThis);
-        } else if (node.elseExpressionIsPresent()) {
-            node.getElseExpression().get().accept(realThis);
-        }
-    }
-
-    @Override
-    public void traverse(ASTOCLConditionalExpr node) {
+    public void traverse(ASTIfThenElseExpr node) {
         node.getThenExpression().accept(realThis);
     }
 
+    @Override
+    public void traverse(ASTConditionalExpression node) {
+        node.getTrueExpression().accept(realThis);
+    }
+/*
     @Override
     public void traverse(ASTOCLConcatenation node) {
         LinkedList<String> names = new LinkedList<>(node.getNames());
@@ -145,33 +145,15 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         CDTypeSymbolReference typeRef = handlePrefixName(node, names, prefixName);
         returnTypeRef = handleNames(names, typeRef, node);
     }
-
+*/
     @Override
     public void traverse(ASTOCLQualifiedPrimary node) {
-        LinkedList<String> names = new LinkedList<>(node.getQualifications());
-        CDTypeSymbolReference typeRef = null;
+        LinkedList<String> names = new LinkedList<>(node.getNames());
 
-        if(node.prefixIdentifierIsPresent()) {
-            String prefixName = node.getPrefixIdentifier().get();
-            names.push(prefixName);
-            typeRef = handlePrefixName(node, names, prefixName);
-        } else if (node.isThis()) {
-            Optional<OCLVariableDeclarationSymbol> thisDecl = scope.resolve("this", OCLVariableDeclarationSymbol.KIND);
-            if (!thisDecl.isPresent()){
-                Log.error("Could not resolve this", node.get_SourcePositionStart());
-            }
-            typeRef = thisDecl.get().getType();
-        } else if (node.isSuper()) {
-            Optional<OCLVariableDeclarationSymbol> superDecl = scope.resolve("super", OCLVariableDeclarationSymbol.KIND);
-            if (!superDecl.isPresent()){
-                Log.error("Could not resolve super", node.get_SourcePositionStart());
-            }
-            typeRef = superDecl.get().getType();
-        }
-        returnTypeRef = handleNames(names, typeRef, node);
+        CDTypeSymbolReference firstType = handlePrefixName(node, names);
+        returnTypeRef = handleNames(names, firstType, node);
 
-        // Todo check method argument or ** or @pre (postfixQualification)
-        if (node.postfixQualificationIsPresent() && node.getPostfixQualification().get() instanceof ASTOCLArrayQualification) {
+        if(node.postfixQualificationIsPresent()) {
             node.getPostfixQualification().get().accept(realThis);
         }
 
@@ -181,15 +163,19 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         }
     }
 
+
     @Override
     public void traverse(ASTOCLArrayQualification node) {
         List<ActualTypeArgument> arguments = returnTypeRef.getActualTypeArguments();
         if (arguments.size() == 0) {
-            Log.error("Could not resolve container argument from: " + returnTypeRef, node.get_SourcePositionStart());
+            Log.error("0xOCLI4 Could not resolve container argument from: " + returnTypeRef + " at " + node.get_SourcePositionStart());
         }
         returnTypeRef = (CDTypeSymbolReference) arguments.get(0).getType();
     }
 
+    @Override
+    public void traverse(ASTOCLArgumentQualification node) {}
+/*
     @Override
     public void traverse(ASTOCLComprehensionPrimary node) {
         String typeName = "";
@@ -261,13 +247,14 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
     *//**
      *  ********** boolean expressions **********
-     *//*
+     */
+
 
     @Override
-    public void traverse(ASTOCLEquivalentExpr node) {
+    public void traverse(ASTEqualsExpression node) {
         returnTypeRef = createTypeRef("boolean", node);
     }
-
+/*
     @Override
     public void traverse(ASTOCLDoubleLogicalAND node) {
         returnTypeRef = createTypeRef("boolean", node);
@@ -350,27 +337,28 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         typeReferenceOuter.setActualTypeArguments(actualTypeArguments);
     }
 
-    private CDTypeSymbolReference handlePrefixName(ASTOCLNode node, LinkedList<String> names, String firstName) {
+    private CDTypeSymbolReference handlePrefixName(ASTOCLQualifiedPrimary node, LinkedList<String> names) {
         // Try and look if name or this was declared as variable or try as ClassName of CD
-        Optional<OCLVariableDeclarationSymbol> nameDecl = scope.resolve(firstName, OCLVariableDeclarationSymbol.KIND);
+        String prefixName = names.get(0);
+        Optional<OCLVariableDeclarationSymbol> nameDecl = scope.resolve(prefixName, OCLVariableDeclarationSymbol.KIND);
         Optional<OCLVariableDeclarationSymbol> thisDecl = scope.resolve("this", OCLVariableDeclarationSymbol.KIND);
-        Optional<CDTypeSymbol> className = scope.resolve(firstName, CDTypeSymbol.KIND);
+        Optional<CDTypeSymbol> typeName = scope.resolve(prefixName, CDTypeSymbol.KIND);
 
         CDTypeSymbolReference typeRef = null;
-        if(returnTypeRef!=null) { //Previous Type present
+        if(returnTypeRef!=null) { //Previous Type present from prefix-qualification
             typeRef = returnTypeRef;
-        } else if(nameDecl.isPresent()) { // firstName as Var defined
+        } else if(nameDecl.isPresent()) { // firstName as defined variable
             names.pop();
             typeRef = nameDecl.get().getType();
-        } else if (className.isPresent()) { // Class same as Class.allInstances()
+        } else if (typeName.isPresent()) { // Class same as Class.allInstances()
             names.pop();
             typeRef = createTypeRef("Set", node);
-            CDTypeSymbolReference argsTypeRef = createTypeRef(firstName, node);
+            CDTypeSymbolReference argsTypeRef = createTypeRef(prefixName, node);
             addActualArgument(typeRef, argsTypeRef);
         } else if (thisDecl.isPresent()) { // implicit this
             typeRef = thisDecl.get().getType();
         } else {
-            Log.error("Could not resolve name or type: " + firstName, node.get_SourcePositionStart());
+            Log.error("0xOCLI2 Could not resolve name or type: " + prefixName + " at " + node.get_SourcePositionStart());
         }
         return typeRef;
     }
@@ -385,31 +373,32 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             String name = names.pop();
             // Try name as method/field/assoc
             Scope elementsScope = previousType.getAllKindElements();
-            CDTypeSymbolReference newType = handleName(node, name, elementsScope);
+            Optional<CDTypeSymbolReference> newType = handleName(node, name, elementsScope);
             // Try again and flatten container
-            if (newType==null) {
+            if (!newType.isPresent()) {
                 CDTypeSymbolReference flattendType = flattenType(previousType);
                 elementsScope = flattendType.getAllKindElements();
                 newType = handleName(node, name, elementsScope);
                 //Try with inner type
-                if (newType==null && !flattendType.getActualTypeArguments().isEmpty()) {
+                if (!newType.isPresent() && !flattendType.getActualTypeArguments().isEmpty()) {
                     CDTypeSymbolReference innerType =
                             (CDTypeSymbolReference) previousType.getActualTypeArguments().get(0).getType();
                     elementsScope = innerType.getAllKindElements();
-                    innerType = handleName(node, name, elementsScope);
-                    if(innerType!=null) {
-                        newType = createTypeRef(flattendType.getName(), node);
-                        addActualArgument(newType, innerType);
-                        newType = flattenType(newType);
+                    newType = handleName(node, name, elementsScope);
+                    if(newType.isPresent()) {
+                        CDTypeSymbolReference containerType = createTypeRef(previousType.getName(), node);
+                        addActualArgument(containerType, newType.get());
+                        containerType = flattenType(containerType);
+                        newType = Optional.of(containerType);
                     }
                 }
             }
 
-            if(newType== null) {
-                Log.error("Could not resolve field/method/association: " + name + " on " + previousType.getName(), node.get_SourcePositionStart());
+            if(!newType.isPresent()) {
+                Log.error("0xOCLI3 Could not resolve field/method/association: " + name + " on " + previousType.getName() + " at " + node.get_SourcePositionStart());
             }
 
-            return handleNames(names, newType, node);
+            return handleNames(names, newType.get(), node);
         } else {
             return previousType;
         }
@@ -471,19 +460,19 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     /**
      * Takes a single name and tries to resolve it as association/field/method on a scope
      */
-    private CDTypeSymbolReference handleName(ASTNode node, String name, Scope elementsScope) {
+    private Optional<CDTypeSymbolReference> handleName(ASTNode node, String name, Scope elementsScope) {
         Optional<CDFieldSymbol> fieldSymbol = elementsScope.<CDFieldSymbol>resolve(name, CDFieldSymbol.KIND);
         Collection<CDAssociationSymbol> associationSymbol = elementsScope.<CDAssociationSymbol>resolveMany(name, CDAssociationSymbol.KIND);
         Optional<CDMethodSymbol> methodSymbol = elementsScope.<CDMethodSymbol>resolve(name, CDMethodSymbol.KIND);
 
         if(fieldSymbol.isPresent()) { // Try name as field
-            return createTypeRef(fieldSymbol.get().getType().getName(), node);
+            return Optional.of(createTypeRef(fieldSymbol.get().getType().getName(), node));
         } else if (!associationSymbol.isEmpty()) { // Try name as association
-            return handleAssociationSymbol(node, associationSymbol.iterator().next(), name);
+            return Optional.of(handleAssociationSymbol(node, associationSymbol.iterator().next(), name));
         } else if (methodSymbol.isPresent()) { // Try name as method
-            return createTypeRef(methodSymbol.get().getReturnType().getName(), node);
+            return Optional.of(createTypeRef(methodSymbol.get().getReturnType().getName(), node));
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 
