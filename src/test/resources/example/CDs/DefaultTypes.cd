@@ -34,18 +34,22 @@ classdiagram DefaultTypes {
     boolean isPresent();
   }
 
-  public class Boolean {}
-  public class Integer {}
-  public class Double {}
-  public class Float {}
-  public class Character {}
-  public class String {
+
+  interface Number;
+  class Integer implements Number {}
+  class Double implements Number {}
+  class Float implements Number {}
+  class Boolean {}
+  class Character {}
+  class String {
     boolean contains(String s);
     String replaceAll(String s1, String s2);
     String replace(String s1, String s2);
     boolean endsWith(String s);
   }
 
-  public class Amount {}
+  interface Amount {}
+  class Length implements Amount {}
+  class Time implements Amount {}
 
 }
