@@ -88,27 +88,27 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
     }
 
     @Override
-    public void traverse(ASTModuloExpression node) {
+    public void visit(ASTModuloExpression node) {
         checkInfixExpr(node);
     }
 
     @Override
-    public void traverse(ASTDivideExpression node) {
+    public void visit(ASTDivideExpression node) {
+        // amount or number
+    }
+
+    @Override
+    public void visit(ASTMultExpression node) {
+        // amount or number
+    }
+
+    @Override
+    public void visit(ASTPlusExpression node){
         checkInfixExpr(node);
     }
 
     @Override
-    public void traverse(ASTMultExpression node) {
-        checkInfixExpr(node);
-    }
-
-    @Override
-    public void traverse(ASTPlusExpression node){
-        checkInfixExpr(node);
-    }
-
-    @Override
-    public void traverse(ASTMinusExpression node){
+    public void visit(ASTMinusExpression node){
         checkInfixExpr(node);
     }
     /**
@@ -116,12 +116,12 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
      */
 
     @Override
-    public void traverse(ASTEqualsExpression node) {
+    public void visit(ASTEqualsExpression node) {
         checkInfixExpr(node);
     }
 
     @Override
-    public void traverse(ASTBooleanNotExpression node) {
+    public void visit(ASTBooleanNotExpression node) {
         CDTypeSymbolReference exprType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getExpression(), scope);
 
         if (!exprType.getName().equals("Boolean")) {
@@ -130,7 +130,7 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
     }
 
     @Override
-    public void traverse(ASTLogicalNotExpression node) {
+    public void visit(ASTLogicalNotExpression node) {
         CDTypeSymbolReference exprType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getExpression(), scope);
 
         if (!exprType.getName().equals("Boolean")) {
@@ -139,42 +139,42 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
     }
 
     @Override
-    public void traverse(ASTEquivalentExpression node) {
+    public void visit(ASTEquivalentExpression node) {
         checkInfixExpr(node);
     }
 
     @Override
-    public void traverse(ASTLessEqualExpression node) {
+    public void visit(ASTLessEqualExpression node) {
         checkInfixExpr(node);
     }
 
     @Override
-    public void traverse(ASTGreaterEqualExpression node) {
+    public void visit(ASTGreaterEqualExpression node) {
         checkInfixExpr(node);
     }
 
     @Override
-    public void traverse(ASTLessThanExpression node) {
+    public void visit(ASTLessThanExpression node) {
         checkInfixExpr(node);
     }
 
     @Override
-    public void traverse(ASTGreaterThanExpression node) {
+    public void visit(ASTGreaterThanExpression node) {
         checkInfixExpr(node);
     }
 
     @Override
-    public void traverse(ASTNotEqualsExpression node) {
+    public void visit(ASTNotEqualsExpression node) {
         checkInfixExpr(node);
     }
 
     @Override
-    public void traverse(ASTBooleanAndOpExpression node) {
+    public void visit(ASTBooleanAndOpExpression node) {
         checkInfixExpr(node);
     }
 
     @Override
-    public void traverse(ASTBooleanOrOpExpression node) {
+    public void visit(ASTBooleanOrOpExpression node) {
         checkInfixExpr(node);
     }
 }
