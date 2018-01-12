@@ -22,13 +22,12 @@ package ocl.monticoreocl.ocl._visitors;
 import de.monticore.ast.ASTNode;
 
 
-import de.monticore.commonexpressions._ast.ASTCallExpression;
-import de.monticore.commonexpressions._ast.ASTConditionalExpression;
-import de.monticore.commonexpressions._ast.ASTEqualsExpression;
+import de.monticore.commonexpressions._ast.*;
 import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.literals._ast.*;
 import de.monticore.numberunit._ast.ASTNumberWithUnit;
 import de.monticore.numberunit.prettyprint.NumberUnitPrettyPrinter;
+import de.monticore.numberunit.prettyprint.UnitsPrinter;
 import de.monticore.oclexpressions._ast.*;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.MutableScope;
@@ -130,29 +129,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             NumberUnitPrettyPrinter printer = new NumberUnitPrettyPrinter(new IndentPrinter());
             printer.prettyprint(node.getUn());
             String unitString = printer.getPrinter().getContent();
-
-            try { // Not all of our NumberUnit units can be parsed by jscience, e.g. imperial unit th
-                Unit<?> unit = Unit.valueOf(unitString);
-                if(unit.isCompatible(SI.METER))
-                    returnTypeRef = createTypeRef("Length", node);
-                if(unit.isCompatible(SI.METERS_PER_SECOND))
-                    returnTypeRef = createTypeRef("Velocity", node);
-                if(unit.isCompatible(SI.METERS_PER_SQUARE_SECOND))
-                    returnTypeRef = createTypeRef("Acceleration", node);
-                if(unit.isCompatible(SI.NEWTON))
-                    returnTypeRef = createTypeRef("Force", node);
-                if(unit.isCompatible(SI.CELSIUS))
-                    returnTypeRef = createTypeRef("Temperature", node);
-                if(unit.isCompatible(SI.CUBIC_METRE))
-                    returnTypeRef = createTypeRef("Volume", node);
-                if(unit.isCompatible(SI.SECOND))
-                    returnTypeRef = createTypeRef("Duration", node);
-                // Todo: add more units
-                if(returnTypeRef==null)
-                    returnTypeRef = createTypeRef("Amount", node);
-            } catch (IllegalArgumentException e) {
-                returnTypeRef = createTypeRef("Amount", node);
-            }
+            returnTypeRef = createTypeRef(UnitsPrinter.unitStringToUnitName(unitString), node);
         }
     }
 
@@ -165,7 +142,6 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     public void traverse(ASTCharLiteral node) {
         returnTypeRef = createTypeRef("char", node);
     }
-
 
     @Override
     public void traverse(ASTParenthizedExpression node) {
@@ -263,80 +239,123 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     }
 
     /**
-     *  ********** boolean expressions **********
+     *  ********** math expressions **********
      */
 
+    @Override
+    public void traverse(ASTPlusExpression node) {
+        node.getLeftExpression().accept(realThis);
+    }
+
+    @Override
+    public void traverse(ASTMinusExpression node) {
+        node.getLeftExpression().accept(realThis);
+    }
+
+    @Override
+    public void traverse(ASTModuloExpression node) {
+        node.getLeftExpression().accept(realThis);
+    }
+
+    @Override
+    public void traverse(ASTDivideExpression node) {
+        CDTypeSymbolReference leftType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getLeftExpression(), scope);
+        CDTypeSymbolReference rightType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getRightExpression(), scope);
+        CDTypeSymbolReference amountType = createTypeRef("Amount", node);
+
+        if (leftType.getName().equals("Number") && rightType.getName().equals("Number")) {
+            returnTypeRef = createTypeRef("Number", node);
+        } else if(leftType.getName().equals("Amount") || rightType.getName().equals("Amount")) {
+            returnTypeRef = createTypeRef("Amount", node);
+        } else if(amountType.isSameOrSuperType(leftType) && amountType.isSameOrSuperType(rightType)){
+            Unit<?> leftUnit = UnitsPrinter.unitNameToUnit(leftType.getName());
+            Unit<?> rightUnit = UnitsPrinter.unitNameToUnit(rightType.getName());
+            Unit<?> resultUnit = leftUnit.divide(rightUnit);
+            String resultUnitName = UnitsPrinter.unitToUnitName(resultUnit);
+
+            returnTypeRef = createTypeRef(resultUnitName, node);
+        }
+    }
+
+    @Override
+    public void traverse(ASTMultExpression node) {
+        CDTypeSymbolReference leftType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getLeftExpression(), scope);
+        CDTypeSymbolReference rightType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getRightExpression(), scope);
+        CDTypeSymbolReference amountType = createTypeRef("Amount", node);
+
+        if (leftType.getName().equals("Number") && rightType.getName().equals("Number")) {
+            returnTypeRef = createTypeRef("Number", node);
+        } else if(leftType.getName().equals("Amount") || rightType.getName().equals("Amount")) {
+            returnTypeRef = createTypeRef("Amount", node);
+        } else if(amountType.isSameOrSuperType(leftType) && amountType.isSameOrSuperType(rightType)){
+            Unit<?> leftUnit = UnitsPrinter.unitNameToUnit(leftType.getName());
+            Unit<?> rightUnit = UnitsPrinter.unitNameToUnit(rightType.getName());
+            Unit<?> resultUnit = leftUnit.times(rightUnit);
+            String resultUnitName = UnitsPrinter.unitToUnitName(resultUnit);
+
+            returnTypeRef = createTypeRef(resultUnitName, node);
+        }
+    }
+
+    /**
+     *  ********** boolean expressions **********
+     */
 
     @Override
     public void traverse(ASTEqualsExpression node) {
         returnTypeRef = createTypeRef("boolean", node);
     }
-/*
+
     @Override
-    public void traverse(ASTOCLDoubleLogicalAND node) {
+    public void traverse(ASTBooleanNotExpression node) {
         returnTypeRef = createTypeRef("boolean", node);
     }
 
     @Override
-    public void traverse(ASTOCLIsin node) {
+    public void traverse(ASTLogicalNotExpression node) {
         returnTypeRef = createTypeRef("boolean", node);
     }
 
     @Override
-    public void traverse(ASTOCLImplies node) {
+    public void traverse(ASTEquivalentExpression node) {
         returnTypeRef = createTypeRef("boolean", node);
     }
 
     @Override
-    public void traverse(ASTOCLCompare node) {
+    public void traverse(ASTLessEqualExpression node) {
         returnTypeRef = createTypeRef("boolean", node);
     }
 
     @Override
-    public void traverse(ASTOCLShiftExpr node) {
+    public void traverse(ASTGreaterEqualExpression node) {
         returnTypeRef = createTypeRef("boolean", node);
     }
 
     @Override
-    public void traverse(ASTOCLBinaryPlusMinusExpr node) {
+    public void traverse(ASTLessThanExpression node) {
         returnTypeRef = createTypeRef("boolean", node);
     }
 
     @Override
-    public void traverse(ASTOCLBinaryMultDivModExpr node) {
+    public void traverse(ASTGreaterThanExpression node) {
         returnTypeRef = createTypeRef("boolean", node);
     }
 
     @Override
-    public void traverse(ASTOCLDoubleLogicalORExpr node) {
+    public void traverse(ASTNotEqualsExpression node) {
         returnTypeRef = createTypeRef("boolean", node);
     }
 
     @Override
-    public void traverse(ASTOCLSingleLogicalORExpr node) {
+    public void traverse(ASTBooleanAndOpExpression node) {
         returnTypeRef = createTypeRef("boolean", node);
     }
 
     @Override
-    public void traverse(ASTOCLLogicalXORExpr node) {
+    public void traverse(ASTBooleanOrOpExpression node) {
         returnTypeRef = createTypeRef("boolean", node);
     }
 
-    @Override
-    public void traverse(ASTOCLSingleLogicalANDExpr node) {
-        returnTypeRef = createTypeRef("boolean", node);
-    }
-
-    @Override
-    public void traverse(ASTOCLRelationalExpr node) {
-        returnTypeRef = createTypeRef("boolean", node);
-    }
-
-    @Override
-    public void traverse(ASTOCLInstanceofExpr node) {
-        returnTypeRef = createTypeRef("boolean", node);
-    }
-*/
 
     /**
      *  ********** Helper Methods **********

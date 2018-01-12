@@ -19,20 +19,19 @@
  */
 package ocl.monticoreocl.ocl._visitors;
 
-import de.monticore.commonexpressions._ast.ASTEqualsExpression;
+import de.monticore.commonexpressions._ast.*;
 import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.monticore.oclexpressions._ast.ASTOCLComprehensionPrimary;
 import de.monticore.oclexpressions._ast.ASTOCLQualifiedPrimary;
 import de.monticore.oclexpressions._ast.ASTParenthizedExpression;
 import de.monticore.symboltable.MutableScope;
-import de.monticore.symboltable.Scope;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
 import ocl.monticoreocl.ocl._ast.*;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
 
 
-public class OCLTypeCheckingVisitor implements OCLVisitor{
+public class OCLTypeCheckingVisitor implements OCLVisitor {
 
     private boolean isTypeCorrect;
     private OCLVisitor realThis = this;
@@ -59,16 +58,6 @@ public class OCLTypeCheckingVisitor implements OCLVisitor{
     }
 
     @Override
-    public void traverse(ASTEqualsExpression node){
-        CDTypeSymbolReference leftType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getLeftExpression(), scope);
-        CDTypeSymbolReference rightType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getRightExpression(), scope);
-
-        if (!leftType.getReferencedSymbol().isSameOrSuperType(rightType.getReferencedSymbol())) {
-            Log.error("0xCET01 left and right type of infix expression do not match: " + node.get_SourcePositionStart());
-        }
-    }
-
-    @Override
     public void traverse(ASTOCLComprehensionPrimary node){
         OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
     }
@@ -83,4 +72,109 @@ public class OCLTypeCheckingVisitor implements OCLVisitor{
         OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
     }
 
+
+
+    /**
+     *  ********** math expressions **********
+     */
+
+    public void checkInfixExpr(ASTInfixExpression node){
+        CDTypeSymbolReference leftType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getLeftExpression(), scope);
+        CDTypeSymbolReference rightType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getRightExpression(), scope);
+
+        if (!leftType.getReferencedSymbol().isSameOrSuperType(rightType.getReferencedSymbol())) {
+            Log.error("0xCET01 left and right type of infix expression do not match: " + node.get_SourcePositionStart());
+        }
+    }
+
+    @Override
+    public void traverse(ASTModuloExpression node) {
+        checkInfixExpr(node);
+    }
+
+    @Override
+    public void traverse(ASTDivideExpression node) {
+        checkInfixExpr(node);
+    }
+
+    @Override
+    public void traverse(ASTMultExpression node) {
+        checkInfixExpr(node);
+    }
+
+    @Override
+    public void traverse(ASTPlusExpression node){
+        checkInfixExpr(node);
+    }
+
+    @Override
+    public void traverse(ASTMinusExpression node){
+        checkInfixExpr(node);
+    }
+    /**
+     *  ********** boolean expressions **********
+     */
+
+    @Override
+    public void traverse(ASTEqualsExpression node) {
+        checkInfixExpr(node);
+    }
+
+    @Override
+    public void traverse(ASTBooleanNotExpression node) {
+        CDTypeSymbolReference exprType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getExpression(), scope);
+
+        if (!exprType.getName().equals("Boolean")) {
+            Log.error("0xCET02 type of prefix expression is not boolean: " + node.get_SourcePositionStart());
+        }
+    }
+
+    @Override
+    public void traverse(ASTLogicalNotExpression node) {
+        CDTypeSymbolReference exprType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getExpression(), scope);
+
+        if (!exprType.getName().equals("Boolean")) {
+            Log.error("0xCET02 type of prefix expression is not boolean: " + node.get_SourcePositionStart());
+        }
+    }
+
+    @Override
+    public void traverse(ASTEquivalentExpression node) {
+        checkInfixExpr(node);
+    }
+
+    @Override
+    public void traverse(ASTLessEqualExpression node) {
+        checkInfixExpr(node);
+    }
+
+    @Override
+    public void traverse(ASTGreaterEqualExpression node) {
+        checkInfixExpr(node);
+    }
+
+    @Override
+    public void traverse(ASTLessThanExpression node) {
+        checkInfixExpr(node);
+    }
+
+    @Override
+    public void traverse(ASTGreaterThanExpression node) {
+        checkInfixExpr(node);
+    }
+
+    @Override
+    public void traverse(ASTNotEqualsExpression node) {
+        checkInfixExpr(node);
+    }
+
+    @Override
+    public void traverse(ASTBooleanAndOpExpression node) {
+        checkInfixExpr(node);
+    }
+
+    @Override
+    public void traverse(ASTBooleanOrOpExpression node) {
+        checkInfixExpr(node);
+    }
 }
