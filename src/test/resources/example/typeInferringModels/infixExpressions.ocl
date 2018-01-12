@@ -1,0 +1,11 @@
+package example.typeInferringModels;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl infixExpressions {
+  inv test:
+    5 N == 5.0kg*m/s^2;
+}
+
+

@@ -19,6 +19,7 @@
  */
 package ocl.monticoreocl.ocl._visitors;
 
+import de.monticore.commonexpressions._ast.ASTEqualsExpression;
 import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.monticore.oclexpressions._ast.ASTOCLComprehensionPrimary;
 import de.monticore.oclexpressions._ast.ASTOCLQualifiedPrimary;
@@ -52,14 +53,24 @@ public class OCLTypeCheckingVisitor implements OCLVisitor{
         for(ASTExpression expr : node.getStatements()){
             expr.accept(checkingVisitor);
             if(!checkingVisitor.isTypeCorrect()) {
-                Log.warn("0xOCLI0 Could not infer type from this expression:" + expr.get_SourcePositionStart());
+                Log.warn("0xOCLT0 Could not infer type from this expression:" + expr.get_SourcePositionStart());
             }
         }
     }
 
     @Override
+    public void traverse(ASTEqualsExpression node){
+        CDTypeSymbolReference leftType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getLeftExpression(), scope);
+        CDTypeSymbolReference rightType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getRightExpression(), scope);
+
+        if (!leftType.getReferencedSymbol().isSameOrSuperType(rightType.getReferencedSymbol())) {
+            Log.error("0xCET01 left and right type of infix expression do not match: " + node.get_SourcePositionStart());
+        }
+    }
+
+    @Override
     public void traverse(ASTOCLComprehensionPrimary node){
-        Log.warn("Todo: implement type checking for comprehensions.");
+        OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
     }
 
     @Override
@@ -71,4 +82,5 @@ public class OCLTypeCheckingVisitor implements OCLVisitor{
     public void traverse(ASTOCLQualifiedPrimary node){
         OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
     }
+
 }

@@ -314,4 +314,12 @@ public class OCLDeclarationTypeInferringTest extends AbstractOCLTest {
         assertEquals(1, declVarSymbol3.getType().getActualTypeArguments().size());
         assertEquals("String", declVarSymbol3.getType().getActualTypeArguments().get(0).getType().toString());
     }
+
+    @Test
+    public void infixExpressionsTypesTest() {
+        final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/");
+
+        final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol> resolve("example.typeInferringModels.infixExpressions", OCLFileSymbol.KIND).orElse(null);
+        assertNotNull(oclFileSymbol);
+    }
 }

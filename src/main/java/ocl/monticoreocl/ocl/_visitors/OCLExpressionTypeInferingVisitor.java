@@ -26,12 +26,11 @@ import de.monticore.commonexpressions._ast.ASTCallExpression;
 import de.monticore.commonexpressions._ast.ASTConditionalExpression;
 import de.monticore.commonexpressions._ast.ASTEqualsExpression;
 import de.monticore.expressionsbasis._ast.ASTExpression;
-import de.monticore.literals.literals._ast.ASTCharLiteral;
-import de.monticore.literals.literals._ast.ASTDoubleLiteral;
-import de.monticore.literals.literals._ast.ASTIntLiteral;
-import de.monticore.literals.literals._ast.ASTStringLiteral;
+import de.monticore.literals.literals._ast.*;
 import de.monticore.numberunit._ast.ASTNumberWithUnit;
+import de.monticore.numberunit.prettyprint.NumberUnitPrettyPrinter;
 import de.monticore.oclexpressions._ast.*;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
@@ -43,6 +42,12 @@ import ocl.monticoreocl.ocl._ast.*;
 import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
 
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.BaseUnit;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
+import javax.measure.unit.UnitFormat;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 
@@ -106,18 +111,48 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
     @Override
     public void traverse(ASTIntLiteral node) {
-        returnTypeRef = createTypeRef("int", node);
+        returnTypeRef = createTypeRef("Number", node);
     }
 
     @Override
     public void traverse(ASTDoubleLiteral node) {
-        returnTypeRef = createTypeRef("double", node);
+        returnTypeRef = createTypeRef("Number", node);
+    }
+
+    @Override
+    public void traverse(ASTFloatLiteral node) {
+        returnTypeRef = createTypeRef("Number", node);
     }
 
     @Override
     public void traverse(ASTNumberWithUnit node) {
         if (node.unIsPresent()) {
-            returnTypeRef = createTypeRef("Amount", node);
+            NumberUnitPrettyPrinter printer = new NumberUnitPrettyPrinter(new IndentPrinter());
+            printer.prettyprint(node.getUn());
+            String unitString = printer.getPrinter().getContent();
+
+            try { // Not all of our NumberUnit units can be parsed by jscience, e.g. imperial unit th
+                Unit<?> unit = Unit.valueOf(unitString);
+                if(unit.isCompatible(SI.METER))
+                    returnTypeRef = createTypeRef("Length", node);
+                if(unit.isCompatible(SI.METERS_PER_SECOND))
+                    returnTypeRef = createTypeRef("Velocity", node);
+                if(unit.isCompatible(SI.METERS_PER_SQUARE_SECOND))
+                    returnTypeRef = createTypeRef("Acceleration", node);
+                if(unit.isCompatible(SI.NEWTON))
+                    returnTypeRef = createTypeRef("Force", node);
+                if(unit.isCompatible(SI.CELSIUS))
+                    returnTypeRef = createTypeRef("Temperature", node);
+                if(unit.isCompatible(SI.CUBIC_METRE))
+                    returnTypeRef = createTypeRef("Volume", node);
+                if(unit.isCompatible(SI.SECOND))
+                    returnTypeRef = createTypeRef("Duration", node);
+                // Todo: add more units
+                if(returnTypeRef==null)
+                    returnTypeRef = createTypeRef("Amount", node);
+            } catch (IllegalArgumentException e) {
+                returnTypeRef = createTypeRef("Amount", node);
+            }
         }
     }
 

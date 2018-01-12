@@ -50,6 +50,11 @@ classdiagram DefaultTypes {
 
   interface Amount {}
   class Length implements Amount {}
-  class Time implements Amount {}
+  class Velocity implements Amount {}
+  class Acceleration implements Amount {}
+  class Force implements Amount {}
+  class Temperature implements Amount {}
+  class Volume implements Amount {}
+  class Duration implements Amount {}
 
 }
