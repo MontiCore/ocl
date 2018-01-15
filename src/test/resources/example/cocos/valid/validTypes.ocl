@@ -1,0 +1,7 @@
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl types {
+  inv Test :
+     10 m/s == 10m / 1s;
+}

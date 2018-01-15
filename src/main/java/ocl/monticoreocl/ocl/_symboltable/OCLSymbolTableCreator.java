@@ -178,7 +178,6 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
 	@Override
 	public void endVisit(final ASTOCLInvariant astInvariant) {
-		OCLTypeCheckingVisitor.checkInvariants(astInvariant, currentScope().get());
 		removeCurrentScope();
 	}
 

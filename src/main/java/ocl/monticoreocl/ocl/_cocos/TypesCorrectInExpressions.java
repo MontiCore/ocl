@@ -19,21 +19,19 @@
  */
 package ocl.monticoreocl.ocl._cocos;
 
-import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;;
+import de.monticore.symboltable.MutableScope;
+import ocl.monticoreocl.ocl._ast.ASTOCLInvariant;
+import ocl.monticoreocl.ocl._visitors.OCLTypeCheckingVisitor;
 
-public class OCLCoCos {
+/**
+ * Created by Ferdinand Mehlan on 15.01.2018.
+ */
+public class TypesCorrectInExpressions implements OCLASTOCLInvariantCoCo {
 
-	public static OCLCoCoChecker createChecker() {
-		return new OCLCoCoChecker()
-		.addCoCo(new FileNameStartsWithLowerCaseLetter())
-		.addCoCo(new MethSignatureStartsWithCapitalLetter())
-		.addCoCo(new ConstructorNameStartsWithCapitalLetter())
-		.addCoCo(new InvariantNameStartsWithCapitalLetter())
-		.addCoCo(new MethodDeclarationStartsWithLowerCaseLetter())
-		.addCoCo(new PreStatementNameStartsWithCapitalLetter())
-		.addCoCo(new PostStatementNameStartsWithCapitalLetter())
-		.addCoCo(new ParameterDeclarationNameStartsWithLowerCaseLetter())
-		.addCoCo(new TypesCorrectInExpressions())
-		;
-	}
+    @Override
+    public void check(ASTOCLInvariant astInvariant){
+        MutableScope scope = (MutableScope) astInvariant.getSpannedScope().get();
+        OCLTypeCheckingVisitor.checkInvariants(astInvariant, scope);
+    }
+
 }

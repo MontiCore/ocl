@@ -94,12 +94,12 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
 
     @Override
     public void visit(ASTDivideExpression node) {
-        // amount or number
+        // Todo amount or number
     }
 
     @Override
     public void visit(ASTMultExpression node) {
-        // amount or number
+        // Todo amount or number
     }
 
     @Override
@@ -111,6 +111,7 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
     public void visit(ASTMinusExpression node){
         checkInfixExpr(node);
     }
+
     /**
      *  ********** boolean expressions **********
      */
