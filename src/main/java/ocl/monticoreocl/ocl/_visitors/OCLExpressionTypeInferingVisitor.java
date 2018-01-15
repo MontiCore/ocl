@@ -70,7 +70,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         CDTypeSymbolReference typeReference = exprVisitor.getReturnTypeReference();
         if (typeReference==null) {
             Log.error("0xOCLI0 The variable type could not be resolved from this expression: " + node.get_SourcePositionStart());
-            return new CDTypeSymbolReference("DefaultClass", exprVisitor.scope);
+            return new CDTypeSymbolReference("Class", exprVisitor.scope);
         } else {
             return typeReference;
         }
@@ -82,7 +82,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         CDTypeSymbolReference typeReference = exprVisitor.getReturnTypeReference();
         if (typeReference==null) {
             Log.error("0xOCLI0 The variable type could not be resolved from this expression: " + node.get_SourcePositionStart());
-            return new CDTypeSymbolReference("DefaultClass", exprVisitor.scope);
+            return new CDTypeSymbolReference("Class", exprVisitor.scope);
         } else {
             return typeReference;
         }
@@ -395,6 +395,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             typeRef = thisDecl.get().getType();
         } else {
             Log.error("0xOCLI2 Could not resolve name or type: " + prefixName + " at " + node.get_SourcePositionStart());
+            typeRef = new CDTypeSymbolReference("Class", scope);
         }
         return typeRef;
     }
@@ -432,6 +433,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
             if(!newType.isPresent()) {
                 Log.error("0xOCLI3 Could not resolve field/method/association: " + name + " on " + previousType.getName() + " at " + node.get_SourcePositionStart());
+                return previousType;
             }
 
             return handleNames(names, newType.get(), node);
