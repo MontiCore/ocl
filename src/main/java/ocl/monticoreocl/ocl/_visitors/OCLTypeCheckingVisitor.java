@@ -58,17 +58,12 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
     }
 
     @Override
-    public void traverse(ASTOCLComprehensionPrimary node){
+    public void visit(ASTParenthizedExpression node){
         OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
     }
 
     @Override
-    public void traverse(ASTParenthizedExpression node){
-        OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
-    }
-
-    @Override
-    public void traverse(ASTOCLQualifiedPrimary node){
+    public void visit(ASTOCLQualifiedPrimary node){
         OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
     }
 

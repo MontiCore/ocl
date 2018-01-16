@@ -15,6 +15,7 @@ classdiagram AuctionCD {
   }
 
   public class Auction {
+    int auctionIdent;
   }
 
   public class Message {
