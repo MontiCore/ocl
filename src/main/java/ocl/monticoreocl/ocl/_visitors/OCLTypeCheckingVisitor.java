@@ -21,7 +21,6 @@ package ocl.monticoreocl.ocl._visitors;
 
 import de.monticore.commonexpressions._ast.*;
 import de.monticore.expressionsbasis._ast.ASTExpression;
-import de.monticore.oclexpressions._ast.ASTOCLComprehensionPrimary;
 import de.monticore.oclexpressions._ast.ASTOCLQualifiedPrimary;
 import de.monticore.oclexpressions._ast.ASTParenthizedExpression;
 import de.monticore.symboltable.MutableScope;
@@ -82,6 +81,14 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
         }
     }
 
+    public void checkPrefixExpr(ASTExpression node){
+        CDTypeSymbolReference exprType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
+
+        if (!exprType.getName().equals("Boolean")) {
+            Log.error("0xCET02 type of prefix expression is not boolean: " + node.get_SourcePositionStart());
+        }
+    }
+
     @Override
     public void visit(ASTModuloExpression node) {
         checkInfixExpr(node);
@@ -89,12 +96,12 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
 
     @Override
     public void visit(ASTDivideExpression node) {
-        // Todo amount or number
+        // Todo Amount or Number
     }
 
     @Override
     public void visit(ASTMultExpression node) {
-        // Todo amount or number
+        // Todo Amount or Number
     }
 
     @Override
@@ -118,20 +125,12 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
 
     @Override
     public void visit(ASTBooleanNotExpression node) {
-        CDTypeSymbolReference exprType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getExpression(), scope);
-
-        if (!exprType.getName().equals("Boolean")) {
-            Log.error("0xCET02 type of prefix expression is not boolean: " + node.get_SourcePositionStart());
-        }
+        checkPrefixExpr(node.getExpression());
     }
 
     @Override
     public void visit(ASTLogicalNotExpression node) {
-        CDTypeSymbolReference exprType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getExpression(), scope);
-
-        if (!exprType.getName().equals("Boolean")) {
-            Log.error("0xCET02 type of prefix expression is not boolean: " + node.get_SourcePositionStart());
-        }
+        checkPrefixExpr(node.getExpression());
     }
 
     @Override
