@@ -1,0 +1,18 @@
+
+package example.typeInferringModels;
+
+import example.CDs.Associations.*;
+import example.CDs.DefaultTypes.*;
+
+ocl associations {
+  context A a1, B b1, C c1, D d1 inv test:
+    let
+        w = a1.b;
+        x = b1.a;
+        y = c1.d;
+        z = d1.c;
+    in
+        true;
+}
+
+

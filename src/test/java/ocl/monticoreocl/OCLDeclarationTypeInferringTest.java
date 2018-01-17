@@ -322,4 +322,42 @@ public class OCLDeclarationTypeInferringTest extends AbstractOCLTest {
         final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("example.typeInferringModels.infixExpressions", OCLFileSymbol.KIND).orElse(null);
         assertNotNull(oclFileSymbol);
     }
+
+    @Test
+    public void AssociationsTypeTest() {
+        final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/");
+
+        final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("example.typeInferringModels.associations", OCLFileSymbol.KIND).orElse(null);
+        assertNotNull(oclFileSymbol);
+        OCLInvariantSymbol oclInvariantSymbol = oclFileSymbol.getOCLInvariant("test").orElse(null);
+        assertNotNull(oclInvariantSymbol);
+
+        OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("w").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Optional", declVarSymbol.getVarTypeName());
+        assertEquals("Optional<B>", declVarSymbol.getType().getStringRepresentation());
+        assertEquals(1, declVarSymbol.getType().getActualTypeArguments().size());
+        assertEquals("B", declVarSymbol.getType().getActualTypeArguments().get(0).getType().toString());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("x").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Set", declVarSymbol.getVarTypeName());
+        assertEquals("Set<A>", declVarSymbol.getType().getStringRepresentation());
+        assertEquals(1, declVarSymbol.getType().getActualTypeArguments().size());
+        assertEquals("A", declVarSymbol.getType().getActualTypeArguments().get(0).getType().toString());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("y").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Set", declVarSymbol.getVarTypeName());
+        assertEquals("Set<D>", declVarSymbol.getType().getStringRepresentation());
+        assertEquals(1, declVarSymbol.getType().getActualTypeArguments().size());
+        assertEquals("D", declVarSymbol.getType().getActualTypeArguments().get(0).getType().toString());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("z").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Optional", declVarSymbol.getVarTypeName());
+        assertEquals("Optional<C>", declVarSymbol.getType().getStringRepresentation());
+        assertEquals(1, declVarSymbol.getType().getActualTypeArguments().size());
+        assertEquals("C", declVarSymbol.getType().getActualTypeArguments().get(0).getType().toString());
+    }
 }
