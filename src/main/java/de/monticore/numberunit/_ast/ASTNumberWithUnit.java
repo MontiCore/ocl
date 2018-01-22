@@ -45,11 +45,11 @@ public class ASTNumberWithUnit extends ASTNumberWithUnitTOP {
   }
 
   public boolean isPlusInfinite() {
-    return this.numIsPresent() && this.getNum().posInfIsPresent();
+    return this.numIsPresent() && this.getNum().get().posInfIsPresent();
   }
 
   public boolean isMinusInfinite() {
-    return this.numIsPresent() && this.getNum().negInfIsPresent();
+    return this.numIsPresent() && this.getNum().get().negInfIsPresent();
   }
 
   public boolean isComplexNumber() {
@@ -63,18 +63,18 @@ public class ASTNumberWithUnit extends ASTNumberWithUnitTOP {
    * @return
    */
   public Optional<Double> getNumber() {
-    if (this.numIsPresent() && this.getNum().numberIsPresent()) {
-      ASTNumericLiteral number = this.getNum().getNumber();
+    if (this.numIsPresent() && this.getNum().get().numberIsPresent()) {
+      ASTNumericLiteral number = this.getNum().get().getNumber().get();
       double d;
-      if (this.getNum().negNumberIsPresent()) {
+      if (this.getNum().get().negNumberIsPresent()) {
         d = -1*Double.parseDouble(print(number));
       }
       else {
         d = Double.parseDouble(print(number));
       }
 
-      if (this.unIsPresent() && this.getUn().imperialUnitIsPresent() &&
-          this.getUn().getImperialUnit().getName().equals("th")) {
+      if (this.unIsPresent() && this.getUn().get().imperialUnitIsPresent() &&
+          this.getUn().get().getImperialUnit().get().getName().equals("th")) {
         d *= 0.0254;
       }
       return Optional.of(d);
@@ -83,25 +83,25 @@ public class ASTNumberWithUnit extends ASTNumberWithUnitTOP {
   }
 
   public Optional<ASTComplexNumber> getComplexNumber() {
-    return this.getCnOpt();
+    return this.getCn();
   }
 
   public Unit getUnit() {
     if (this.unIsPresent()) {
-      if (this.getUn().degCelsiusIsPresent()) {
+      if (this.getUn().get().degCelsiusIsPresent()) {
         return SI.CELSIUS;
       }
-      if (this.getUn().degFahrenheitIsPresent()) {
+      if (this.getUn().get().degFahrenheitIsPresent()) {
         return NonSI.FAHRENHEIT;
       }
-      if (this.getUn().imperialUnitIsPresent()) {
-        if (this.getUn().getImperialUnit().getName().equals("th")) {
+      if (this.getUn().get().imperialUnitIsPresent()) {
+        if (this.getUn().get().getImperialUnit().get().getName().equals("th")) {
           return Unit.valueOf("mm");
         }
-        return Unit.valueOf(this.getUn().getImperialUnit().getName());
+        return Unit.valueOf(this.getUn().get().getImperialUnit().get().getName());
       }
-      if (this.getUn().sIUnitIsPresent()) {
-        return siUnit(this.getUn().getSIUnit());
+      if (this.getUn().get().sIUnitIsPresent()) {
+        return siUnit(this.getUn().get().getSIUnit().get());
       }
     }
     return Unit.ONE;
@@ -109,7 +109,7 @@ public class ASTNumberWithUnit extends ASTNumberWithUnitTOP {
 
   protected Unit siUnit(ASTSIUnit siUnit) {
     if (siUnit.siUnitDimensionlessIsPresent()) {
-      return Unit.valueOf(siUnit.getSiUnitDimensionless().getName().replace("deg", "°"));
+      return Unit.valueOf(siUnit.getSiUnitDimensionless().get().getName().replace("deg", "°"));
     }
     String s = toString(siUnit.getSIUnitBasics().get(0));
     for (int i = 1; i < siUnit.getSIUnitBasics().size(); i++) {
@@ -121,16 +121,16 @@ public class ASTNumberWithUnit extends ASTNumberWithUnitTOP {
   protected String toString(ASTSIUnitBasic sib) {
     String unit = "";
     if (sib.unitBaseDimWithPrefixIsPresent()) {
-      unit =  sib.getUnitBaseDimWithPrefix().getName();
+      unit =  sib.getUnitBaseDimWithPrefix().get().getName();
     }
     else if (sib.officallyAcceptedUnitIsPresent()) {
-      unit = sib.getOfficallyAcceptedUnit().getName();
+      unit = sib.getOfficallyAcceptedUnit().get().getName();
     }
     else if (sib.degIsPresent()) {
       unit = "°";
     }
     if (sib.signedIntLiteralIsPresent()) {
-      unit = unit + "^" + print(sib.getSignedIntLiteral());
+      unit = unit + "^" + print(sib.getSignedIntLiteral().get());
     }
     return unit;
   }

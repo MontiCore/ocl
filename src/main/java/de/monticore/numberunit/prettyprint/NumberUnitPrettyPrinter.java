@@ -70,10 +70,10 @@ public class NumberUnitPrettyPrinter implements NumberUnitVisitor{
             getPrinter().print("°F");
         }
         else if (node.imperialUnitIsPresent()) {
-            node.getImperialUnit().accept(getRealThis());
+            node.getImperialUnit().get().accept(getRealThis());
         }
         else if (node.sIUnitIsPresent()) {
-            node.getSIUnit().accept(getRealThis());
+            node.getSIUnit().get().accept(getRealThis());
         }
     }
 
@@ -85,7 +85,7 @@ public class NumberUnitPrettyPrinter implements NumberUnitVisitor{
     @Override
     public void handle(ASTSIUnit node) {
         if (node.siUnitDimensionlessIsPresent()) {
-            node.getSiUnitDimensionless().accept(getRealThis());
+            node.getSiUnitDimensionless().get().accept(getRealThis());
         } else {
             List<ASTTimeDiv> timeDivs = node.getTimeDivs();
             List<ASTSIUnitBasic> astsiUnitBasics = node.getSIUnitBasics();
@@ -115,10 +115,10 @@ public class NumberUnitPrettyPrinter implements NumberUnitVisitor{
     @Override
     public void handle(ASTSIUnitBasic node) {
         if (node.unitBaseDimWithPrefixIsPresent()) {
-            node.getUnitBaseDimWithPrefix().accept(getRealThis());
+            node.getUnitBaseDimWithPrefix().get().accept(getRealThis());
         }
         else if (node.officallyAcceptedUnitIsPresent()) {
-            node.getOfficallyAcceptedUnit().accept(getRealThis());
+            node.getOfficallyAcceptedUnit().get().accept(getRealThis());
         }
         else if (node.degIsPresent()) {
             getPrinter().print("°");
@@ -126,9 +126,9 @@ public class NumberUnitPrettyPrinter implements NumberUnitVisitor{
 
         if(node.signedIntLiteralIsPresent()) {
             getPrinter().print("^");
-            if (node.getSignedIntLiteral().isNegative() )
+            if (node.getSignedIntLiteral().get().isNegative() )
                 getPrinter().print("-");
-            getPrinter().print(node.getSignedIntLiteral().getSource());
+            getPrinter().print(node.getSignedIntLiteral().get().getSource());
         }
     }
 

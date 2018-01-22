@@ -127,7 +127,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     public void traverse(ASTNumberWithUnit node) {
         if (node.unIsPresent()) {
             NumberUnitPrettyPrinter printer = new NumberUnitPrettyPrinter(new IndentPrinter());
-            printer.prettyprint(node.getUn());
+            printer.prettyprint(node.getUn().get());
             String unitString = printer.getPrinter().getContent();
             returnTypeRef = createTypeRef(UnitsPrinter.unitStringToUnitName(unitString), node);
         }

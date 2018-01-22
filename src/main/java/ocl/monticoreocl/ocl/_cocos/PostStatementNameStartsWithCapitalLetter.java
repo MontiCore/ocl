@@ -27,8 +27,8 @@ public class PostStatementNameStartsWithCapitalLetter implements OCLASTOCLPostSt
 
 	@Override
 	public void check(ASTOCLPostStatement astPostStatement){
-		if (astPostStatement.nameIsPresent() && Character.isLowerCase(astPostStatement.getName().charAt(0))) {
-			Log.error(String.format("0xOCL03 post condition name" + " '" + astPostStatement.getName() + "' " + "must start in upper-case."),
+		if (astPostStatement.nameIsPresent() && Character.isLowerCase(astPostStatement.getName().get().charAt(0))) {
+			Log.error(String.format("0xOCL03 post condition name" + " '" + astPostStatement.getName().get() + "' " + "must start in upper-case."),
 					astPostStatement.get_SourcePositionStart());
 		}
 	}

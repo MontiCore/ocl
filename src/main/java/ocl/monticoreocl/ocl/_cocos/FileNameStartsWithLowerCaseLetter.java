@@ -28,7 +28,7 @@ public class FileNameStartsWithLowerCaseLetter implements OCLASTOCLFileCoCo {
 
 	@Override 
 	public void check(ASTOCLFile astFile){
-		String fileName = astFile.getFileName();
+		String fileName = astFile.getFileName().get();
 		boolean startsWithUpperCase = Character.isUpperCase(fileName.charAt(0));
 
 		if (startsWithUpperCase) {
