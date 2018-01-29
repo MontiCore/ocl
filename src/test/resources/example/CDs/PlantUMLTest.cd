@@ -1,0 +1,13 @@
+
+classdiagram PlantUMLTest {
+
+  public class A {}
+  public class B extends A{}
+  public class C {}
+  public class D extends B{}
+
+  association [*] A <-> B [0..1];
+  association [0..1] C <-> D [*];
+  association A <- D [*];
+
+}

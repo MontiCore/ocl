@@ -17,7 +17,7 @@
  *  License along with this project. If not, see <http://www.gnu.org/licenses/>.
  * *******************************************************************************
  */
-package ocl.monticoreocl.ocl;
+package ocl.cli;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -25,17 +25,20 @@ import java.util.Optional;
 
 import de.monticore.ModelingLanguageFamily;
 import de.monticore.io.paths.ModelPath;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolvingConfiguration;
 import de.monticore.umlcd4a.CD4AnalysisLanguage;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
+import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
 import de.se_rwth.commons.logging.Log;
 import ocl.LogConfig;
 import ocl.monticoreocl.ocl._ast.ASTCompilationUnit;
 import ocl.monticoreocl.ocl._symboltable.OCLLanguage;
 import ocl.monticoreocl.ocl._symboltable.OCLSymbolTableCreator;
+import ocl.monticoreocl.ocl._visitors.CD4A2PlantUMLVisitor;
 import org.antlr.v4.runtime.RecognitionException;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
@@ -61,6 +64,9 @@ public class OCLCDTool {
         Option ocl = new Option("ocl", "ocl-file", true, "input ocl as qualified name or string");
         options.addOption(ocl);
 
+        Option printcd = new Option("printCD", "classdiagram", true, "input classdiagramm");
+        options.addOption(printcd);
+
         CommandLineParser parser = new BasicParser();
         CommandLine cmd;
 
@@ -75,11 +81,14 @@ public class OCLCDTool {
         String parentDir = cmd.getOptionValue("path");
         String oclModel = cmd.getOptionValue("ocl");
         String cdModel = cmd.getOptionValue("cd");
+        String cdString = cmd.getOptionValue("printcd");
 
         if (cmd.hasOption("path") && cmd.hasOption("ocl") && isQualifiedName(oclModel)) {
             loadOclModel(parentDir, oclModel);
         } else if (cmd.hasOption("ocl") && cmd.hasOption("cd") && !isQualifiedName(oclModel) && !isQualifiedName(cdModel)) {
             loadOclFromString(oclModel, cdModel);
+        } else if (cmd.hasOption("printcd")) {
+            printCD2PlantUML(cdString);
         } else {
             printHelp(options);
         }
@@ -179,5 +188,17 @@ public class OCLCDTool {
      */
     private static boolean isQualifiedName(String name) {
         return name.matches("^(\\w+\\.)*\\w+$");
+    }
+
+    protected static void printCD2PlantUML(String cdString) {
+        IndentPrinter printer = new IndentPrinter();
+        CD4A2PlantUMLVisitor cdVisitor = new CD4A2PlantUMLVisitor(printer);
+        CD4AnalysisParser parser = new CD4AnalysisParser();
+        try {
+            ASTCDCompilationUnit astCD = parser.parse(cdString).orElse(null);
+            System.out.println(cdVisitor.print2PlantUML(astCD));
+        } catch (IOException e) {
+            Log.error(e.getMessage());
+        }
     }
 }

@@ -354,7 +354,7 @@
         </descriptorRefs>
         <archive>
           <manifest>
-            <mainClass>ocl.monticoreocl.ocl.OCLCDTool</mainClass>
+            <mainClass>ocl.cli.OCLCDTool</mainClass>
           </manifest>
         </archive>
       </configuration>

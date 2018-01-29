@@ -21,8 +21,7 @@ package ocl.monticoreocl;
 
 
 import de.se_rwth.commons.logging.Log;
-import ocl.monticoreocl.ocl.OCLCDTool;
-import org.junit.Ignore;
+import ocl.cli.OCLCDTool;
 import org.junit.Test;
 
 
