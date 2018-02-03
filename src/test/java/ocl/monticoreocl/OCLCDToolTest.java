@@ -24,12 +24,16 @@ import de.se_rwth.commons.logging.Log;
 import ocl.cli.OCLCDTool;
 import org.junit.Test;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 
 public class OCLCDToolTest {
 
     @Test
     public void cdToolTest() {
-        String parentpath = "D:\\6.Docs\\Git\\EmbeddedMontiArcProject\\OCL\\src\\test\\resources";
+
+        String parentpath = Paths.get("src/test/resources").toAbsolutePath().toString();
         String oclModel = "example.typeInferringModels.CDToolFile";
         //String oclModel = "example.OCLArtifactModel";
         String[] args = new String[]{"-path", parentpath, "-ocl", oclModel};
@@ -44,8 +48,8 @@ public class OCLCDToolTest {
     public void cdTool2Test() {
         String oclModel =
                 "\"package example.typeInferringModels;\n" +
-                "ocl CDToolFile {\n" +
-                "  context Auction a inv test:\n" +
+                "ocl cDToolFile {\n" +
+                "  context Auction a inv Test:\n" +
                 "      a.participants.size > 0;\n" +
                 "}\"";
         String cdModel =
@@ -58,7 +62,8 @@ public class OCLCDToolTest {
                         "    }\n" +
                         "    public class Set extends Collection {}\n  " +
                         "    public class Boolean {}\n" +
-                        "    public class Integer {}" +
+                        "    interface Number;\n" +
+                        "    class Integer implements Number {}\n" +
                         "    association participants [*] Auction (auctions) <-> (bidder) Person [*];\n" +
                         "}\"";
         String[] args = new String[]{"-ocl", oclModel, "-cd", cdModel};

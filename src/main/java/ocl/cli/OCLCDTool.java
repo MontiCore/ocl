@@ -29,13 +29,17 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolvingConfiguration;
+import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.CD4AnalysisLanguage;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
+import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
 import de.se_rwth.commons.logging.Log;
 import ocl.LogConfig;
 import ocl.monticoreocl.ocl._ast.ASTCompilationUnit;
+import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
+import ocl.monticoreocl.ocl._cocos.OCLCoCos;
 import ocl.monticoreocl.ocl._symboltable.OCLLanguage;
 import ocl.monticoreocl.ocl._symboltable.OCLSymbolTableCreator;
 import ocl.monticoreocl.ocl._visitors.CD4A2PlantUMLVisitor;
@@ -131,6 +135,8 @@ public class OCLCDTool {
             }
 
             oclSymbolTableCreator.createFromAST(astOCLCompilationUnit.get());
+            OCLCoCoChecker checker2 = OCLCoCos.createChecker();
+            checker2.checkAll(astOCLCompilationUnit.get());
             return astOCLCompilationUnit.get();
         } catch (IOException e) {
             e.printStackTrace();
@@ -161,6 +167,8 @@ public class OCLCDTool {
 
             if(astOCLCompilationUnit.isPresent()) {
                 astOCLCompilationUnit.get().accept(oclSymbolTableCreator);
+                OCLCoCoChecker checker = OCLCoCos.createChecker();
+                checker.checkAll(astOCLCompilationUnit.get());
                 return astOCLCompilationUnit.get();
             }
         } catch (RecognitionException e) {

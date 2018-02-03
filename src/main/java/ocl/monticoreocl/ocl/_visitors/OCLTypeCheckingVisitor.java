@@ -77,7 +77,9 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
         CDTypeSymbolReference rightType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getRightExpression(), scope);
 
         if (!leftType.getReferencedSymbol().isSameOrSuperType(rightType.getReferencedSymbol())) {
-            Log.error("0xCET01 left and right type of infix expression do not match: " + node.get_SourcePositionStart());
+            if (!rightType.getReferencedSymbol().isSameOrSuperType(leftType.getReferencedSymbol())) {
+                Log.error("0xCET01 left and right type of infix expression do not match: " + node.get_SourcePositionStart());
+            }
         }
     }
 
