@@ -34,7 +34,7 @@ public class ParameterDeclarationNameStartsWithLowerCaseLetter implements OCLAST
 		boolean startsWithUpperCase = Character.isUpperCase(parameterName.charAt(0));
 
 		if (startsWithUpperCase) {
-			Log.error(String.format("0xOCL03 parameter name" + " '" + astParameterDeclaration.getName() + "' " + "cannot be written in upper-case letters."),
+			Log.error(String.format("0xOCL06 parameter name '%s' must start in lower-case.", parameterName),
 					astParameterDeclaration.get_SourcePositionStart());
 		}
 	}

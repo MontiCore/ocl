@@ -30,7 +30,7 @@ public class ConstructorNameStartsWithCapitalLetter implements OCLASTOCLConstruc
 	@Override
 	public void check(ASTOCLConstructorSignature astConstructorSig){
 		if (Character.isLowerCase(astConstructorSig.getReferenceType().charAt(0))) {
-			Log.error(String.format("0xOCL10 constructor name '%s' after keyword 'new' cannot start in lower-case.", astConstructorSig.getReferenceType()),
+			Log.warn(String.format("0xOCL01 constructor name '%s' after keyword 'new' should not start in lower-case.", astConstructorSig.getReferenceType()),
 					astConstructorSig.get_SourcePositionStart());
 		}
 	}

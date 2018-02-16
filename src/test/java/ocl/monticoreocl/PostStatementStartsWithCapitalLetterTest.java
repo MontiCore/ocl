@@ -57,7 +57,7 @@ public class PostStatementStartsWithCapitalLetterTest extends AbstractOCLTest {
 	  @Test
 	  public void invalidPostStatementNameTest() {
 	    String modelName = "example.cocos.invalid.invalidPostStatementName";
-	    String errorCode = "0xOCL03";
+	    String errorCode = "0xOCL07";
 	    
 	    Collection<Finding> expectedErrors = Arrays
 	        .asList(

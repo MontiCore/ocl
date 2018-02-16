@@ -33,8 +33,8 @@ public class FileNameStartsWithLowerCaseLetter implements OCLASTOCLFileCoCo {
 
 		if (startsWithUpperCase) {
 			// Issue warning...
-			Log.error(
-					String.format("0xAUT02 State name '%s' should start with a capital letter.", fileName),
+			Log.warn(
+					String.format("0xOCL02 file name '%s' should not start with a capital letter.", fileName),
 					astFile.get_SourcePositionStart());
 		}
 	}

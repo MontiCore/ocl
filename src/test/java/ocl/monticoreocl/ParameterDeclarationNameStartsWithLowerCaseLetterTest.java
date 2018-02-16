@@ -57,11 +57,11 @@ public class ParameterDeclarationNameStartsWithLowerCaseLetterTest extends Abstr
 	  @Test
 	  public void invalidParameterDeclarationNameTest() {
 	    String modelName = "example.cocos.invalid.invalidParameterDeclarationName";
-	    String errorCode = "0xOCL03";
+	    String errorCode = "0xOCL06";
 	    
 	    Collection<Finding> expectedErrors = Arrays
 	        .asList(
-	       Finding.error(errorCode + " " + "parameter name 'Name' cannot be written in upper-case letters.",
+	       Finding.error(errorCode + " parameter name 'Name' must start in lower-case.",
 	        	            new SourcePosition(2, 39))  
 	        );
 		  testModelForErrors(PARENT_DIR, modelName, expectedErrors);

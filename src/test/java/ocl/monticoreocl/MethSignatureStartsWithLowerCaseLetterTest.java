@@ -35,7 +35,7 @@ import de.se_rwth.commons.logging.Log;
 import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
 import ocl.monticoreocl.ocl._cocos.OCLCoCos;
 
-public class MethSignatureStartsWithCapitalLetterTest extends AbstractOCLTest {
+public class MethSignatureStartsWithLowerCaseLetterTest extends AbstractOCLTest {
 
 	@Override
 	protected OCLCoCoChecker getChecker() {

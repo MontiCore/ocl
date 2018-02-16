@@ -53,11 +53,11 @@ public class FileNameStartsWithLowerCaseLetterTest extends AbstractOCLTest {
 	  @Test
 	  public void invalidFileNameTest() {
 	    String modelName = "example.cocos.invalid.invalidFileName";
-	    String errorCode = "0xAUT02";
+	    String errorCode = "0xOCL02";
 	    
 	    Collection<Finding> expectedErrors = Arrays
 	        .asList(
-	        Finding.error(errorCode + " State name 'Association1' should start with a capital letter.",
+	        Finding.error(errorCode + " file name 'Association1' should not start with a capital letter.",
 	            new SourcePosition(1, 0))
 	        );
 	    testModelForErrors(PARENT_DIR, modelName, expectedErrors);

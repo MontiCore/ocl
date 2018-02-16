@@ -1,7 +1,7 @@
 import example.CDs.AuctionCD.*;
 import example.CDs.DefaultTypes.*;
 
-ocl types {
-  inv Test :
+ocl validType {
+  inv Test:
      10 m/s == 10m / 1s;
 }

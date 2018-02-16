@@ -54,11 +54,11 @@ public class ConstructorNameStartsWithCapitalLetterTest extends AbstractOCLTest 
 	  @Test
 	  public void invalidConstructorSignatureNameTest() {
 	    String modelName = "example.cocos.invalid.invalidConstructorName";
-	    String errorCode = "0xOCL10";
+	    String errorCode = "0xOCL01";
 	    
 	    Collection<Finding> expectedErrors = Arrays
 	        .asList(
-	        Finding.error(errorCode + " constructor name 'auction' after keyword 'new' cannot start in lower-case.",
+	        Finding.error(errorCode + " constructor name 'auction' after keyword 'new' should not start in lower-case.",
 	            new SourcePosition(2,10))
 	        );
 		  testModelForErrors(PARENT_DIR, modelName, expectedErrors);

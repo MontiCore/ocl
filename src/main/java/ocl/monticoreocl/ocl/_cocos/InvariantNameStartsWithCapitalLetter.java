@@ -30,7 +30,8 @@ public class InvariantNameStartsWithCapitalLetter implements OCLASTOCLInvariantC
 	@Override
 	public void check(ASTOCLInvariant astInv){
 		if (astInv.nameIsPresent() && Character.isLowerCase(astInv.getName().get().charAt(0))) {
-			Log.error(String.format("0xOCL02 invariant name" + " '" + astInv.getName().get() + "' " + "cannot start in lower-case."),
+			Log.warn(
+					String.format("0xOCL03 invariant name '%s' should start with a capital letter.", astInv.getName().get()),
 					astInv.get_SourcePositionStart());
 		}
 

@@ -25,13 +25,13 @@ import ocl.monticoreocl.ocl._cocos.OCLASTOCLMethodSignatureCoCo;
 
 import java.util.ArrayList;
 
-public class MethSignatureStartsWithCapitalLetter implements OCLASTOCLMethodSignatureCoCo {
+public class MethSignatureStartsWithLowerCaseLetter implements OCLASTOCLMethodSignatureCoCo {
 
 	@Override
 	public void check(ASTOCLMethodSignature astMethSig){
 		String methodName = astMethSig.getMethodName().getParts().get(1);
 		if (!Character.isLowerCase(methodName.charAt(0))) {
-			Log.error(String.format("0xOCL10 Method '%s' must start in lower-case.", astMethSig.getMethodName()),
+			Log.error(String.format("0xOCL05 Method '%s' must start in lower-case.", astMethSig.getMethodName()),
 					astMethSig.get_SourcePositionStart());
 		}
 	}

@@ -53,11 +53,11 @@ public class InvariantNameStartsWithCapitalLetterTest extends AbstractOCLTest{
 	  @Test
 	  public void invalidInvariantNameTest() {
 	    String modelName = "example.cocos.invalid.invalidInvariantName";
-	    String errorCode = "0xOCL02";
+	    String errorCode = "0xOCL03";
 	    
 	    Collection<Finding> expectedErrors = Arrays
 	        .asList(
-	        Finding.error(errorCode + " " + "invariant name 'nameInv' cannot start in lower-case.",
+	        Finding.error(errorCode + " invariant name 'nameInv' should start with a capital letter.",
 	            new SourcePosition(2, 2))
 	        );
 		  testModelForErrors(PARENT_DIR, modelName, expectedErrors);

@@ -52,7 +52,7 @@ public class TypesCorrectInExpressionsTest extends AbstractOCLTest {
     }
 
     @Test
-    public void invalidConstructorSignatureNameTest() {
+    public void invalidTypesTest() {
         String modelName = "example.cocos.invalid.invalidTypes";
         String errorCode = "0xCET01";
 
@@ -67,7 +67,7 @@ public class TypesCorrectInExpressionsTest extends AbstractOCLTest {
 
 
     @Test
-    public void validConstructorSignatureNameTest() {
+    public void validTypesTest() {
 
         String modelName = "example.cocos.valid.validTypes";
         testModelNoErrors(PARENT_DIR, modelName);

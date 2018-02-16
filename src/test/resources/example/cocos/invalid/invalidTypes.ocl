@@ -1,7 +1,7 @@
 import example.CDs.AuctionCD.*;
 import example.CDs.DefaultTypes.*;
 
-ocl types {
+ocl invalidTypes {
   inv Test :
      10 == 10m;
 }
