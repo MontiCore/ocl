@@ -58,7 +58,7 @@ public class TypesCorrectInExpressionsTest extends AbstractOCLTest {
 
         Collection<Finding> expectedErrors = Arrays
                 .asList(
-                        Finding.error(errorCode + " left and right type of infix expression do not match: StringReader:<6,8>",
+                        Finding.error(errorCode + " Types mismatch on infix expression at StringReader:<6,8> left: Number right: Length",
                                 new SourcePosition(6,8))
                 );
         testModelForErrors(PARENT_DIR, modelName, expectedErrors);

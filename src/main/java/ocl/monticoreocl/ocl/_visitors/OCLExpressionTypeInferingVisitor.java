@@ -433,7 +433,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
             if(!newType.isPresent()) {
                 Log.error("0xOCLI3 Could not resolve field/method/association: " + name + " on " + previousType.getName() + " at " + node.get_SourcePositionStart());
-                return previousType;
+                return createTypeRef("Class", node);
             }
 
             return handleNames(names, newType.get(), node);

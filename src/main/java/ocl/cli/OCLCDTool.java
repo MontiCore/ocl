@@ -56,6 +56,8 @@ public class OCLCDTool {
 
     public static void main(String[] args) throws Exception{
 
+        Log.enableFailQuick(false);
+
         Options options = new Options();
 
         Option path = new Option("path", "project-path", true, "absolute path to project, " +
@@ -97,7 +99,11 @@ public class OCLCDTool {
             printHelp(options);
         }
 
-        System.out.println("OCL Model loaded successfully!");
+        if (Log.getErrorCount() > 0) {
+            System.out.println("There are errors!");
+        } else {
+            System.out.println("OCL Model loaded successfully!");
+        }
     }
 
     protected static ASTCompilationUnit loadOclFromString (String oclModel, String cdModel) {

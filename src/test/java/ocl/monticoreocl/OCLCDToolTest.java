@@ -22,6 +22,7 @@ package ocl.monticoreocl;
 
 import de.se_rwth.commons.logging.Log;
 import ocl.cli.OCLCDTool;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -42,6 +43,7 @@ public class OCLCDToolTest {
         } catch (Exception e) {
             Log.error(e.getMessage());
         }
+        Assert.assertEquals(0, Log.getErrorCount());
     }
 
     @Test
@@ -50,7 +52,8 @@ public class OCLCDToolTest {
                 "\"package example.typeInferringModels;\n" +
                 "ocl cDToolFile {\n" +
                 "  context Auction a inv Test:\n" +
-                "      a.participants.size > 0;\n" +
+                "      a.participants.size > 0s ;\n" +
+                "      a.participants.sze > 0 ;\n" +
                 "}\"";
         String cdModel =
                 "\"package example.CDs;\n" +
@@ -61,7 +64,8 @@ public class OCLCDToolTest {
                         "      int size();\n" +
                         "    }\n" +
                         "    public class Set extends Collection {}\n  " +
-                        "    public class Boolean {}\n" +
+                        "    public class Length {}\n" +
+                        "    public class Class {}\n" +
                         "    interface Number;\n" +
                         "    class Integer implements Number {}\n" +
                         "    association participants [*] Auction (auctions) <-> (bidder) Person [*];\n" +
@@ -72,6 +76,8 @@ public class OCLCDToolTest {
         } catch (Exception e) {
             Log.error(e.getMessage());
         }
+        Assert.assertEquals(4, Log.getErrorCount());
+
     }
 
 }
