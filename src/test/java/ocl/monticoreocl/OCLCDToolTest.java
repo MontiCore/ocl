@@ -35,7 +35,7 @@ public class OCLCDToolTest {
     public void cdToolTest() {
 
         String parentpath = Paths.get("src/test/resources").toAbsolutePath().toString();
-        String oclModel = "example.typeInferringModels.CDToolFile";
+        String oclModel = "example.typeInferringModels.cdToolFile";
         //String oclModel = "example.OCLArtifactModel";
         String[] args = new String[]{"-path", parentpath, "-ocl", oclModel};
         try {

@@ -57,6 +57,7 @@ public class OCLCDTool {
     public static void main(String[] args) throws Exception{
 
         Log.enableFailQuick(false);
+        //Log.debug("s","d");
 
         Options options = new Options();
 
@@ -110,7 +111,7 @@ public class OCLCDTool {
         final OCLLanguage ocllang = new OCLLanguage();
         final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();
 
-        LogConfig.init();
+        //LogConfig.init();
         try {
             ModelPath modelPath = new ModelPath();
 
@@ -156,7 +157,7 @@ public class OCLCDTool {
         final OCLLanguage ocllang = new OCLLanguage();
         final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();
 
-        LogConfig.init();
+        //LogConfig.init();
         try {
             ModelPath modelPath = new ModelPath(Paths.get(parentDirectory));
 

@@ -48,7 +48,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
 	@Override
 	public void visit(final ASTCompilationUnit compilationUnit) {
-		Log.debug("Building Symboltable for OCL: " + compilationUnit.getOCLFile().getFileName(), OCLSymbolTableCreator.class.getSimpleName());
+		String oclFile = compilationUnit.getOCLFile().getFileName().isPresent() ? compilationUnit.getOCLFile().getFileName().get() : "oclFile";
+		Log.debug("Building Symboltable for OCL: " + oclFile, OCLSymbolTableCreator.class.getSimpleName());
 		String compilationUnitPackage = Names.getQualifiedName(compilationUnit.getPackage());
 
 		// imports
@@ -68,19 +69,21 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 	public void endVisit(final ASTCompilationUnit compilationUnit) {
 		setEnclosingScopeOfNodes(compilationUnit);
 		Log.debug("Setting enclosingScope: " + compilationUnit, OCLSymbolTableCreator.class.getSimpleName());
-		Log.debug("endVisit of " + compilationUnit.getOCLFile().getFileName(), OCLSymbolTableCreator.class.getSimpleName());
+		String oclFile = compilationUnit.getOCLFile().getFileName().isPresent() ? compilationUnit.getOCLFile().getFileName().get() : "oclFile";
+		Log.debug("endVisit of " + oclFile, OCLSymbolTableCreator.class.getSimpleName());
 	}
 
 	@Override
 	public void visit(final ASTOCLFile astFile) {
-		final String oclName = astFile.fileNameIsPresent() ? astFile.getFileName().get() : "oclFile";
-		final OCLFileSymbol oclSymbol = new OCLFileSymbol(oclName);
+		final String oclFile = astFile.fileNameIsPresent() ? astFile.getFileName().get() : "oclFile";
+		final OCLFileSymbol oclSymbol = new OCLFileSymbol(oclFile);
 		addToScopeAndLinkWithNode(oclSymbol, astFile);
 	}
 
 	@Override
 	public void endVisit(final ASTOCLFile astFile) {
-		Log.debug("Finished build of symboltable for OCL: " + astFile.getFileName(), OCLSymbolTableCreator.class.getSimpleName());
+		String oclFile = astFile.fileNameIsPresent() ? astFile.getFileName().get() : "oclFile";
+		Log.debug("Finished build of symboltable for OCL: " + oclFile, OCLSymbolTableCreator.class.getSimpleName());
 		removeCurrentScope();
 	}
 

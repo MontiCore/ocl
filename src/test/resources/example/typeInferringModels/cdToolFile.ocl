@@ -1,12 +1,8 @@
-package example.typeInferringModels;
-
 import example.CDs.AuctionCD.*;
 import example.CDs.DefaultTypes.*;
 
-ocl cDToolFile {
-  context Auction a inv Test:
+context Auction a inv:
     let
         p = a.participants;
     in
-        p.size > 0;
-}
+        p.size > 0
