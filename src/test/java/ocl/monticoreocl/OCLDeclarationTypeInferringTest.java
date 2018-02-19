@@ -105,11 +105,11 @@ public class OCLDeclarationTypeInferringTest extends AbstractOCLTest {
 
         OCLVariableDeclarationSymbol declVarSymbol2 = oclInvariantSymbol.getOCLVariableDecl("number").orElse(null);
         assertNotNull(declVarSymbol2);
-        assertEquals("Number", declVarSymbol2.getVarTypeName());
+        assertEquals("Double", declVarSymbol2.getVarTypeName());
 
         OCLVariableDeclarationSymbol declVarSymbol3 = oclInvariantSymbol.getOCLVariableDecl("i").orElse(null);
         assertNotNull(declVarSymbol3);
-        assertEquals("Number", declVarSymbol3.getVarTypeName());
+        assertEquals("Integer", declVarSymbol3.getVarTypeName());
 
         OCLVariableDeclarationSymbol declVarSymbol4 = oclInvariantSymbol.getOCLVariableDecl("s").orElse(null);
         assertNotNull(declVarSymbol4);
@@ -248,9 +248,9 @@ public class OCLDeclarationTypeInferringTest extends AbstractOCLTest {
         OCLVariableDeclarationSymbol declVarSymbol2 = oclInvariantSymbol.getOCLVariableDecl("comp2").orElse(null);
         assertNotNull(declVarSymbol2);
         assertEquals("Set", declVarSymbol2.getVarTypeName());
-        assertEquals("Set<Number>", declVarSymbol2.getType().getStringRepresentation());
+        assertEquals("Set<Integer>", declVarSymbol2.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol2.getType().getActualTypeArguments().size());
-        assertEquals("Number", declVarSymbol2.getType().getActualTypeArguments().get(0).getType().toString());
+        assertEquals("Integer", declVarSymbol2.getType().getActualTypeArguments().get(0).getType().toString());
 
         OCLVariableDeclarationSymbol declVarSymbol3 = oclInvariantSymbol.getOCLVariableDecl("comp3").orElse(null);
         assertNotNull(declVarSymbol3);
