@@ -57,7 +57,6 @@ public class OCLCDTool {
     public static void main(String[] args) throws Exception{
 
         Log.enableFailQuick(false);
-        //Log.debug("s","d");
 
         Options options = new Options();
 
@@ -74,6 +73,9 @@ public class OCLCDTool {
         Option printcd = new Option("printCD", "classdiagram", true, "input classdiagramm");
         options.addOption(printcd);
 
+        Option verbose = new Option("verbose", "verbose", false, "sets verbose logging");
+        options.addOption(verbose);
+
         CommandLineParser parser = new BasicParser();
         CommandLine cmd;
 
@@ -89,11 +91,12 @@ public class OCLCDTool {
         String oclModel = cmd.getOptionValue("ocl");
         String cdModel = cmd.getOptionValue("cd");
         String cdString = cmd.getOptionValue("printcd");
+        Boolean verb = cmd.hasOption("verbose");
 
         if (cmd.hasOption("path") && cmd.hasOption("ocl") && isQualifiedName(oclModel)) {
-            loadOclModel(parentDir, oclModel);
+            loadOclModel(parentDir, oclModel, verb);
         } else if (cmd.hasOption("ocl") && cmd.hasOption("cd") && !isQualifiedName(oclModel) && !isQualifiedName(cdModel)) {
-            loadOclFromString(oclModel, cdModel);
+            loadOclFromString(oclModel, cdModel, verb);
         } else if (cmd.hasOption("printcd")) {
             printCD2PlantUML(cdString);
         } else {
@@ -107,11 +110,14 @@ public class OCLCDTool {
         }
     }
 
-    protected static ASTCompilationUnit loadOclFromString (String oclModel, String cdModel) {
+    protected static ASTCompilationUnit loadOclFromString (String oclModel, String cdModel, Boolean verbose) {
         final OCLLanguage ocllang = new OCLLanguage();
         final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();
 
-        //LogConfig.init();
+        if(!verbose) {
+            LogConfig.init();
+        }
+
         try {
             ModelPath modelPath = new ModelPath();
 
@@ -153,11 +159,14 @@ public class OCLCDTool {
 
 
 
-    protected static ASTCompilationUnit loadOclModel(String parentDirectory, String modelFullQualifiedFilename) {
+    protected static ASTCompilationUnit loadOclModel(String parentDirectory, String modelFullQualifiedFilename, Boolean verbose) {
         final OCLLanguage ocllang = new OCLLanguage();
         final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();
 
-        //LogConfig.init();
+        if(!verbose) {
+            LogConfig.init();
+        }
+
         try {
             ModelPath modelPath = new ModelPath(Paths.get(parentDirectory));
 
