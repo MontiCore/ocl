@@ -19,8 +19,12 @@
  */
 package ocl.cli;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 
 import de.monticore.ModelingLanguageFamily;
@@ -29,10 +33,8 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolvingConfiguration;
-import de.monticore.umlcd4a.CD4ACoCos;
 import de.monticore.umlcd4a.CD4AnalysisLanguage;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
-import de.monticore.umlcd4a.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
 import de.se_rwth.commons.logging.Log;
@@ -70,8 +72,10 @@ public class OCLCDTool {
         Option ocl = new Option("ocl", "ocl-file", true, "input ocl as qualified name or string");
         options.addOption(ocl);
 
-        Option printcd = new Option("printCD", "classdiagram", true, "input classdiagramm");
-        options.addOption(printcd);
+        Option printSrc = new Option("printSrc", "classdiagram", true, "input classdiagram as string");
+        options.addOption(printSrc);
+        Option printTgt = new Option("printTgt", "classdiagram", true, "output path for visualized classdiagram");
+        options.addOption(printTgt);
 
         Option verbose = new Option("verbose", "verbose", false, "sets verbose logging");
         options.addOption(verbose);
@@ -90,15 +94,16 @@ public class OCLCDTool {
         String parentDir = cmd.getOptionValue("path");
         String oclModel = cmd.getOptionValue("ocl");
         String cdModel = cmd.getOptionValue("cd");
-        String cdString = cmd.getOptionValue("printcd");
+        String cdString = cmd.getOptionValue("printSrc");
+        String cdPath = cmd.getOptionValue("printTgt");
         Boolean verb = cmd.hasOption("verbose");
 
         if (cmd.hasOption("path") && cmd.hasOption("ocl") && isQualifiedName(oclModel)) {
             loadOclModel(parentDir, oclModel, verb);
         } else if (cmd.hasOption("ocl") && cmd.hasOption("cd") && !isQualifiedName(oclModel) && !isQualifiedName(cdModel)) {
             loadOclFromString(oclModel, cdModel, verb);
-        } else if (cmd.hasOption("printcd")) {
-            printCD2PlantUML(cdString);
+        } else if (cmd.hasOption("printSrc") && cmd.hasOption("printTgt")) {
+            printCD2PlantUML(cdString, cdPath);
         } else {
             printHelp(options);
         }
@@ -214,13 +219,22 @@ public class OCLCDTool {
         return name.matches("^(\\w+\\.)*\\w+$");
     }
 
-    protected static void printCD2PlantUML(String cdString) {
+    protected static void printCD2PlantUML(String cdString, String cdPath) {
         IndentPrinter printer = new IndentPrinter();
         CD4A2PlantUMLVisitor cdVisitor = new CD4A2PlantUMLVisitor(printer);
         CD4AnalysisParser parser = new CD4AnalysisParser();
+        String plantUMLString = "@startuml\n@enduml";
         try {
-            ASTCDCompilationUnit astCD = parser.parse(cdString).orElse(null);
-            System.out.println(cdVisitor.print2PlantUML(astCD));
+            Optional<ASTCDCompilationUnit> astCD = parser.parse_String(cdString);
+            if (astCD.isPresent()) {
+                cdVisitor.print2PlantUML(astCD.get());
+                plantUMLString = printer.getContent();
+            }
+
+            try (PrintWriter out = new PrintWriter(cdPath, "UTF-8")) {
+                out.write(plantUMLString);
+            }
+
         } catch (IOException e) {
             Log.error(e.getMessage());
         }

@@ -24,13 +24,19 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.se_rwth.commons.logging.Log;
+import ocl.LogConfig;
+import ocl.cli.OCLCDTool;
 import ocl.monticoreocl.ocl._visitors.CD4A2PlantUMLVisitor;
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;;
 
 public class CD4A2PlantUmlTest {
 
@@ -56,5 +62,29 @@ public class CD4A2PlantUmlTest {
         } catch (IOException e) {
             Log.error(e.getMessage());
         }
+    }
+
+    @Test
+    public void cd4a2plantUml2Test() {
+        String cdString = "classdiagram plantUMLTest {\n" +
+                "\n" +
+                "  public class A {}\n" +
+                "  public class B extends A{}\n" +
+                "  public class C {}\n" +
+                "  public class D extends B{}\n" +
+                "\n" +
+                "  association [*] A <-> B [0..1];\n" +
+                "  association [0..1] C <-> D [*];\n" +
+                "  association A <- D [*];\n" +
+                "\n" +
+                "}";
+        String[] args = new String[]{"-printSrc", cdString, "-printTgt", "target/plantuml.txt"};
+        try {
+            OCLCDTool.main(args);
+        } catch (Exception e) {
+            Log.error(e.getMessage());
+        }
+        File plantFile = Paths.get("target/plantuml.txt").toFile();
+        assertTrue(plantFile.exists());
     }
 }
