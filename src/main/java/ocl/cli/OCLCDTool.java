@@ -56,7 +56,7 @@ import org.apache.commons.cli.ParseException;
 
 public class OCLCDTool {
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
 
         Log.enableFailQuick(false);
 
@@ -121,11 +121,11 @@ public class OCLCDTool {
 
     }
 
-    protected static ASTCompilationUnit loadOclFromString (String oclModel, String cdModel, Boolean verbose) {
+    protected static ASTCompilationUnit loadOclFromString(String oclModel, String cdModel, Boolean verbose) {
         final OCLLanguage ocllang = new OCLLanguage();
         final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();
 
-        if(!verbose) {
+        if (!verbose) {
             LogConfig.init();
         }
 
@@ -169,12 +169,11 @@ public class OCLCDTool {
     }
 
 
-
     protected static ASTCompilationUnit loadOclModel(String parentDirectory, String modelFullQualifiedFilename, Boolean verbose) {
         final OCLLanguage ocllang = new OCLLanguage();
         final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();
 
-        if(!verbose) {
+        if (!verbose) {
             LogConfig.init();
         }
 
@@ -192,7 +191,7 @@ public class OCLCDTool {
             OCLSymbolTableCreator oclSymbolTableCreator = ocllang.getSymbolTableCreator(resolvingConfiguration, globalScope).get();
             Optional<ASTCompilationUnit> astOCLCompilationUnit = ocllang.getModelLoader().loadModel(modelFullQualifiedFilename, modelPath);
 
-            if(astOCLCompilationUnit.isPresent()) {
+            if (astOCLCompilationUnit.isPresent()) {
                 astOCLCompilationUnit.get().accept(oclSymbolTableCreator);
                 OCLCoCoChecker checker = OCLCoCos.createChecker();
                 checker.checkAll(astOCLCompilationUnit.get());
@@ -226,24 +225,33 @@ public class OCLCDTool {
     }
 
     protected static void printCD2PlantUML(String cdString, String cdPath) {
-        System.out.println("Printing plantuml cd to: " + Paths.get(cdPath).toAbsolutePath());
+        Log.debug("OCLCDTool","Printing plantuml cd to: " + Paths.get(cdPath).toAbsolutePath());
+
+        String plantUMLString = printCD2PlantUML(cdString);
+
+        try (PrintWriter out = new PrintWriter(cdPath, "UTF-8")) {
+            out.write(plantUMLString);
+        } catch (IOException e) {
+            Log.error(e.getMessage());
+        }
+    }
+
+    protected static String printCD2PlantUML(String cdString) {
         IndentPrinter printer = new IndentPrinter();
         CD4A2PlantUMLVisitor cdVisitor = new CD4A2PlantUMLVisitor(printer);
         CD4AnalysisParser parser = new CD4AnalysisParser();
         String plantUMLString = "@startuml\n@enduml";
+
         try {
             Optional<ASTCDCompilationUnit> astCD = parser.parse_String(cdString);
             if (astCD.isPresent()) {
                 cdVisitor.print2PlantUML(astCD.get());
                 plantUMLString = printer.getContent();
             }
-
-            try (PrintWriter out = new PrintWriter(cdPath, "UTF-8")) {
-                out.write(plantUMLString);
-            }
-
         } catch (IOException e) {
             Log.error(e.getMessage());
         }
+
+        return plantUMLString;
     }
 }
