@@ -100,19 +100,25 @@ public class OCLCDTool {
 
         if (cmd.hasOption("path") && cmd.hasOption("ocl") && isQualifiedName(oclModel)) {
             loadOclModel(parentDir, oclModel, verb);
+            if (Log.getErrorCount() > 0) {
+                System.out.println("There are errors!");
+            } else {
+                System.out.println("OCL Model loaded successfully!");
+            }
         } else if (cmd.hasOption("ocl") && cmd.hasOption("cd") && !isQualifiedName(oclModel) && !isQualifiedName(cdModel)) {
             loadOclFromString(oclModel, cdModel, verb);
+            if (Log.getErrorCount() > 0) {
+                System.out.println("There are errors!");
+            } else {
+                System.out.println("OCL Model loaded successfully!");
+            }
         } else if (cmd.hasOption("printSrc") && cmd.hasOption("printTgt")) {
             printCD2PlantUML(cdString, cdPath);
         } else {
             printHelp(options);
         }
 
-        if (Log.getErrorCount() > 0) {
-            System.out.println("There are errors!");
-        } else {
-            System.out.println("OCL Model loaded successfully!");
-        }
+
     }
 
     protected static ASTCompilationUnit loadOclFromString (String oclModel, String cdModel, Boolean verbose) {
@@ -220,6 +226,7 @@ public class OCLCDTool {
     }
 
     protected static void printCD2PlantUML(String cdString, String cdPath) {
+        System.out.println("Printing plantuml cd to: " + Paths.get(cdPath).toAbsolutePath());
         IndentPrinter printer = new IndentPrinter();
         CD4A2PlantUMLVisitor cdVisitor = new CD4A2PlantUMLVisitor(printer);
         CD4AnalysisParser parser = new CD4AnalysisParser();

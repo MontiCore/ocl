@@ -23,6 +23,7 @@ package ocl.monticoreocl;
 import de.se_rwth.commons.logging.Log;
 import ocl.cli.OCLCDTool;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.nio.file.Path;
@@ -78,6 +79,21 @@ public class OCLCDToolTest {
         }
         Assert.assertEquals(4, Log.getErrorCount());
 
+    }
+
+    @Ignore
+    @Test
+    public void cdTool3Test() {
+
+        String parentpath = Paths.get("src/test/resources").toAbsolutePath().toString();
+        String oclModel = "example.ArtifactModel_OCL";
+        String[] args = new String[]{"-path", parentpath, "-ocl", oclModel};
+        try {
+            OCLCDTool.main(args);
+        } catch (Exception e) {
+            Log.error(e.getMessage());
+        }
+        Assert.assertEquals(0, Log.getErrorCount());
     }
 
 }
