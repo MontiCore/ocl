@@ -229,8 +229,11 @@ public class OCLCDTool {
 
         String plantUMLString = printCD2PlantUML(cdString);
 
-        try (PrintWriter out = new PrintWriter(cdPath, "UTF-8")) {
-            out.write(plantUMLString);
+        try {
+            File newTextFile = new File(cdPath);
+            FileWriter fw = new FileWriter(newTextFile);
+            fw.write(plantUMLString);
+            fw.close();
         } catch (IOException e) {
             Log.error(e.getMessage());
         }
