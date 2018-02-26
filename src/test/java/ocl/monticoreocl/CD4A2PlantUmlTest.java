@@ -78,7 +78,7 @@ public class CD4A2PlantUmlTest {
                 "  association A <- D [*];\n" +
                 "\n" +
                 "}";
-        String[] args = new String[]{"-printSrc", cdString, "-printTgt", "target/plantuml.txt", "-showAttributes", "-showAssociationNames", ""};
+        String[] args = new String[]{"-printSrc", cdString, "-printTgt", "target/plantuml.txt", "-showAttributes", "-showNoCardinality", ""};
         try {
             OCLCDTool.main(args);
         } catch (Exception e) {

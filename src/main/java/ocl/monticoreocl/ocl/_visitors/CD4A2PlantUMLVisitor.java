@@ -128,7 +128,7 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
     public void handle(ASTCDAssociation node) {
         getPrinter().print(node.getLeftReferenceName().toString() + " ");
 
-        if(node.leftCardinalityIsPresent() || node.leftRoleIsPresent()) {
+        if((showRoles || showCard) && (node.leftCardinalityIsPresent() || node.leftRoleIsPresent())) {
             getPrinter().print("\"");
             if(showRoles && node.leftRoleIsPresent())
                 getPrinter().print("(" + node.getLeftRole().get() + ") ");
@@ -147,7 +147,7 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
             getPrinter().print("--");
         }
 
-        if(node.rightCardinalityIsPresent() || node.rightRoleIsPresent()) {
+        if((showRoles || showCard) && (node.rightCardinalityIsPresent() || node.rightRoleIsPresent())) {
             getPrinter().print(" \"");
             if(showRoles && node.rightRoleIsPresent())
                 getPrinter().print("(" + node.getRightRole().get() + ") ");
