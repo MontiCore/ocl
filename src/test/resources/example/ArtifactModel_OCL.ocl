@@ -1,0 +1,232 @@
+package example;
+
+import example.CDforOCLCheck.*;
+import example.CDs.DefaultTypes.*;
+
+OCL OCLArtifactModel {
+
+  context Artifact inv: 
+    name == ((nameExtension == "") ? simpleName :
+      simpleName + "." + nameExtension);
+
+  context Artifact a inv: 
+    !a.produces**.contains(a);
+
+  context Artifact inv:     
+    isRoot <=> parent.isAbsent &&
+    !isRoot implies {p in parent** | p.isRoot}.size == 1;
+
+  context Artifact inv: 
+    fullName == (isRoot ? "/" :
+                (parent.isRoot ? "/" + name :
+                 parent.fullName + "/" + name));
+
+  context Artifact a, Artifact b inv: 
+    a.name == b.name && a.parent == b.parent
+      implies a == b;
+
+  context Directory inv: 
+    nameExtension == "";
+
+  context Artifact inv: 
+    isRoot implies (this in Directory);
+
+  context Artifact inv: 
+    isRoot <=> simpleName == "/";
+
+  context Artifact inv: 
+    name.contains("/") implies isRoot;
+
+  context JavaArtifact inv: 
+    refersTo.containsAll(reliesOnJavaArtifact);
+
+  context JavaSourceFile inv: 
+    reliesOnJavaArtifact.containsAll(imports);
+
+  context JavaSourceFile inv: 
+    produces.containsAll(compiledTo);
+
+  context JavaSourceFile inv: 
+    nameExtension == "java";
+
+  context JavaClassFile inv: 
+    nameExtension == "class";
+
+  context JavaArchive inv:
+    nameExtension == "jar";
+
+  context Pkg inv: 
+    !name.contains(".");
+
+  context Pkg inv:     
+    isRoot <=> parent.isAbsent &&
+    !isRoot implies {p in parent** | p.isRoot}.size == 1;    
+
+  context Pkg inv: 
+    !isRoot implies
+      fullName == parent.fullName + "." + name;
+
+  context Pkg a, Pkg b inv: 
+    a.parent == b.parent && a.name == b.name implies a == b;
+
+  context AType inv:     
+    isInnerAType <=> !containingAType.isAbsent &&
+    isInnerAType implies 
+      {t in containingAType** | t.isInnerAType}.size == 1;
+
+  context AType inv: 
+    name == (isInnerAType ?
+      containingAType.name + "." + simpleName : simpleName);
+
+  context AType inv: 
+    fullName == (pkg.isRoot ? name :
+      pkg.fullName + "." + simpleName);
+
+  context JavaSourceFile inv: 
+    defines == compiledTo.defines;
+
+  context JavaSourceFile inv: 
+    { t in defines | !t.isInnerAType }.size == 1;
+
+  context JavaArtifact a1, a2, 
+    AType t1 in a1.defines, AType t2 in a2.defines inv:
+      t1.reliesOn.contains(t2) implies 
+        a1 == a2 || a1.reliesOn.contains(a2);
+
+  context JavaArtifact a, AType t in a.defines inv: 
+    !t.isInnerAType implies t.simpleName == a.simpleName;
+
+  context JavaArtifact inv: 
+    parent.fullName.replaceAll("/", ".").endsWith(belongsTo.fullName);
+
+  context JavaSourceFile inv: 
+    forall n in { t.fullName.replaceAll(".", "/") |
+      t in defines, !t.isInnerAType }:
+        fullName.endsWith(n + ".java");
+
+  context JavaClassFile inv: 
+    parent.fullName.replaceAll("/", ".")
+      .endsWith(defines.pkg.fullName);
+
+  context JavaClassFile inv: 
+    simpleName == defines.name.replaceAll(".", "$");
+
+  context Language inv: 
+    name != "";
+
+  context GrammarFile inv:
+    nameExtension == "mc4";
+
+  context GrammarFile inv: 
+    refersTo.containsAll(includes);
+
+  context CDModelFile inv: 
+    nameExtension == "cd";
+
+  context CDModelFile inv: 
+    reliesOn.containsAll(imports);
+
+  context CDModelFile inv: 
+    refersTo.containsAll(reliesOn);
+
+  context CDModelFile m1, m2, 
+    AType t1 in m1.defines, AType t2 in m2.defines inv:
+      ((t2 in t1.reliesOn) implies m1 == m2) || (m2 in m1.reliesOn);
+
+  context CDModelFile m, JavaArtifact a, 
+    AType t1 in m.defines, AType t2 in a.defines inv:
+      t2 in t1.reliesOn implies a in m.reliesOn;        
+
+  context FreeMarkerTemplate inv: 
+    nameExtension == "ftl";
+
+  context FreeMarkerTemplate inv: 
+    refersTo.containsAll(reliesOnTemplate);
+
+  context FreeMarkerTemplate inv: 
+    refersTo.containsAll(reliesOnJavaArtifact);
+
+  context JavaArtifact inv: 
+    refersTo.containsAll(reliesOnTemplate);
+
+  context Generator g, JavaArtifact a in g.consistsOf inv:  
+    g.template == g.uses.addAll(g.template.reliesOnTemplate**).addAll(a.reliesOnTemplate);
+
+  context Generator inv:  
+    consistsOf.contains(template);
+
+  context Generator inv:  
+    consistsOf.contains(template.reliesOnJavaArtifact);
+
+  context ExecutionProtocol p, int i,k inv: 
+    (0 <= k && k <= p.action.size && 0 <= i && i <= k) implies
+      p.action[i].start <= p.action[k].start;
+
+  context ExecutionProtocol p inv: 
+    p.action.nonEmpty implies (p.action.asSet == 
+      p.action[0].subaction**.asSet.add(action[0]));
+
+  context Action inv:  
+    start <= end;
+
+  context Event inv:  
+    start == end;
+
+  context Action a, Action s in a.subaction inv: 
+    a.start <= s.start && s.end <= a.end;
+
+  context ExecutionProtocol p, int i,k inv: 
+    (0 <= k && k <= p.action.size && 0 <= i && i <= k) implies
+      p.action[i].end <= p.action[k].start;
+
+  context ToolExecution inv:
+    input == { a in subaction** |
+      a in ArtifactRead || a in ArtifactExistenceCheck }.reads;
+
+  context ToolExecution inv:
+    output ==
+      { a in subaction** | a in ArtifactCreate }.creates;
+
+  context Artifact inv: 
+    creationDependency == output.input;
+
+  context Artifact inv:    
+    produces.containsAll(creationDependency);
+
+  context ToolExecution inv: 
+    contributesTo == sub.contributesTo;
+
+  context ToolExecution inv: 
+    contributesTo == output;
+
+  context TemplateExecution inv: 
+    contributesTo == sub.contributesTo.add(writesTo);
+
+  context JavaMethodCall inv: 
+    contributesTo == sub.contributesTo;
+
+  context ArtifactRead inv: 
+    contributesTo == {};
+
+  context ArtifactExistenceCheck inv: 
+    contributesTo == {};
+
+  context ArtifactCreate inv: 
+    contributesTo == {creates};
+
+  context WriteString inv: 
+    contributesTo == {writesTo};
+
+  context FreeMarkerTemplate inv: 
+    contributionFT == templateExecution.contributesTo;
+
+  context FreeMarkerTemplate inv: 
+    produces.containsAll(contributionFT);
+
+  context JavaClassFile inv: 
+    contributionJava == javaMethodCall.contributesTo;
+
+  context JavaClassFile inv: 
+    produces.containsAll(contributionJava);
+
+}

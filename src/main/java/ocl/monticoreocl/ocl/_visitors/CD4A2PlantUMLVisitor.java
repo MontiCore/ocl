@@ -32,8 +32,23 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
 
     protected CD4A2PlantUMLVisitor realThis;
     protected IndentPrinter printer;
+    protected Boolean showAtt, showAssoc, showRoles, showCard;
 
     public CD4A2PlantUMLVisitor(IndentPrinter printer) {
+        this.showAtt = false;
+        this.showAssoc = false;
+        this.showRoles = false;
+        this.showCard = true;
+        this.printer=printer;
+        realThis = this;
+    }
+
+    public CD4A2PlantUMLVisitor(IndentPrinter printer, Boolean showAtt, Boolean showAssoc,
+                                Boolean showRoles, Boolean showCard) {
+        this.showAtt = showAtt;
+        this.showAssoc = showAssoc;
+        this.showRoles = showRoles;
+        this.showCard = showCard;
         this.printer=printer;
         realThis = this;
     }
@@ -80,43 +95,88 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
 
     @Override
     public void handle(ASTCDClass node) {
-        getPrinter().print("class " + node.getName() + "\n");
+        getPrinter().print("class " + node.getName());
+        if (showAtt && node.getCDAttributes().size() > 0) {
+            getPrinter().print(" {\n");
+            getPrinter().indent();
+            node.getCDAttributes().forEach(a -> a.accept(getRealThis()));
+            getPrinter().unindent();
+            getPrinter().print("}\n");
+        } else {
+            getPrinter().print("\n");
+        }
+    }
+
+    @Override
+    public void handle(ASTCDAttribute node) {
+        if(node.modifierIsPresent())
+            node.getModifier().get().accept(getRealThis());
+        getPrinter().print(node.printType() + " " + node.getName() + "\n");
+    }
+
+    @Override
+    public void handle(ASTModifier node) {
+        if(node.isPrivate())
+            getPrinter().print("-");
+        else if(node.isProtected())
+            getPrinter().print("#");
+        else if(node.isPublic())
+            getPrinter().print("+");
     }
 
     @Override
     public void handle(ASTCDAssociation node) {
-        String leftClass = node.getLeftReferenceName().toString();
-        String rightClass = node.getRightReferenceName().toString();
-        String leftCardinality = printCardinality(node.getLeftCardinality());
-        String rightCardinality = printCardinality((node.getRightCardinality()));
-        String direction;
-        if(node.isLeftToRight()) {
-            direction = "-->";
-        } else if (node.isRightToLeft()) {
-            direction = "<--";
-        } else if (node.isBidirectional()){
-            direction = "<-->";
-        } else {
-            direction = "--";
+        getPrinter().print(node.getLeftReferenceName().toString() + " ");
+
+        if(node.leftCardinalityIsPresent() || node.leftRoleIsPresent()) {
+            getPrinter().print("\"");
+            if(showRoles && node.leftRoleIsPresent())
+                getPrinter().print("(" + node.getLeftRole().get() + ") ");
+            if(node.leftCardinalityIsPresent())
+                node.getLeftCardinality().get().accept(getRealThis());
+            getPrinter().print("\" ");
         }
-        getPrinter().print(leftClass + " " + leftCardinality + " " + direction + " " + rightCardinality + " " + rightClass + "\n");
+
+        if(node.isLeftToRight()) {
+            getPrinter().print("-->");
+        } else if (node.isRightToLeft()) {
+            getPrinter().print("<--");
+        } else if (node.isBidirectional()){
+            getPrinter().print("<-->");
+        } else {
+            getPrinter().print("--");
+        }
+
+        if(node.rightCardinalityIsPresent() || node.rightRoleIsPresent()) {
+            getPrinter().print(" \"");
+            if(showRoles && node.rightRoleIsPresent())
+                getPrinter().print("(" + node.getRightRole().get() + ") ");
+            if(node.rightCardinalityIsPresent())
+                node.getRightCardinality().get().accept(getRealThis());
+            getPrinter().print("\"");
+        }
+
+        getPrinter().print(" " + node.getRightReferenceName().toString());
+
+        if(showAssoc && node.nameIsPresent())
+            getPrinter().print(" : " + node.getName().get());
+
+        getPrinter().print("\n");
     }
 
-    public String printCardinality(Optional<ASTCardinality> cardinality) {
-        if(!cardinality.isPresent())
-            return "";
-
-        if(cardinality.get().isMany()) {
-            return "\"*\"";
-        } else if (cardinality.get().isOne()) {
-            return "\"1\"";
-        } else if (cardinality.get().isOneToMany()) {
-            return "\"1..*\"";
-        } else if (cardinality.get().isOptional()) {
-            return "\"0..1\"";
+    @Override
+    public void handle(ASTCardinality cardinality) {
+        if(showCard) {
+            if (cardinality.isMany()) {
+                getPrinter().print("*");
+            } else if (cardinality.isOne()) {
+                getPrinter().print("1");
+            } else if (cardinality.isOneToMany()) {
+                getPrinter().print("1..*");
+            } else if (cardinality.isOptional()) {
+                getPrinter().print("0..1");
+            }
         }
-
-        return "";
     }
 
 

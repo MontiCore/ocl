@@ -1,0 +1,374 @@
+package example;
+
+classdiagram CDforOCLCheck {
+
+  // ______________________________________________________
+  // Artifact
+  // ______________________________________________________
+
+  abstract class Artifact {
+    String simpleName;
+    String nameExtension;
+    Date modified;
+    /String name;
+    /String fullName;
+    /boolean isRoot;
+  }
+
+
+  association /refersTo [*] Artifact <-> Artifact [*];
+
+  association /produces [*] Artifact <-> Artifact [*];
+
+
+  //______________________________________________________
+  // ArtifactContainer
+  //______________________________________________________
+
+  abstract class ArtifactContainer extends Artifact {}
+
+  composition contains
+    [0..1] ArtifactContainer (parent) <-> Artifact [*];
+
+
+
+
+  //______________________________________________________
+  // Directory
+  //______________________________________________________
+
+  class Directory extends ArtifactContainer {}
+
+
+
+
+
+  //______________________________________________________
+  // Archive
+  //______________________________________________________
+
+  class Archive extends ArtifactContainer {}
+
+  // ______________________________________________________
+  // JavaArtifacts
+  // ______________________________________________________
+
+  abstract class JavaArtifact extends Artifact {}
+
+  association reliesOnJavaArtifact
+    [*] JavaArtifact <-> JavaArtifact [*];
+
+
+  // ______________________________________________________
+  // JavaSourceFile
+  // ______________________________________________________
+
+  class JavaSourceFile extends JavaArtifact {}
+
+  association imports [*] JavaSourceFile <-> JavaArtifact [*];
+
+  association compiledTo 
+    [1] JavaSourceFile <-> JavaClassFile [*];
+
+
+
+
+  // ______________________________________________________
+  // JavaClassFile
+  // ______________________________________________________
+
+  class JavaClassFile extends JavaArtifact {}
+
+
+  // ______________________________________________________
+  // JavaArchive
+  // ______________________________________________________
+
+  class JavaArchive extends Archive {}
+
+
+  // ______________________________________________________
+  // Pkg
+  // ______________________________________________________
+
+  class Pkg {
+    String name;
+    String fullName;
+    /boolean isRoot;
+  }
+
+  association belongsTo [*] JavaArtifact <-> Pkg [1];
+
+  composition subPkg 
+    [0..1] Pkg (parent) <-> (child) Pkg [*];
+
+
+    
+
+
+  // ______________________________________________________
+  // AType
+  // ______________________________________________________
+
+  class AType {
+    String simpleName;
+    /String name;
+    /String fullName;
+    /boolean isInnerAType;
+  }
+
+  association defines [*] JavaArtifact <-> AType [*]; 
+
+  composition contains [1] Pkg <-> AType [*]; 
+
+  composition 
+    [0..1] AType (containingAType) <-> (innerAType) AType [*];
+
+  association reliesOn [*] AType <-> AType [*]; 
+
+
+
+
+  // ______________________________________________________
+  // Relation between Java Artifacts and Java ATypes
+  // ______________________________________________________
+
+
+
+
+
+
+
+
+
+  //______________________________________________________
+  // Language
+  //______________________________________________________
+
+  class Language {
+    String name;
+  }
+
+  class Grammar {}
+
+  class CoCo {
+    String name;
+  }
+
+  association grammar [*] Language <-> Grammar [1];
+
+  association coco [*] Language <-> CoCo [*];
+
+
+  //______________________________________________________
+  // GrammarFile
+  //______________________________________________________
+
+  class GrammarFile extends Artifact {}
+
+  association defines [1] GrammarFile <-> Grammar [1];
+
+  association includes [*] GrammarFile <-> GrammarFile [*];
+
+
+
+  //______________________________________________________
+  // CoCo
+  //______________________________________________________
+
+  association implementedBy [*] CoCo <-> JavaSourceFile [1..*];
+
+  //______________________________________________________
+  // ModelFile
+  //______________________________________________________
+
+  abstract class ModelFile extends Artifact {}
+
+  association conformsTo [*] ModelFile <-> Language [*];
+
+  // ______________________________________________________
+  // CDModelFile
+  // ______________________________________________________
+
+  class CDModelFile extends ModelFile {}
+
+  association imports [*] CDModelFile <-> Artifact [*];
+
+  association reliesOn [*] CDModelFile <-> Artifact [*];
+
+  association defines [0..1] CDModelFile <-> AType [*];
+  
+
+
+    
+        
+
+  // ______________________________________________________
+  // JSystem
+  // ______________________________________________________
+
+  abstract class JSystem {
+    String name;
+    String version;
+  }
+
+  association consistsOf [*] JSystem <-> Artifact [*];
+
+  // ______________________________________________________
+  // Product
+  // ______________________________________________________
+
+  class Product extends JSystem {}
+  
+  // ______________________________________________________
+  // Tool
+  // ______________________________________________________
+
+  class Tool extends JSystem {}
+  
+  // ______________________________________________________
+  // Module
+  // ______________________________________________________
+
+  class Module {
+    String name;
+  }
+
+  association module [*] JSystem <-> Module [*];
+
+  association subModule [*] Module <-> Module [*];
+
+  association artifact [*] Module <-> Artifact [*];
+
+  // ______________________________________________________
+  // FreeMarkerTemplate
+  // ______________________________________________________
+
+  class FreeMarkerTemplate extends Artifact {}
+
+  association reliesOnTemplate 
+    [*] FreeMarkerTemplate <-> FreeMarkerTemplate [*];
+
+  association reliesOnJavaArtifact
+    [*] FreeMarkerTemplate <-> JavaArtifact [*];
+
+  association reliesOnTemplate 
+    [*] JavaArtifact <-> FreeMarkerTemplate [*];
+
+
+
+
+
+  // ______________________________________________________
+  // Generator
+  // ______________________________________________________
+
+  class Generator extends Tool {}
+
+  association uses [*] Generator <-> FreeMarkerTemplate [*];
+
+  association /template
+    [*] Generator <-> FreeMarkerTemplate [*];
+
+  association inputLanguage [*] Generator <-> Language [*];
+
+
+
+
+  // ______________________________________________________
+  // Action
+  // ______________________________________________________
+
+  class ExecutionProtocol {}
+
+  class Action {
+    Date start;
+    Date end;
+  }
+
+  class Event extends Action {}
+
+  association ExecutionProtocol <-> Action [*] <<ordered>>;  
+
+  association subaction
+    [0..1] Action <-> (sub) Action [*] <<ordered>>;
+
+
+
+
+
+
+
+  // ______________________________________________________
+  // ToolActions
+  // ______________________________________________________
+
+  class ToolExecution           extends Action {}
+  class TemplateExecution       extends Action {}
+  class JavaMethodCall          extends Action {}
+  class ArtifactRead            extends Action {}
+  class ArtifactExistenceCheck  extends Action {
+    String fullName;
+  }
+  class ArtifactCreate          extends Action {}
+  class WriteString             extends Action {
+    String content;
+  }
+  
+  association tool [*] ToolExecution <-> Tool [1];
+
+  association writesTo 
+    [*] TemplateExecution <-> Artifact [0..1];
+  
+  association template
+    [*] TemplateExecution <-> FreeMarkerTemplate [1];
+
+  association file [*] JavaMethodCall <-> JavaClassFile [1];
+
+  association reads [*] ArtifactRead <-> Artifact [1];
+
+  association checks 
+    [*] ArtifactExistenceCheck <-> Artifact [0..1];
+
+  association creates [0..1] ArtifactCreate <-> Artifact [1];
+
+  association writesTo [*] WriteString <-> Artifact [1];
+
+  // ______________________________________________________
+  // ToolExecution
+  // ______________________________________________________
+
+  association /input [*] ToolExecution <-> Artifact [*]; 
+
+
+  association /output [0..1] ToolExecution <-> Artifact [*]; 
+
+
+  association /creationDependency [*] Artifact <-> Artifact [*]; 
+
+
+
+  // ______________________________________________________
+  // Action and Artifact Contribution
+  // ______________________________________________________
+
+  association /contributesTo [*] Action <-> Artifact [*];    
+    
+
+
+
+
+
+
+
+
+  association /contributionFT 
+    [*] FreeMarkerTemplate <-> Artifact [*];
+   
+   
+  
+  association /contributionJava 
+    [*] JavaClassFile <-> Artifact [*]; 
+  
+  
+}

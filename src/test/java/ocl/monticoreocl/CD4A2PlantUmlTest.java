@@ -68,17 +68,17 @@ public class CD4A2PlantUmlTest {
     public void cd4a2plantUml2Test() {
         String cdString = "classdiagram plantUMLTest {\n" +
                 "\n" +
-                "  public class A {}\n" +
+                "  public class A ;\n" +
                 "  public class B extends A{}\n" +
                 "  public class C {}\n" +
                 "  public class D extends B{}\n" +
                 "\n" +
-                "  association [*] A <-> B [0..1];\n" +
+                "  association blub [*] A (left) <->  (right) B [0..1];\n" +
                 "  association [0..1] C <-> D [*];\n" +
                 "  association A <- D [*];\n" +
                 "\n" +
                 "}";
-        String[] args = new String[]{"-printSrc", cdString, "-printTgt", "target/plantuml.txt"};
+        String[] args = new String[]{"-printSrc", cdString, "-printTgt", "target/plantuml.txt", "-showAttributes", "-showAssociationNames", ""};
         try {
             OCLCDTool.main(args);
         } catch (Exception e) {

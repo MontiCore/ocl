@@ -20,11 +20,7 @@
 package ocl.cli;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Optional;
 
 import de.monticore.ModelingLanguageFamily;
@@ -76,6 +72,16 @@ public class OCLCDTool {
         options.addOption(printSrc);
         Option printTgt = new Option("printTgt", "classdiagram", true, "output path for visualized classdiagram");
         options.addOption(printTgt);
+        Option showAtt = new Option("showAttributes", "showAttributes", false, "show attributes when printing cd");
+        options.addOption(showAtt);
+        Option showAssoc = new Option("showAssociationNames", "showAssociationNames", false, "show association names when printing cd");
+        options.addOption(showAssoc);
+        Option showRoles = new Option("showRoleNames", "showRoleNames", false, "show role name when printing cd");
+        options.addOption(showRoles);
+        Option showCard = new Option("showNoCardinality", "showNoCardinality", false, "don't show cardinality when printing cd");
+        options.addOption(showCard);
+
+
 
         Option verbose = new Option("verbose", "verbose", false, "sets verbose logging");
         options.addOption(verbose);
@@ -113,7 +119,8 @@ public class OCLCDTool {
                 System.out.println("OCL Model loaded successfully!");
             }
         } else if (cmd.hasOption("printSrc") && cmd.hasOption("printTgt")) {
-            printCD2PlantUML(cdString, cdPath);
+            printCD2PlantUML(cdString, cdPath, cmd.hasOption("showAttributes"), cmd.hasOption("showAssociationNames"),
+                    cmd.hasOption("showRoleNames"), !cmd.hasOption("showNoCardinality"));
         } else {
             printHelp(options);
         }
@@ -224,10 +231,11 @@ public class OCLCDTool {
         return name.matches("^(\\w+\\.)*\\w+$");
     }
 
-    protected static void printCD2PlantUML(String cdString, String cdPath) {
-        Log.debug("OCLCDTool","Printing plantuml cd to: " + Paths.get(cdPath).toAbsolutePath());
+    protected static void printCD2PlantUML(String cdString, String cdPath, Boolean showAtt, Boolean showAssoc,
+                                           Boolean showRoles, Boolean showCard) {
+        // Log.debug("OCLCDTool","Printing plantuml cd to: " + Paths.get(cdPath).toAbsolutePath());
 
-        String plantUMLString = printCD2PlantUML(cdString);
+        String plantUMLString = printCD2PlantUML(cdString, showAtt, showAssoc, showRoles, showCard);
 
         try {
             File newTextFile = new File(cdPath);
@@ -240,8 +248,13 @@ public class OCLCDTool {
     }
 
     protected static String printCD2PlantUML(String cdString) {
+        return printCD2PlantUML(cdString, false, false, false, true);
+    }
+
+    protected static String printCD2PlantUML(String cdString, Boolean showAtt, Boolean showAssoc,
+                                             Boolean showRoles, Boolean showCard) {
         IndentPrinter printer = new IndentPrinter();
-        CD4A2PlantUMLVisitor cdVisitor = new CD4A2PlantUMLVisitor(printer);
+        CD4A2PlantUMLVisitor cdVisitor = new CD4A2PlantUMLVisitor(printer, showAtt, showAssoc, showRoles, showCard);
         CD4AnalysisParser parser = new CD4AnalysisParser();
         String plantUMLString = "@startuml\n@enduml";
 
@@ -252,7 +265,7 @@ public class OCLCDTool {
                 plantUMLString = printer.getContent();
             }
         } catch (IOException e) {
-            Log.error(e.getMessage());
+            Log.error("Cannot display CD since it contains errors!");
         }
 
         return plantUMLString;
