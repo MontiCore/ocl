@@ -56,7 +56,7 @@ public class CD4A2PlantUmlTest {
                     "class D\n" +
                     "A \"*\" <--> \"0..1\" B\n" +
                     "C \"0..1\" <--> \"*\" D\n" +
-                    "A  <-- \"*\" D\n" +
+                    "A <-- \"*\" D\n" +
                     "@enduml";
             assertEquals(expected, cdVisitor.print2PlantUML(astCD));
         } catch (IOException e) {
