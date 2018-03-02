@@ -356,6 +356,11 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         returnTypeRef = createTypeRef("boolean", node);
     }
 
+    @Override
+    public void traverse(ASTImpliesExpression node) {
+        returnTypeRef = createTypeRef("boolean", node);
+    }
+
 
     /**
      *  ********** Handle Methods **********

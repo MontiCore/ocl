@@ -3,10 +3,10 @@ package example.TGs_models;
 import example.TGs_models.CDforOCLCheck.*;
 import example.CDs.DefaultTypes.*;
 
-ocl TG_Test {
 
   context Artifact inv:
-    {p in parent** | p.isRoot}.size == 1;
+    isRoot implies (this in Directory);
 
-}
+
+
 
