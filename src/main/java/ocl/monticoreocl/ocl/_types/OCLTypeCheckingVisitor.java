@@ -17,15 +17,13 @@
  *  License along with this project. If not, see <http://www.gnu.org/licenses/>.
  * *******************************************************************************
  */
-package ocl.monticoreocl.ocl._visitors;
+package ocl.monticoreocl.ocl._types;
 
 import de.monticore.commonexpressions._ast.*;
 import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.monticore.oclexpressions._ast.ASTOCLQualifiedPrimary;
 import de.monticore.oclexpressions._ast.ASTParenthizedExpression;
 import de.monticore.symboltable.MutableScope;
-import de.monticore.types.TypesPrinter;
-import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
 import ocl.monticoreocl.ocl._ast.*;
@@ -67,14 +65,12 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
     public void checkInfixExpr(ASTInfixExpression node){
         CDTypeSymbolReference leftType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getLeftExpression(), scope);
         CDTypeSymbolReference rightType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getRightExpression(), scope);
+        leftType = TypeInferringHelper.removeAllOptionals(leftType);
+        rightType = TypeInferringHelper.removeAllOptionals(rightType);
 
         if (!leftType.isSameOrSuperType(rightType) && !rightType.isSameOrSuperType(leftType)) {
-            CDTypeSymbolReference flatLeft = OCLExpressionTypeInferingVisitor.flatten(leftType, scope);
-            CDTypeSymbolReference flatRight = OCLExpressionTypeInferingVisitor.flatten(rightType, scope);
-            if (!flatLeft.isSameOrSuperType(flatRight) && !flatRight.isSameOrSuperType(flatLeft)) {
                 Log.error("0xCET01 Types mismatch on infix expression at " + node.get_SourcePositionStart() +
                         " left: " + leftType.getStringRepresentation() + " right: " + rightType.getStringRepresentation());
-            }
         }
     }
 

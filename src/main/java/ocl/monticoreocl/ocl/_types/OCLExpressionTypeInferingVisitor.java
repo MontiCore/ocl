@@ -17,7 +17,7 @@
  *  License along with this project. If not, see <http://www.gnu.org/licenses/>.
  * *******************************************************************************
  */
-package ocl.monticoreocl.ocl._visitors;
+package ocl.monticoreocl.ocl._types;
 
 import de.monticore.ast.ASTNode;
 
@@ -37,16 +37,10 @@ import de.monticore.types.TypesPrinter;
 import de.monticore.umlcd4a.symboltable.*;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
-import ocl.monticoreocl.ocl._ast.*;
 import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
 
-import javax.measure.quantity.Quantity;
-import javax.measure.unit.BaseUnit;
-import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import javax.measure.unit.UnitFormat;
-import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 
@@ -203,8 +197,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
         if (node.expressionIsPresent()) {
             CDTypeSymbolReference innerType = getTypeFromExpression(node.getExpression().get(), scope);
-            addActualArgument(returnTypeRef, innerType);
-            returnTypeRef = flattenType(returnTypeRef);
+            TypeInferringHelper.addActualArgument(returnTypeRef, innerType);
         }
 
         if (node.qualificationIsPresent()) {
@@ -358,20 +351,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
 
     /**
-     *  ********** Helper Methods **********
+     *  ********** Handle Methods **********
      */
-
-    private void addActualArgument(CDTypeSymbolReference typeReferenceOuter, CDTypeSymbolReference typeReferenceInner) {
-        String stringRepresentation = typeReferenceOuter.getStringRepresentation() + "<";
-
-        List<ActualTypeArgument> actualTypeArguments = new ArrayList<>();
-        ActualTypeArgument actualTypeArgument = new ActualTypeArgument(typeReferenceInner);
-        actualTypeArguments.add(actualTypeArgument);
-
-        stringRepresentation +=  typeReferenceInner.getStringRepresentation() + ">";
-        typeReferenceOuter.setStringRepresentation(stringRepresentation);
-        typeReferenceOuter.setActualTypeArguments(actualTypeArguments);
-    }
 
     private CDTypeSymbolReference handlePrefixName(ASTOCLQualifiedPrimary node, LinkedList<String> names) {
         // Try and look if name or this was declared as variable or try as ClassName of CD
@@ -390,7 +371,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             names.pop();
             typeRef = createTypeRef("Set", node);
             CDTypeSymbolReference argsTypeRef = createTypeRef(prefixName, node);
-            addActualArgument(typeRef, argsTypeRef);
+            TypeInferringHelper.addActualArgument(typeRef, argsTypeRef);
         } else if (thisDecl.isPresent()) { // implicit this
             typeRef = thisDecl.get().getType();
         } else {
@@ -408,29 +389,23 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     private CDTypeSymbolReference handleNames(LinkedList<String> names, CDTypeSymbolReference previousType, ASTNode node) {
         if (names.size() > 0) {
             String name = names.pop();
-            previousType = flattenType(previousType);
 
             // Try name as method/field/assoc
             Scope elementsScope = previousType.getAllKindElements();
             Optional<CDTypeSymbolReference> newType = handleName(node, name, elementsScope);
-            // Try again and flatten container
+
+            //If it failed try implicit flattening
             if (!newType.isPresent()) {
-                CDTypeSymbolReference flattendType = flattenType(previousType);
+                CDTypeSymbolReference flattendType = TypeInferringHelper.flattenAll(previousType);
                 elementsScope = flattendType.getAllKindElements();
                 newType = handleName(node, name, elementsScope);
-                //Try with inner type
-                if (!newType.isPresent() && !flattendType.getActualTypeArguments().isEmpty()) {
-                    CDTypeSymbolReference innerType =
-                            (CDTypeSymbolReference) previousType.getActualTypeArguments().get(0).getType();
-                    elementsScope = innerType.getAllKindElements();
-                    newType = handleName(node, name, elementsScope);
-                    if(newType.isPresent()) {
-                        CDTypeSymbolReference containerType = createTypeRef(previousType.getName(), node);
-                        addActualArgument(containerType, newType.get());
-                        // implicit flattening with . operator
-                        containerType = flattenType(containerType);
-                        newType = Optional.of(containerType);
-                    }
+                // If it succeeded add container from previous type around it
+                if(newType.isPresent()) {
+                    CDTypeSymbolReference containerType = createTypeRef(previousType.getName(), node);
+                    TypeInferringHelper.addActualArgument(containerType, newType.get());
+                    // implicit flattening with . operator
+                    containerType = TypeInferringHelper.flattenOnce(containerType);
+                    newType = Optional.of(containerType);
                 }
             }
 
@@ -443,64 +418,6 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         } else {
             return previousType;
         }
-    }
-
-    protected static CDTypeSymbolReference flatten(CDTypeSymbolReference type, MutableScope scope) {
-        OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
-        return exprVisitor.flattenType(type);
-    }
-        /**
-         * Takes a Type and flattens them according to:
-         * http://mbse.se-rwth.de/book1/index.php?c=chapter3-3#x1-560003.3.6
-         */
-    private CDTypeSymbolReference flattenType(CDTypeSymbolReference previousType) {
-        String typeName = previousType.getName();
-        List<ActualTypeArgument> arguments = previousType.getActualTypeArguments();
-        if (typeName.equals("Optional") && !arguments.isEmpty()) {
-            return flattenOptionalorSet(previousType);
-        } else if (typeName.equals("Set") && !arguments.isEmpty()) {
-            return flattenOptionalorSet(previousType);
-        } else if (typeName.equals("List")) {
-            return flattenList(previousType);
-        }
-        return previousType;
-    }
-
-    /**
-     *  Set<Optional<Optional<Set<Optional<Person>>>>> -> Set<Person>
-     */
-    private CDTypeSymbolReference flattenOptionalorSet(CDTypeSymbolReference previousType) {
-        String typeName = previousType.getName();
-        List<ActualTypeArgument> arguments = previousType.getActualTypeArguments();
-        if (typeName.equals("Set") && !arguments.isEmpty()) {
-            CDTypeSymbolReference innerType = (CDTypeSymbolReference) arguments.get(0).getType();
-            if (innerType.getName().equals("Set"))
-                return flattenOptionalorSet(innerType);
-            if (innerType.getName().equals("Optional") && !innerType.getActualTypeArguments().isEmpty()) {
-                addActualArgument(previousType, (CDTypeSymbolReference)innerType.getActualTypeArguments().get(0).getType());
-                return flattenOptionalorSet(previousType);
-            }
-        }
-        if (typeName.equals("Optional") && !arguments.isEmpty()) {
-            CDTypeSymbolReference innerType = (CDTypeSymbolReference) arguments.get(0).getType();
-            if (innerType.getName().equals("Set") || innerType.getName().equals("Optional"))
-                return flattenOptionalorSet(innerType);
-        }
-        return previousType;
-    }
-
-    /**
-     *  List<List<List<List<Person>>>> -> List<Person>
-     */
-    private CDTypeSymbolReference flattenList(CDTypeSymbolReference previousType) {
-        String typeName = previousType.getName();
-        List<ActualTypeArgument> arguments = previousType.getActualTypeArguments();
-        if (typeName.equals("List") && !arguments.isEmpty()) {
-            CDTypeSymbolReference innerType = (CDTypeSymbolReference) arguments.get(0).getType();
-            if (innerType.getName().equals("List"))
-                return flattenList(innerType);
-        }
-        return previousType;
     }
 
     /**
@@ -538,10 +455,10 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             } else {
                 newType = createTypeRef("Set", node);
             }
-            addActualArgument(newType, targetType);
+            TypeInferringHelper.addActualArgument(newType, targetType);
         } else if (!cardinality.isDefault()) {
             newType = createTypeRef("Optional", node);
-            addActualArgument(newType, targetType);
+            TypeInferringHelper.addActualArgument(newType, targetType);
         } else {
             newType = targetType;
         }

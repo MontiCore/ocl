@@ -1,0 +1,23 @@
+package example;
+
+import example.CDforOCLCheck.*;
+import example.CDs.DefaultTypes.*;
+
+ocl TG_Test {
+
+  context Module inv: 
+    externalReferredArtifact == 
+      containedArtifact.refersTo.removeAll(containedArtifact);
+
+  context Module inv: 
+    reliesOnModule == externalArtifact.module;
+
+  context Module inv: 
+    externalProducedArtifact == 
+      containedArtifact.produces.removeAll(containedArtifact);
+
+  context Module inv: 
+    contributionModule == externalArtifact.module;
+
+}
+

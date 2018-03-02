@@ -38,7 +38,7 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
-public class OCLDeclarationTypeInferringTest extends AbstractOCLTest {
+public class OCLTypeInferringTest extends AbstractOCLTest {
 
     @Override
     protected OCLCoCoChecker getChecker() {
@@ -241,9 +241,9 @@ public class OCLDeclarationTypeInferringTest extends AbstractOCLTest {
         OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("comp").orElse(null);
         assertNotNull(declVarSymbol);
         assertEquals("Set", declVarSymbol.getVarTypeName());
-        assertEquals("Set<String>", declVarSymbol.getType().getStringRepresentation());
+        assertEquals("Set<Set<String>>", declVarSymbol.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol.getType().getActualTypeArguments().size());
-        assertEquals("String", declVarSymbol.getType().getActualTypeArguments().get(0).getType().toString());
+        assertEquals("Set", declVarSymbol.getType().getActualTypeArguments().get(0).getType().getName());
 
         OCLVariableDeclarationSymbol declVarSymbol2 = oclInvariantSymbol.getOCLVariableDecl("comp2").orElse(null);
         assertNotNull(declVarSymbol2);
@@ -302,10 +302,8 @@ public class OCLDeclarationTypeInferringTest extends AbstractOCLTest {
 
         OCLVariableDeclarationSymbol declVarSymbol2 = oclInvariantSymbol.getOCLVariableDecl("m").orElse(null);
         assertNotNull(declVarSymbol2);
-        assertEquals("Set", declVarSymbol2.getVarTypeName());
-        assertEquals("Set<List<Message>>", declVarSymbol2.getType().getStringRepresentation());
-        assertEquals(1, declVarSymbol2.getType().getActualTypeArguments().size());
-        assertEquals("List", declVarSymbol2.getType().getActualTypeArguments().get(0).getType().toString());
+        assertEquals("List", declVarSymbol2.getVarTypeName());
+        assertEquals("List<Message>", declVarSymbol2.getType().getStringRepresentation());
 
         OCLVariableDeclarationSymbol declVarSymbol3 = oclInvariantSymbol.getOCLVariableDecl("n").orElse(null);
         assertNotNull(declVarSymbol3);

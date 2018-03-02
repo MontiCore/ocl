@@ -30,15 +30,13 @@ import de.monticore.symboltable.*;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.types.TypesPrinter;
 import de.monticore.types.types._ast.*;
-import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.CDTypes;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.Joiners;
 import ocl.monticoreocl.ocl._ast.*;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-import ocl.monticoreocl.ocl._visitors.OCLExpressionTypeInferingVisitor;
-import ocl.monticoreocl.ocl._visitors.OCLTypeCheckingVisitor;
+import ocl.monticoreocl.ocl._types.OCLExpressionTypeInferingVisitor;
 
 public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
