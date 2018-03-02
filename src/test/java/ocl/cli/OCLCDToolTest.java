@@ -17,7 +17,7 @@
  *  License along with this project. If not, see <http://www.gnu.org/licenses/>.
  * *******************************************************************************
  */
-package ocl.monticoreocl;
+package ocl.cli;
 
 
 import de.se_rwth.commons.logging.Log;
@@ -61,6 +61,7 @@ public class OCLCDToolTest {
                         "classdiagram AuctionCD {\n" +
                         "    public class Auction {}\n" +
                         "    public class Person {}\n" +
+                        "    public class Duration {}\n" +
                         "    public class Collection {\n" +
                         "      int size();\n" +
                         "    }\n" +

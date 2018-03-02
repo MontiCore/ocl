@@ -18,9 +18,8 @@
  * *******************************************************************************
  */
 
-package ocl.monticoreocl;
 
-import static org.junit.Assert.*;
+package ocl.monticoreocl._cocos;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,14 +29,13 @@ import ocl.monticoreocl.ocl._cocos.OCLCoCos;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 
-public class MethodDeclarationStartsWithLowerCaseLetterTest extends AbstractOCLTest {
+public class PostStatementStartsWithCapitalLetterTest extends AbstractOCLTest {
 
 	@Override
 	  protected OCLCoCoChecker getChecker() {
@@ -54,25 +52,27 @@ public class MethodDeclarationStartsWithLowerCaseLetterTest extends AbstractOCLT
 	    Log.getFindings().clear();
 	  }
 
-	  @Ignore
 	  @Test
-	  public void invalidMethodDeclarationNameTest() {
-	    String modelName = "example.cocos.invalid.invalidMethodDeclarationName";
-	    String errorCode = "0xOCL06";
+	  public void invalidPostStatementNameTest() {
+	    String modelName = "example.cocos.invalid.invalidPostStatementName";
+	    String errorCode = "0xOCL07";
 	    
 	    Collection<Finding> expectedErrors = Arrays
 	        .asList(
-	        Finding.error(errorCode + " method declaration name 'Min' should start with a capital letter.",
-	            new SourcePosition(4, 6))
+	       Finding.error(errorCode + " " + "pre condition name 'ias1' must start in upper-case.",
+	        	            new SourcePosition(3, 2)),	
+	        Finding.error(errorCode + " " + "post condition name 'ias2' must start in upper-case.",
+	            new SourcePosition(4, 2))
 	        );
 		  testModelForErrors(PARENT_DIR, modelName, expectedErrors);
 	  }
-
-	  @Ignore
+	  
+	  
+	  
 	  @Test
-	  public void validMethodDeclarationNameTest() {
+	  public void validPostStatementNameTest() {
 		  
-		  String modelName = "example.cocos.valid.validMethodDeclarationName";
+		  String modelName = "example.cocos.valid.validPostStatementName";
 		  testModelNoErrors(PARENT_DIR, modelName);
 	  }
 

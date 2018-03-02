@@ -18,62 +18,57 @@
  * *******************************************************************************
  */
 
-package ocl.monticoreocl;
-
-import static org.junit.Assert.*;
+package ocl.monticoreocl._cocos;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
-import ocl.monticoreocl.ocl._cocos.OCLCoCos;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+//import ocl.monticoreocl.lang.AbstractTest;
+import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
+import ocl.monticoreocl.ocl._cocos.OCLCoCos;
 
-public class ParameterDeclarationNameStartsWithLowerCaseLetterTest extends AbstractOCLTest {
+public class MethSignatureStartsWithLowerCaseLetterTest extends AbstractOCLTest {
 
 	@Override
-	  protected OCLCoCoChecker getChecker() {
-		 return OCLCoCos.createChecker();
-	  }
-	  
-	  @BeforeClass
-	  public static void init() {
-	    Log.enableFailQuick(false);
-	  }
-	  
-	  @Before
-	  public void setUp() {
-	    Log.getFindings().clear();
-	  }
+	protected OCLCoCoChecker getChecker() {
+		return OCLCoCos.createChecker();
+	}
 
-	  
-	  @Test
-	  public void invalidParameterDeclarationNameTest() {
-	    String modelName = "example.cocos.invalid.invalidParameterDeclarationName";
-	    String errorCode = "0xOCL06";
-	    
-	    Collection<Finding> expectedErrors = Arrays
-	        .asList(
-	       Finding.error(errorCode + " parameter name 'Name' must start in lower-case.",
-	        	            new SourcePosition(2, 39))  
-	        );
-		  testModelForErrors(PARENT_DIR, modelName, expectedErrors);
-	  }
-	  
-	  
-	  
-	  @Test
-	  public void validParameterDeclarationNameTest() {
-		  
-		  String modelName = "example.cocos.valid.validParameterDeclarationName";
-		  testModelNoErrors(PARENT_DIR, modelName);
-	  }
+	@BeforeClass
+	public static void init() {
+		Log.enableFailQuick(false);
+	}
+
+	@Before
+	public void setUp() {
+		Log.getFindings().clear();
+	}
+
+	@Ignore
+	@Test
+	public void invalidMethodSignatureNameTest() {
+		String modelName = "example.cocos.invalid.invalidMethSigName";
+		String errorCode = "0xOCL10";
+
+		Collection<Finding> expectedErrors = Arrays.asList(
+				Finding.error(errorCode + " Method 'PersonalMsg' must start in lower-case.", new SourcePosition(2, 10)));
+		testModelForErrors(PARENT_DIR, modelName, expectedErrors);
+	}
+
+	@Ignore
+	@Test
+	public void validMethodSignatureNameTest() {
+
+		String modelName = "example.cocos.valid.validMethSigName";
+		testModelNoErrors(PARENT_DIR, modelName);
+	}
 
 }

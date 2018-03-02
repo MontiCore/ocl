@@ -17,7 +17,7 @@
  *  License along with this project. If not, see <http://www.gnu.org/licenses/>.
  * *******************************************************************************
  */
-package ocl.monticoreocl;
+package ocl.monticoreocl._cocos;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;

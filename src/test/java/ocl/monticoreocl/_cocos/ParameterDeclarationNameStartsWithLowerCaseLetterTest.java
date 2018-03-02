@@ -18,10 +18,13 @@
  * *******************************************************************************
  */
 
-package ocl.monticoreocl;
+package ocl.monticoreocl._cocos;
 
 import java.util.Arrays;
 import java.util.Collection;
+
+import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
+import ocl.monticoreocl.ocl._cocos.OCLCoCos;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,15 +33,12 @@ import org.junit.Test;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
-import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
-import ocl.monticoreocl.ocl._cocos.OCLCoCos;
 
-
-public class ConstructorNameStartsWithCapitalLetterTest extends AbstractOCLTest {
+public class ParameterDeclarationNameStartsWithLowerCaseLetterTest extends AbstractOCLTest {
 
 	@Override
 	  protected OCLCoCoChecker getChecker() {
-	    return OCLCoCos.createChecker();
+		 return OCLCoCos.createChecker();
 	  }
 	  
 	  @BeforeClass
@@ -50,16 +50,17 @@ public class ConstructorNameStartsWithCapitalLetterTest extends AbstractOCLTest 
 	  public void setUp() {
 	    Log.getFindings().clear();
 	  }
+
 	  
 	  @Test
-	  public void invalidConstructorSignatureNameTest() {
-	    String modelName = "example.cocos.invalid.invalidConstructorName";
-	    String errorCode = "0xOCL01";
+	  public void invalidParameterDeclarationNameTest() {
+	    String modelName = "example.cocos.invalid.invalidParameterDeclarationName";
+	    String errorCode = "0xOCL06";
 	    
 	    Collection<Finding> expectedErrors = Arrays
 	        .asList(
-	        Finding.error(errorCode + " constructor name 'auction' after keyword 'new' should not start in lower-case.",
-	            new SourcePosition(2,10))
+	       Finding.error(errorCode + " parameter name 'Name' must start in lower-case.",
+	        	            new SourcePosition(2, 39))  
 	        );
 		  testModelForErrors(PARENT_DIR, modelName, expectedErrors);
 	  }
@@ -67,9 +68,9 @@ public class ConstructorNameStartsWithCapitalLetterTest extends AbstractOCLTest 
 	  
 	  
 	  @Test
-	  public void validConstructorSignatureNameTest() {
+	  public void validParameterDeclarationNameTest() {
 		  
-		  String modelName = "example.cocos.valid.validConstructorName";
+		  String modelName = "example.cocos.valid.validParameterDeclarationName";
 		  testModelNoErrors(PARENT_DIR, modelName);
 	  }
 

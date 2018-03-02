@@ -17,17 +17,17 @@
  *  License along with this project. If not, see <http://www.gnu.org/licenses/>.
  * *******************************************************************************
  */
-package ocl.monticoreocl;
+package ocl.monticoreocl._types;
 
 
 import de.monticore.symboltable.*;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.umlcd4a.symboltable.*;
+import ocl.monticoreocl.OCLGlobalScopeTestFactory;
+import ocl.monticoreocl._cocos.AbstractOCLTest;
 import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
 import ocl.monticoreocl.ocl._cocos.OCLCoCos;
 import ocl.monticoreocl.ocl._symboltable.*;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;

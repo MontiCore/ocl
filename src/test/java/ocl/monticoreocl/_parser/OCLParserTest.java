@@ -18,7 +18,7 @@
  * *******************************************************************************
  */
 
-package ocl.monticoreocl;
+package ocl.monticoreocl._parser;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

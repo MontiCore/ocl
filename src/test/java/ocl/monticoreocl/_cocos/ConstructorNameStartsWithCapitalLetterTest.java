@@ -18,7 +18,7 @@
  * *******************************************************************************
  */
 
-package ocl.monticoreocl;
+package ocl.monticoreocl._cocos;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -33,11 +33,12 @@ import de.se_rwth.commons.logging.Log;
 import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
 import ocl.monticoreocl.ocl._cocos.OCLCoCos;
 
-public class FileNameStartsWithLowerCaseLetterTest extends AbstractOCLTest { 
-	
+
+public class ConstructorNameStartsWithCapitalLetterTest extends AbstractOCLTest {
+
 	@Override
 	  protected OCLCoCoChecker getChecker() {
-		return OCLCoCos.createChecker();
+	    return OCLCoCos.createChecker();
 	  }
 	  
 	  @BeforeClass
@@ -49,24 +50,27 @@ public class FileNameStartsWithLowerCaseLetterTest extends AbstractOCLTest {
 	  public void setUp() {
 	    Log.getFindings().clear();
 	  }
-
+	  
 	  @Test
-	  public void invalidFileNameTest() {
-	    String modelName = "example.cocos.invalid.invalidFileName";
-	    String errorCode = "0xOCL02";
+	  public void invalidConstructorSignatureNameTest() {
+	    String modelName = "example.cocos.invalid.invalidConstructorName";
+	    String errorCode = "0xOCL01";
 	    
 	    Collection<Finding> expectedErrors = Arrays
 	        .asList(
-	        Finding.error(errorCode + " file name 'Association1' should not start with a capital letter.",
-	            new SourcePosition(1, 0))
+	        Finding.error(errorCode + " constructor name 'auction' after keyword 'new' should not start in lower-case.",
+	            new SourcePosition(2,10))
 	        );
-	    testModelForErrors(PARENT_DIR, modelName, expectedErrors);
+		  testModelForErrors(PARENT_DIR, modelName, expectedErrors);
 	  }
 	  
+	  
+	  
 	  @Test
-	  public void validFileNameTest() {
+	  public void validConstructorSignatureNameTest() {
 		  
-		  String modelName = "example.cocos.valid.validFileName";
+		  String modelName = "example.cocos.valid.validConstructorName";
 		  testModelNoErrors(PARENT_DIR, modelName);
 	  }
+
 }

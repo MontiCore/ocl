@@ -18,13 +18,10 @@
  * *******************************************************************************
  */
 
-package ocl.monticoreocl;
+package ocl.monticoreocl._cocos;
 
 import java.util.Arrays;
 import java.util.Collection;
-
-import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
-import ocl.monticoreocl.ocl._cocos.OCLCoCos;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -33,9 +30,11 @@ import org.junit.Test;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
+import ocl.monticoreocl.ocl._cocos.OCLCoCos;
 
-public class InvariantNameStartsWithCapitalLetterTest extends AbstractOCLTest{
-
+public class FileNameStartsWithLowerCaseLetterTest extends AbstractOCLTest { 
+	
 	@Override
 	  protected OCLCoCoChecker getChecker() {
 		return OCLCoCos.createChecker();
@@ -50,25 +49,24 @@ public class InvariantNameStartsWithCapitalLetterTest extends AbstractOCLTest{
 	  public void setUp() {
 	    Log.getFindings().clear();
 	  }
+
 	  @Test
-	  public void invalidInvariantNameTest() {
-	    String modelName = "example.cocos.invalid.invalidInvariantName";
-	    String errorCode = "0xOCL03";
+	  public void invalidFileNameTest() {
+	    String modelName = "example.cocos.invalid.invalidFileName";
+	    String errorCode = "0xOCL02";
 	    
 	    Collection<Finding> expectedErrors = Arrays
 	        .asList(
-	        Finding.error(errorCode + " invariant name 'nameInv' should start with a capital letter.",
-	            new SourcePosition(2, 2))
+	        Finding.error(errorCode + " file name 'Association1' should not start with a capital letter.",
+	            new SourcePosition(1, 0))
 	        );
-		  testModelForErrors(PARENT_DIR, modelName, expectedErrors);
+	    testModelForErrors(PARENT_DIR, modelName, expectedErrors);
 	  }
 	  
-	  
-	  
 	  @Test
-	  public void validInvariantNameTest() {
+	  public void validFileNameTest() {
 		  
-		  String modelName = "example.cocos.valid.validInvariantName";
+		  String modelName = "example.cocos.valid.validFileName";
 		  testModelNoErrors(PARENT_DIR, modelName);
 	  }
 }

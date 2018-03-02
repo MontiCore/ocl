@@ -17,11 +17,12 @@
  *  License along with this project. If not, see <http://www.gnu.org/licenses/>.
  * *******************************************************************************
  */
-package ocl.monticoreocl;
+package ocl.monticoreocl._cocos;
 
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+import ocl.monticoreocl._cocos.AbstractOCLTest;
 import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
 import ocl.monticoreocl.ocl._cocos.OCLCoCos;
 import org.junit.Before;
@@ -59,6 +60,8 @@ public class TypesCorrectInExpressionsTest extends AbstractOCLTest {
         Collection<Finding> expectedErrors = Arrays
                 .asList(
                         Finding.error(errorCode + " Types mismatch on infix expression at StringReader:<6,8> left: Integer right: Length",
+                                new SourcePosition(6,8)),
+                        Finding.error(errorCode + " Types mismatch on infix expression at StringReader:<8,6> left: Integer right: Set<String>",
                                 new SourcePosition(6,8))
                 );
         testModelForErrors(PARENT_DIR, modelName, expectedErrors);

@@ -18,9 +18,7 @@
  * *******************************************************************************
  */
 
-package ocl.monticoreocl;
-
-import static org.junit.Assert.*;
+package ocl.monticoreocl._cocos;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,13 +28,14 @@ import ocl.monticoreocl.ocl._cocos.OCLCoCos;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 
-public class PreStatementStartsWithCapitalLetterTest extends AbstractOCLTest {
+public class MethodDeclarationStartsWithLowerCaseLetterTest extends AbstractOCLTest {
 
 	@Override
 	  protected OCLCoCoChecker getChecker() {
@@ -53,28 +52,25 @@ public class PreStatementStartsWithCapitalLetterTest extends AbstractOCLTest {
 	    Log.getFindings().clear();
 	  }
 
-	  
+	  @Ignore
 	  @Test
-	  public void invalidMethodSignatureNameTest() {
-	    String modelName = "example.cocos.invalid.invalidPreStatementName";
-	    String errorCode = "0xOCL07";
+	  public void invalidMethodDeclarationNameTest() {
+	    String modelName = "example.cocos.invalid.invalidMethodDeclarationName";
+	    String errorCode = "0xOCL06";
 	    
 	    Collection<Finding> expectedErrors = Arrays
 	        .asList(
-	        Finding.error(errorCode + " " + "pre condition name 'ias1' must start in upper-case.",
-	            new SourcePosition(3, 2)),
-	        Finding.error(errorCode + " " + "post condition name 'ias2' must start in upper-case.",
-	            new SourcePosition(4, 2))
+	        Finding.error(errorCode + " method declaration name 'Min' should start with a capital letter.",
+	            new SourcePosition(4, 6))
 	        );
 		  testModelForErrors(PARENT_DIR, modelName, expectedErrors);
 	  }
-	  
-	  
-	  
+
+	  @Ignore
 	  @Test
-	  public void validMethodSignatureNameTest() {
+	  public void validMethodDeclarationNameTest() {
 		  
-		  String modelName = "example.cocos.valid.validPreStatementName";
+		  String modelName = "example.cocos.valid.validMethodDeclarationName";
 		  testModelNoErrors(PARENT_DIR, modelName);
 	  }
 

@@ -18,10 +18,7 @@
  * *******************************************************************************
  */
 
-
-package ocl.monticoreocl;
-
-import static org.junit.Assert.*;
+package ocl.monticoreocl._cocos;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,7 +34,7 @@ import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 
-public class PostStatementStartsWithCapitalLetterTest extends AbstractOCLTest {
+public class InvariantNameStartsWithCapitalLetterTest extends AbstractOCLTest{
 
 	@Override
 	  protected OCLCoCoChecker getChecker() {
@@ -53,18 +50,15 @@ public class PostStatementStartsWithCapitalLetterTest extends AbstractOCLTest {
 	  public void setUp() {
 	    Log.getFindings().clear();
 	  }
-
 	  @Test
-	  public void invalidPostStatementNameTest() {
-	    String modelName = "example.cocos.invalid.invalidPostStatementName";
-	    String errorCode = "0xOCL07";
+	  public void invalidInvariantNameTest() {
+	    String modelName = "example.cocos.invalid.invalidInvariantName";
+	    String errorCode = "0xOCL03";
 	    
 	    Collection<Finding> expectedErrors = Arrays
 	        .asList(
-	       Finding.error(errorCode + " " + "pre condition name 'ias1' must start in upper-case.",
-	        	            new SourcePosition(3, 2)),	
-	        Finding.error(errorCode + " " + "post condition name 'ias2' must start in upper-case.",
-	            new SourcePosition(4, 2))
+	        Finding.error(errorCode + " invariant name 'nameInv' should start with a capital letter.",
+	            new SourcePosition(2, 2))
 	        );
 		  testModelForErrors(PARENT_DIR, modelName, expectedErrors);
 	  }
@@ -72,10 +66,9 @@ public class PostStatementStartsWithCapitalLetterTest extends AbstractOCLTest {
 	  
 	  
 	  @Test
-	  public void validPostStatementNameTest() {
+	  public void validInvariantNameTest() {
 		  
-		  String modelName = "example.cocos.valid.validPostStatementName";
+		  String modelName = "example.cocos.valid.validInvariantName";
 		  testModelNoErrors(PARENT_DIR, modelName);
 	  }
-
 }

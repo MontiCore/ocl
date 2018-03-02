@@ -17,7 +17,7 @@
  *  License along with this project. If not, see <http://www.gnu.org/licenses/>.
  * *******************************************************************************
  */
-package ocl.monticoreocl;
+package ocl.monticoreocl._parser;
 
 import de.se_rwth.commons.logging.Log;
 import ocl.monticoreocl.ocl._ast.ASTCompilationUnit;

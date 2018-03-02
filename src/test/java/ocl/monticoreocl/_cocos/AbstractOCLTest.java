@@ -18,7 +18,7 @@
  * *******************************************************************************
  */
 
-package ocl.monticoreocl;
+package ocl.monticoreocl._cocos;
 
 import static org.junit.Assert.assertEquals;
 

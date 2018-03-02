@@ -18,7 +18,7 @@
  * *******************************************************************************
  */
 
-package ocl.monticoreocl;
+package ocl.monticoreocl._symboltable;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -30,6 +30,7 @@ import java.util.Collection;
 
 import de.monticore.types.TypesPrinter;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
+import ocl.monticoreocl.OCLGlobalScopeTestFactory;
 import org.junit.Ignore;
 import org.junit.Test;
 
