@@ -2,10 +2,10 @@ package example.CDs;
 
 classdiagram DefaultTypes {
 
-  public class Class;
+  class Class;
 
-  public class Object;
-  public class Collection {
+  class Object;
+  class Collection {
     boolean containsAll(Collection c);
     boolean contains(Collection c);
     int size();
@@ -13,24 +13,25 @@ classdiagram DefaultTypes {
     Collection addAll(Collection c);
   }
 
-  public class List extends Collection {
+  class List extends Collection {
       boolean nonEmpty();
       List addAll(List c);
       Set asSet();
       List add(Object o);
   }
 
-  public class Set extends Collection {
+  class Set extends Collection {
       Set addAll(Set c);
       List asList();
       Set add(Object o);
   }
 
-  public class Optional {
+  class Optional {
     boolean isAbsent();
     boolean isPresent();
   }
 
+  class Date;
 
   interface Number extends Amount;
   class Integer implements Number;
