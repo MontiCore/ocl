@@ -3,5 +3,7 @@ import example.CDs.DefaultTypes.*;
 
 ocl validType {
   inv Test:
-     10 m/s == 10m / 1s;
+    10 m/s == 10m / 1s;
+  inv Test :
+    Set{Set{"name"}} == Set{"name"}
 }

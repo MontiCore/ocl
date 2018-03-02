@@ -1,5 +1,8 @@
+import example.CDs.DefaultTypes.*;
+import example.CDs.AuctionCD.*;
+
 ocl validMethSigName {
   context boolean Person.personalMsg()
   pre Test: true;
-  post Test: result == List{m in p.message | !m.isAuctionSpecific()};
+  post Test: result == List{m in Person.message | !m.isAuctionSpecific()};
 }

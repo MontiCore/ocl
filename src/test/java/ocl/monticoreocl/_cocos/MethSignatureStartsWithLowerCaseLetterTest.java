@@ -63,7 +63,6 @@ public class MethSignatureStartsWithLowerCaseLetterTest extends AbstractOCLTest 
 		testModelForErrors(PARENT_DIR, modelName, expectedErrors);
 	}
 
-	@Ignore
 	@Test
 	public void validMethodSignatureNameTest() {
 

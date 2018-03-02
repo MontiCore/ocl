@@ -380,7 +380,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         Optional<OCLVariableDeclarationSymbol> thisDecl = scope.resolve("this", OCLVariableDeclarationSymbol.KIND);
         Optional<CDTypeSymbol> typeName = scope.resolve(prefixName, CDTypeSymbol.KIND);
 
-        CDTypeSymbolReference typeRef = null;
+        CDTypeSymbolReference typeRef;
         if(returnTypeRef!=null) { //Previous Type present from prefix-qualification
             typeRef = returnTypeRef;
         } else if(nameDecl.isPresent()) { // firstName as defined variable
@@ -408,6 +408,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     private CDTypeSymbolReference handleNames(LinkedList<String> names, CDTypeSymbolReference previousType, ASTNode node) {
         if (names.size() > 0) {
             String name = names.pop();
+            previousType = flattenType(previousType);
+
             // Try name as method/field/assoc
             Scope elementsScope = previousType.getAllKindElements();
             Optional<CDTypeSymbolReference> newType = handleName(node, name, elementsScope);
@@ -425,6 +427,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
                     if(newType.isPresent()) {
                         CDTypeSymbolReference containerType = createTypeRef(previousType.getName(), node);
                         addActualArgument(containerType, newType.get());
+                        // implicit flattening with . operator
                         containerType = flattenType(containerType);
                         newType = Optional.of(containerType);
                     }
@@ -442,9 +445,14 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         }
     }
 
-    /**
-     * Takes a Type and flattens them according to: http://mbse.se-rwth.de/book1/index.php?c=chapter3-3#x1-560003.3.6
-     */
+    protected static CDTypeSymbolReference flatten(CDTypeSymbolReference type, MutableScope scope) {
+        OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
+        return exprVisitor.flattenType(type);
+    }
+        /**
+         * Takes a Type and flattens them according to:
+         * http://mbse.se-rwth.de/book1/index.php?c=chapter3-3#x1-560003.3.6
+         */
     private CDTypeSymbolReference flattenType(CDTypeSymbolReference previousType) {
         String typeName = previousType.getName();
         List<ActualTypeArgument> arguments = previousType.getActualTypeArguments();

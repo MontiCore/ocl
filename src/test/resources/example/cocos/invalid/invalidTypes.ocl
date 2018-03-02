@@ -4,4 +4,6 @@ import example.CDs.DefaultTypes.*;
 ocl invalidTypes {
   inv Test :
      10 == 10m;
+  inv Test :
+    "name" == Set{"name"}
 }
