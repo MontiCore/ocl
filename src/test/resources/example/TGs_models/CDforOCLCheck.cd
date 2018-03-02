@@ -1,4 +1,4 @@
-package example;
+package example.TGs_models;
 classdiagram CDforOCLCheck {
 
   class Action{

@@ -42,20 +42,10 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
         OCLTypeCheckingVisitor checkingVisitor = new OCLTypeCheckingVisitor(scope);
 
         for(ASTExpression expr : node.getStatements()){
+            checkingVisitor.checkPrefixExpr(expr);
             expr.accept(checkingVisitor);
         }
     }
-
-    @Override
-    public void visit(ASTParenthizedExpression node){
-        OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
-    }
-
-    @Override
-    public void visit(ASTOCLQualifiedPrimary node){
-        OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
-    }
-
 
 
     /**

@@ -68,6 +68,7 @@ public class OCLCDToolTest {
                         "    public class Set extends Collection {}\n  " +
                         "    public class Length {}\n" +
                         "    public class Class {}\n" +
+                        "    public class Boolean {}\n" +
                         "    interface Number;\n" +
                         "    class Integer implements Number {}\n" +
                         "    association participants [*] Auction (auctions) <-> (bidder) Person [*];\n" +
@@ -78,7 +79,7 @@ public class OCLCDToolTest {
         } catch (Exception e) {
             Log.error(e.getMessage());
         }
-        Assert.assertEquals(4, Log.getErrorCount());
+        Assert.assertEquals(3, Log.getErrorCount());
 
     }
 
@@ -87,7 +88,22 @@ public class OCLCDToolTest {
     public void cdTool3Test() {
 
         String parentpath = Paths.get("src/test/resources").toAbsolutePath().toString();
-        String oclModel = "example.ArtifactModel_OCL";
+        String oclModel = "example.TGs_models.ArtifactModel_OCL";
+        String[] args = new String[]{"-path", parentpath, "-ocl", oclModel};
+        try {
+            OCLCDTool.main(args);
+        } catch (Exception e) {
+            Log.error(e.getMessage());
+        }
+        Assert.assertEquals(0, Log.getErrorCount());
+    }
+
+    @Ignore
+    @Test
+    public void cdTool4Test() {
+
+        String parentpath = Paths.get("src/test/resources").toAbsolutePath().toString();
+        String oclModel = "example.TGs_models.TG_Test";
         String[] args = new String[]{"-path", parentpath, "-ocl", oclModel};
         try {
             OCLCDTool.main(args);

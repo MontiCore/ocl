@@ -1,6 +1,6 @@
-package example;
+package example.TGs_models;
 
-import example.CDforOCLCheck.*;
+import example.TGs_models.CDforOCLCheck.*;
 import example.CDs.DefaultTypes.*;
 
 OCL OCLArtifactModel {

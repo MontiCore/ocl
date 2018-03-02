@@ -172,6 +172,13 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         }
     }
 
+    @Override
+    public void traverse(ASTOCLTransitivQualification node) {
+        CDTypeSymbolReference setType = createTypeRef("Set", node);
+        TypeInferringHelper.addActualArgument(setType, returnTypeRef);
+        setType = TypeInferringHelper.flattenOnce(setType);
+        returnTypeRef = setType;
+    }
 
     @Override
     public void traverse(ASTOCLArrayQualification node) {

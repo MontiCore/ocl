@@ -1,4 +1,4 @@
-package example;
+package example.TGs_models;
 
 import example.CDforOCLCheck.*;
 import example.CDs.DefaultTypes.*;
