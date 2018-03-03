@@ -219,7 +219,10 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
     @Override
     public void traverse(ASTOCLComprehensionEnumerationStyle node) {
-        node.getOCLCollectionItems().get(0).getExpressions().get(0).accept(realThis);
+        if (!node.getOCLCollectionItems().isEmpty()) {
+            node.getOCLCollectionItems().get(0).getExpressions().get(0).accept(realThis);
+        }
+
     }
 
     @Override
@@ -233,8 +236,9 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             if (containerType.getActualTypeArguments().size() == 0) {
                 Log.error("0xOCLI5 Could not resolve type from InExpression, " + node.getVarNames() +
                         " in " + containerType + " at " +  node.get_SourcePositionStart());
+            } else {
+                returnTypeRef = (CDTypeSymbolReference) containerType.getActualTypeArguments().get(0).getType();
             }
-            returnTypeRef = (CDTypeSymbolReference) containerType.getActualTypeArguments().get(0).getType();
         }
     }
 

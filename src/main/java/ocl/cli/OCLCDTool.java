@@ -169,7 +169,7 @@ public class OCLCDTool {
             OCLCoCoChecker checker2 = OCLCoCos.createChecker();
             checker2.checkAll(astOCLCompilationUnit.get());
             return astOCLCompilationUnit.get();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         throw new RuntimeException("Error during parsing of ocl model.");
@@ -204,7 +204,7 @@ public class OCLCDTool {
                 checker.checkAll(astOCLCompilationUnit.get());
                 return astOCLCompilationUnit.get();
             }
-        } catch (RecognitionException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         throw new RuntimeException("Error during loading of model " + modelFullQualifiedFilename + ".");
