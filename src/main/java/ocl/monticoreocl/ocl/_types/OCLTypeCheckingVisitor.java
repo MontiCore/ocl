@@ -66,6 +66,7 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
 
     public void checkPrefixExpr(ASTExpression node){
         CDTypeSymbolReference exprType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
+        exprType = TypeInferringHelper.removeAllOptionals(exprType);
 
         if (!exprType.getName().equals("Boolean")) {
             Log.error("0xCET02 type of prefix expression must be Boolean, but is: " + exprType.getStringRepresentation() + " " + node.get_SourcePositionStart());
