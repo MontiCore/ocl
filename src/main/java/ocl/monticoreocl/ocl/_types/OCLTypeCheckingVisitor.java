@@ -68,7 +68,7 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
         CDTypeSymbolReference exprType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
 
         if (!exprType.getName().equals("Boolean")) {
-            Log.error("0xCET02 type of prefix expression is not boolean: " + node.get_SourcePositionStart());
+            Log.error("0xCET02 type of prefix expression mus be Boolean, but is: " + exprType.getStringRepresentation() + " " + node.get_SourcePositionStart());
         }
     }
 
