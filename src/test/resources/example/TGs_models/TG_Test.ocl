@@ -3,11 +3,11 @@ package example.TGs_models;
 import example.TGs_models.CDforOCLCheck.*;
 import example.CDs.DefaultTypes.*;
 
-  context JavaSourceFile inv:
-    { t in defines | !t.isInnerAType }.size == 1;
+  context Artifact inv:
+    isRoot <=> simpleName == "/";
 
   context Artifact inv:
-    isRoot implies (this in Directory);
+    simpleName == "/" <=> isRoot;
 
 
 

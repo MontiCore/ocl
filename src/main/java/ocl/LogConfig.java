@@ -31,6 +31,7 @@ public class LogConfig extends Log {
     public static void init() {
         log = new LogConfig();
         Log.setLog(log);
+        Log.enableFailQuick(false);
     }
 
     @Override

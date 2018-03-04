@@ -135,7 +135,7 @@ OCL OCLArtifactModel {
 
   context CDModelFile m, JavaArtifact a, 
     AType t1 in m.defines, AType t2 in a.defines inv:
-      t2 in t1.reliesOn implies a in m.reliesOn;        
+      (t2 in t1.reliesOn) implies (a in m.reliesOn);
 
   context FreeMarkerTemplate inv: 
     nameExtension == "ftl";
@@ -181,7 +181,7 @@ OCL OCLArtifactModel {
 
   context ToolExecution inv:
     input == { a in subaction** |
-      a in ArtifactRead || a in ArtifactExistenceCheck }.reads;
+      (a in ArtifactRead) || (a in ArtifactExistenceCheck) }.reads;
 
   context ToolExecution inv:
     output ==

@@ -24,10 +24,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.se_rwth.commons.logging.Log;
-import ocl.LogConfig;
-import ocl.cli.OCLCDTool;
 import ocl.monticoreocl.ocl._visitors.CD4A2PlantUMLVisitor;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;

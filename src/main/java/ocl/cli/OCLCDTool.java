@@ -20,6 +20,7 @@
 package ocl.cli;
 
 import java.io.*;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
@@ -38,10 +39,10 @@ import ocl.LogConfig;
 import ocl.monticoreocl.ocl._ast.ASTCompilationUnit;
 import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
 import ocl.monticoreocl.ocl._cocos.OCLCoCos;
+import ocl.monticoreocl.ocl._parser.OCLParser;
 import ocl.monticoreocl.ocl._symboltable.OCLLanguage;
 import ocl.monticoreocl.ocl._symboltable.OCLSymbolTableCreator;
 import ocl.monticoreocl.ocl._visitors.CD4A2PlantUMLVisitor;
-import org.antlr.v4.runtime.RecognitionException;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -61,16 +62,16 @@ public class OCLCDTool {
         Option path = new Option("path", "project-path", true, "absolute path to project, " +
                 "required when ocl given as qualified name");
         options.addOption(path);
-
         Option cd = new Option("cd", "classdiagram", true, "input classdiagram as string");
         options.addOption(cd);
-
         Option ocl = new Option("ocl", "ocl-file", true, "input ocl as qualified name or string");
         options.addOption(ocl);
+        Option parseOpt = new Option("parseOnly", "parseOnly", false, "only parse the cd model, don't check cocos!");
+        options.addOption(parseOpt);
 
-        Option printSrc = new Option("printSrc", "classdiagram", true, "input classdiagram as string");
+        Option printSrc = new Option("printSrc", "printCDSrc", true, "input classdiagram as string");
         options.addOption(printSrc);
-        Option printTgt = new Option("printTgt", "classdiagram", true, "output path for visualized classdiagram");
+        Option printTgt = new Option("printTgt", "printCDTgt", true, "output path for visualized classdiagram");
         options.addOption(printTgt);
         Option showAtt = new Option("showAttributes", "showAttributes", false, "show attributes when printing cd");
         options.addOption(showAtt);
@@ -83,8 +84,8 @@ public class OCLCDTool {
 
 
 
-        Option verbose = new Option("verbose", "verbose", false, "sets verbose logging");
-        options.addOption(verbose);
+        Option verboseOpt = new Option("verbose", "verbose", false, "sets verbose logging");
+        options.addOption(verboseOpt);
 
         CommandLineParser parser = new BasicParser();
         CommandLine cmd;
@@ -102,17 +103,31 @@ public class OCLCDTool {
         String cdModel = cmd.getOptionValue("cd");
         String cdString = cmd.getOptionValue("printSrc");
         String cdPath = cmd.getOptionValue("printTgt");
-        Boolean verb = cmd.hasOption("verbose");
+        Boolean verbose = cmd.hasOption("verbose");
+        Boolean parse = cmd.hasOption("parseOnly");
+
+        // Disable verbose logging
+        if (!verbose) {
+            LogConfig.init();
+        }
 
         if (cmd.hasOption("path") && cmd.hasOption("ocl") && isQualifiedName(oclModel)) {
-            loadOclModel(parentDir, oclModel, verb);
+            if(!parse) {
+                loadOclModel(parentDir, oclModel);
+            } else {
+                parseOcl(parentDir, oclModel);
+            }
             if (Log.getErrorCount() > 0) {
                 System.out.println("There are errors!");
             } else {
                 System.out.println("OCL Model loaded successfully!");
             }
-        } else if (cmd.hasOption("ocl") && cmd.hasOption("cd") && !isQualifiedName(oclModel) && !isQualifiedName(cdModel)) {
-            loadOclFromString(oclModel, cdModel, verb);
+        } else if (cmd.hasOption("ocl") && !isQualifiedName(oclModel)) {
+            if(!parse) {
+                loadOclFromString(oclModel, cdModel);
+            } else {
+                parseOclFromString(oclModel);
+            }
             if (Log.getErrorCount() > 0) {
                 System.out.println("There are errors!");
             } else {
@@ -128,13 +143,32 @@ public class OCLCDTool {
 
     }
 
-    protected static ASTCompilationUnit loadOclFromString(String oclModel, String cdModel, Boolean verbose) {
+    private static void parseOcl(String parent, String oclModel) {
+        try {
+            Path oclModelPath = Paths.get(parent + "\\" + oclModel.replaceAll("\\.", "/") + ".ocl");
+            OCLParser parser = new OCLParser();
+            Optional<ASTCompilationUnit> oclAST = parser.parse(oclModelPath.toString());
+            if (!oclAST.isPresent())
+                Log.error("Could not parse OCL Model!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void parseOclFromString(String oclModel) {
+        try {
+            OCLParser oclParser = new OCLParser();
+            Optional<ASTCompilationUnit> oclAST = oclParser.parse_String(oclModel);
+            if (!oclAST.isPresent())
+                Log.error("Could not parse OCL Model!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected static ASTCompilationUnit loadOclFromString(String oclModel, String cdModel) {
         final OCLLanguage ocllang = new OCLLanguage();
         final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();
-
-        if (!verbose) {
-            LogConfig.init();
-        }
 
         try {
             ModelPath modelPath = new ModelPath();
@@ -176,13 +210,9 @@ public class OCLCDTool {
     }
 
 
-    protected static ASTCompilationUnit loadOclModel(String parentDirectory, String modelFullQualifiedFilename, Boolean verbose) {
+    protected static ASTCompilationUnit loadOclModel(String parentDirectory, String modelFullQualifiedFilename) {
         final OCLLanguage ocllang = new OCLLanguage();
         final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();
-
-        if (!verbose) {
-            LogConfig.init();
-        }
 
         try {
             ModelPath modelPath = new ModelPath(Paths.get(parentDirectory));

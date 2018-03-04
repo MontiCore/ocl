@@ -45,8 +45,14 @@ public class OCLCDToolTest {
         } catch (Exception e) {
             Log.error(e.getMessage());
         }
+        Assert.assertEquals(0, Log.getErrorCount());
 
-        //Assert.assertEquals(2, Log.getErrorCount());
+        args = new String[]{"-path", parentpath, "-ocl", oclModel, "-parseOnly"};
+        try {
+            OCLCDTool.main(args);
+        } catch (Exception e) {
+            Log.error(e.getMessage());
+        }
         Assert.assertEquals(0, Log.getErrorCount());
     }
 
@@ -83,8 +89,15 @@ public class OCLCDToolTest {
         } catch (Exception e) {
             Log.error(e.getMessage());
         }
-        //Assert.assertEquals(5, Log.getErrorCount());
         Assert.assertEquals(3, Log.getErrorCount());
+
+        args = new String[]{"-ocl", oclModel, "-cd", cdModel, "-parseOnly"};
+        try {
+            OCLCDTool.main(args);
+        } catch (Exception e) {
+            Log.error(e.getMessage());
+        }
+        Assert.assertEquals(0, Log.getErrorCount());
 
     }
 
