@@ -22,6 +22,7 @@ package ocl.cli;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 import de.monticore.ModelingLanguageFamily;
@@ -34,6 +35,8 @@ import de.monticore.umlcd4a.CD4AnalysisLanguage;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.umlcd4a.symboltable.CD4AnalysisSymbolTableCreator;
+import de.se_rwth.commons.SourcePosition;
+import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import ocl.LogConfig;
 import ocl.monticoreocl.ocl._ast.ASTCompilationUnit;
@@ -66,8 +69,10 @@ public class OCLCDTool {
         options.addOption(cd);
         Option ocl = new Option("ocl", "ocl-file", true, "input ocl as qualified name or string");
         options.addOption(ocl);
-        Option parseOpt = new Option("parseOnly", "parseOnly", false, "only parse the cd model, don't check cocos!");
+        Option parseOpt = new Option("parseOnly", "parseOnly", false, "only parse the cd model, don't check cocos");
         options.addOption(parseOpt);
+        Option logErrOpt = new Option("logErrTo", "logErrTo", true, "Log errors to this file");
+        options.addOption(logErrOpt);
 
         Option printSrc = new Option("printSrc", "printCDSrc", true, "input classdiagram as string");
         options.addOption(printSrc);
@@ -139,7 +144,48 @@ public class OCLCDTool {
         } else {
             printHelp(options);
         }
+        if(cmd.hasOption("logErrTo")) {
+            findingsToJSON(cmd.getOptionValue("logErrTo"));
+        }
+    }
 
+    public static void findingsToJSON(String logErrPath) {
+        try {
+            String findings = findingsToJSON();
+            File newTextFile = new File(logErrPath);
+            FileWriter fw = new FileWriter(newTextFile);
+            fw.write(findings);
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String findingsToJSON() {
+        List<Finding> findings = Log.getFindings();
+        StringBuilder sb = new StringBuilder();
+        sb.append("[\n");
+        for (Finding f:findings) {
+            int sl = -1, sc = -1, el = -1, ec = -1;
+            if (f.getSourcePosition().isPresent()) {
+                sl = f.getSourcePosition().get().getLine();
+                sc = f.getSourcePosition().get().getColumn();
+            }
+            if (f.getSourcePositionEnd() != null && f.getSourcePositionEnd().isPresent()) {
+                el = f.getSourcePositionEnd().get().getLine();
+                ec = f.getSourcePositionEnd().get().getColumn();
+            }
+            sb.append("{\n");
+            String positions = String.format("    pos: { sl: %d, el: %d, sc: %d, ec: %d },\n", sl, el, sc, ec);
+            sb.append(positions);
+            sb.append("    type: \"").append(f.getType()).append("\",\n");
+            sb.append("    message: \"").append(f.getMsg()).append("\"\n");
+            sb.append("},\n");
+        }
+        sb.deleteCharAt(sb.length()-1);
+        sb.deleteCharAt(sb.length()-1);
+        sb.append("\n]\n");
+        return sb.toString();
 
     }
 

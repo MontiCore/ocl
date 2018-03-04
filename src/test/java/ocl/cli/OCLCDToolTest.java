@@ -68,7 +68,7 @@ public class OCLCDToolTest {
                 "}\"";
         String cdModel =
                 "\"package example.CDs;\n" +
-                        "classdiagram AuctionCD {\n" +
+                        "classdiagram auctionCD {\n" +
                         "    public class Auction {}\n" +
                         "    public class Person {}\n" +
                         "    public class Duration {}\n" +
@@ -83,7 +83,7 @@ public class OCLCDToolTest {
                         "    class Integer implements Number {}\n" +
                         "    association participants [*] Auction (auctions) <-> (bidder) Person [*];\n" +
                         "}\"";
-        String[] args = new String[]{"-ocl", oclModel, "-cd", cdModel};
+        String[] args = new String[]{"-ocl", oclModel, "-cd", cdModel, "-logErrTo", "target/err.log"};
         try {
             OCLCDTool.main(args);
         } catch (Exception e) {
