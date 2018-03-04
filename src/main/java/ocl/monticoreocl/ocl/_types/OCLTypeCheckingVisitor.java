@@ -60,7 +60,7 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
 
         if (!leftType.isSameOrSuperType(rightType) && !rightType.isSameOrSuperType(leftType)) {
                 Log.error("0xCET01 Types mismatch on infix expression at " + node.get_SourcePositionStart() +
-                        " left: " + leftType.getStringRepresentation() + " right: " + rightType.getStringRepresentation());
+                        " left: " + leftType.getStringRepresentation() + " right: " + rightType.getStringRepresentation(), node.get_SourcePositionStart());
         }
     }
 
@@ -69,7 +69,8 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
         exprType = TypeInferringHelper.removeAllOptionals(exprType);
 
         if (!exprType.getName().equals("Boolean")) {
-            Log.error("0xCET02 type of prefix expression must be Boolean, but is: " + exprType.getStringRepresentation() + " " + node.get_SourcePositionStart());
+            Log.error("0xCET02 type of prefix expression must be Boolean, but is: " + exprType.getStringRepresentation() + " " + node.get_SourcePositionStart()
+            , node.get_SourcePositionStart(), node.get_SourcePositionEnd());
         }
     }
 

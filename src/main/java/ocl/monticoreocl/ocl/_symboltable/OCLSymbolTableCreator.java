@@ -270,7 +270,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 			CDTypeSymbolReference containerType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(astExpression, currentScope().get());
 			if (containerType.getActualTypeArguments().size() == 0) {
 				Log.error("0xOCLS3 Could not resolve type from InExpression, " + astInExpr.getVarNames() +
-						" in " + containerType + " at " +  astInExpr.get_SourcePositionStart());
+						" in " + containerType + " at " +  astInExpr.get_SourcePositionStart()
+						, astInExpr.get_SourcePositionStart(), astInExpr.get_SourcePositionEnd());
 			} else {
 				CDTypeSymbolReference varType = (CDTypeSymbolReference) containerType.getActualTypeArguments().get(0).getType();
 				varNames.forEach(name -> addVarDeclSymbol(name, varType, astInExpr));
@@ -316,7 +317,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 		CDTypeSymbolReference typeReference = new CDTypeSymbolReference(typeName, this.getFirstCreatedScope());
 		// Check if type was found in CD loaded CD models
 		if (!typeReference.existsReferencedSymbol()) {
-			Log.error("0xOCLS2 This type could not be found: " + typeName + " at " + node.get_SourcePositionStart());
+			Log.error("0xOCLS2 This type could not be found: " + typeName + " at " + node.get_SourcePositionStart()
+					, node.get_SourcePositionStart(), node.get_SourcePositionEnd());
 		}
 		return typeReference;
 	}
@@ -337,7 +339,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 		}
 
 		if (typeReference == null) {
-			Log.error("0xOCLS1 No type reference could be created for: " + astType + " at " + node.get_SourcePositionStart());
+			Log.error("0xOCLS1 No type reference could be created for: " + astType + " at " + node.get_SourcePositionStart()
+					, node.get_SourcePositionStart(), node.get_SourcePositionEnd());
 		}
 		return typeReference;
 	}

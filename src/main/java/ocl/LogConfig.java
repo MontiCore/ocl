@@ -19,7 +19,11 @@
  */
 package ocl;
 
+import de.se_rwth.commons.SourcePosition;
+import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+
+import javax.xml.transform.Source;
 
 /**
  * @author Sascha Schneiders
@@ -71,11 +75,36 @@ public class LogConfig extends Log {
         }
     }
 
+
     @Override
-    protected void doTrace(String msg, String logName) {
-        if (!disableOutput) {
-            super.doTrace(msg, logName);
-        }
+    protected void doError(String msg, SourcePosition pos) {
+        Finding error = Finding.error(msg, pos);
+        addFinding(error);
+        doErrPrint("[ERROR] " + error.getMsg());
+        terminateIfErrors();
     }
 
+    @Override
+    protected void doError(String msg, SourcePosition start, SourcePosition end) {
+        Finding error = Finding.error(msg, start, end);
+        addFinding(error);
+        doErrPrint("[ERROR] " + error.getMsg());
+        terminateIfErrors();
+    }
+
+    @Override
+    protected void doWarn(String msg, SourcePosition pos) {
+        Finding warn = Finding.warning(msg, pos);
+        addFinding(warn);
+        doErrPrint("[WARN] " + warn.getMsg());
+        terminateIfErrors();
+    }
+
+    @Override
+    protected void doWarn(String msg, SourcePosition start, SourcePosition end) {
+        Finding warn = Finding.warning(msg, start, end);
+        addFinding(warn);
+        doErrPrint("[WARN] " + warn.getMsg());
+        terminateIfErrors();
+    }
 }
