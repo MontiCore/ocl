@@ -32,31 +32,21 @@ public class LogConfig extends Log {
     static Log log;
     boolean disableOutput = true;
 
+
     public static void init() {
         log = new LogConfig();
         Log.setLog(log);
         Log.enableFailQuick(false);
     }
 
-    @Override
-    protected void doInfo(String msg, Throwable t, String logName) {
-        if (!disableOutput) {
-            super.doInfo(msg, t, logName);
-        }
-    }
+    /**
+     * Disable output for debug, trace and info if disableOutput is set
+     */
 
     @Override
     protected void doInfo(String msg, String logName) {
         if (!disableOutput) {
             super.doInfo(msg, logName);
-        }
-    }
-
-
-    @Override
-    protected void doDebug(String msg, Throwable t, String logName) {
-        if (!disableOutput) {
-            super.doDebug(msg, t, logName);
         }
     }
 
@@ -67,14 +57,16 @@ public class LogConfig extends Log {
         }
     }
 
-
     @Override
-    protected void doTrace(String msg, Throwable t, String logName) {
+    protected void doTrace(String msg, String logName) {
         if (!disableOutput) {
-            super.doTrace(msg, t, logName);
+            super.doTrace(msg, logName);
         }
     }
 
+    /**
+     * Reformat printing of error and warn
+     */
 
     @Override
     protected void doError(String msg, SourcePosition pos) {
