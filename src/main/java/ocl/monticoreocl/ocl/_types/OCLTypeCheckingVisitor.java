@@ -58,9 +58,12 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
         leftType = TypeInferringHelper.removeAllOptionals(leftType);
         rightType = TypeInferringHelper.removeAllOptionals(rightType);
 
-        if (!leftType.isSameOrSuperType(rightType) && !rightType.isSameOrSuperType(leftType)) {
+        if(leftType.existsReferencedSymbol() && rightType.existsReferencedSymbol()) {
+
+            if (!leftType.isSameOrSuperType(rightType) && !rightType.isSameOrSuperType(leftType)) {
                 Log.error("0xCET01 Types mismatch on infix expression at " + node.get_SourcePositionStart() +
                         " left: " + leftType.getStringRepresentation() + " right: " + rightType.getStringRepresentation(), node.get_SourcePositionStart());
+            }
         }
     }
 
