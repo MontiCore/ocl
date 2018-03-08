@@ -176,10 +176,10 @@ public class OCLCDTool {
                 ec = f.getSourcePositionEnd().get().getColumn();
             }
             sb.append("{\n");
-            String positions = String.format("    pos: { sl: %d, el: %d, sc: %d, ec: %d },\n", sl, el, sc, ec);
+            String positions = String.format("    \"pos\": { \"sl\": %d, \"el\": %d, \"sc\": %d, \"ec\": %d },\n", sl, el, sc, ec);
             sb.append(positions);
-            sb.append("    type: \"").append(f.getType()).append("\",\n");
-            sb.append("    message: \"").append(f.getMsg()).append("\"\n");
+            sb.append("    \"type\": \"").append(f.getType()).append("\",\n");
+            sb.append("    \"message\": \"").append(f.getMsg()).append("\"\n");
             sb.append("},\n");
         }
         sb.deleteCharAt(sb.length()-1);
