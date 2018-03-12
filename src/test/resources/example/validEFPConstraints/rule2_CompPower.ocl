@@ -1,0 +1,14 @@
+package ocl;
+
+import ocl.CnCExt;
+import ocl.NFPExt;
+
+ocl rule2_CompPower {
+    context CTDef ct inv:
+            let
+                selectedVals = ct.CSubs;
+                aggregatedTags = List{max(s.CType.tagTypePower, 0W) | s in selectedVals};
+                aggregatedValue = sum(aggregatedTags, "W");
+            in
+                aggregatedValue < min(ct.tagTypePower, +oo W);
+}

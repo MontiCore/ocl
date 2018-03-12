@@ -1,0 +1,13 @@
+package ocl;
+
+import ocl.CnCExt;
+import ocl.NFPExt;
+
+ocl rule1_InstPower {
+    context Cmp cmp inv:
+            let
+                selectedVals = cmp.CType;
+                aggregatedValue = max(cmp.tagInstPower, 0W);
+            in
+                aggregatedValue < min(selectedVals.tagTypePower, +oo W);
+}

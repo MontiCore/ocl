@@ -45,7 +45,6 @@ public class OCLParserTest {
 		Optional<ASTCompilationUnit> cdDef = parser.parse(model.toString());
 		assertFalse(parser.hasErrors());
 		assertTrue(cdDef.isPresent());
-		//Log.debug(cdDef.toString(), "OCLParserTest");
 	}
 
 	@Test
@@ -683,6 +682,34 @@ public class OCLParserTest {
 	@Test
 	public void unit4Test() throws RecognitionException, IOException {
 		Path model = Paths.get("src/test/resources/example/validGrammarModels/unit4.ocl");
+		test(model);
+	}
+
+	/**
+	 * old ocl files, testing parsing effeciency
+	 */
+
+	@Test
+	public void rule1Test() throws RecognitionException, IOException {
+		Path model = Paths.get("src/test/resources/example/validEFPConstraints/rule1_InstPower.ocl");
+		test(model);
+	}
+
+	@Test
+	public void rule2Test() throws RecognitionException, IOException {
+		Path model = Paths.get("src/test/resources/example/validEFPConstraints/rule2_CompPower.ocl");
+		test(model);
+	}
+
+	@Test
+	public void rule3Test() throws RecognitionException, IOException {
+		Path model = Paths.get("src/test/resources/example/validEFPConstraints/rule3_WCET_SingleCore.ocl");
+		test(model);
+	}
+
+	@Test
+	public void rule4Test() throws RecognitionException, IOException {
+		Path model = Paths.get("src/test/resources/example/validEFPConstraints/rule4_WCET_MultiCore.ocl");
 		test(model);
 	}
 }

@@ -1,0 +1,15 @@
+package ocl;
+
+import ocl.CnCExt;
+import ocl.NFPExt;
+
+ocl rule4_WCET_MultiCore {
+    context Cmp cmp inv:
+            let
+                selectedPaths = directSubComponentPaths(cmp);
+                aggregatedValues = List{sum(selectedVals, "s") | path in selectedPaths , selectedVals =
+                                                                List{max(e.wcet, 0 s) | e in path}
+                                 };
+            in
+                forall a in aggregatedValues: (a < min(cmp.wcet, +oo s));
+}
