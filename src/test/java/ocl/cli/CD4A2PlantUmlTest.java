@@ -48,9 +48,9 @@ public class CD4A2PlantUmlTest {
 
             String expected = "@startuml\n" +
                     "class A\n" +
-                    "class B\n" +
+                    "class B extends A\n" +
                     "class C\n" +
-                    "class D\n" +
+                    "class D extends B\n" +
                     "A \"*\" <--> \"0..1\" B\n" +
                     "C \"0..1\" <--> \"*\" D\n" +
                     "A <-- \"*\" D\n" +
@@ -66,9 +66,9 @@ public class CD4A2PlantUmlTest {
         String cdString = "classdiagram plantUMLTest {\n" +
                 "\n" +
                 "  public class A ;\n" +
-                "  public class B extends A{}\n" +
-                "  public class C {}\n" +
-                "  public class D extends B{}\n" +
+                "  public class B extends A{int b;}\n" +
+                "  public interface C {}\n" +
+                "  public class D implements C,C{int b;}\n" +
                 "\n" +
                 "  association blub [*] A (left) <->  (right) B [0..1];\n" +
                 "  association [0..1] C <-> D [*];\n" +

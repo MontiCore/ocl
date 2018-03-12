@@ -21,6 +21,8 @@ package ocl.monticoreocl.ocl._visitors;
 
 
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.TypesPrinter;
+import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.umlcd4a.cd4analysis._ast.*;
 import de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisVisitor;
 
@@ -96,6 +98,15 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
     @Override
     public void handle(ASTCDClass node) {
         getPrinter().print("class " + node.getName());
+
+        if (node.superclassIsPresent()) {
+            getPrinter().print(" extends " + node.printSuperClass());
+        }
+
+        if (!node.getInterfaces().isEmpty()) {
+            getPrinter().print(" implements " + node.printInterfaces());
+        }
+
         if (showAtt && node.getCDAttributes().size() > 0) {
             getPrinter().print(" {\n");
             getPrinter().indent();
