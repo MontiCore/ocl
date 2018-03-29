@@ -22,6 +22,9 @@ package ocl.monticoreocl.ocl._symboltable;
 import de.monticore.symboltable.types.CommonJFieldSymbol;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 
+import javax.measure.unit.Unit;
+import java.util.Optional;
+
 public class OCLVariableDeclarationSymbol extends CommonJFieldSymbol<CDTypeSymbolReference> {
 
 	public static final OCLVariableDeclarationKind KIND = new OCLVariableDeclarationKind();
@@ -29,7 +32,7 @@ public class OCLVariableDeclarationSymbol extends CommonJFieldSymbol<CDTypeSymbo
 	protected String varName;
 	protected CDTypeSymbolReference typeReference;
 	protected String varTypeName;
-
+	protected Optional<Unit<?>> unit;
 
 	public OCLVariableDeclarationSymbol(String varName, CDTypeSymbolReference typeReference) {
 		super(varName, KIND, typeReference);
@@ -39,6 +42,7 @@ public class OCLVariableDeclarationSymbol extends CommonJFieldSymbol<CDTypeSymbo
 		if (typeReference!=null) {
 			this.varTypeName = typeReference.getName();
 		}
+		this.unit = Optional.empty();
 	}
 
 	public String getExtendedName() {
@@ -57,6 +61,14 @@ public class OCLVariableDeclarationSymbol extends CommonJFieldSymbol<CDTypeSymbo
 	@Override
 	public String getName(){
 		return varName;
+	}
+
+	public Optional<Unit<?>> getUnit(){
+		return unit;
+	}
+
+	public void setUnit(Unit<?> unit){
+		this.unit = Optional.of(unit);
 	}
 
 	@Override

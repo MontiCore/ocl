@@ -41,6 +41,8 @@ import ocl.monticoreocl.ocl._ast.ASTOCLNonNumberPrimary;
 import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
 
+import javax.measure.quantity.Quantity;
+import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import java.util.*;
 
@@ -53,10 +55,23 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     private CDTypeSymbolReference returnTypeRef;
     private OCLVisitor realThis = this;
     private MutableScope scope;
+    private Optional<Unit<?>> returnUnit;
 
     public OCLExpressionTypeInferingVisitor(MutableScope scope) {
         this.returnTypeRef = null;
         this.scope = scope;
+        this.returnUnit = Optional.empty();
+    }
+
+    public CDTypeSymbolReference getTypeFromExpression(ASTExpression node) {
+        node.accept(realThis);
+        if (returnTypeRef==null) {
+            Log.error("0xOCLI0 The variable type could not be resolved from this expression: " + node.get_SourcePositionStart()
+                    , node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+            return new CDTypeSymbolReference("Class", scope);
+        } else {
+            return returnTypeRef;
+        }
     }
 
     public static CDTypeSymbolReference getTypeFromExpression(ASTExpression node, MutableScope scope) {
@@ -87,6 +102,10 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
     public CDTypeSymbolReference getReturnTypeReference() {
         return returnTypeRef;
+    }
+
+    public Optional<Unit<?>> getReturnUnit() {
+        return returnUnit;
     }
 
     private CDTypeSymbolReference createTypeRef(String typeName, ASTNode node) {
@@ -137,7 +156,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             NumberUnitPrettyPrinter printer = new NumberUnitPrettyPrinter(new IndentPrinter());
             printer.prettyprint(node.getUn().get());
             String unitString = printer.getPrinter().getContent();
-            returnTypeRef = createTypeRef(UnitsPrinter.unitStringToUnitName(unitString), node);
+            returnUnit = Optional.of(Unit.valueOf(unitString));
+            returnTypeRef = createTypeRef(UnitsPrinter.unitToUnitName(returnUnit.get()), node);
         }
     }
 
@@ -153,7 +173,9 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
     @Override
     public void traverse(ASTParenthizedExpression node) {
-        returnTypeRef = getTypeFromExpression(node.getExpression(), scope);
+        OCLExpressionTypeInferingVisitor innerVisitor = new OCLExpressionTypeInferingVisitor(scope);
+        returnTypeRef = innerVisitor.getTypeFromExpression(node.getExpression());
+        returnUnit = innerVisitor.getReturnUnit();
         if (node.qualificationIsPresent()) {
             node.getQualification().get().accept(realThis);
         }
@@ -279,41 +301,37 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
     @Override
     public void traverse(ASTDivideExpression node) {
-        CDTypeSymbolReference leftType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getLeftExpression(), scope);
-        CDTypeSymbolReference rightType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getRightExpression(), scope);
+        OCLExpressionTypeInferingVisitor leftVisitor = new OCLExpressionTypeInferingVisitor(scope);
+        CDTypeSymbolReference leftType = leftVisitor.getTypeFromExpression(node.getLeftExpression());
+        OCLExpressionTypeInferingVisitor rightVisitor = new OCLExpressionTypeInferingVisitor(scope);
+        CDTypeSymbolReference rightType = rightVisitor.getTypeFromExpression(node.getRightExpression());
         CDTypeSymbolReference amountType = createTypeRef("Amount", node);
 
         if (leftType.getName().equals("Number") && rightType.getName().equals("Number")) {
             returnTypeRef = createTypeRef("Number", node);
-        } else if(leftType.getName().equals("Amount") || rightType.getName().equals("Amount")) {
-            returnTypeRef = createTypeRef("Amount", node);
         } else if(amountType.isSameOrSuperType(leftType) && amountType.isSameOrSuperType(rightType)){
-            Unit<?> leftUnit = UnitsPrinter.unitNameToUnit(leftType.getName());
-            Unit<?> rightUnit = UnitsPrinter.unitNameToUnit(rightType.getName());
-            Unit<?> resultUnit = leftUnit.divide(rightUnit);
-            String resultUnitName = UnitsPrinter.unitToUnitName(resultUnit);
-
-            returnTypeRef = createTypeRef(resultUnitName, node);
+            Unit<?> leftUnit = leftVisitor.getReturnUnit().orElse(Unit.ONE);
+            Unit<?> rightUnit = rightVisitor.getReturnUnit().orElse(Unit.ONE);
+            returnUnit = Optional.of(leftUnit.divide(rightUnit));
+            returnTypeRef = createTypeRef(UnitsPrinter.unitToUnitName(returnUnit.get()), node);
         }
     }
 
     @Override
     public void traverse(ASTMultExpression node) {
-        CDTypeSymbolReference leftType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getLeftExpression(), scope);
-        CDTypeSymbolReference rightType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getRightExpression(), scope);
+        OCLExpressionTypeInferingVisitor leftVisitor = new OCLExpressionTypeInferingVisitor(scope);
+        CDTypeSymbolReference leftType = leftVisitor.getTypeFromExpression(node.getLeftExpression());
+        OCLExpressionTypeInferingVisitor rightVisitor = new OCLExpressionTypeInferingVisitor(scope);
+        CDTypeSymbolReference rightType = rightVisitor.getTypeFromExpression(node.getLeftExpression());
         CDTypeSymbolReference amountType = createTypeRef("Amount", node);
 
         if (leftType.getName().equals("Number") && rightType.getName().equals("Number")) {
             returnTypeRef = createTypeRef("Number", node);
-        } else if(leftType.getName().equals("Amount") || rightType.getName().equals("Amount")) {
-            returnTypeRef = createTypeRef("Amount", node);
         } else if(amountType.isSameOrSuperType(leftType) && amountType.isSameOrSuperType(rightType)){
-            Unit<?> leftUnit = UnitsPrinter.unitNameToUnit(leftType.getName());
-            Unit<?> rightUnit = UnitsPrinter.unitNameToUnit(rightType.getName());
-            Unit<?> resultUnit = leftUnit.times(rightUnit);
-            String resultUnitName = UnitsPrinter.unitToUnitName(resultUnit);
-
-            returnTypeRef = createTypeRef(resultUnitName, node);
+            Unit<?> leftUnit = leftVisitor.getReturnUnit().orElse(Unit.ONE);
+            Unit<?> rightUnit = rightVisitor.getReturnUnit().orElse(Unit.ONE);
+            returnUnit = Optional.of(leftUnit.times(rightUnit));
+            returnTypeRef = createTypeRef(UnitsPrinter.unitToUnitName(returnUnit.get()), node);
         }
     }
 
@@ -399,6 +417,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         } else if(nameDecl.isPresent()) { // firstName as defined variable
             names.pop();
             typeRef = nameDecl.get().getType();
+            returnUnit = nameDecl.get().getUnit();
         } else if (typeName.isPresent()) { // Class same as Class.allInstances()
             names.pop();
             typeRef = createTypeRef("Set", node);
@@ -406,6 +425,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             TypeInferringHelper.addActualArgument(typeRef, argsTypeRef);
         } else if (thisDecl.isPresent()) { // implicit this
             typeRef = thisDecl.get().getType();
+            returnUnit = nameDecl.get().getUnit();
         } else {
             Log.error("0xOCLI2 Could not resolve name or type: " + prefixName + " at " + node.get_SourcePositionStart()
                     , node.get_SourcePositionStart(), node.get_SourcePositionEnd());

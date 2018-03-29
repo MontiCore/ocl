@@ -71,16 +71,44 @@ public class OCLCDToolTest {
                         "classdiagram auctionCD {\n" +
                         "    public class Auction {}\n" +
                         "    public class Person {}\n" +
-                        "    public class Duration {}\n" +
-                        "    public class Collection {\n" +
-                        "      int size();\n" +
-                        "    }\n" +
-                        "    public class Set extends Collection {}\n  " +
-                        "    public class Length {}\n" +
-                        "    public class Class {}\n" +
-                        "    public class Boolean {}\n" +
-                        "    interface Number;\n" +
-                        "    class Integer implements Number {}\n" +
+
+                        "  class Class;\n" +
+                        "  class Object;\n" +
+                        "  class Collection {\n" +
+                        "    boolean containsAll(Collection c);\n" +
+                        "    boolean contains(Collection c);\n" +
+                        "    int size();\n" +
+                        "    boolean isEmpty();\n" +
+                        "    Collection addAll(Collection c);\n" +
+                        "  }\n" +
+                        "  class List extends Collection {\n" +
+                        "      boolean nonEmpty();\n" +
+                        "      List addAll(List c);\n" +
+                        "      Set asSet();\n" +
+                        "      List add(Object o);\n" +
+                        "  }\n" +
+                        "  class Set extends Collection {\n" +
+                        "      Set addAll(Set c);\n" +
+                        "      List asList();\n" +
+                        "      Set add(Object o);\n" +
+                        "  }\n" +
+                        "  class Optional {\n" +
+                        "    boolean isAbsent();\n" +
+                        "    boolean isPresent();\n" +
+                        "  }\n" +
+
+                        "  interface Number extends Amount;\n" +
+                        "  class Integer implements Number;\n" +
+                        "  class Double implements Number;\n" +
+                        "  class Float implements Number;\n" +
+                        "  class Boolean;\n" +
+                        "  class Character;\n" +
+
+                        "  interface Amount;\n" +
+                        "  class Duration implements Amount;\n" +
+                        "  class Length implements Amount;\n" +
+                        "  class Acceleration implements Amount;\n" +
+
                         "    association participants [*] Auction (auctions) <-> (bidder) Person [*];\n" +
                         "}\"";
         String[] args = new String[]{"-ocl", oclModel, "-cd", cdModel, "-logErrTo", "target/err.log"};

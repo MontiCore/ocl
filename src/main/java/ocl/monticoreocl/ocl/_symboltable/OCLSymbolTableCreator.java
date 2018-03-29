@@ -288,8 +288,12 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 			//Todo: cross check with expression Type?
 		} else {
 			ASTExpression astExpression = astVariableDeclaration.getExpression();
-			CDTypeSymbolReference typeReference = OCLExpressionTypeInferingVisitor.getTypeFromExpression(astExpression, currentScope().get());
-			addVarDeclSymbol(astVariableDeclaration.getName(), typeReference, astVariableDeclaration);
+			OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(currentScope().get());
+			CDTypeSymbolReference typeReference = exprVisitor.getTypeFromExpression(astExpression);
+
+			OCLVariableDeclarationSymbol declSymbol = addVarDeclSymbol(astVariableDeclaration.getName(), typeReference, astVariableDeclaration);
+			if(exprVisitor.getReturnUnit().isPresent());
+				declSymbol.setUnit(exprVisitor.getReturnUnit().get());
 		}
 	}
 

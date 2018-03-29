@@ -358,4 +358,35 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
         assertEquals(1, declVarSymbol.getType().getActualTypeArguments().size());
         assertEquals("C", declVarSymbol.getType().getActualTypeArguments().get(0).getType().toString());
     }
+
+    @Test
+    public void amountTypesTest() {
+        final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/");
+
+        final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("example.typeInferringModels.amountTypes", OCLFileSymbol.KIND).orElse(null);
+        assertNotNull(oclFileSymbol);
+        OCLInvariantSymbol oclInvariantSymbol = oclFileSymbol.getOCLInvariant("test1").orElse(null);
+        assertNotNull(oclInvariantSymbol);
+
+        OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("a").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Length", declVarSymbol.getVarTypeName());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("b").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Duration", declVarSymbol.getVarTypeName());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("c").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Velocity", declVarSymbol.getVarTypeName());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("d").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Velocity", declVarSymbol.getVarTypeName());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("e").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Acceleration", declVarSymbol.getVarTypeName());
+
+    }
 }

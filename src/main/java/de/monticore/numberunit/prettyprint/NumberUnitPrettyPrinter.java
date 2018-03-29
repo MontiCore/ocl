@@ -106,9 +106,9 @@ public class NumberUnitPrettyPrinter implements NumberUnitVisitor{
     @Override
     public void handle(ASTTimeDiv node) {
         if (node.isDivIsPresent()) {
-            getPrinter().print(node.getIsDiv());
+            getPrinter().print(node.getIsDiv().get());
         } else if (node.isTimeIsPresent()) {
-            getPrinter().print(node.getIsTime());
+            getPrinter().print(node.getIsTime().get());
         }
     }
 
