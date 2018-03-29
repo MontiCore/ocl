@@ -292,7 +292,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 			CDTypeSymbolReference typeReference = exprVisitor.getTypeFromExpression(astExpression);
 
 			OCLVariableDeclarationSymbol declSymbol = addVarDeclSymbol(astVariableDeclaration.getName(), typeReference, astVariableDeclaration);
-			if(exprVisitor.getReturnUnit().isPresent());
+			if(exprVisitor.getReturnUnit().isPresent())
 				declSymbol.setUnit(exprVisitor.getReturnUnit().get());
 		}
 	}

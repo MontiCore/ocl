@@ -425,7 +425,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             TypeInferringHelper.addActualArgument(typeRef, argsTypeRef);
         } else if (thisDecl.isPresent()) { // implicit this
             typeRef = thisDecl.get().getType();
-            returnUnit = nameDecl.get().getUnit();
+            returnUnit = thisDecl.get().getUnit();
         } else {
             Log.error("0xOCLI2 Could not resolve name or type: " + prefixName + " at " + node.get_SourcePositionStart()
                     , node.get_SourcePositionStart(), node.get_SourcePositionEnd());
