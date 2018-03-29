@@ -65,7 +65,7 @@ public class OCLCDToolTest {
                 "  context Auction a inv Test:\n" +
                 "      a.participants.size > 0s ;\n" +
                 "      a.participants.sze > 0 ;\n" +
-                "      1 m/s > 1 m ;\n" +
+                "      3 m < 7 m/s ;\n" +
                 "}\"";
         String cdModel =
                 "\"package example.CDs;\n" +
@@ -119,7 +119,7 @@ public class OCLCDToolTest {
         } catch (Exception e) {
             Log.error(e.getMessage());
         }
-        Assert.assertEquals(3, Log.getErrorCount());
+        Assert.assertEquals(4, Log.getErrorCount());
 
         args = new String[]{"-ocl", oclModel, "-cd", cdModel, "-parseOnly"};
         try {

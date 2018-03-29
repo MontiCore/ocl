@@ -101,7 +101,7 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
 
         OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("numberUnit").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("Amount", declVarSymbol.getVarTypeName());
+        assertEquals("Power", declVarSymbol.getVarTypeName());
 
         OCLVariableDeclarationSymbol declVarSymbol2 = oclInvariantSymbol.getOCLVariableDecl("number").orElse(null);
         assertNotNull(declVarSymbol2);
