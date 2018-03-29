@@ -41,8 +41,7 @@ import ocl.monticoreocl.ocl._ast.ASTOCLNonNumberPrimary;
 import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
 
-import javax.measure.quantity.Quantity;
-import javax.measure.unit.SI;
+
 import javax.measure.unit.Unit;
 import java.util.*;
 
@@ -74,29 +73,14 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         }
     }
 
-    public static CDTypeSymbolReference getTypeFromExpression(ASTExpression node, MutableScope scope) {
-        OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
-        node.accept(exprVisitor);
-        CDTypeSymbolReference typeReference = exprVisitor.getReturnTypeReference();
-        if (typeReference==null) {
+    public CDTypeSymbolReference getTypeFromExpression(ASTOCLComprehensionExpr node) {
+        node.accept(realThis);
+        if (returnTypeRef==null) {
             Log.error("0xOCLI0 The variable type could not be resolved from this expression: " + node.get_SourcePositionStart()
                     , node.get_SourcePositionStart(), node.get_SourcePositionEnd());
-            return new CDTypeSymbolReference("Class", exprVisitor.scope);
+            return new CDTypeSymbolReference("Class", scope);
         } else {
-            return typeReference;
-        }
-    }
-
-    public static CDTypeSymbolReference getTypeFromExpression(ASTOCLComprehensionExpr node, MutableScope scope) {
-        OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
-        node.accept(exprVisitor);
-        CDTypeSymbolReference typeReference = exprVisitor.getReturnTypeReference();
-        if (typeReference==null) {
-            Log.error("0xOCLI0 The variable type could not be resolved from this expression: " + node.get_SourcePositionStart()
-                    , node.get_SourcePositionStart(), node.get_SourcePositionEnd());
-            return new CDTypeSymbolReference("Class", exprVisitor.scope);
-        } else {
-            return typeReference;
+            return returnTypeRef;
         }
     }
 
@@ -240,7 +224,10 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         returnTypeRef = createTypeRef(typeName, node);
 
         if (node.expressionIsPresent()) {
-            CDTypeSymbolReference innerType = getTypeFromExpression(node.getExpression().get(), scope);
+
+            OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
+            CDTypeSymbolReference innerType = exprVisitor.getTypeFromExpression(node.getExpression().get());
+
             TypeInferringHelper.addActualArgument(returnTypeRef, innerType);
         }
 
@@ -269,7 +256,9 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             returnTypeRef = createTypeRef(typeName, node);
         }
         else if(node.expressionIsPresent()) {
-            CDTypeSymbolReference containerType = getTypeFromExpression(node.getExpression().get(), scope);
+            OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
+            CDTypeSymbolReference containerType = exprVisitor.getTypeFromExpression(node.getExpression().get());
+
             if (containerType.getActualTypeArguments().size() == 0) {
                 Log.error("0xOCLI5 Could not resolve type from InExpression, " + node.getVarNames() +
                         " in " + containerType + " at " +  node.get_SourcePositionStart()

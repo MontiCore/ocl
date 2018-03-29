@@ -227,7 +227,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 					addVarDeclSymbol("this", astType, astContext);
 				}
 				else if (astContext.expressionIsPresent()) {
-					CDTypeSymbolReference typeReference = OCLExpressionTypeInferingVisitor.getTypeFromExpression(astContext.getExpression().get(), currentScope().get());
+					OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(currentScope().get());
+					CDTypeSymbolReference typeReference = exprVisitor.getTypeFromExpression(astContext.getExpression().get());
 					addVarDeclSymbol("this", typeReference, astContext);
 				}
 			}
@@ -248,7 +249,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 		List<String> varNames = astContextDef.getVarNames();
 		if (astContextDef.expressionIsPresent() && !astContextDef.typeIsPresent()) {
 			ASTExpression astExpression = astContextDef.getExpression().get();
-			CDTypeSymbolReference typeReference = OCLExpressionTypeInferingVisitor.getTypeFromExpression(astExpression, currentScope().get());
+			OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(currentScope().get());
+			CDTypeSymbolReference typeReference = exprVisitor.getTypeFromExpression(astExpression);
 			varNames.forEach(name -> addVarDeclSymbol(name, typeReference, astContextDef));
 		}
 	}
@@ -267,7 +269,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 		List<String> varNames = astInExpr.getVarNames();
 		if (astInExpr.expressionIsPresent() && !astInExpr.typeIsPresent()) {
 			ASTExpression astExpression = astInExpr.getExpression().get();
-			CDTypeSymbolReference containerType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(astExpression, currentScope().get());
+			OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(currentScope().get());
+			CDTypeSymbolReference containerType = exprVisitor.getTypeFromExpression(astExpression);
 			if (containerType.getActualTypeArguments().size() == 0) {
 				Log.error("0xOCLS3 Could not resolve type from InExpression, " + astInExpr.getVarNames() +
 						" in " + containerType + " at " +  astInExpr.get_SourcePositionStart()
