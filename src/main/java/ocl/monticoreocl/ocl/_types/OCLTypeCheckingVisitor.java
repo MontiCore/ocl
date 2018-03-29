@@ -21,6 +21,7 @@ package ocl.monticoreocl.ocl._types;
 
 import de.monticore.commonexpressions._ast.*;
 import de.monticore.expressionsbasis._ast.ASTExpression;
+import de.monticore.numberunit.prettyprint.UnitsPrinter;
 import de.monticore.oclexpressions._ast.ASTOCLQualifiedPrimary;
 import de.monticore.oclexpressions._ast.ASTParenthizedExpression;
 import de.monticore.symboltable.MutableScope;
@@ -28,6 +29,9 @@ import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
 import ocl.monticoreocl.ocl._ast.*;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
+
+import javax.measure.unit.Unit;
+import java.util.Optional;
 
 
 public class OCLTypeCheckingVisitor implements OCLVisitor {
@@ -53,8 +57,12 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
      */
 
     public void checkInfixExpr(ASTInfixExpression node){
-        CDTypeSymbolReference leftType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getLeftExpression(), scope);
-        CDTypeSymbolReference rightType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node.getRightExpression(), scope);
+        OCLExpressionTypeInferingVisitor leftVisitor = new OCLExpressionTypeInferingVisitor(scope);
+        CDTypeSymbolReference leftType = leftVisitor.getTypeFromExpression(node.getLeftExpression());
+        OCLExpressionTypeInferingVisitor rightVisitor = new OCLExpressionTypeInferingVisitor(scope);
+        CDTypeSymbolReference rightType = rightVisitor.getTypeFromExpression(node.getRightExpression());
+        CDTypeSymbolReference amountType = new CDTypeSymbolReference("Amount", this.scope);
+
         leftType = TypeInferringHelper.removeAllOptionals(leftType);
         rightType = TypeInferringHelper.removeAllOptionals(rightType);
 
@@ -64,11 +72,20 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
                 Log.error("0xCET01 Types mismatch on infix expression at " + node.get_SourcePositionStart() +
                         " left: " + leftType.getStringRepresentation() + " right: " + rightType.getStringRepresentation(), node.get_SourcePositionStart());
             }
+            else if(amountType.isSameOrSuperType(leftType) && amountType.isSameOrSuperType(rightType)){
+                Unit<?> leftUnit = leftVisitor.getReturnUnit().orElse(Unit.ONE);
+                Unit<?> rightUnit = rightVisitor.getReturnUnit().orElse(Unit.ONE);
+                if(!leftUnit.isCompatible(rightUnit)){
+                    Log.error("0xCET03 Units mismatch on infix expression at " + node.get_SourcePositionStart() +
+                        " left: " + leftUnit.toString() + " right: " + rightUnit.toString(), node.get_SourcePositionStart());
+                }
+            }
         }
     }
 
     public void checkPrefixExpr(ASTExpression node){
-        CDTypeSymbolReference exprType = OCLExpressionTypeInferingVisitor.getTypeFromExpression(node, scope);
+        OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
+        CDTypeSymbolReference exprType = exprVisitor.getTypeFromExpression(node);
         exprType = TypeInferringHelper.removeAllOptionals(exprType);
 
         if (!exprType.getName().equals("Boolean")) {

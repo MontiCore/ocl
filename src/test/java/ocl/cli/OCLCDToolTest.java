@@ -65,6 +65,7 @@ public class OCLCDToolTest {
                 "  context Auction a inv Test:\n" +
                 "      a.participants.size > 0s ;\n" +
                 "      a.participants.sze > 0 ;\n" +
+                "      1 m/s > 1 m ;\n" +
                 "}\"";
         String cdModel =
                 "\"package example.CDs;\n" +
@@ -108,6 +109,7 @@ public class OCLCDToolTest {
                         "  class Duration implements Amount;\n" +
                         "  class Length implements Amount;\n" +
                         "  class Acceleration implements Amount;\n" +
+                        "  class Velocity implements Amount;\n" +
 
                         "    association participants [*] Auction (auctions) <-> (bidder) Person [*];\n" +
                         "}\"";

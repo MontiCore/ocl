@@ -27,18 +27,6 @@ import javax.measure.unit.Unit;
  */
 public class UnitsPrinter {
 
-    public static String unitStringToUnitName(String unitString) {
-        String unitName;
-        try { // Not all of our NumberUnit units can be parsed by jscience, e.g. imperial unit th
-            Unit<?> unit = Unit.valueOf(unitString);
-            unitName = unitToUnitName(unit);
-        } catch (IllegalArgumentException e) {
-            return "Amount";
-        }
-
-        return unitName;
-    }
-
     public static String unitToUnitName(Unit<?> unit) {
         String unitName = "";
 
@@ -64,22 +52,4 @@ public class UnitsPrinter {
         return unitName;
     }
 
-    public static Unit<?> unitNameToUnit(String unitName) throws IllegalArgumentException {
-        if(unitName.equals("Length"))
-            return Unit.valueOf("m");
-        if(unitName.equals("Velocity"))
-            return Unit.valueOf("m/s");
-        if(unitName.equals("Acceleration"))
-            return Unit.valueOf("m/s^2");
-        if(unitName.equals("Force"))
-            return Unit.valueOf("N");
-        if(unitName.equals("Temperature"))
-            return Unit.valueOf("°C");
-        if(unitName.equals("Volume"))
-            return Unit.valueOf("m^2");
-        if(unitName.equals("Duration"))
-            return Unit.valueOf("s");
-
-        throw new IllegalArgumentException("Unit: " + unitName + "not supported!");
-    }
 }

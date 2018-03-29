@@ -12,7 +12,7 @@ ocl amountTypes {
         d = a / b;
         e = a / (b*b);
     in
-        true
+        e == 1 m/s
 }
 
 
