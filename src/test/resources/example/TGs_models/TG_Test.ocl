@@ -3,9 +3,7 @@ package example.TGs_models;
 import example.TGs_models.CDforOCLCheck.*;
 import example.CDs.DefaultTypes.*;
 
-  context Artifact inv:
-    isRoot <=> (simpleName == "/");
 
-
-
-
+  context ExecutionProtocol p inv:
+    p.action.nonEmpty implies (p.action.asSet ==
+      p.action[0].subaction**.asSet.add(action[0]));

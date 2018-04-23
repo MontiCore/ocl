@@ -22,6 +22,8 @@ package ocl.monticoreocl.ocl._types;
 import de.monticore.commonexpressions._ast.*;
 import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.monticore.numberunit.prettyprint.UnitsPrinter;
+import de.monticore.oclexpressions._ast.ASTExistsExpr;
+import de.monticore.oclexpressions._ast.ASTForallExpr;
 import de.monticore.oclexpressions._ast.ASTOCLQualifiedPrimary;
 import de.monticore.oclexpressions._ast.ASTParenthizedExpression;
 import de.monticore.symboltable.MutableScope;
@@ -49,6 +51,15 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
             checkingVisitor.checkPrefixExpr(expr);
             expr.accept(checkingVisitor);
         }
+    }
+
+    @Override
+    public void visit(ASTExistsExpr node) {
+        checkPrefixExpr(node.getExpression());
+    }
+    @Override
+    public void visit(ASTForallExpr node) {
+        checkPrefixExpr(node.getExpression());
     }
 
 

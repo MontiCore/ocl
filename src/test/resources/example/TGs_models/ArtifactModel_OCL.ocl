@@ -163,7 +163,7 @@ OCL OCLArtifactModel {
       p.action[i].start <= p.action[k].start;
 
   context ExecutionProtocol p inv: 
-    p.action.nonEmpty implies (p.action.asSet == 
+    p.action.nonEmpty implies (p.action.asSet ==
       p.action[0].subaction**.asSet.add(action[0]));
 
   context Action inv:  

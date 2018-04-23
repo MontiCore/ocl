@@ -30,6 +30,7 @@ import de.monticore.numberunit.prettyprint.NumberUnitPrettyPrinter;
 import de.monticore.numberunit.prettyprint.UnitsPrinter;
 import de.monticore.oclexpressions._ast.*;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.setexpressions._ast.ASTIsInExpression;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
@@ -76,8 +77,6 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     public CDTypeSymbolReference getTypeFromExpression(ASTOCLComprehensionExpr node) {
         node.accept(realThis);
         if (returnTypeRef==null) {
-            Log.error("0xOCLI0 The variable type could not be resolved from this expression: " + node.get_SourcePositionStart()
-                    , node.get_SourcePositionStart(), node.get_SourcePositionEnd());
             return new CDTypeSymbolReference("Class", scope);
         } else {
             return returnTypeRef;
@@ -108,6 +107,15 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     /**
      *  ********** traverse methods **********
      */
+
+    @Override
+    public void traverse(ASTIsInExpression node) {returnTypeRef = createTypeRef("Boolean", node);}
+
+    @Override
+    public void traverse(ASTForallExpr node) {returnTypeRef = createTypeRef("Boolean", node);}
+
+    @Override
+    public void traverse(ASTExistsExpr node) {returnTypeRef = createTypeRef("Boolean", node);}
 
     @Override
     public void traverse(ASTOCLNonNumberPrimary node) {
@@ -228,7 +236,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
             CDTypeSymbolReference innerType = exprVisitor.getTypeFromExpression(node.getExpression());
 
-            TypeInferringHelper.addActualArgument(returnTypeRef, innerType);
+            if (!innerType.getName().equals("Class")) // Only add when innerType is present
+                TypeInferringHelper.addActualArgument(returnTypeRef, innerType);
         }
 
         if (node.isPresentQualification()) {
@@ -246,6 +255,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         if (!node.getOCLCollectionItemList().isEmpty()) {
             node.getOCLCollectionItem(0).getExpression(0).accept(realThis);
         }
+
 
     }
 
@@ -452,7 +462,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             }
 
             if(!newType.isPresent()) {
-                Log.error("0xOCLI3 Could not resolve field/method/association: " + name + " on " + previousType.getName() + " at " + node.get_SourcePositionStart()
+                Log.error("0xOCLI3 Could not resolve field/method/association: " + name + " on " + previousType.getStringRepresentation() + " at " + node.get_SourcePositionStart()
                         , node.get_SourcePositionStart(), node.get_SourcePositionEnd());
                 return createTypeRef("Class", node);
             }
