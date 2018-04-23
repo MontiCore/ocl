@@ -1,0 +1,18 @@
+package example.typeInferringModels;
+
+import example.CDs.MontiArc.*;
+import example.CDs.DefaultTypes.*;
+
+ocl declaredTypes {
+  inv test:
+    let
+        Cmp cmp = null;
+        List<Port> ports = null;
+        List<List<Port> > ports2 = null;
+        int i = 0;
+    in
+        forall Port p2 in null :
+                true;
+}
+
+

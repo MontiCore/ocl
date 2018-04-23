@@ -23,14 +23,14 @@
 
 
 
-set jar= %~dp0%ocl-0.0.8-SNAPSHOT-jar-with-dependencies.jar
+set jar= %~dp0%ocl-1.2.2-cli.jar
 set parent_dir= "%~dp0\"
-set ocl= "ocl.exampleWithTypes"
+set ocl= "example.typeInferringModels.declaredTypes"
 
 
 cd %JDK_PATH%
 
-java -jar %JAR% %parent_dir% %ocl%
+java -jar %JAR% -path %parent_dir% -ocl %ocl%
 
 
 pause

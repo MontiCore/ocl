@@ -1,0 +1,16 @@
+package example.typeInferringModels;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl implicitFlattening {
+  context Auction inv test:
+    let
+        b = AllData.auction.bidder;
+        m = AllData.auction.bidder.message;
+        n = AllData.auction.bidder.company.name;
+    in
+        true;
+}
+
+

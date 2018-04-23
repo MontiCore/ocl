@@ -1,4 +1,4 @@
-package cd;
+package example.CDs;
 
 classdiagram MontiArc {
 
@@ -46,10 +46,8 @@ classdiagram MontiArc {
   
   association [0..1] Cmp (parent) <-> (subs) Cmp [*];
   
-  association ports [1] Cmp -> Port [*];
-  association comp [*] Port -> Cmp [1];
-  association portDefs [1] CTDef -> PortDef [*];
-  association compDef [*] PortDef -> CTDef [1];
+  association [1] Cmp -> Port [*] <<ordered>>;
+  association [1] CTDef -> PortDef [*];
 
   association srcDef [1] ConDef -> PortDef [1]; 
   association tgtDef [1] ConDef -> PortDef [1];  
