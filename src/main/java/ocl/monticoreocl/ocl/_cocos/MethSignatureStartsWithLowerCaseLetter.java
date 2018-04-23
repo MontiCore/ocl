@@ -29,7 +29,7 @@ public class MethSignatureStartsWithLowerCaseLetter implements OCLASTOCLMethodSi
 
 	@Override
 	public void check(ASTOCLMethodSignature astMethSig){
-		String methodName = astMethSig.getMethodName().getParts().get(1);
+		String methodName = astMethSig.getMethodName().getPart(1);
 		if (!Character.isLowerCase(methodName.charAt(0))) {
 			Log.error(String.format("0xOCL05 Method '%s' must start in lower-case.", astMethSig.getMethodName()),
 					astMethSig.get_SourcePositionStart());

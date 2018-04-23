@@ -21,13 +21,9 @@ package ocl.monticoreocl.ocl._visitors;
 
 
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.TypesPrinter;
-import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.umlcd4a.cd4analysis._ast.*;
 import de.monticore.umlcd4a.cd4analysis._visitor.CD4AnalysisVisitor;
 
-
-import java.util.Optional;
 
 
 public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
@@ -78,10 +74,10 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
     @Override
     public void handle(ASTCDDefinition node) {
         getPrinter().print("@startuml\n");
-        node.getCDInterfaces().forEach(i -> i.accept(getRealThis()));
-        node.getCDEnums().forEach(e -> e.accept(getRealThis()));
-        node.getCDClasses().forEach(c -> c.accept(getRealThis()));
-        node.getCDAssociations().forEach(a -> a.accept(getRealThis()));
+        node.getCDInterfaceList().forEach(i -> i.accept(getRealThis()));
+        node.getCDEnumList().forEach(e -> e.accept(getRealThis()));
+        node.getCDClassList().forEach(c -> c.accept(getRealThis()));
+        node.getCDAssociationList().forEach(a -> a.accept(getRealThis()));
         getPrinter().print("@enduml");
     }
 
@@ -99,18 +95,18 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
     public void handle(ASTCDClass node) {
         getPrinter().print("class " + node.getName());
 
-        if (node.superclassIsPresent()) {
+        if (node.isPresentSuperclass()) {
             getPrinter().print(" extends " + node.printSuperClass());
         }
 
-        if (!node.getInterfaces().isEmpty()) {
+        if (!node.getInterfaceList().isEmpty()) {
             getPrinter().print(" implements " + node.printInterfaces());
         }
 
-        if (showAtt && node.getCDAttributes().size() > 0) {
+        if (showAtt && node.getCDAttributeList().size() > 0) {
             getPrinter().print(" {\n");
             getPrinter().indent();
-            node.getCDAttributes().forEach(a -> a.accept(getRealThis()));
+            node.getCDAttributeList().forEach(a -> a.accept(getRealThis()));
             getPrinter().unindent();
             getPrinter().print("}\n");
         } else {
@@ -120,8 +116,8 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
 
     @Override
     public void handle(ASTCDAttribute node) {
-        if(node.modifierIsPresent())
-            node.getModifier().get().accept(getRealThis());
+        if(node.isPresentModifier())
+            node.getModifier().accept(getRealThis());
         getPrinter().print(node.printType() + " " + node.getName() + "\n");
     }
 
@@ -139,12 +135,12 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
     public void handle(ASTCDAssociation node) {
         getPrinter().print(node.getLeftReferenceName().toString() + " ");
 
-        if((showRoles && node.leftRoleIsPresent()) || (showCard && node.leftCardinalityIsPresent())) {
+        if((showRoles && node.isPresentLeftRole()) || (showCard && node.isPresentLeftCardinality())) {
             getPrinter().print("\"");
-            if(showRoles && node.leftRoleIsPresent())
-                getPrinter().print("(" + node.getLeftRole().get() + ") ");
-            if(node.leftCardinalityIsPresent())
-                node.getLeftCardinality().get().accept(getRealThis());
+            if(showRoles && node.isPresentLeftRole())
+                getPrinter().print("(" + node.getLeftRole() + ") ");
+            if(node.isPresentLeftCardinality())
+                node.getLeftCardinality().accept(getRealThis());
             getPrinter().print("\" ");
         }
 
@@ -158,19 +154,19 @@ public class CD4A2PlantUMLVisitor implements CD4AnalysisVisitor {
             getPrinter().print("--");
         }
 
-        if((showRoles && node.rightRoleIsPresent()) || (showCard && node.rightCardinalityIsPresent())) {
+        if((showRoles && node.isPresentRightRole()) || (showCard && node.isPresentRightCardinality())) {
             getPrinter().print(" \"");
-            if(showRoles && node.rightRoleIsPresent())
-                getPrinter().print("(" + node.getRightRole().get() + ") ");
-            if(node.rightCardinalityIsPresent())
-                node.getRightCardinality().get().accept(getRealThis());
+            if(showRoles && node.isPresentRightRole())
+                getPrinter().print("(" + node.getRightRole() + ") ");
+            if(node.isPresentRightCardinality())
+                node.getRightCardinality().accept(getRealThis());
             getPrinter().print("\"");
         }
 
         getPrinter().print(" " + node.getRightReferenceName().toString());
 
-        if(showAssoc && node.nameIsPresent())
-            getPrinter().print(" : " + node.getName().get());
+        if(showAssoc && node.isPresentName())
+            getPrinter().print(" : " + node.getName());
 
         getPrinter().print("\n");
     }

@@ -20,7 +20,7 @@ grammar NumberUnit extends /*de.monticore.MCLiterals*/ de.monticore.literals.Lit
    ;
 
    NumberWithInf =
-     negNumber:"-"? number:NumericLiteral |
+     (negNumber:"-")? number:NumericLiteral |
      "+"? posInf:Inf |
      "-" negInf:Inf
    ;

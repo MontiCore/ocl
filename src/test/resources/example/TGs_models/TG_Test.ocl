@@ -4,10 +4,7 @@ import example.TGs_models.CDforOCLCheck.*;
 import example.CDs.DefaultTypes.*;
 
   context Artifact inv:
-    isRoot <=> simpleName == "/";
-
-  context Artifact inv:
-    simpleName == "/" <=> isRoot;
+    isRoot <=> (simpleName == "/");
 
 
 

@@ -32,6 +32,9 @@ classdiagram DefaultTypes {
   }
 
   class Date;
+  class Time {
+      boolean lessThan(Time that);
+  }
 
   interface Number extends Amount;
   class Integer implements Number;

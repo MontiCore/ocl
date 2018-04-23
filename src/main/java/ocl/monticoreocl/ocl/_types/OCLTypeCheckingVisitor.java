@@ -45,7 +45,7 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
     public static void checkInvariants(ASTOCLInvariant node, MutableScope scope) {
         OCLTypeCheckingVisitor checkingVisitor = new OCLTypeCheckingVisitor(scope);
 
-        for(ASTExpression expr : node.getStatements()){
+        for(ASTExpression expr : node.getStatementsList()){
             checkingVisitor.checkPrefixExpr(expr);
             expr.accept(checkingVisitor);
         }

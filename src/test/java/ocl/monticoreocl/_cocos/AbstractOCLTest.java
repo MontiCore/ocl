@@ -84,8 +84,8 @@ public abstract class AbstractOCLTest {
 			GlobalScope globalScope = new GlobalScope(modelPath, modelingLanguageFamily);
 
 			ResolvingConfiguration resolvingConfiguration = new ResolvingConfiguration();
-			resolvingConfiguration.addDefaultFilters(ocllang.getResolvers());
-			resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvers());
+			resolvingConfiguration.addDefaultFilters(ocllang.getResolvingFilters());
+			resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvingFilters());
 
 			OCLSymbolTableCreator oclSymbolTableCreator = ocllang.getSymbolTableCreator(resolvingConfiguration, globalScope).get();
 			Optional<ASTCompilationUnit> astOCLCompilationUnit = ocllang.getModelLoader().loadModel(modelFullQualifiedFilename, modelPath);

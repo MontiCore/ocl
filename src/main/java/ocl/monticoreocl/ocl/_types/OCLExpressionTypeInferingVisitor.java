@@ -136,9 +136,9 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
     @Override
     public void traverse(ASTNumberWithUnit node) {
-        if (node.unIsPresent()) {
+        if (node.isPresentUn()) {
             NumberUnitPrettyPrinter printer = new NumberUnitPrettyPrinter(new IndentPrinter());
-            printer.prettyprint(node.getUn().get());
+            printer.prettyprint(node.getUn());
             String unitString = printer.getPrinter().getContent();
             returnUnit = Optional.of(Unit.valueOf(unitString));
             returnTypeRef = createTypeRef(UnitsPrinter.unitToUnitName(returnUnit.get()), node);
@@ -160,8 +160,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         OCLExpressionTypeInferingVisitor innerVisitor = new OCLExpressionTypeInferingVisitor(scope);
         returnTypeRef = innerVisitor.getTypeFromExpression(node.getExpression());
         returnUnit = innerVisitor.getReturnUnit();
-        if (node.qualificationIsPresent()) {
-            node.getQualification().get().accept(realThis);
+        if (node.isPresentQualification()) {
+            node.getQualification().accept(realThis);
         }
     }
 
@@ -177,18 +177,18 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
     @Override
     public void traverse(ASTOCLQualifiedPrimary node) {
-        LinkedList<String> names = new LinkedList<>(node.getNames());
+        LinkedList<String> names = new LinkedList<>(node.getNameList());
 
         CDTypeSymbolReference firstType = handlePrefixName(node, names);
         returnTypeRef = handleNames(names, firstType, node);
 
-        if(node.postfixQualificationIsPresent()) {
-            node.getPostfixQualification().get().accept(realThis);
+        if(node.isPresentPostfixQualification()) {
+            node.getPostfixQualification().accept(realThis);
         }
 
         // process following primaries
-        if(node.oCLQualifiedPrimaryIsPresent()) {
-           node.getOCLQualifiedPrimary().get().accept(realThis);
+        if(node.isPresentOCLQualifiedPrimary()) {
+           node.getOCLQualifiedPrimary().accept(realThis);
         }
     }
 
@@ -216,23 +216,23 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     @Override
     public void traverse(ASTOCLComprehensionPrimary node) {
         String typeName;
-        if (node.typeIsPresent()) {
-            typeName = TypesPrinter.printType(node.getType().get());
+        if (node.isPresentType()) {
+            typeName = TypesPrinter.printType(node.getType());
         } else {
             typeName = "Collection";
         }
         returnTypeRef = createTypeRef(typeName, node);
 
-        if (node.expressionIsPresent()) {
+        if (node.isPresentExpression()) {
 
             OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
-            CDTypeSymbolReference innerType = exprVisitor.getTypeFromExpression(node.getExpression().get());
+            CDTypeSymbolReference innerType = exprVisitor.getTypeFromExpression(node.getExpression());
 
             TypeInferringHelper.addActualArgument(returnTypeRef, innerType);
         }
 
-        if (node.qualificationIsPresent()) {
-            node.getQualification().get().accept(realThis);
+        if (node.isPresentQualification()) {
+            node.getQualification().accept(realThis);
         }
     }
 
@@ -243,24 +243,24 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
     @Override
     public void traverse(ASTOCLComprehensionEnumerationStyle node) {
-        if (!node.getOCLCollectionItems().isEmpty()) {
-            node.getOCLCollectionItems().get(0).getExpressions().get(0).accept(realThis);
+        if (!node.getOCLCollectionItemList().isEmpty()) {
+            node.getOCLCollectionItem(0).getExpression(0).accept(realThis);
         }
 
     }
 
     @Override
     public void traverse(ASTInExpr node) {
-        if(node.typeIsPresent()) {
-            String typeName = TypesPrinter.printType(node.getType().get());
+        if(node.isPresentType()) {
+            String typeName = TypesPrinter.printType(node.getType());
             returnTypeRef = createTypeRef(typeName, node);
         }
-        else if(node.expressionIsPresent()) {
+        else if(node.isPresentExpression()) {
             OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
-            CDTypeSymbolReference containerType = exprVisitor.getTypeFromExpression(node.getExpression().get());
+            CDTypeSymbolReference containerType = exprVisitor.getTypeFromExpression(node.getExpression());
 
             if (containerType.getActualTypeArguments().size() == 0) {
-                Log.error("0xOCLI5 Could not resolve type from InExpression, " + node.getVarNames() +
+                Log.error("0xOCLI5 Could not resolve type from InExpression, " + node.getVarNameList() +
                         " in " + containerType + " at " +  node.get_SourcePositionStart()
                         , node.get_SourcePositionStart(), node.get_SourcePositionEnd());
             } else {

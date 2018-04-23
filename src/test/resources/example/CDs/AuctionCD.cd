@@ -4,9 +4,7 @@ classdiagram AuctionCD {
 
   public class AllData {
   }
-  public class Time {
-    boolean lessThan(Time that);
-  }
+
   public class Name {}
 
 

@@ -27,8 +27,8 @@ public class PreStatementNameStartsWithCapitalLetter implements OCLASTOCLPreStat
 
 	@Override
 	public void check(ASTOCLPreStatement astPreStatement){
-		if (astPreStatement.getName().isPresent() && Character.isLowerCase(astPreStatement.getName().get().charAt(0))) {
-			Log.error(String.format("0xOCL07 pre condition name '%s' must start in upper-case.", astPreStatement.getName().get()),
+		if (astPreStatement.isPresentName() && Character.isLowerCase(astPreStatement.getName().charAt(0))) {
+			Log.error(String.format("0xOCL07 pre condition name '%s' must start in upper-case.", astPreStatement.getName()),
 					astPreStatement.get_SourcePositionStart());
 		}
 	}

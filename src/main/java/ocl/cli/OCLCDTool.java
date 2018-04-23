@@ -225,8 +225,8 @@ public class OCLCDTool {
             GlobalScope globalScope = new GlobalScope(modelPath, modelingLanguageFamily);
 
             ResolvingConfiguration resolvingConfiguration = new ResolvingConfiguration();
-            resolvingConfiguration.addDefaultFilters(ocllang.getResolvers());
-            resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvers());
+            resolvingConfiguration.addDefaultFilters(ocllang.getResolvingFilters());
+            resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvingFilters());
 
             CD4AnalysisSymbolTableCreator cd4AnalysisSymbolTableCreator = cd4AnalysisLang.getSymbolTableCreator(resolvingConfiguration, globalScope).get();
             Optional<ASTCDCompilationUnit> astcdCompilationUnit = cd4AnalysisLang.getParser().parse_String(cdModel);
@@ -269,8 +269,8 @@ public class OCLCDTool {
             GlobalScope globalScope = new GlobalScope(modelPath, modelingLanguageFamily);
 
             ResolvingConfiguration resolvingConfiguration = new ResolvingConfiguration();
-            resolvingConfiguration.addDefaultFilters(ocllang.getResolvers());
-            resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvers());
+            resolvingConfiguration.addDefaultFilters(ocllang.getResolvingFilters());
+            resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvingFilters());
             OCLSymbolTableCreator oclSymbolTableCreator = ocllang.getSymbolTableCreator(resolvingConfiguration, globalScope).get();
             Optional<ASTCompilationUnit> astOCLCompilationUnit = ocllang.getModelLoader().loadModel(modelFullQualifiedFilename, modelPath);
 

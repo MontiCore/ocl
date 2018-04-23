@@ -32,7 +32,7 @@ OCL OCLArtifactModel {
     isRoot implies (this in Directory);
 
   context Artifact inv: 
-    isRoot <=> simpleName == "/";
+    isRoot <=> (simpleName == "/");
 
   context Artifact inv: 
     name.contains("/") implies isRoot;
@@ -102,14 +102,14 @@ OCL OCLArtifactModel {
   context JavaSourceFile inv: 
     forall n in { t.fullName.replaceAll(".", "/") |
       t in defines, !t.isInnerAType }:
-        fullName.endsWith(n + ".java");
+         fullName.endsWith(n + ".java");
 
   context JavaClassFile inv: 
     parent.fullName.replaceAll("/", ".")
       .endsWith(defines.pkg.fullName);
 
   context JavaClassFile inv: 
-    simpleName == defines.name.replaceAll(".", "$");
+    {simpleName} == defines.name.replaceAll(".", "$");
 
   context Language inv: 
     name != "";
@@ -131,7 +131,7 @@ OCL OCLArtifactModel {
 
   context CDModelFile m1, m2, 
     AType t1 in m1.defines, AType t2 in m2.defines inv:
-      ((t2 in t1.reliesOn) implies m1 == m2) || (m2 in m1.reliesOn);
+      ((t2 isin t1.reliesOn) implies m1 == m2) || (m2 isin m1.reliesOn);
 
   context CDModelFile m, JavaArtifact a, 
     AType t1 in m.defines, AType t2 in a.defines inv:
@@ -181,7 +181,7 @@ OCL OCLArtifactModel {
 
   context ToolExecution inv:
     input == { a in subaction** |
-      (a in ArtifactRead) || (a in ArtifactExistenceCheck) }.reads;
+      (a isin ArtifactRead) , (a isin ArtifactExistenceCheck) }.reads;
 
   context ToolExecution inv:
     output ==
@@ -194,16 +194,16 @@ OCL OCLArtifactModel {
     produces.containsAll(creationDependency);
 
   context ToolExecution inv: 
-    contributesTo == sub.contributesTo;
+    contributesTo == sub.contributesTo.asSet;
 
   context ToolExecution inv: 
     contributesTo == output;
 
   context TemplateExecution inv: 
-    contributesTo == sub.contributesTo.add(writesTo);
+    contributesTo == sub.contributesTo.add(writesTo).asSet;
 
   context JavaMethodCall inv: 
-    contributesTo == sub.contributesTo;
+    contributesTo == sub.contributesTo.asSet;
 
   context ArtifactRead inv: 
     contributesTo == {};

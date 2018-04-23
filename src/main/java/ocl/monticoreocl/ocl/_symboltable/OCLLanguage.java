@@ -43,16 +43,16 @@ public class OCLLanguage extends OCLLanguageTOP implements ModelingLanguage {
 	protected void initResolvingFilters() {
 		super.initResolvingFilters();
 
-		addResolver(new CommonResolvingFilter<OCLFileSymbol>(OCLFileSymbol.KIND));
-		addResolver(new CommonResolvingFilter<OCLInvariantSymbol>(OCLInvariantSymbol.KIND));
-		addResolver(new CommonResolvingFilter<OCLMethodSignatureSymbol>(OCLMethodSignatureSymbol.KIND));
-		addResolver(new CommonResolvingFilter<OCLConstructorSignatureSymbol>(OCLConstructorSignatureSymbol.KIND));
-		addResolver(new CommonResolvingFilter<OCLThrowsClauseSymbol>(OCLThrowsClauseSymbol.KIND));
-		addResolver(new CommonResolvingFilter<OCLParameterDeclarationSymbol>(OCLParameterDeclarationSymbol.KIND));
-		addResolver(new CommonResolvingFilter<OCLVariableDeclarationSymbol>(OCLVariableDeclarationSymbol.KIND));
-		addResolver(new CommonResolvingFilter<OCLMethodDeclarationSymbol>(OCLMethodDeclarationSymbol.KIND));
-		addResolver(new CommonResolvingFilter<OCLPreStatementSymbol>(OCLPreStatementSymbol.KIND));
-		addResolver(new CommonResolvingFilter<OCLPostStatementSymbol>(OCLPostStatementSymbol.KIND));
+		addResolvingFilter(new CommonResolvingFilter<OCLFileSymbol>(OCLFileSymbol.KIND));
+		addResolvingFilter(new CommonResolvingFilter<OCLInvariantSymbol>(OCLInvariantSymbol.KIND));
+		addResolvingFilter(new CommonResolvingFilter<OCLMethodSignatureSymbol>(OCLMethodSignatureSymbol.KIND));
+		addResolvingFilter(new CommonResolvingFilter<OCLConstructorSignatureSymbol>(OCLConstructorSignatureSymbol.KIND));
+		addResolvingFilter(new CommonResolvingFilter<OCLThrowsClauseSymbol>(OCLThrowsClauseSymbol.KIND));
+		addResolvingFilter(new CommonResolvingFilter<OCLParameterDeclarationSymbol>(OCLParameterDeclarationSymbol.KIND));
+		addResolvingFilter(new CommonResolvingFilter<OCLVariableDeclarationSymbol>(OCLVariableDeclarationSymbol.KIND));
+		addResolvingFilter(new CommonResolvingFilter<OCLMethodDeclarationSymbol>(OCLMethodDeclarationSymbol.KIND));
+		addResolvingFilter(new CommonResolvingFilter<OCLPreStatementSymbol>(OCLPreStatementSymbol.KIND));
+		addResolvingFilter(new CommonResolvingFilter<OCLPostStatementSymbol>(OCLPostStatementSymbol.KIND));
 
 		setModelNameCalculator(new OCLModelNameCalculator());
 	}

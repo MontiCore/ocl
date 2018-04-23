@@ -20,14 +20,19 @@
 package ocl.cli;
 
 
+import de.monticore.commonexpressions._ast.ASTEquivalentExpression;
+import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.se_rwth.commons.logging.Log;
 import ocl.cli.OCLCDTool;
+import ocl.monticoreocl.ocl._parser.OCLParser;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 
 public class OCLCDToolTest {
@@ -148,8 +153,7 @@ public class OCLCDToolTest {
 
     @Ignore
     @Test
-    public void cdTool4Test() {
-
+    public void cdTool4Test() throws IOException {
         String parentpath = Paths.get("src/test/resources").toAbsolutePath().toString();
         String oclModel = "example.TGs_models.TG_Test";
         String[] args = new String[]{"-path", parentpath, "-ocl", oclModel};
