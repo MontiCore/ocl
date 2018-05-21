@@ -37,6 +37,7 @@ import java.util.Optional;
 
 public class OCLCDToolTest {
 
+    // ToDo these tests seem to work, but not on travis
     @Ignore
     @Test
     public void cdToolTest() {
