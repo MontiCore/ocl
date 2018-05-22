@@ -7,3 +7,5 @@
 # OCL
 
 A DSL parsing OCL expressions
+
+Also see [Documentation](https://github.com/MontiCore/OCL/tree/master/documentation) for further information about type checking and grammar.
