@@ -453,11 +453,16 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
                 newType = handleName(node, name, elementsScope);
                 // If it succeeded add container from previous type around it
                 if(newType.isPresent()) {
-                    CDTypeSymbolReference containerType = createTypeRef(previousType.getName(), node);
-                    TypeInferringHelper.addActualArgument(containerType, newType.get());
-                    // implicit flattening with . operator
-                    containerType = TypeInferringHelper.flattenOnce(containerType);
-                    newType = Optional.of(containerType);
+
+                    Optional<CDMethodSymbol> methodSymbol = elementsScope.<CDMethodSymbol>resolve(name, CDMethodSymbol.KIND);
+                    if(!methodSymbol.isPresent() || !methodSymbol.get().isStatic()) {
+                        CDTypeSymbolReference containerType = createTypeRef(previousType.getName(), node);
+                        TypeInferringHelper.addActualArgument(containerType, newType.get());
+                        // implicit flattening with . operator
+                        containerType = TypeInferringHelper.flattenOnce(containerType);
+                        newType = Optional.of(containerType);
+                    }
+
                 }
             }
 

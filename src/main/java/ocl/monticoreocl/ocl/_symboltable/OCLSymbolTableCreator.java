@@ -54,7 +54,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 		List<ImportStatement> imports = new ArrayList<>();
 		for (ASTImportStatement astImportStatement : compilationUnit.getImportStatementList()) {
 			String qualifiedImport = Names.getQualifiedName(astImportStatement.getImportList());
-			ImportStatement importStatement = new ImportStatement(qualifiedImport, astImportStatement.isStar());
+			ImportStatement importStatement = new ImportStatement(qualifiedImport, true);
 			imports.add(importStatement);
 		}
 

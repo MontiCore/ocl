@@ -33,6 +33,7 @@ classdiagram DefaultTypes {
 
   class Date;
   class Time {
+      static Time now();
       boolean lessThan(Time that);
   }
 
@@ -40,6 +41,7 @@ classdiagram DefaultTypes {
   class Integer implements Number;
   class Double implements Number;
   class Float implements Number;
+  class Long implements Number;
   class Boolean;
   class Character;
   class String {

@@ -48,7 +48,7 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
     @Test
     public void testCDModelCnC() throws IOException{
         CD4AnalysisParser parser = new CD4AnalysisParser();
-        Path model = Paths.get("src/test/resources/example/CDs/MontiArc.cd");
+        Path model = Paths.get("src/test/resources/example/CDs/DefaultTypes.cd");
         Optional<ASTCDCompilationUnit> root = parser.parseCDCompilationUnit(model.toString());
         assertFalse(parser.hasErrors());
         assertTrue(root.isPresent());
@@ -387,6 +387,22 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
         declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("e").orElse(null);
         assertNotNull(declVarSymbol);
         assertEquals("Acceleration", declVarSymbol.getVarTypeName());
+
+    }
+
+
+    @Test
+    public void staticMethodsTest() {
+        final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/");
+
+        final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("example.typeInferringModels.staticMethods", OCLFileSymbol.KIND).orElse(null);
+        assertNotNull(oclFileSymbol);
+        OCLInvariantSymbol oclInvariantSymbol = oclFileSymbol.getOCLInvariant("test1").orElse(null);
+        assertNotNull(oclInvariantSymbol);
+
+        OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("t").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Time", declVarSymbol.getVarTypeName());
 
     }
 }
