@@ -35,6 +35,11 @@
           <password>password</password>
         </server>
         -->
+        <server>
+            <id>se-nexus</id>
+            <username>testcimcdeploy</username>
+            <password>${env.testcimcdeploy}</password>
+        </server>
 
     </servers>
 
