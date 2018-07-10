@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class TypeInferringHelper {
 
-    protected static void addActualArgument(CDTypeSymbolReference typeOuter, CDTypeSymbolReference typeInner) {
+     public static void addActualArgument(CDTypeSymbolReference typeOuter, CDTypeSymbolReference typeInner) {
         String stringRepresentation = typeOuter.getStringRepresentation() + "<";
 
         List<ActualTypeArgument> actualTypeArguments = new ArrayList<>();
