@@ -29,7 +29,7 @@
 
   <groupId>de.monticore.lang</groupId>
   <artifactId>ocl</artifactId>
-  <version>1.2.3</version>
+  <version>1.2.4-SNAPSHOT</version>
 
   <!-- == PROJECT DEPENDENCIES ============================================= -->
 
