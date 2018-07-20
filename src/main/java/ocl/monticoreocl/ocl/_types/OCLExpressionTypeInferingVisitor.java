@@ -148,8 +148,13 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             NumberUnitPrettyPrinter printer = new NumberUnitPrettyPrinter(new IndentPrinter());
             printer.prettyprint(node.getUn());
             String unitString = printer.getPrinter().getContent();
+
+            CDTypeSymbolReference amountType = createTypeRef("Amount", node);
             returnUnit = Optional.of(Unit.valueOf(unitString));
-            returnTypeRef = createTypeRef(UnitsPrinter.unitToUnitName(returnUnit.get()), node);
+            CDTypeSymbolReference returnUnitRef = createTypeRef(UnitsPrinter.unitToUnitName(returnUnit.get()), node);
+            TypeInferringHelper.addActualArgument(amountType, returnUnitRef);
+            returnTypeRef = amountType;
+
         }
     }
 
@@ -308,18 +313,20 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         CDTypeSymbolReference numberType = createTypeRef("Number", node);
 
         if (leftType.getName().equals("Number") && rightType.getName().equals("Number")) {
-            returnTypeRef = createTypeRef("Number", node);
+            returnTypeRef = numberType;
         } else if(isImplementing(leftType, numberType) && isImplementing(rightType, numberType)) {
             if(leftType.getName().equals(rightType.getName())) {
                 returnTypeRef = createTypeRef(leftType.getName(), node);
             } else {
-                returnTypeRef = createTypeRef("Number", node);
+                returnTypeRef = numberType;
             }
         } else if(amountType.isSameOrSuperType(leftType) && amountType.isSameOrSuperType(rightType)){
             Unit<?> leftUnit = leftVisitor.getReturnUnit().orElse(Unit.ONE);
             Unit<?> rightUnit = rightVisitor.getReturnUnit().orElse(Unit.ONE);
             returnUnit = Optional.of(leftUnit.divide(rightUnit));
-            returnTypeRef = createTypeRef(UnitsPrinter.unitToUnitName(returnUnit.get()), node);
+            CDTypeSymbolReference returnUnitRef = createTypeRef(UnitsPrinter.unitToUnitName(returnUnit.get()), node);
+            TypeInferringHelper.addActualArgument(amountType, returnUnitRef);
+            returnTypeRef = amountType;
         }
     }
 
@@ -344,7 +351,9 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             Unit<?> leftUnit = leftVisitor.getReturnUnit().orElse(Unit.ONE);
             Unit<?> rightUnit = rightVisitor.getReturnUnit().orElse(Unit.ONE);
             returnUnit = Optional.of(leftUnit.times(rightUnit));
-            returnTypeRef = createTypeRef(UnitsPrinter.unitToUnitName(returnUnit.get()), node);
+            CDTypeSymbolReference returnUnitRef = createTypeRef(UnitsPrinter.unitToUnitName(returnUnit.get()), node);
+            TypeInferringHelper.addActualArgument(amountType, returnUnitRef);
+            returnTypeRef = amountType;
         }
     }
 

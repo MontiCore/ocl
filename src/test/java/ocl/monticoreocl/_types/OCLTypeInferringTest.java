@@ -105,7 +105,8 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
 
         OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("numberUnit").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("Power", declVarSymbol.getVarTypeName());
+        assertEquals("Amount", declVarSymbol.getVarTypeName());
+        assertEquals("Amount<Power>", declVarSymbol.getType().getStringRepresentation());
 
         OCLVariableDeclarationSymbol declVarSymbol2 = oclInvariantSymbol.getOCLVariableDecl("number").orElse(null);
         assertNotNull(declVarSymbol2);
@@ -413,23 +414,33 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
 
         OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("a").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("Length", declVarSymbol.getVarTypeName());
+        assertEquals("Amount", declVarSymbol.getVarTypeName());
+        assertEquals("Amount<Length>", declVarSymbol.getType().getStringRepresentation());
 
         declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("b").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("Duration", declVarSymbol.getVarTypeName());
+        assertEquals("Amount", declVarSymbol.getVarTypeName());
+        assertEquals("Amount<Duration>", declVarSymbol.getType().getStringRepresentation());
 
         declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("c").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("Velocity", declVarSymbol.getVarTypeName());
+        assertEquals("Amount", declVarSymbol.getVarTypeName());
+        assertEquals("Amount<Velocity>", declVarSymbol.getType().getStringRepresentation());
 
         declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("d").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("Velocity", declVarSymbol.getVarTypeName());
+        assertEquals("Amount", declVarSymbol.getVarTypeName());
+        assertEquals("Amount<Velocity>", declVarSymbol.getType().getStringRepresentation());
 
         declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("e").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("Acceleration", declVarSymbol.getVarTypeName());
+        assertEquals("Amount", declVarSymbol.getVarTypeName());
+        assertEquals("Amount<Acceleration>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("g").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Amount", declVarSymbol.getVarTypeName());
+        assertEquals("Amount<Duration>", declVarSymbol.getType().getStringRepresentation());
 
     }
 

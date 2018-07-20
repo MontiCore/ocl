@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.expressionsbasis._ast.ASTExpression;
+import de.monticore.numberunit.prettyprint.UnitsPrinter;
 import de.monticore.oclexpressions._ast.ASTInExpr;
 import de.monticore.symboltable.*;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
@@ -37,6 +38,9 @@ import ocl.monticoreocl.ocl._ast.*;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import ocl.monticoreocl.ocl._types.OCLExpressionTypeInferingVisitor;
+import ocl.monticoreocl.ocl._types.TypeInferringHelper;
+
+import javax.measure.unit.Unit;
 
 public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
@@ -344,7 +348,13 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 			String typeName = Joiners.DOT.join(astSimpleType.getNameList());
 			typeReference = createTypeRef(typeName, node);
 			typeReference.setStringRepresentation(TypesPrinter.printSimpleReferenceType(astSimpleType));
-			addActualArguments(typeReference, astSimpleType, node);
+			if(UnitsPrinter.isSupported(typeName)) {
+				CDTypeSymbolReference amountType = createTypeRef("Amount", node);
+				TypeInferringHelper.addActualArgument(amountType, typeReference);
+				typeReference = amountType;
+			} else {
+				addActualArguments(typeReference, astSimpleType, node);
+			}
 		}
 
 		if (typeReference == null) {

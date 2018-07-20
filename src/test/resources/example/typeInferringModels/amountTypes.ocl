@@ -4,7 +4,7 @@ import example.CDs.AuctionCD.*;
 import example.CDs.DefaultTypes.*;
 
 ocl amountTypes {
-  inv test1:
+  inv test1(Duration g):
     let
         a = 1 m;
         b = 1 s;

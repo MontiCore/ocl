@@ -80,4 +80,12 @@ public class UnitsPrinter {
         return unitName;
     }
 
+    public static boolean isSupported (String unit) {
+        boolean result = false;
+        switch(unit) {
+            case "Acceleration": result = true;
+            case "Duration": result = true;
+        }
+        return result;
+    }
 }
