@@ -303,7 +303,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         OCLExpressionTypeInferingVisitor leftVisitor = new OCLExpressionTypeInferingVisitor(scope);
         CDTypeSymbolReference leftType = leftVisitor.getTypeFromExpression(node.getLeftExpression());
         OCLExpressionTypeInferingVisitor rightVisitor = new OCLExpressionTypeInferingVisitor(scope);
-        CDTypeSymbolReference rightType = rightVisitor.getTypeFromExpression(node.getLeftExpression());
+        CDTypeSymbolReference rightType = rightVisitor.getTypeFromExpression(node.getRightExpression());
         CDTypeSymbolReference amountType = createTypeRef("Amount", node);
         CDTypeSymbolReference numberType = createTypeRef("Number", node);
 

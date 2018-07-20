@@ -20,6 +20,8 @@ classdiagram AuctionCD {
     Time time;
   }
 
+  public class Policy;
+
 
   public class Person {
     boolean lessThan(Person that);

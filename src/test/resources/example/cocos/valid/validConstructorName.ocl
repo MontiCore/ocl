@@ -1,3 +1,5 @@
+import example.CDs.AuctionCD;
+
 ocl validConstructorName {
   context new Auction(Policy p)
   pre Test: p != null;
