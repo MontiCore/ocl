@@ -133,6 +133,11 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     }
 
     @Override
+    public void traverse(ASTNullLiteral node) {
+        returnTypeRef = createTypeRef("Object", node);
+    }
+
+    @Override
     public void traverse(ASTDoubleLiteral node) {
         returnTypeRef = createTypeRef("Double", node);
     }

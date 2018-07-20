@@ -11,8 +11,12 @@ ocl infixExpressions2 {
         e = a * b;
         f = a / b;
         g = a % b;
+        h = ("abc" + "def").length();
     in
         true;
+
+  inv test2:
+    ("abc" + "def").length() > 0
 }
 
 

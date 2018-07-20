@@ -363,6 +363,10 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
         declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("g").orElse(null);
         assertNotNull(declVarSymbol);
         assertEquals("Integer", declVarSymbol.getVarTypeName());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("h").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Integer", declVarSymbol.getVarTypeName());
     }
 
     @Test

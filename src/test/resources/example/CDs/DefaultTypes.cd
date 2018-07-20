@@ -49,6 +49,7 @@ classdiagram DefaultTypes {
     String replaceAll(String s1, String s2);
     String replace(String s1, String s2);
     boolean endsWith(String s);
+    int length();
   }
 
   // support for units comes with the jscience library
