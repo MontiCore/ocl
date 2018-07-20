@@ -20,14 +20,18 @@
 package ocl.monticoreocl._types;
 
 
+import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.monticore.symboltable.*;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
+import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import ocl.monticoreocl.OCLGlobalScopeTestFactory;
 import ocl.monticoreocl._cocos.AbstractOCLTest;
 import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
 import ocl.monticoreocl.ocl._cocos.OCLCoCos;
+import ocl.monticoreocl.ocl._parser.OCLParser;
 import ocl.monticoreocl.ocl._symboltable.*;
+import ocl.monticoreocl.ocl._types.OCLExpressionTypeInferingVisitor;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -319,6 +323,45 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
 
         final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("example.typeInferringModels.infixExpressions", OCLFileSymbol.KIND).orElse(null);
         assertNotNull(oclFileSymbol);
+    }
+
+    @Test
+    public void infixExpressionType2Test() {
+        final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/");
+
+        final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol> resolve("example.typeInferringModels.infixExpressions2", OCLFileSymbol.KIND).orElse(null);
+        assertNotNull(oclFileSymbol);
+        assertEquals(3, globalScope.getSubScopes().size());
+        OCLInvariantSymbol oclInvariantSymbol = oclFileSymbol.getOCLInvariant("test1").orElse(null);
+        assertNotNull(oclInvariantSymbol);
+
+        OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("a").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Integer", declVarSymbol.getVarTypeName());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("b").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Integer", declVarSymbol.getVarTypeName());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("c").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Integer", declVarSymbol.getVarTypeName());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("d").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Integer", declVarSymbol.getVarTypeName());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("e").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Integer", declVarSymbol.getVarTypeName());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("f").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Integer", declVarSymbol.getVarTypeName());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("g").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Integer", declVarSymbol.getVarTypeName());
     }
 
     @Test

@@ -1,0 +1,18 @@
+package example.typeInferringModels;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl infixExpressions2 {
+  inv test1(int a, int b):
+    let
+        c = a + b;
+        d = a - b;
+        e = a * b;
+        f = a / b;
+        g = a % b;
+    in
+        true;
+}
+
+

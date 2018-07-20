@@ -128,6 +128,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 		paramDeclSymbol.setType(astParamDecl.getType());
 		paramDeclSymbol.setClassName(astParamDecl.getType().getClass().getName());
 
+		addVarDeclSymbol(astParamDecl.getName(), astParamDecl.getType(), astParamDecl);
+
 		addToScopeAndLinkWithNode(paramDeclSymbol, astParamDecl);
 	}
 

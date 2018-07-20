@@ -303,11 +303,18 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         OCLExpressionTypeInferingVisitor leftVisitor = new OCLExpressionTypeInferingVisitor(scope);
         CDTypeSymbolReference leftType = leftVisitor.getTypeFromExpression(node.getLeftExpression());
         OCLExpressionTypeInferingVisitor rightVisitor = new OCLExpressionTypeInferingVisitor(scope);
-        CDTypeSymbolReference rightType = rightVisitor.getTypeFromExpression(node.getRightExpression());
+        CDTypeSymbolReference rightType = rightVisitor.getTypeFromExpression(node.getLeftExpression());
         CDTypeSymbolReference amountType = createTypeRef("Amount", node);
+        CDTypeSymbolReference numberType = createTypeRef("Number", node);
 
         if (leftType.getName().equals("Number") && rightType.getName().equals("Number")) {
             returnTypeRef = createTypeRef("Number", node);
+        } else if(isImplementing(leftType, numberType) && isImplementing(rightType, numberType)) {
+            if(leftType.getName().equals(rightType.getName())) {
+                returnTypeRef = createTypeRef(leftType.getName(), node);
+            } else {
+                returnTypeRef = createTypeRef("Number", node);
+            }
         } else if(amountType.isSameOrSuperType(leftType) && amountType.isSameOrSuperType(rightType)){
             Unit<?> leftUnit = leftVisitor.getReturnUnit().orElse(Unit.ONE);
             Unit<?> rightUnit = rightVisitor.getReturnUnit().orElse(Unit.ONE);
@@ -323,9 +330,16 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         OCLExpressionTypeInferingVisitor rightVisitor = new OCLExpressionTypeInferingVisitor(scope);
         CDTypeSymbolReference rightType = rightVisitor.getTypeFromExpression(node.getLeftExpression());
         CDTypeSymbolReference amountType = createTypeRef("Amount", node);
+        CDTypeSymbolReference numberType = createTypeRef("Number", node);
 
         if (leftType.getName().equals("Number") && rightType.getName().equals("Number")) {
             returnTypeRef = createTypeRef("Number", node);
+        } else if(isImplementing(leftType, numberType) && isImplementing(rightType, numberType)) {
+            if(leftType.getName().equals(rightType.getName())) {
+                returnTypeRef = createTypeRef(leftType.getName(), node);
+            } else {
+                returnTypeRef = createTypeRef("Number", node);
+            }
         } else if(amountType.isSameOrSuperType(leftType) && amountType.isSameOrSuperType(rightType)){
             Unit<?> leftUnit = leftVisitor.getReturnUnit().orElse(Unit.ONE);
             Unit<?> rightUnit = rightVisitor.getReturnUnit().orElse(Unit.ONE);
@@ -523,6 +537,11 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         return newType;
     }
 
+    private boolean isImplementing(CDTypeSymbolReference a, CDTypeSymbolReference b) {
+        List<String> interfaces = new LinkedList<>();
+        a.getInterfaces().forEach(i -> interfaces.add(i.getName()));
+        return interfaces.contains(b.getName());
+    }
 
 
 }
