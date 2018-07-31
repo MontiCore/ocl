@@ -85,8 +85,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of methSigSymbol1
 		assertTrue(methSigSymbol1.getAstNode().isPresent());
 		assertTrue(methSigSymbol1.getAstNode().get() instanceof ASTOCLMethodSignature);
-		assertSame(methSigSymbol1, methSigSymbol1.getAstNode().get().getSymbol().get());
-		assertSame(methSigSymbol1.getEnclosingScope(), methSigSymbol1.getAstNode().get().getEnclosingScope().get());
+		assertSame(methSigSymbol1, methSigSymbol1.getAstNode().get().getSymbol());
+		assertSame(methSigSymbol1.getEnclosingScope(), methSigSymbol1.getAstNode().get().getEnclosingScope());
 
 		// methSigSymbol1 -> throwsClauseSymbol1
 		final OCLThrowsClauseSymbol throwsClauseSymbol1 = methSigSymbol1.getOCLThrowsClause("Exception").orElse(null);
@@ -95,9 +95,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of throwsClauseSymbol1
 		assertTrue(throwsClauseSymbol1.getAstNode().isPresent());
 		assertTrue(throwsClauseSymbol1.getAstNode().get() instanceof ASTOCLThrowsClause);
-		assertSame(throwsClauseSymbol1, throwsClauseSymbol1.getAstNode().get().getSymbol().get());
+		assertSame(throwsClauseSymbol1, throwsClauseSymbol1.getAstNode().get().getSymbol());
 		assertSame(throwsClauseSymbol1.getEnclosingScope(),
-				throwsClauseSymbol1.getAstNode().get().getEnclosingScope().get());
+				throwsClauseSymbol1.getAstNode().get().getEnclosingScope());
 
 		final OCLPreStatementSymbol preSymbol1 = methSigSymbol1.getOCLPreStatement("IAS1").orElse(null);
 		assertNotNull(preSymbol1);
@@ -131,8 +131,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of methSigSymbol2
 		assertTrue(methSigSymbol2.getAstNode().isPresent());
 		assertTrue(methSigSymbol2.getAstNode().get() instanceof ASTOCLMethodSignature);
-		assertSame(methSigSymbol2, methSigSymbol2.getAstNode().get().getSymbol().get());
-		assertSame(methSigSymbol2.getEnclosingScope(), methSigSymbol2.getAstNode().get().getEnclosingScope().get());
+		assertSame(methSigSymbol2, methSigSymbol2.getAstNode().get().getSymbol());
+		assertSame(methSigSymbol2.getEnclosingScope(), methSigSymbol2.getAstNode().get().getEnclosingScope());
 
 		final OCLThrowsClauseSymbol throwsClauseSym1 = methSigSymbol2.getOCLThrowsClause("RecognitionException").orElse(null);
 		assertNotNull(throwsClauseSym1);
@@ -140,8 +140,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of throwsClauseSym1
 		assertTrue(throwsClauseSym1.getAstNode().isPresent());
 		assertTrue(throwsClauseSym1.getAstNode().get() instanceof ASTOCLThrowsClause);
-		assertSame(throwsClauseSym1, throwsClauseSym1.getAstNode().get().getSymbol().get());
-		assertSame(throwsClauseSym1.getEnclosingScope(), throwsClauseSym1.getAstNode().get().getEnclosingScope().get());
+		assertSame(throwsClauseSym1, throwsClauseSym1.getAstNode().get().getSymbol());
+		assertSame(throwsClauseSym1.getEnclosingScope(), throwsClauseSym1.getAstNode().get().getEnclosingScope());
 
 		// methodSignatureSymbol2 -> parameterDeclarationSymbol1
 		final OCLParameterDeclarationSymbol parameterDeclarationSymbol1 = methSigSymbol2.getOCLParamDecl("gehalt").orElse(null);
@@ -152,9 +152,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of parameterDeclarationSymbol1
 		assertTrue(parameterDeclarationSymbol1.getAstNode().isPresent());
 		assertTrue(parameterDeclarationSymbol1.getAstNode().get() instanceof ASTOCLParameterDeclaration);
-		assertSame(parameterDeclarationSymbol1, parameterDeclarationSymbol1.getAstNode().get().getSymbol().get());
+		assertSame(parameterDeclarationSymbol1, parameterDeclarationSymbol1.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationSymbol1.getEnclosingScope(),
-				parameterDeclarationSymbol1.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationSymbol1.getAstNode().get().getEnclosingScope());
 
 		// methSigSymbol2 -> variableDeclarationSymbol1
 		final OCLVariableDeclarationSymbol variableDeclarationSymbol1 = methSigSymbol2.getOCLVariableDecl("oldCo").orElse(null);
@@ -164,9 +164,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of variableDeclarationSymbol1
 		assertTrue(variableDeclarationSymbol1.getAstNode().isPresent());
 		assertTrue(variableDeclarationSymbol1.getAstNode().get() instanceof ASTOCLVariableDeclaration);
-		assertSame(variableDeclarationSymbol1, variableDeclarationSymbol1.getAstNode().get().getSymbol().get());
+		assertSame(variableDeclarationSymbol1, variableDeclarationSymbol1.getAstNode().get().getSymbol());
 		assertSame(variableDeclarationSymbol1.getEnclosingScope(),
-				variableDeclarationSymbol1.getAstNode().get().getEnclosingScope().get());
+				variableDeclarationSymbol1.getAstNode().get().getEnclosingScope());
 
 
 		// methSigSymbol2 -> variableDeclarationSymbol2
@@ -177,9 +177,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of variableDeclarationSymbol2
 		assertTrue(variableDeclarationSymbol2.getAstNode().isPresent());
 		assertTrue(variableDeclarationSymbol2.getAstNode().get() instanceof ASTOCLVariableDeclaration);
-		assertSame(variableDeclarationSymbol2, variableDeclarationSymbol2.getAstNode().get().getSymbol().get());
+		assertSame(variableDeclarationSymbol2, variableDeclarationSymbol2.getAstNode().get().getSymbol());
 		assertSame(variableDeclarationSymbol2.getEnclosingScope(),
-				variableDeclarationSymbol2.getAstNode().get().getEnclosingScope().get());
+				variableDeclarationSymbol2.getAstNode().get().getEnclosingScope());
 
 
 		// methSigSymbol2 -> variableDeclarationSymbol3
@@ -189,9 +189,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of variableDeclarationSymbol3
 		assertTrue(variableDeclarationSymbol3.getAstNode().isPresent());
 		assertTrue(variableDeclarationSymbol3.getAstNode().get() instanceof ASTOCLVariableDeclaration);
-		assertSame(variableDeclarationSymbol3, variableDeclarationSymbol3.getAstNode().get().getSymbol().get());
+		assertSame(variableDeclarationSymbol3, variableDeclarationSymbol3.getAstNode().get().getSymbol());
 		assertSame(variableDeclarationSymbol3.getEnclosingScope(),
-				variableDeclarationSymbol3.getAstNode().get().getEnclosingScope().get());
+				variableDeclarationSymbol3.getAstNode().get().getEnclosingScope());
 
 		final OCLMethodDeclarationSymbol methDeclSymbol = methSigSymbol2.getOCLMethodDecl("min").orElse(null);
 		assertNotNull(methDeclSymbol);
@@ -220,9 +220,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of constructorSigSymbol
 		assertTrue(constructorSigSymbol.getAstNode().isPresent());
 		assertTrue(constructorSigSymbol.getAstNode().get() instanceof ASTOCLConstructorSignature);
-		assertSame(constructorSigSymbol, constructorSigSymbol.getAstNode().get().getSymbol().get());
+		assertSame(constructorSigSymbol, constructorSigSymbol.getAstNode().get().getSymbol());
 		assertSame(constructorSigSymbol.getEnclosingScope(),
-				constructorSigSymbol.getAstNode().get().getEnclosingScope().get());
+				constructorSigSymbol.getAstNode().get().getEnclosingScope());
 
 		// constructorSigSymbol -> parameterDeclarationSymbol2
 		final OCLParameterDeclarationSymbol parameterDeclarationSymbol2 = constructorSigSymbol.getOCLParamDecl("bidder").orElse(null);
@@ -233,9 +233,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of parameterDeclarationSymbol2
 		assertTrue(parameterDeclarationSymbol2.getAstNode().isPresent());
 		assertTrue(parameterDeclarationSymbol2.getAstNode().get() instanceof ASTOCLParameterDeclaration);
-		assertSame(parameterDeclarationSymbol2, parameterDeclarationSymbol2.getAstNode().get().getSymbol().get());
+		assertSame(parameterDeclarationSymbol2, parameterDeclarationSymbol2.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationSymbol2.getEnclosingScope(),
-				parameterDeclarationSymbol2.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationSymbol2.getAstNode().get().getEnclosingScope());
 
 		// constructorSigSymbol -> parameterDeclarationSymbol2
 		final OCLParameterDeclarationSymbol parameterDeclarationSymbol3 = constructorSigSymbol.getOCLParamDecl("bidObjects").orElse(null);
@@ -246,9 +246,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of parameterDeclarationSymbol3
 		assertTrue(parameterDeclarationSymbol3.getAstNode().isPresent());
 		assertTrue(parameterDeclarationSymbol3.getAstNode().get() instanceof ASTOCLParameterDeclaration);
-		assertSame(parameterDeclarationSymbol3, parameterDeclarationSymbol3.getAstNode().get().getSymbol().get());
+		assertSame(parameterDeclarationSymbol3, parameterDeclarationSymbol3.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationSymbol3.getEnclosingScope(),
-				parameterDeclarationSymbol3.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationSymbol3.getAstNode().get().getEnclosingScope());
 
 		final OCLFileSymbol OCLFileSymbol4 = globalScope.<OCLFileSymbol> resolve("example.symbolTableTestFiles.test4", OCLFileSymbol.KIND).orElse(null);
 		assertNotNull(OCLFileSymbol4);
@@ -264,8 +264,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of invSymbol4
 		assertTrue(invSymbol4.getAstNode().isPresent());
 		assertTrue(invSymbol4.getAstNode().get() instanceof ASTOCLInvariant);
-		assertSame(invSymbol4, invSymbol4.getAstNode().get().getSymbol().get());
-		assertSame(invSymbol4.getEnclosingScope(), invSymbol4.getAstNode().get().getEnclosingScope().get());
+		assertSame(invSymbol4, invSymbol4.getAstNode().get().getSymbol());
+		assertSame(invSymbol4.getEnclosingScope(), invSymbol4.getAstNode().get().getEnclosingScope());
 
 		final OCLFileSymbol OCLFileSymbol5 = globalScope.<OCLFileSymbol> resolve("example.symbolTableTestFiles.test5", OCLFileSymbol.KIND).orElse(null);
 		assertNotNull(OCLFileSymbol5);
@@ -283,8 +283,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of methSigSymbol5
 		assertTrue(methSigSymbol5.getAstNode().isPresent());
 		assertTrue(methSigSymbol5.getAstNode().get() instanceof ASTOCLMethodSignature);
-		assertSame(methSigSymbol5, methSigSymbol5.getAstNode().get().getSymbol().get());
-		assertSame(methSigSymbol5.getEnclosingScope(), methSigSymbol5.getAstNode().get().getEnclosingScope().get());
+		assertSame(methSigSymbol5, methSigSymbol5.getAstNode().get().getSymbol());
+		assertSame(methSigSymbol5.getEnclosingScope(), methSigSymbol5.getAstNode().get().getEnclosingScope());
 
 		final OCLThrowsClauseSymbol throwsClauseSym2 = methSigSymbol5.getOCLThrowsClause("Exception").orElse(null);
 		assertNotNull(throwsClauseSym2);
@@ -292,8 +292,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of throwsClauseSym2
 		assertTrue(throwsClauseSym2.getAstNode().isPresent());
 		assertTrue(throwsClauseSym2.getAstNode().get() instanceof ASTOCLThrowsClause);
-		assertSame(throwsClauseSym2, throwsClauseSym2.getAstNode().get().getSymbol().get());
-		assertSame(throwsClauseSym2.getEnclosingScope(), throwsClauseSym2.getAstNode().get().getEnclosingScope().get());
+		assertSame(throwsClauseSym2, throwsClauseSym2.getAstNode().get().getSymbol());
+		assertSame(throwsClauseSym2.getEnclosingScope(), throwsClauseSym2.getAstNode().get().getEnclosingScope());
 
 		// methSigSymbol5 -> parameterDeclarationSymbol4
 		final OCLParameterDeclarationSymbol parameterDeclarationSymbol4 = methSigSymbol5.getOCLParamDecl("semester").orElse(null);
@@ -304,9 +304,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of parameterDeclarationSymbol4
 		assertTrue(parameterDeclarationSymbol4.getAstNode().isPresent());
 		assertTrue(parameterDeclarationSymbol4.getAstNode().get() instanceof ASTOCLParameterDeclaration);
-		assertSame(parameterDeclarationSymbol4, parameterDeclarationSymbol4.getAstNode().get().getSymbol().get());
+		assertSame(parameterDeclarationSymbol4, parameterDeclarationSymbol4.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationSymbol4.getEnclosingScope(),
-				parameterDeclarationSymbol4.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationSymbol4.getAstNode().get().getEnclosingScope());
 
 		// methSigSymbol5 -> variableDeclarationSymbol4
 		final OCLVariableDeclarationSymbol variableDeclarationSymbol4 = methSigSymbol5.getOCLVariableDecl("oldUniName").orElse(null);
@@ -316,9 +316,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of variableDeclarationSymbol4
 		assertTrue(variableDeclarationSymbol4.getAstNode().isPresent());
 		assertTrue(variableDeclarationSymbol4.getAstNode().get() instanceof ASTOCLVariableDeclaration);
-		assertSame(variableDeclarationSymbol4, variableDeclarationSymbol4.getAstNode().get().getSymbol().get());
+		assertSame(variableDeclarationSymbol4, variableDeclarationSymbol4.getAstNode().get().getSymbol());
 		assertSame(variableDeclarationSymbol4.getEnclosingScope(),
-				variableDeclarationSymbol4.getAstNode().get().getEnclosingScope().get());
+				variableDeclarationSymbol4.getAstNode().get().getEnclosingScope());
 
 		// methSigSymbol5 -> variableDeclarationSymbol5
 		final OCLVariableDeclarationSymbol variableDeclarationSymbol5 = methSigSymbol5.getOCLVariableDecl("newUniName").orElse(null);
@@ -328,9 +328,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of variableDeclarationSymbol5
 		assertTrue(variableDeclarationSymbol5.getAstNode().isPresent());
 		assertTrue(variableDeclarationSymbol5.getAstNode().get() instanceof ASTOCLVariableDeclaration);
-		assertSame(variableDeclarationSymbol5, variableDeclarationSymbol5.getAstNode().get().getSymbol().get());
+		assertSame(variableDeclarationSymbol5, variableDeclarationSymbol5.getAstNode().get().getSymbol());
 		assertSame(variableDeclarationSymbol5.getEnclosingScope(),
-				variableDeclarationSymbol5.getAstNode().get().getEnclosingScope().get());
+				variableDeclarationSymbol5.getAstNode().get().getEnclosingScope());
 
 		final OCLFileSymbol OCLFileSymbol6 = globalScope.<OCLFileSymbol> resolve("example.symbolTableTestFiles.test6", OCLFileSymbol.KIND).orElse(null);
 		assertNotNull(OCLFileSymbol6);
@@ -347,8 +347,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of invSymbol6
 		assertTrue(invSymbol6.getAstNode().isPresent());
 		assertTrue(invSymbol6.getAstNode().get() instanceof ASTOCLInvariant);
-		assertSame(invSymbol6, invSymbol6.getAstNode().get().getSymbol().get());
-		assertSame(invSymbol6.getEnclosingScope(), invSymbol6.getAstNode().get().getEnclosingScope().get());
+		assertSame(invSymbol6, invSymbol6.getAstNode().get().getSymbol());
+		assertSame(invSymbol6.getEnclosingScope(), invSymbol6.getAstNode().get().getEnclosingScope());
 
 		final OCLFileSymbol OCLFileSymbol8 = globalScope.<OCLFileSymbol> resolve("example.symbolTableTestFiles.test8", OCLFileSymbol.KIND).orElse(null);
 		assertNotNull(OCLFileSymbol8);
@@ -366,8 +366,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of methSigSymbol6
 		assertTrue(methSigSymbol6.getAstNode().isPresent());
 		assertTrue(methSigSymbol6.getAstNode().get() instanceof ASTOCLMethodSignature);
-		assertSame(methSigSymbol6, methSigSymbol6.getAstNode().get().getSymbol().get());
-		assertSame(methSigSymbol6.getEnclosingScope(), methSigSymbol6.getAstNode().get().getEnclosingScope().get());
+		assertSame(methSigSymbol6, methSigSymbol6.getAstNode().get().getSymbol());
+		assertSame(methSigSymbol6.getEnclosingScope(), methSigSymbol6.getAstNode().get().getEnclosingScope());
 
 		// methodSignatureSymbol6 -> parameterDeclarationSymbol5
 		final OCLParameterDeclarationSymbol parameterDeclarationSymbol5 = methSigSymbol6.getOCLParamDecl("d").orElse(null);
@@ -378,9 +378,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of parameterDeclarationSymbol5
 		assertTrue(parameterDeclarationSymbol5.getAstNode().isPresent());
 		assertTrue(parameterDeclarationSymbol5.getAstNode().get() instanceof ASTOCLParameterDeclaration);
-		assertSame(parameterDeclarationSymbol5, parameterDeclarationSymbol5.getAstNode().get().getSymbol().get());
+		assertSame(parameterDeclarationSymbol5, parameterDeclarationSymbol5.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationSymbol5.getEnclosingScope(),
-				parameterDeclarationSymbol5.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationSymbol5.getAstNode().get().getEnclosingScope());
 
 		final OCLMethodDeclarationSymbol methDeclSymbol2 = methSigSymbol6.getOCLMethodDecl("function").orElse(null);
 		assertNotNull(methDeclSymbol2);
@@ -390,8 +390,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of methDeclSymbol2
 		assertTrue(methDeclSymbol2.getAstNode().isPresent());
 		assertTrue(methDeclSymbol2.getAstNode().get() instanceof ASTOCLMethodDeclaration);
-		assertSame(methDeclSymbol2, methDeclSymbol2.getAstNode().get().getSymbol().get());
-		assertSame(methDeclSymbol2.getEnclosingScope(), methDeclSymbol2.getAstNode().get().getEnclosingScope().get());
+		assertSame(methDeclSymbol2, methDeclSymbol2.getAstNode().get().getSymbol());
+		assertSame(methDeclSymbol2.getEnclosingScope(), methDeclSymbol2.getAstNode().get().getEnclosingScope());
 
 		// parameterDeclarationOfMethodDecl3
 		final OCLParameterDeclarationSymbol parameterDeclarationOfMethodDecl3 = methDeclSymbol2.getOCLParamDecl("a").orElse(null);
@@ -402,9 +402,9 @@ public class OCLSymbolTableCreatorTest {
 		assertTrue(parameterDeclarationOfMethodDecl3.getAstNode().isPresent());
 		assertTrue(parameterDeclarationOfMethodDecl3.getAstNode().get() instanceof ASTOCLParameterDeclaration);
 		assertSame(parameterDeclarationOfMethodDecl3,
-				parameterDeclarationOfMethodDecl3.getAstNode().get().getSymbol().get());
+				parameterDeclarationOfMethodDecl3.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationOfMethodDecl3.getEnclosingScope(),
-				parameterDeclarationOfMethodDecl3.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationOfMethodDecl3.getAstNode().get().getEnclosingScope());
 
 		final OCLParameterDeclarationSymbol parameterDeclarationOfMethodDecl4 = methDeclSymbol2.getOCLParamDecl("b").orElse(null);
 		assertNotNull(parameterDeclarationOfMethodDecl4);
@@ -414,9 +414,9 @@ public class OCLSymbolTableCreatorTest {
 		assertTrue(parameterDeclarationOfMethodDecl4.getAstNode().isPresent());
 		assertTrue(parameterDeclarationOfMethodDecl4.getAstNode().get() instanceof ASTOCLParameterDeclaration);
 		assertSame(parameterDeclarationOfMethodDecl4,
-				parameterDeclarationOfMethodDecl4.getAstNode().get().getSymbol().get());
+				parameterDeclarationOfMethodDecl4.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationOfMethodDecl4.getEnclosingScope(),
-				parameterDeclarationOfMethodDecl4.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationOfMethodDecl4.getAstNode().get().getEnclosingScope());
 
 		final OCLFileSymbol OCLFileSymbol13 = globalScope.<OCLFileSymbol> resolve("example.symbolTableTestFiles.test13", OCLFileSymbol.KIND).orElse(null);
 		assertNotNull(OCLFileSymbol13);
@@ -434,8 +434,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of methSigSymbol7
 		assertTrue(methSigSymbol7.getAstNode().isPresent());
 		assertTrue(methSigSymbol7.getAstNode().get() instanceof ASTOCLMethodSignature);
-		assertSame(methSigSymbol7, methSigSymbol7.getAstNode().get().getSymbol().get());
-		assertSame(methSigSymbol7.getEnclosingScope(), methSigSymbol7.getAstNode().get().getEnclosingScope().get());
+		assertSame(methSigSymbol7, methSigSymbol7.getAstNode().get().getSymbol());
+		assertSame(methSigSymbol7.getEnclosingScope(), methSigSymbol7.getAstNode().get().getEnclosingScope());
 
 		final OCLMethodDeclarationSymbol methDeclSymbol3 = methSigSymbol7.getOCLMethodDecl("f1").orElse(null);
 		assertNotNull(methDeclSymbol3);
@@ -445,8 +445,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of methDeclSymbol3
 		assertTrue(methDeclSymbol3.getAstNode().isPresent());
 		assertTrue(methDeclSymbol3.getAstNode().get() instanceof ASTOCLMethodDeclaration);
-		assertSame(methDeclSymbol3, methDeclSymbol3.getAstNode().get().getSymbol().get());
-		assertSame(methDeclSymbol3.getEnclosingScope(), methDeclSymbol3.getAstNode().get().getEnclosingScope().get());
+		assertSame(methDeclSymbol3, methDeclSymbol3.getAstNode().get().getSymbol());
+		assertSame(methDeclSymbol3.getEnclosingScope(), methDeclSymbol3.getAstNode().get().getEnclosingScope());
 
 		// parameterDeclarationOfMethodDecl5
 		final OCLParameterDeclarationSymbol parameterDeclarationOfMethodDecl5 = methDeclSymbol3.getOCLParamDecl("e").orElse(null);
@@ -457,9 +457,9 @@ public class OCLSymbolTableCreatorTest {
 		assertTrue(parameterDeclarationOfMethodDecl5.getAstNode().isPresent());
 		assertTrue(parameterDeclarationOfMethodDecl5.getAstNode().get() instanceof ASTOCLParameterDeclaration);
 		assertSame(parameterDeclarationOfMethodDecl5,
-				parameterDeclarationOfMethodDecl5.getAstNode().get().getSymbol().get());
+				parameterDeclarationOfMethodDecl5.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationOfMethodDecl5.getEnclosingScope(),
-				parameterDeclarationOfMethodDecl5.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationOfMethodDecl5.getAstNode().get().getEnclosingScope());
 
 		final OCLParameterDeclarationSymbol parameterDeclarationOfMethodDecl6 = methDeclSymbol3.getOCLParamDecl("f").orElse(null);
 		assertNotNull(parameterDeclarationOfMethodDecl6);
@@ -469,9 +469,9 @@ public class OCLSymbolTableCreatorTest {
 		assertTrue(parameterDeclarationOfMethodDecl6.getAstNode().isPresent());
 		assertTrue(parameterDeclarationOfMethodDecl6.getAstNode().get() instanceof ASTOCLParameterDeclaration);
 		assertSame(parameterDeclarationOfMethodDecl6,
-				parameterDeclarationOfMethodDecl6.getAstNode().get().getSymbol().get());
+				parameterDeclarationOfMethodDecl6.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationOfMethodDecl6.getEnclosingScope(),
-				parameterDeclarationOfMethodDecl6.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationOfMethodDecl6.getAstNode().get().getEnclosingScope());
 
 		// parameterDeclarationOfMethodDecl7
 		final OCLParameterDeclarationSymbol parameterDeclarationOfMethodDecl7 = methDeclSymbol3.getOCLParamDecl("g").orElse(null);
@@ -482,9 +482,9 @@ public class OCLSymbolTableCreatorTest {
 		assertTrue(parameterDeclarationOfMethodDecl7.getAstNode().isPresent());
 		assertTrue(parameterDeclarationOfMethodDecl7.getAstNode().get() instanceof ASTOCLParameterDeclaration);
 		assertSame(parameterDeclarationOfMethodDecl7,
-				parameterDeclarationOfMethodDecl7.getAstNode().get().getSymbol().get());
+				parameterDeclarationOfMethodDecl7.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationOfMethodDecl7.getEnclosingScope(),
-				parameterDeclarationOfMethodDecl7.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationOfMethodDecl7.getAstNode().get().getEnclosingScope());
 
 		// parameterDeclarationOfMethodDecl7
 		final OCLParameterDeclarationSymbol parameterDeclarationOfMethodDecl8 = methSigSymbol7.getOCLParamDecl("b").orElse(null);
@@ -495,9 +495,9 @@ public class OCLSymbolTableCreatorTest {
 		assertTrue(parameterDeclarationOfMethodDecl8.getAstNode().isPresent());
 		assertTrue(parameterDeclarationOfMethodDecl8.getAstNode().get() instanceof ASTOCLParameterDeclaration);
 		assertSame(parameterDeclarationOfMethodDecl8,
-				parameterDeclarationOfMethodDecl8.getAstNode().get().getSymbol().get());
+				parameterDeclarationOfMethodDecl8.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationOfMethodDecl8.getEnclosingScope(),
-				parameterDeclarationOfMethodDecl8.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationOfMethodDecl8.getAstNode().get().getEnclosingScope());
 
 		// methSigSymbol7 -> variableDeclarationSymbol6
 		final OCLVariableDeclarationSymbol variableDeclarationSymbol6 = methSigSymbol7.getOCLVariableDecl("helpVariable").orElse(null);
@@ -507,9 +507,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of variableDeclarationSymbol6
 		assertTrue(variableDeclarationSymbol6.getAstNode().isPresent());
 		assertTrue(variableDeclarationSymbol6.getAstNode().get() instanceof ASTOCLVariableDeclaration);
-		assertSame(variableDeclarationSymbol6, variableDeclarationSymbol6.getAstNode().get().getSymbol().get());
+		assertSame(variableDeclarationSymbol6, variableDeclarationSymbol6.getAstNode().get().getSymbol());
 		assertSame(variableDeclarationSymbol6.getEnclosingScope(),
-				variableDeclarationSymbol6.getAstNode().get().getEnclosingScope().get());
+				variableDeclarationSymbol6.getAstNode().get().getEnclosingScope());
 
 		// OCLFileSymbol7
 		final OCLFileSymbol OCLFileSymbol7 = globalScope.<OCLFileSymbol> resolve("example.symbolTableTestFiles.test7", OCLFileSymbol.KIND).orElse(null);
@@ -525,9 +525,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of constructorSigSymbol2
 		assertTrue(constructorSigSymbol2.getAstNode().isPresent());
 		assertTrue(constructorSigSymbol2.getAstNode().get() instanceof ASTOCLConstructorSignature);
-		assertSame(constructorSigSymbol2, constructorSigSymbol2.getAstNode().get().getSymbol().get());
+		assertSame(constructorSigSymbol2, constructorSigSymbol2.getAstNode().get().getSymbol());
 		assertSame(constructorSigSymbol2.getEnclosingScope(),
-				constructorSigSymbol2.getAstNode().get().getEnclosingScope().get());
+				constructorSigSymbol2.getAstNode().get().getEnclosingScope());
 
 		// constructorSigSymbol2 -> parameterDeclarationSymbol6
 		final OCLParameterDeclarationSymbol parameterDeclarationSymbol6 = constructorSigSymbol2.getOCLParamDecl("Param1").orElse(null);
@@ -538,9 +538,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of parameterDeclarationSymbol6
 		assertTrue(parameterDeclarationSymbol6.getAstNode().isPresent());
 		assertTrue(parameterDeclarationSymbol6.getAstNode().get() instanceof ASTOCLParameterDeclaration);
-		assertSame(parameterDeclarationSymbol6, parameterDeclarationSymbol6.getAstNode().get().getSymbol().get());
+		assertSame(parameterDeclarationSymbol6, parameterDeclarationSymbol6.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationSymbol6.getEnclosingScope(),
-				parameterDeclarationSymbol6.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationSymbol6.getAstNode().get().getEnclosingScope());
 
 		// constructorSigSymbol2 -> parameterDeclarationSymbol7
 		final OCLParameterDeclarationSymbol parameterDeclarationSymbol7 = constructorSigSymbol2.getOCLParamDecl("Param2").orElse(null);
@@ -551,9 +551,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of parameterDeclarationSymbol7
 		assertTrue(parameterDeclarationSymbol7.getAstNode().isPresent());
 		assertTrue(parameterDeclarationSymbol7.getAstNode().get() instanceof ASTOCLParameterDeclaration);
-		assertSame(parameterDeclarationSymbol7, parameterDeclarationSymbol7.getAstNode().get().getSymbol().get());
+		assertSame(parameterDeclarationSymbol7, parameterDeclarationSymbol7.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationSymbol7.getEnclosingScope(),
-				parameterDeclarationSymbol7.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationSymbol7.getAstNode().get().getEnclosingScope());
 
 		// OCLFileSymbol12
 		final OCLFileSymbol OCLFileSymbol12 = globalScope.<OCLFileSymbol> resolve("example.symbolTableTestFiles.test12", OCLFileSymbol.KIND).orElse(null);
@@ -569,9 +569,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of constructorSigSymbol3
 		assertTrue(constructorSigSymbol3.getAstNode().isPresent());
 		assertTrue(constructorSigSymbol3.getAstNode().get() instanceof ASTOCLConstructorSignature);
-		assertSame(constructorSigSymbol3, constructorSigSymbol3.getAstNode().get().getSymbol().get());
+		assertSame(constructorSigSymbol3, constructorSigSymbol3.getAstNode().get().getSymbol());
 		assertSame(constructorSigSymbol3.getEnclosingScope(),
-				constructorSigSymbol3.getAstNode().get().getEnclosingScope().get());
+				constructorSigSymbol3.getAstNode().get().getEnclosingScope());
 
 		// constructorSigSymbol3 -> parameterDeclarationSymbol8
 		final OCLParameterDeclarationSymbol parameterDeclarationSymbol8 = constructorSigSymbol3.getOCLParamDecl("Param1").orElse(null);
@@ -582,9 +582,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of parameterDeclarationSymbol8
 		assertTrue(parameterDeclarationSymbol8.getAstNode().isPresent());
 		assertTrue(parameterDeclarationSymbol8.getAstNode().get() instanceof ASTOCLParameterDeclaration);
-		assertSame(parameterDeclarationSymbol8, parameterDeclarationSymbol8.getAstNode().get().getSymbol().get());
+		assertSame(parameterDeclarationSymbol8, parameterDeclarationSymbol8.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationSymbol8.getEnclosingScope(),
-				parameterDeclarationSymbol8.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationSymbol8.getAstNode().get().getEnclosingScope());
 
 		// constructorSigSymbol3 -> parameterDeclarationSymbol9
 		final OCLParameterDeclarationSymbol parameterDeclarationSymbol9 = constructorSigSymbol3.getOCLParamDecl("Param2").orElse(null);
@@ -595,9 +595,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of parameterDeclarationSymbol9
 		assertTrue(parameterDeclarationSymbol9.getAstNode().isPresent());
 		assertTrue(parameterDeclarationSymbol9.getAstNode().get() instanceof ASTOCLParameterDeclaration);
-		assertSame(parameterDeclarationSymbol9, parameterDeclarationSymbol9.getAstNode().get().getSymbol().get());
+		assertSame(parameterDeclarationSymbol9, parameterDeclarationSymbol9.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationSymbol9.getEnclosingScope(),
-				parameterDeclarationSymbol9.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationSymbol9.getAstNode().get().getEnclosingScope());
 
 		// constructorSigSymbol3 -> parameterDeclarationSymbol10
 		final OCLParameterDeclarationSymbol parameterDeclarationSymbol10 = constructorSigSymbol3.getOCLParamDecl("Param3").orElse(null);
@@ -608,9 +608,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of parameterDeclarationSymbol10
 		assertTrue(parameterDeclarationSymbol10.getAstNode().isPresent());
 		assertTrue(parameterDeclarationSymbol10.getAstNode().get() instanceof ASTOCLParameterDeclaration);
-		assertSame(parameterDeclarationSymbol10, parameterDeclarationSymbol10.getAstNode().get().getSymbol().get());
+		assertSame(parameterDeclarationSymbol10, parameterDeclarationSymbol10.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationSymbol10.getEnclosingScope(),
-				parameterDeclarationSymbol10.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationSymbol10.getAstNode().get().getEnclosingScope());
 
 		// OCLFileSymbol9
 		final OCLFileSymbol OCLFileSymbol9 = globalScope.<OCLFileSymbol> resolve("example.symbolTableTestFiles.test9", OCLFileSymbol.KIND).orElse(null);
@@ -629,8 +629,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of invSymbol5
 		assertTrue(invSymbol5.getAstNode().isPresent());
 		assertTrue(invSymbol5.getAstNode().get() instanceof ASTOCLInvariant);
-		assertSame(invSymbol5, invSymbol5.getAstNode().get().getSymbol().get());
-		assertSame(invSymbol5.getEnclosingScope(), invSymbol5.getAstNode().get().getEnclosingScope().get());
+		assertSame(invSymbol5, invSymbol5.getAstNode().get().getSymbol());
+		assertSame(invSymbol5.getEnclosingScope(), invSymbol5.getAstNode().get().getEnclosingScope());
 
 		// invSymbol5 -> varDeclSymbol3
 		final OCLVariableDeclarationSymbol varDeclSymbol3 = invSymbol5.getOCLVariableDecl("p").orElse(null);
@@ -639,8 +639,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of varDeclSymbol3
 		assertTrue(varDeclSymbol3.getAstNode().isPresent());
 		assertTrue(varDeclSymbol3.getAstNode().get() instanceof ASTOCLVariableDeclaration);
-		assertSame(varDeclSymbol3, varDeclSymbol3.getAstNode().get().getSymbol().get());
-		assertSame(varDeclSymbol3.getEnclosingScope(), varDeclSymbol3.getAstNode().get().getEnclosingScope().get());
+		assertSame(varDeclSymbol3, varDeclSymbol3.getAstNode().get().getSymbol());
+		assertSame(varDeclSymbol3.getEnclosingScope(), varDeclSymbol3.getAstNode().get().getEnclosingScope());
 
 		// OCLFileSymbol10
 		final OCLFileSymbol OCLFileSymbol10 = globalScope.<OCLFileSymbol> resolve("example.symbolTableTestFiles.test10", OCLFileSymbol.KIND).orElse(null);
@@ -663,8 +663,8 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of methDeclSymbol4
 		assertTrue(methDeclSymbol4.getAstNode().isPresent());
 		assertTrue(methDeclSymbol4.getAstNode().get() instanceof ASTOCLMethodDeclaration);
-		assertSame(methDeclSymbol4, methDeclSymbol4.getAstNode().get().getSymbol().get());
-		assertSame(methDeclSymbol4.getEnclosingScope(), methDeclSymbol4.getAstNode().get().getEnclosingScope().get());
+		assertSame(methDeclSymbol4, methDeclSymbol4.getAstNode().get().getSymbol());
+		assertSame(methDeclSymbol4.getEnclosingScope(), methDeclSymbol4.getAstNode().get().getEnclosingScope());
 
 		// invSymbol7 -> parameterDeclarationSymbol11
 		final OCLParameterDeclarationSymbol parameterDeclarationSymbol11 = methDeclSymbol4.getOCLParamDecl("k").orElse(null);
@@ -675,9 +675,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of parameterDeclarationSymbol11
 		assertTrue(parameterDeclarationSymbol11.getAstNode().isPresent());
 		assertTrue(parameterDeclarationSymbol11.getAstNode().get() instanceof ASTOCLParameterDeclaration);
-		assertSame(parameterDeclarationSymbol11, parameterDeclarationSymbol11.getAstNode().get().getSymbol().get());
+		assertSame(parameterDeclarationSymbol11, parameterDeclarationSymbol11.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationSymbol11.getEnclosingScope(),
-				parameterDeclarationSymbol11.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationSymbol11.getAstNode().get().getEnclosingScope());
 
 		// invSymbol7 -> parameterDeclarationSymbol12
 		final OCLParameterDeclarationSymbol parameterDeclarationSymbol12 = methDeclSymbol4.getOCLParamDecl("l").orElse(null);
@@ -688,9 +688,9 @@ public class OCLSymbolTableCreatorTest {
 		// AST assertions of parameterDeclarationSymbol12
 		assertTrue(parameterDeclarationSymbol12.getAstNode().isPresent());
 		assertTrue(parameterDeclarationSymbol12.getAstNode().get() instanceof ASTOCLParameterDeclaration);
-		assertSame(parameterDeclarationSymbol12, parameterDeclarationSymbol12.getAstNode().get().getSymbol().get());
+		assertSame(parameterDeclarationSymbol12, parameterDeclarationSymbol12.getAstNode().get().getSymbol());
 		assertSame(parameterDeclarationSymbol12.getEnclosingScope(),
-				parameterDeclarationSymbol12.getAstNode().get().getEnclosingScope().get());
+				parameterDeclarationSymbol12.getAstNode().get().getEnclosingScope());
 
 	}
 

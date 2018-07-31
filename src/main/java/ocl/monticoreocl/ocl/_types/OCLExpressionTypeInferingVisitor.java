@@ -280,11 +280,11 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             CDTypeSymbolReference containerType = exprVisitor.getTypeFromExpression(node.getExpression());
 
             if (containerType.getActualTypeArguments().size() == 0) {
-                Log.error("0xOCLI5 Could not resolve type from InExpression, " + node.getVarNameList() +
+                Log.error("0xOCLI5 Could not resolve inner type from InExpression, " + node.getVarNameList() +
                         " in " + containerType + " at " +  node.get_SourcePositionStart()
                         , node.get_SourcePositionStart(), node.get_SourcePositionEnd());
             } else {
-                returnTypeRef = (CDTypeSymbolReference) containerType.getActualTypeArguments().get(0).getType();
+                returnTypeRef = containerType;
             }
         }
     }

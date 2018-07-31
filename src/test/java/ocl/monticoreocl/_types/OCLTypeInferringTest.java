@@ -260,9 +260,9 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
         OCLVariableDeclarationSymbol declVarSymbol3 = oclInvariantSymbol.getOCLVariableDecl("comp3").orElse(null);
         assertNotNull(declVarSymbol3);
         assertEquals("Collection", declVarSymbol3.getVarTypeName());
-        assertEquals("Collection<Person>", declVarSymbol3.getType().getStringRepresentation());
+        assertEquals("Collection<Set<Person>>", declVarSymbol3.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol3.getType().getActualTypeArguments().size());
-        assertEquals("Person", declVarSymbol3.getType().getActualTypeArguments().get(0).getType().toString());
+        assertEquals("Set", declVarSymbol3.getType().getActualTypeArguments().get(0).getType().toString());
 
         OCLVariableDeclarationSymbol declVarSymbol4 = oclInvariantSymbol.getOCLVariableDecl("s").orElse(null);
         assertNotNull(declVarSymbol4);

@@ -36,7 +36,7 @@
   <properties>
 
     <!-- .. SE-Libraries .................................................. -->
-    <monticore.version>5.0.0</monticore.version>
+    <monticore.version>5.0.1</monticore.version>
     <se-commons.version>1.7.9-SNAPSHOT</se-commons.version>
     <mc.grammars.assembly.version>0.0.6</mc.grammars.assembly.version>
     <cd4analysis.version>1.3.13</cd4analysis.version>

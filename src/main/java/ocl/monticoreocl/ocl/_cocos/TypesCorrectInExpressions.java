@@ -30,7 +30,7 @@ public class TypesCorrectInExpressions implements OCLASTOCLInvariantCoCo {
 
     @Override
     public void check(ASTOCLInvariant astInvariant){
-        MutableScope scope = (MutableScope) astInvariant.getSpannedScope().get();
+        MutableScope scope = (MutableScope) astInvariant.getSpannedScope();
         OCLTypeCheckingVisitor.checkInvariants(astInvariant, scope);
     }
 
