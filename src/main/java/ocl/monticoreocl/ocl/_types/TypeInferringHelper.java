@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class TypeInferringHelper {
 
-     public static void addActualArgument(CDTypeSymbolReference typeOuter, CDTypeSymbolReference typeInner) {
+    public static void addActualArgument(CDTypeSymbolReference typeOuter, CDTypeSymbolReference typeInner) {
         String stringRepresentation = typeOuter.getStringRepresentation() + "<";
 
         List<ActualTypeArgument> actualTypeArguments = new ArrayList<>();
@@ -46,7 +46,7 @@ public class TypeInferringHelper {
      * Removes nested leading Optionals:
      * Optional<Optional<A>> --> A
      */
-    protected static CDTypeSymbolReference removeAllOptionals(CDTypeSymbolReference type) {
+    public static CDTypeSymbolReference removeAllOptionals(CDTypeSymbolReference type) {
         List<ActualTypeArgument> arguments = type.getActualTypeArguments();
         if (type.getName().equals("Optional") && !arguments.isEmpty()) {
             CDTypeSymbolReference innerType = (CDTypeSymbolReference) arguments.get(0).getType();
@@ -60,7 +60,7 @@ public class TypeInferringHelper {
      * container types. Used for implicit flattening in OCL
      * E.g. Collection<Optional<Set<X>>> -> X
      */
-    protected static CDTypeSymbolReference flattenAll(CDTypeSymbolReference type) {
+    public static CDTypeSymbolReference flattenAll(CDTypeSymbolReference type) {
         List<ActualTypeArgument> arguments = type.getActualTypeArguments();
         while (!arguments.isEmpty() &&
                 isContainer((CDTypeSymbolReference) arguments.get(0).getType())) {
@@ -78,7 +78,7 @@ public class TypeInferringHelper {
      * Takes a Type and flattens them according to:
      * http://mbse.se-rwth.de/book1/index.php?c=chapter3-3#x1-560003.3.6
      */
-    protected static CDTypeSymbolReference flattenOnce(CDTypeSymbolReference type) {
+    public static CDTypeSymbolReference flattenOnce(CDTypeSymbolReference type) {
         // flatten containers
         String typeName = type.getName();
         List<ActualTypeArgument> arguments = type.getActualTypeArguments();
@@ -103,7 +103,7 @@ public class TypeInferringHelper {
         return type;
     }
 
-    private static CDTypeSymbolReference flattenSet(CDTypeSymbolReference type, CDTypeSymbolReference innerType) {
+    public static CDTypeSymbolReference flattenSet(CDTypeSymbolReference type, CDTypeSymbolReference innerType) {
         // if Set<Optional<X>> return Set<X>
         if (innerType.getName().equals("Optional")) {
             return handleReturnType(innerType, "Set");
@@ -113,7 +113,7 @@ public class TypeInferringHelper {
         return isContainer(innerType) ? innerType : type;
     }
 
-    private static CDTypeSymbolReference flattenList(CDTypeSymbolReference type, CDTypeSymbolReference innerType) {
+    public static CDTypeSymbolReference flattenList(CDTypeSymbolReference type, CDTypeSymbolReference innerType) {
         // if List<B<X>> return  List<X> , B in {List, Set, Collection, Optional}
         if (isContainer(innerType)) {
             return handleReturnType(innerType, "List");
@@ -124,7 +124,7 @@ public class TypeInferringHelper {
         }
     }
 
-    private static CDTypeSymbolReference flattenCollection(CDTypeSymbolReference type, CDTypeSymbolReference innerType) {
+    public static CDTypeSymbolReference flattenCollection(CDTypeSymbolReference type, CDTypeSymbolReference innerType) {
         // if Collection<List<X>> return List<X>
         if (innerType.getName().equals("List")) {
             return innerType;
@@ -139,12 +139,12 @@ public class TypeInferringHelper {
         }
     }
 
-    private static CDTypeSymbolReference flattenOptional(CDTypeSymbolReference type, CDTypeSymbolReference innerType) {
+    public static CDTypeSymbolReference flattenOptional(CDTypeSymbolReference type, CDTypeSymbolReference innerType) {
         // if Optional<B<X>> return  B<X> , B in {List, Set, Optional, Collection}
         return isContainer(innerType) ? innerType : type;
     }
 
-    private static CDTypeSymbolReference handleReturnType(CDTypeSymbolReference innerType, String containerName) {
+    public static CDTypeSymbolReference handleReturnType(CDTypeSymbolReference innerType, String containerName) {
         List<ActualTypeArgument> innerArguments = innerType.getActualTypeArguments();
         CDTypeSymbolReference collectionType = new CDTypeSymbolReference(containerName, innerType.getEnclosingScope());
         if (!innerArguments.isEmpty()) {
@@ -154,7 +154,7 @@ public class TypeInferringHelper {
         return collectionType;
     }
 
-    private static Boolean isContainer(CDTypeSymbolReference type) {
+    public static Boolean isContainer(CDTypeSymbolReference type) {
         String typeName = type.getName();
         return typeName.equals("Set") || typeName.equals("List") || typeName.equals("Collection")
                 || typeName.equals("Optional");
