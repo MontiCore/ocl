@@ -712,4 +712,10 @@ public class OCLParserTest {
 		Path model = Paths.get("src/test/resources/example/validEFPConstraints/rule4_WCET_MultiCore.ocl");
 		test(model);
 	}
+
+	@Test
+	public void testStereotypedExpr() throws IOException {
+		Path model = Paths.get("src/test/resources/example/validGrammarModels/stereotype.ocl");
+		test(model);
+	}
 }

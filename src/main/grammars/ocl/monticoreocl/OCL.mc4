@@ -65,7 +65,8 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
     */
 	interface OCLOperationSignature;
 
-	OCLTaggedExpr = "<<" (Expression | OCLConstraint) ("," (Expression | OCLConstraint))* ">>" ;
+    //TODO FIX "<<", replace as soon as Stereotypes in Common.mc4 are fixed as well
+	OCLTaggedExpr = "<<" (Expression | OCLConstraint) ("," (Expression | OCLConstraint))* ">" ">" {noSpace()}? ;
 
 	/** ASTOCLOperationConstraint represents the typical method or constructor
         specifications with pre- and post-conditions.
@@ -253,5 +254,11 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
 
     OCLNumberPrimary implements OCLPrimary <0> =
         value:NumberWithUnit;
+
+    /** Additional Expression to enable Stereotypes for Expressions
+    */
+    //TODO move to OCLExpressions.mc4 ???
+    StereotypeExpr implements Expression =
+        Stereotype Expression;
 
 }
