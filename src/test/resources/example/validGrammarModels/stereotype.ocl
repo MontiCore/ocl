@@ -1,0 +1,4 @@
+ocl stereotype {
+    context Test inv:
+        << msg="Test" >> blub.length < 10;
+}
