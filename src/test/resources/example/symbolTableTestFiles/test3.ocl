@@ -1,5 +1,7 @@
 package example.symbolTableTestFiles;
 
+import example.CDs.DefaultTypes.*;
+
 ocl test3 {
   context new Auction(int bidder, int bidObjects)
   pre preTest3: p != null;
