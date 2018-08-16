@@ -577,7 +577,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         newType = createTypeRef("List", node);
       }
       else {
-        newType = createTypeRef("Set", node);
+        newType = createTypeRef("Collection", node);
       }
       TypeInferringHelper.addActualArgument(newType, targetType);
     }

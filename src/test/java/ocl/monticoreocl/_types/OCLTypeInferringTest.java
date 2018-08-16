@@ -137,15 +137,15 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
 
         OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("p").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("Set", declVarSymbol.getVarTypeName());
-        assertEquals("Set<Person>", declVarSymbol.getType().getStringRepresentation());
+        assertEquals("Collection", declVarSymbol.getVarTypeName());
+        assertEquals("Collection<Person>", declVarSymbol.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol.getType().getActualTypeArguments().size());
         assertEquals("Person", declVarSymbol.getType().getActualTypeArguments().get(0).getType().toString());
 
         OCLVariableDeclarationSymbol declVarSymbol2 = oclInvariantSymbol.getOCLVariableDecl("p").orElse(null);
         assertNotNull(declVarSymbol2);
-        assertEquals("Set", declVarSymbol2.getVarTypeName());
-        assertEquals("Set<Person>", declVarSymbol2.getType().getStringRepresentation());
+        assertEquals("Collection", declVarSymbol2.getVarTypeName());
+        assertEquals("Collection<Person>", declVarSymbol2.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol2.getType().getActualTypeArguments().size());
         assertEquals("Person", declVarSymbol2.getType().getActualTypeArguments().get(0).getType().toString());
 
@@ -178,15 +178,15 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
 
         OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("a").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("Set", declVarSymbol.getVarTypeName());
-        assertEquals("Set<Auction>", declVarSymbol.getType().getStringRepresentation());
+        assertEquals("Collection", declVarSymbol.getVarTypeName());
+        assertEquals("Collection<Auction>", declVarSymbol.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol.getType().getActualTypeArguments().size());
         assertEquals("Auction", declVarSymbol.getType().getActualTypeArguments().get(0).getType().toString());
 
         OCLVariableDeclarationSymbol declVarSymbol2 = oclInvariantSymbol.getOCLVariableDecl("a2").orElse(null);
         assertNotNull(declVarSymbol2);
-        assertEquals("Set", declVarSymbol2.getVarTypeName());
-        assertEquals("Set<Auction>", declVarSymbol2.getType().getStringRepresentation());
+        assertEquals("Collection", declVarSymbol2.getVarTypeName());
+        assertEquals("Collection<Auction>", declVarSymbol2.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol2.getType().getActualTypeArguments().size());
         assertEquals("Auction", declVarSymbol2.getType().getActualTypeArguments().get(0).getType().toString());
 
@@ -260,9 +260,9 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
         OCLVariableDeclarationSymbol declVarSymbol3 = oclInvariantSymbol.getOCLVariableDecl("comp3").orElse(null);
         assertNotNull(declVarSymbol3);
         assertEquals("Collection", declVarSymbol3.getVarTypeName());
-        assertEquals("Collection<Set<Person>>", declVarSymbol3.getType().getStringRepresentation());
+        assertEquals("Collection<Collection<Person>>", declVarSymbol3.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol3.getType().getActualTypeArguments().size());
-        assertEquals("Set", declVarSymbol3.getType().getActualTypeArguments().get(0).getType().toString());
+        assertEquals("Collection", declVarSymbol3.getType().getActualTypeArguments().get(0).getType().toString());
 
         OCLVariableDeclarationSymbol declVarSymbol4 = oclInvariantSymbol.getOCLVariableDecl("s").orElse(null);
         assertNotNull(declVarSymbol4);
@@ -300,8 +300,8 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
 
         OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("b").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("Set", declVarSymbol.getVarTypeName());
-        assertEquals("Set<Person>", declVarSymbol.getType().getStringRepresentation());
+        assertEquals("Collection", declVarSymbol.getVarTypeName());
+        assertEquals("Collection<Person>", declVarSymbol.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol.getType().getActualTypeArguments().size());
         assertEquals("Person", declVarSymbol.getType().getActualTypeArguments().get(0).getType().toString());
 
@@ -312,8 +312,8 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
 
         OCLVariableDeclarationSymbol declVarSymbol3 = oclInvariantSymbol.getOCLVariableDecl("n").orElse(null);
         assertNotNull(declVarSymbol3);
-        assertEquals("Set", declVarSymbol3.getVarTypeName());
-        assertEquals("Set<String>", declVarSymbol3.getType().getStringRepresentation());
+        assertEquals("Collection", declVarSymbol3.getVarTypeName());
+        assertEquals("Collection<String>", declVarSymbol3.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol3.getType().getActualTypeArguments().size());
         assertEquals("String", declVarSymbol3.getType().getActualTypeArguments().get(0).getType().toString());
     }
@@ -387,15 +387,15 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
 
         declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("x").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("Set", declVarSymbol.getVarTypeName());
-        assertEquals("Set<A>", declVarSymbol.getType().getStringRepresentation());
+        assertEquals("Collection", declVarSymbol.getVarTypeName());
+        assertEquals("Collection<A>", declVarSymbol.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol.getType().getActualTypeArguments().size());
         assertEquals("A", declVarSymbol.getType().getActualTypeArguments().get(0).getType().toString());
 
         declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("y").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("Set", declVarSymbol.getVarTypeName());
-        assertEquals("Set<D>", declVarSymbol.getType().getStringRepresentation());
+        assertEquals("Collection", declVarSymbol.getVarTypeName());
+        assertEquals("Collection<D>", declVarSymbol.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol.getType().getActualTypeArguments().size());
         assertEquals("D", declVarSymbol.getType().getActualTypeArguments().get(0).getType().toString());
 
