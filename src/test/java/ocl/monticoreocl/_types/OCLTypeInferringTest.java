@@ -463,4 +463,20 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
         assertEquals("Time", declVarSymbol.getVarTypeName());
 
     }
+
+    @Test
+    public void embeddedMATest() {
+        final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/");
+
+        final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("example.typeInferringModels.embeddedMA", OCLFileSymbol.KIND).orElse(null);
+        assertNotNull(oclFileSymbol);
+        OCLInvariantSymbol oclInvariantSymbol = oclFileSymbol.getOCLInvariant("B1").orElse(null);
+        assertNotNull(oclInvariantSymbol);
+
+        OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("subDefs").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection", declVarSymbol.getVarTypeName());
+        assertEquals("Collection<Component>", declVarSymbol.getType().getStringRepresentation());
+
+    }
 }

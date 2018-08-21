@@ -564,12 +564,25 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
   private CDTypeSymbolReference handleAssociationSymbol(ASTNode node, CDAssociationSymbol associationSymbol, String roleName) {
     CDTypeSymbolReference newType;
-    CDTypeSymbolReference targetType = (CDTypeSymbolReference) associationSymbol.getTargetType();
-    Cardinality cardinality = associationSymbol.getTargetCardinality();
+    CDTypeSymbolReference targetType ;//= (CDTypeSymbolReference) associationSymbol.getTargetType();
+    Cardinality cardinality;// = associationSymbol.getTargetCardinality();
     List<Stereotype> stereotypes = associationSymbol.getStereotypes();
+
     if (associationSymbol.getSourceRole().isPresent() && associationSymbol.getSourceRole().get().equals(roleName)) {
       targetType = (CDTypeSymbolReference) associationSymbol.getSourceType();
       cardinality = associationSymbol.getSourceCardinality();
+    } else if (associationSymbol.getTargetRole().isPresent() && associationSymbol.getTargetRole().get().equals(roleName)) {
+      targetType = (CDTypeSymbolReference) associationSymbol.getTargetType();
+      cardinality = associationSymbol.getTargetCardinality();
+    } else if (associationSymbol.getSourceType().getName().equals(roleName)) {
+      targetType = (CDTypeSymbolReference) associationSymbol.getSourceType();
+      cardinality = associationSymbol.getSourceCardinality();
+    } else if (associationSymbol.getTargetType().getName().equals(roleName)) {
+      targetType = (CDTypeSymbolReference) associationSymbol.getTargetType();
+      cardinality = associationSymbol.getTargetCardinality();
+    } else {
+      targetType = (CDTypeSymbolReference) associationSymbol.getTargetType();
+      cardinality = associationSymbol.getTargetCardinality();
     }
 
     if (cardinality.isMultiple()) {
