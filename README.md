@@ -60,3 +60,5 @@ classdiagram AuctionCD {
 And then will verify that the OCL models type-integrety holds according to the classdiagramms.
 
 E.g. `a.participants.size` can be resolved according to `AuctionCD` and `DefaultTypes` and yields an Integer value.
+
+It is important to import the DefaultTypes to support basic types like Integer, Double, Set, List, etc. 
