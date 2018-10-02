@@ -17,7 +17,7 @@ Also see [Documentation](https://github.com/MontiCore/OCL/tree/master/documentat
 
 # How to use the CLI
 
-[Or look at this video, instead of reading](https://www.google.com "Explanetory Video")
+[Or look at this video, instead of reading](https://drive.google.com/file/d/17KxPKBuITt7Q28hE69l-idwXJSD79-Xj/view "Explanetory Video")
 
 ```
 java -jar ocl-${version}-cli.jar -path "C:\Path\to\Project" -ocl example.ocl.Rule
