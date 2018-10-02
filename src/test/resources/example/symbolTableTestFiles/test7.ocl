@@ -1,5 +1,7 @@
 package example.symbolTableTestFiles;
 
+import example.CDs.DefaultTypes.*;
+
 ocl test7 {
   context new Constructor(int Param1, int Param2)
   pre Pre: a != b;
