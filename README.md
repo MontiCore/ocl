@@ -9,3 +9,18 @@
 A DSL parsing OCL expressions
 
 Also see [Documentation](https://github.com/MontiCore/OCL/tree/master/documentation) for further information about type checking and grammar.
+
+# Download
+* Please download the latest jar from: http://nexus.se.rwth-aachen.de/#browse/search=keyword%3Docl%20AND%20group.raw%3Dde.monticore.lang
+  * you need to log-in with your credentials
+  * please download `de/monticore/lang/ocl/${version}/ocl-${long-version}-cli.jar`
+
+# How to use the CLI
+
+```
+java -jar ocl-${version}-cli.jar -path "C:\Path\to\Project" -ocl example.ocl.Rule
+```
+-path defines the path to the project folder, can be relative
+-ocl defines the qualified name to the OCL model within the project folder
+
+# Features
