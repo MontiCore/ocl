@@ -8,7 +8,7 @@
 
 A DSL parsing OCL expressions
 
-Also see [Documentation](https://github.com/MontiCore/OCL/tree/master/documentation) for further information about type checking and grammar.
+Also see [Documentation](https://git.rwth-aachen.de/monticore/languages/OCL/tree/master/documentation) for further information about type checking and grammar.
 
 # Download
 * Please download the latest jar from: http://nexus.se.rwth-aachen.de/#browse/search=keyword%3Docl%20AND%20group.raw%3Dde.monticore.lang
