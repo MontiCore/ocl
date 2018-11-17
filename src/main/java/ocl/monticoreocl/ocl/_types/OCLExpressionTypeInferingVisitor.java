@@ -158,7 +158,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
       printer.prettyprint(node.getUn());
       String unitString = printer.getPrinter().getContent();
 
-      CDTypeSymbolReference amountType = createTypeRef("Number", node);
+      CDTypeSymbolReference amountType = createTypeRef("Amount", node);
       returnUnit = Optional.of(Unit.valueOf(unitString));
       CDTypeSymbolReference returnUnitRef = createTypeRef(UnitsPrinter.unitToUnitName(returnUnit.get()), node);
       TypeInferringHelper.addActualArgument(amountType, returnUnitRef);
@@ -317,7 +317,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     CDTypeSymbolReference leftType = leftVisitor.getTypeFromExpression(node.getLeftExpression());
     OCLExpressionTypeInferingVisitor rightVisitor = new OCLExpressionTypeInferingVisitor(scope);
     CDTypeSymbolReference rightType = rightVisitor.getTypeFromExpression(node.getRightExpression());
-    CDTypeSymbolReference amountType = createTypeRef("Number", node);
+    CDTypeSymbolReference amountType = createTypeRef("Amount", node);
     CDTypeSymbolReference numberType = createTypeRef("Number", node);
 
     if (leftType.getName().equals("Number") && rightType.getName().equals("Number")) {
@@ -347,7 +347,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     CDTypeSymbolReference leftType = leftVisitor.getTypeFromExpression(node.getLeftExpression());
     OCLExpressionTypeInferingVisitor rightVisitor = new OCLExpressionTypeInferingVisitor(scope);
     CDTypeSymbolReference rightType = rightVisitor.getTypeFromExpression(node.getLeftExpression());
-    CDTypeSymbolReference amountType = createTypeRef("Number", node);
+    CDTypeSymbolReference amountType = createTypeRef("Amount", node);
     CDTypeSymbolReference numberType = createTypeRef("Number", node);
 
     if (leftType.getName().equals("Number") && rightType.getName().equals("Number")) {

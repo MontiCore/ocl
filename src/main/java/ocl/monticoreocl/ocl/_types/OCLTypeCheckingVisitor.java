@@ -72,7 +72,7 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
         CDTypeSymbolReference leftType = leftVisitor.getTypeFromExpression(node.getLeftExpression());
         OCLExpressionTypeInferingVisitor rightVisitor = new OCLExpressionTypeInferingVisitor(scope);
         CDTypeSymbolReference rightType = rightVisitor.getTypeFromExpression(node.getRightExpression());
-        CDTypeSymbolReference amountType = new CDTypeSymbolReference("Number", this.scope);
+        CDTypeSymbolReference amountType = new CDTypeSymbolReference("Amount", this.scope);
 
         leftType = TypeInferringHelper.removeAllOptionals(leftType);
         rightType = TypeInferringHelper.removeAllOptionals(rightType);
