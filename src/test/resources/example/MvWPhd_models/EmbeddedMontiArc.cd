@@ -44,7 +44,7 @@ classdiagram EmbeddedMontiArc {
   association max NumericType -> Number [1];
   association res NumericType -> Number [0..1];
   association NumericType -> Quantity [1];
-  association NumericType -> AlgebraicProperty [*];
+  association NumericType -> (algebraicProperties) AlgebraicProperty [*];
   class EnumType implements PortType;
   association [1] EnumType <-> EnumItem [*];
   class BooleanType implements PortType;
@@ -172,6 +172,7 @@ classdiagram EmbeddedMontiArc {
 
   class PortInstantiation;
   association PortInstantiation -> Port [1];
+  association PortInstantiation -> (sub) ComponentInstantiation [0..1];
   association PortInstantiation -> (portIndices) Range [1];
   association PortInstantiation -> (subIndices) Range [0..1];
 
@@ -350,5 +351,9 @@ classdiagram EmbeddedMontiArc {
     String replace(String s1, String s2);
     boolean endsWith(String s);
     int length();
+  }
+
+  class Math {
+    static double abs(double v);
   }
 }

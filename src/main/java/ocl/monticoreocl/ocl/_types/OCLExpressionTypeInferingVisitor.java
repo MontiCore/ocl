@@ -122,6 +122,11 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
   }
 
   @Override
+  public void traverse(ASTInstanceOfExpression node) {
+    returnTypeRef = createTypeRef("Boolean", node);
+  }
+
+  @Override
   public void traverse(ASTOCLNonNumberPrimary node) {
     node.getValue().accept(realThis);
   }
@@ -341,6 +346,34 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     }
   }
 
+  // returns true if case could be handled
+  protected boolean handleDoubleFloatInteger(CDTypeSymbolReference leftType, CDTypeSymbolReference rightType, ASTMultExpression node) {
+    if (leftType.getName().equals("Double") && rightType.getName().equals("Double")) {
+      returnTypeRef = createTypeRef("Double", node);
+    }
+    else if (leftType.getName().equals("Integer") && rightType.getName().equals("Integer")) {
+      returnTypeRef = createTypeRef("Integer", node);
+    }
+    else if (leftType.getName().equals("Float") && rightType.getName().equals("Float")) {
+      returnTypeRef = createTypeRef("Float", node);
+    }
+    else if (leftType.getName().equals("Double") && (rightType.getName().equals("Integer") || rightType.getName().equals("Float"))) {
+      returnTypeRef = createTypeRef("Double", node);
+    }
+    else if ((leftType.getName().equals("Integer") || leftType.getName().equals("Float")) && rightType.getName().equals("Double")) {
+      returnTypeRef = createTypeRef("Double", node);
+    }
+    else if ((leftType.getName().equals("Integer")) && rightType.getName().equals("Float")) {
+      returnTypeRef = createTypeRef("Float", node);
+    }
+    else if ((leftType.getName().equals("Float")) && rightType.getName().equals("Integer")) {
+      returnTypeRef = createTypeRef("Float", node);
+    } else {
+      return false;
+    }
+    return true;
+  }
+
   @Override
   public void traverse(ASTMultExpression node) {
     OCLExpressionTypeInferingVisitor leftVisitor = new OCLExpressionTypeInferingVisitor(scope);
@@ -350,24 +383,21 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     CDTypeSymbolReference amountType = createTypeRef("Number", node);
     CDTypeSymbolReference numberType = createTypeRef("Number", node);
 
-    if (leftType.getName().equals("Number") && rightType.getName().equals("Number")) {
-      returnTypeRef = createTypeRef("Number", node);
-    }
-    else if (isImplementing(leftType, numberType) && isImplementing(rightType, numberType)) {
-      if (leftType.getName().equals(rightType.getName())) {
-        returnTypeRef = createTypeRef(leftType.getName(), node);
+    if (!handleDoubleFloatInteger(leftType, rightType, node)) {
+      if (isImplementing(leftType, numberType) && isImplementing(rightType, numberType)) {
+        if (leftType.getName().equals(rightType.getName())) {
+          returnTypeRef = createTypeRef(leftType.getName(), node);
+        } else {
+          returnTypeRef = createTypeRef("Number", node);
+        }
+      } else if (amountType.isSameOrSuperType(leftType) && amountType.isSameOrSuperType(rightType)) {
+        Unit<?> leftUnit = leftVisitor.getReturnUnit().orElse(Unit.ONE);
+        Unit<?> rightUnit = rightVisitor.getReturnUnit().orElse(Unit.ONE);
+        returnUnit = Optional.of(leftUnit.times(rightUnit));
+        CDTypeSymbolReference returnUnitRef = createTypeRef(UnitsPrinter.unitToUnitName(returnUnit.get()), node);
+        TypeInferringHelper.addActualArgument(amountType, returnUnitRef);
+        returnTypeRef = amountType;
       }
-      else {
-        returnTypeRef = createTypeRef("Number", node);
-      }
-    }
-    else if (amountType.isSameOrSuperType(leftType) && amountType.isSameOrSuperType(rightType)) {
-      Unit<?> leftUnit = leftVisitor.getReturnUnit().orElse(Unit.ONE);
-      Unit<?> rightUnit = rightVisitor.getReturnUnit().orElse(Unit.ONE);
-      returnUnit = Optional.of(leftUnit.times(rightUnit));
-      CDTypeSymbolReference returnUnitRef = createTypeRef(UnitsPrinter.unitToUnitName(returnUnit.get()), node);
-      TypeInferringHelper.addActualArgument(amountType, returnUnitRef);
-      returnTypeRef = amountType;
     }
   }
 

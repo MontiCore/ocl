@@ -1,0 +1,9 @@
+import EmbeddedMontiArc.*;
+
+
+
+context NumericType t1 inv:
+  let
+     x = t1.min.value * t1.res.value;
+  in
+    x == x
