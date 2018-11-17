@@ -38,7 +38,6 @@ import java.util.Optional;
 public class OCLCDToolTest {
 
     // ToDo these tests seem to work, but not on travis
-    @Ignore
     @Test
     public void cdToolTest() {
 
@@ -62,7 +61,6 @@ public class OCLCDToolTest {
         Assert.assertEquals(0, Log.getErrorCount());
     }
 
-    @Ignore
     @Test
     public void cdTool2Test() {
         String oclModel =
@@ -137,7 +135,6 @@ public class OCLCDToolTest {
 
     }
 
-    @Ignore
     @Test
     public void cdTool3Test() {
 
@@ -152,7 +149,6 @@ public class OCLCDToolTest {
         Assert.assertEquals(0, Log.getErrorCount());
     }
 
-    @Ignore
     @Test
     public void cdTool4Test() throws IOException {
         String parentpath = Paths.get("src/test/resources").toAbsolutePath().toString();

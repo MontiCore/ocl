@@ -1,0 +1,5 @@
+import EmbeddedMontiArc.*;
+
+context NaturalNumber inv:
+  value >= 1 &&
+  !isPlusInf && !isMinusInf
