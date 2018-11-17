@@ -176,18 +176,4 @@ public class OCLCDToolTest {
         Assert.assertEquals(0, Log.getErrorCount());
     }
 
-    @Test
-    public void oclTest1() {
-
-        String parentpath = Paths.get("src/test/resources/example/MvWPhd_models").toAbsolutePath().toString();
-        String oclModel = "Test1";
-        String[] args = new String[]{"-path", parentpath, "-ocl", oclModel};
-        try {
-            OCLCDTool.main(args);
-        } catch (Exception e) {
-            Log.error(e.getMessage());
-        }
-        Assert.assertEquals(0, Log.getErrorCount());
-    }
-
 }
