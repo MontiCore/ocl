@@ -78,17 +78,18 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
         rightType = TypeInferringHelper.removeAllOptionals(rightType);
 
         if(leftType.existsReferencedSymbol() && rightType.existsReferencedSymbol()) {
-            if(leftType.isSameOrSuperType(amountType) && rightType.isSameOrSuperType(amountType)){
+
+            if (!leftType.isSameOrSuperType(rightType) && !rightType.isSameOrSuperType(leftType)) {
+                Log.error("0xCET01 Types mismatch on infix expression at " + node.get_SourcePositionStart() +
+                        " left: " + leftType.getStringRepresentation() + " right: " + rightType.getStringRepresentation(), node.get_SourcePositionStart());
+            }
+            else if(amountType.isSameOrSuperType(leftType) && amountType.isSameOrSuperType(rightType)){
                 Unit<?> leftUnit = leftVisitor.getReturnUnit().orElse(Unit.ONE);
                 Unit<?> rightUnit = rightVisitor.getReturnUnit().orElse(Unit.ONE);
                 if(!leftUnit.isCompatible(rightUnit)){
                     Log.error("0xCET03 Units mismatch on infix expression at " + node.get_SourcePositionStart() +
                         " left: " + leftUnit.toString() + " right: " + rightUnit.toString(), node.get_SourcePositionStart());
                 }
-            }
-            else if (!leftType.isSameOrSuperType(rightType) && !rightType.isSameOrSuperType(leftType)) {
-                Log.error("0xCET01 Types mismatch on infix expression at " + node.get_SourcePositionStart() +
-                        " left: " + leftType.getStringRepresentation() + " right: " + rightType.getStringRepresentation(), node.get_SourcePositionStart());
             }
         }
     }

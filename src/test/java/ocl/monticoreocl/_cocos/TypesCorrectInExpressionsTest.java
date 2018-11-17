@@ -58,8 +58,8 @@ public class TypesCorrectInExpressionsTest extends AbstractOCLTest {
         String errorCode = "0xCET01";
 
         Collection<Finding> expectedErrors = Arrays
-                .asList( // switched order to get better error codes
-                        Finding.error("0xCET03 Units mismatch on infix expression at invalidTypes.ocl:<6,8> left:  right: m",
+                .asList(
+                        Finding.error(errorCode + " Types mismatch on infix expression at invalidTypes.ocl:<6,8> left: Integer right: Amount<Length>",
                                 new SourcePosition(6,8)),
                         Finding.error(errorCode + " Types mismatch on infix expression at invalidTypes.ocl:<8,11> left: String right: Set<String>",
                                 new SourcePosition(8,11))
