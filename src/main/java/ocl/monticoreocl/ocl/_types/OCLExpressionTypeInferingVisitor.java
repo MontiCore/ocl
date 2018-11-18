@@ -488,9 +488,11 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         if (enum1.get().getEnumConstants().stream().map(e -> e.getName()).anyMatch(s -> s.equals(names.getLast()))) {
           return new CDTypeSymbolReference(enum1.get().getName(), enum1.get().getEnclosingScope());
         }
-        else {
+        else if (!names.getLast().isEmpty()) {
           Log.error(String.format("0xOCLI6 Could not resolve enum item `%s` of enumeration type `%s` at %s %s.", names.getLast(), enum1.get().getFullName(),
               node.get_SourcePositionStart(), node.get_SourcePositionEnd()), node.get_SourcePositionStart());
+        } else {
+          return new CDTypeSymbolReference("Class", scope); // for enum1 instanceof EnumX
         }
       }
     }
