@@ -20,7 +20,6 @@
 package ocl.monticoreocl.ocl._types;
 
 import de.monticore.ast.ASTNode;
-
 import de.monticore.commonexpressions._ast.*;
 import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.literals._ast.*;
@@ -32,10 +31,8 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.setexpressions._ast.ASTIsInExpression;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
-import de.monticore.symboltable.Symbol;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.types.TypesPrinter;
-import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisMill;
 import de.monticore.umlcd4a.symboltable.*;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
@@ -44,7 +41,9 @@ import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
 
 import javax.measure.unit.Unit;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -134,6 +133,11 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
   }
 
   @Override
+  public void traverse(ASTTypeIfExpr node) {
+    node.getElseExpressionPart().accept(realThis);
+  }
+
+  @Override
   public void traverse(ASTBooleanLiteral node) {
     returnTypeRef = createTypeRef("Boolean", node);
   }
@@ -196,7 +200,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
   @Override
   public void traverse(ASTIfThenElseExpr node) {
-    node.getThenExpression().accept(realThis);
+    node.getThenExpressionPart().accept(realThis);
   }
 
   @Override
@@ -477,6 +481,14 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
   private CDTypeSymbolReference handlePrefixName(ASTOCLQualifiedPrimary node, LinkedList<String> names) {
     // Try and look if name or this was declared as variable or try as ClassName of CD
     String prefixName = names.get(0);
+
+    /*if (isTypeIf && isThenExpressionPart) {
+      if (qualifiedPrimaryNames.get(0).equals(prefixName)) {
+        names.pop();
+        return new CDTypeSymbolReference(typeIfNames.stream().collect(Collectors.joining(".")), scope);
+      }
+    }*/
+
     Optional<OCLVariableDeclarationSymbol> nameDecl = scope.resolve(prefixName, OCLVariableDeclarationSymbol.KIND);
     Optional<OCLVariableDeclarationSymbol> thisDecl = scope.resolve("this", OCLVariableDeclarationSymbol.KIND);
     Optional<CDTypeSymbol> typeName = scope.resolve(prefixName, CDTypeSymbol.KIND);
@@ -524,7 +536,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
   }
 
   /**
-   * Takes a chain of names and recursivly traces back the return type: Class.field.association.method().
+   * Takes a chain of names and recursively traces back the return type: Class.field.association.method().
    * E.g. Auction.members.size() -> Set<int>
    * Implicit flattening is used: E.g a type of List<List<Person>>> is also looked at as List<Person>
    */
@@ -603,11 +615,22 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
   protected Optional<CDAssociationSymbol> resolveAssociationSymbol(CDTypeSymbolReference typeSymbolReference, String name) {
     boolean nameEqualsDerivedName;
     boolean nameEqualsTargetRole;
+    boolean nameEqualsSourceRole;
+
     for (CDAssociationSymbol assoc : typeSymbolReference.getAllAssociations()) {
       nameEqualsDerivedName = assoc.getDerivedName().equals(name);
       nameEqualsTargetRole = assoc.getTargetRole().isPresent() && assoc.getTargetRole().get().equals(name);
       if (nameEqualsDerivedName || nameEqualsTargetRole) {
         return Optional.of(assoc);
+      }
+    }
+
+    for (CDAssociationSymbol assoc : typeSymbolReference.getAllSpecAssociations()) {
+      nameEqualsDerivedName = assoc.getDerivedNameSourceRole().equals(name);
+      nameEqualsSourceRole = assoc.getSourceRole().isPresent() && assoc.getSourceRole().get().equals(name);
+      if (nameEqualsDerivedName || nameEqualsSourceRole) {
+        // use opposite direction of association symbol
+        return Optional.of(assoc.getInverseAssociation());
       }
     }
     return Optional.empty();

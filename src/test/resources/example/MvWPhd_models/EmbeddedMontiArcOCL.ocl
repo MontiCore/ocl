@@ -1,7 +1,7 @@
 import EmbeddedMontiArc.*;
-/*
-// slide Ch04_PortValue
 
+// slide Ch04_PortValue
+/*
 context NaturalNumber inv:
   value >= 1 &&
   !isPlusInf && !isMinusInf
@@ -64,7 +64,13 @@ context Effector inv:
 
 // Bug: need to be fixed tomorrow
 context Effector inv:
-  sourcePort.direction == PortDirection.IN  &&
-  targetPort.direction == PortDirection.OUT // &&
-//  sourcePort.component == targetPort.component &&
-//  sourcePort.component.subs == {}
+  let
+    sct = sourcePort.componentType;
+    s = (typeif (sct instanceof Component) then sct.subs else {});
+  in
+//  sourcePort.direction == PortDirection.IN  &&
+//  targetPort.direction == PortDirection.OUT  &&
+//  sourcePort.componentType == targetPort.componentType &&
+
+//  sct instanceof Component implies
+     s == {}
