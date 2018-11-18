@@ -32,6 +32,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.setexpressions._ast.ASTIsInExpression;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
+import de.monticore.symboltable.Symbol;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.types.TypesPrinter;
 import de.monticore.umlcd4a.cd4analysis._ast.CD4AnalysisMill;
@@ -44,6 +45,7 @@ import ocl.monticoreocl.ocl._visitor.OCLVisitor;
 
 import javax.measure.unit.Unit;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This visitor tries to infer the return type of an ocl expression
@@ -207,7 +209,10 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     LinkedList<String> names = new LinkedList<>(node.getNameList());
 
     CDTypeSymbolReference firstType = handlePrefixName(node, names);
-    returnTypeRef = handleNames(names, firstType, node);
+    if (firstType.isEnum())
+      returnTypeRef = firstType;
+    else
+      returnTypeRef = handleNames(names, firstType, node);
 
     if (node.isPresentPostfixQualification()) {
       node.getPostfixQualification().accept(realThis);
@@ -475,6 +480,20 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     Optional<OCLVariableDeclarationSymbol> nameDecl = scope.resolve(prefixName, OCLVariableDeclarationSymbol.KIND);
     Optional<OCLVariableDeclarationSymbol> thisDecl = scope.resolve("this", OCLVariableDeclarationSymbol.KIND);
     Optional<CDTypeSymbol> typeName = scope.resolve(prefixName, CDTypeSymbol.KIND);
+
+    if (!nameDecl.isPresent()) {
+      // try to resolve enum
+      Optional<CDTypeSymbol> enum1 = scope.resolve(names.subList(0, names.size() - 1).stream().collect(Collectors.joining(".")), CDTypeSymbol.KIND);
+      if (enum1.isPresent() && enum1.get().isEnum()) {
+        if (enum1.get().getEnumConstants().stream().map(e -> e.getName()).anyMatch(s -> s.equals(names.getLast()))) {
+          return new CDTypeSymbolReference(enum1.get().getName(), enum1.get().getEnclosingScope());
+        }
+        else {
+          Log.error(String.format("0xOCLI6 Could not resolve enum item `%s` of enumeration type `%s` at %s %s.", names.getLast(), enum1.get().getFullName(),
+              node.get_SourcePositionStart(), node.get_SourcePositionEnd()), node.get_SourcePositionStart());
+        }
+      }
+    }
 
     CDTypeSymbolReference typeRef;
     if (returnTypeRef != null) { //Previous Type present from prefix-qualification

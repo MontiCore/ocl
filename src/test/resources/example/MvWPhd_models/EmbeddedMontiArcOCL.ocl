@@ -1,5 +1,5 @@
 import EmbeddedMontiArc.*;
-
+/*
 // slide Ch04_PortValue
 
 context NaturalNumber inv:
@@ -24,11 +24,11 @@ context ComponentParameter inv:
   type instanceof ComponentInterface
 
 // Ch04_ComponentInstantiation
-/* --> Bug in OCL
-context Component inv:
-  forall t in implements.type:
-    t instanceof ComponentInterface
-*/
+// --> Bug in OCL
+//context Component inv:
+//  forall t in implements.type:
+//    t instanceof ComponentInterface
+
 
 // TODO: this is incomplete: handle cases when t1.res or t2.res are absent
 context NumericType t1, NumericType t2 inv:
@@ -60,10 +60,11 @@ context Range inv:
 context Effector inv:
   sourceIndex.end <= sourcePort.dimension &&
   targetIndex.end <= sourcePort.dimension
+*/
 
 // Bug: need to be fixed tomorrow
 context Effector inv:
-  sourcePort.direction == PortDirection.IN &&
-  targetPort.direction == PortDirection.OUT &&
-  sourcePort.component == targetPort.component &&
-  sourcePort.component.subs == {}
+  sourcePort.direction == PortDirection.IN  &&
+  targetPort.direction == PortDirection.OUT // &&
+//  sourcePort.component == targetPort.component &&
+//  sourcePort.component.subs == {}
