@@ -41,6 +41,7 @@ import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
 
 import javax.measure.unit.Unit;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -482,13 +483,6 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     // Try and look if name or this was declared as variable or try as ClassName of CD
     String prefixName = names.get(0);
 
-    /*if (isTypeIf && isThenExpressionPart) {
-      if (qualifiedPrimaryNames.get(0).equals(prefixName)) {
-        names.pop();
-        return new CDTypeSymbolReference(typeIfNames.stream().collect(Collectors.joining(".")), scope);
-      }
-    }*/
-
     Optional<OCLVariableDeclarationSymbol> nameDecl = scope.resolve(prefixName, OCLVariableDeclarationSymbol.KIND);
     Optional<OCLVariableDeclarationSymbol> thisDecl = scope.resolve("this", OCLVariableDeclarationSymbol.KIND);
     Optional<CDTypeSymbol> typeName = scope.resolve(prefixName, CDTypeSymbol.KIND);
@@ -617,23 +611,41 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     boolean nameEqualsTargetRole;
     boolean nameEqualsSourceRole;
 
+    ArrayList<CDAssociationSymbol> matchedAssoc = new ArrayList<>();
+
     for (CDAssociationSymbol assoc : typeSymbolReference.getAllAssociations()) {
       nameEqualsDerivedName = assoc.getDerivedName().equals(name);
       nameEqualsTargetRole = assoc.getTargetRole().isPresent() && assoc.getTargetRole().get().equals(name);
       if (nameEqualsDerivedName || nameEqualsTargetRole) {
-        return Optional.of(assoc);
+        matchedAssoc.add(assoc);
       }
     }
+
 
     for (CDAssociationSymbol assoc : typeSymbolReference.getAllSpecAssociations()) {
       nameEqualsDerivedName = assoc.getDerivedNameSourceRole().equals(name);
       nameEqualsSourceRole = assoc.getSourceRole().isPresent() && assoc.getSourceRole().get().equals(name);
       if (nameEqualsDerivedName || nameEqualsSourceRole) {
         // use opposite direction of association symbol
-        return Optional.of(assoc.getInverseAssociation());
+        matchedAssoc.add(assoc.getInverseAssociation());
       }
     }
-    return Optional.empty();
+
+    return getMostSpecificAssoc(matchedAssoc);
+  }
+
+  private Optional<CDAssociationSymbol> getMostSpecificAssoc(ArrayList<CDAssociationSymbol> matchedAssoc) {
+    if (matchedAssoc.isEmpty())
+      return Optional.empty();
+    CDAssociationSymbol ret = matchedAssoc.get(matchedAssoc.size() - 1);
+    for (int i = matchedAssoc.size() - 2; i >= 0; i--) {
+      CDAssociationSymbol ass = matchedAssoc.get(i);
+      if (ass.getTargetType().hasSuperTypeByFullName(ret.getTargetType().getFullName()) ||
+          ass.getSourceType().hasSuperTypeByFullName(ret.getSourceType().getFullName())) {
+        ret = ass;
+      }
+    }
+    return Optional.of(ret);
   }
 
   private CDTypeSymbolReference handleAssociationSymbol(ASTNode node, CDAssociationSymbol associationSymbol, String roleName) {

@@ -193,8 +193,8 @@ classdiagram EmbeddedMontiArc {
   association Effector (endEff) -> (targetPort) Port [1];
 
   // slide Ch04_Component
-  association ComponentType -> Port [*] <<ordered>>;
-  association ComponentType -> Parameter [*] <<ordered>>;
+  association ComponentType -> (ports) Port [*] <<ordered>>;
+  association ComponentType -> (parameters) Parameter [*] <<ordered>>;
   association Component -> (subs) ComponentInstantiation [*];
 
   // slide Ch04_CnCModel
