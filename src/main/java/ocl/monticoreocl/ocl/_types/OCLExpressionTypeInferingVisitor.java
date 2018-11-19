@@ -535,7 +535,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
    * Implicit flattening is used: E.g a type of List<List<Person>>> is also looked at as List<Person>
    */
   private CDTypeSymbolReference handleNames(LinkedList<String> names, CDTypeSymbolReference previousType, ASTNode node) {
-    if (names.size() > 0) {
+    if (!names.isEmpty()) {
       String name = names.pop();
 
       // Try name as method/field/assoc
@@ -589,6 +589,9 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
       return Optional.of(handleAssociationSymbol(node, associationSymbol.get(), name));
     }
     else if (methodSymbol.isPresent()) { // Try name as method
+      if ((name.equals("add") || name.equals("addAll")) && typeSymbolReference.hasSuperType("Collection")) {
+        return Optional.of(typeSymbolReference); // CD4A does not support generics
+      }
       return Optional.of(createTypeRef(methodSymbol.get().getReturnType().getName(), node));
     }
     else {

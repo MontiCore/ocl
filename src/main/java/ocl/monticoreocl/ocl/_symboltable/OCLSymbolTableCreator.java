@@ -277,7 +277,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 			ASTExpression astExpression = astInExpr.getExpression();
 			OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(currentScope().get());
 			CDTypeSymbolReference containerType = exprVisitor.getTypeFromExpression(astExpression);
-			if (containerType.getActualTypeArguments().size() == 0) {
+			if (containerType.getActualTypeArguments().isEmpty()) {
 				Log.error("0xOCLS3 Could not resolve type from InExpression, " + astInExpr.getVarNameList() +
 						" in " + containerType + " at " +  astInExpr.get_SourcePositionStart()
 						, astInExpr.get_SourcePositionStart(), astInExpr.get_SourcePositionEnd());

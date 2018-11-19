@@ -78,3 +78,15 @@ context Component inv:
   forall cmpType in implements.type:
     cmpType.ports.name == this.ports.name
 
+context Component inv:
+  let
+    typeDimParams = {p in ports.type.addAll(ports.dimension) |
+                     p instanceof Parameter};
+  in
+    this.subs != {} implies
+    this.parameters ==
+    subs.values.parameter
+      .addAll(typeDimParams)
+      .addAll( { param | param in this.parameters,
+                        exists param2 in this.parameters:
+                               param == param2.type})
