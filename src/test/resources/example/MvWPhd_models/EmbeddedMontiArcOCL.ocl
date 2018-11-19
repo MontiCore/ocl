@@ -128,3 +128,18 @@ context PortInst inv:
                           eff.sourcePort == p && eff.targetPort == this} )   &&
   influencee == receiver.addAll( {p | exists eff in EffectorInst:
                           eff.sourcePort == this && eff.targetPort == p} )
+
+// Ch06_CO1
+
+context ConnectorInst inv CO1:
+  let
+     srcCI = sourcePort.componentInst;
+     tgtCI = targetPort.componentInst;
+     srcD = sourcePort.direction;
+     tgtD = targetPort.direction;
+  in
+    (srcCI == tgtCI && srcD != tgtD)   || // in -> out, out -> in (loop)
+    (tgtCI.parent == srcCI && srcD == PortDirection.IN && tgtD == PortDirection.OUT) || // in -> sub.in
+    (srcCI.parent == tgtCI.parent && tgtCI != srcCI &&
+                   srcD == PortDirection.OUT && tgtD == PortDirection.IN) || // sub1.in -> sub2.in
+    (srcCI.parent == tgtCI && srcD == PortDirection.OUT && tgtD == PortDirection.OUT) // sub.out -> out

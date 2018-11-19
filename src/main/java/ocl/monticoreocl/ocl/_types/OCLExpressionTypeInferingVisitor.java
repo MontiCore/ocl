@@ -36,6 +36,7 @@ import de.monticore.types.TypesPrinter;
 import de.monticore.umlcd4a.symboltable.*;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
+import ocl.monticoreocl.ocl._ast.ASTOCLFile;
 import ocl.monticoreocl.ocl._ast.ASTOCLNonNumberPrimary;
 import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
@@ -136,6 +137,11 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
   @Override
   public void traverse(ASTTypeIfExpr node) {
     node.getElseExpressionPart().accept(realThis);
+  }
+
+  @Override
+  public void traverse(ASTLetinExpr node) {
+    node.getExpression().accept(realThis);
   }
 
   @Override
