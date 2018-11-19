@@ -19,8 +19,9 @@
 
 package ocl.monticoreocl;
 
-grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
-                        de.monticore.CommonExpressions, de.monticore.SetExpressions {
+grammar OCL extends de.monticore.NumberUnit, ocl.monticoreocl.OCLExpressions,
+                        de.monticore.CommonExpressions, de.monticore.SetExpressions,
+                         ocl.monticoreocl.MaxMinEvlisExpressions {
 
 	/*========================================================================*/
     /*============================ PRODUCTIONS  ==============================*/
@@ -30,7 +31,7 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
 
 
 	CompilationUnit =
-		("package" package:(Name || ".")+ ";")?
+		("package" package2:(Name2 || ".")+ ";")?
 		(ImportStatement)*
 		OCLFile;
 
@@ -43,10 +44,10 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
     // Note: Prefix should be only "ocl" (-> Context Condition). On the
     //       other side this should not prevent using "ocl" as identifiers.
     //       Therefore this is not defined as terminal symbol.
-
+  // need once symbol to get symbol table infrastructre generated
 	OCLFile =
         prefix:Name
-        fileName:Name "{"
+        fileName2:Name2 "{"
         OCLConstraint*
         "}"
         |
@@ -102,7 +103,7 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
     */
     OCLInvariant implements OCLConstraint =
         OCLClassContext?
-        "inv" Name?
+        "inv" name2:Name2?
         OCLParameters?
         ":"
         statements:(Expression || ";")+
@@ -127,7 +128,7 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
 	    Type
 	    |
 		Type?
-		varNames:(Name || ",")+
+		varNames2:(Name2 || ",")+
 		("in" Expression)?;
 
 	/** ASTOCLPreStatement represents a list of pre-statements subsumed to a
@@ -138,7 +139,7 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
                    List of boolean expressions.
     */
 	OCLPreStatement  =
-        "pre" Name? ":"
+        "pre" name2:Name2? ":"
         (statements:Expression+ ";")+;
 
     /** ASTOCLPostStatement represents a list of post-statements subsumed to a
@@ -149,7 +150,7 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
                    List of boolean expressions.
     */
     OCLPostStatement  =
-        "post" Name? ":"
+        "post" name2:Name2? ":"
         (statements:Expression+ ";")+;
 
 	/** ASTOCLMethodSignature defines the signature of a Java5 method.
@@ -170,6 +171,9 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
         OCLParameters
         OCLThrowsClause?;
 
+   QualifiedName =
+           part2:(Name2 || ".")+;
+
     /** ASTOCLConstructorSignature defines signature of a constructor.
         @attribute ReferenceType
                    Type of the Constructor.
@@ -179,7 +183,7 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
                    Optional throwables.
     */
     OCLConstructorSignature implements OCLOperationSignature =
-        "new" referenceType:Name
+        "new" referenceType2:Name2
         OCLParameters
         OCLThrowsClause?;
 
@@ -191,7 +195,7 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
         "(" params:(OCLParameterDeclaration || ",")* ")";
 
     OCLParameterDeclaration  =
-        Type Name;
+        Type name2:Name2;
 
 	/** ASTOCLThrowsClause defines throwables for a method or constructor
         signature.
@@ -199,7 +203,7 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
                    List of throwables.
     */
     OCLThrowsClause =
-        "throws" throwables:(Name || ",")+;
+        "throws" throwables2:(Name2 || ",")+;
 
 
     /*============================== DECLARATORS ============================*/
@@ -222,9 +226,9 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
                    Method definition as an expression (right hand of the
                    assignment).
     */
-    symbol OCLMethodDeclaration implements OCLDeclaration =
+    OCLMethodDeclaration implements OCLDeclaration =
         ReturnType?
-        Name
+        Name2
         OCLParameters
         "=" Expression;
 
@@ -239,7 +243,7 @@ grammar OCL extends de.monticore.NumberUnit, de.monticore.OCLExpressions,
      */
      OCLVariableDeclaration implements OCLDeclaration =
         Type?
-        Name
+        Name2
         "=" Expression;
 
 

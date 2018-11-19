@@ -193,3 +193,30 @@ context ComponentInstantiation inv R9R10:
     (p.value.isAbsent implies
       exists pb in values:
         pb.parameter == p)
+
+/////////////////////////////////////////////////////////////////////////
+///// Constraints about Extra-functional properties
+/////////////////////////////////////////////////////////////////////////
+
+// Ch06_Traceability
+
+context ComponentInst inv Traceability:
+  let
+    selection = this;
+    aggregation = component.traceable;
+    compareTo   = traceable;
+  in         // comparison
+    aggregation implies compareTo
+
+/*
+
+context ComponentInst inv MaxPower:
+  let
+    selection = component;
+    aggregation =
+      max maxPower ?: 0W;
+    compareTo =
+      min selection.maxPower ?: oo W;
+  in         // comparison
+    aggregation <= compareTo
+*/

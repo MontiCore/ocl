@@ -26,7 +26,7 @@ import de.monticore.literals.literals._ast.*;
 import de.monticore.numberunit._ast.ASTNumberWithUnit;
 import de.monticore.numberunit.prettyprint.NumberUnitPrettyPrinter;
 import de.monticore.numberunit.prettyprint.UnitsPrinter;
-import de.monticore.oclexpressions._ast.*;
+import ocl.monticoreocl.oclexpressions._ast.*;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.setexpressions._ast.ASTIsInExpression;
 import de.monticore.symboltable.MutableScope;

@@ -19,22 +19,17 @@
  */
 package ocl.monticoreocl.ocl._types;
 
-import de.monticore.ast.ASTNode;
 import de.monticore.commonexpressions._ast.*;
 import de.monticore.expressionsbasis._ast.ASTExpression;
-import de.monticore.numberunit._ast.ASTI;
-import de.monticore.numberunit.prettyprint.UnitsPrinter;
-import de.monticore.oclexpressions._ast.*;
 import de.monticore.symboltable.MutableScope;
-import de.monticore.symboltable.Symbol;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
-import ocl.monticoreocl.ocl._ast.*;
-import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationKind;
+import ocl.monticoreocl.ocl._ast.ASTOCLInvariant;
 import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
+import ocl.monticoreocl.oclexpressions._ast.*;
 
 import javax.measure.unit.Unit;
 import java.util.Collection;

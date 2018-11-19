@@ -1,0 +1,30 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package ocl.monticoreocl;
+
+component grammar MaxMinEvlisExpressions extends de.monticore.ExpressionsBasis {
+
+   token TElvis = '?' ':';
+
+    // indirect tokens
+   // TMax = { _input.LT(1).getText().equals("max") }? Name; // do not want to destroy the name
+   // TMin = { _input.LT(1).getText().equals("min") }? Name;
+
+    MaxExpressionPrefix implements Expression <170> =
+        "max"
+        set:Expression; // normally this would be the best, but the precedence does not work yet
+
+    MinExpressionPrefix implements Expression <170> =
+        "min"
+        set:Expression;
+
+    SumExpressionPrefix implements Expression <170> =
+        "sum"
+        set:Expression;
+
+    // `opt ?: 0W` is equals to `opt.isPresent ? opt.get : 0W`
+    ElvisExpressionPrefix implements Expression <65> = // same precedence as cond ? ifTrue : ifFalse expression
+        get:Expression
+        TElvis
+        orElse:Expression;
+}

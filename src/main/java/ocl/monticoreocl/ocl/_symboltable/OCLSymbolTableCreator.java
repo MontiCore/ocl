@@ -26,7 +26,7 @@ import java.util.Optional;
 import de.monticore.ast.ASTNode;
 import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.monticore.numberunit.prettyprint.UnitsPrinter;
-import de.monticore.oclexpressions._ast.ASTInExpr;
+import ocl.monticoreocl.oclexpressions._ast.ASTInExpr;
 import de.monticore.symboltable.*;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.types.TypesPrinter;
