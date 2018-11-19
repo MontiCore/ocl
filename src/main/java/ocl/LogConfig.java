@@ -30,7 +30,9 @@ import javax.xml.transform.Source;
  */
 public class LogConfig extends Log {
     static Log log;
-    boolean disableOutput = true;
+    boolean disableInfo = false;
+    boolean disableDebug = true;
+    boolean disableTrace = true;
 
 
     public static void init() {
@@ -40,26 +42,26 @@ public class LogConfig extends Log {
     }
 
     /**
-     * Disable output for debug, trace and info if disableOutput is set
+     * Disable output for debug, trace and info if disable options are set
      */
 
     @Override
     protected void doInfo(String msg, String logName) {
-        if (!disableOutput) {
+        if (!disableInfo) {
             super.doInfo(msg, logName);
         }
     }
 
     @Override
     protected void doDebug(String msg, String logName) {
-        if (!disableOutput) {
+        if (!disableDebug) {
             super.doDebug(msg, logName);
         }
     }
 
     @Override
     protected void doTrace(String msg, String logName) {
-        if (!disableOutput) {
+        if (!disableTrace) {
             super.doTrace(msg, logName);
         }
     }

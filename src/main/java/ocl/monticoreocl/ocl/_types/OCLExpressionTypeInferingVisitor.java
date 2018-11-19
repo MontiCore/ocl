@@ -31,6 +31,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.setexpressions._ast.ASTIsInExpression;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
+import de.monticore.symboltable.Symbol;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.types.TypesPrinter;
 import de.monticore.umlcd4a.symboltable.*;
@@ -42,11 +43,9 @@ import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
 
 import javax.measure.unit.Unit;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This visitor tries to infer the return type of an ocl expression
@@ -601,8 +600,41 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
       return Optional.of(createTypeRef(methodSymbol.get().getReturnType().getName(), node));
     }
     else {
+      return handleSubClassesTypes(node, name, elementsScope, typeSymbolReference);
+    }
+  }
+
+  private Optional<CDTypeSymbolReference> handleSubClassesTypes(ASTNode node, String name, Scope elementsScope, CDTypeSymbolReference typeSymbolReference) {
+    Collection<CDTypeSymbol> allTypeSymbols = typeSymbolReference.getEnclosingScope().resolveLocally(CDTypeSymbol.KIND);
+    Set<CDTypeSymbol> allSubTypes = allTypeSymbols.stream().filter(t -> t.hasSuperTypeByFullName(typeSymbolReference.getFullName())).collect(Collectors.toSet());
+    allSubTypes.remove(typeSymbolReference.getReferencedSymbol());
+    ArrayList<CDTypeSymbolReference> returnTypesOfSubClasses = new ArrayList<>();
+    ArrayList<CDTypeSymbol> availableSubTypes = new ArrayList<>();
+    for (CDTypeSymbol subType : allSubTypes) {
+      Optional<CDTypeSymbolReference> retType = handleName(node, name, elementsScope, new CDTypeSymbolReference(subType.getName(), subType.getEnclosingScope()));
+      if (retType.isPresent()) {
+        availableSubTypes.add(subType);
+        returnTypesOfSubClasses.add(retType.get());
+      }
+    }
+
+    if (returnTypesOfSubClasses.isEmpty()) {
       return Optional.empty();
     }
+
+    CDTypeSymbolReference firstType = returnTypesOfSubClasses.get(0);
+    for (int i = 1; i < returnTypesOfSubClasses.size(); i++) {
+      CDTypeSymbolReference nextType = returnTypesOfSubClasses.get(i);
+      if (!(firstType.isSameOrSuperType(nextType) || (nextType.isSameOrSuperType(firstType)))) {
+        Log.error(String.format("0xOCLI7 Derived return types `%s` of `%s` of method/field/association `%s` subclasses of `%s` are not compatible (neither one is a subset of the other one)",
+            firstType.getFullName(), nextType.getFullName(), name, typeSymbolReference.getFullName()), node.get_SourcePositionStart());
+        return Optional.empty();
+      }
+    }
+    Log.info(String.format("Resolved `%s.%s` as `%s.%s` (`%s` extends/implements `%s`) by automatic subtype casting the field/association/method call; so inferred type is `%s` at %s",
+        typeSymbolReference.getName(), name, availableSubTypes.get(0).getName(), name, availableSubTypes.get(0).getName(), typeSymbolReference.getName(), firstType, node.get_SourcePositionStart()),
+        this.getClass().getSimpleName());
+    return Optional.of(firstType);
   }
 
   /**

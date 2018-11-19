@@ -28,6 +28,7 @@ import de.monticore.oclexpressions._ast.*;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Symbol;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
+import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
 import ocl.monticoreocl.ocl._ast.*;
@@ -36,6 +37,7 @@ import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
 
 import javax.measure.unit.Unit;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -168,11 +170,28 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
                         " left: " + leftUnit.toString() + " right: " + rightUnit.toString(), node.get_SourcePositionStart());
                 }
             }
-            else if (!leftType.isSameOrSuperType(rightType) && !rightType.isSameOrSuperType(leftType)) {
+            else if (!leftType.isSameOrSuperType(rightType) && !rightType.isSameOrSuperType(leftType) && !existsCommonSubClass(leftType, rightType)) {
                 Log.error("0xCET01 Types mismatch on infix expression at " + node.get_SourcePositionStart() +
                         " left: " + leftType.getStringRepresentation() + " right: " + rightType.getStringRepresentation(), node.get_SourcePositionStart());
             }
         }
+    }
+
+  /**
+   * interface Parameter;
+   * class NaturalNumber;
+   * class NaturalNumberParameter extends NaturalNumber implements Parameter;
+   *
+   * context Parameter p, NaturalNumber n inv:
+   *   p == n // exist a subclass of both so that this conditions can be satisfied; if p instanceof NaturalNumberParameter and n instanceof NaturalNumberParameter they can be compared
+   * @param type1
+   * @param type2
+   * @return
+   */
+    protected boolean existsCommonSubClass(CDTypeSymbolReference type1, CDTypeSymbolReference type2) {
+      Collection<CDTypeSymbol> allTypeSymbols = type1.getEnclosingScope().resolveLocally(CDTypeSymbol.KIND);
+      return allTypeSymbols.stream().filter(s -> !s.getFullName().equals(type1.getName()) && !s.getFullName().equals(type2.getFullName()))
+          .anyMatch(s -> s.hasSuperTypeByFullName(type1.getFullName()) && s.hasSuperTypeByFullName(type2.getFullName()));
     }
 
     public void checkPrefixExpr(ASTExpression node){

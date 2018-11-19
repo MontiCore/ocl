@@ -143,3 +143,53 @@ context ConnectorInst inv CO1:
     (srcCI.parent == tgtCI.parent && tgtCI != srcCI &&
                    srcD == PortDirection.OUT && tgtD == PortDirection.IN) || // sub1.in -> sub2.in
     (srcCI.parent == tgtCI && srcD == PortDirection.OUT && tgtD == PortDirection.OUT) // sub.out -> out
+
+// Ch06_R1R2
+
+context ConnectorInst conInst1, conInst2 inv R1R2:
+  conInst1.targetPort == conInst2.targetPort implies
+    conInst1.sourcePort == conInst2.sourcePort
+
+// Ch06_R13
+
+context Component inv:
+  subDefs == {t | s in subs, t = s.type, t instanceof Component}
+
+context Component inv R13:
+  !(this isin subDefs**)
+
+// Ch06_B1
+
+context Component inv:
+  innerElements ==
+    ports.addAll(parameters).addAll(subs).addAll(innerComponents)
+
+context Component inv B1:
+  forall e1, e2 in innerElements:
+    e1.name == e2.name implies e1 == e2
+
+// Ch06_CV5CV6
+
+context Component cmp inv CV5:
+  cmp.subs != {} || (exists ComponentInstantiation ci: ci.parent == cmp) implies
+    forall p in cmp.ports:
+      exists con in Connector:
+        (p == con.sourcePort.port || p == con.targetPort.port)
+
+context Component cmp inv CV6:
+  forall ci in {ComponentInstantiation ci | ci.type == cmp}, p in cmp.ports:
+    exists con in Connector:
+      (p == con.sourcePort.port && ci == con.sourcePort.sub ||
+       p == con.targetPort.port && ci == con.targetPort.sub)
+
+// Ch06_R9R10
+
+context ComponentInstantiation inv R9R10:
+  forall p in type.parameters:
+    !(exists p2 in type.parameters: // p can be inferred due to bounded
+        p2.kind == ParameterKind.CONFIG &&        // configuration parameter p2
+        (p2.dimension == p || p2.type.rows == p || p2.type.cols == p)
+    ) &&
+    (p.value.isAbsent implies
+      exists pb in values:
+        pb.parameter == p)
