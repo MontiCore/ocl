@@ -90,3 +90,15 @@ context Component inv:
       .addAll( { param | param in this.parameters,
                         exists param2 in this.parameters:
                                param == param2.type})
+
+// Ch04_CnCModel
+
+context CnCModel inv:
+  let
+    inPorts = {p | p in components.ports, p.direction == PortDirection.IN};
+  in
+    forall p in inPorts:
+      forall pi in PortInstantiation:
+        (pi.port == p && pi.sub != main) implies
+        (exists con in connectors:
+           pi == con.targetPort)

@@ -201,8 +201,9 @@ classdiagram EmbeddedMontiArc {
   class CnCModel;
   association CnCModel -> (depends) CnCLibrary [*];
   association CnCModel -> (main) ComponentInstantiation [1];
-  association / CnCModel -> Effector [*];
-  association / CnCModel -> Component [*];
+  association / CnCModel -> (effectors) Effector [*];
+  association / CnCModel -> (connectors) Connector [*];
+  association / CnCModel -> (components) Component [*];
 
   class CnCLibrary;
   association / CnCLibrary -> Effector [*];
