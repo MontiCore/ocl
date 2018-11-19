@@ -248,6 +248,14 @@ classdiagram EmbeddedMontiArc {
   association start ChainInst -> ElementInst [1];
   association end ChainInst -> ElementInst [1];
 
+  association / PortInst (invInfluencee) -> (influencee) PortInst [*];
+  association / PortInst (invInfluencer) -> (influencer) PortInst [*];
+  association / PortInst (invSender) -> (sender) PortInst [0..1];
+  association / PortInst (invReceiver) -> (receiver) PortInst [*];
+
+  association / ComponentInst (invSender) -> (sender) ComponentInst [*];
+  association / ComponentInst (invReceiver) -> (receiver) ComponentInst [*];
+
   // slide Ch03_PortTypeSystem
 
   // support for units comes with the jscience library
@@ -331,6 +339,7 @@ classdiagram EmbeddedMontiArc {
   }
 
   class Optional {
+    Set asSet(); // Optional.empty => {} and Optional.of(X) => { X }
     boolean isAbsent();
     boolean isPresent();
   }

@@ -23,12 +23,9 @@ context StructItem inv:
 context ComponentParameter inv:
   type instanceof ComponentInterface
 
-// Ch04_ComponentInstantiation
-// --> Bug in OCL
-//context Component inv:
-//  forall t in implements.type:
-//    t instanceof ComponentInterface
-
+context Component inv:
+  forall t in implements.type:
+    (t instanceof ComponentInterface)
 
 // TODO: this is incomplete: handle cases when t1.res or t2.res are absent
 context NumericType t1, NumericType t2 inv:
@@ -102,3 +99,32 @@ context CnCModel inv:
         (pi.port == p && pi.sub != main) implies
         (exists con in connectors:
            pi == con.targetPort)
+
+// Ch04_CnCInstanceStructure
+
+context ComponentInst inv:
+  (forall p in params.parameter:
+    p.kind == ParameterKind.CONFIG) &&
+ (subs != {} implies params == {})
+
+context PortInst inv:
+  ! (type instanceof Parameter)
+
+
+// Ch04_InstanceChain
+
+context ComponentInst inv:
+  sender == { p.sender |
+     p in this.ports}.componentInst &&
+  receiver == { p.receiver |
+     p in this.ports}.componentInst
+
+context PortInst inv:
+  sender.asSet == { PortInst p | exists con in ConnectorInst:
+                          con.sourcePort == p && con.targetPort == this } &&
+  receiver == {PortInst p | exists con in ConnectorInst:
+                          con.sourcePort == this && con.targetPort == p} &&
+  influencer == sender.asSet.addAll( {p | exists eff in EffectorInst:
+                          eff.sourcePort == p && eff.targetPort == this} )   &&
+  influencee == receiver.addAll( {p | exists eff in EffectorInst:
+                          eff.sourcePort == this && eff.targetPort == p} )
