@@ -594,7 +594,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
       return Optional.of(handleAssociationSymbol(node, associationSymbol.get(), name));
     }
     else if (methodSymbol.isPresent()) { // Try name as method
-      if ((name.equals("add") || name.equals("addAll")) && typeSymbolReference.hasSuperType("Collection")) {
+      if ((name.equals("add") || name.equals("addAll") || name.equals("retainAll")) && typeSymbolReference.hasSuperType("Collection")) {
         return Optional.of(typeSymbolReference); // CD4A does not support generics
       }
       return Optional.of(createTypeRef(methodSymbol.get().getReturnType().getName(), node));

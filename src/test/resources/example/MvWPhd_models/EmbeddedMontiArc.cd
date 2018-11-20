@@ -178,7 +178,7 @@ classdiagram EmbeddedMontiArc {
   association Port -> (dimension) NaturalNumber [1];
 
   class PortInstantiation;
-  association PortInstantiation -> Port [1];
+  association [*] PortInstantiation (portInstantiations) -> Port [1]; // Ch06_EncryptionTargetPort
   association PortInstantiation -> (sub) ComponentInstantiation [0..1];
   association PortInstantiation -> (portIndices) Range [1];
   association PortInstantiation -> (subIndices) Range [0..1];
@@ -346,6 +346,13 @@ classdiagram EmbeddedMontiArc {
   association Component -> MaxPower [*];
   association ComponentInst -> MaxPower [*];
 
+  // Ch06_EncryptionTargetPort
+  class EncryptionCollection;
+  enum EEncryption {
+    AES, RSA, DES, DES3;
+  }
+  association Port -> (encryption) EncryptionCollection [*];
+  association EncryptionCollection -> (elements) EEncryption [*];
 
 
 
@@ -362,6 +369,7 @@ classdiagram EmbeddedMontiArc {
     int size();
     boolean isEmpty();
     Collection addAll(Collection c);
+    Collection retainAll(Collection c);
   }
 
   class List extends Collection {

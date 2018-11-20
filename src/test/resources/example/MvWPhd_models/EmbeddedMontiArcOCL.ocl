@@ -219,3 +219,16 @@ context ComponentInst inv MaxPower:
       min selection.maxPower ?: oo W;
   in         // comparison
     aggregation <= compareTo
+
+// Ch06_EncryptionTargetPort
+
+context Port inv Encryption:
+  let  // selection is a set of sender ports
+    selection = portInstantiations
+              .endCon.sourcePort.port;
+    aggregation = { p.encryption.elements
+                       | p in selection };
+    compareTo = encryption.elements;
+  in         // comparison
+    forall encSrc in aggregation:
+      encSrc.retainAll(compareTo) != {}
