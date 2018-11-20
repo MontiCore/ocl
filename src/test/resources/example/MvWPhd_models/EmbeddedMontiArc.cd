@@ -354,6 +354,13 @@ classdiagram EmbeddedMontiArc {
   association Port -> (encryption) EncryptionCollection [*];
   association EncryptionCollection -> (elements) EEncryption [*];
 
+  // Ch06_CombinedPowerX
+  class NumberPower extends Number <<Quantity = "Power">>;
+  class Encryption;
+  association Encryption -> (value) EEncryption [1];
+  association PortInst -> (encryption) Encryption [*];
+  association Encryption -> (decryptPower) NumberPower [1];
+  association Encryption -> (encryptPower) NumberPower [1];
 
 
 

@@ -21,21 +21,27 @@ package ocl.monticoreocl.ocl._types;
 
 import de.monticore.commonexpressions._ast.*;
 import de.monticore.expressionsbasis._ast.ASTExpression;
+import de.monticore.numberunit._ast.ASTI;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
+import ocl.monticoreocl.maxminevlisexpressions._ast.ASTElvisExpressionPrefix;
 import ocl.monticoreocl.ocl._ast.ASTOCLInvariant;
 import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
 import ocl.monticoreocl.oclexpressions._ast.*;
 
+import javax.measure.unit.Dimension;
 import javax.measure.unit.Unit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static ocl.monticoreocl.ocl._types.TypeInferringHelper.getContainerGeneric;
+import static ocl.monticoreocl.ocl._types.TypeInferringHelper.getMostNestedGeneric;
 
 
 public class OCLTypeCheckingVisitor implements OCLVisitor {
@@ -151,26 +157,28 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
         CDTypeSymbolReference leftType = leftVisitor.getTypeFromExpression(node.getLeftExpression());
         OCLExpressionTypeInferingVisitor rightVisitor = new OCLExpressionTypeInferingVisitor(scope);
         CDTypeSymbolReference rightType = rightVisitor.getTypeFromExpression(node.getRightExpression());
-        CDTypeSymbolReference amountType = new CDTypeSymbolReference("Number", this.scope);
 
         leftType = TypeInferringHelper.removeAllOptionals(leftType);
         rightType = TypeInferringHelper.removeAllOptionals(rightType);
 
-        if(leftType.existsReferencedSymbol() && rightType.existsReferencedSymbol()) {
-            if(leftType.isSameOrSuperType(amountType) && rightType.isSameOrSuperType(amountType)){
-                Unit<?> leftUnit = leftVisitor.getReturnUnit().orElse(Unit.ONE);
-                Unit<?> rightUnit = rightVisitor.getReturnUnit().orElse(Unit.ONE);
-                if(!leftUnit.isCompatible(rightUnit)){
-                    Log.error("0xCET03 Units mismatch on infix expression at " + node.get_SourcePositionStart() +
-                        " left: " + leftUnit.toString() + " right: " + rightUnit.toString(), node.get_SourcePositionStart());
-                }
-            }
-            else if (!leftType.isSameOrSuperType(rightType) && !rightType.isSameOrSuperType(leftType) && !existsCommonSubClass(leftType, rightType)) {
-                Log.error("0xCET01 Types mismatch on infix expression at " + node.get_SourcePositionStart() +
-                        " left: " + leftType.getStringRepresentation() + " right: " + rightType.getStringRepresentation(), node.get_SourcePositionStart());
+      checkTypeAndUnit(node, leftVisitor.getReturnUnit().orElse(Unit.ONE), leftType, rightVisitor.getReturnUnit().orElse(Unit.ONE), rightType);
+    }
+
+  private void checkTypeAndUnit(ASTExpression node, Unit<?> leftUnit, CDTypeSymbolReference leftType, Unit<?> rightUnit, CDTypeSymbolReference rightType) {
+    CDTypeSymbolReference amountType = new CDTypeSymbolReference("Number", this.scope);
+    if(leftType.existsReferencedSymbol() && rightType.existsReferencedSymbol()) {
+        if(leftType.isSameOrSuperType(amountType) && rightType.isSameOrSuperType(amountType)){
+            if(!leftUnit.isCompatible(rightUnit)){
+              Log.error("0xCET03 Units mismatch on infix expression at " + node.get_SourcePositionStart() +
+                    " left: " + leftUnit.toString() + " right: " + rightUnit.toString(), node.get_SourcePositionStart());
             }
         }
+        else if (!leftType.isSameOrSuperType(rightType) && !rightType.isSameOrSuperType(leftType) && !existsCommonSubClass(leftType, rightType)) {
+            Log.error("0xCET01 Types mismatch on infix expression at " + node.get_SourcePositionStart() +
+                    " left: " + leftType.getStringRepresentation() + " right: " + rightType.getStringRepresentation(), node.get_SourcePositionStart());
+        }
     }
+  }
 
   /**
    * interface Parameter;
@@ -283,4 +291,34 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
     public void visit(ASTBooleanOrOpExpression node) {
         checkInfixExpr(node);
     }
+
+  @Override
+  public void visit(ASTElvisExpressionPrefix node) {
+    OCLExpressionTypeInferingVisitor getVisitor = new OCLExpressionTypeInferingVisitor(scope);
+    CDTypeSymbolReference getType = getVisitor.getTypeFromExpression(node.getGet());
+    if (!getType.getName().equals("Optional")) {
+      Log.error(String.format("0xOCLK1 The left side of the elvis operator must be `Optional<X>`. But your type is `%s`.",
+          getType.getStringRepresentation()),
+          node.get_SourcePositionStart());
+      return;
+    }
+    if (getType.getActualTypeArguments().size() > 1) {
+      Log.error(String.format("0xOCLK2 The left side of the elvis operator must be `Optional<X>`, whereby `X` represents one generic type parameter, but your `Optional` has %s type parameters",
+          getType.getActualTypeArguments().size()),
+          node.get_SourcePositionStart());
+      return;
+    }
+    if (getType.getActualTypeArguments().isEmpty()) {
+      Log.error("0xOCLK3 The left side of the elvis operator must be `Optional<X>`, whereby `X` represents one generic type parameter, but your `Optional` has no generic parameter",
+          node.get_SourcePositionStart());
+      return;
+    }
+
+    getType = getContainerGeneric(getType);
+
+    OCLExpressionTypeInferingVisitor elseVisitor = new OCLExpressionTypeInferingVisitor(scope);
+    CDTypeSymbolReference elseType = elseVisitor.getTypeFromExpression(node.getOrElse());
+
+    checkTypeAndUnit(node, getVisitor.getReturnUnit().orElse(Unit.ONE), getType, elseVisitor.getReturnUnit().orElse(Unit.ONE), elseType);
+  }
 }

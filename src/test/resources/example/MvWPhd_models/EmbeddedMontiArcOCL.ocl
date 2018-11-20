@@ -232,3 +232,16 @@ context Port inv Encryption:
   in         // comparison
     forall encSrc in aggregation:
       encSrc.retainAll(compareTo) != {}
+
+context ComponentInst inv PowerConsumptionWithEncryption:
+  let  // selections are subcomponent and port instances
+    selection1 = subs;
+    selection2 = ports.addAll(subs.ports);
+    aggregation = sum List{ max s.maxPower ?: 0W | s in selection1 }
+                + sum List{ max pi.encryption.encryptPower ?: 0W |
+                        pi in selection2, pi.receiver != {} }
+                + sum List{ max pi.encryption.decryptPower ?: 0W |
+                        pi in selection2, pi.sender.isPresent };
+    compareTo = min component.maxPower ?: oo W;
+  in
+    aggregation <= compareTo

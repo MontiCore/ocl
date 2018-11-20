@@ -23,9 +23,14 @@ import de.monticore.ast.ASTNode;
 import de.monticore.commonexpressions._ast.*;
 import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.literals._ast.*;
+import de.monticore.numberunit._ast.ASTI;
 import de.monticore.numberunit._ast.ASTNumberWithUnit;
 import de.monticore.numberunit.prettyprint.NumberUnitPrettyPrinter;
 import de.monticore.numberunit.prettyprint.UnitsPrinter;
+import ocl.monticoreocl.maxminevlisexpressions._ast.ASTElvisExpressionPrefix;
+import ocl.monticoreocl.maxminevlisexpressions._ast.ASTMaxExpressionPrefix;
+import ocl.monticoreocl.maxminevlisexpressions._ast.ASTMinExpressionPrefix;
+import ocl.monticoreocl.maxminevlisexpressions._ast.ASTSumExpressionPrefix;
 import ocl.monticoreocl.oclexpressions._ast.*;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.setexpressions._ast.ASTIsInExpression;
@@ -46,6 +51,10 @@ import javax.measure.unit.Unit;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static ocl.monticoreocl.ocl._types.TypeInferringHelper.flattenOnce;
+import static ocl.monticoreocl.ocl._types.TypeInferringHelper.getContainerGeneric;
+import static ocl.monticoreocl.ocl._types.TypeInferringHelper.isContainer;
 
 /**
  * This visitor tries to infer the return type of an ocl expression
@@ -232,13 +241,64 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     if (node.isPresentOCLQualifiedPrimary()) {
       node.getOCLQualifiedPrimary().accept(realThis);
     }
+    returnUnit = handleUnit(returnTypeRef);
+  }
+
+  protected final static Map<String, String> mapQuantityToUnit;
+
+  static {
+    mapQuantityToUnit = new HashMap<>();
+    mapQuantityToUnit.put("Acceleration", "m/s^2");
+    mapQuantityToUnit.put("AmountOfSubstance", "mol");
+    mapQuantityToUnit.put("Angle", "rad");
+    mapQuantityToUnit.put("AngularAcceleration", "rad/s^2");
+    mapQuantityToUnit.put("AngularVelocity", "rad/s");
+    mapQuantityToUnit.put("Area", "m^2");
+    mapQuantityToUnit.put("CatalyticActivity", "kat");
+    mapQuantityToUnit.put("DataAmount", "bit");
+    mapQuantityToUnit.put("DataRate", "bit/s");
+    mapQuantityToUnit.put("Dimensionless", "");
+    mapQuantityToUnit.put("Duration", "s");
+    mapQuantityToUnit.put("DynamicViscosity", "Pa*s");
+    mapQuantityToUnit.put("ElectricCapacitance", "F");
+    mapQuantityToUnit.put("ElectricCharge", "C");
+    // TODO: add from http://jscience.org/api/javax/measure/quantity/Quantity.html
+
+    // here only most important ones
+    mapQuantityToUnit.put("Energy", "J");
+    mapQuantityToUnit.put("Force", "N");
+    mapQuantityToUnit.put("Frequency", "Hz");
+    mapQuantityToUnit.put("Length", "m");
+    mapQuantityToUnit.put("Mass", "kg");
+    mapQuantityToUnit.put("Power", "W");
+    mapQuantityToUnit.put("Pressure", "Pa");
+    mapQuantityToUnit.put("Temperature", "K");
+    mapQuantityToUnit.put("Torque", "N*m");
+    mapQuantityToUnit.put("Velocity", "m/s");
+    mapQuantityToUnit.put("Volume", "m^3");
+  }
+
+  private Optional<Unit<?>> handleUnit(CDTypeSymbolReference typeRef) {
+    if (typeRef == null)
+      return Optional.empty();
+
+    while (isContainer(typeRef) && !typeRef.getActualTypeArguments().isEmpty()) {
+      typeRef = getContainerGeneric(typeRef);
+    }
+
+    Optional<Stereotype> q = typeRef.getStereotype("Quantity");
+    if (q.isPresent()) {
+      String unit = q.get().getValue();
+      return Optional.of(Unit.valueOf(mapQuantityToUnit.get(unit)));
+    }
+    return Optional.empty();
   }
 
   @Override
   public void traverse(ASTOCLTransitivQualification node) {
     CDTypeSymbolReference setType = createTypeRef("Set", node);
     TypeInferringHelper.addActualArgument(setType, returnTypeRef);
-    setType = TypeInferringHelper.flattenOnce(setType);
+    setType = flattenOnce(setType);
     returnTypeRef = setType;
   }
 
@@ -273,6 +333,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
       if (!innerType.getName().equals("Class")) // Only add when innerType is present
         TypeInferringHelper.addActualArgument(returnTypeRef, innerType);
+
+      returnUnit = exprVisitor.getReturnUnit();
     }
 
     if (node.isPresentQualification()) {
@@ -414,6 +476,58 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
         returnTypeRef = amountType;
       }
     }
+  }
+
+  @Override
+  public void traverse(ASTSumExpressionPrefix node) {
+    OCLExpressionTypeInferingVisitor setVisitor = new OCLExpressionTypeInferingVisitor(scope);
+    CDTypeSymbolReference setType = setVisitor.getTypeFromExpression(node.getSet());
+    String typeName = setType.getName();
+    if (!typeName.equals("Set") && !typeName.equals("List") && !typeName.equals("Collection")) {
+      Log.error(String.format("0xOCLI8 The type of the sum operator expression must be a container (Set, List, or Collection), but it is actually `%s`",
+          setType.getStringRepresentation()), node.get_SourcePositionStart());
+      return;
+    }
+    if (setType.getActualTypeArguments().size() != 1) {
+      Log.error("0xOCLI9 The generic type of the sum operator expression is not defined. It is needed to infer the return type of the sum prefix expression.",
+          node.get_SourcePositionStart());
+      return;
+    }
+    returnTypeRef = getContainerGeneric(setType);
+    returnUnit = setVisitor.getReturnUnit();
+  }
+
+  @Override
+  public void traverse(ASTMaxExpressionPrefix node) {
+    inferMinMax(node.getSet());
+  }
+
+  @Override
+  public void traverse(ASTMinExpressionPrefix node) {
+    inferMinMax(node.getSet());
+  }
+
+  private void inferMinMax(ASTExpression node) {
+    OCLExpressionTypeInferingVisitor setVisitor = new OCLExpressionTypeInferingVisitor(scope);
+    CDTypeSymbolReference setType = setVisitor.getTypeFromExpression(node);
+    if (isContainer(setType)) {
+      if (setType.getActualTypeArguments().size() != 1) {
+        Log.error(String.format("0xOCLK0 The min/max expression changes the type of `Collection<X>` to `Optional<X>`. But your collection `%s` has no generic, so the type cannot be inferred",
+            setType.getStringRepresentation()),
+            node.get_SourcePositionStart());
+        return;
+      }
+      setType = getContainerGeneric(setType); // use only generic part
+    }
+    CDTypeSymbolReference newType = createTypeRef("Optional", node);
+    TypeInferringHelper.addActualArgument(newType, setType);
+    returnTypeRef = newType;
+    returnUnit = setVisitor.getReturnUnit();
+  }
+
+  @Override
+  public void traverse(ASTElvisExpressionPrefix node) {
+    node.getOrElse().accept(realThis);
   }
 
   /**
@@ -560,7 +674,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
             CDTypeSymbolReference containerType = createTypeRef(previousType.getName(), node);
             TypeInferringHelper.addActualArgument(containerType, newType.get());
             // implicit flattening with . operator
-            containerType = TypeInferringHelper.flattenOnce(containerType);
+            containerType = flattenOnce(containerType);
             newType = Optional.of(containerType);
           }
 
