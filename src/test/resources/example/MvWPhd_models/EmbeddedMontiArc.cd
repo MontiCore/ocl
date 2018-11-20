@@ -251,7 +251,7 @@ classdiagram EmbeddedMontiArc {
   // slide Ch04_InstanceChain
   interface ElementInst;
   class ChainInst;
-  association ChainInst -> ElementInst [*];
+  association ChainInst -> (elements) ElementInst [*];
   association start ChainInst -> ElementInst [1];
   association end ChainInst -> ElementInst [1];
 
@@ -342,7 +342,8 @@ classdiagram EmbeddedMontiArc {
   association ComponentInst -> Traceable [1];
 
   // Ch06_MaxPower
-  class MaxPower extends Number <<Quantity = "Power">>;
+  class NumberPower extends Number <<Quantity = "Power">>;
+  class MaxPower extends NumberPower;
   association Component -> MaxPower [*];
   association ComponentInst -> MaxPower [*];
 
@@ -355,16 +356,39 @@ classdiagram EmbeddedMontiArc {
   association EncryptionCollection -> (elements) EEncryption [*];
 
   // Ch06_CombinedPowerX
-  class NumberPower extends Number <<Quantity = "Power">>;
   class Encryption;
   association Encryption -> (value) EEncryption [1];
   association PortInst -> (encryption) Encryption [*];
   association Encryption -> (decryptPower) NumberPower [1];
   association Encryption -> (encryptPower) NumberPower [1];
 
+  // Ch06_CombinedPowerWithTable
+  class EncryptPower {
+    Encryption encryption;
+  }
+  association EncryptPower -> (encrypt) NumberPower [1];
+  association EncryptPower -> (decrypt) NumberPower [1];
+  association Component [[encryption]] -> (encryptPower) EncryptPower [*];
 
+  // Ch06_ASIL
+  enum EAsil {
+    QM, ASIL_A, ASIL_B, ASIL_C, ASIL_D;
+  }
+  class Asil;
+  association Asil -> (value) EAsil [1];
+  association Component -> (asil) Asil [*];
 
+  // Ch06_WCET_SingleCore
+  class NumberDuration extends Number <<Quantity = "Duration">>;
+  class Wcet extends NumberDuration;
+  association Component -> (wcet) Wcet [*];
 
+  // Ch06_WCET_MultiCore
+  class Threads extends NaturalNumber;
+  association ComponentInst -> (threads) Threads [*];
+
+  // Ch06_WCET_MultiCore
+  association ChainInst -> (listPartitions) ChainInst [*]; // TODO: change to function if possible
 
   ////////////////////// support for standard types and operations in OCL ///////////////////////////////////
   class Class;
@@ -377,6 +401,7 @@ classdiagram EmbeddedMontiArc {
     boolean isEmpty();
     Collection addAll(Collection c);
     Collection retainAll(Collection c);
+    Collection flatten(); // see http://mbse.se-rwth.de/book1/index.php?c=chapter3-3#x1-560003.3.6
   }
 
   class List extends Collection {
@@ -384,6 +409,7 @@ classdiagram EmbeddedMontiArc {
       List addAll(List c);
       Set asSet();
       List add(Object o);
+      int indexOf(Object o);
   }
 
   class Set extends Collection {

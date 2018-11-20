@@ -11,12 +11,13 @@ classdiagram DefaultTypes {
     int size();
     boolean isEmpty();
     Collection addAll(Collection c);
+    Set asSet();
+    Collection flatten(); // see http://mbse.se-rwth.de/book1/index.php?c=chapter3-3#x1-560003.3.6
   }
 
   class List extends Collection {
       boolean nonEmpty();
       List addAll(List c);
-      Set asSet();
       List add(Object o);
   }
 
@@ -38,8 +39,12 @@ classdiagram DefaultTypes {
   }
 
   interface Number extends Amount;
-  class Integer implements Number;
-  class Double implements Number;
+  class Integer implements Number {
+    String toString();
+  }
+  class Double implements Number {
+    String toString();
+  }
   class Float implements Number;
   class Long implements Number;
   class Boolean;

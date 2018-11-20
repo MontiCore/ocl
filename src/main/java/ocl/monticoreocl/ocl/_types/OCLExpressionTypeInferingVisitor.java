@@ -65,22 +65,29 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
   private OCLVisitor realThis = this;
   private MutableScope scope;
   private Optional<Unit<?>> returnUnit;
+  private boolean logError = true;
 
   public OCLExpressionTypeInferingVisitor(MutableScope scope) {
+    this(scope, true);
+  }
+
+  public OCLExpressionTypeInferingVisitor(MutableScope scope, boolean logError) {
     this.returnTypeRef = null;
     this.scope = scope;
     this.returnUnit = Optional.empty();
+    this.logError = logError;
   }
 
   public CDTypeSymbolReference getTypeFromExpression(ASTExpression node) {
-    node.accept(realThis);
-    if (returnTypeRef == null) {
-      Log.error("0xOCLI0 The variable type could not be resolved from this expression: " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
-      return new CDTypeSymbolReference("Class", scope);
-    }
-    else {
-      return returnTypeRef;
-    }
+      node.accept(realThis);
+      if (returnTypeRef == null) {
+        if (logError)
+          Log.error("0xOCLI0 The variable type could not be resolved from this expression: " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+        return new CDTypeSymbolReference("Class", scope);
+      }
+      else {
+        return returnTypeRef;
+      }
   }
 
   public CDTypeSymbolReference getTypeFromExpression(ASTOCLComprehensionExpr node) {
@@ -108,7 +115,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     typeReference.setStringRepresentation(typeName);
     // Check if type was found in CD loaded CD models
     if (!typeReference.existsReferencedSymbol()) {
-      Log.error("0xOCLI9 This type could not be found: " + typeName + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+      if (logError)
+        Log.error("0xOCLI9 This type could not be found: " + typeName + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
     return typeReference;
   }
@@ -306,7 +314,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
   public void traverse(ASTOCLArrayQualification node) {
     List<ActualTypeArgument> arguments = returnTypeRef.getActualTypeArguments();
     if (arguments.size() == 0) {
-      Log.error("0xOCLI4 Could not resolve container argument from: " + returnTypeRef + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+      if (logError)
+        Log.error("0xOCLI4 Could not resolve container argument from: " + returnTypeRef + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
     returnTypeRef = (CDTypeSymbolReference) arguments.get(0).getType();
   }
@@ -366,7 +375,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
       CDTypeSymbolReference containerType = exprVisitor.getTypeFromExpression(node.getExpression());
 
       if (containerType.getActualTypeArguments().size() == 0) {
-        Log.error("0xOCLI5 Could not resolve inner type from InExpression, " + node.getVarNameList() + " in " + containerType + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+        if (logError)
+          Log.error("0xOCLI5 Could not resolve inner type from InExpression, " + node.getVarNameList() + " in " + containerType + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
       }
       else {
         returnTypeRef = containerType;
@@ -484,11 +494,13 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     CDTypeSymbolReference setType = setVisitor.getTypeFromExpression(node.getSet());
     String typeName = setType.getName();
     if (!typeName.equals("Set") && !typeName.equals("List") && !typeName.equals("Collection")) {
-      Log.error(String.format("0xOCLI8 The type of the sum operator expression must be a container (Set, List, or Collection), but it is actually `%s`",
+      if (logError)
+        Log.error(String.format("0xOCLI8 The type of the sum operator expression must be a container (Set, List, or Collection), but it is actually `%s`",
           setType.getStringRepresentation()), node.get_SourcePositionStart());
       return;
     }
     if (setType.getActualTypeArguments().size() != 1) {
+      if (logError)
       Log.error("0xOCLI9 The generic type of the sum operator expression is not defined. It is needed to infer the return type of the sum prefix expression.",
           node.get_SourcePositionStart());
       return;
@@ -512,7 +524,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     CDTypeSymbolReference setType = setVisitor.getTypeFromExpression(node);
     if (isContainer(setType)) {
       if (setType.getActualTypeArguments().size() != 1) {
-        Log.error(String.format("0xOCLK0 The min/max expression changes the type of `Collection<X>` to `Optional<X>`. But your collection `%s` has no generic, so the type cannot be inferred",
+        if (logError)
+          Log.error(String.format("0xOCLK0 The min/max expression changes the type of `Collection<X>` to `Optional<X>`. But your collection `%s` has no generic, so the type cannot be inferred",
             setType.getStringRepresentation()),
             node.get_SourcePositionStart());
         return;
@@ -614,7 +627,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
           return new CDTypeSymbolReference(enum1.get().getName(), enum1.get().getEnclosingScope());
         }
         else if (!names.getLast().isEmpty()) {
-          Log.error(String.format("0xOCLI6 Could not resolve enum item `%s` of enumeration type `%s` at %s %s.", names.getLast(), enum1.get().getFullName(),
+          if (logError)
+           Log.error(String.format("0xOCLI6 Could not resolve enum item `%s` of enumeration type `%s` at %s %s.", names.getLast(), enum1.get().getFullName(),
               node.get_SourcePositionStart(), node.get_SourcePositionEnd()), node.get_SourcePositionStart());
         } else {
           return new CDTypeSymbolReference("Class", scope); // for enum1 instanceof EnumX
@@ -642,7 +656,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
       returnUnit = thisDecl.get().getUnit();
     }
     else {
-      Log.error("0xOCLI2 Could not resolve name or type: " + prefixName + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+      if (logError)
+        Log.error("0xOCLI2 Could not resolve name or type: " + prefixName + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
       typeRef = new CDTypeSymbolReference("Class", scope);
     }
     return typeRef;
@@ -682,7 +697,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
       }
 
       if (!newType.isPresent()) {
-        Log.error("0xOCLI3 Could not resolve field/method/association: " + name + " on " + previousType.getStringRepresentation() + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+        if (logError)
+          Log.error("0xOCLI3 Could not resolve field/method/association: " + name + " on " + previousType.getStringRepresentation() + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
         return createTypeRef("Class", node);
       }
 
@@ -708,8 +724,24 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
       return Optional.of(handleAssociationSymbol(node, associationSymbol.get(), name));
     }
     else if (methodSymbol.isPresent()) { // Try name as method
-      if ((name.equals("add") || name.equals("addAll") || name.equals("retainAll")) && typeSymbolReference.hasSuperType("Collection")) {
+      boolean isCollection = typeSymbolReference.hasSuperType("Collection");
+      if (isCollection && (name.equals("add") || name.equals("addAll") || name.equals("retainAll"))) {
         return Optional.of(typeSymbolReference); // CD4A does not support generics
+      }
+      if (isCollection && name.equals("asSet")) { // CD4A does not support generics
+        CDTypeSymbolReference newType = createTypeRef("Set", node);
+        if (typeSymbolReference.getActualTypeArguments().size() == 1) {
+          TypeInferringHelper.addActualArgument(newType, getContainerGeneric(typeSymbolReference));
+        }
+        return Optional.of(newType);
+      }
+      if (isCollection && name.equals("flatten")) {
+        if (typeSymbolReference.getActualTypeArguments().size() != 1) {
+          if (logError)
+            Log.error("0xOCLK4 Explicit flattening is only possible if the generic of the collection is known.");
+          return Optional.empty();
+        }
+        return Optional.of(flattenOnce(typeSymbolReference)); // CD4A does not support generics
       }
       return Optional.of(createTypeRef(methodSymbol.get().getReturnType().getName(), node));
     }
@@ -740,12 +772,14 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     for (int i = 1; i < returnTypesOfSubClasses.size(); i++) {
       CDTypeSymbolReference nextType = returnTypesOfSubClasses.get(i);
       if (!(firstType.isSameOrSuperType(nextType) || (nextType.isSameOrSuperType(firstType)))) {
-        Log.error(String.format("0xOCLI7 Derived return types `%s` of `%s` of method/field/association `%s` subclasses of `%s` are not compatible (neither one is a subset of the other one)",
+        if (logError)
+          Log.error(String.format("0xOCLI7 Derived return types `%s` of `%s` of method/field/association `%s` subclasses of `%s` are not compatible (neither one is a subset of the other one)",
             firstType.getFullName(), nextType.getFullName(), name, typeSymbolReference.getFullName()), node.get_SourcePositionStart());
         return Optional.empty();
       }
     }
-    Log.info(String.format("Resolved `%s.%s` as `%s.%s` (`%s` extends/implements `%s`) by automatic subtype casting the field/association/method call; so inferred type is `%s` at %s",
+    if (logError)
+      Log.info(String.format("Resolved `%s.%s` as `%s.%s` (`%s` extends/implements `%s`) by automatic subtype casting the field/association/method call; so inferred type is `%s` at %s",
         typeSymbolReference.getName(), name, availableSubTypes.get(0).getName(), name, availableSubTypes.get(0).getName(), typeSymbolReference.getName(), firstType, node.get_SourcePositionStart()),
         this.getClass().getSimpleName());
     return Optional.of(firstType);

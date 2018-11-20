@@ -1,0 +1,22 @@
+package example.typeInferringModels;
+
+import example.CDs.DefaultTypes.*;
+
+ocl nestedSetsSimple {
+
+inv X:
+  let
+    chain1 = {1.1, 1.2, 1.3, 1.4};
+    chain2 = {2.1, 2.2, 2.3, 2.4};
+
+    partition1A = {chain1, chain2 };
+    // partition1A is `Collection<Collection<Double>>`
+
+    combSubs = { { (10+d).toString | d in chain} |
+                   chain in partition1A };
+    // combSubs is `Collection<Collection<String>>`
+    // combSubs = { {"11.1", "11.2", "11.3", "11.4"}, {"12.1", "12.2", "12.3", "12.4"} }
+  in
+    1 == 1
+
+}

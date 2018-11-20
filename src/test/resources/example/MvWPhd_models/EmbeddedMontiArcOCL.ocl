@@ -233,6 +233,8 @@ context Port inv Encryption:
     forall encSrc in aggregation:
       encSrc.retainAll(compareTo) != {}
 
+// Ch06_CombinedPowerX
+
 context ComponentInst inv PowerConsumptionWithEncryption:
   let  // selections are subcomponent and port instances
     selection1 = subs;
@@ -245,3 +247,97 @@ context ComponentInst inv PowerConsumptionWithEncryption:
     compareTo = min component.maxPower ?: oo W;
   in
     aggregation <= compareTo
+
+// Ch06_CombinedPowerWithTable
+context ComponentInst inv PowerConsumptionWithEncryption:
+  let selection1 = subs;
+      selection2 = ports.addAll(subs.ports);
+      ep = component.encryptPower;
+      aggregation = sum List{ max s.maxPower ?: 0W | s in selection1 }
+                  + sum List{ max ep[pi.encryption].encrypt ?: 0W |
+                              pi in selection2, pi.receiver != {} }
+                  + sum List{ max ep[pi.encryption].decrypt ?: 0W |
+                              pi in selection2, pi.sender.isPresent };
+      compareTo = min component.maxPower ?: oo W;
+  in
+    aggregation <= compareTo
+
+// Ch06_ASIL
+context ComponentInst inv ASIL:
+  let
+    asilNb = List{ EAsil.QM, EAsil.ASIL_A, EAsil.ASIL_B,
+                   EAsil.ASIL_C, EAsil.ASIL_D };
+    selection = subs;
+    aggregation = min {
+      min asilNb.indexOf(s.asil.value) ?: 0 |
+      s in selection.component           };
+    compareTo = min asilNb.indexOf(
+                   component.asil.value) ?: 0;
+  in         // comparison
+    aggregation >= compareTo
+
+// Ch06_WCET_SingleCore
+context NumberDuration inv MinTag:
+  this >= 0s
+
+context ComponentInst inv WCET_SingleCore:
+  let
+    selection = subs;
+    aggregation = sum { max s.wcet ?: 0s |
+                  s in selection.component };
+    compareTo = min component.wcet ?: oo s;
+  in         // comparison
+    aggregation <= compareTo
+
+context ComponentInst inv WCET_InfiteCores:
+  let
+    startSubs = {s in subs | this in s.sender };
+    outPorts = {p in ports | p.direction == PortDirection.OUT};
+    // selection: chains from subcomponents to
+    // an output port
+    selection = { chain in startSubs.start |
+                  chain.end in outPorts };
+    subChains = { chain.retainAll(subs) |
+                  chain in selection };
+    aggChains = { sum List{ max s.wcet ?: 0s |
+                        s in chain.elements.component } |
+                  chain in subChains };
+    aggregation = max aggChains;
+    compareTo = min component.wcet ?: oo s;
+  in
+    aggregation <= compareTo
+
+/*
+context ComponentInst inv WCET_MultiCore:
+let
+  startSubs = {s in subs | this in s.sender };
+  outPorts = {p in ports | p.direction == PortDirection.OUT};
+  // selection: chains from subcomponents to
+  // an output port
+  selection = { chain in startSubs.start | chain.end in outPorts };
+  subChains = { chain.retainAll(subs) | chain in selection };
+  threads = min cis.main.threads ?: 1;
+
+  // calculates all partition combinations
+
+  combChains=subChains.listPartitions; //(threads);
+
+  combSubs = { { {chain | chain in partition}.flatten.asSet |
+               partition in singleComb } |
+             singleComb in combChains };
+
+  partSums =  { { { sum List{ max s.wcet ?: 0s |
+                            s in el.component}|
+                  el in partition } |
+                partition in singleCombs } |
+              singleCombs in combSubs };
+
+  maxTimeInComb = { max { p | p in singleComb }
+    | singleComb in partSums };
+  // aggregation takes best combination
+  aggregation = min maxTimeInComb;
+  compareTo = min component.wcet ?: oo s;
+in
+  aggregation <= compareTo
+
+*/

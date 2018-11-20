@@ -65,4 +65,9 @@ public class ASTOCLQualifiedPrimary extends ASTOCLQualifiedPrimaryTOP {
   public List<String> getNameList() {
     return name2StringList(getName2List());
   }
+
+  @Override
+  public String toString() {
+    return getNameList().stream().collect(Collectors.joining("."));
+  }
 }
