@@ -302,12 +302,11 @@ context ComponentInst inv WCET_InfiteCores:
     aggChains = { sum List{ max s.wcet ?: 0s |
                         s in chain.elements.component } |
                   chain in subChains };
-    aggregation = max aggChains;
+    aggregation = max aggChains ?: 0; // 0s -> bug with unit inference
     compareTo = min component.wcet ?: oo s;
   in
     aggregation <= compareTo
 
-/*
 context ComponentInst inv WCET_MultiCore:
 let
   startSubs = {s in subs | this in s.sender };
@@ -320,24 +319,22 @@ let
 
   // calculates all partition combinations
 
-  combChains=subChains.listPartitions; //(threads);
+  combChains=subChains.listPartitions(threads);
 
   combSubs = { { {chain | chain in partition}.flatten.asSet |
                partition in singleComb } |
              singleComb in combChains };
 
   partSums =  { { { sum List{ max s.wcet ?: 0s |
-                            s in el.component}|
+                            s in el.elements.component}|
                   el in partition } |
                 partition in singleCombs } |
               singleCombs in combSubs };
 
-  maxTimeInComb = { max { p | p in singleComb }
+  maxTimeInComb = { max { sc | sc in singleComb }.flatten ?: 0 // 0s -> flatten does not support unit inferrence yet
     | singleComb in partSums };
   // aggregation takes best combination
-  aggregation = min maxTimeInComb;
+  aggregation = min maxTimeInComb ?: 0; // 0s -> unit is lost due to flatten
   compareTo = min component.wcet ?: oo s;
 in
   aggregation <= compareTo
-
-*/

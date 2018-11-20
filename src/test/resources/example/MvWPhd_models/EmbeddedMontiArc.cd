@@ -227,7 +227,7 @@ classdiagram EmbeddedMontiArc {
   association [0..1] ComponentInst (parent) <-> (subs) ComponentInst [*];
   association ComponentInst -> (ports) PortInst [*];
   class CnCInstanceStructure;
-  association CnCInstanceStructure -> (main) ComponentInst [1];
+  association CnCInstanceStructure (cis) -> (main) ComponentInst [1];
   association [1] CnCInstanceStructure <-> CnCModel [*];
 
   class ConnectorInst implements ElementInst;
@@ -387,9 +387,6 @@ classdiagram EmbeddedMontiArc {
   class Threads extends NaturalNumber;
   association ComponentInst -> (threads) Threads [*];
 
-  // Ch06_WCET_MultiCore
-  association ChainInst -> (listPartitions) ChainInst [*]; // TODO: change to function if possible
-
   ////////////////////// support for standard types and operations in OCL ///////////////////////////////////
   class Class;
 
@@ -401,13 +398,14 @@ classdiagram EmbeddedMontiArc {
     boolean isEmpty();
     Collection addAll(Collection c);
     Collection retainAll(Collection c);
+    Set asSet();
     Collection flatten(); // see http://mbse.se-rwth.de/book1/index.php?c=chapter3-3#x1-560003.3.6
+    Collection listPartitions(int length); // see https://github.com/dpaukov/combinatoricslib#7-list-partitions
   }
 
   class List extends Collection {
       boolean nonEmpty();
       List addAll(List c);
-      Set asSet();
       List add(Object o);
       int indexOf(Object o);
   }
