@@ -135,6 +135,7 @@ external EDeclaration;
         shortform of "Auction a in Auction.allInstances").
     */
     InExpr implements Expression <50> =
+    { !_input.LT(1).getText().equals("oo") }?
 		Type
 		varName:(Name || ",")+
 		|

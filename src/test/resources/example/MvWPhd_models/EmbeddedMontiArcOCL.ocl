@@ -208,15 +208,14 @@ context ComponentInst inv Traceability:
   in         // comparison
     aggregation implies compareTo
 
-/*
+// Ch06_CombinedPower
 
 context ComponentInst inv MaxPower:
   let
     selection = component;
     aggregation =
-      max maxPower ?: 0W;
+      max maxPower ?: 0 W;
     compareTo =
       min selection.maxPower ?: oo W;
   in         // comparison
     aggregation <= compareTo
-*/
