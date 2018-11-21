@@ -338,3 +338,13 @@ let
   compareTo = min component.wcet ?: oo s;
 in
   aggregation <= compareTo
+
+// Ch06_Traceability2
+context Component inv Traceability2:
+  let
+    selection = componentInsts;
+    aggregation =
+      and componentInsts.traceable;
+    compareTo   = traceable;
+  in         // comparison
+    compareTo implies aggregation

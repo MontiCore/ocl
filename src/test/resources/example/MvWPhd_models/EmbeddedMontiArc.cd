@@ -222,7 +222,7 @@ classdiagram EmbeddedMontiArc {
     String fullName;
   }
   association ComponentInst -> ComponentInstantiation [1];
-  association / ComponentInst -> Component [1];
+  association / ComponentInst (componentInsts) -> Component [1];
   association ComponentInst -> (params) TensorParameterBinding [*];
   association [0..1] ComponentInst (parent) <-> (subs) ComponentInst [*];
   association ComponentInst -> (ports) PortInst [*];

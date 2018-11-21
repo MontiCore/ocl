@@ -33,7 +33,6 @@ import ocl.monticoreocl.maxminevlisexpressions._ast.ASTMinExpressionPrefix;
 import ocl.monticoreocl.maxminevlisexpressions._ast.ASTSumExpressionPrefix;
 import ocl.monticoreocl.oclexpressions._ast.*;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.setexpressions._ast.ASTIsInExpression;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.Scope;
 import de.monticore.symboltable.Symbol;
@@ -46,6 +45,7 @@ import ocl.monticoreocl.ocl._ast.ASTOCLFile;
 import ocl.monticoreocl.ocl._ast.ASTOCLNonNumberPrimary;
 import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
+import ocl.monticoreocl.setexpressions._ast.ASTIsInExpression;
 
 import javax.measure.unit.Unit;
 import java.util.*;

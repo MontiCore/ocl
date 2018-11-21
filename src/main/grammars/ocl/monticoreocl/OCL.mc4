@@ -20,7 +20,7 @@
 package ocl.monticoreocl;
 
 grammar OCL extends de.monticore.NumberUnit, ocl.monticoreocl.OCLExpressions,
-                        de.monticore.CommonExpressions, de.monticore.SetExpressions,
+                        de.monticore.CommonExpressions, ocl.monticoreocl.SetExpressions,
                          ocl.monticoreocl.MaxMinEvlisExpressions {
 
 	/*========================================================================*/
