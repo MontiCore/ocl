@@ -463,9 +463,11 @@ classdiagram EmbeddedMontiArc {
 
   interface AComponentType extends ATypeOrAInstantiation { // Ch07_AbstractConnector
     boolean portsComplete;
+    boolean atomic; // Ch07_SatisfactionPort
   }
   association AComponentType -> (name) String [0..1];
   association AComponentType -> (parameters) AParameter [*];
+  association AComponentType -> (ports) APort [*];
 
   interface APortType;
 

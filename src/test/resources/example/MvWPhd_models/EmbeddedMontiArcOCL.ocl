@@ -1,5 +1,5 @@
 import EmbeddedMontiArc.*;
-
+/*
 // slide Ch04_PortValue
 
 context NaturalNumber inv:
@@ -455,3 +455,12 @@ inv RedundandVelocityControllerPorts:
          p.direction == PortDirection.OUT &&
          p.type instanceof NumericType &&
          p.type.min == -oo m/s^2 && p.type.max == oo m/s^2)
+*/
+
+// Ch07_SatisfactionPortOCL
+
+context AComponentType inv PortsComplete:
+  portsComplete implies
+     (exists ComponentType c:
+       name ?== c.name &&
+       this.ports.name == c.ports.name)

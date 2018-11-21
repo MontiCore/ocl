@@ -2,7 +2,7 @@
 
 package ocl.monticoreocl;
 
-component grammar MaxMinEvlisExpressions extends de.monticore.ExpressionsBasis {
+component grammar MaxMinEvlisExpressions extends de.monticore.CommonExpressions {
 
    token TElvis = '?' ':';
 
@@ -30,4 +30,24 @@ component grammar MaxMinEvlisExpressions extends de.monticore.ExpressionsBasis {
         get:Expression
         TElvis
         orElse:Expression;
+
+    // `x ?== y` is the same as `x.isPresent implies x.get == y`
+    // this is useful for underspecification relations, if it is underspecified (x.isAbsent) nothing must hold
+    //
+    // `x ?>= y` equals `x.isPresent implies x.get >= y` -> the other operators work the same way
+
+    ElvisLessEqualExpression implements Expression <150>, InfixExpression =
+    	leftExpression:Expression operator:"?<=" rightExpression:Expression;
+
+    ElvisGreaterEqualExpression implements Expression <150>, InfixExpression =
+    	leftExpression:Expression operator:"?>=" rightExpression:Expression;
+
+    ElvisLessThanExpression implements Expression <150>, InfixExpression =
+    	leftExpression:Expression operator:"?<" rightExpression:Expression;
+
+    ElvisGreaterThanExpression implements Expression <150>, InfixExpression =
+    	leftExpression:Expression operator:"?>" rightExpression:Expression;
+
+    ElvisEqualsExpression implements Expression <130>, InfixExpression =
+    	leftExpression:Expression operator:"?==" rightExpression:Expression;
 }

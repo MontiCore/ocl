@@ -27,10 +27,7 @@ import de.monticore.numberunit._ast.ASTI;
 import de.monticore.numberunit._ast.ASTNumberWithUnit;
 import de.monticore.numberunit.prettyprint.NumberUnitPrettyPrinter;
 import de.monticore.numberunit.prettyprint.UnitsPrinter;
-import ocl.monticoreocl.maxminevlisexpressions._ast.ASTElvisExpressionPrefix;
-import ocl.monticoreocl.maxminevlisexpressions._ast.ASTMaxExpressionPrefix;
-import ocl.monticoreocl.maxminevlisexpressions._ast.ASTMinExpressionPrefix;
-import ocl.monticoreocl.maxminevlisexpressions._ast.ASTSumExpressionPrefix;
+import ocl.monticoreocl.maxminevlisexpressions._ast.*;
 import ocl.monticoreocl.oclexpressions._ast.*;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.MutableScope;
@@ -124,6 +121,32 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
   /**
    * ********** traverse methods **********
    */
+
+  @Override // ?==
+  public void traverse(ASTElvisEqualsExpression node) {
+    returnTypeRef = createTypeRef("Boolean", node);
+  }
+
+  @Override // ?>=
+  public void traverse(ASTElvisGreaterEqualExpression node) {
+    returnTypeRef = createTypeRef("Boolean", node);
+  }
+
+  @Override // ?>
+  public void traverse(ASTElvisGreaterThanExpression node) {
+    returnTypeRef = createTypeRef("Boolean", node);
+  }
+
+  @Override // ?<=
+  public void traverse(ASTElvisLessEqualExpression node) {
+    returnTypeRef = createTypeRef("Boolean", node);
+  }
+
+  @Override // ?<
+  public void traverse(ASTElvisLessThanExpression node) {
+    returnTypeRef = createTypeRef("Boolean", node);
+  }
+
 
   @Override
   public void traverse(ASTIsInExpression node) {
