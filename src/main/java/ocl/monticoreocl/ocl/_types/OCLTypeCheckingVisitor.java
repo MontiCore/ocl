@@ -32,6 +32,8 @@ import ocl.monticoreocl.ocl._ast.ASTOCLInvariant;
 import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
 import ocl.monticoreocl.oclexpressions._ast.*;
+import ocl.monticoreocl.setexpressions._ast.ASTSetAndExpression;
+import ocl.monticoreocl.setexpressions._ast.ASTSetOrExpression;
 
 import javax.measure.unit.Dimension;
 import javax.measure.unit.Unit;
@@ -41,9 +43,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ocl.monticoreocl.ocl._types.OCLExpressionTypeInferingVisitor.quantityToUnit;
-import static ocl.monticoreocl.ocl._types.TypeInferringHelper.flattenAll;
-import static ocl.monticoreocl.ocl._types.TypeInferringHelper.getContainerGeneric;
-import static ocl.monticoreocl.ocl._types.TypeInferringHelper.getMostNestedGeneric;
+import static ocl.monticoreocl.ocl._types.TypeInferringHelper.*;
 
 
 public class OCLTypeCheckingVisitor implements OCLVisitor {
@@ -326,5 +326,25 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
     CDTypeSymbolReference elseType = elseVisitor.getTypeFromExpression(node.getOrElse());
 
     checkTypeAndUnit(node, getVisitor.getReturnUnit(), getType, elseVisitor.getReturnUnit(), elseType);
+  }
+
+  @Override
+  public void visit(ASTSetOrExpression node) {
+    checkSetOrAnd(node.getSet(), node);
+  }
+
+  @Override
+  public void visit(ASTSetAndExpression node) {
+    checkSetOrAnd(node.getSet(), node);
+  }
+
+  private void checkSetOrAnd(ASTExpression set, ASTExpression node) {
+    OCLExpressionTypeInferingVisitor setVisitor = new OCLExpressionTypeInferingVisitor(scope);
+    CDTypeSymbolReference setType = setVisitor.getTypeFromExpression(set);
+    CDTypeSymbolReference setType2 = flattenAll(setType); // do not care wether it is or of optional, normal or collection -> or of optional is false and or of boolean value is boolean value
+    if (!setType2.getName().equals("boolean") && !setType2.hasSuperType("Boolean")) {
+      Log.error(String.format("0xOCLK5 The type of the set part of the and/or expression must be: Collection<boolean>, boolean, or Optional<boolean>. But the current type is `%s`.",
+          setType.getStringRepresentation()), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+    }
   }
 }

@@ -46,15 +46,15 @@ import ocl.monticoreocl.ocl._ast.ASTOCLNonNumberPrimary;
 import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
 import ocl.monticoreocl.setexpressions._ast.ASTIsInExpression;
+import ocl.monticoreocl.setexpressions._ast.ASTSetAndExpression;
+import ocl.monticoreocl.setexpressions._ast.ASTSetOrExpression;
 
 import javax.measure.unit.Unit;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static ocl.monticoreocl.ocl._types.TypeInferringHelper.flattenOnce;
-import static ocl.monticoreocl.ocl._types.TypeInferringHelper.getContainerGeneric;
-import static ocl.monticoreocl.ocl._types.TypeInferringHelper.isContainer;
+import static ocl.monticoreocl.ocl._types.TypeInferringHelper.*;
 
 /**
  * This visitor tries to infer the return type of an ocl expression
@@ -142,6 +142,16 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
   @Override
   public void traverse(ASTSimilarExpression node) {
+    returnTypeRef = createTypeRef("Boolean", node);
+  }
+
+  @Override
+  public void traverse(ASTSetAndExpression node) {
+    returnTypeRef = createTypeRef("Boolean", node);
+  }
+
+  @Override
+  public void traverse(ASTSetOrExpression node) {
     returnTypeRef = createTypeRef("Boolean", node);
   }
 

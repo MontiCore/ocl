@@ -200,7 +200,7 @@ classdiagram EmbeddedMontiArc {
   association Effector (endEff) -> (targetPort) Port [1];
 
   // slide Ch04_Component
-  association ComponentType -> (ports) Port [*] <<ordered>>;
+  association [1] ComponentType -> (ports) Port [*] <<ordered>>;
   association ComponentType -> (parameters) Parameter [*] <<ordered>>;
   association [0..1] Component (parent) <-> (subs) ComponentInstantiation [*];
 
@@ -398,9 +398,12 @@ classdiagram EmbeddedMontiArc {
   // this association is only needed to express the transformations
   association [1] Component (componentScope) <-> (definedConnectors) Connector [*];
 
-  class ComponentSugar;
-  association ComponentSugar -> (ports) PortSugar [*] <<ordered>>;
+  interface ComponentTypeSugar;
+  association [1] ComponentTypeSugar (componentType) -> (ports) PortSugar [*] <<ordered>>;
+
+  class ComponentSugar implements ComponentTypeSugar;
   association [1] ComponentSugar (componentScope) <-> (definedConnectors) ConnectorSugar [*];
+  association [0..1] ComponentSugar (parent) <-> (subs) ComponentInstantiationSugar [*];
 
   class PortSugar {
     String name;

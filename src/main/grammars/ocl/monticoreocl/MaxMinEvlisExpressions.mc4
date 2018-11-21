@@ -23,7 +23,10 @@ component grammar MaxMinEvlisExpressions extends de.monticore.ExpressionsBasis {
         set:Expression;
 
     // `opt ?: 0W` is equals to `opt.isPresent ? opt.get : 0W`
-    ElvisExpressionPrefix implements Expression <140> = // priority between `==` and `<`
+    // this operator is right associative, so that multiple optionals can be chained:
+    // x ?: y ?: 0 is the same as x ?; (y ?: 0)
+    // and this means that if x is present it returns x.get other it tries if y is present if not it returns 0
+    ElvisExpressionPrefix implements Expression <140> = <rightassoc> // priority between `==` and `<`
         get:Expression
         TElvis
         orElse:Expression;

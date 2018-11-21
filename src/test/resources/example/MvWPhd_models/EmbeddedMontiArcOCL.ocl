@@ -364,3 +364,48 @@ context Range rn, RangeSugar rs inv:
    (rs.all implies rn.start == 1 && rn.step == 1 && rn.end == dimension) &&
    (!rs.all implies rn.start == rs.start && rn.end == rs.end   &&
                                                    rn.step == rs.step ?: 1)
+
+context Port pn, PortSugar ps inv:
+  let
+    ports = ps.componentType.ports;
+  in
+    pn ~~ ps <=>
+    pn.name == ps.name && pn.dimension == ps.dimension ?: 1 &&
+    pn.direction == ps.direction ?:
+                             ports[ports.indexOf(ps) - 1].direction ?: PortDirection.IN
+
+// brackets are only here to speed up parsing from 24s to 3s -> they can be removed to receive the same result
+context PortInstantiation pin, PortInstantiationSugar pis inv:
+ let
+   r1List = List {RangeSugar r | r.start == 1 && r.end == 1 && r.step == 1};
+   r1 =  r1List[0];
+  in
+    pin ~~ pis <=>
+    (pin.port ~~ pis.port && pin.sub ~~ pis.sub) &&
+    (pin.portIndices ~~ pis.portIndices ?: r1)    &&
+    (pis.sub.isPresent implies pin.subIndices ~~ pis.subIndices ?: r1)
+
+context Connector cn, ConnectorSugar cs inv:
+  let spn = cn.sourcePort;
+      sps = cs.sourcePort;
+      tpn = cn.targetPort;
+      tps = cs.targetPort;
+      ps = {sps, tps};
+  in
+    cn ~~ cs <=>
+    ( (!or ps.indexBased) && (!or ps.nameBased) implies
+      spn ~~ sps && tpn ~~ tps ) &&
+    ( or ps.nameBased implies
+      let sCmp = sps.sub.parent;
+          tCmp = tps.sub.parent;
+          names = sCmp.ports.name.retainAll(tCmp.ports.name);
+          sPorts = {sp in Port | sp.name in names, sp.component ~~ sCmp };
+          tPorts = {tp in Port | tp.name in names, tp.component ~~ tCmp };
+          cons = {c in Connector | c.sourcePort in sPorts,
+                                   c.targetPort in tPorts,
+                                   c.sourcePort.port.name == c.targetPort.port.name};
+          compNList = List{Component cmp | cmp ~~ cs.componentScope};
+          compN = compNList[0];
+       in
+         compN.containsAll(cons) // OCLTrafo generator changes it to addAll
+    ) // && ... indexBased case similar to nameBased one: use position

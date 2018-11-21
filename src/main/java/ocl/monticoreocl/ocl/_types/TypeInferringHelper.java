@@ -173,5 +173,10 @@ public class TypeInferringHelper {
                 || typeName.equals("Optional");
     }
 
+    public static Boolean isList(CDTypeSymbolReference type) {
+        String typeName = type.getName();
+        return typeName.equals("List");
+    }
+
 
 }
