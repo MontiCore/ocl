@@ -25,6 +25,7 @@ import de.monticore.numberunit._ast.ASTI;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.types.types._ast.ASTSimpleReferenceType;
 import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
+import de.monticore.umlcd4a.symboltable.Stereotype;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
 import ocl.monticoreocl.maxminevlisexpressions._ast.ASTElvisExpressionPrefix;
@@ -169,20 +170,26 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
   private void checkTypeAndUnit(ASTExpression node, Optional<Unit<?>> leftUnit, CDTypeSymbolReference leftType, Optional<Unit<?>> rightUnit, CDTypeSymbolReference rightType) {
     CDTypeSymbolReference amountType = new CDTypeSymbolReference("Number", this.scope);
     if(leftType.existsReferencedSymbol() && rightType.existsReferencedSymbol()) {
-        if(leftType.isSameOrSuperType(amountType) && rightType.isSameOrSuperType(amountType)){
-          Optional<Unit<?>> rightTypeUnit = quantityToUnit(flattenAll(rightType).getName());
-          Optional<Unit<?>> leftTypeUnit = quantityToUnit(flattenAll(leftType).getName());
-          Unit<?> lU = leftUnit.orElse(leftTypeUnit.orElse(Unit.ONE));
-          Unit<?> rU = rightUnit.orElse(rightTypeUnit.orElse(Unit.ONE));
-            if(!lU.isCompatible(rU)){
-              Log.error("0xCET03 Units mismatch on infix expression at " + node.get_SourcePositionStart() +
-                    " left: " + lU.toString() + " right: " + rU.toString(), node.get_SourcePositionStart());
-            }
+      if(leftType.isSameOrSuperType(amountType) && rightType.isSameOrSuperType(amountType)){
+        Optional<Unit<?>> rightTypeUnit = quantityToUnit(flattenAll(rightType).getName());
+        Optional<Unit<?>> leftTypeUnit = quantityToUnit(flattenAll(leftType).getName());
+        Unit<?> lU = leftUnit.orElse(leftTypeUnit.orElse(Unit.ONE));
+        Unit<?> rU = rightUnit.orElse(rightTypeUnit.orElse(Unit.ONE));
+        if(!lU.isCompatible(rU)){
+          // want to support attributes with type `Number` with unknown quantity
+          Optional<Stereotype> leftAny = leftType.getStereotype("Quantity");
+          Optional<Stereotype> rightAny = rightType.getStereotype("Quantity");
+          if (! (leftType.getName().equals("Number") && rightType.getName().equals("Number") &&
+              (leftAny.isPresent() && leftAny.get().getValue().equals("Any") || rightAny.isPresent() && rightAny.get().getValue().equals("Any")))) {
+            Log.error("0xCET03 Units mismatch on infix expression at " + node.get_SourcePositionStart() +
+                " left: " + lU.toString() + " right: " + rU.toString(), node.get_SourcePositionStart());
+          }
         }
-        else if (!leftType.isSameOrSuperType(rightType) && !rightType.isSameOrSuperType(leftType) && !existsCommonSubClass(leftType, rightType)) {
-            Log.error("0xCET01 Types mismatch on infix expression at " + node.get_SourcePositionStart() +
-                    " left: " + leftType.getStringRepresentation() + " right: " + rightType.getStringRepresentation(), node.get_SourcePositionStart());
-        }
+      }
+      else if (!leftType.isSameOrSuperType(rightType) && !rightType.isSameOrSuperType(leftType) && !existsCommonSubClass(leftType, rightType)) {
+        Log.error("0xCET01 Types mismatch on infix expression at " + node.get_SourcePositionStart() +
+            " left: " + leftType.getStringRepresentation() + " right: " + rightType.getStringRepresentation(), node.get_SourcePositionStart());
+      }
     }
   }
 

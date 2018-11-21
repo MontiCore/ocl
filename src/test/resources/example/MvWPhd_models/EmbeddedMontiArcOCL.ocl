@@ -409,3 +409,73 @@ context Connector cn, ConnectorSugar cs inv:
        in
          compN.containsAll(cons) // OCLTrafo generator changes it to addAll
     ) // && ... indexBased case similar to nameBased one: use position
+
+/////////////////////////////////////////////////////////////////////////
+///// Constraints about EmbeddedMontiView,
+///// Design constraints about EmbeddedMontiArc,
+///// Verification constraints between EmbeddedMontiArc and EmbeddedMontiView
+/////////////////////////////////////////////////////////////////////////
+
+// Ch07_OCLPorts2
+inv RedundandVelocityControllerPorts:
+ exists c in Component:
+   let
+     cV = c.ports["currentVelocity"];
+     wV = c.ports["wishedVelocity"];
+     nPortsIn = {p in c.ports | p.direction == PortDirection.IN};
+     nPortsOut = {p in c.ports | p.direction == PortDirection.OUT};
+   in
+     // component RedundantVelocityController {
+     ( c.name == "RedundantVelocityController" ) &&
+
+     // 3x ports in and 3x ports out
+     ( nPortsIn.size >= 3 &&
+     nPortsOut.size >= 3 ) &&
+
+     // ports in (0km/h : 250km/h) currentVelocity
+     ( cV.direction == PortDirection.IN && (cV.type instanceof NumericType) ) &&
+     ( cV.type.min == 0km/h && cV.type.max == 250km/h )
+
+/*
+
+// Ch07_AbstractConnector
+
+context APortInstantiation inv:
+  port.isPresent == portIndices.isPresent &&
+  cmpNav.size    == cmpNavIndices.size
+
+// Ch07_OCLPorts2
+inv RedundandVelocityControllerPorts:
+ exists c in Component:
+   let
+     cV = c.ports["currentVelocity"];
+     wV = c.ports["wishedVelocity"];
+     nPortsIn = {p in c.ports | p.direction == PortDirection.IN};
+     nPortsOut = {p in c.ports | p.direction == PortDirection.OUT};
+   in
+     // component RedundantVelocityController {
+     ( c.name == "RedundantVelocityController" ) &&
+
+     // 3x ports in and 3x ports out
+     ( nPortsIn.size >= 3 &&
+     nPortsOut.size >= 3 ) &&
+
+     // ports in (0km/h : 250km/h) currentVelocity
+     ( cV.direction == PortDirection.IN && (cV.type instanceof NumericType) ) &&
+     ( cV.type.min == 0km/h && cV.type.max == 250km/h ) &&
+
+     // ports in ?                 wishedVelocity
+     wV.direction == PortDirection.IN &&
+
+     // ports in Gear              ?
+     (exists p in c.ports:
+         p != cV && p != wV && p.type && p.direction == PortDirection.IN &&
+         p.type instanceof EnumType && p.type.name == "Gear") &&
+
+     // ports out (-oo m/s^2 : oo m/s^2) $acceleration
+     (exists p in c.ports:
+         p.direction == PortDirection.OUT &&
+         p.type instanceof NumericType &&
+         p.min == -oo m/s^2 && p.max == oo m/s^2)
+
+*/

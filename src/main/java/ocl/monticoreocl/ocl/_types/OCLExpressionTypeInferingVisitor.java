@@ -316,7 +316,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
       typeRef = getContainerGeneric(typeRef);
     }
 
-    Optional<Stereotype> q = typeRef.getStereotype("Quantity");
+    Optional<Stereotype> q = typeRef.getAllStereotype("Quantity");
     if (q.isPresent()) {
       String unit = q.get().getValue();
       return quantityToUnit(unit);
