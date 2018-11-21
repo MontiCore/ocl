@@ -1,5 +1,5 @@
 import EmbeddedMontiArc.*;
-/*
+
 // slide Ch04_PortValue
 
 context NaturalNumber inv:
@@ -416,8 +416,6 @@ context Connector cn, ConnectorSugar cs inv:
 ///// Verification constraints between EmbeddedMontiArc and EmbeddedMontiView
 /////////////////////////////////////////////////////////////////////////
 
-*/
-
 // Ch07_AbstractConnector
 
 context APortInstantiation inv:
@@ -441,7 +439,7 @@ inv RedundandVelocityControllerPorts:
      nPortsOut.size >= 3 ) &&
 
      // ports in (0km/h : 250km/h) currentVelocity
-     ( cV.direction == PortDirection.IN && (cV.type instanceof NumericType) ) &&
+     ( cV.direction == PortDirection.IN && cV.type instanceof NumericType ) &&
      ( cV.type.min == 0km/h && cV.type.max == 250km/h ) &&
 
      // ports in ?                 wishedVelocity
@@ -450,10 +448,10 @@ inv RedundandVelocityControllerPorts:
      // ports in Gear              ?
      (exists p in c.ports:
          p != cV && p != wV && p.direction == PortDirection.IN &&
-         (p.type instanceof EnumType) && p.type.name == "Gear") &&
+         p.type instanceof EnumType && p.type.name == "Gear") &&
 
      // ports out (-oo m/s^2 : oo m/s^2) $acceleration
      (exists p in c.ports:
          p.direction == PortDirection.OUT &&
-         (p.type instanceof NumericType) &&
+         p.type instanceof NumericType &&
          p.type.min == -oo m/s^2 && p.type.max == oo m/s^2)

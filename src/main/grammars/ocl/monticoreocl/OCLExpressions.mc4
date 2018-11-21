@@ -10,7 +10,7 @@ external EDeclaration;
    SimilarExpression implements Expression <130>, InfixExpression =
    	leftExpression:Expression operator:"~~" rightExpression:Expression;
 
-    InstanceOfExpression implements Expression <50> =
+    InstanceOfExpression implements Expression <210> =
         leftExpression:Expression operator:"instanceof" Type;
 
     TypeIfExpr implements Expression <100> =
