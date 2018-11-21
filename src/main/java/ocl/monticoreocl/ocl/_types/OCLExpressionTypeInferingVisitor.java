@@ -252,6 +252,13 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     returnUnit = handleUnit(returnTypeRef);
   }
 
+  public static Optional<Unit<?>> quantityToUnit(String quantity) {
+    String unit = mapQuantityToUnit.get(quantity);
+    if (unit == null) {
+      return Optional.empty();
+    }
+    return Optional.of(Unit.valueOf(unit));
+  }
   protected final static Map<String, String> mapQuantityToUnit;
 
   static {
@@ -297,7 +304,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     Optional<Stereotype> q = typeRef.getStereotype("Quantity");
     if (q.isPresent()) {
       String unit = q.get().getValue();
-      return Optional.of(Unit.valueOf(mapQuantityToUnit.get(unit)));
+      return quantityToUnit(unit);
     }
     return Optional.empty();
   }

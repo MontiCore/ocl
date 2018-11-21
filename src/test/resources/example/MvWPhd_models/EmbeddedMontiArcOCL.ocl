@@ -302,7 +302,7 @@ context ComponentInst inv WCET_InfiteCores:
     aggChains = { sum List{ max s.wcet ?: 0s |
                         s in chain.elements.component } |
                   chain in subChains };
-    aggregation = max aggChains ?: 0; // 0s -> bug with unit inference
+    aggregation = max aggChains ?: 0s;
     compareTo = min component.wcet ?: oo s;
   in
     aggregation <= compareTo
@@ -331,10 +331,10 @@ let
                 partition in singleCombs } |
               singleCombs in combSubs };
 
-  maxTimeInComb = { max { sc | sc in singleComb }.flatten ?: 0 // 0s -> flatten does not support unit inferrence yet
+  maxTimeInComb = { max { sc | sc in singleComb }.flatten ?: 0s
     | singleComb in partSums };
   // aggregation takes best combination
-  aggregation = min maxTimeInComb ?: 0; // 0s -> unit is lost due to flatten
+  aggregation = min maxTimeInComb ?: 0s;
   compareTo = min component.wcet ?: oo s;
 in
   aggregation <= compareTo

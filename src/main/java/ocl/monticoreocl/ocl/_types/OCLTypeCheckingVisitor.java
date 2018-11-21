@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static ocl.monticoreocl.ocl._types.OCLExpressionTypeInferingVisitor.quantityToUnit;
+import static ocl.monticoreocl.ocl._types.TypeInferringHelper.flattenAll;
 import static ocl.monticoreocl.ocl._types.TypeInferringHelper.getContainerGeneric;
 import static ocl.monticoreocl.ocl._types.TypeInferringHelper.getMostNestedGeneric;
 
@@ -161,16 +163,20 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
         leftType = TypeInferringHelper.removeAllOptionals(leftType);
         rightType = TypeInferringHelper.removeAllOptionals(rightType);
 
-      checkTypeAndUnit(node, leftVisitor.getReturnUnit().orElse(Unit.ONE), leftType, rightVisitor.getReturnUnit().orElse(Unit.ONE), rightType);
+      checkTypeAndUnit(node, leftVisitor.getReturnUnit(), leftType, rightVisitor.getReturnUnit(), rightType);
     }
 
-  private void checkTypeAndUnit(ASTExpression node, Unit<?> leftUnit, CDTypeSymbolReference leftType, Unit<?> rightUnit, CDTypeSymbolReference rightType) {
+  private void checkTypeAndUnit(ASTExpression node, Optional<Unit<?>> leftUnit, CDTypeSymbolReference leftType, Optional<Unit<?>> rightUnit, CDTypeSymbolReference rightType) {
     CDTypeSymbolReference amountType = new CDTypeSymbolReference("Number", this.scope);
     if(leftType.existsReferencedSymbol() && rightType.existsReferencedSymbol()) {
         if(leftType.isSameOrSuperType(amountType) && rightType.isSameOrSuperType(amountType)){
-            if(!leftUnit.isCompatible(rightUnit)){
+          Optional<Unit<?>> rightTypeUnit = quantityToUnit(flattenAll(rightType).getName());
+          Optional<Unit<?>> leftTypeUnit = quantityToUnit(flattenAll(leftType).getName());
+          Unit<?> lU = leftUnit.orElse(leftTypeUnit.orElse(Unit.ONE));
+          Unit<?> rU = rightUnit.orElse(rightTypeUnit.orElse(Unit.ONE));
+            if(!lU.isCompatible(rU)){
               Log.error("0xCET03 Units mismatch on infix expression at " + node.get_SourcePositionStart() +
-                    " left: " + leftUnit.toString() + " right: " + rightUnit.toString(), node.get_SourcePositionStart());
+                    " left: " + lU.toString() + " right: " + rU.toString(), node.get_SourcePositionStart());
             }
         }
         else if (!leftType.isSameOrSuperType(rightType) && !rightType.isSameOrSuperType(leftType) && !existsCommonSubClass(leftType, rightType)) {
@@ -319,6 +325,6 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
     OCLExpressionTypeInferingVisitor elseVisitor = new OCLExpressionTypeInferingVisitor(scope);
     CDTypeSymbolReference elseType = elseVisitor.getTypeFromExpression(node.getOrElse());
 
-    checkTypeAndUnit(node, getVisitor.getReturnUnit().orElse(Unit.ONE), getType, elseVisitor.getReturnUnit().orElse(Unit.ONE), elseType);
+    checkTypeAndUnit(node, getVisitor.getReturnUnit(), getType, elseVisitor.getReturnUnit(), elseType);
   }
 }
