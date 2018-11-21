@@ -28,7 +28,7 @@ import de.monticore.umlcd4a.symboltable.CDTypeSymbol;
 import de.monticore.umlcd4a.symboltable.Stereotype;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
 import de.se_rwth.commons.logging.Log;
-import ocl.monticoreocl.maxminevlisexpressions._ast.ASTElvisExpressionPrefix;
+import ocl.monticoreocl.maxminevlisexpressions._ast.*;
 import ocl.monticoreocl.ocl._ast.ASTOCLInvariant;
 import ocl.monticoreocl.ocl._symboltable.OCLVariableDeclarationSymbol;
 import ocl.monticoreocl.ocl._visitor.OCLVisitor;
@@ -307,8 +307,42 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
 
   @Override
   public void visit(ASTElvisExpressionPrefix node) {
+    checkElivsOperators(node);
+  }
+
+  @Override
+  public void visit(ASTElvisEqualsExpression node) {
+    checkElivsOperators(node);
+  }
+
+  @Override
+  public void visit(ASTElvisNotEqualsExpression node) {
+    checkElivsOperators(node);
+  }
+
+  @Override
+  public void visit(ASTElvisLessThanExpression node) {
+    checkElivsOperators(node);
+  }
+
+  @Override
+  public void visit(ASTElvisLessEqualExpression node) {
+    checkElivsOperators(node);
+  }
+
+  @Override
+  public void visit(ASTElvisGreaterThanExpression node) {
+    checkElivsOperators(node);
+  }
+
+  @Override
+  public void visit(ASTElvisGreaterEqualExpression node) {
+    checkElivsOperators(node);
+  }
+
+  private void checkElivsOperators(ASTInfixExpression node) {
     OCLExpressionTypeInferingVisitor getVisitor = new OCLExpressionTypeInferingVisitor(scope);
-    CDTypeSymbolReference getType = getVisitor.getTypeFromExpression(node.getGet());
+    CDTypeSymbolReference getType = getVisitor.getTypeFromExpression(node.getLeftExpression());
     if (!getType.getName().equals("Optional")) {
       Log.error(String.format("0xOCLK1 The left side of the elvis operator must be `Optional<X>`. But your type is `%s`.",
           getType.getStringRepresentation()),
@@ -330,7 +364,7 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
     getType = getContainerGeneric(getType);
 
     OCLExpressionTypeInferingVisitor elseVisitor = new OCLExpressionTypeInferingVisitor(scope);
-    CDTypeSymbolReference elseType = elseVisitor.getTypeFromExpression(node.getOrElse());
+    CDTypeSymbolReference elseType = elseVisitor.getTypeFromExpression(node.getRightExpression());
 
     checkTypeAndUnit(node, getVisitor.getReturnUnit(), getType, elseVisitor.getReturnUnit(), elseType);
   }

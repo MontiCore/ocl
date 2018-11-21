@@ -123,6 +123,11 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
    */
 
   @Override // ?==
+  public void traverse(ASTElvisNotEqualsExpression node) {
+    returnTypeRef = createTypeRef("Boolean", node);
+  }
+
+  @Override // ?==
   public void traverse(ASTElvisEqualsExpression node) {
     returnTypeRef = createTypeRef("Boolean", node);
   }
@@ -585,7 +590,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
   @Override
   public void traverse(ASTElvisExpressionPrefix node) {
-    node.getOrElse().accept(realThis);
+    node.getRightExpression().accept(realThis);
   }
 
   /**
