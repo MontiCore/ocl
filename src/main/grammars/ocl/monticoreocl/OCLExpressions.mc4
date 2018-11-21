@@ -2,9 +2,13 @@
 
 package ocl.monticoreocl;
 
-component grammar OCLExpressions extends de.monticore.common.Common, de.monticore.ExpressionsBasis {
+component grammar OCLExpressions extends de.monticore.common.Common, de.monticore.CommonExpressions {
 
 external EDeclaration;
+
+   // x ~~ y, is the same as x == y, except that the types of x and y must not be compatible
+   SimilarExpression implements Expression <130>, InfixExpression =
+   	leftExpression:Expression operator:"~~" rightExpression:Expression;
 
     InstanceOfExpression implements Expression <50> =
         leftExpression:Expression operator:"instanceof" Type;

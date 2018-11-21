@@ -74,7 +74,7 @@ public class LogConfig extends Log {
     protected void doError(String msg, SourcePosition pos) {
         Finding error = Finding.error(msg, pos);
         addFinding(error);
-        doErrPrint("[ERROR] " + error.getMsg());
+        doErrPrint("[ERROR: " + pos.toString() + "] " + error.getMsg());
         terminateIfErrors();
     }
 
@@ -82,7 +82,7 @@ public class LogConfig extends Log {
     protected void doError(String msg, SourcePosition start, SourcePosition end) {
         Finding error = Finding.error(msg, start, end);
         addFinding(error);
-        doErrPrint("[ERROR] " + error.getMsg());
+        doErrPrint("[ERROR: " + start.toString() + " - " + end.toString() + "]" +  error.getMsg());
         terminateIfErrors();
     }
 

@@ -387,6 +387,54 @@ classdiagram EmbeddedMontiArc {
   class Threads extends NaturalNumber;
   association ComponentInst -> (threads) Threads [*];
 
+//////////////////////////////////////////////////////////////////////////
+// Syntactic Sugar Diagram (added here in same CD,
+// so that OCL does not need different packages)
+// `Component'` in slide matches to `ComponentSugar` same is for the rest
+/////////////////////////////////////////////////////////////////////////
+
+  // Ch06_ConnectorSugarCD
+
+  // this association is only needed to express the transformations
+  association [1] Component (componentScope) <-> (definedConnectors) Connector [*];
+
+  class ComponentSugar;
+  association ComponentSugar -> (ports) PortSugar [*] <<ordered>>;
+  association [1] ComponentSugar (componentScope) <-> (definedConnectors) ConnectorSugar [*];
+
+  class PortSugar {
+    String name;
+  }
+  association PortSugar -> (direction) PortDirection [0..1];
+  association PortSugar -> (type) PortType [1];
+  association PortSugar -> (dimension) NaturalNumber [0..1];
+
+  class PortInstantiationSugar {
+    boolean indexBased;
+    boolean nameBased;
+  }
+  association PortInstantiationSugar -> (port) PortSugar [1];
+  association PortInstantiationSugar -> (sub) ComponentInstantiationSugar [0..1];
+  association PortInstantiationSugar -> (portIndices) RangeSugar [0..1];
+  association PortInstantiationSugar -> (subIndices) RangeSugar [0..1];
+  // one PortInstantiationSugar can have zero to two RangeSugars (cf. portIndices, subIndices),
+  // but one RangeSugar belongs to one PortInstantiationSugar
+  association RangeSugar -> (portInstantiation) PortInstantiationSugar [1];
+
+  class ComponentInstantiationSugar;
+  association ComponentInstantiationSugar -> (dimension) NaturalNumber [0..1];
+
+  class ConnectorSugar;
+  association ConnectorSugar -> (sourcePort) PortInstantiationSugar [1];
+  association ConnectorSugar -> (targetPort) PortInstantiationSugar [1];
+
+  class RangeSugar {
+    boolean all;
+  }
+  association RangeSugar -> (start) NaturalNumber [0..1];
+  association RangeSugar -> (end) NaturalNumber [0..1];
+  association RangeSugar -> (step) NaturalNumber [0..1];
+
   ////////////////////// support for standard types and operations in OCL ///////////////////////////////////
   class Class;
 

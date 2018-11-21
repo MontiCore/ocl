@@ -23,7 +23,7 @@ component grammar MaxMinEvlisExpressions extends de.monticore.ExpressionsBasis {
         set:Expression;
 
     // `opt ?: 0W` is equals to `opt.isPresent ? opt.get : 0W`
-    ElvisExpressionPrefix implements Expression <65> = // same precedence as cond ? ifTrue : ifFalse expression
+    ElvisExpressionPrefix implements Expression <140> = // priority between `==` and `<`
         get:Expression
         TElvis
         orElse:Expression;

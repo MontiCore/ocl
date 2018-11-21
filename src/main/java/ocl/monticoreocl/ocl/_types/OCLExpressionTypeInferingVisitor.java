@@ -141,6 +141,11 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
   }
 
   @Override
+  public void traverse(ASTSimilarExpression node) {
+    returnTypeRef = createTypeRef("Boolean", node);
+  }
+
+  @Override
   public void traverse(ASTInstanceOfExpression node) {
     returnTypeRef = createTypeRef("Boolean", node);
   }

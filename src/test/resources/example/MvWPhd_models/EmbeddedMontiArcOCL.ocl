@@ -348,3 +348,19 @@ context Component inv Traceability2:
     compareTo   = traceable;
   in         // comparison
     compareTo implies aggregation
+
+/////////////////////////////////////////////////////////////////////////
+///// Constraints about relation between EmbeddedMontiArc sugar and EmbeddedMontiArc normalized
+/////////////////////////////////////////////////////////////////////////
+
+// Ch06_OCLTrafo1
+
+context Range rn, RangeSugar rs inv:
+ let pi = rs.portInstantiation;
+   dimension = pi.portIndices == rs ? (pi.port.dimension ?: 1) :
+                                      (pi.sub.dimension ?: 1) ;
+ in
+   rn ~~ rs <=>
+   (rs.all implies rn.start == 1 && rn.step == 1 && rn.end == dimension) &&
+   (!rs.all implies rn.start == rs.start && rn.end == rs.end   &&
+                                                   rn.step == rs.step ?: 1)
