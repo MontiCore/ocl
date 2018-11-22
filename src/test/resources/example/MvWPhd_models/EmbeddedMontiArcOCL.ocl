@@ -92,7 +92,7 @@ context Component inv:
 
 context CnCModel inv:
   let
-    inPorts = {p | p in components.ports, p.direction == PortDirection.IN};
+    inPorts = {p | p in componentTypes.ports, p.direction == PortDirection.IN};
   in
     forall p in inPorts:
       forall pi in PortInstantiation:
@@ -516,3 +516,70 @@ context AComponentType inv Parameters:
         (ap.name == p.name && ap.kind == p.kind && (ap.type ?~~ p.type) &&
         (forall t in ap.bindings.value.type: p.type.isPresent implies t.isCompatibleTo(p.type) ) &&
         ap.dimension.min ?<= p.dimension && ap.dimension.max ?>= p.dimension))
+
+// Ch07_AbstractConnectorsCDExample2
+
+context ConnectorChainInst inv:
+  elements.containsAll(connectors) &&
+  connectors[0] == start && connectors[connectors.size - 1] == end &&
+  forall i in {0 .. connectors.size - 1}:
+    connectors[i].targetPort == connectors[i+1].sourcePort
+
+context ConnectorChainInst inv:
+  startPort == start.sourcePort && endPort == end.targetPort
+
+context ComponentInstantiation inv:
+  subs == typeif type instanceof Component then type.subs else {}
+
+context Component inv:
+  allSubs == subs.subs**
+
+// Ch07_AbstractConnectorsOCLExample
+
+inv SignalConnections:
+  (exists car in {c in ComponentInst | c.component.name == "Car"}:
+    (forall PortInst car_signal in {p in car.ports |
+                                   p.port.name == "signal" && p.direction == PortDirection.IN}:
+      (exists ComponentType tParkAss:
+        (exists Set<ComponentInst> parkAss:
+          {s in car.subs**| s.component == tParkAss}.containsAll(parkAss) &&
+          parkAss.size == 2 &&
+          (exists ComponentType tFilter:
+            (forall ComponentInst filter in {s in parkAss.subs** | s.component == tFilter}:
+              (exists PortInst filter_signal in {p in filter.ports |
+                                   p.port.name == "signal" && p.direction == PortDirection.IN}:
+                (exists ConnectorChainInst cci in car_signal.startPorts:
+                    cci.endPort == filter_signal
+  ) ) ) ) ) ) ) )
+
+// Ch07_AbstractEffectorsCD2
+
+context ConnectorChainInst inv:
+  elements.containsAll(connectors) &&
+  connectors[0] == start && connectors[connectors.size - 1] == end &&
+  forall i in {0 .. connectors.size - 1}:
+    connectors[i].targetPort == connectors[i+1].sourcePort
+
+context ConnectorChainInst inv:
+  startPort == start.sourcePort && endPort == end.targetPort
+
+context ComponentInstantiation inv:
+  subs == typeif type instanceof Component then type.subs else {}
+
+context CnCModel cncm, CnCView cncv inv:
+  cncm.satisfies(cncv) <=>
+    forall act in cncv.aComponentTypes:
+      // constraint PortsComplete
+     (act.portsComplete implies exists c in cncm.componentTypes:
+        act.name ?== c.name && c.ports.name == act.ports.name)
+      && // constraint Parameters
+      (exists c in cncm.componentTypes:
+         act.name ?== c.name &&
+         (forall ap in {ap in act.parameters | !ap.underspec}:
+           exists p in c.parameters:
+             (ap.name == p.name && ap.kind == p.kind && ap.type ?~~ p.type) &&
+             (forall t in ap.bindings.value.type: p.type.isPresent implies t.isCompatibleTo(p.type) ) &&
+              ap.dimension.min ?<= p.dimension &&
+              ap.dimension.max ?>= p.dimension))
+       // &&  ... (other OCL constraints)
+
