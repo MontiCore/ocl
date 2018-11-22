@@ -1,5 +1,5 @@
 import EmbeddedMontiArc.*;
-/*
+
 // slide Ch04_PortValue
 
 context NaturalNumber inv:
@@ -288,7 +288,7 @@ context ComponentInst inv WCET_SingleCore:
     compareTo = min component.wcet ?: oo s;
   in         // comparison
     aggregation <= compareTo
-*/
+
 context ComponentInst inv WCET_InfiteCores:
   let
     startSubs = {s in subs | this in s.sender }; // -> startSubs is Collection<ComponentInst>
@@ -339,7 +339,7 @@ let
 
   // partSums is { { `Number<Duration>` } } and this is `Collection<Collection<Number<Duration>>>`
   partSums =  { { sum List{ max s.wcet ?: 0s |
-                            el in partition,  // el is ChainInst
+                            (el in partition),  // el is ChainInst
                             s in el.elements.component } |
                 partition in singleCombs } |      // partition is Collection<ChainInst>
               singleCombs in combSubs };          // singleCombs is Collection<Collection<ChainInst>>
@@ -354,7 +354,6 @@ let
 in
   aggregation <= compareTo
 
-/*
 
 // Ch06_Traceability2
 context Component inv Traceability2:
@@ -487,8 +486,6 @@ context AComponentType inv NbOfPorts:
                       sum {p.dimension | p in c.ports, p.direction == PortDirection.IN} &&
     sum {ap.dimension.min ?: 1 | ap in ports, ap.direction == PortDirection.OUT} <=
                       sum {p.dimension | p in c.ports, p.direction == PortDirection.OUT}
-*/
-
 /*
 context AComponentType inv PortNames:
  let

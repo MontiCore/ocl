@@ -27,19 +27,20 @@ let
                partition in singleCombs } |        // partition is Collection<ChainInst>
              singleCombs in combChains };          // singleCombs is Collection<Collection<ChainInst>>
 
-  // partSums is { { { `Number<Duration>` } } } and this is `Collection<Collection<Collection<Number<Duration>>>>`
-  partSums =  { { { sum List{ max s.wcet ?: 0s |
-                            s in el.elements.component}|
-                  el in partition } |             // // el is ChainInst
+  // partSums is { { `Number<Duration>` } } and this is `Collection<Collection<Number<Duration>>>`
+  partSums =  { { sum List{ max s.wcet ?: 0s |
+                            (el in partition),  // el is ChainInst
+                            s in el.elements.component } |
                 partition in singleCombs } |      // partition is Collection<ChainInst>
               singleCombs in combSubs };          // singleCombs is Collection<Collection<ChainInst>>
 
   // maxTimeInComb is { `Number<Duration>` } and this is `Collection<Number<Duration>>`
-  maxTimeInComb = { max { sc | sc in singleComb } ?: 0s // sc is Collection<Number<Duration>> -> `max ..` is Optional<Number<Duration>>
-    | singleComb in partSums }; // singleComb is Collection<Collection<Number<Duration>>>
+  maxTimeInComb = { max singleComb ?: 0s // `max ..` is Optional<Number<Duration>>
+    | singleComb in partSums }; // singleComb is Collection<Number<Duration>>
 
   // aggregation takes best combination
   aggregation = min maxTimeInComb ?: 0s; // aggregation is Number<Duration>
+  compareTo = min component.wcet ?: oo s;
 in
-  true
+  aggregation <= compareTo
 }
