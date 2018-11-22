@@ -1,5 +1,5 @@
 import EmbeddedMontiArc.*;
-
+/*
 // slide Ch04_PortValue
 
 context NaturalNumber inv:
@@ -288,20 +288,24 @@ context ComponentInst inv WCET_SingleCore:
     compareTo = min component.wcet ?: oo s;
   in         // comparison
     aggregation <= compareTo
-
+*/
 context ComponentInst inv WCET_InfiteCores:
   let
-    startSubs = {s in subs | this in s.sender };
-    outPorts = {p in ports | p.direction == PortDirection.OUT};
+    startSubs = {s in subs | this in s.sender }; // -> startSubs is Collection<ComponentInst>
+    outPorts = {p in ports | p.direction == PortDirection.OUT}; // -> outPorts is Collection<PortInst>
     // selection: chains from subcomponents to
     // an output port
-    selection = { chain in startSubs.start |
-                  chain.end in outPorts };
-    subChains = { chain.retainAll(subs) |
-                  chain in selection };
-    aggChains = { sum List{ max s.wcet ?: 0s |
-                        s in chain.elements.component } |
-                  chain in subChains };
+    selection = { chain in startSubs.start | // startSubs.start is `Collection<Collection<ChainInst>>`
+                                                     // chain is `ChainInst` (due to flatten)
+                  chain.end in outPorts };           // chain.end is `ElementInstance`
+                                                     // selection is `Collection<ChainInst>`
+    subChains = { chain in selection |               // chain is `ChainInst`
+                  chain.elements.retainAll(subs)};   // chain.elements is `Collection<ElementInstance>`
+                                                     // subChains is `Collection<ChainInst>`
+    aggChains = { sum List{ max cmp.wcet ?: 0s |
+                        cmp in chain.elements.component } | // `chain.elements.component` is Collection<Component>
+                                                            // cmp is Component
+                  chain in subChains };                     // chain is ChainInst
     aggregation = max aggChains ?: 0s;
     compareTo = min component.wcet ?: oo s;
   in
@@ -309,35 +313,48 @@ context ComponentInst inv WCET_InfiteCores:
 
 context ComponentInst inv WCET_MultiCore:
 let
-  startSubs = {s in subs | this in s.sender };
-  outPorts = {p in ports | p.direction == PortDirection.OUT};
+  startSubs = {s in subs | this in s.sender }; // -> startSubs is Collection<ComponentInst>
+  outPorts = {p in ports | p.direction == PortDirection.OUT}; // -> outPorts is Collection<PortInst>
   // selection: chains from subcomponents to
   // an output port
-  selection = { chain in startSubs.start | chain.end in outPorts };
-  subChains = { chain.retainAll(subs) | chain in selection };
-  threads = min cis.main.threads ?: 1;
+  selection = { chain in startSubs.start         | // startSubs.start is `Collection<Collection<ChainInst>>` but auto-flattening due to navigation to Collection<ChainInst>
+                                                   // chain is `ChainInst` (due to flatten)
+                chain.end in outPorts };           // chain.end is `ElementInstance`
+                                                   // selection is `Collection<ChainInst>`
+  subChains = { chain in selection |               // chain is `ChainInst`
+                chain.elements.retainAll(subs)};   // chain.elements is `Collection<ElementInstance>`
+                                                   // subChains is `Collection<ChainInst>`
+  threads = min cis.main.threads ?: 1;             // `cis.main` is ComponentInst
+                                                   // threads is `Integer`
 
   // calculates all partition combinations
 
-  combChains=subChains.listPartitions(threads);
+  combChains=subChains.listPartitions(threads);    // combChains is `Collection<Collection<Collection<ChainInst>>>`
+                                                   // subChains is `Collection<ChainInst>`
 
-  combSubs = { { {chain | chain in partition}.flatten.asSet |
-               partition in singleComb } |
-             singleComb in combChains };
+   // combSubs is { { { `ChainInst` } } } this is `Collection<Collection<Collection<ChainInst>>>`
+  combSubs = { { {chain | chain in partition}.asSet | // chain is ChainInst
+               partition in singleCombs } |        // partition is Collection<ChainInst>
+             singleCombs in combChains };          // singleCombs is Collection<Collection<ChainInst>>
 
-  partSums =  { { { sum List{ max s.wcet ?: 0s |
-                            s in el.elements.component}|
-                  el in partition } |
-                partition in singleCombs } |
-              singleCombs in combSubs };
+  // partSums is { { `Number<Duration>` } } and this is `Collection<Collection<Number<Duration>>>`
+  partSums =  { { sum List{ max s.wcet ?: 0s |
+                            el in partition,  // el is ChainInst
+                            s in el.elements.component } |
+                partition in singleCombs } |      // partition is Collection<ChainInst>
+              singleCombs in combSubs };          // singleCombs is Collection<Collection<ChainInst>>
 
-  maxTimeInComb = { max { sc | sc in singleComb }.flatten ?: 0s
-    | singleComb in partSums };
+  // maxTimeInComb is { `Number<Duration>` } and this is `Collection<Number<Duration>>`
+  maxTimeInComb = { max singleComb ?: 0s // `max ..` is Optional<Number<Duration>>
+    | singleComb in partSums }; // singleComb is Collection<Number<Duration>>
+
   // aggregation takes best combination
-  aggregation = min maxTimeInComb ?: 0s;
+  aggregation = min maxTimeInComb ?: 0s; // aggregation is Number<Duration>
   compareTo = min component.wcet ?: oo s;
 in
   aggregation <= compareTo
+
+/*
 
 // Ch06_Traceability2
 context Component inv Traceability2:
@@ -463,3 +480,25 @@ context AComponentType inv PortsComplete:
      exists ComponentType c:
        name ?== c.name &&
        this.ports.name == c.ports.name
+
+context AComponentType inv NbOfPorts:
+  exists ComponentType c: name ?== c.name &&
+    sum {ap.dimension.min ?: 1 | ap in ports, ap.direction == PortDirection.IN} <=
+                      sum {p.dimension | p in c.ports, p.direction == PortDirection.IN} &&
+    sum {ap.dimension.min ?: 1 | ap in ports, ap.direction == PortDirection.OUT} <=
+                      sum {p.dimension | p in c.ports, p.direction == PortDirection.OUT}
+*/
+
+/*
+context AComponentType inv PortNames:
+ let
+   apNames = {ap2 in ports | ap2.name.isPresent};
+ in
+  exists ComponentType c:
+    (name ?== c.name &&
+    forall ap in apNames: // ap: abstract port
+      exists p in c.ports:
+         (p.name == ap.name && p.direction == ap.direction
+         && ap.type ?== p.type && ap.dimension.min ?<= p.dimension &&
+          ap.dimension.max ?>= p.dimension ))
+*/

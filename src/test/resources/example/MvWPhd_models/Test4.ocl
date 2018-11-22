@@ -1,0 +1,45 @@
+import EmbeddedMontiArc.*;
+
+ocl Test4 { // checks only derived type of apNames
+context ComponentInst inv WCET_MultiCore:
+let
+  startSubs = {s in subs | this in s.sender }; // -> startSubs is Collection<ComponentInst>
+  outPorts = {p in ports | p.direction == PortDirection.OUT}; // -> outPorts is Collection<PortInst>
+  // selection: chains from subcomponents to
+  // an output port
+  selection = { chain in startSubs.start         | // startSubs.start is `Collection<Collection<ChainInst>>` but auto-flattening due to navigation to Collection<ChainInst>
+                                                   // chain is `ChainInst` (due to flatten)
+                chain.end in outPorts };           // chain.end is `ElementInstance`
+                                                   // selection is `Collection<ChainInst>`
+  subChains = { chain in selection |               // chain is `ChainInst`
+                chain.elements.retainAll(subs)};   // chain.elements is `Collection<ElementInstance>`
+                                                   // subChains is `Collection<ChainInst>`
+  threads = min cis.main.threads ?: 1;             // `cis.main` is ComponentInst
+                                                   // threads is `Integer`
+
+  // calculates all partition combinations
+
+  combChains=subChains.listPartitions(threads);    // combChains is `Collection<Collection<Collection<ChainInst>>>`
+                                                   // subChains is `Collection<ChainInst>`
+
+   // combSubs is { { { `ChainInst` } } } this is `Collection<Collection<Collection<ChainInst>>>`
+  combSubs = { { {chain | chain in partition}.asSet | // chain is ChainInst
+               partition in singleCombs } |        // partition is Collection<ChainInst>
+             singleCombs in combChains };          // singleCombs is Collection<Collection<ChainInst>>
+
+  // partSums is { { { `Number<Duration>` } } } and this is `Collection<Collection<Collection<Number<Duration>>>>`
+  partSums =  { { { sum List{ max s.wcet ?: 0s |
+                            s in el.elements.component}|
+                  el in partition } |             // // el is ChainInst
+                partition in singleCombs } |      // partition is Collection<ChainInst>
+              singleCombs in combSubs };          // singleCombs is Collection<Collection<ChainInst>>
+
+  // maxTimeInComb is { `Number<Duration>` } and this is `Collection<Number<Duration>>`
+  maxTimeInComb = { max { sc | sc in singleComb } ?: 0s // sc is Collection<Number<Duration>> -> `max ..` is Optional<Number<Duration>>
+    | singleComb in partSums }; // singleComb is Collection<Collection<Number<Duration>>>
+
+  // aggregation takes best combination
+  aggregation = min maxTimeInComb ?: 0s; // aggregation is Number<Duration>
+in
+  true
+}

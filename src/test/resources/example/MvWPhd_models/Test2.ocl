@@ -1,0 +1,9 @@
+import EmbeddedMontiArc.*;
+
+ocl Test2 { // checks only derived type of apNames
+context AComponentType inv PortNames:
+ let
+   apNames = {ap2 in ports | ap2.name.isPresent};
+ in
+   1 == 1
+}

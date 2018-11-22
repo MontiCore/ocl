@@ -498,7 +498,7 @@ classdiagram EmbeddedMontiArc {
   association ANumericType -> (rows) ANaturalNumber [0..1];
   association ANumericType -> (cols) ANaturalNumber [0..1];
   association ANumericType -> (depth) ANaturalNumber [0..1];
-  class ANaturalNumber implements AParameter;
+  class ANaturalNumber extends Number implements AParameter;
 
   // Ch07_AbstractConnector
   class ARange extends Range {

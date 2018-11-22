@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import static ocl.monticoreocl.ocl._types.TypeInferringHelper.flattenOnce;
+import static ocl.monticoreocl.ocl._types.TypeInferringHelper.getContainerGeneric;
 
 public class FindInExpressionHelper implements OCLVisitor {
 
@@ -49,7 +50,7 @@ public class FindInExpressionHelper implements OCLVisitor {
       List<String> varNames = astInExpr.getVarNameList();
       OCLExpressionTypeInferingVisitor typeVisitor = new OCLExpressionTypeInferingVisitor(scope, false);
       CDTypeSymbolReference type = typeVisitor.getTypeFromExpression(astInExpr.getExpression());
-      CDTypeSymbolReference type2 = flattenOnce(type);
+      CDTypeSymbolReference type2 = type.getActualTypeArguments().isEmpty() ? type : getContainerGeneric(type);
       varNames.stream().forEach(s -> inTypes.put(s, type2));
     }
   }

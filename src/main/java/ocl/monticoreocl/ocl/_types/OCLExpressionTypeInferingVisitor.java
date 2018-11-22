@@ -429,7 +429,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
           Log.error("0xOCLI5 Could not resolve inner type from InExpression, " + node.getVarNameList() + " in " + containerType + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
       }
       else {
-        returnTypeRef = containerType;
+        returnTypeRef = getContainerGeneric(containerType);
       }
     }
   }
@@ -775,8 +775,15 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     }
     else if (methodSymbol.isPresent()) { // Try name as method
       boolean isCollection = typeSymbolReference.hasSuperType("Collection");
-      if (isCollection && (name.equals("add") || name.equals("addAll") || name.equals("retainAll") || name.equals("listPartitions"))) {
+      if (isCollection && (name.equals("add") || name.equals("addAll") || name.equals("retainAll"))) {
         return Optional.of(typeSymbolReference); // CD4A does not support generics
+      }
+      if (isCollection && name.equals("listPartitions")) {
+        CDTypeSymbolReference newType = createTypeRef("Collection", node);
+        TypeInferringHelper.addActualArgument(newType, typeSymbolReference);
+        CDTypeSymbolReference newType2 = createTypeRef("Collection", node);
+        TypeInferringHelper.addActualArgument(newType2, newType);
+        return Optional.of(newType2);
       }
       if (isCollection && name.equals("asSet")) { // CD4A does not support generics
         CDTypeSymbolReference newType = createTypeRef("Set", node);
