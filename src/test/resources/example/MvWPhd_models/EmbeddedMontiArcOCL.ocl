@@ -486,7 +486,7 @@ context AComponentType inv NbOfPorts:
                       sum {p.dimension | p in c.ports, p.direction == PortDirection.IN} &&
     sum {ap.dimension.min ?: 1 | ap in ports, ap.direction == PortDirection.OUT} <=
                       sum {p.dimension | p in c.ports, p.direction == PortDirection.OUT}
-/*
+
 context AComponentType inv PortNames:
  let
    apNames = {ap2 in ports | ap2.name.isPresent};
@@ -496,6 +496,5 @@ context AComponentType inv PortNames:
     forall ap in apNames: // ap: abstract port
       exists p in c.ports:
          (p.name == ap.name && p.direction == ap.direction
-         && ap.type ?== p.type && ap.dimension.min ?<= p.dimension &&
+         && ap.type ?~~ p.type && ap.dimension.min ?<= p.dimension &&
           ap.dimension.max ?>= p.dimension ))
-*/

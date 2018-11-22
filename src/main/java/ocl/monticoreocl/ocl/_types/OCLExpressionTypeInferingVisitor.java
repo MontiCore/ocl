@@ -122,7 +122,17 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
    * ********** traverse methods **********
    */
 
-  @Override // ?==
+  @Override // ?!~
+  public void traverse(ASTElvisNotSimilarExpression node) {
+    returnTypeRef = createTypeRef("Boolean", node);
+  }
+
+  @Override // ?~~
+  public void traverse(ASTElvisSimilarExpression node) {
+    returnTypeRef = createTypeRef("Boolean", node);
+  }
+
+  @Override // ?!=
   public void traverse(ASTElvisNotEqualsExpression node) {
     returnTypeRef = createTypeRef("Boolean", node);
   }
@@ -424,7 +434,7 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
       OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(scope);
       CDTypeSymbolReference containerType = exprVisitor.getTypeFromExpression(node.getExpression());
 
-      if (containerType.getActualTypeArguments().size() == 0) {
+      if (containerType.getActualTypeArguments().isEmpty()) {
         if (logError)
           Log.error("0xOCLI5 Could not resolve inner type from InExpression, " + node.getVarNameList() + " in " + containerType + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
       }

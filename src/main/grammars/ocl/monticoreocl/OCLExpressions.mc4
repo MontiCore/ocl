@@ -10,6 +10,10 @@ external EDeclaration;
    SimilarExpression implements Expression <130>, InfixExpression =
    	leftExpression:Expression operator:"~~" rightExpression:Expression;
 
+    // x !~ y, is the same as x != y, except that the types of x and y must not be compatible
+    NotSimilarExpression implements Expression <130>, InfixExpression =
+      leftExpression:Expression operator:"!~" rightExpression:Expression;
+
     InstanceOfExpression implements Expression <210> =
         leftExpression:Expression operator:"instanceof" Type;
 

@@ -307,40 +307,50 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
 
   @Override
   public void visit(ASTElvisExpressionPrefix node) {
-    checkElivsOperators(node);
+    checkElivsOperators(node, true);
   }
 
   @Override
   public void visit(ASTElvisEqualsExpression node) {
-    checkElivsOperators(node);
+    checkElivsOperators(node, true);
   }
 
   @Override
   public void visit(ASTElvisNotEqualsExpression node) {
-    checkElivsOperators(node);
+    checkElivsOperators(node, true);
   }
 
   @Override
   public void visit(ASTElvisLessThanExpression node) {
-    checkElivsOperators(node);
+    checkElivsOperators(node, true);
   }
 
   @Override
   public void visit(ASTElvisLessEqualExpression node) {
-    checkElivsOperators(node);
+    checkElivsOperators(node, true);
   }
 
   @Override
   public void visit(ASTElvisGreaterThanExpression node) {
-    checkElivsOperators(node);
+    checkElivsOperators(node, true);
   }
 
   @Override
   public void visit(ASTElvisGreaterEqualExpression node) {
-    checkElivsOperators(node);
+    checkElivsOperators(node, true);
   }
 
-  private void checkElivsOperators(ASTInfixExpression node) {
+  @Override
+  public void visit(ASTElvisNotSimilarExpression node) {
+    checkElivsOperators(node, false);
+  }
+
+  @Override
+  public void visit(ASTElvisSimilarExpression node) {
+    checkElivsOperators(node, false);
+  }
+
+  private void checkElivsOperators(ASTInfixExpression node, boolean checkType) {
     OCLExpressionTypeInferingVisitor getVisitor = new OCLExpressionTypeInferingVisitor(scope);
     CDTypeSymbolReference getType = getVisitor.getTypeFromExpression(node.getLeftExpression());
     if (!getType.getName().equals("Optional")) {
@@ -366,7 +376,8 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
     OCLExpressionTypeInferingVisitor elseVisitor = new OCLExpressionTypeInferingVisitor(scope);
     CDTypeSymbolReference elseType = elseVisitor.getTypeFromExpression(node.getRightExpression());
 
-    checkTypeAndUnit(node, getVisitor.getReturnUnit(), getType, elseVisitor.getReturnUnit(), elseType);
+    if (checkType)
+      checkTypeAndUnit(node, getVisitor.getReturnUnit(), getType, elseVisitor.getReturnUnit(), elseType);
   }
 
   @Override
