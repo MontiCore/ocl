@@ -583,6 +583,7 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
 
     @Test
     public void Test4() {
+        //Log.enableFailQuick(false);
         final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/example/MvWPhd_models");
 
         final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("Test4", OCLFileSymbol.KIND).orElse(null);
@@ -620,7 +621,7 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
 
         declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("partSums").orElse(null);
         assertNotNull(declVarSymbol);
-        assertEquals("Collection<Collection<Collection<Number<Duration>>>>", declVarSymbol.getType().getStringRepresentation());
+        assertEquals("Collection<Collection<Number<Duration>>>", declVarSymbol.getType().getStringRepresentation());
 
         declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("maxTimeInComb").orElse(null);
         assertNotNull(declVarSymbol);
