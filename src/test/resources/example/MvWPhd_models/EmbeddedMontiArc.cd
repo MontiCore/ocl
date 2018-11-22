@@ -1,10 +1,30 @@
 classdiagram EmbeddedMontiArc {
 
-// slide Ch04_BasicValue
-  interface BasicValue;
-  class Tensor implements BasicValue;
-  class EnumItem implements BasicValue;
-  class Boolean implements BasicValue {
+/////////////////////////////////////////////////////////////////////////////////////////////
+//// below specific for EmbeddedMontiArc only
+////////////////////////////////////////////////////////////////////////////////////////////
+
+  // slide Ch04_PortTypeSystemOverview
+  interface PortType extends Type {
+    boolean isCompatibleTo(PortType pt);
+  }
+  interface PortValue extends Value;
+  class Unit {
+    double prefix;
+  }
+  association [1] Unit (baseUnit) <-> Quantity [1];
+
+  interface Value;
+  interface Type extends Value; // cf. Ch04_Parameter1
+  interface Quantity extends Type;
+
+  read-only association Value -> (type) Type [0..1];
+  read-only association PortValue -> (type) PortType [1];
+
+  // slide Ch04_PortValue
+  class Tensor implements PortValue;
+  class EnumItem implements PortValue;
+  class Boolean implements PortValue {
     boolean value;
   }
   class Matrix extends Tensor;
@@ -21,27 +41,6 @@ classdiagram EmbeddedMontiArc {
   association Tensor (tensorOfDepth) -> (depth) NaturalNumber [1];
   association Tensor -> Quantity [1];
   association Number -> Unit [1];
-
-/////////////////////////////////////////////////////////////////////////////////////////////
-//// below specific for EmbeddedMontiArc only
-////////////////////////////////////////////////////////////////////////////////////////////
-
-  // slide Ch04_PortTypeSystemOverview
-  interface PortType extends Type {
-    boolean isCompatibleTo(PortType pt);
-  }
-  interface PortValue extends Value, BasicValue;
-  class Unit {
-    double prefix;
-  }
-  association [1] Unit (baseUnit) <-> Quantity [1];
-
-  interface Value;
-  interface Type extends Value; // cf. Ch04_Parameter1
-  interface Quantity extends Type;
-
-  read-only association Value -> (type) Type [0..1];
-  read-only association PortValue -> (type) PortType [1];
 
   // slide Ch04_PortTypeSystem
   interface AlgebraicProperty;
@@ -466,7 +465,7 @@ classdiagram EmbeddedMontiArc {
     String name;
     ParameterKind kind;
   }
-  association AParameter -> (type) AType [0..1];
+  association / AParameter -> (type) AType [0..1];
 
   class APort {
     PortDirection direction;
@@ -519,7 +518,7 @@ classdiagram EmbeddedMontiArc {
   association ANumericType -> (cols) NaturalNumber [0..1];
   association ANumericType -> (depth) NaturalNumber [0..1];
 
-  interface APortValue extends AValue, BasicValue;
+  interface APortValue extends AValue;
   read-only association APortValue -> (type) APortType [1];
 
   // Ch07_AbstractConnector
