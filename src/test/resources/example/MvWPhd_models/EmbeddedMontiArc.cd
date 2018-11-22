@@ -259,8 +259,8 @@ classdiagram EmbeddedMontiArc {
   interface ElementInst;
   class ChainInst;
   association ChainInst -> (elements) ElementInst [*];
-  association start ChainInst -> ElementInst [1];
-  association end ChainInst -> ElementInst [1];
+  read-only association start ChainInst -> ElementInst [1];
+  read-only association end ChainInst -> ElementInst [1];
 
   association / PortInst (invInfluencee) -> (influencee) PortInst [*];
   association / PortInst (invInfluencer) -> (influencer) PortInst [*];
