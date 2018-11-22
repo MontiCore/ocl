@@ -38,7 +38,6 @@ import java.util.Optional;
 public class OCLCDToolTest {
 
     // ToDo these tests seem to work, but not on travis
-    @Ignore
     @Test
     public void cdToolTest() {
 
@@ -62,7 +61,6 @@ public class OCLCDToolTest {
         Assert.assertEquals(0, Log.getErrorCount());
     }
 
-    @Ignore
     @Test
     public void cdTool2Test() {
         String oclModel =
@@ -137,7 +135,6 @@ public class OCLCDToolTest {
 
     }
 
-    @Ignore
     @Test
     public void cdTool3Test() {
 
@@ -152,11 +149,38 @@ public class OCLCDToolTest {
         Assert.assertEquals(0, Log.getErrorCount());
     }
 
-    @Ignore
     @Test
     public void cdTool4Test() throws IOException {
         String parentpath = Paths.get("src/test/resources").toAbsolutePath().toString();
         String oclModel = "example.TGs_models.TG_Test";
+        String[] args = new String[]{"-path", parentpath, "-ocl", oclModel};
+        try {
+            OCLCDTool.main(args);
+        } catch (Exception e) {
+            Log.error(e.getMessage());
+        }
+        Assert.assertEquals(0, Log.getErrorCount());
+    }
+
+    @Test
+    public void oclMvWPhdTest() {
+
+        String parentpath = Paths.get("src/test/resources/example/MvWPhd_models").toAbsolutePath().toString();
+        String oclModel = "EmbeddedMontiArcOCL";
+        String[] args = new String[]{"-path", parentpath, "-ocl", oclModel};
+        try {
+            OCLCDTool.main(args);
+        } catch (Exception e) {
+            Log.error(e.getMessage());
+        }
+        Assert.assertEquals(0, Log.getErrorCount());
+    }
+
+    @Test
+    public void oclTest1() {
+
+        String parentpath = Paths.get("src/test/resources/example/MvWPhd_models").toAbsolutePath().toString();
+        String oclModel = "Test1";
         String[] args = new String[]{"-path", parentpath, "-ocl", oclModel};
         try {
             OCLCDTool.main(args);

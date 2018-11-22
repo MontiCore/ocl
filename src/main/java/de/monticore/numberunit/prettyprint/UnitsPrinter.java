@@ -29,7 +29,7 @@ import javax.measure.unit.*;
 public class UnitsPrinter {
 
     public static String unitToUnitName(Unit<?> unit) {
-        String unitName = "Amount";
+        String unitName = "Number";
 
         if(unit.isCompatible(SI.METERS_PER_SQUARE_SECOND)) { unitName = "Acceleration"; }
         else if(unit.isCompatible(SI.RADIAN)) { unitName = "Angle"; }

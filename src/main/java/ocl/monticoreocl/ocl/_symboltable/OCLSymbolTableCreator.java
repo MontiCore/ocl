@@ -378,7 +378,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 			typeReference = createTypeRef(typeName, node);
 			typeReference.setStringRepresentation(TypesPrinter.printSimpleReferenceType(astSimpleType));
 			if(UnitsPrinter.isSupported(typeName)) {
-				CDTypeSymbolReference amountType = createTypeRef("Amount", node);
+				CDTypeSymbolReference amountType = createTypeRef("Number", node);
 				TypeInferringHelper.addActualArgument(amountType, typeReference);
 				typeReference = amountType;
 			} else {
