@@ -79,8 +79,8 @@ OCL OCLArtifactModel {
       containingAType.name + "." + simpleName : simpleName);
 
   context AType inv: 
-    fullName == (contains.isRoot ? name :
-      contains.fullName + "." + simpleName);
+    fullName == (pkg.isRoot ? name :
+      pkg.fullName + "." + simpleName);
 
   context JavaSourceFile inv: 
     defines == compiledTo.defines;
@@ -179,13 +179,13 @@ OCL OCLArtifactModel {
     (0 <= k && k <= p.action.size && 0 <= i && i <= k) implies
       p.action[i].end <= p.action[k].start;
 
- /* context ToolExecution inv:
+  context ToolExecution inv:
     input == { a in subaction** |
       (a isin ArtifactRead) , (a isin ArtifactExistenceCheck) }.reads;
 
   context ToolExecution inv:
     output ==
-      { a in subaction** | a in ArtifactCreate }.creates; */ // --> role name should be used instead of association name when using reflective association
+      { a in subaction** | a in ArtifactCreate }.creates;
 
   context Artifact inv: 
     creationDependency == output.input;
@@ -218,13 +218,13 @@ OCL OCLArtifactModel {
     contributesTo == {writesTo};
 
   context FreeMarkerTemplate inv: 
-    contributionFT == writesTo.contributesTo;
+    contributionFT == templateExecution.contributesTo;
 
   context FreeMarkerTemplate inv: 
     produces.containsAll(contributionFT);
 
   context JavaClassFile inv: 
-    contributionJava == file.contributesTo;
+    contributionJava == javaMethodCall.contributesTo;
 
   context JavaClassFile inv: 
     produces.containsAll(contributionJava);
