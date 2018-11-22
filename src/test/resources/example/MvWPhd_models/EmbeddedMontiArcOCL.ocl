@@ -35,7 +35,7 @@ context NumericType t1, NumericType t2 inv:
      maxSteps2 = {1 .. 2*Math.abs(t2.max.value / t2.res.value) + 1};
      range2 = { v | v = t2.min.value + k * t2.res.value, k in maxSteps2, v <= t2.max.value };
   in
-    (t1 <= t2) <=>
+    t1.isCompatibleTo(t2) <=>
     (t1.quantity == t2.quantity &&
     t1.cols == t2.cols &&
     t1.rows == t2.rows &&
@@ -43,7 +43,7 @@ context NumericType t1, NumericType t2 inv:
     t2.algebraicProperties.containsAll(t1.algebraicProperties))
 
 context Connector inv:
-  sourcePort.port.type <= targetPort.port.type
+  sourcePort.port.type.isCompatibleTo(targetPort.port.type)
 
 context PortInstantiation inv:
   portIndices.end <= port.dimension &&
@@ -498,3 +498,21 @@ context AComponentType inv PortNames:
          (p.name == ap.name && p.direction == ap.direction
          && ap.type ?~~ p.type && ap.dimension.min ?<= p.dimension &&
           ap.dimension.max ?>= p.dimension ))
+
+context AComponentType inv PortTypes:
+  exists ComponentType c: name ?== c.name &&
+    forall ap in {ap in ports | !ap.name.isPresent && ap.type.isPresent}:
+      exists p in c.ports: !ports.name.contains(p.name) &&
+        p.direction == ap.direction && ap.type ~~ p.type &&
+        ap.dimension.min ?<= p.dimension && ap.dimension.max ?>= p.dimension
+
+// Ch07_SatisfactionOCLParameters
+
+context AComponentType inv Parameters:
+  exists ComponentType c:
+    name ?== c.name &&
+    (forall ap in {ap2 in parameters | !ap2.underspec}:
+      exists p in c.parameters:
+        (ap.name == p.name && ap.kind == p.kind && (ap.type ?~~ p.type) &&
+        (forall t in ap.bindings.value.type: p.type.isPresent implies t.isCompatibleTo(p.type) ) &&
+        ap.dimension.min ?<= p.dimension && ap.dimension.max ?>= p.dimension))

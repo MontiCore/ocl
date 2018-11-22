@@ -27,7 +27,9 @@ classdiagram EmbeddedMontiArc {
 ////////////////////////////////////////////////////////////////////////////////////////////
 
   // slide Ch04_PortTypeSystemOverview
-  interface PortType extends Type;
+  interface PortType extends Type {
+    boolean isCompatibleTo(PortType pt);
+  }
   interface PortValue extends Value, BasicValue;
   class Unit {
     double prefix;
@@ -451,10 +453,13 @@ classdiagram EmbeddedMontiArc {
 
   // slide Ch07_AbstractComponentType
   class ADimension;
-  association ADimension -> (min) ANaturalNumber [1];
-  association ADimension -> (max) ANaturalNumber [1];
+  association ADimension -> (min) NaturalNumber [1];
+  association ADimension -> (max) NaturalNumber [1];
 
-  interface AType extends AValue; // Ch07_AbstractComponentInstantiation
+  interface AType extends AValue { // Ch07_AbstractComponentInstantiation
+     boolean isCompatibleTo(Type t);
+     boolean isCompatibleTo(AType at);
+  }
 
   interface AParameter extends AType {
     boolean underspec;
@@ -510,12 +515,11 @@ classdiagram EmbeddedMontiArc {
   // Ch07_AbstractNumericType
   class ANumericType implements APortType;
   association ANumericType -> (quantity) Quantity [0..1];
-  association ANumericType -> (rows) ANaturalNumber [0..1];
-  association ANumericType -> (cols) ANaturalNumber [0..1];
-  association ANumericType -> (depth) ANaturalNumber [0..1];
-  class ANaturalNumber implements APortValue;
+  association ANumericType -> (rows) NaturalNumber [0..1];
+  association ANumericType -> (cols) NaturalNumber [0..1];
+  association ANumericType -> (depth) NaturalNumber [0..1];
 
-  interface APortValue extends AValue;
+  interface APortValue extends AValue, BasicValue;
   read-only association APortValue -> (type) APortType [1];
 
   // Ch07_AbstractConnector
