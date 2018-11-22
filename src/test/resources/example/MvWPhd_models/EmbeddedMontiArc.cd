@@ -1,25 +1,10 @@
 classdiagram EmbeddedMontiArc {
 
-  interface PortType extends Type;
-  interface PortValue extends Value;
-
-  // slide Ch04_PortTypeSystemOverview
-  class Unit {
-    double prefix;
-  }
-  association [1] Unit (baseUnit) <-> Quantity [1];
-
-  interface Value;
-  interface Type extends Value; // cf. Ch04_Parameter1
-  interface Quantity extends Type;
-
-  read-only association Value -> (type) Type [0..1];
-  read-only association PortValue -> (type) PortType [1];
-
-  // slide Ch04_PortValue
-  class Tensor implements PortValue;
-  class EnumItem implements PortValue;
-  class Boolean implements PortValue {
+// slide Ch04_BasicValue
+  interface BasicValue;
+  class Tensor implements BasicValue;
+  class EnumItem implements BasicValue;
+  class Boolean implements BasicValue {
     boolean value;
   }
   class Matrix extends Tensor;
@@ -36,6 +21,25 @@ classdiagram EmbeddedMontiArc {
   association Tensor (tensorOfDepth) -> (depth) NaturalNumber [1];
   association Tensor -> Quantity [1];
   association Number -> Unit [1];
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+//// below specific for EmbeddedMontiArc only
+////////////////////////////////////////////////////////////////////////////////////////////
+
+  // slide Ch04_PortTypeSystemOverview
+  interface PortType extends Type;
+  interface PortValue extends Value, BasicValue;
+  class Unit {
+    double prefix;
+  }
+  association [1] Unit (baseUnit) <-> Quantity [1];
+
+  interface Value;
+  interface Type extends Value; // cf. Ch04_Parameter1
+  interface Quantity extends Type;
+
+  read-only association Value -> (type) Type [0..1];
+  read-only association PortValue -> (type) PortType [1];
 
   // slide Ch04_PortTypeSystem
   interface AlgebraicProperty;
@@ -450,9 +454,14 @@ classdiagram EmbeddedMontiArc {
   association ADimension -> (min) ANaturalNumber [1];
   association ADimension -> (max) ANaturalNumber [1];
 
-  interface AParameter {
+  interface AType extends AValue; // Ch07_AbstractComponentInstantiation
+
+  interface AParameter extends AType {
     boolean underspec;
+    String name;
+    ParameterKind kind;
   }
+  association AParameter -> (type) AType [0..1];
 
   class APort {
     PortDirection direction;
@@ -469,7 +478,7 @@ classdiagram EmbeddedMontiArc {
   association AComponentType -> (parameters) AParameter [*];
   association AComponentType -> (ports) APort [*];
 
-  interface APortType;
+  interface APortType extends AType;
 
   // Ch07_AbstractComponentInstantiation
   class AComponentInstantiation implements ATypeOrAInstantiation { // Ch07_AbstractConnector
@@ -480,8 +489,14 @@ classdiagram EmbeddedMontiArc {
   association AComponentInstantiation -> (value) AParameterBinding [*];
   association AComponentInstantiation -> (type) AComponentType [0..1];
 
-  interface AParameterBinding extends ParameterBinding;
-  association AParameterBinding -> AParameter [1];
+  interface AParameterBinding;
+  association [*] AParameterBinding (bindings) -> (parameter) AParameter [1];
+  association AParameterBinding -> (range) ARange [1];
+  association AParameterBinding -> (value) AValue [1];
+
+  interface AValue;
+  read-only association AValue -> (type) AType [0..1];
+
   class AComponentInterface implements AComponentType;
 
   class AComponent implements AComponentType {
@@ -498,7 +513,10 @@ classdiagram EmbeddedMontiArc {
   association ANumericType -> (rows) ANaturalNumber [0..1];
   association ANumericType -> (cols) ANaturalNumber [0..1];
   association ANumericType -> (depth) ANaturalNumber [0..1];
-  class ANaturalNumber extends Number implements AParameter;
+  class ANaturalNumber implements APortValue;
+
+  interface APortValue extends AValue;
+  read-only association APortValue -> (type) APortType [1];
 
   // Ch07_AbstractConnector
   class ARange extends Range {
@@ -531,6 +549,9 @@ classdiagram EmbeddedMontiArc {
 
   // slide Ch07_OCLPorts2
   association Type -> (name) String [1]; // a type has a short name which can be derived
+
+  // slide Ch07_SatisfactionOCLParameters
+  association AParameter -> (dimension) ADimension [0..1];
 
   ////////////////////// support for standard types and operations in OCL ///////////////////////////////////
   class Class;
