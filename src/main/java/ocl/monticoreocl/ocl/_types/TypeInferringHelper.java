@@ -30,6 +30,19 @@ import java.util.List;
  */
 public class TypeInferringHelper {
 
+    public static CDTypeSymbolReference getContainerGeneric(CDTypeSymbolReference type) {
+        return ((CDTypeSymbolReference)type.getActualTypeArguments().get(0).getType());
+    }
+
+    /** if it has no generics it returns type */
+    public static CDTypeSymbolReference getMostNestedGeneric(CDTypeSymbolReference type) {
+        CDTypeSymbolReference ret = type;
+        while (!ret.getActualTypeArguments().isEmpty()) {
+            ret = getContainerGeneric(ret);
+        }
+        return ret;
+    }
+
     public static void addActualArgument(CDTypeSymbolReference typeOuter, CDTypeSymbolReference typeInner) {
         String stringRepresentation = typeOuter.getStringRepresentation() + "<";
 
@@ -158,6 +171,11 @@ public class TypeInferringHelper {
         String typeName = type.getName();
         return typeName.equals("Set") || typeName.equals("List") || typeName.equals("Collection")
                 || typeName.equals("Optional");
+    }
+
+    public static Boolean isList(CDTypeSymbolReference type) {
+        String typeName = type.getName();
+        return typeName.equals("List");
     }
 
 

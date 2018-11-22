@@ -25,6 +25,7 @@ import de.monticore.symboltable.*;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.umlcd4a.symboltable.references.CDTypeSymbolReference;
+import de.se_rwth.commons.logging.Log;
 import ocl.monticoreocl.OCLGlobalScopeTestFactory;
 import ocl.monticoreocl._cocos.AbstractOCLTest;
 import ocl.monticoreocl.ocl._cocos.OCLCoCoChecker;
@@ -260,9 +261,9 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
         OCLVariableDeclarationSymbol declVarSymbol3 = oclInvariantSymbol.getOCLVariableDecl("comp3").orElse(null);
         assertNotNull(declVarSymbol3);
         assertEquals("Collection", declVarSymbol3.getVarTypeName());
-        assertEquals("Collection<Collection<Person>>", declVarSymbol3.getType().getStringRepresentation());
+        assertEquals("Collection<Person>", declVarSymbol3.getType().getStringRepresentation());
         assertEquals(1, declVarSymbol3.getType().getActualTypeArguments().size());
-        assertEquals("Collection", declVarSymbol3.getType().getActualTypeArguments().get(0).getType().toString());
+        assertEquals("Person", declVarSymbol3.getType().getActualTypeArguments().get(0).getType().toString());
 
         OCLVariableDeclarationSymbol declVarSymbol4 = oclInvariantSymbol.getOCLVariableDecl("s").orElse(null);
         assertNotNull(declVarSymbol4);
@@ -478,5 +479,154 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
         assertEquals("Collection", declVarSymbol.getVarTypeName());
         assertEquals("Collection<Component>", declVarSymbol.getType().getStringRepresentation());
 
+    }
+
+    @Test
+    public void nestedSetsSimpleTest() {
+        final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/");
+
+        final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("example.typeInferringModels.nestedSetsSimple", OCLFileSymbol.KIND).orElse(null);
+        assertNotNull(oclFileSymbol);
+        OCLInvariantSymbol oclInvariantSymbol = oclFileSymbol.getOCLInvariant("X").orElse(null);
+        assertNotNull(oclInvariantSymbol);
+
+        OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("chain1").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<Double>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("partition1A").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<Collection<Double>>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("combSubs").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<Collection<String>>", declVarSymbol.getType().getStringRepresentation());
+
+    }
+
+    @Test
+    public void nestedSetsTest() {
+        final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/");
+
+        final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("example.typeInferringModels.nestedSets", OCLFileSymbol.KIND).orElse(null);
+        assertNotNull(oclFileSymbol);
+        OCLInvariantSymbol oclInvariantSymbol = oclFileSymbol.getOCLInvariant("X").orElse(null);
+        assertNotNull(oclInvariantSymbol);
+
+        OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("chain1").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<Double>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("partition1A").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<Collection<Double>>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("singleCombA").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<Collection<Collection<Double>>>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("combChains").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<Collection<Collection<Collection<Double>>>>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("combSubs").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<Collection<Set<Double>>>", declVarSymbol.getType().getStringRepresentation());
+
+    }
+
+    @Test
+    public void Test2() {
+        final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/example/MvWPhd_models");
+
+        final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("Test2", OCLFileSymbol.KIND).orElse(null);
+        assertNotNull(oclFileSymbol);
+        OCLInvariantSymbol oclInvariantSymbol = oclFileSymbol.getOCLInvariant("PortNames").orElse(null);
+        assertNotNull(oclInvariantSymbol);
+
+        OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("apNames").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<APort>", declVarSymbol.getType().getStringRepresentation());
+    }
+
+    @Test
+    public void Test3() {
+        final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/example/MvWPhd_models");
+
+        final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("Test3", OCLFileSymbol.KIND).orElse(null);
+        assertNotNull(oclFileSymbol);
+        OCLInvariantSymbol oclInvariantSymbol = oclFileSymbol.getOCLInvariant("WCET_InfiteCores").orElse(null);
+        assertNotNull(oclInvariantSymbol);
+
+        OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("startSubs").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<ComponentInst>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("outPorts").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<PortInst>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("selection").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<ChainInst>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("subChains").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<ChainInst>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("aggChains").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<Number<Duration>>", declVarSymbol.getType().getStringRepresentation());
+    }
+
+    @Test
+    public void Test4() {
+        //Log.enableFailQuick(false);
+        final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/example/MvWPhd_models");
+
+        final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("Test4", OCLFileSymbol.KIND).orElse(null);
+        assertNotNull(oclFileSymbol);
+        OCLInvariantSymbol oclInvariantSymbol = oclFileSymbol.getOCLInvariant("WCET_MultiCore").orElse(null);
+        assertNotNull(oclInvariantSymbol);
+
+        OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("startSubs").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<ComponentInst>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("outPorts").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<PortInst>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("selection").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<ChainInst>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("subChains").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<ChainInst>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("threads").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Integer", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("combChains").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<Collection<Collection<ChainInst>>>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("combSubs").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<Collection<Set<ChainInst>>>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("partSums").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<Collection<Number<Duration>>>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("maxTimeInComb").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Collection<Number<Duration>>", declVarSymbol.getType().getStringRepresentation());
+
+        declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("aggregation").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Number<Duration>", declVarSymbol.getType().getStringRepresentation());
     }
 }

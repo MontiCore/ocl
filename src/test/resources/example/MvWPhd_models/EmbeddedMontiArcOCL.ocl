@@ -1,0 +1,585 @@
+import EmbeddedMontiArc.*;
+
+// slide Ch04_PortValue
+
+context NaturalNumber inv:
+  value >= 1 &&
+  !isPlusInf && !isMinusInf
+
+context Matrix inv:
+  depth ==1
+
+context Vector inv:
+  rows == 1
+
+context Number inv:
+  cols == 1;
+
+// Ch04_PortTypeSystem
+context StructItem inv:
+  this.name == type.name
+
+// Ch04_Parameter3
+context ComponentParameter inv:
+  type instanceof ComponentInterface
+
+context Component inv:
+  forall t in implements.type:
+    (t instanceof ComponentInterface)
+
+// TODO: this is incomplete: handle cases when t1.res or t2.res are absent
+context NumericType t1, NumericType t2 inv:
+  let
+     maxSteps1 = {1 .. 2*Math.abs(t1.max.value / t1.res.value) + 1};
+     range1 = { v | v = t1.min.value + k * t1.res.value, k in maxSteps1, v <= t1.max.value };
+     maxSteps2 = {1 .. 2*Math.abs(t2.max.value / t2.res.value) + 1};
+     range2 = { v | v = t2.min.value + k * t2.res.value, k in maxSteps2, v <= t2.max.value };
+  in
+    t1.isCompatibleTo(t2) <=>
+    (t1.quantity == t2.quantity &&
+    t1.cols == t2.cols &&
+    t1.rows == t2.rows &&
+    range2.containsAll(range1) &&
+    t2.algebraicProperties.containsAll(t1.algebraicProperties))
+
+context Connector inv:
+  sourcePort.port.type.isCompatibleTo(targetPort.port.type)
+
+context PortInstantiation inv:
+  portIndices.end <= port.dimension &&
+  subIndices.end <= sub.dimension
+
+context Range inv:
+  start <= end
+
+// Ch04_Effector
+
+context Effector inv:
+  sourceIndex.end <= sourcePort.dimension &&
+  targetIndex.end <= sourcePort.dimension
+
+context Effector inv:
+  let
+    sct = sourcePort.componentType;
+    s = typeif sct instanceof Component then sct.subs else {};
+  in
+    sourcePort.direction == PortDirection.IN  &&
+    targetPort.direction == PortDirection.OUT  &&
+    sct == targetPort.componentType &&
+    s == {}
+
+
+// Ch04_Component
+
+context Component inv:
+  forall cmpType in implements.type:
+    cmpType.ports.name == this.ports.name
+
+context Component inv:
+  let
+    typeDimParams = {p in ports.type.addAll(ports.dimension) |
+                     p instanceof Parameter};
+  in
+    this.subs != {} implies
+    this.parameters ==
+    subs.values.parameter
+      .addAll(typeDimParams)
+      .addAll( { param | param in this.parameters,
+                        exists param2 in this.parameters:
+                               param == param2.type})
+
+// Ch04_CnCModel
+
+context CnCModel inv:
+  let
+    inPorts = {p | p in componentTypes.ports, p.direction == PortDirection.IN};
+  in
+    forall p in inPorts:
+      forall pi in PortInstantiation:
+        (pi.port == p && pi.sub != main) implies
+        (exists con in connectors:
+           pi == con.targetPort)
+
+// Ch04_CnCInstanceStructure
+
+context ComponentInst inv:
+  (forall p in params.parameter:
+    p.kind == ParameterKind.CONFIG) &&
+ (subs != {} implies params == {})
+
+context PortInst inv:
+  ! (type instanceof Parameter)
+
+
+// Ch04_InstanceChain
+
+context ComponentInst inv:
+  sender == { p.sender |
+     p in this.ports}.componentInst &&
+  receiver == { p.receiver |
+     p in this.ports}.componentInst
+
+context PortInst inv:
+  sender.asSet == { PortInst p | exists con in ConnectorInst:
+                          con.sourcePort == p && con.targetPort == this } &&
+  receiver == {PortInst p | exists con in ConnectorInst:
+                          con.sourcePort == this && con.targetPort == p} &&
+  influencer == sender.asSet.addAll( {p | exists eff in EffectorInst:
+                          eff.sourcePort == p && eff.targetPort == this} )   &&
+  influencee == receiver.addAll( {p | exists eff in EffectorInst:
+                          eff.sourcePort == this && eff.targetPort == p} )
+
+// Ch06_CO1
+
+context ConnectorInst inv CO1:
+  let
+     srcCI = sourcePort.componentInst;
+     tgtCI = targetPort.componentInst;
+     srcD = sourcePort.direction;
+     tgtD = targetPort.direction;
+  in
+    (srcCI == tgtCI && srcD != tgtD)   || // in -> out, out -> in (loop)
+    (tgtCI.parent == srcCI && srcD == PortDirection.IN && tgtD == PortDirection.OUT) || // in -> sub.in
+    (srcCI.parent == tgtCI.parent && tgtCI != srcCI &&
+                   srcD == PortDirection.OUT && tgtD == PortDirection.IN) || // sub1.in -> sub2.in
+    (srcCI.parent == tgtCI && srcD == PortDirection.OUT && tgtD == PortDirection.OUT) // sub.out -> out
+
+// Ch06_R1R2
+
+context ConnectorInst conInst1, conInst2 inv R1R2:
+  conInst1.targetPort == conInst2.targetPort implies
+    conInst1.sourcePort == conInst2.sourcePort
+
+// Ch06_R13
+
+context Component inv:
+  subDefs == {t | s in subs, t = s.type, t instanceof Component}
+
+context Component inv R13:
+  !(this isin subDefs**)
+
+// Ch06_B1
+
+context Component inv:
+  innerElements ==
+    ports.addAll(parameters).addAll(subs).addAll(innerComponents)
+
+context Component inv B1:
+  forall e1, e2 in innerElements:
+    e1.name == e2.name implies e1 == e2
+
+// Ch06_CV5CV6
+
+context Component cmp inv CV5:
+  cmp.subs != {} || (exists ComponentInstantiation ci: ci.parent == cmp) implies
+    forall p in cmp.ports:
+      exists con in Connector:
+        (p == con.sourcePort.port || p == con.targetPort.port)
+
+context Component cmp inv CV6:
+  forall ci in {ComponentInstantiation ci | ci.type == cmp}, p in cmp.ports:
+    exists con in Connector:
+      (p == con.sourcePort.port && ci == con.sourcePort.sub ||
+       p == con.targetPort.port && ci == con.targetPort.sub)
+
+// Ch06_R9R10
+
+context ComponentInstantiation inv R9R10:
+  forall p in type.parameters:
+    !(exists p2 in type.parameters: // p can be inferred due to bounded
+        p2.kind == ParameterKind.CONFIG &&        // configuration parameter p2
+        (p2.dimension == p || p2.type.rows == p || p2.type.cols == p)
+    ) &&
+    (p.value.isAbsent implies
+      exists pb in values:
+        pb.parameter == p)
+
+/////////////////////////////////////////////////////////////////////////
+///// Constraints about Extra-functional properties
+/////////////////////////////////////////////////////////////////////////
+
+// Ch06_Traceability
+
+context ComponentInst inv Traceability:
+  let
+    selection = this;
+    aggregation = component.traceable;
+    compareTo   = traceable;
+  in         // comparison
+    aggregation implies compareTo
+
+// Ch06_CombinedPower
+
+context ComponentInst inv MaxPower:
+  let
+    selection = component;
+    aggregation =
+      max maxPower ?: 0 W;
+    compareTo =
+      min selection.maxPower ?: oo W;
+  in         // comparison
+    aggregation <= compareTo
+
+// Ch06_EncryptionTargetPort
+
+context Port inv Encryption:
+  let  // selection is a set of sender ports
+    selection = portInstantiations
+              .endCon.sourcePort.port;
+    aggregation = { p.encryption.elements
+                       | p in selection };
+    compareTo = encryption.elements;
+  in         // comparison
+    forall encSrc in aggregation:
+      encSrc.retainAll(compareTo) != {}
+
+// Ch06_CombinedPowerX
+
+context ComponentInst inv PowerConsumptionWithEncryption:
+  let  // selections are subcomponent and port instances
+    selection1 = subs;
+    selection2 = ports.addAll(subs.ports);
+    aggregation = sum List{ max s.maxPower ?: 0W | s in selection1 }
+                + sum List{ max pi.encryption.encryptPower ?: 0W |
+                        pi in selection2, pi.receiver != {} }
+                + sum List{ max pi.encryption.decryptPower ?: 0W |
+                        pi in selection2, pi.sender.isPresent };
+    compareTo = min component.maxPower ?: oo W;
+  in
+    aggregation <= compareTo
+
+// Ch06_CombinedPowerWithTable
+context ComponentInst inv PowerConsumptionWithEncryption:
+  let selection1 = subs;
+      selection2 = ports.addAll(subs.ports);
+      ep = component.encryptPower;
+      aggregation = sum List{ max s.maxPower ?: 0W | s in selection1 }
+                  + sum List{ max ep[pi.encryption].encrypt ?: 0W |
+                              pi in selection2, pi.receiver != {} }
+                  + sum List{ max ep[pi.encryption].decrypt ?: 0W |
+                              pi in selection2, pi.sender.isPresent };
+      compareTo = min component.maxPower ?: oo W;
+  in
+    aggregation <= compareTo
+
+// Ch06_ASIL
+context ComponentInst inv ASIL:
+  let
+    asilNb = List{ EAsil.QM, EAsil.ASIL_A, EAsil.ASIL_B,
+                   EAsil.ASIL_C, EAsil.ASIL_D };
+    selection = subs;
+    aggregation = min {
+      min asilNb.indexOf(s.asil.value) ?: 0 |
+      s in selection.component           };
+    compareTo = min asilNb.indexOf(
+                   component.asil.value) ?: 0;
+  in         // comparison
+    aggregation >= compareTo
+
+// Ch06_WCET_SingleCore
+context NumberDuration inv MinTag:
+  this >= 0s
+
+context ComponentInst inv WCET_SingleCore:
+  let
+    selection = subs;
+    aggregation = sum { max s.wcet ?: 0s |
+                  s in selection.component };
+    compareTo = min component.wcet ?: oo s;
+  in         // comparison
+    aggregation <= compareTo
+
+context ComponentInst inv WCET_InfiteCores:
+  let
+    startSubs = {s in subs | this in s.sender }; // -> startSubs is Collection<ComponentInst>
+    outPorts = {p in ports | p.direction == PortDirection.OUT}; // -> outPorts is Collection<PortInst>
+    // selection: chains from subcomponents to
+    // an output port
+    selection = { chain in startSubs.start | // startSubs.start is `Collection<Collection<ChainInst>>`
+                                                     // chain is `ChainInst` (due to flatten)
+                  chain.end in outPorts };           // chain.end is `ElementInstance`
+                                                     // selection is `Collection<ChainInst>`
+    subChains = { chain in selection |               // chain is `ChainInst`
+                  chain.elements.retainAll(subs)};   // chain.elements is `Collection<ElementInstance>`
+                                                     // subChains is `Collection<ChainInst>`
+    aggChains = { sum List{ max cmp.wcet ?: 0s |
+                        cmp in chain.elements.component } | // `chain.elements.component` is Collection<Component>
+                                                            // cmp is Component
+                  chain in subChains };                     // chain is ChainInst
+    aggregation = max aggChains ?: 0s;
+    compareTo = min component.wcet ?: oo s;
+  in
+    aggregation <= compareTo
+
+context ComponentInst inv WCET_MultiCore:
+let
+  startSubs = {s in subs | this in s.sender }; // -> startSubs is Collection<ComponentInst>
+  outPorts = {p in ports | p.direction == PortDirection.OUT}; // -> outPorts is Collection<PortInst>
+  // selection: chains from subcomponents to
+  // an output port
+  selection = { chain in startSubs.start         | // startSubs.start is `Collection<Collection<ChainInst>>` but auto-flattening due to navigation to Collection<ChainInst>
+                                                   // chain is `ChainInst` (due to flatten)
+                chain.end in outPorts };           // chain.end is `ElementInstance`
+                                                   // selection is `Collection<ChainInst>`
+  subChains = { chain in selection |               // chain is `ChainInst`
+                chain.elements.retainAll(subs)};   // chain.elements is `Collection<ElementInstance>`
+                                                   // subChains is `Collection<ChainInst>`
+  threads = min cis.main.threads ?: 1;             // `cis.main` is ComponentInst
+                                                   // threads is `Integer`
+
+  // calculates all partition combinations
+
+  combChains=subChains.listPartitions(threads);    // combChains is `Collection<Collection<Collection<ChainInst>>>`
+                                                   // subChains is `Collection<ChainInst>`
+
+   // combSubs is { { { `ChainInst` } } } this is `Collection<Collection<Collection<ChainInst>>>`
+  combSubs = { { {chain | chain in partition}.asSet | // chain is ChainInst
+               partition in singleCombs } |        // partition is Collection<ChainInst>
+             singleCombs in combChains };          // singleCombs is Collection<Collection<ChainInst>>
+
+  // partSums is { { `Number<Duration>` } } and this is `Collection<Collection<Number<Duration>>>`
+  partSums =  { { sum List{ max s.wcet ?: 0s |
+                            (el in partition),  // el is ChainInst
+                            s in el.elements.component } |
+                partition in singleCombs } |      // partition is Collection<ChainInst>
+              singleCombs in combSubs };          // singleCombs is Collection<Collection<ChainInst>>
+
+  // maxTimeInComb is { `Number<Duration>` } and this is `Collection<Number<Duration>>`
+  maxTimeInComb = { max singleComb ?: 0s // `max ..` is Optional<Number<Duration>>
+    | singleComb in partSums }; // singleComb is Collection<Number<Duration>>
+
+  // aggregation takes best combination
+  aggregation = min maxTimeInComb ?: 0s; // aggregation is Number<Duration>
+  compareTo = min component.wcet ?: oo s;
+in
+  aggregation <= compareTo
+
+
+// Ch06_Traceability2
+context Component inv Traceability2:
+  let
+    selection = componentInsts;
+    aggregation =
+      and componentInsts.traceable;
+    compareTo   = traceable;
+  in         // comparison
+    compareTo implies aggregation
+
+/////////////////////////////////////////////////////////////////////////
+///// Constraints about relation between EmbeddedMontiArc sugar and EmbeddedMontiArc normalized
+/////////////////////////////////////////////////////////////////////////
+
+// Ch06_OCLTrafo1
+
+context Range rn, RangeSugar rs inv:
+ let pi = rs.portInstantiation;
+   dimension = pi.portIndices == rs ? (pi.port.dimension ?: 1) :
+                                      (pi.sub.dimension ?: 1) ;
+ in
+   rn ~~ rs <=>
+   (rs.all implies rn.start == 1 && rn.step == 1 && rn.end == dimension) &&
+   (!rs.all implies rn.start == rs.start && rn.end == rs.end   &&
+                                                   rn.step == rs.step ?: 1)
+
+context Port pn, PortSugar ps inv:
+  let
+    ports = ps.componentType.ports;
+  in
+    pn ~~ ps <=>
+    pn.name == ps.name && pn.dimension == ps.dimension ?: 1 &&
+    pn.direction == ps.direction ?:
+                             ports[ports.indexOf(ps) - 1].direction ?: PortDirection.IN
+
+// brackets are only here to speed up parsing from 24s to 3s -> they can be removed to receive the same result
+context PortInstantiation pin, PortInstantiationSugar pis inv:
+ let
+   r1List = List {RangeSugar r | r.start == 1 && r.end == 1 && r.step == 1};
+   r1 =  r1List[0];
+  in
+    pin ~~ pis <=>
+    (pin.port ~~ pis.port && pin.sub ~~ pis.sub) &&
+    (pin.portIndices ~~ pis.portIndices ?: r1)    &&
+    (pis.sub.isPresent implies pin.subIndices ~~ pis.subIndices ?: r1)
+
+context Connector cn, ConnectorSugar cs inv:
+  let spn = cn.sourcePort;
+      sps = cs.sourcePort;
+      tpn = cn.targetPort;
+      tps = cs.targetPort;
+      ps = {sps, tps};
+  in
+    cn ~~ cs <=>
+    ( (!or ps.indexBased) && (!or ps.nameBased) implies
+      spn ~~ sps && tpn ~~ tps ) &&
+    ( or ps.nameBased implies
+      let sCmp = sps.sub.parent;
+          tCmp = tps.sub.parent;
+          names = sCmp.ports.name.retainAll(tCmp.ports.name);
+          sPorts = {sp in Port | sp.name in names, sp.component ~~ sCmp };
+          tPorts = {tp in Port | tp.name in names, tp.component ~~ tCmp };
+          cons = {c in Connector | c.sourcePort in sPorts,
+                                   c.targetPort in tPorts,
+                                   c.sourcePort.port.name == c.targetPort.port.name};
+          compNList = List{Component cmp | cmp ~~ cs.componentScope};
+          compN = compNList[0];
+       in
+         compN.containsAll(cons) // OCLTrafo generator changes it to addAll
+    ) // && ... indexBased case similar to nameBased one: use position
+
+/////////////////////////////////////////////////////////////////////////
+///// Constraints about EmbeddedMontiView,
+///// Design constraints about EmbeddedMontiArc,
+///// Verification constraints between EmbeddedMontiArc and EmbeddedMontiView
+/////////////////////////////////////////////////////////////////////////
+
+// Ch07_AbstractConnector
+
+context APortInstantiation inv:
+  port.isPresent == portIndices.isPresent &&
+  cmpNav.size    == cmpNavIndices.size
+
+// Ch07_OCLPorts2
+inv RedundandVelocityControllerPorts:
+ exists c in Component:
+   let
+     cV = c.ports["currentVelocity"];
+     wV = c.ports["wishedVelocity"];
+     nPortsIn = {p in c.ports | p.direction == PortDirection.IN};
+     nPortsOut = {p in c.ports | p.direction == PortDirection.OUT};
+   in
+     // component RedundantVelocityController {
+     ( c.name == "RedundantVelocityController" ) &&
+
+     // 3x ports in and 3x ports out
+     ( nPortsIn.size >= 3 &&
+     nPortsOut.size >= 3 ) &&
+
+     // ports in (0km/h : 250km/h) currentVelocity
+     ( cV.direction == PortDirection.IN && cV.type instanceof NumericType ) &&
+     ( cV.type.min == 0km/h && cV.type.max == 250km/h ) &&
+
+     // ports in ?                 wishedVelocity
+     wV.direction == PortDirection.IN &&
+
+     // ports in Gear              ?
+     (exists p in c.ports:
+         p != cV && p != wV && p.direction == PortDirection.IN &&
+         p.type instanceof EnumType && p.type.name == "Gear") &&
+
+     // ports out (-oo m/s^2 : oo m/s^2) $acceleration
+     (exists p in c.ports:
+         p.direction == PortDirection.OUT &&
+         p.type instanceof NumericType &&
+         p.type.min == -oo m/s^2 && p.type.max == oo m/s^2)
+
+// Ch07_SatisfactionPortOCL
+
+context AComponentType inv PortsComplete:
+  portsComplete implies
+     exists ComponentType c:
+       name ?== c.name &&
+       this.ports.name == c.ports.name
+
+context AComponentType inv NbOfPorts:
+  exists ComponentType c: name ?== c.name &&
+    sum {ap.dimension.min ?: 1 | ap in ports, ap.direction == PortDirection.IN} <=
+                      sum {p.dimension | p in c.ports, p.direction == PortDirection.IN} &&
+    sum {ap.dimension.min ?: 1 | ap in ports, ap.direction == PortDirection.OUT} <=
+                      sum {p.dimension | p in c.ports, p.direction == PortDirection.OUT}
+
+context AComponentType inv PortNames:
+ let
+   apNames = {ap2 in ports | ap2.name.isPresent};
+ in
+  exists ComponentType c:
+    (name ?== c.name &&
+    forall ap in apNames: // ap: abstract port
+      exists p in c.ports:
+         (p.name == ap.name && p.direction == ap.direction
+         && ap.type ?~~ p.type && ap.dimension.min ?<= p.dimension &&
+          ap.dimension.max ?>= p.dimension ))
+
+context AComponentType inv PortTypes:
+  exists ComponentType c: name ?== c.name &&
+    forall ap in {ap in ports | !ap.name.isPresent && ap.type.isPresent}:
+      exists p in c.ports: !ports.name.contains(p.name) &&
+        p.direction == ap.direction && ap.type ~~ p.type &&
+        ap.dimension.min ?<= p.dimension && ap.dimension.max ?>= p.dimension
+
+// Ch07_SatisfactionOCLParameters
+
+context AComponentType inv Parameters:
+  exists ComponentType c:
+    name ?== c.name &&
+    (forall ap in {ap2 in parameters | !ap2.underspec}:
+      exists p in c.parameters:
+        (ap.name == p.name && ap.kind == p.kind && (ap.type ?~~ p.type) &&
+        (forall t in ap.bindings.value.type: p.type.isPresent implies t.isCompatibleTo(p.type) ) &&
+        ap.dimension.min ?<= p.dimension && ap.dimension.max ?>= p.dimension))
+
+// Ch07_AbstractConnectorsCDExample2
+
+context ConnectorChainInst inv:
+  elements.containsAll(connectors) &&
+  connectors[0] == start && connectors[connectors.size - 1] == end &&
+  forall i in {0 .. connectors.size - 1}:
+    connectors[i].targetPort == connectors[i+1].sourcePort
+
+context ConnectorChainInst inv:
+  startPort == start.sourcePort && endPort == end.targetPort
+
+context ComponentInstantiation inv:
+  subs == typeif type instanceof Component then type.subs else {}
+
+context Component inv:
+  allSubs == subs.subs**
+
+// Ch07_AbstractConnectorsOCLExample
+
+inv SignalConnections:
+  (exists car in {c in ComponentInst | c.component.name == "Car"}:
+    (forall PortInst car_signal in {p in car.ports |
+                                   p.port.name == "signal" && p.direction == PortDirection.IN}:
+      (exists ComponentType tParkAss:
+        (exists Set<ComponentInst> parkAss:
+          {s in car.subs**| s.component == tParkAss}.containsAll(parkAss) &&
+          parkAss.size == 2 &&
+          (exists ComponentType tFilter:
+            (forall ComponentInst filter in {s in parkAss.subs** | s.component == tFilter}:
+              (exists PortInst filter_signal in {p in filter.ports |
+                                   p.port.name == "signal" && p.direction == PortDirection.IN}:
+                (exists ConnectorChainInst cci in car_signal.startPorts:
+                    cci.endPort == filter_signal
+  ) ) ) ) ) ) ) )
+
+// Ch07_AbstractEffectorsCD2
+
+context ConnectorChainInst inv:
+  elements.containsAll(connectors) &&
+  connectors[0] == start && connectors[connectors.size - 1] == end &&
+  forall i in {0 .. connectors.size - 1}:
+    connectors[i].targetPort == connectors[i+1].sourcePort
+
+context ConnectorChainInst inv:
+  startPort == start.sourcePort && endPort == end.targetPort
+
+context ComponentInstantiation inv:
+  subs == typeif type instanceof Component then type.subs else {}
+
+context CnCModel cncm, CnCView cncv inv:
+  cncm.satisfies(cncv) <=>
+    forall act in cncv.aComponentTypes:
+      // constraint PortsComplete
+     (act.portsComplete implies exists c in cncm.componentTypes:
+        act.name ?== c.name && c.ports.name == act.ports.name)
+      && // constraint Parameters
+      (exists c in cncm.componentTypes:
+         act.name ?== c.name &&
+         (forall ap in {ap in act.parameters | !ap.underspec}:
+           exists p in c.parameters:
+             (ap.name == p.name && ap.kind == p.kind && ap.type ?~~ p.type) &&
+             (forall t in ap.bindings.value.type: p.type.isPresent implies t.isCompatibleTo(p.type) ) &&
+              ap.dimension.min ?<= p.dimension &&
+              ap.dimension.max ?>= p.dimension))
+       // &&  ... (other OCL constraints)
+

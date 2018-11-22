@@ -21,12 +21,14 @@ package ocl.monticoreocl.ocl._symboltable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.expressionsbasis._ast.ASTExpression;
 import de.monticore.numberunit.prettyprint.UnitsPrinter;
-import de.monticore.oclexpressions._ast.ASTInExpr;
+import ocl.monticoreocl.ocl._types.FindInExpressionHelper;
+import ocl.monticoreocl.oclexpressions._ast.ASTInExpr;
 import de.monticore.symboltable.*;
 import de.monticore.symboltable.types.references.ActualTypeArgument;
 import de.monticore.types.TypesPrinter;
@@ -39,6 +41,8 @@ import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import ocl.monticoreocl.ocl._types.OCLExpressionTypeInferingVisitor;
 import ocl.monticoreocl.ocl._types.TypeInferringHelper;
+import ocl.monticoreocl.oclexpressions._ast.ASTName2;
+import ocl.monticoreocl.oclexpressions._ast.ASTOCLComprehensionExpressionStyle;
 
 import javax.measure.unit.Unit;
 
@@ -137,6 +141,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 		addToScopeAndLinkWithNode(paramDeclSymbol, astParamDecl);
 	}
 
+	MutableScope scope;
 	@Override
 	public void visit(final ASTOCLInvariant astInvariant) {
 		String invName = "invariantName";
@@ -153,6 +158,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 		setClassName(invSymbol, astInvariant);
 		setClassObject(invSymbol, astInvariant);
 		addToScopeAndLinkWithNode(invSymbol, astInvariant);
+		scope = (MutableScope) astInvariant.getSpannedScope();
 	}
 
 	protected void setClassContextIsPresent(final OCLInvariantSymbol invSymbol, ASTOCLClassContext astClassContext) {
@@ -260,6 +266,29 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 			varNames.forEach(name -> addVarDeclSymbol(name, typeReference, astContextDef));
 		}
 	}
+  // This methods tries to infer the types of variables defined later in sets, e.g., in
+	// combSubs = { { (10+d).toString | d in chain} |
+	//                   chain in partition1A };
+	// the algorithm needs to look ahead to infer the type of chain as `chain in partitiona1A` comes after `d in chain`
+	@Override
+	public void visit(ASTOCLComprehensionExpressionStyle node) {
+		long undefined = Long.MAX_VALUE - 1;
+		long undefinedPrev = Long.MAX_VALUE;
+		while (undefined < undefinedPrev) {
+			FindInExpressionHelper inExpressionHelper;
+			try { // looking ahead may crash
+				inExpressionHelper = new FindInExpressionHelper(node, scope);
+			} catch(Exception e) {
+				break;
+			}
+			Map<String, CDTypeSymbolReference> inTypes = inExpressionHelper.getInTypes();
+			undefinedPrev = undefined;
+			undefined = inTypes.values().stream().filter(s -> s.getStringRepresentation().equals("Class")).count();
+			inTypes.forEach( (name, type) -> addVarDeclSymbol(name, type, node));
+			if (undefined == 0)
+				break;
+		}
+	}
 
 	@Override
 	public void visit(final ASTInExpr astInExpr) {
@@ -277,7 +306,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 			ASTExpression astExpression = astInExpr.getExpression();
 			OCLExpressionTypeInferingVisitor exprVisitor = new OCLExpressionTypeInferingVisitor(currentScope().get());
 			CDTypeSymbolReference containerType = exprVisitor.getTypeFromExpression(astExpression);
-			if (containerType.getActualTypeArguments().size() == 0) {
+			if (containerType.getActualTypeArguments().isEmpty()) {
 				Log.error("0xOCLS3 Could not resolve type from InExpression, " + astInExpr.getVarNameList() +
 						" in " + containerType + " at " +  astInExpr.get_SourcePositionStart()
 						, astInExpr.get_SourcePositionStart(), astInExpr.get_SourcePositionEnd());

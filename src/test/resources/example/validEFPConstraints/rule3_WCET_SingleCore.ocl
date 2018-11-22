@@ -7,8 +7,8 @@ ocl rule3_WCET_SingleCore {
     context Cmp cmp inv:
             let
                 selectedVals = cmp.CSubs;
-                aggregatedTags = List{max(s.wcet, 0 s) | s in selectedVals};
+                aggregatedTags = List{ max s.wcet ?: 0 s | s in selectedVals};
                 aggregatedValue = sum(aggregatedTags, "s");
             in
-                aggregatedValue < min(cmp.wcet, +oo s);
+                aggregatedValue < min cmp.wcet ?: +oo s;
 }

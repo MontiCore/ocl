@@ -1,0 +1,64 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package ocl.monticoreocl;
+
+component grammar MaxMinEvlisExpressions extends de.monticore.CommonExpressions {
+
+   // token TElvis = '?' ':';
+
+    // indirect tokens
+   // TMax = { _input.LT(1).getText().equals("max") }? Name; // do not want to destroy the name
+   // TMin = { _input.LT(1).getText().equals("min") }? Name;
+
+    MaxExpressionPrefix implements Expression <225> =
+        "max"
+        set:Expression; // normally this would be the best, but the precedence does not work yet
+
+    MinExpressionPrefix implements Expression <225> =
+        "min"
+        set:Expression;
+
+    SumExpressionPrefix implements Expression <225> =
+        "sum"
+        set:Expression;
+
+    // `opt ?: 0W` is equals to `opt.isPresent ? opt.get : 0W`
+    // this operator is right associative, so that multiple optionals can be chained:
+    // x ?: y ?: 0 is the same as x ?; (y ?: 0)
+    // and this means that if x is present it returns x.get other it tries if y is present if not it returns 0
+    ElvisExpressionPrefix implements Expression <140>, InfixExpression = <rightassoc> // priority between `==` and `<`
+        leftExpression:Expression
+        operator:"?:"
+        rightExpression:Expression;
+
+    // `x ?== y` is the same as `x.isPresent implies x.get == y`
+    // this is useful for underspecification relations, if it is underspecified (x.isAbsent) nothing must hold
+    //
+    // `x ?>= y` equals `x.isPresent implies x.get >= y` -> the other operators work the same way
+
+    ElvisLessEqualExpression implements Expression <150>, InfixExpression =
+    	leftExpression:Expression operator:"?<=" rightExpression:Expression;
+
+    ElvisGreaterEqualExpression implements Expression <150>, InfixExpression =
+    	leftExpression:Expression operator:"?>=" rightExpression:Expression;
+
+    ElvisLessThanExpression implements Expression <150>, InfixExpression =
+    	leftExpression:Expression operator:"?<" rightExpression:Expression;
+
+    ElvisGreaterThanExpression implements Expression <150>, InfixExpression =
+    	leftExpression:Expression operator:"?>" rightExpression:Expression;
+
+    ElvisEqualsExpression implements Expression <130>, InfixExpression =
+    	leftExpression:Expression operator:"?==" rightExpression:Expression;
+
+    ElvisNotEqualsExpression implements Expression <130>, InfixExpression =
+          	leftExpression:Expression operator:"?!=" rightExpression:Expression;
+
+     // x ?~~ y, is the same as x ?== y, except that the types of x and y must not be compatible
+     ElvisSimilarExpression implements Expression <130>, InfixExpression =
+        	leftExpression:Expression operator:"?~~" rightExpression:Expression;
+
+     // x ?!~ y, is the same as x != y, except that the types of x and y must not be compatible
+     ElvisNotSimilarExpression implements Expression <130>, InfixExpression =
+         	leftExpression:Expression operator:"?!~" rightExpression:Expression;
+}
