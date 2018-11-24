@@ -23,24 +23,45 @@ context StructItem inv:
 context ComponentParameter inv:
   type instanceof ComponentInterface
 
+// Ch04_ComponentInstantiation
 context Component inv:
   forall t in implements.type:
     (t instanceof ComponentInterface)
 
-// TODO: this is incomplete: handle cases when t1.res or t2.res are absent
+// Ch04_PortConnector
 context NumericType t1, NumericType t2 inv:
   let
-     maxSteps1 = {1 .. 2*Math.abs(t1.max.value / t1.res.value) + 1};
-     range1 = { v | v = t1.min.value + k * t1.res.value, k in maxSteps1, v <= t1.max.value };
-     maxSteps2 = {1 .. 2*Math.abs(t2.max.value / t2.res.value) + 1};
-     range2 = { v | v = t2.min.value + k * t2.res.value, k in maxSteps2, v <= t2.max.value };
+     maxSteps1 = {1 .. 2*Math.abs(t1.max / t1.res) + 1};
+     range1 = { v | v = t1.min + k * t1.res, k in maxSteps1, v <= t1.max };
+     maxSteps2 = {1 .. 2*Math.abs(t2.max / t2.res) + 1};
+     range2 = { v | v = t2.min + k * t2.res, k in maxSteps2, v <= t2.max };
   in
     t1.isCompatibleTo(t2) <=>
     (t1.quantity == t2.quantity &&
     t1.cols == t2.cols &&
     t1.rows == t2.rows &&
-    range2.containsAll(range1) &&
-    t2.algebraicProperties.containsAll(t1.algebraicProperties))
+    t2.algebraicProperties.containsAll(t1.algebraicProperties)) &&
+    t1.res.isPresent == t2.res.isPresent &&
+    ( t1.res.isPresent implies range2.containsAll(range1) ) &&
+    ( !t1.res.isPresent implies t1.min >= t2.min && t1.max <= t2.max )
+
+context StructType inv:
+  forall item1 in items:
+    item1 == item[item1.name]
+
+context StructType t1, StructType t2 inv:
+  t1.isCompatibleTo(t2) <=>
+  t1.items.size == t2.items.size &&
+  (forall item1 in t1.items:
+    exists item2 in t2.items:
+      (item1.name == item2.name &&
+       item1.type.isCompatibleTo(item2.type)))
+
+context BooleanType t1, BooleanType t2 inv:
+  t1.isCompatibleTo(t2) <=> true // booleans are always compatible
+
+
+
 
 context Connector inv:
   sourcePort.port.type.isCompatibleTo(targetPort.port.type)
@@ -249,14 +270,14 @@ context ComponentInst inv PowerConsumptionWithEncryption:
     aggregation <= compareTo
 
 // Ch06_CombinedPowerWithTable
-context ComponentInst inv PowerConsumptionWithEncryption:
+context ComponentInst inv PowerConsumptionWithEncryptionTable:
   let selection1 = subs;
       selection2 = ports.addAll(subs.ports);
       ep = component.encryptPower;
       aggregation = sum List{ max s.maxPower ?: 0W | s in selection1 }
-                  + sum List{ max ep[pi.encryption].encrypt ?: 0W |
+                  + sum List{ max { ep[encValue].encrypt | encValue in pi.encryption }.flatten ?: 0W | // pi.encryption is Collection<Encryption>, therefore ep[pi.encryption] does not work, as ep is Map<Encryption, Collection<EncryptPower>>
                               pi in selection2, pi.receiver != {} }
-                  + sum List{ max ep[pi.encryption].decrypt ?: 0W |
+                  + sum List{ max { ep[decValue].decrypt | decValue in pi.encryption }.flatten ?: 0W |
                               pi in selection2, pi.sender.isPresent };
       compareTo = min component.maxPower ?: oo W;
   in
@@ -442,8 +463,8 @@ context APortInstantiation inv:
 inv RedundandVelocityControllerPorts:
  exists c in Component:
    let
-     cV = c.ports["currentVelocity"];
-     wV = c.ports["wishedVelocity"];
+     cV = c.port["currentVelocity"];
+     wV = c.port["wishedVelocity"];
      nPortsIn = {p in c.ports | p.direction == PortDirection.IN};
      nPortsOut = {p in c.ports | p.direction == PortDirection.OUT};
    in

@@ -631,4 +631,18 @@ public class OCLTypeInferringTest extends AbstractOCLTest {
         assertNotNull(declVarSymbol);
         assertEquals("Number<Duration>", declVarSymbol.getType().getStringRepresentation());
     }
+
+    @Test
+    public void Test5() {
+        final GlobalScope globalScope = OCLGlobalScopeTestFactory.create("src/test/resources/example/MvWPhd_models");
+
+        final OCLFileSymbol oclFileSymbol = globalScope.<OCLFileSymbol>resolve("Test5", OCLFileSymbol.KIND).orElse(null);
+        assertNotNull(oclFileSymbol);
+        OCLInvariantSymbol oclInvariantSymbol = oclFileSymbol.getOCLInvariant("Y").orElse(null);
+        assertNotNull(oclInvariantSymbol);
+
+        OCLVariableDeclarationSymbol declVarSymbol = oclInvariantSymbol.getOCLVariableDecl("x").orElse(null);
+        assertNotNull(declVarSymbol);
+        assertEquals("Map<String,StructTypeItem>", declVarSymbol.getType().getStringRepresentation());
+    }
 }

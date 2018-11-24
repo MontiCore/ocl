@@ -399,4 +399,35 @@ public class OCLTypeCheckingVisitor implements OCLVisitor {
           setType.getStringRepresentation()), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
   }
+
+  @Override
+  public void visit(ASTOCLArrayQualification node) {
+    ASTOCLQualifiedPrimary primary = new ASTOCLQualifiedPrimary();
+    primary.setNameList(qualifiedPrimaryNames);
+    OCLExpressionTypeInferingVisitor type = new OCLExpressionTypeInferingVisitor(scope);
+    CDTypeSymbolReference containerType = type.getTypeFromExpression(primary);
+    OCLExpressionTypeInferingVisitor atype = new OCLExpressionTypeInferingVisitor(scope);
+    CDTypeSymbolReference argumentType = atype.getTypeFromExpression(node.getArguments(0));
+
+    if (isCollection(containerType)) {
+      // check that argument is only type of Number without any quantity
+      if (!argumentType.hasSuperType("Number")) {
+        Log.error(String.format("0xOCLK6 Index access of a Collection is only possible via a number type, but the type of your index is `%s`",
+            argumentType.getStringRepresentation()),
+            node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+      }
+    }
+    else if (isMap(containerType)) {
+      CDTypeSymbolReference keyType = getContainerGeneric(containerType);
+      if (!argumentType.isSameOrSuperType(keyType) && !keyType.isSameOrSuperType(argumentType)) {
+        Log.error(String.format("0xOCLK7 Index access at Map `%s`: the key type `%s` is not compatible with the index type `%s`",
+            containerType.getStringRepresentation(), keyType.getStringRepresentation(), argumentType.getStringRepresentation()),
+            node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+      }
+      // if it is a map the index must be the first generic the type of the key
+    }
+    // todo check that [] is only applied on Collections or on Maps
+    // and if it is a collection the index must be of Number without any quantity
+    // if it is a map the index must be the first generic the type of the key
+  }
 }

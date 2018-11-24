@@ -373,11 +373,21 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
   @Override
   public void traverse(ASTOCLArrayQualification node) {
     List<ActualTypeArgument> arguments = returnTypeRef.getActualTypeArguments();
-    if (arguments.size() == 0) {
+    if (arguments.isEmpty()) {
       if (logError)
         Log.error("0xOCLI4 Could not resolve container argument from: " + returnTypeRef + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
-    returnTypeRef = (CDTypeSymbolReference) arguments.get(0).getType();
+    if (returnTypeRef.getName().equals("Map")) {
+      if (arguments.size() != 2) {
+        if (logError)
+          Log.error("0xOCLK6 Could not resolve value argument from: " + returnTypeRef + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+        return;
+      }
+      returnTypeRef = ((CDTypeSymbolReference)arguments.get(1).getType());
+    }
+    else {
+      returnTypeRef = (CDTypeSymbolReference) arguments.get(0).getType();
+    }
   }
 
   @Override
@@ -439,7 +449,12 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
           Log.error("0xOCLI5 Could not resolve inner type from InExpression, " + node.getVarNameList() + " in " + containerType + " at " + node.get_SourcePositionStart(), node.get_SourcePositionStart(), node.get_SourcePositionEnd());
       }
       else {
-        returnTypeRef = getContainerGeneric(containerType);
+        if (containerType.getName().equals("Map") && containerType.getActualTypeArguments().size() == 2) {
+         returnTypeRef = ((CDTypeSymbolReference)containerType.getActualTypeArguments().get(1).getType());
+        }
+        else {
+          returnTypeRef = getContainerGeneric(containerType);
+        }
       }
     }
   }
@@ -777,6 +792,9 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     Optional<CDAssociationSymbol> associationSymbol = resolveAssociationSymbol(typeSymbolReference, name);
     Optional<CDMethodSymbol> methodSymbol = elementsScope.resolve(name, CDMethodSymbol.KIND);
 
+    if (!fieldSymbol.isPresent()) {
+      fieldSymbol = typeSymbolReference.getAllVisibleFields().stream().filter(f -> f.getName().equals(name)).findAny();
+    }
     if (fieldSymbol.isPresent()) { // Try name as field
       return Optional.of(createTypeRef(fieldSymbol.get().getType().getName(), node));
     }
@@ -942,6 +960,26 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     }
     else {
       newType = targetType;
+    }
+    if (associationSymbol.getQualifier().isPresent()) {
+      CDTypeSymbolReference newTypeMap = createTypeRef("Map", node);
+      CDTypeSymbolReference keyType;
+      String name = associationSymbol.getQualifier().get().getName();
+      if (associationSymbol.getQualifier().get().isTypeQualifier()) {
+        keyType = createTypeRef(name, node);
+      } else {
+        keyType = handleName(node, name, scope,
+            createTypeRef(associationSymbol.getTargetType().getName(), node)).orElse(null);
+        if (keyType == null) {
+          if (logError)
+            Log.error(String.format("0xOCLK6 Could not resolve name-qualifier `%s` of association `%s`, because type `%s` does not has an attribute/field/association with the name `%s`",
+              name, associationSymbol.getAstNode().isPresent() ? associationSymbol.getAstNode() : associationSymbol, associationSymbol.getTargetType().getName(), name),
+              node.get_SourcePositionStart(), node.get_SourcePositionEnd());
+          return null;
+        }
+      }
+      addActualArguments(newTypeMap, keyType, newType);
+      newType = newTypeMap;
     }
     return newType;
   }

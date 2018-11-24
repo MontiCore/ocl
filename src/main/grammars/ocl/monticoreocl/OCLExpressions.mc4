@@ -187,7 +187,8 @@ external EDeclaration;
         ("." OCLQualifiedPrimary)?
         ;
 
-
+    OCLQualifiedPrimaryExpression implements Expression <499> = // to write down `{x*x | x in {1 .. 10}}.addAll({10 .. 100})`
+        Expression "." OCLQualifiedPrimary;
 
     /** ASTOCLQualification defines qualification postfixes of a qualified
         primary. A qualification is one of the three kinds:

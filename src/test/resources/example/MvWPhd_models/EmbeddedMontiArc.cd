@@ -6,7 +6,7 @@ classdiagram EmbeddedMontiArc {
 
   // slide Ch04_PortTypeSystemOverview
   interface PortType extends Type {
-    boolean isCompatibleTo(PortType pt);
+    boolean isCompatibleTo(PortType pt); // Ch04_PortConnector
   }
   interface PortValue extends Value;
   class Unit {
@@ -54,6 +54,26 @@ classdiagram EmbeddedMontiArc {
   association [1] EnumType <-> EnumItem [*];
   class BooleanType implements PortType;
 
+  // Ch04_Struct
+  class Struct implements PortValue;
+  class StructItem {
+    String name;
+  }
+  association Struct [[name]] -> (item) StructItem [1];
+  association / Struct -> (items) StructItem [*];
+  association StructItem -> (value) PortValue [1];
+  class StructTypeItem {
+    String name;
+  }
+  association StructTypeItem -> (type) PortType [1];
+  class StructType implements PortType {
+    String name;
+  }
+  association StructType [[name]] -> (item) StructTypeItem [1];
+  association / StructType -> (items) StructTypeItem [*];
+  association Struct -> (type) StructType [1];
+  association StructItem -> (type) StructTypeItem [1];
+
   // slide Ch04_Parameter1
   enum ParameterKind {
     CONFIG, GENERIC;
@@ -70,25 +90,6 @@ classdiagram EmbeddedMontiArc {
   association ParameterBinding -> Range [1];
   read-only association ParameterBinding -> Parameter [1];
   read-only association ParameterBinding -> Value [1];
-
-  // Ch04_Struct (needs to be created)
-
-  class Struct implements PortValue;
-  class StructItem {
-    String name;
-  }
-  association Struct [[name]] -> (item) StructItem [1];
-  association StructItem -> (value) PortValue [1];
-  class StructTypeItem {
-    String name;
-  }
-  association StructTypeItem -> (type) PortType [1];
-  class StructType implements PortType {
-    String name;
-  }
-  association StructType [[name]] -> (item) StructTypeItem [1];
-  association Struct -> (type) StructType [1];
-  association StructItem -> (type) StructTypeItem [1];
 
   // Ch04_Parameter2
 
@@ -149,7 +150,7 @@ classdiagram EmbeddedMontiArc {
   association StructTypeParameterBinding -> (parameter) StructTypeParameter [1];
 
   class ComponentParameter extends ComponentInstantiation implements Parameter;
-  association / ComponentParameter -> (type) /* ComponentInterface */ ComponentType [1];
+  association / ComponentParameter -> (type) ComponentType [1];
   association ComponentParameter -> (defaultValue) ComponentInstantiation [0..1];
   class ComponentParameterBinding implements ParameterBinding;
   association ComponentParameterBinding -> (value) ComponentInstantiation [1];
@@ -206,6 +207,7 @@ classdiagram EmbeddedMontiArc {
 
   // slide Ch04_Component
   association [1] ComponentType -> (ports) Port [*] <<ordered>>;
+  association ComponentType [[name]] -> (port) Port [1];
   association ComponentType -> (parameters) Parameter [*] <<ordered>>;
   association [0..1] Component (parent) <-> (subs) ComponentInstantiation [*];
 
@@ -601,6 +603,10 @@ classdiagram EmbeddedMontiArc {
     Set asSet(); // Optional.empty => {} and Optional.of(X) => { X }
     boolean isAbsent();
     boolean isPresent();
+  }
+
+  class Map {
+    int size();
   }
 
   class Date;

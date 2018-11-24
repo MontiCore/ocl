@@ -1,0 +1,9 @@
+import EmbeddedMontiArc.*;
+
+ocl Test5 { // type of x
+context StructType inv Y:
+  let
+    x = item;
+  in
+   true;
+}

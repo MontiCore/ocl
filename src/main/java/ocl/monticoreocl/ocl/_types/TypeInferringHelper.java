@@ -44,13 +44,24 @@ public class TypeInferringHelper {
     }
 
     public static void addActualArgument(CDTypeSymbolReference typeOuter, CDTypeSymbolReference typeInner) {
+        addActualArguments(typeOuter, typeInner, null);
+    }
+
+    public static void addActualArguments(CDTypeSymbolReference typeOuter, CDTypeSymbolReference typeInner1, CDTypeSymbolReference typeInner2) {
         String stringRepresentation = typeOuter.getStringRepresentation() + "<";
 
         List<ActualTypeArgument> actualTypeArguments = new ArrayList<>();
-        ActualTypeArgument actualTypeArgument = new ActualTypeArgument(typeInner);
-        actualTypeArguments.add(actualTypeArgument);
+        ActualTypeArgument actualTypeArgument1 = new ActualTypeArgument(typeInner1);
+        actualTypeArguments.add(actualTypeArgument1);
+        stringRepresentation += typeInner1.getStringRepresentation();
 
-        stringRepresentation += typeInner.getStringRepresentation() + ">";
+        if (typeInner2 != null) {
+            ActualTypeArgument actualTypeArgument2 = new ActualTypeArgument(typeInner2);
+            actualTypeArguments.add(actualTypeArgument2);
+            stringRepresentation += "," + typeInner2.getStringRepresentation();
+        }
+
+        stringRepresentation += ">";
         typeOuter.setStringRepresentation(stringRepresentation);
         typeOuter.setActualTypeArguments(actualTypeArguments);
     }
@@ -173,9 +184,19 @@ public class TypeInferringHelper {
                 || typeName.equals("Optional");
     }
 
+    public static Boolean isCollection(CDTypeSymbolReference type) {
+        String typeName = type.getName();
+        return typeName.equals("Set") || typeName.equals("List") || typeName.equals("Collection");
+    }
+
     public static Boolean isList(CDTypeSymbolReference type) {
         String typeName = type.getName();
         return typeName.equals("List");
+    }
+
+    public static Boolean isMap(CDTypeSymbolReference type) {
+        String typeName = type.getName();
+        return typeName.equals("Map");
     }
 
 

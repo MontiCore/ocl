@@ -41,6 +41,26 @@ public class ASTOCLQualifiedPrimary extends ASTOCLQualifiedPrimaryTOP {
     super(name2s, postfixQualification, oCLQualifiedPrimary);
   }
 
+  public void setNameList(List<String> qualifiedNames) {
+    name2s.clear();
+    for (String name : qualifiedNames) {
+      name2s.add(string2Name2(name));
+    }
+  }
+
+  public static ASTName2 string2Name2(String name) {
+    ASTName2 ret = new ASTName2();
+    if (name.equals("max"))
+      ret.setMax(true);
+    else if (name.equals("min"))
+      ret.setMax(true);
+    else if (name.equals("sum"))
+      ret.setSum(true);
+    else
+      ret.setName(name);
+    return ret;
+  }
+
   static public String name2String(ASTName2 name2) {
     if (name2.isMax())
       return "max";
