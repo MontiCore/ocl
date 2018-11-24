@@ -275,9 +275,9 @@ context ComponentInst inv PowerConsumptionWithEncryptionTable:
       selection2 = ports.addAll(subs.ports);
       ep = component.encryptPower;
       aggregation = sum List{ max s.maxPower ?: 0W | s in selection1 }
-                  + sum List{ max { ep[encValue].encrypt | encValue in pi.encryption }.flatten ?: 0W | // pi.encryption is Collection<Encryption>, therefore ep[pi.encryption] does not work, as ep is Map<Encryption, Collection<EncryptPower>>
+                  + sum List{ max { ep[encValue] | encValue in pi.encryption }.encrypt ?: 0W | // pi.encryption is Collection<Encryption>, therefore ep[pi.encryption] does not work, as ep is Map<Encryption, Collection<EncryptPower>>
                               pi in selection2, pi.receiver != {} }
-                  + sum List{ max { ep[decValue].decrypt | decValue in pi.encryption }.flatten ?: 0W |
+                  + sum List{ max { ep[decValue] | decValue in pi.encryption }.decrypt ?: 0W |
                               pi in selection2, pi.sender.isPresent };
       compareTo = min component.maxPower ?: oo W;
   in
@@ -603,4 +603,3 @@ context CnCModel cncm, CnCView cncv inv:
               ap.dimension.min ?<= p.dimension &&
               ap.dimension.max ?>= p.dimension))
        // &&  ... (other OCL constraints)
-
