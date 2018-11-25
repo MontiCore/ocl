@@ -18,7 +18,7 @@ classdiagram EmbeddedMontiArc {
   interface Type extends Value; // cf. Ch04_Parameter1
   interface Quantity extends Type;
 
-  read-only association Value -> (type) Type [0..1];
+  read-only association Value -> (type) Type [1];
   read-only association PortValue -> (type) PortType [1];
 
   // slide Ch04_PortValue
@@ -51,7 +51,7 @@ classdiagram EmbeddedMontiArc {
   association NumericType -> Quantity [1];
   association NumericType -> (algebraicProperties) AlgebraicProperty [*];
   class EnumType implements PortType;
-  association [1] EnumType <-> EnumItem [*];
+  association [1] EnumType <-> (items) EnumItem [*];
   class BooleanType implements PortType;
 
   // Ch04_Struct
@@ -84,7 +84,7 @@ classdiagram EmbeddedMontiArc {
   }
   association Parameter -> (dimension) NaturalNumber [1];
   read-only association Parameter -> (defaultValue) Value [0..1];
-  read-only association / Parameter -> (type) Type [0..1];
+  read-only association / Parameter -> (type) Type [1];
 
   interface ParameterBinding;
   association ParameterBinding -> Range [1];
@@ -224,7 +224,7 @@ classdiagram EmbeddedMontiArc {
   class CnCLibrary;
   association / CnCLibrary -> Effector [*];
   association / CnCLibrary -> Connector [*];
-  association [0..1] CnCLibrary <-> Component [*];
+  association [0..1] CnCLibrary <-> ComponentType [*];
 
   // slide Ch04_CnCInstanceStructure
   class ComponentInst implements ElementInst {
@@ -461,7 +461,6 @@ classdiagram EmbeddedMontiArc {
 
   interface AType extends AValue { // Ch07_AbstractComponentInstantiation
      boolean isCompatibleTo(Type t);
-     boolean isCompatibleTo(AType at);
   }
 
   interface AParameter extends AType {

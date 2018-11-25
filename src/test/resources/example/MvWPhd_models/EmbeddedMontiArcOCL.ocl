@@ -46,8 +46,8 @@ context NumericType t1, NumericType t2 inv:
     ( !t1.res.isPresent implies t1.min >= t2.min && t1.max <= t2.max )
 
 context StructType inv:
-  forall item1 in items:
-    item1 == item[item1.name]
+  forall it in items:
+    it == item[it.name]
 
 context StructType t1, StructType t2 inv:
   t1.isCompatibleTo(t2) <=>
@@ -60,6 +60,10 @@ context StructType t1, StructType t2 inv:
 context BooleanType t1, BooleanType t2 inv:
   t1.isCompatibleTo(t2) <=> true // booleans are always compatible
 
+context EnumType t1, EnumType t2 inv:
+  t1.isCompatibleTo(t2) <=>
+  t1.items == t2.items
+
 
 
 
@@ -67,8 +71,10 @@ context Connector inv:
   sourcePort.port.type.isCompatibleTo(targetPort.port.type)
 
 context PortInstantiation inv:
+  sub.isPresent == subIndices.isPresent &&
   portIndices.end <= port.dimension &&
   subIndices.end <= sub.dimension
+
 
 context Range inv:
   start <= end
@@ -108,6 +114,10 @@ context Component inv:
       .addAll( { param | param in this.parameters,
                         exists param2 in this.parameters:
                                param == param2.type})
+
+context ComponentType inv:
+  forall p in ports:
+    p == port[p.name]
 
 // Ch04_CnCModel
 
@@ -535,7 +545,7 @@ context AComponentType inv Parameters:
     (forall ap in {ap2 in parameters | !ap2.underspec}:
       exists p in c.parameters:
         (ap.name == p.name && ap.kind == p.kind && (ap.type ?~~ p.type) &&
-        (forall t in ap.bindings.value.type: p.type.isPresent implies t.isCompatibleTo(p.type) ) &&
+        (forall t in ap.bindings.value.type: t.isCompatibleTo(p.type) ) &&
         ap.dimension.min ?<= p.dimension && ap.dimension.max ?>= p.dimension))
 
 // Ch07_AbstractConnectorsCDExample2
@@ -599,7 +609,7 @@ context CnCModel cncm, CnCView cncv inv:
          (forall ap in {ap in act.parameters | !ap.underspec}:
            exists p in c.parameters:
              (ap.name == p.name && ap.kind == p.kind && ap.type ?~~ p.type) &&
-             (forall t in ap.bindings.value.type: p.type.isPresent implies t.isCompatibleTo(p.type) ) &&
+             (forall t in ap.bindings.value.type: t.isCompatibleTo(p.type) ) &&
               ap.dimension.min ?<= p.dimension &&
               ap.dimension.max ?>= p.dimension))
        // &&  ... (other OCL constraints)
