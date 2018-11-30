@@ -220,7 +220,7 @@ external EDeclaration;
         @attribute qualification
                    Optional Qualification.
     */
-    OCLComprehensionPrimary implements OCLPrimary  <40> =
+    OCLComprehensionPrimary implements OCLPrimary  <310> =
         SetListCollection?
         "{" expression:OCLComprehensionExpr? "}"
         ;
@@ -260,7 +260,7 @@ external EDeclaration;
                    (e.g.: "1..3, x, y..z")
     */
     OCLComprehensionEnumerationStyle implements OCLComprehensionExpr <10> =
-    	OCLCollectionItem* (",")?
+    	OCLCollectionItem+ (",")?
     	;
 
     OCLCollectionItem =
