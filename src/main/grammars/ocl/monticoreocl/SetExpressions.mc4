@@ -22,7 +22,7 @@ component grammar SetExpressions extends de.monticore.CommonExpressions {
 
     IntersectionExpressionInfix implements Expression <225> =
         leftExpression:Expression
-        "intersect"
+        ("intersect" | "intersection")
         rightExpression:Expression;
 
     UnionExpressionPrefix implements Expression <225> =
@@ -30,7 +30,7 @@ component grammar SetExpressions extends de.monticore.CommonExpressions {
 	    set:Expression;
 
     IntersectionExpressionPrefix implements Expression <225> =
-        "intersect"
+        ("intersect" | "intersection")
         set:Expression;
 
     SetAndExpression implements Expression <225> =

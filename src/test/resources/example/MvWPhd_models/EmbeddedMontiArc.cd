@@ -364,6 +364,20 @@ classdiagram EmbeddedMontiArc {
   association Port -> (encryption) EncryptionCollection [*];
   association EncryptionCollection -> (elements) EEncryption [*];
 
+  // Ch06_Authentification
+  enum EAuth {
+    Pin, Voice, FaceID, Finger;
+  }
+  class Auth;
+  association Auth -> (value) EAuth [1];
+  association Connector -> (auth) Auth [*];
+  association ConnectorInst -> (auth) Auth [*];
+
+  // Ch06_Certificate
+  class Cert extends String;
+  association Port -> (cert) Cert [*];
+  association ComponentInst -> (cert) Cert [*];
+
   // Ch06_CombinedPowerX
   class Encryption;
   association Encryption -> (value) EEncryption [1];
@@ -493,7 +507,7 @@ classdiagram EmbeddedMontiArc {
   }
   association AComponentInstantiation -> (name) String [0..1];
   association AComponentInstantiation -> (dimension) ADimension [0..1];
-  association AComponentInstantiation -> (value) AParameterBinding [*];
+  association AComponentInstantiation -> (values) AParameterBinding [*];
   association AComponentInstantiation -> (type) AComponentType [0..1];
 
   interface AParameterBinding;
@@ -583,6 +597,7 @@ classdiagram EmbeddedMontiArc {
     Set asSet();
     Collection flatten(); // see http://mbse.se-rwth.de/book1/index.php?c=chapter3-3#x1-560003.3.6
     Collection listPartitions(int length); // see https://github.com/dpaukov/combinatoricslib#7-list-partitions
+    boolean areCompatibleTo(Collection algebraicProperties); // boolean Collection<AlgebraicProperty>::areCompatibleTo(Collection<AlgebraicProperty> algebraicProperties)
   }
 
   class List extends Collection {

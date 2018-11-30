@@ -3,7 +3,7 @@ import EmbeddedMontiArc.*;
 // slide Ch04_PortValue
 
 context NaturalNumber inv:
-  value >= 1 &&
+  value >= 1 && unit.quantity instanceof Dimensionless &&
   !isPlusInf && !isMinusInf
 
 context Matrix inv:
@@ -40,7 +40,7 @@ context NumericType t1, NumericType t2 inv:
     (t1.quantity == t2.quantity &&
     t1.cols == t2.cols &&
     t1.rows == t2.rows &&
-    t2.algebraicProperties.containsAll(t1.algebraicProperties)) &&
+    t2.algebraicProperties.areCompatibleTo(t1.algebraicProperties)) &&
     t1.res.isPresent == t2.res.isPresent &&
     ( t1.res.isPresent implies range2.containsAll(range1) ) &&
     ( !t1.res.isPresent implies t1.min >= t2.min && t1.max <= t2.max )
@@ -49,6 +49,9 @@ context StructType inv:
   forall it in items:
     it == item[it.name]
 
+context Struct inv:
+  items.size == type.items.size
+  
 context StructType t1, StructType t2 inv:
   t1.isCompatibleTo(t2) <=>
   t1.items.size == t2.items.size &&
@@ -78,13 +81,11 @@ context PortInstantiation inv:
 
 context Range inv:
   start <= end
-
 // Ch04_Effector
 
 context Effector inv:
   sourceIndex.end <= sourcePort.dimension &&
-  targetIndex.end <= sourcePort.dimension
-
+  targetIndex.end <= targetPort.dimension
 context Effector inv:
   let
     sct = sourcePort.componentType;
@@ -239,7 +240,7 @@ context ComponentInst inv Traceability:
   in         // comparison
     aggregation implies compareTo
 
-// Ch06_CombinedPower
+// Ch06_MaxPower
 
 context ComponentInst inv MaxPower:
   let
@@ -248,6 +249,52 @@ context ComponentInst inv MaxPower:
       max maxPower ?: 0 W;
     compareTo =
       min selection.maxPower ?: oo W;
+  in         // comparison
+    aggregation <= compareTo
+
+// Ch06_Encryption
+
+context PortInst inv Encryption:
+  let
+    selection = port;
+    aggregation =
+      selection.encryption.elements;
+    compareTo = encryption.value;
+  in         // comparison
+    encryption.value.size <= 1    &&
+    aggregation.containsAll(compareTo)
+
+
+//  Ch06_Authentification
+context Connector inv Authentication:
+  let
+    selection = connectorInst;
+    aggregation = selection.auth.value;
+    compareTo = auth.value;
+  in         // comparison
+    compareTo.containsAll(aggregation)
+
+// Ch06_Certificate
+context ComponentInst inv Certificates:
+  let
+    selection = component.ports;
+    aggregation = intersection { s.cert |
+                  s in selection};
+    compareTo = cert;
+  in         // comparison
+    compareTo.containsAll(aggregation)
+
+// Ch06_CombinedPower
+
+context Component inv MaxPowerSubs:
+  let
+    selection1 = subs;
+    selection2 = this;
+    aggTags =
+      List { max s.type.maxPower ?: 0W |
+                       s in subs };
+    aggregation = sum aggTags;
+    compareTo = min maxPower ?: oo W;
   in         // comparison
     aggregation <= compareTo
 
