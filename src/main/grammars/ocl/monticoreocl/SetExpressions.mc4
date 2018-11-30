@@ -5,12 +5,12 @@ package ocl.monticoreocl;
 component grammar SetExpressions extends de.monticore.CommonExpressions {
 
 
-    IsInExpression implements Expression <190> =
+    IsInExpression implements Expression <150> = // same priority as <, <= (cf. http://mbse.se-rwth.de/book2/index.php?c=chapter3-2)
         leftExpression:Expression
         operator:"isin"
         rightExpression:Expression;
 
-    SetInExpression implements Expression <190> =
+    SetInExpression implements Expression <150> =
         leftExpression:Expression
         operator:"in"
         rightExpression:Expression;
