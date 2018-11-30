@@ -220,7 +220,6 @@ external EDeclaration;
     OCLComprehensionPrimary implements OCLPrimary  <40> =
         Type?
         "{" expression:OCLComprehensionExpr? "}"
-        ("." qualification:OCLPrimary)?
         ;
 
     /** ASTOCLComprehensionExpr defines comprehension kinds.

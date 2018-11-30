@@ -407,10 +407,6 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
 
       returnUnit = exprVisitor.getReturnUnit();
     }
-
-    if (node.isPresentQualification()) {
-      node.getQualification().accept(realThis);
-    }
   }
 
   @Override
