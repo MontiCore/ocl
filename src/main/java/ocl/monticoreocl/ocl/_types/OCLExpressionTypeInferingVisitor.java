@@ -389,8 +389,8 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
   @Override
   public void traverse(ASTOCLComprehensionPrimary node) {
     String typeName;
-    if (node.isPresentType()) {
-      typeName = TypesPrinter.printType(node.getType());
+    if (node.isPresentSetListCollection()) {
+      typeName = node.getSetListCollection().getName();
     }
     else {
       typeName = "Collection";

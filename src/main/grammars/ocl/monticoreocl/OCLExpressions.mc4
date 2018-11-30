@@ -208,17 +208,20 @@ external EDeclaration;
 
 
     /*============================= OCL Comprehensions =============================*/
+    SetListCollection =
+      { _input.LT(1).getText().equals("Set") || _input.LT(1).getText().equals("List") || _input.LT(1).getText().equals("Collection") }?
+      Name;
 
     /** ASTOCLComprehensionPrimary represents comprehensions.
         @attribute SimpleReferenceType
-                   Optional type of comprehension, e.g. Set, List or Collection.
+                   Optional type of comprehension, i.e., Set, List or Collection.
         @attribute expression
                    Expression of comprehension.
         @attribute qualification
                    Optional Qualification.
     */
     OCLComprehensionPrimary implements OCLPrimary  <40> =
-        Type?
+        SetListCollection?
         "{" expression:OCLComprehensionExpr? "}"
         ;
 
