@@ -135,10 +135,6 @@ external EDeclaration;
     TypeCastExpression implements Expression <200> =
     	"(" Type ")" Expression;
 
-    ParenthizedExpression implements Expression <400> =
-        "(" Expression ")"
-        ("." qualification:OCLPrimary)?;
-
     /** ASTInExpr defines a collection like "int x in y" or "Auction a" as
         shortform of "Auction a in Auction.allInstances").
     */

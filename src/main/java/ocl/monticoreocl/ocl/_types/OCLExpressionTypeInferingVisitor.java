@@ -265,13 +265,10 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
   }
 
   @Override
-  public void traverse(ASTParenthizedExpression node) {
+  public void traverse(ASTBracketExpression node) {
     OCLExpressionTypeInferingVisitor innerVisitor = new OCLExpressionTypeInferingVisitor(scope);
     returnTypeRef = innerVisitor.getTypeFromExpression(node.getExpression());
     returnUnit = innerVisitor.getReturnUnit();
-    if (node.isPresentQualification()) {
-      node.getQualification().accept(realThis);
-    }
   }
 
   @Override
