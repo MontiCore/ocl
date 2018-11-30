@@ -14,7 +14,7 @@ external EDeclaration;
     NotSimilarExpression implements Expression <130>, InfixExpression =
       leftExpression:Expression operator:"!~" rightExpression:Expression;
 
-    InstanceOfExpression implements Expression <210> =
+    InstanceOfExpression implements Expression <150> = // same as <=, < (cf. http://mbse.se-rwth.de/book2/index.php?c=chapter3-2)
         leftExpression:Expression operator:"instanceof" Type;
 
     TypeIfExpr implements Expression <100> =
@@ -33,7 +33,7 @@ external EDeclaration;
         ThenExpressionPart
         ElseExpressionPart;
 
-    ImpliesExpression implements Expression <60> =
+    ImpliesExpression implements Expression <108> = // higher than <=> (cf. http://mbse.se-rwth.de/book2/index.php?c=chapter3-2)
         leftExpression:Expression
         "implies"
         rightExpression:Expression;
