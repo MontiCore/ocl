@@ -294,11 +294,6 @@ public class OCLExpressionTypeInferingVisitor implements OCLVisitor {
     if (node.isPresentPostfixQualification()) {
       node.getPostfixQualification().accept(realThis);
     }
-
-    // process following primaries
-    if (node.isPresentOCLQualifiedPrimary()) {
-      node.getOCLQualifiedPrimary().accept(realThis);
-    }
     returnUnit = handleUnit(returnTypeRef);
   }
 

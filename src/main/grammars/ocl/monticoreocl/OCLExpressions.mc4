@@ -180,7 +180,6 @@ external EDeclaration;
     OCLQualifiedPrimary implements OCLPrimary <500> =
         (Name2 || ".")+
         postfixQualification:OCLQualification?
-        ("." OCLQualifiedPrimary)?
         ;
 
     OCLQualifiedPrimaryExpression implements Expression <499> = // to write down `{x*x | x in {1 .. 10}}.addAll({10 .. 100})`
