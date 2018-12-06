@@ -149,28 +149,30 @@ classdiagram EmbeddedMontiArc {
   association StructTypeParameterBinding -> (value) Struct [1];
   association StructTypeParameterBinding -> (parameter) StructTypeParameter [1];
 
-  class ComponentParameter extends ComponentInstantiation implements Parameter;
+  class ComponentParameter extends BoundComponentType implements Parameter;
   association / ComponentParameter -> (type) ComponentType [1];
-  association ComponentParameter -> (defaultValue) ComponentInstantiation [0..1];
+  association ComponentParameter -> (defaultValue) BoundComponentType [0..1];
   class ComponentParameterBinding implements ParameterBinding;
-  association ComponentParameterBinding -> (value) ComponentInstantiation [1];
+  association ComponentParameterBinding -> (value) BoundComponentType [1];
   association ComponentParameterBinding -> (parameter) ComponentParameter [1];
 
   // slide Ch04_ComponentInstantiation
 
-  class ComponentInstantiation implements Value, ComponentElement { // Ch06_B1
+  class BoundComponentType implements Value;
+  association BoundComponentType -> (values) ParameterBinding [*];
+  association BoundComponentType -> (type) ComponentType [1];
+
+  class ComponentInstantiation extends BoundComponentType implements ComponentElement { // Ch06_B1
     String name;
   }
   association ComponentInstantiation -> (dimension) NaturalNumber [1];
-  association ComponentInstantiation -> (values) ParameterBinding [*];
-  association ComponentInstantiation -> (type) ComponentType [1];
 
   interface ComponentType extends Type {
     String name; // Ch04_Component
   }
   class ComponentInterface implements ComponentType;
   class Component implements ComponentType, ComponentElement; // Ch06_B1
-  association Component -> (implements) ComponentInstantiation [*];
+  association Component -> (implements) BoundComponentType [*];
 
   // slide Ch04_PortConnector
   enum PortDirection {
