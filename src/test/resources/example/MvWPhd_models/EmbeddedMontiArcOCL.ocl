@@ -222,7 +222,7 @@ context ComponentInstantiation inv R9R10:
         p2.kind == ParameterKind.CONFIG &&        // configuration parameter p2
         (p2.dimension == p || p2.type.rows == p || p2.type.cols == p)
     ) &&
-    (p.value.isAbsent implies
+    (p.defaultValue.isAbsent implies
       exists pb in values:
         pb.parameter == p)
 
