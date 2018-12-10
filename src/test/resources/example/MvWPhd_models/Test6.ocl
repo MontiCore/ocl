@@ -1,0 +1,13 @@
+import EmbeddedMontiArc.*;
+
+context Parameter p, p2 inv:
+  let
+    t = p2.type;
+    b = typeif t instanceof NumericType then t.rows == p else false;
+  in
+    b <=> p2.type.rows == p
+
+context Parameter p, p2 inv:
+  typeif p2.type instanceof NumericType then p2.type.rows == p else false
+    <=>
+  p2.type.rows == p
