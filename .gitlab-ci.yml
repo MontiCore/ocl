@@ -39,7 +39,7 @@ license_management:
     entrypoint: [""]
   stage: test
   variables:
-    SETUP_CMD: mvn clean install -s settings.xml -Dmaven.test.skip
+    SETUP_CMD: mvn clean install -s settings.xml -DskipTests
   allow_failure: true
   script:
     - /run.sh analyze .
