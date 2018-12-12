@@ -38,6 +38,8 @@ license_management:
     name: "registry.gitlab.com/gitlab-org/security-products/license-management:$CI_SERVER_VERSION_MAJOR-$CI_SERVER_VERSION_MINOR-stable"
     entrypoint: [""]
   stage: test
+  variables:
+    SETUP_CMD: mvn clean install -s settings.xml -Dmaven.test.skip
   allow_failure: true
   script:
     - /run.sh analyze .
