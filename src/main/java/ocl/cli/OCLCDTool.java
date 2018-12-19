@@ -279,14 +279,20 @@ public class OCLCDTool {
             OCLSymbolTableCreator oclSymbolTableCreator = ocllang.getSymbolTableCreator(resolvingConfiguration, globalScope).get();
             CD4AnalysisSymbolTableCreator cdSymbolTableCreator = cd4AnalysisLang.getSymbolTableCreator(resolvingConfiguration, globalScope).get();
 
-            String path = parentDirectory + "/" + modelFullQualifiedFilename.replace(".", "/") + ".ocl";
-            if (path.startsWith("/"))
-              path = path.substring(1);
+            Optional<ASTCompilationUnit> astOCLCompilationUnit;
 
-            //System.out.println("path: " + path);
-            OCLParser parser = new OCLParser();
-            Optional<ASTCompilationUnit> astOCLCompilationUnit = //ocllang.getModelLoader().loadModel(modelFullQualifiedFilename, modelPath);
-              parser.parse(path);
+            if (preloadCD) {
+                String path = parentDirectory + "/" + modelFullQualifiedFilename.replace(".", "/") + ".ocl";
+                if (path.startsWith("/"))
+                    path = path.substring(1);
+
+                //System.out.println("path: " + path);
+                OCLParser parser = new OCLParser();
+                astOCLCompilationUnit = parser.parse(path);
+            }
+            else {
+                astOCLCompilationUnit = ocllang.getModelLoader().loadModel(modelFullQualifiedFilename, modelPath);
+            }
             //System.out.println("astOCLCompilationUnit.isPresent(): " + astOCLCompilationUnit.isPresent());
             if (astOCLCompilationUnit.isPresent()) {
                 if (preloadCD) {
