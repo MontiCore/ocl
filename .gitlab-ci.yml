@@ -35,7 +35,7 @@ BranchJob:
   
 license_management:
   image:
-    name: "registry.gitlab.com/gitlab-org/security-products/license-management:$CI_SERVER_VERSION_MAJOR-$CI_SERVER_VERSION_MINOR-stable"
+    name: "registry.gitlab.com/gitlab-org/security-products/license-management:11-6-stable"
     entrypoint: [""]
   stage: test
   variables:
