@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import de.monticore.ModelingLanguageFamily;
 import de.monticore.io.paths.ModelPath;
@@ -31,6 +32,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symboltable.GlobalScope;
 import de.monticore.symboltable.MutableScope;
 import de.monticore.symboltable.ResolvingConfiguration;
+import de.monticore.types.types._ast.ASTImportStatement;
 import de.monticore.umlcd4a.CD4AnalysisLanguage;
 import de.monticore.umlcd4a.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.umlcd4a.cd4analysis._parser.CD4AnalysisParser;
@@ -62,6 +64,8 @@ public class OCLCDTool {
 
         Options options = new Options();
 
+        Option preload = new Option("preloadCD", "preloadCD", false, "preload classdiagrams in browser");
+        options.addOption(preload);
         Option path = new Option("path", "project-path", true, "absolute path to project, " +
                 "required when ocl given as qualified name");
         options.addOption(path);
@@ -110,6 +114,7 @@ public class OCLCDTool {
         String cdPath = cmd.getOptionValue("printTgt");
         Boolean verbose = cmd.hasOption("verbose");
         Boolean parse = cmd.hasOption("parseOnly");
+        Boolean preloadCD = cmd.hasOption("preloadCD");
 
         // Disable verbose logging
         if (!verbose) {
@@ -118,7 +123,7 @@ public class OCLCDTool {
 
         if (cmd.hasOption("path") && cmd.hasOption("ocl") && isQualifiedName(oclModel)) {
             if(!parse) {
-                loadOclModel(parentDir, oclModel);
+                loadOclModel(parentDir, oclModel,preloadCD);
             } else {
                 parseOcl(parentDir, oclModel);
             }
@@ -256,7 +261,7 @@ public class OCLCDTool {
     }
 
 
-    protected static ASTCompilationUnit loadOclModel(String parentDirectory, String modelFullQualifiedFilename) {
+    protected static ASTCompilationUnit loadOclModel(String parentDirectory, String modelFullQualifiedFilename, boolean preloadCD) {
         final OCLLanguage ocllang = new OCLLanguage();
         final CD4AnalysisLanguage cd4AnalysisLang = new CD4AnalysisLanguage();
 
@@ -272,13 +277,41 @@ public class OCLCDTool {
             resolvingConfiguration.addDefaultFilters(ocllang.getResolvingFilters());
             resolvingConfiguration.addDefaultFilters(cd4AnalysisLang.getResolvingFilters());
             OCLSymbolTableCreator oclSymbolTableCreator = ocllang.getSymbolTableCreator(resolvingConfiguration, globalScope).get();
-            Optional<ASTCompilationUnit> astOCLCompilationUnit = ocllang.getModelLoader().loadModel(modelFullQualifiedFilename, modelPath);
+            CD4AnalysisSymbolTableCreator cdSymbolTableCreator = cd4AnalysisLang.getSymbolTableCreator(resolvingConfiguration, globalScope).get();
 
+            String path = parentDirectory + "/" + modelFullQualifiedFilename.replace(".", "/") + ".ocl";
+            if (path.startsWith("/"))
+              path = path.substring(1);
+
+            //System.out.println("path: " + path);
+            OCLParser parser = new OCLParser();
+            Optional<ASTCompilationUnit> astOCLCompilationUnit = //ocllang.getModelLoader().loadModel(modelFullQualifiedFilename, modelPath);
+              parser.parse(path);
+            //System.out.println("astOCLCompilationUnit.isPresent(): " + astOCLCompilationUnit.isPresent());
             if (astOCLCompilationUnit.isPresent()) {
+                if (preloadCD) {
+                    for (ASTImportStatement importS : astOCLCompilationUnit.get().getImportStatementList()) {
+                        // need to reload all cd4 files and add symbols, b/c the model loader does not work in JS file system (anything is wrong with path calculation)
+                        // ignore here .* imports -> this is only for the fiddle
+                        String cdPath = parentDirectory + "/" + importS.getImportList().stream().collect(Collectors.joining("/")) + ".cd";
+                        if (cdPath.startsWith("/"))
+                            cdPath = cdPath.substring(1);
+                        //System.out.println("cdPath: " + cdPath);
+                        CD4AnalysisParser cdParser = new CD4AnalysisParser();
+                        Optional<ASTCDCompilationUnit> astcdCompilationUnit = cdParser.parse(cdPath);
+                        //System.out.println("astcdCompilationUnit.isPresent(): " + astcdCompilationUnit.isPresent());
+                        if (astcdCompilationUnit.isPresent()) {
+                            astcdCompilationUnit.get().accept(cdSymbolTableCreator);
+                        }
+                    }
+                }
+
                 astOCLCompilationUnit.get().accept(oclSymbolTableCreator);
                 OCLCoCoChecker checker = OCLCoCos.createChecker();
                 checker.checkAll(astOCLCompilationUnit.get());
                 return astOCLCompilationUnit.get();
+            } else {
+              Log.error("Could not create AST (probably model could not be loaded).");
             }
         } catch (Exception e) {
             e.printStackTrace();

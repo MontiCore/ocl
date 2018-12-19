@@ -162,6 +162,17 @@ public class OCLCDToolTest {
         Assert.assertEquals(0, Log.getErrorCount());
     }
 
+    @Ignore("This test fails here, but it works in the browser -> the browser cannot load models via model loader so the CD models must be pre-loaded")
+    @Test
+    public void cheerpJTest() {
+        String[] args = new String[] {"-path", "", "-ocl", "example.ocl.Demo", "-preloadCD"};
+        try {
+            OCLCDTool.main(args);
+        } catch (Exception e) {
+            Log.error(e.getMessage());
+        }
+    }
+
     @Test
     public void oclMvWPhdTest() {
 
