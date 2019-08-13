@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl prepost4 {
   context List<Message> Person.getMsgOfAuction(Auction a)
   pre:

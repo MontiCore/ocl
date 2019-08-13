@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 import EmbeddedMontiArc.*;
 
 ocl Test3 { // checks only derived type of apNames

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl container3 {
   context AllData ad inv AllDataIsSingleton:
     AllData == {ad};

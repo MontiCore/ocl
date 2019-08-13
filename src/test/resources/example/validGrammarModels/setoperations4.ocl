@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl setoperations4 {
   inv:
     forall s1 in x, s2 in y: s1 == s2 implies s1.asList == s2.asList;

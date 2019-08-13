@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl invalidVariableName {
   context boolean Person.changeCompany(String name)
   let 

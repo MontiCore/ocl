@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl query1 {
   context Auction a inv:
     forall p in a.bidder: a.message == {m in p.message | m.isAuctionSpecific() && m.getAuction() == a};

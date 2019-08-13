@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl setoperations1 {
   inv(Set<X> sa, Set<X> sb):
     sa.equals(sb) <=> sa == sb;

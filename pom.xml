@@ -276,8 +276,8 @@
                                 <filter>
                                     <artifact>*:*</artifact>
                                     <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
+                                <include>**/*.java</include>
+                                <include>**/*.ftl</include>
                                         <exclude>META-INF/*.RSA</exclude>
                                     </excludes>
                                 </filter>
@@ -308,8 +308,6 @@
                         <configuration>
                             <excludeResources>false</excludeResources>
                             <includes>
-                                <include>**/*.java</include>
-                                <include>**/*.ftl</include>
                             </includes>
                         </configuration>
                     </execution>

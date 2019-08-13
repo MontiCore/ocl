@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl context2 {
   import Auction a inv:
     a.startTime.lessThan(a.closingTime);

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl setoperations15 {
   context AllData ad inv WelcomeMessage1:
     forall a in ad.auction: let

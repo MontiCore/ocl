@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl transitiveclosure3 {
   context Person inv Transitiv:
     ancestors == ancestorsUpToN(Person.size);

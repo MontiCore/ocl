@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl sor4 {
   inv:
     {(a | b)}.size == 1;

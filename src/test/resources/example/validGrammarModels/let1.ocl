@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl let1 {
   context Auction a inv Time1:
     let

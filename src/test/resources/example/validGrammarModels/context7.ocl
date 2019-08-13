@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl context7 {
   context Auction inv:
     startTime.lessThan(Time.now()) implies numberOfBids == 0;

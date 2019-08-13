@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl special5 {
   context Auction a inv:
     let

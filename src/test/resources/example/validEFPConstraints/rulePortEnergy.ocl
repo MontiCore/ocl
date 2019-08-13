@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 import CnCExt;
 import EFPExt.*;
 import Encryption.encEn; // function returns energy for encryption of data with a given algorithm

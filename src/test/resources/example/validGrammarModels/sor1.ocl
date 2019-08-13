@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl sor1 {
   inv:
     a | b;

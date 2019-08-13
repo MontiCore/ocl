@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl numbers4 {
   context Object o inv:
     o.heigth() < 123456789098;

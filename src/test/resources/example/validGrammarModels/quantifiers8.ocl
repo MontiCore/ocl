@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl quantifiers8 {
   inv Testauktion:
     exists Auction testauction: testauction.startTime.lessThan(Time.now()) && Time.now().lessThan(testauction.closingTime) && (forall Person p: !p.auctions.isEmpty implies p isin testauction.bidder);

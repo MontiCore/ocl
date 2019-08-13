@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl comprehension7 {
   context Auction a inv MessageTime2:
     let

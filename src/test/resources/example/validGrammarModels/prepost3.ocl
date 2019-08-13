@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl prepost3 {
   context <<isStatic>> StatusMessage MessageFactory.createStatusMessage(Time time, Auction auction, int newStatus)
   pre: true;

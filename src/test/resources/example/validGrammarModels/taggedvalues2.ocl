@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl taggedvalues2 {
   <<author = "anonymous", myversion = "2a">> context boolean BidMessage.isAuctionsSpecific() throws Exception
   pre IAS1: true;

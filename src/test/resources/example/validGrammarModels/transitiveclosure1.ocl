@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl transitiveclosure1 {
   context Person inv Transitiv:
     ancestors == parents.addAll(parents.ancestors);

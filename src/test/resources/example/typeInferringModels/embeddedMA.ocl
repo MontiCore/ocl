@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package example.typeInferringModels;
 
 import example.CDs.DefaultTypes;

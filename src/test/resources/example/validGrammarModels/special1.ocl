@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl special1 {
   context AllData ad inv:
     forall String lg in Person.login: {Person p | p.login == lg}.size == 1;

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl validPostStatementName {
   context boolean BidMessage.isAuctionsSpecific()
   pre IAS1 : true;

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl prepost7 {
   context void Person.changeCompany(String name)
   pre CC1pre: !(exists Company co: co.name == name);

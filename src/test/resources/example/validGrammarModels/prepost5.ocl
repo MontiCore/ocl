@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl prepost5 {
   context Name Person.personalMsg()
   pre: true;

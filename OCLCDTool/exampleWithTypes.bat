@@ -1,3 +1,4 @@
+@rem (c) https://github.com/MontiCore/monticore  
 @REM
 @REM ******************************************************************************
 @REM  MontiCAR Modeling Family, www.se-rwth.de

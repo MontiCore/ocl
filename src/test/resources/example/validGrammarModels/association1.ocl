@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl association1 {
   context AllData _ad, Auction a inv:
     _ad.auction[a.auctionIdent] == a;

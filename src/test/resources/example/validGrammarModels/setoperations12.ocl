@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl setoperations12 {
   context AllData ad inv:
     forall p in ad.auction.bidder: p.auctions <= 20;

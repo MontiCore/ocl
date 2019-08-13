@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl setoperations14 {
   context Person p inv:
     p.auctions.messages == p.auctions.asList.messages;

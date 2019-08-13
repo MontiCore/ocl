@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl prepost2 {
   context Auction Message.getAuction()
   pre: isAuctionSpecific();

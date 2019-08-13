@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl prepost12 {
   context void Person.changeCompany(String name)
   let 

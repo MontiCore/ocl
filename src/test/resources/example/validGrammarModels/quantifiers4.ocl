@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl quantifiers4 {
   inv:
     forall a in Auction: even(1 / 0);

@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl quantifiers2 {
   inv Nachrichten1:
     forall a in Auction, p in Person, m in a.message: p isin a.bidder implies m isin p.message;

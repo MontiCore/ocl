@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 ocl prepost10 {
   context void Person.changeCompany(String name)
   pre: company.name != name;
