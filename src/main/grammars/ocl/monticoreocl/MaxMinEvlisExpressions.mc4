@@ -2,7 +2,7 @@
 
 package ocl.monticoreocl;
 
-component grammar MaxMinEvlisExpressions extends de.monticore.CommonExpressions {
+component grammar MaxMinEvlisExpressions extends de.monticore.expressions.CommonExpressions {
 
    // token TElvis = '?' ':';
 
@@ -27,9 +27,9 @@ component grammar MaxMinEvlisExpressions extends de.monticore.CommonExpressions 
     // x ?: y ?: 0 is the same as x ?; (y ?: 0)
     // and this means that if x is present it returns x.get other it tries if y is present if not it returns 0
     ElvisExpressionPrefix implements Expression <140>, InfixExpression = <rightassoc> // priority between `==` and `<`
-        leftExpression:Expression
+        left:Expression
         operator:"?:"
-        rightExpression:Expression;
+        right:Expression;
 
     // `x ?== y` is the same as `x.isPresent implies x.get == y`
     // this is useful for underspecification relations, if it is underspecified (x.isAbsent) nothing must hold
@@ -37,28 +37,28 @@ component grammar MaxMinEvlisExpressions extends de.monticore.CommonExpressions 
     // `x ?>= y` equals `x.isPresent implies x.get >= y` -> the other operators work the same way
 
     ElvisLessEqualExpression implements Expression <150>, InfixExpression =
-    	leftExpression:Expression operator:"?<=" rightExpression:Expression;
+    	left:Expression operator:"?<=" right:Expression;
 
     ElvisGreaterEqualExpression implements Expression <150>, InfixExpression =
-    	leftExpression:Expression operator:"?>=" rightExpression:Expression;
+    	left:Expression operator:"?>=" right:Expression;
 
     ElvisLessThanExpression implements Expression <150>, InfixExpression =
-    	leftExpression:Expression operator:"?<" rightExpression:Expression;
+    	left:Expression operator:"?<" right:Expression;
 
     ElvisGreaterThanExpression implements Expression <150>, InfixExpression =
-    	leftExpression:Expression operator:"?>" rightExpression:Expression;
+    	left:Expression operator:"?>" right:Expression;
 
     ElvisEqualsExpression implements Expression <130>, InfixExpression =
-    	leftExpression:Expression operator:"?==" rightExpression:Expression;
+    	left:Expression operator:"?==" right:Expression;
 
     ElvisNotEqualsExpression implements Expression <130>, InfixExpression =
-          	leftExpression:Expression operator:"?!=" rightExpression:Expression;
+          	left:Expression operator:"?!=" right:Expression;
 
      // x ?~~ y, is the same as x ?== y, except that the types of x and y must not be compatible
      ElvisSimilarExpression implements Expression <130>, InfixExpression =
-        	leftExpression:Expression operator:"?~~" rightExpression:Expression;
+        	left:Expression operator:"?~~" right:Expression;
 
      // x ?!~ y, is the same as x != y, except that the types of x and y must not be compatible
      ElvisNotSimilarExpression implements Expression <130>, InfixExpression =
-         	leftExpression:Expression operator:"?!~" rightExpression:Expression;
+         	left:Expression operator:"?!~" right:Expression;
 }
