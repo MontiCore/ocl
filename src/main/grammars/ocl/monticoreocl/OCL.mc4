@@ -2,10 +2,14 @@
 
 package ocl.monticoreocl;
 
-grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OCLExpressions,
-                        de.monticore.expressions.CommonExpressions, de.monticore.expressions.SetExpressions,
-                        de.monticore.literals.MCCommonLiterals,
-                         ocl.monticoreocl.MaxMinEvlisExpressions {
+grammar OCL extends de.monticore.types.MCBasicTypes,
+                    //de.monticore.expressions.OCLExpressions, //error in grammar?
+                    de.monticore.expressions.CommonExpressions,
+                    de.monticore.expressions.SetExpressions,
+                    de.monticore.literals.MCCommonLiterals,
+                    ocl.monticoreocl.AdditionalExpressions,
+                    de.monticore.UMLStereotype
+                    {
 
 	/*========================================================================*/
     /*============================ PRODUCTIONS  ==============================*/
@@ -15,8 +19,8 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
 
 
 	CompilationUnit =
-		("package" package2:(Name2 || ".")+ ";")?
-		(ImportStatement)*
+		("package" package:(Name || ".")+ ";")?
+		(MCImportStatement)*
 		OCLFile;
 
 	/** ASTOCLFile represents a file that contains an OCL-Constraint.
@@ -31,7 +35,7 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
   // need once symbol to get symbol table infrastructre generated
 	OCLFile =
         prefix:Name
-        fileName2:Name2 "{"
+        fileName:Name "{"
         OCLConstraint*
         "}"
         |
@@ -50,12 +54,9 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
     */
 	interface OCLOperationSignature;
 
-    //TODO FIX "<<", replace as soon as Stereotypes in Common.mc4 are fixed as well
-	OCLTaggedExpr = "<<" (Expression | OCLConstraint) ("," (Expression | OCLConstraint))* ">" ">" {noSpace()}? ;
-
 	/** ASTOCLOperationConstraint represents the typical method or constructor
         specifications with pre- and post-conditions.
-        @attribute OCLTaggedExpr
+        @attribute Stereotype
         		   is needed in cases like "<<special, author = "mustermann">> context...." , e.g. taggedvalues1.ocl
         @attribute OCLOperationSignature
                    Operation Signature (of a method or constructor).
@@ -67,11 +68,11 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
                    Optional post-statements.
     */
 	OCLOperationConstraint implements OCLConstraint =
-        OCLTaggedExpr?
+        Stereotype?
         "context"
-        OCLTaggedExpr?
+        Stereotype?
         OCLOperationSignature
-       	LetDeclaration?
+       	//LetinDeclaration? //fix OCLExpressions import
         OCLPreStatement?
         OCLPostStatement?;
 
@@ -87,7 +88,7 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
     */
     OCLInvariant implements OCLConstraint =
         OCLClassContext?
-        "inv" name2:Name2?
+        "inv" name:Name?
         OCLParameters?
         ":"
         statements:(Expression || ";")+
@@ -112,7 +113,7 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
 	    MCType
 	    |
 		MCType?
-		varNames2:(Name2 || ",")+
+		varNames:(Name || ",")+
 		("in" Expression)?;
 
 	/** ASTOCLPreStatement represents a list of pre-statements subsumed to a
@@ -123,7 +124,7 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
                    List of boolean expressions.
     */
 	OCLPreStatement  =
-        "pre" name2:Name2? ":"
+        "pre" name:Name? ":"
         (statements:Expression+ ";")+;
 
     /** ASTOCLPostStatement represents a list of post-statements subsumed to a
@@ -134,7 +135,7 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
                    List of boolean expressions.
     */
     OCLPostStatement  =
-        "post" name2:Name2? ":"
+        "post" name:Name? ":"
         (statements:Expression+ ";")+;
 
 	/** ASTOCLMethodSignature defines the signature of a Java5 method.
@@ -156,7 +157,7 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
         OCLThrowsClause?;
 
    QualifiedName =
-           part2:(Name2 || ".")+;
+           part:(Name || ".")+;
 
     /** ASTOCLConstructorSignature defines signature of a constructor.
         @attribute ReferenceType
@@ -167,7 +168,7 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
                    Optional throwables.
     */
     OCLConstructorSignature implements OCLOperationSignature =
-        "new" referenceType2:Name2
+        "new" referenceType:Name
         OCLParameters
         OCLThrowsClause?;
 
@@ -179,7 +180,7 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
         "(" params:(OCLParameterDeclaration || ",")* ")";
 
     OCLParameterDeclaration  =
-        MCType name2:Name2;
+        MCType name:Name;
 
 	/** ASTOCLThrowsClause defines throwables for a method or constructor
         signature.
@@ -187,7 +188,7 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
                    List of throwables.
     */
     OCLThrowsClause =
-        "throws" throwables2:(Name2 || ",")+;
+        "throws" throwables:(Name || ",")+;
 
 
     /*============================== DECLARATORS ============================*/
@@ -212,7 +213,7 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
     */
     OCLMethodDeclaration implements OCLDeclaration =
         MCReturnType?
-        Name2
+        Name
         OCLParameters
         "=" Expression;
 
@@ -227,7 +228,7 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
      */
      OCLVariableDeclaration implements OCLDeclaration =
         MCType?
-        Name2
+        Name
         "=" Expression;
 
 
@@ -237,12 +238,11 @@ grammar OCL extends de.monticore.types.MCBasicTypes, de.monticore.expressions.OC
         and implement numbers from SI grammar
         to support expressions as 7 m/s
     */
-    OCLNonNumberPrimary implements OCLPrimary <700> =
-        value:Literal;
+    //OCLNonNumberPrimary implements OCLPrimary <700> = //fix OCLExpressions import
+    //    value:Literal;
 
     /** Additional Expression to enable Stereotypes for Expressions
     */
-    //TODO move to OCLExpressions.mc4 ???
     StereotypeExpr implements Expression =
         Stereotype Expression;
 

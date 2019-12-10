@@ -1,3 +1,12 @@
+<!--
+
+
+    /* (c) https://github.com/MontiCore/monticore */
+
+    The license generally applicable for this project
+    can be found under https://github.com/MontiCore/monticore.
+
+-->
 <!-- (c) https://github.com/MontiCore/monticore -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -16,10 +25,10 @@
     <properties>
 
         <!-- .. SE-Libraries .................................................. -->
-        <monticore.version>6.0.0</monticore.version>
+        <monticore.version>6.1.0-SNAPSHOT</monticore.version>
         <se-commons.version>1.7.9</se-commons.version>
         <mc.grammars.assembly.version>0.0.10</mc.grammars.assembly.version>
-        <cd4analysis.version>1.6.0</cd4analysis.version>
+        <cd4analysis.version>1.7.0-SNAPSHOT</cd4analysis.version>
 
         <!-- .. Libraries .................................................. -->
         <guava.version>18.0</guava.version>
@@ -28,7 +37,7 @@
         <jscience.version>4.3.1</jscience.version>
 
         <!-- .. Plugins ....................................................... -->
-        <monticore.plugin>6.0.0</monticore.plugin>
+        <monticore.plugin>6.1.0-SNAPSHOT</monticore.plugin>
         <assembly.plugin>2.5.4</assembly.plugin>
         <compiler.plugin>3.3</compiler.plugin>
         <source.plugin>2.4</source.plugin>
@@ -365,6 +374,25 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>se-nexus</id>
+            <url>https://nexus.se.rwth-aachen.de/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>montibelle-gitlab-maven</id>
+            <url>https://git.rwth-aachen.de/api/v4/groups/montibelle/-/packages/maven</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>se-nexus</id>
+            <url>https://nexus.se.rwth-aachen.de/content/groups/public/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
 
     <distributionManagement>
         <repository>
