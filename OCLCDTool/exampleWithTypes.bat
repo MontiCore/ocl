@@ -1,4 +1,4 @@
-@rem (c) https://github.com/MontiCore/monticore  
+@rem (c) https://github.com/MontiCore/monticore
 
 @echo off
 

@@ -1,0 +1,192 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package de.monticore.ocl;
+
+grammar OCL extends
+      de.monticore.literals.MCCommonLiterals,
+      de.monticore.types.MCCollectionTypes,
+      de.monticore.expressions.CommonExpressions,
+      de.monticore.expressions.SetExpressions,
+      de.monticore.expressions.OCLExpressions,
+      de.monticore.ocl.AdditionalExpressions,
+      de.monticore.UMLStereotype
+    {
+
+	/*========================================================================*/
+  /*============================ PRODUCTIONS  ==============================*/
+  /*========================================================================*/
+
+  /*====================== HEADER DEFINITIONS ==============================*/
+
+  OCLExtType = MCType;
+
+	CompilationUnit =
+		("package" package:(Name& || ".")+ ";")?
+		(MCImportStatement)*
+		OCLFile
+  ;
+
+	/** ASTOCLFile represents a file that contains an OCL-Constraint.
+      @attribute fileName
+                 Name of OCLFile (necessary for MCCompilationUnit)
+      @attribute OCLConstraints
+                 List of OCL-constraints.
+  */
+  // Note: Prefix should be only "ocl" (-> Context Condition). On the
+  //       other side this should not prevent using "ocl" as identifiers.
+  //       Therefore this is not defined as terminal symbol.
+  // need once symbol to get symbol table infrastructure generated
+	scope OCLFile =
+    prefix:Name
+    ( fileName:Name "{"
+        OCLConstraint*
+      "}"
+    | OCLConstraint+
+    )
+  ;
+
+  /** ASTOCLConstraint subsumes all OCL types that are used as embedded OCL.
+      An OCLConstraint (Invariant or Method- or
+      ConstructorSpec) or an abstract expression (expression).
+  */
+  interface scope OCLConstraint;
+
+	/** ASTOCLOperationSignature subsumes method and constructor signatures.
+    */
+	interface OCLOperationSignature;
+
+	/** ASTOCLOperationConstraint represents the typical method or constructor
+      specifications with pre- and post-conditions.
+      @attribute Stereotype
+             is needed in cases like "<<special, author = "mustermann">> context...." , e.g. taggedvalues1.ocl
+      @attribute OCLOperationSignature
+                 Operation Signature (of a method or constructor).
+      @attribute LetDeclaration
+                 Optional let-declarations.
+      @attribute OCLPreStatement
+                 Optional pre-statements.
+      @attribute OCLPostStatement
+                 Optional post-statements.
+  */
+	OCLOperationConstraint implements OCLConstraint =
+    Stereotype? "context"
+    Stereotype? OCLOperationSignature
+    Expression?
+    OCLPreStatement?
+    OCLPostStatement?
+  ;
+
+	/** ASTOCLInvariant represents the typical invariant definitions of OCL.
+      @attribute OCLClassContext
+             Optional keyword definitions: (context|import) and class definition
+      @attribute name
+                 Name of the invariant.
+      @attribute OCLParameters
+                 Optional parameters of the invariant.
+      @attribute statements
+                 List of boolean expressions.
+  */
+  OCLInvariant implements OCLConstraint =
+    OCLClassContext? "inv" name:Name?
+    OCLParameters? ":"
+    statements:(Expression || ";")+
+  ;
+
+  /** ASTOCLClassContext represents the OCL-Context-Clause of an invariant.
+      @attribute contextType
+                 Type of context (context or import)
+                 For import look at http://mbse.se-rwth.de/book1/index.php?c=chapter3-1#x1-400003.1.1
+  */
+  OCLClassContext =
+    (context:["context"] | Import:["import"])
+    (OCLContextDefinition || ",")+
+  ;
+
+  /** ASTOCLContextDefinition can be of the followoing type.
+      Auction | Auction a | a in (...) | Auction a in (...)
+      The rule is written as follows to avoid matching empty strings
+  */
+	OCLContextDefinition =
+	    OCLExtType
+	  | Expression
+  ;
+
+	/** ASTOCLPreStatement represents a list of pre-statements subsumed to a
+      pre-condition.
+      @attribute name
+                 Optional name of pre-condition.
+      @attribute statements
+                 List of boolean expressions.
+  */
+	OCLPreStatement  =
+    "pre" name:Name? ":"
+    (statements:Expression+ ";")+
+  ;
+
+  /** ASTOCLPostStatement represents a list of post-statements subsumed to a
+      post-condition.
+      @attribute name
+                 Optional name of post-conditions.
+      @attribute statements
+                 List of boolean expressions.
+  */
+  OCLPostStatement  =
+    "post" name:Name? ":"
+    (statements:Expression+ ";")+
+  ;
+
+	/** ASTOCLMethodSignature defines the signature of a Java5 method.
+      @attribute MCReturnType
+                 Optional complex type that is returned by given method
+      @attribute methodName
+                 Name of given method.
+      @attribute OCLParameters
+                 Parameter declarations of given method.
+      @attribute OCLThrowsClause
+                 Optional throwables.
+
+      Example : context Person.addMessages(Message m):
+  */
+	OCLMethodSignature implements OCLOperationSignature =
+    MCReturnType?
+    methodName:MCQualifiedName
+    OCLParameters
+    OCLThrowsClause?
+  ;
+
+  /** ASTOCLConstructorSignature defines signature of a constructor.
+      @attribute ReferenceType
+                 Type of the Constructor.
+      @attribute OCLParameters
+                 Parameters of constructor.
+      @attribute OCLThrowsClause
+                 Optional throwables.
+  */
+  OCLConstructorSignature implements OCLOperationSignature =
+    "new" referenceType:Name
+    OCLParameters
+    OCLThrowsClause?
+  ;
+
+
+  /** ASTOCLParameters defines a list of parameter declarations (can also be
+      empty)
+  */
+  OCLParameters =
+    "(" params:(OCLParamDeclaration || ",")* ")";
+
+	/** ASTOCLThrowsClause defines throwables for a method or constructor
+        signature.
+      @attribute throwables
+                 List of throwables.
+  */
+  OCLThrowsClause =
+    "throws" throwables:(Name || ",")+;
+
+
+  /** Additional Expression to enable Stereotypes for Expressions
+  */
+  StereotypeExpr implements Expression =
+    Stereotype Expression;
+
+}

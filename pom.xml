@@ -1,12 +1,4 @@
-<!--
 
-
-    /* (c) https://github.com/MontiCore/monticore */
-
-    The license generally applicable for this project
-    can be found under https://github.com/MontiCore/monticore.
-
--->
 <!-- (c) https://github.com/MontiCore/monticore -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -163,30 +155,6 @@
             </plugin>
 
             <plugin>
-                <groupId>de.monticore.mojo</groupId>
-                <artifactId>monticore-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>test-id</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase>generate-test-sources</phase>
-                        <configuration>
-                            <grammars>
-                                <grammar>src/test/grammars</grammar>
-                            </grammars>
-                            <modelPaths>
-                                <modelPath>src/main/grammars</modelPath>
-                                <modelPath>target/generated-sources/monticore/sourcecode</modelPath>
-                            </modelPaths>
-                            <outputDirectory>target/generated-test-sources/monticore/sourcecode</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
@@ -303,7 +271,7 @@
                 </executions>
             </plugin>
             <!-- to add copyright information automatically-->
-            <plugin>
+            <!-- <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
                 <version>3.0</version>
@@ -328,7 +296,7 @@
                         <phase>process-sources</phase>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

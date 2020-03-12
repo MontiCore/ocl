@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package ocl.monticoreocl;
+package de.monticore.ocl;
 
 component grammar AdditionalExpressions extends de.monticore.expressions.CommonExpressions {
 

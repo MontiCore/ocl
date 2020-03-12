@@ -1,13 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
-package ocl.monticoreocl.ocl._cocos;
 
+package de.monticore.ocl.ocl._cocos;
+
+import de.monticore.expressions.oclexpressions._ast.ASTOCLMethodDeclaration;
+import de.monticore.expressions.oclexpressions._cocos.OCLExpressionsASTOCLMethodDeclarationCoCo;
 import de.se_rwth.commons.logging.Log;
 
-import ocl.monticoreocl.ocl._ast.ASTOCLMethodDeclaration;
-
-import ocl.monticoreocl.ocl._cocos.OCLASTOCLMethodDeclarationCoCo;
-
-public class MethodDeclarationStartsWithLowerCaseLetter implements OCLASTOCLMethodDeclarationCoCo {
+public class MethodDeclarationStartsWithLowerCaseLetter implements OCLExpressionsASTOCLMethodDeclarationCoCo {
 
 	@Override 
 	public void check(ASTOCLMethodDeclaration astMethodDeclaration){
