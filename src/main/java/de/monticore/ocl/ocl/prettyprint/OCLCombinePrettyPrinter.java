@@ -6,13 +6,16 @@ import de.monticore.MCCommonLiteralsPrettyPrinter;
 import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
 import de.monticore.expressions.prettyprint.OCLExpressionsPrettyPrinter;
-import de.monticore.ocl.ocl._ast.ASTCompilationUnit;
+import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLFile;
 import de.monticore.ocl.ocl._visitor.OCLDelegatorVisitor;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.UMLStereotypePrettyPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
+import de.monticore.umlstereotype._visitor.UMLStereotypeVisitor;
+
+import java.util.Optional;
 
 public class OCLCombinePrettyPrinter
     extends OCLDelegatorVisitor {
@@ -38,7 +41,7 @@ public class OCLCombinePrettyPrinter
     return printer;
   }
 
-  public String prettyprint(ASTCompilationUnit node) {
+  public String prettyprint(ASTOCLCompilationUnit node) {
     getPrinter().clearBuffer();
     node.accept(getRealThis());
     return getPrinter().getContent();

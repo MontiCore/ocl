@@ -6,6 +6,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
 import de.monticore.expressions.oclexpressions._ast.ASTOCLExpressionsNode;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
+import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLExtType;
 import de.monticore.ocl.ocl._visitor.OCLDelegatorVisitor;
 import de.monticore.types.check.*;
@@ -104,6 +105,16 @@ public class DeriveSymTypeOfOCLCombineExpressions
 
     final Optional<SymTypeExpression> result = getMCCollectionTypesVisitorAsSynthesizedType().getResult();
     result.ifPresent(r -> lastResult.setLast(r));
+  }
+
+  public Optional<SymTypeExpression> calculateType(ASTOCLCompilationUnit node) {
+    node.accept(realThis);
+    Optional<SymTypeExpression> result = Optional.empty();
+    if (lastResult.isPresentLast()) {
+      result = Optional.ofNullable(lastResult.getLast());
+    }
+    lastResult.setLastAbsent();
+    return result;
   }
 
   /**

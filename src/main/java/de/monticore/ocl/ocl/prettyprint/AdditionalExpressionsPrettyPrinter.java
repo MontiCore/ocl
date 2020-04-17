@@ -21,6 +21,11 @@ public class AdditionalExpressionsPrettyPrinter
   }
 
   @Override
+  public void setRealThis(AdditionalExpressionsVisitor realThis) {
+    this.realThis = realThis;
+  }
+
+  @Override
   public AdditionalExpressionsVisitor getRealThis() {
     return realThis;
   }

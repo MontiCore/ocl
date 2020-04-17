@@ -2,9 +2,11 @@
 
 package de.monticore.ocl.ocl._cocos;
 
+import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+
 public class OCLCoCos {
 
-  public static OCLCoCoChecker createChecker() {
+  public static OCLCoCoChecker createChecker(DeriveSymTypeOfOCLCombineExpressions typeChecker) {
     return new OCLCoCoChecker()
         .addCoCo(new FileNameStartsWithLowerCaseLetter())
         .addCoCo(new MethSignatureStartsWithLowerCaseLetter())
@@ -14,9 +16,13 @@ public class OCLCoCos {
         .addCoCo(new PreStatementNameStartsWithCapitalLetter())
         .addCoCo(new PostStatementNameStartsWithCapitalLetter())
         .addCoCo(new ParameterDeclarationNameStartsWithLowerCaseLetter())
+        .addCoCo(new ParameterNamesUnique())
         .addCoCo(new VariableDeclarationStartsWithLowerCaseLetter())
         .addCoCo(new ExpressionInOperationConstraintHasToBeLetInExpression())
         .addCoCo(new ExpressionInContextDefinitionHasToBeLetInExpression())
+
+        .addCoCo(new ConstructorNameReferencesType())
+        .addCoCo(new ValidTypes(typeChecker))
         ;
   }
 }

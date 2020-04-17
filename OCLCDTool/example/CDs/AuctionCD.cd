@@ -21,6 +21,10 @@ classdiagram AuctionCD {
     Time time;
   }
 
+  /*interface Policy;
+
+  public class SimplePolicy implements Policy;*/
+  public class Policy;
 
   public class Person {
     boolean lessThan(Person that);

@@ -14,4 +14,9 @@ public class OCLLanguage extends OCLLanguageTOP {
   public OCLLanguage() {
     super("OCL Language", FILE_ENDING);
   }
+
+  @Override
+  protected OCLModelLoader provideModelLoader() {
+    return new OCLModelLoader(this);
+  }
 }

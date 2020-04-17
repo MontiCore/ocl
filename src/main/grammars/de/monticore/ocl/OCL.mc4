@@ -20,11 +20,13 @@ grammar OCL extends
 
   OCLExtType = MCType;
 
-	CompilationUnit =
+	OCLCompilationUnit =
 		("package" package:(Name& || ".")+ ";")?
 		(MCImportStatement)*
 		OCLFile
   ;
+
+  start OCLCompilationUnit;
 
 	/** ASTOCLFile represents a file that contains an OCL-Constraint.
       @attribute fileName
@@ -150,7 +152,7 @@ grammar OCL extends
 	OCLMethodSignature implements OCLOperationSignature =
     MCReturnType?
     methodName:MCQualifiedName
-    OCLParameters
+  OCLParameters
     OCLThrowsClause?
   ;
 
