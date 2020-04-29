@@ -11,7 +11,7 @@ public class InvariantNameStartsWithCapitalLetter
   @Override
   public void check(ASTOCLInvariant astInv) {
     if (astInv.isPresentName() && Character.isLowerCase(astInv.getName().charAt(0))) {
-      Log.warn(
+      Log.error(
           String.format("0xOCL03 invariant name '%s' should start with a capital letter.",
               astInv.getName()),
           astInv.get_SourcePositionStart());

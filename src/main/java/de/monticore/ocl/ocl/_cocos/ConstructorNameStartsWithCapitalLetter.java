@@ -11,7 +11,7 @@ public class ConstructorNameStartsWithCapitalLetter
   @Override
   public void check(ASTOCLConstructorSignature astConstructorSig) {
     if (Character.isLowerCase(astConstructorSig.getReferenceType().charAt(0))) {
-      Log.warn(String.format("0xOCL01 constructor name '%s' after keyword 'new' should not start in lower-case.", astConstructorSig.getReferenceType()),
+      Log.error(String.format("0xOCL01 constructor name '%s' after keyword 'new' should not start in lower-case.", astConstructorSig.getReferenceType()),
           astConstructorSig.get_SourcePositionStart());
     }
   }

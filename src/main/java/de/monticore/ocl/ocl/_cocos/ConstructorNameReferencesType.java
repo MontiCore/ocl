@@ -15,7 +15,7 @@ public class ConstructorNameReferencesType
   public void check(ASTOCLConstructorSignature astConstructorSig) {
     final Optional<TypeSymbol> typeSymbol = astConstructorSig.getEnclosingScope().resolveType(astConstructorSig.getReferenceType());
     if (!typeSymbol.isPresent()) {
-      Log.warn(String.format("0xOCL0D constructor name '%s' after keyword 'new' has to reference a type, but could not be found.", astConstructorSig.getReferenceType()),
+      Log.error(String.format("0xOCL0D constructor name '%s' after keyword 'new' has to reference a type, but could not be found.", astConstructorSig.getReferenceType()),
           astConstructorSig.get_SourcePositionStart());
     }
   }

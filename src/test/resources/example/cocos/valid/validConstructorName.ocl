@@ -1,8 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
-import example.CDs.AuctionCD;
+import example.CDs.AuctionCD.*;
 
 ocl validConstructorName {
   context new Auction(Policy p)
-  pre Test: p != null;
-  post Test: policy == p && status == INITIAL && messages.isEmpty;
+    pre Test: p != null;
+    post Test:
+      let a = any Auction
+      in a.policy == p && a.status == INITIAL && messages.isEmpty;
 }

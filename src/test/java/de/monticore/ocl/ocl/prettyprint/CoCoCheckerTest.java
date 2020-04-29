@@ -95,25 +95,32 @@ public class CoCoCheckerTest {
 
   @Test
   public void validConstructorName0() throws IOException {
-    final OCLParser parser = new OCLParser();
-    final Optional<ASTOCLCompilationUnit> astOCLCompilationUnit = parser.parseOCLCompilationUnit("src/test/resources/example/cocos/valid/validConstructorName0.ocl");
-    System.out.println(parser.hasErrors());
-    System.out.println(Log.getFindings());
-    final ASTOCLCompilationUnit ast = astOCLCompilationUnit.get();
-    final OCLScope st = createSTFromAST(ast, true);
-    OCLCoCos.createChecker(derLit).checkAll(ast);
-
-    final OCLCombinePrettyPrinter printer = new OCLCombinePrettyPrinter(new IndentPrinter());
-    String output = printer.prettyprint(ast);
-    System.out.println(output);
+    loadAndCheckOCL("src/test/resources/example/cocos/valid/validConstructorName0.ocl");
   }
 
   @Test
   public void validConstructorName() throws IOException {
+    loadAndCheckOCL("src/test/resources/example/cocos/valid/validConstructorName.ocl");
+  }
+
+  @Test
+  public void validFileName() throws IOException {
+    loadAndCheckOCL("src/test/resources/example/cocos/valid/validFileName.ocl");
+  }
+
+  @Test
+  public void validPrePost() throws IOException {
+    loadAndCheckOCL("src/test/resources/example/cocos/valid/validPrePost.ocl");
+  }
+
+  private void loadAndCheckOCL(String filename) throws IOException {
     final OCLParser parser = new OCLParser();
-    final ASTOCLCompilationUnit ast = parser.parseOCLCompilationUnit("src/test/resources/example/cocos/valid/validConstructorName.ocl").get();
-    createSTFromAST(ast, true);
+    final Optional<ASTOCLCompilationUnit> astOCLCompilationUnit = parser.parseOCLCompilationUnit(filename);
+    printFindingsAndFail();
+    final ASTOCLCompilationUnit ast = astOCLCompilationUnit.get();
+    final OCLScope st = createSTFromAST(ast, true);
     OCLCoCos.createChecker(derLit).checkAll(ast);
+    printFindingsAndFail();
 
     final OCLCombinePrettyPrinter printer = new OCLCombinePrettyPrinter(new IndentPrinter());
     String output = printer.prettyprint(ast);
@@ -124,8 +131,6 @@ public class CoCoCheckerTest {
     symbolTableCreator.setTypeVisitor(derLit);
 
     final OCLGlobalScope globalScope = (OCLGlobalScope) symbolTableCreator.getGlobalScope();
-
-    //createPolicy(scope);
 
     final OCLArtifactScope fromAST = symbolTableCreator.createFromAST(astex);
 /*

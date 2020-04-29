@@ -8,8 +8,8 @@ import de.monticore.expressions.oclexpressions._symboltable.OCLExpressionsSymbol
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.symboltable.ImportStatement;
-import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.Joiners;
+import de.se_rwth.commons.Names;
 
 import java.util.stream.Collectors;
 
@@ -20,8 +20,8 @@ public class OCLSymbolTableCreatorDelegator
   }
 
   public void setTypeVisitor(DeriveSymTypeOfOCLCombineExpressions typesCalculator) {
-    ((OCLSymbolTableCreator)this.getOCLVisitor().get()).setTypeVisitor(typesCalculator);
-    ((OCLExpressionsSymbolTableCreator) this.getOCLExpressionsVisitor().get()).setTypeVisitor(typesCalculator.getOCLExpressionsVisitorAsDerivedType());
+    ((OCLSymbolTableCreator) this.getOCLVisitor().get()).setTypeVisitor(typesCalculator);
+    ((OCLExpressionsSymbolTableCreator) this.getOCLExpressionsVisitor().get()).setTypeVisitor(typesCalculator.getOCLExpressionsVisitorAsTypeVisitor());
   }
 
   public IExpressionsBasisScope createScope(boolean shadowing) {
@@ -36,21 +36,9 @@ public class OCLSymbolTableCreatorDelegator
   @Override
   public OCLArtifactScope createFromAST(ASTOCLCompilationUnit rootNode) {
     final OCLArtifactScope artifactScope = super.createFromAST(rootNode);
-    artifactScope.setPackageName(Joiners.DOT.join(rootNode.getPackageList()));
+    // TODO SVa: move to OCLSymbolTableCreator
+    artifactScope.setPackageName(Names.getQualifiedName(rootNode.getPackageList()));
     artifactScope.setImportList(rootNode.streamMCImportStatements().map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList()));
     return artifactScope;
-  }
-
-  @Override
-  public void handle(ASTMCImportStatement node) {
-    super.handle(node);
-/*
-    final CD4AnalysisGlobalScope globalScope = CD4AnalysisSymTabMill.cD4AnalysisGlobalScopeBuilder().setModelPath(node.getQName()).build();
-    final CD4AnalysisArtifactScope scope = CD4AnalysisSymTabMill.cD4AnalysisArtifactScopeBuilder().setEnclosingScope(globalScope).build();
-    final CDDefinitionSymbolLoader loader = new CDDefinitionSymbolLoader(node.getQName(), scope);
-    final Optional<CDDefinitionSymbol> cdDefinitionSymbol = loader.loadSymbol();
-    System.out.println(cdDefinitionSymbol);
-
- */
   }
 }

@@ -15,6 +15,13 @@ classdiagram AuctionCD {
 
   public class Auction {
     int auctionIdent;
+    AuctionStatus status;
+  }
+
+  public enum AuctionStatus {
+    INITIAL,
+    RUNNING,
+    FINISHED;
   }
 
   public class Message {
@@ -40,7 +47,7 @@ classdiagram AuctionCD {
   association [*] Person <-> Company [1];
   association Person (bidder) <-> Message [*] <<ordered>>;
   association Auction <-> Message [*] <<ordered>>;
-
+  association Auction -> Policy [1];
 
 
 

@@ -2,13 +2,21 @@
 
 package de.monticore.ocl.types.check;
 
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.ocl.ocl._ast.ASTOCLExtType;
+import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
+import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
 import de.monticore.ocl.ocl._visitor.OCLVisitor;
 import de.monticore.types.check.DeriveSymTypeOfExpression;
+import de.monticore.types.check.ITypesCalculator;
 import de.monticore.types.check.LastResult;
+import de.monticore.types.check.SymTypeExpression;
+
+import java.util.Optional;
 
 public class DeriveSymTypeOfOCL extends DeriveSymTypeOfExpression
-    implements OCLVisitor {
+    implements OCLVisitor, ITypesCalculator {
 
   private OCLVisitor realThis;
 
@@ -33,5 +41,29 @@ public class DeriveSymTypeOfOCL extends DeriveSymTypeOfExpression
   @Override
   public void traverse(ASTOCLExtType node) {
     node.accept(getRealThis());
+  }
+
+  @Override
+  public void traverse(ASTOCLOperationConstraint node) {
+    ((ITypesCalculator) realThis).setScope(node.getEnclosingScope());
+
+    OCLVisitor.super.traverse(node);
+  }
+
+  @Override
+  public void traverse(ASTOCLInvariant node) {
+    ((ITypesCalculator) realThis).setScope(node.getEnclosingScope());
+
+    OCLVisitor.super.traverse(node);
+  }
+
+  @Override
+  public Optional<SymTypeExpression> calculateType(ASTExpression ex) {
+    return ((ITypesCalculator) realThis).calculateType(ex);
+  }
+
+  @Override
+  public Optional<SymTypeExpression> calculateType(ASTLiteral lit) {
+    return ((ITypesCalculator) realThis).calculateType(lit);
   }
 }

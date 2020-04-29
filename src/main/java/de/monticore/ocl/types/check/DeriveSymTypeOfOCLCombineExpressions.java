@@ -76,15 +76,19 @@ public class DeriveSymTypeOfOCLCombineExpressions
     setScope(scope);
   }
 
-  protected DeriveSymTypeOfExpression getExpressionsBasisVisitorAsDerivedType() {
+  protected DeriveSymTypeOfExpression getExpressionsBasisVisitorAsTypeVisitor() {
     return (DeriveSymTypeOfExpression) getExpressionsBasisVisitor().get();
   }
 
-  protected DeriveSymTypeOfCommonExpressions getCommonExpressionsVisitorAsDerivedType() {
+  protected DeriveSymTypeOfCommonExpressions getCommonExpressionsVisitorAsTypeVisitor() {
     return (DeriveSymTypeOfCommonExpressions) getCommonExpressionsVisitor().get();
   }
 
-  public DeriveSymTypeOfOCLExpressions getOCLExpressionsVisitorAsDerivedType() {
+  /*protected DeriveSymTypeOfSetExpressions getSetExpressionsVisitorAsTypeVisitor() {
+    return (DeriveSymTypeOfSetExpressions) getSetExpressionsVisitor().get();
+  }*/
+
+  public DeriveSymTypeOfOCLExpressions getOCLExpressionsVisitorAsTypeVisitor() {
     return (DeriveSymTypeOfOCLExpressions) getOCLExpressionsVisitor().get();
   }
 
@@ -188,12 +192,13 @@ public class DeriveSymTypeOfOCLCombineExpressions
   @Override
   public void rawSetScope(IExpressionsBasisScope scope) {
     //deriveSymTypeOfExpression.rawSetScope(scope);
-    getExpressionsBasisVisitorAsDerivedType().rawSetScope(scope);
+    getExpressionsBasisVisitorAsTypeVisitor().rawSetScope(scope);
     //deriveSymTypeOfCommonExpressions.rawSetScope(scope);
-    getCommonExpressionsVisitorAsDerivedType().rawSetScope(scope);
+    getCommonExpressionsVisitorAsTypeVisitor().rawSetScope(scope);
     //deriveSymTypeOfSetExpressions.rawSetScope(scope);
+    //getSetExpressionsVisitorAsTypesCalculator().rawSetScope(scope);
     //deriveSymTypeOfOCLExpressions.rawSetScope(scope);
-    getOCLExpressionsVisitorAsDerivedType().rawSetScope(scope);
+    getOCLExpressionsVisitorAsTypeVisitor().rawSetScope(scope);
   }
 
   /**

@@ -62,7 +62,7 @@ grammar OCL extends
       @attribute Stereotype
              is needed in cases like "<<special, author = "mustermann">> context...." , e.g. taggedvalues1.ocl
       @attribute OCLOperationSignature
-                 Operation Signature (of a method or constructor).
+                 Operation Sinature (of a method or constructor).
       @attribute LetDeclaration
                  Optional let-declarations.
       @attribute OCLPreStatement

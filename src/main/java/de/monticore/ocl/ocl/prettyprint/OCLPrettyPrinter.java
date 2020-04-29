@@ -60,7 +60,7 @@ public class OCLPrettyPrinter implements OCLVisitor {
     printer.print(node.getPrefix() + " ");
 
     if (node.isPresentFileName()) {
-      printer.print(node.getFileName() + " {");
+      printer.println(node.getFileName() + " {");
     }
 
     node.getOCLConstraintList().forEach(c -> {
