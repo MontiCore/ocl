@@ -32,6 +32,8 @@
     <compiler.plugin>3.3</compiler.plugin>
     <source.plugin>2.4</source.plugin>
     <shade.plugin>2.4.3</shade.plugin>
+    <jacoco.plugin>0.8.5</jacoco.plugin>
+    <jacoco.reportPath>${project.basedir}/../target/jacoco.exec</jacoco.reportPath>
 
     <!-- Classifiers -->
     <grammars.classifier>grammars</grammars.classifier>
@@ -286,6 +288,33 @@
             <version>1.6</version>
           </dependency>
         </dependencies>
+      </plugin>
+
+      <!-- Coverage Report -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.plugin}</version>
+        <executions>
+          <execution>
+            <id>pre-unit-test</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>post-unit-test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <excludes>
+            <exclude>**/_*/*.class</exclude>
+          </excludes>
+        </configuration>
       </plugin>
     </plugins>
   </build>
