@@ -11,7 +11,7 @@ import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.DefsTypeBasic;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.typesymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
@@ -59,7 +59,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
     getCurrentScope().get().setAstNode(compilationUnit);
 
     final OCLArtifactScope enclosingScope = (OCLArtifactScope) compilationUnit.getEnclosingScope();
-    enclosingScope.setImportList(imports);
+    enclosingScope.setImportsList(imports);
     enclosingScope.setPackageName(compilationUnitPackage);
   }
 
@@ -119,7 +119,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
       return null;
     }
      */
-    return DefsTypeBasic.field(paramName, typeVisitor.getLastResult().getLast());
+    return DefsTypeBasic.field(paramName, typeVisitor.getLastResult().getCurrentResult());
   }
 
   public void registerFields(List<ASTOCLParamDeclaration> params,
@@ -139,8 +139,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
   private boolean handleOCLInExpressions(IOCLExpressionsScope scope, List<ASTLetinExpr> exprList,
     String astType) {
     for (ASTLetinExpr expr : exprList) {
-      for (ASTOCLVariableDeclaration variable : expr.getOCLVariableDeclarationList()) {
-        final List<String> varNameList = variable.getVariableDeclaratorList().stream()
+      for (ASTOCLVariableDeclaration variable : expr.getOCLVariableDeclarationsList()) {
+        final List<String> varNameList = variable.getVariableDeclaratorsList().stream()
           .map( v->v.getDeclaratorId().getName())
           .collect(Collectors.toList());
 
@@ -148,8 +148,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
           variable.getMCType().accept(typeVisitor.getRealThis());
 
 
-        if (typeVisitor.getLastResult().isPresentLast()) {
-          final SymTypeExpression last = typeVisitor.getLastResult().getLast();
+        if (typeVisitor.getLastResult().isPresentCurrentResult()) {
+          final SymTypeExpression last = typeVisitor.getLastResult().getCurrentResult();
           varNameList.stream().map(name -> DefsTypeBasic.field(name, last))
             .forEach(f -> DefsTypeBasic.add2scope(scope, f));
         }

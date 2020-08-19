@@ -6,11 +6,12 @@
 
 plugins {
   id 'java'
-  id 'monticore' version '6.1.0'
+  id 'monticore' version '6.2.0'
   id 'com.github.johnrengelman.shadow' version '6.0.0'
   id 'de.set.ecj' version '1.4.1' // Eclipse compiler as it's faster than javac
   id 'jacoco'
-  id 'com.adarshr.test-logger' version '2.0.0'
+  // com.adarshr.test-logger seems to be incompatible with MontiCore 6.2 :(
+  //id 'com.adarshr.test-logger' version '2.1.0'
   id 'maven-publish'
 }
 

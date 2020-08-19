@@ -9,16 +9,16 @@ package de.monticore.ocl.ocl._symboltable;
 
 import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.ITypeSymbolResolvingDelegate;
 import de.monticore.symboltable.modifiers.AccessModifier;
-import de.monticore.types.typesymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class CDTypeSymbolDelegate implements
-    de.monticore.types.typesymbols._symboltable.ITypeSymbolResolvingDelegate {
+public class CDTypeSymbolDelegate implements ITypeSymbolResolvingDelegate {
   CD4AnalysisGlobalScope cd4AnalysisGlobalScope;
 
   public CDTypeSymbolDelegate(CD4AnalysisGlobalScope cd4AnalysisGlobalScope) {

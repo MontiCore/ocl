@@ -46,8 +46,8 @@ public class OCLPrettyPrinter implements OCLVisitor {
       printer
           .println("package " + Names.getQualifiedName(unit.getPackageList()) + ";\n");
     }
-    if (unit.getMCImportStatementList() != null && !unit.getMCImportStatementList().isEmpty()) {
-      unit.getMCImportStatementList().forEach(i -> i.accept(getRealThis()));
+    if (unit.getMCImportStatementsList() != null && !unit.getMCImportStatementsList().isEmpty()) {
+      unit.getMCImportStatementsList().forEach(i -> i.accept(getRealThis()));
       getPrinter().println();
     }
     unit.getOCLFile().accept(getRealThis());
@@ -63,7 +63,7 @@ public class OCLPrettyPrinter implements OCLVisitor {
       printer.println(node.getFileName() + " {");
     }
 
-    node.getOCLConstraintList().forEach(c -> {
+    node.getOCLConstraintsList().forEach(c -> {
       c.accept(getRealThis());
       printer.println();
     });
@@ -142,7 +142,7 @@ public class OCLPrettyPrinter implements OCLVisitor {
       printer.println("import");
     }
 
-    node.getOCLContextDefinitionList().forEach(c -> {
+    node.getOCLContextDefinitionsList().forEach(c -> {
       c.accept(getRealThis());
       printer.println();
     });

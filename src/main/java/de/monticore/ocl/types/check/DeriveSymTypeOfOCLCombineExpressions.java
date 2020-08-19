@@ -4,6 +4,7 @@ package de.monticore.ocl.types.check;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
+import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
 import de.monticore.ocl.expressions.oclexpressions._ast.ASTOCLExpressionsNode;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -36,9 +37,9 @@ public class DeriveSymTypeOfOCLCombineExpressions
 
   private DeriveSymTypeOfOCL deriveSymTypeOfOCL;
 
-  private LastResult lastResult = new LastResult();
+  private TypeCheckResult lastResult = new TypeCheckResult();
 
-  public LastResult getLastResult() {
+  public TypeCheckResult getLastResult() {
     return lastResult;
   }
 
@@ -48,11 +49,11 @@ public class DeriveSymTypeOfOCLCombineExpressions
     initializeTypeVisitor();
 
     deriveSymTypeOfExpression = new DeriveSymTypeOfExpression();
-    deriveSymTypeOfExpression.setLastResult(lastResult);
+    deriveSymTypeOfExpression.setTypeCheckResult(lastResult);
     setExpressionsBasisVisitor(deriveSymTypeOfExpression);
 
     deriveSymTypeOfCommonExpressions = new DeriveSymTypeOfCommonExpressions();
-    deriveSymTypeOfCommonExpressions.setLastResult(lastResult);
+    deriveSymTypeOfCommonExpressions.setTypeCheckResult(lastResult);
     setCommonExpressionsVisitor(deriveSymTypeOfCommonExpressions);
 
     /*deriveSymTypeOfSetExpressions = new DeriveSymTypeOfSetExpressions();
@@ -67,15 +68,15 @@ public class DeriveSymTypeOfOCLCombineExpressions
      */
 
     deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
-    deriveSymTypeOfLiterals.setResult(lastResult);
+    deriveSymTypeOfLiterals.setTypeCheckResult(lastResult);
     setMCLiteralsBasisVisitor(deriveSymTypeOfLiterals);
 
     deriveSymTypeOfMCCommonLiterals = new DeriveSymTypeOfMCCommonLiterals();
-    deriveSymTypeOfMCCommonLiterals.setResult(lastResult);
+    deriveSymTypeOfMCCommonLiterals.setTypeCheckResult(lastResult);
     setMCCommonLiteralsVisitor(deriveSymTypeOfMCCommonLiterals);
 
     deriveSymTypeOfOCL = new DeriveSymTypeOfOCL();
-    deriveSymTypeOfOCL.setLastResult(lastResult);
+    deriveSymTypeOfOCL.setTypeCheckResult(lastResult);
     setOCLVisitor(deriveSymTypeOfOCL);
 
     //setScope(scope);
@@ -106,16 +107,16 @@ public class DeriveSymTypeOfOCLCombineExpressions
   public void handle(ASTMCQualifiedType node) {
     getMCCollectionTypesVisitor().get().handle(node);
     final Optional<SymTypeExpression> result = getMCCollectionTypesVisitorAsSynthesizedType().getResult();
-    result.ifPresent(r -> lastResult.setLast(r));
+    result.ifPresent(r -> lastResult.setCurrentResult(r));
   }
 
   public Optional<SymTypeExpression> calculateType(ASTOCLCompilationUnit node) {
     node.accept(realThis);
     Optional<SymTypeExpression> result = Optional.empty();
-    if (lastResult.isPresentLast()) {
-      result = Optional.ofNullable(lastResult.getLast());
+    if (lastResult.isPresentCurrentResult()) {
+      result = Optional.ofNullable(lastResult.getCurrentResult());
     }
-    lastResult.setLastAbsent();
+    lastResult.setCurrentResultAbsent();
     return result;
   }
 
@@ -125,20 +126,20 @@ public class DeriveSymTypeOfOCLCombineExpressions
   public Optional<SymTypeExpression> calculateType(ASTExpression e) {
     e.accept(realThis);
     Optional<SymTypeExpression> result = Optional.empty();
-    if (lastResult.isPresentLast()) {
-      result = Optional.ofNullable(lastResult.getLast());
+    if (lastResult.isPresentCurrentResult()) {
+      result = Optional.ofNullable(lastResult.getCurrentResult());
     }
-    lastResult.setLastAbsent();
+    lastResult.setCurrentResultAbsent();
     return result;
   }
 
   public Optional<SymTypeExpression> calculateType(ASTOCLExpressionsNode e) {
     e.accept(realThis);
     Optional<SymTypeExpression> result = Optional.empty();
-    if (lastResult.isPresentLast()) {
-      result = Optional.ofNullable(lastResult.getLast());
+    if (lastResult.isPresentCurrentResult()) {
+      result = Optional.ofNullable(lastResult.getCurrentResult());
     }
-    lastResult.setLastAbsent();
+    lastResult.setCurrentResultAbsent();
     return result;
   }
 
@@ -149,10 +150,21 @@ public class DeriveSymTypeOfOCLCombineExpressions
   public Optional<SymTypeExpression> calculateType(ASTLiteral lit) {
     lit.accept(realThis);
     Optional<SymTypeExpression> result = Optional.empty();
-    if (lastResult.isPresentLast()) {
-      result = Optional.ofNullable(lastResult.getLast());
+    if (lastResult.isPresentCurrentResult()) {
+      result = Optional.ofNullable(lastResult.getCurrentResult());
     }
-    lastResult.setLastAbsent();
+    lastResult.setCurrentResultAbsent();
+    return result;
+  }
+
+  @Override
+  public Optional<SymTypeExpression> calculateType(ASTSignedLiteral lit) {
+    lit.accept(realThis);
+    Optional<SymTypeExpression> result = Optional.empty();
+    if (lastResult.isPresentCurrentResult()) {
+      result = Optional.ofNullable(lastResult.getCurrentResult());
+    }
+    lastResult.setCurrentResultAbsent();
     return result;
   }
 
@@ -164,14 +176,14 @@ public class DeriveSymTypeOfOCLCombineExpressions
   /**
    * set the last result of all calculators to the same object
    */
-  public void setLastResult(LastResult lastResult) {
-    deriveSymTypeOfExpression.setLastResult(lastResult);
-    deriveSymTypeOfCommonExpressions.setLastResult(lastResult);
+  public void setLastResult(TypeCheckResult lastResult) {
+    deriveSymTypeOfExpression.setTypeCheckResult(lastResult);
+    deriveSymTypeOfCommonExpressions.setTypeCheckResult(lastResult);
     //deriveSymTypeOfSetExpressions.setLastResult(lastResult);
     //deriveSymTypeOfOCLExpressions.setLastResult(lastResult);
-    deriveSymTypeOfLiterals.setResult(lastResult);
-    deriveSymTypeOfMCCommonLiterals.setResult(lastResult);
-    deriveSymTypeOfOCL.setLastResult(lastResult);
+    deriveSymTypeOfLiterals.setTypeCheckResult(lastResult);
+    deriveSymTypeOfMCCommonLiterals.setTypeCheckResult(lastResult);
+    deriveSymTypeOfOCL.setTypeCheckResult(lastResult);
   }
 
   /*

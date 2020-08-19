@@ -3,7 +3,7 @@
 package de.monticore.ocl.ocl._cocos;
 
 import de.monticore.ocl.ocl._ast.ASTOCLConstructorSignature;
-import de.monticore.types.typesymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;

@@ -3,13 +3,14 @@
 package de.monticore.ocl.types.check;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
 import de.monticore.ocl.ocl._visitor.OCLVisitor;
 import de.monticore.types.check.DeriveSymTypeOfExpression;
 import de.monticore.types.check.ITypesCalculator;
-import de.monticore.types.check.LastResult;
+import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.check.SymTypeExpression;
 
 import java.util.Optional;
@@ -31,10 +32,6 @@ public class DeriveSymTypeOfOCL extends DeriveSymTypeOfExpression
 
   public DeriveSymTypeOfOCL() {
     realThis = this;
-  }
-
-  public void setLastResult(LastResult lastResult) {
-    this.lastResult = lastResult;
   }
 
   /*
@@ -65,6 +62,11 @@ public class DeriveSymTypeOfOCL extends DeriveSymTypeOfExpression
 
   @Override
   public Optional<SymTypeExpression> calculateType(ASTLiteral lit) {
+    return ((ITypesCalculator) realThis).calculateType(lit);
+  }
+
+  @Override
+  public Optional<SymTypeExpression> calculateType(ASTSignedLiteral lit) {
     return ((ITypesCalculator) realThis).calculateType(lit);
   }
 
