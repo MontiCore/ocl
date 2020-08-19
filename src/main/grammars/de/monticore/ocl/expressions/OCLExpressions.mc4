@@ -9,9 +9,9 @@ import de.monticore.expressions.*;
  * This grammar defines a expressions typical to UMLs OCL
  */
 component grammar OCLExpressions
-          extends de.monticore.ocl.expressions.OCLExpressionsBasis,
-                  de.monticore.ocl.expressions.OCLExpressionsSetComprehensions,
-                  de.monticore.ocl.expressions.OCLExpressionsPrimaries
+          extends OCLExpressionsBasis,
+                  OCLExpressionsSetComprehensions,
+                  OCLExpressionsPrimaries
 {
 
 }

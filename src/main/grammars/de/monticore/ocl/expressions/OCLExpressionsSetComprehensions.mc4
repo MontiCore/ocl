@@ -9,7 +9,7 @@ import de.monticore.expressions.*;
  * This grammar defines a expressions typical to UMLs OCL
  */
 component grammar OCLExpressionsSetComprehensions
-          extends de.monticore.ocl.expressions.OCLExpressionsBasis
+          extends OCLExpressionsBasis
 {
     /**
      * ASTOCLComprehensionPrimary represents comprehensions.

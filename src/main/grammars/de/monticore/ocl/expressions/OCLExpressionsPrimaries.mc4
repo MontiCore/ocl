@@ -9,7 +9,7 @@ import de.monticore.expressions.*;
  * This grammar defines a expressions typical to UMLs OCL
  */
 component grammar OCLExpressionsPrimaries
-          extends de.monticore.ocl.expressions.OCLExpressionsBasis
+          extends OCLExpressionsBasis
 {
   OCLIsNewPrimary implements OCLPrimary <100> =
       "isnew" "(" Expression ")";

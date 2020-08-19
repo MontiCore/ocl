@@ -1,16 +1,20 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 package de.monticore.ocl;
 
 /* Alpha-version: This is intended to become a MontiCore stable grammar. */
 
-grammar OCL extends
-      de.monticore.literals.MCCommonLiterals,
-      de.monticore.types.MCCollectionTypes,
-      de.monticore.expressions.CommonExpressions,
-      de.monticore.expressions.SetExpressions,
-      de.monticore.ocl.expressions.OCLExpressions,
-      de.monticore.ocl.expressions.AdditionalExpressions
+import de.monticore.expressions.CommonExpressions;
+import de.monticore.expressions.SetExpressions;
+import de.monticore.ocl.expressions.*;
+import de.monticore.types.*;
+import de.monticore.literals.*;
+
+grammar OCL extends MCCommonLiterals,
+                    MCCollectionTypes,
+                    CommonExpressions,
+                    SetExpressions,
+                    OCLExpressions,
+                    AdditionalExpressions
 {
 	/*========================================================================*/
   /*============================ PRODUCTIONS  ==============================*/

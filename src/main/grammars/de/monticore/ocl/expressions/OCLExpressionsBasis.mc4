@@ -4,13 +4,14 @@ package de.monticore.ocl.expressions;
 /* Alpha-version: This is intended to become a MontiCore stable grammar. */
 
 import de.monticore.expressions.*;
+import de.monticore.statements.*;
 
 /**
  * This grammar defines a expressions typical to UMLs OCL
  */
 component grammar OCLExpressionsBasis
-          extends de.monticore.expressions.ExpressionsBasis,
-                  de.monticore.statements.MCVarDeclarationStatements
+          extends ExpressionsBasis,
+                  MCVarDeclarationStatements
 {
   // Similar to LocalVariableDeclaration from MCVarDeclarationStatements
   // but without MCModifiers

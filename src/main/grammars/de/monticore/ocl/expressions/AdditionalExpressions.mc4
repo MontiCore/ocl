@@ -1,9 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 package de.monticore.ocl.expressions;
 
-component grammar AdditionalExpressions extends de.monticore.expressions.CommonExpressions {
+/* Alpha-version: This is intended to become a MontiCore stable grammar. */
 
+import de.monticore.expressions.*;
+
+component grammar AdditionalExpressions
+          extends de.monticore.expressions.CommonExpressions
+{
   // token TElvis = '?' ':';
 
   // indirect tokens
