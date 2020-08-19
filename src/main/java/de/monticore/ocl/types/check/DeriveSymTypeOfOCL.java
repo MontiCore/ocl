@@ -4,7 +4,6 @@ package de.monticore.ocl.types.check;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
-import de.monticore.ocl.ocl._ast.ASTOCLExtType;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
 import de.monticore.ocl.ocl._visitor.OCLVisitor;
@@ -38,8 +37,9 @@ public class DeriveSymTypeOfOCL extends DeriveSymTypeOfExpression
     this.lastResult = lastResult;
   }
 
+  /*
   @Override
-  public void traverse(ASTOCLExtType node) {
+  public void traverse(MCType node) {
     node.accept(getRealThis());
   }
 
@@ -56,6 +56,7 @@ public class DeriveSymTypeOfOCL extends DeriveSymTypeOfExpression
 
     OCLVisitor.super.traverse(node);
   }
+   */
 
   @Override
   public Optional<SymTypeExpression> calculateType(ASTExpression ex) {
@@ -65,5 +66,9 @@ public class DeriveSymTypeOfOCL extends DeriveSymTypeOfExpression
   @Override
   public Optional<SymTypeExpression> calculateType(ASTLiteral lit) {
     return ((ITypesCalculator) realThis).calculateType(lit);
+  }
+
+  @Override public void init() {
+    
   }
 }

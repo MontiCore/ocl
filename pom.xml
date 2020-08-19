@@ -9,18 +9,17 @@
 
   <groupId>de.monticore.lang</groupId>
   <artifactId>ocl</artifactId>
-  <version>1.11.0-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
 
   <!-- == PROJECT DEPENDENCIES ============================================= -->
 
   <properties>
 
     <!-- .. SE-Libraries .................................................. -->
-    <monticore.version>6.1.0-SNAPSHOT</monticore.version>
-    <monticore.grammar.version>6.1.0-OCL</monticore.grammar.version>
+    <monticore.version>6.1.0.1</monticore.version>
     <se-commons.version>1.7.9</se-commons.version>
     <mc.grammars.assembly.version>0.0.10</mc.grammars.assembly.version>
-    <cd4analysis.version>1.7.0-SNAPSHOT</cd4analysis.version>
+    <cd4analysis.version>1.7.0</cd4analysis.version>
 
     <!-- .. Libraries .................................................. -->
     <guava.version>18.0</guava.version>
@@ -29,7 +28,6 @@
     <jscience.version>4.3.1</jscience.version>
 
     <!-- .. Plugins ....................................................... -->
-    <monticore.plugin>6.1.0-SNAPSHOT</monticore.plugin>
     <assembly.plugin>2.5.4</assembly.plugin>
     <compiler.plugin>3.3</compiler.plugin>
     <source.plugin>2.4</source.plugin>
@@ -88,15 +86,14 @@
     <dependency>
       <groupId>de.monticore</groupId>
       <artifactId>monticore-grammar</artifactId>
-      <version>${monticore.grammar.version}</version>
+      <version>${monticore.version}</version>
     </dependency>
 
     <dependency>
       <groupId>de.monticore</groupId>
       <artifactId>monticore-grammar</artifactId>
-      <version>${monticore.grammar.version}</version>
+      <version>${monticore.version}</version>
       <classifier>${grammars.classifier}</classifier>
-      <scope>provided</scope>
     </dependency>
 
     <!-- .. Test Libraries ............................................... -->
@@ -141,7 +138,7 @@
       <plugin>
         <groupId>de.monticore.mojo</groupId>
         <artifactId>monticore-maven-plugin</artifactId>
-        <version>${monticore.plugin}</version>
+        <version>${monticore.version}</version>
         <configuration>
           <skip>false</skip>
           <script>de/monticore/monticore_noemf.groovy</script>
@@ -151,25 +148,6 @@
             <goals>
               <goal>generate</goal>
             </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-test-source</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>target/generated-test-sources/monticore/sourcecode</source>
-              </sources>
-            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -271,33 +249,7 @@
           </execution>
         </executions>
       </plugin>
-      <!-- to add copyright information automatically-->
-      <!-- <plugin>
-          <groupId>com.mycila</groupId>
-          <artifactId>license-maven-plugin</artifactId>
-          <version>3.0</version>
-          <configuration>
-              <header>${project.baseUri}/src/license/se/license.txt</header>
-              <properties>
-                  <owner>Michael von Wenckstern</owner>
-                  <email>vonwenckstern@se-rwth.de</email>
-              </properties>
-              <excludes>
-                  <exclude>**/README</exclude>
-                  <exclude>src/test/resources/**</exclude>
-                  <exclude>src/main/resources/**</exclude>
-                  <exclude>src/license/**</exclude>
-              </excludes>
-          </configuration>
-          <executions>
-              <execution>
-                  <goals>
-                      <goal>format</goal>
-                  </goals>
-                  <phase>process-sources</phase>
-              </execution>
-          </executions>
-      </plugin> -->
+
       <plugin>
         <groupId>org.eluder.coveralls</groupId>
         <artifactId>coveralls-maven-plugin</artifactId>

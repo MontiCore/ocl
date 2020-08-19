@@ -7,7 +7,6 @@ import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisS
 import de.monticore.expressions.oclexpressions._ast.ASTOCLExpressionsNode;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLExtType;
 import de.monticore.ocl.ocl._visitor.OCLDelegatorVisitor;
 import de.monticore.types.check.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
@@ -29,7 +28,7 @@ public class DeriveSymTypeOfOCLCombineExpressions
 
   //private DeriveSymTypeOfSetExpressions deriveSymTypeOfSetExpressions;
 
-  private DeriveSymTypeOfOCLExpressions deriveSymTypeOfOCLExpressions;
+  //private DeriveSymTypeOfOCLExpressions deriveSymTypeOfOCLExpressions;
 
   private DeriveSymTypeOfLiterals deriveSymTypeOfLiterals;
 
@@ -38,6 +37,10 @@ public class DeriveSymTypeOfOCLCombineExpressions
   private DeriveSymTypeOfOCL deriveSymTypeOfOCL;
 
   private LastResult lastResult = new LastResult();
+
+  public LastResult getLastResult() {
+    return lastResult;
+  }
 
   public DeriveSymTypeOfOCLCombineExpressions(IExpressionsBasisScope scope) {
     this.realThis = this;
@@ -57,9 +60,11 @@ public class DeriveSymTypeOfOCLCombineExpressions
     deriveSymTypeOfSetExpressions.setLastResult(lastResult);
     setSetExpressionsVisitor(deriveSymTypeOfSetExpressions);*/
 
+    /*
     deriveSymTypeOfOCLExpressions = new DeriveSymTypeOfOCLExpressions();
     deriveSymTypeOfOCLExpressions.setLastResult(lastResult);
     setOCLExpressionsVisitor(deriveSymTypeOfOCLExpressions);
+     */
 
     deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setResult(lastResult);
@@ -73,7 +78,7 @@ public class DeriveSymTypeOfOCLCombineExpressions
     deriveSymTypeOfOCL.setLastResult(lastResult);
     setOCLVisitor(deriveSymTypeOfOCL);
 
-    setScope(scope);
+    //setScope(scope);
   }
 
   protected DeriveSymTypeOfExpression getExpressionsBasisVisitorAsTypeVisitor() {
@@ -88,9 +93,10 @@ public class DeriveSymTypeOfOCLCombineExpressions
     return (DeriveSymTypeOfSetExpressions) getSetExpressionsVisitor().get();
   }*/
 
+  /*
   public DeriveSymTypeOfOCLExpressions getOCLExpressionsVisitorAsTypeVisitor() {
     return (DeriveSymTypeOfOCLExpressions) getOCLExpressionsVisitor().get();
-  }
+  }*/
 
   protected SynthesizeSymTypeFromMCCollectionTypes getMCCollectionTypesVisitorAsSynthesizedType() {
     return (SynthesizeSymTypeFromMCCollectionTypes) getMCCollectionTypesVisitor().get();
@@ -99,14 +105,6 @@ public class DeriveSymTypeOfOCLCombineExpressions
   @Override
   public void handle(ASTMCQualifiedType node) {
     getMCCollectionTypesVisitor().get().handle(node);
-    final Optional<SymTypeExpression> result = getMCCollectionTypesVisitorAsSynthesizedType().getResult();
-    result.ifPresent(r -> lastResult.setLast(r));
-  }
-
-  @Override
-  public void traverse(ASTOCLExtType node) {
-    node.getMCType().accept(getRealThis());
-
     final Optional<SymTypeExpression> result = getMCCollectionTypesVisitorAsSynthesizedType().getResult();
     result.ifPresent(r -> lastResult.setLast(r));
   }
@@ -170,36 +168,40 @@ public class DeriveSymTypeOfOCLCombineExpressions
     deriveSymTypeOfExpression.setLastResult(lastResult);
     deriveSymTypeOfCommonExpressions.setLastResult(lastResult);
     //deriveSymTypeOfSetExpressions.setLastResult(lastResult);
-    deriveSymTypeOfOCLExpressions.setLastResult(lastResult);
+    //deriveSymTypeOfOCLExpressions.setLastResult(lastResult);
     deriveSymTypeOfLiterals.setResult(lastResult);
     deriveSymTypeOfMCCommonLiterals.setResult(lastResult);
     deriveSymTypeOfOCL.setLastResult(lastResult);
   }
 
+  /*
   @Override
   public LastResult getLastResult() {
     return lastResult;
   }
 
+   */
+
   /**
    * set the scope of the typescalculator, important for resolving for e.g. NameExpression
    */
-  @Override
-  public void setScope(IExpressionsBasisScope scope) {
-    rawSetScope(scope);
-  }
 
+  public void setScope(IExpressionsBasisScope scope) {
+    //rawSetScope(scope);
+  }
+  /*
   @Override
   public void rawSetScope(IExpressionsBasisScope scope) {
     //deriveSymTypeOfExpression.rawSetScope(scope);
-    getExpressionsBasisVisitorAsTypeVisitor().rawSetScope(scope);
+    //getExpressionsBasisVisitorAsTypeVisitor().rawSetScope(scope);
     //deriveSymTypeOfCommonExpressions.rawSetScope(scope);
-    getCommonExpressionsVisitorAsTypeVisitor().rawSetScope(scope);
+    //getCommonExpressionsVisitorAsTypeVisitor().rawSetScope(scope);
     //deriveSymTypeOfSetExpressions.rawSetScope(scope);
     //getSetExpressionsVisitorAsTypesCalculator().rawSetScope(scope);
     //deriveSymTypeOfOCLExpressions.rawSetScope(scope);
-    getOCLExpressionsVisitorAsTypeVisitor().rawSetScope(scope);
+    //getOCLExpressionsVisitorAsTypeVisitor().rawSetScope(scope);
   }
+   */
 
   /**
    * initialize the typescalculator
@@ -209,7 +211,7 @@ public class DeriveSymTypeOfOCLCombineExpressions
     deriveSymTypeOfExpression = new DeriveSymTypeOfExpression();
     deriveSymTypeOfCommonExpressions = new DeriveSymTypeOfCommonExpressions();
     //deriveSymTypeOfSetExpressions = new DeriveSymTypeOfSetExpressions();
-    deriveSymTypeOfOCLExpressions = new DeriveSymTypeOfOCLExpressions();
+    //deriveSymTypeOfOCLExpressions = new DeriveSymTypeOfOCLExpressions();
     deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfMCCommonLiterals = new DeriveSymTypeOfMCCommonLiterals();
     deriveSymTypeOfOCL = new DeriveSymTypeOfOCL();
@@ -220,8 +222,8 @@ public class DeriveSymTypeOfOCLCombineExpressions
   }
 
   protected void initializeTypeVisitor() {
-    final SynthesizeSymTypeFromMCCollectionTypes mCCollectionTypesVisitor = new SynthesizeSymTypeFromMCCollectionTypes();
-    setMCBasicTypesVisitor(mCCollectionTypesVisitor);
-    setMCCollectionTypesVisitor(mCCollectionTypesVisitor);
+    //final SynthesizeSymTypeFromMCCollectionTypes mCCollectionTypesVisitor = new SynthesizeSymTypeFromMCCollectionTypes();
+    //setMCBasicTypesVisitor(mCCollectionTypesVisitor);
+    //setMCCollectionTypesVisitor(mCCollectionTypesVisitor);
   }
 }

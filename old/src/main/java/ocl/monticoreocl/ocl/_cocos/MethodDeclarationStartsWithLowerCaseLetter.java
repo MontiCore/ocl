@@ -30,8 +30,7 @@ public class MethodDeclarationStartsWithLowerCaseLetter implements OCLASTOCLMeth
 
 		if (startsWithUpperCase) {
 			Log.error(
-					String.format("0xOCL04 method declaration name '%s' must start with a capital letter.", methName),
-					astMethodDeclaration.get_SourcePositionStart());
+					String.format("0xOCL04 method declaration name '%s' must start with a capital letter.", methName));
 		}
 	}
 }

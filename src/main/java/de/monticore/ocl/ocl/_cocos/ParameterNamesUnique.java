@@ -17,7 +17,7 @@ public class ParameterNamesUnique
   @Override
   public void check(ASTOCLParameters astParameterDeclaration) {
     final List<String> duplicateNames = astParameterDeclaration.getParamsList()
-        .stream().collect(Collectors.groupingBy(ASTOCLParamDeclaration::getParam)).entrySet()
+        .stream().collect(Collectors.groupingBy(ASTOCLParamDeclaration::getName)).entrySet()
         .stream().filter(e -> e.getValue().size() > 1).map(Map.Entry::getKey).collect(Collectors.toList());
     if (!duplicateNames.isEmpty()) {
       Log.error(String.format("0xOCL0C parameters need to have unique names, but following names are used more than once (%s).", Joiners.COMMA.join(duplicateNames)),

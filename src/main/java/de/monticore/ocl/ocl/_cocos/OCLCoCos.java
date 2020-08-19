@@ -12,12 +12,9 @@ public class OCLCoCos {
         .addCoCo(new MethSignatureStartsWithLowerCaseLetter())
         .addCoCo(new ConstructorNameStartsWithCapitalLetter())
         .addCoCo(new InvariantNameStartsWithCapitalLetter())
-        .addCoCo(new MethodDeclarationStartsWithLowerCaseLetter())
         .addCoCo(new PreStatementNameStartsWithCapitalLetter())
         .addCoCo(new PostStatementNameStartsWithCapitalLetter())
-        .addCoCo(new ParameterDeclarationNameStartsWithLowerCaseLetter())
         .addCoCo(new ParameterNamesUnique())
-        .addCoCo(new VariableDeclarationStartsWithLowerCaseLetter())
         .addCoCo(new ExpressionInOperationConstraintHasToBeLetInExpression())
         .addCoCo(new ExpressionInContextDefinitionHasToBeLetInExpression())
 

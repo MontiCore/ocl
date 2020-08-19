@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-
-    (c) https://github.com/MontiCore/monticore
-
-    The license generally applicable for this project
-    can be found under https://github.com/MontiCore/monticore.
-
--->
-<!--
-
-
-    /* (c) https://github.com/MontiCore/monticore */
-
-    The license generally applicable for this project
-    can be found under https://github.com/MontiCore/monticore.
-
--->
 <!-- (c) https://github.com/MontiCore/monticore -->
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -25,14 +7,6 @@
 
     <servers>
         <!-- insert any other required servers (e.g. webdavs, application servers, etc. -->
-
-        <!-- for example:
-        <server>
-          <id>monticore-webdav</id>
-          <username>username</username>
-          <password>password</password>
-        </server>
-        -->
         <server>
             <id>se-nexus</id>
             <username>testcimcdeploy</username>

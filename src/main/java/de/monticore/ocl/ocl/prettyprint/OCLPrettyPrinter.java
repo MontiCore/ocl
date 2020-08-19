@@ -57,7 +57,7 @@ public class OCLPrettyPrinter implements OCLVisitor {
   @Override
   public void handle(ASTOCLFile node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
-    printer.print(node.getPrefix() + " ");
+    printer.print("ocl ");
 
     if (node.isPresentFileName()) {
       printer.println(node.getFileName() + " {");
@@ -154,8 +154,8 @@ public class OCLPrettyPrinter implements OCLVisitor {
   public void handle(ASTOCLContextDefinition node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
 
-    if (node.isPresentOCLExtType()) {
-      node.getOCLExtType().accept(getRealThis());
+    if (node.isPresentMCType()) {
+      node.getMCType().accept(getRealThis());
     }
     else if (node.isPresentExpression()) {
       node.getExpression().accept(getRealThis());
@@ -256,17 +256,6 @@ public class OCLPrettyPrinter implements OCLVisitor {
   public void handle(ASTOCLThrowsClause node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     printer.print("throws " + Joiners.COMMA.join(node.getThrowablesList()));
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
-  }
-
-  @Override
-  public void handle(ASTStereotypeExpr node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
-
-    node.getStereotype().accept(getRealThis());
-    printer.print(" ");
-    node.getExpression().accept(getRealThis());
-
     CommentPrettyPrinter.printPreComments(node, getPrinter());
   }
 }

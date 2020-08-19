@@ -34,7 +34,6 @@ public class OCLCombinePrettyPrinter
     setOCLExpressionsVisitor(new OCLExpressionsPrettyPrinter(printer));
     setAdditionalExpressionsVisitor(new AdditionalExpressionsPrettyPrinter(printer));
     setOCLVisitor(new OCLPrettyPrinter(printer));
-    setUMLStereotypeVisitor(new UMLStereotypePrettyPrinter(printer));
   }
 
   public IndentPrinter getPrinter() {
