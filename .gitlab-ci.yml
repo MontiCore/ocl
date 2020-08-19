@@ -32,8 +32,7 @@ Validate:
     - mvn $MAVEN_CLI_OPTS compile -Dmaven.test.skip=true
   artifacts:
     paths:
-      - generators/montithings2cpp/target/
-      - languages/montithings/target/
+      - ./target/
     expire_in: 1 week
 
 # Run Unit Tests after build
@@ -42,14 +41,13 @@ Validate:
   coverage: '/\d+.\d+ \% covered/'
   script:
     - mvn $MAVEN_CLI_OPTS test
-    - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, "instructions covered"; print 100*covered/instructions, "% covered" }' ./languages/montithings/target/site/jacoco/jacoco.csv
+    - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, "instructions covered"; print 100*covered/instructions, "% covered" }' ./target/site/jacoco/jacoco.csv
   dependencies:
     - Validate #download artifacts from build
   artifacts:
     reports:
       junit:
-        - ./generators/montithings2cpp/target/surefire-reports/TEST-*.xml
-        - ./languages/montithings/target/surefire-reports/TEST-*.xml
+        - ./target/surefire-reports/TEST-*.xml
 
 Unit Test JDK 8:
   image: maven:3-jdk-8
