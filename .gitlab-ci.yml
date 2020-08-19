@@ -29,7 +29,7 @@ Validate:
   image: maven:3-jdk-8
   stage: build
   script:
-    - mvn $MAVEN_CLI_OPTS compile package -Dmaven.test.skip=true
+    - mvn $MAVEN_CLI_OPTS compile -Dmaven.test.skip=true
   artifacts:
     paths:
       - generators/montithings2cpp/target/
@@ -41,7 +41,7 @@ Validate:
   stage: test
   coverage: '/\d+.\d+ \% covered/'
   script:
-    - mvn $MAVEN_CLI_OPTS test package
+    - mvn $MAVEN_CLI_OPTS test
     - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, "instructions covered"; print 100*covered/instructions, "% covered" }' ./languages/montithings/target/site/jacoco/jacoco.csv
   dependencies:
     - Validate #download artifacts from build
@@ -60,7 +60,6 @@ Unit Test JDK 11:
   # We do not require JDK 11 support yet. We appreciate it though.
   allow_failure: true
   <<: *unit_test_definition
-
 
 Unit Test JDK 14:
   image: maven:3-jdk-14
