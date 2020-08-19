@@ -31,7 +31,7 @@ component grammar OCLExpressionsBasis
 
   // need own ASTNode for visitor to know when we are in then part and
   // when we are in else part for
-  // typeif construction, b/c in then part we automatically cast the type
+  // typeif construction, b/c in then part we implicitly cast the type
   // cf. http://mbse.se-rwth.de/book1/index.php?c=chapter3-3#x1-550003.3.5
   ThenExpressionPart = "then" thenExpression:Expression;
   ElseExpressionPart = "else" elseExpression:Expression;
@@ -43,15 +43,15 @@ component grammar OCLExpressionsBasis
 
   ImpliesExpression implements Expression <60> =
       left:Expression
-      "implies"
+      key("implies")
       right:Expression;
 
-  SingleLogicalORExpr implements Expression <80> =
+  LogicalORExpr implements Expression <80> =
       left:Expression
       "|"
       right:Expression;
 
-  SingleLogicalANDExpr implements Expression <80> =
+  LogicalANDExpr implements Expression <80> =
       left:Expression
       "&"
       right:Expression;
@@ -93,8 +93,8 @@ component grammar OCLExpressionsBasis
       ;
 
   /**
-   * ASTOCLAnyExpr defines iterations with all objects of a collection e.g.
-   *   any x in set or any Auction.
+   * ASTOCLAnyExpr selects an element from a non-empty collection e.g.
+   *   any x in set or any Auction. The result is underspecified.
    *   @attribute OCLExpression
    *              A collection defined by an expression.
    */
@@ -103,7 +103,7 @@ component grammar OCLExpressionsBasis
 
   /**
    * ASTOCLLetinExpr are used to define local vars or methods. The defined
-   *   vars and methods are visible in the in-expression.
+   *   vars and methods are visible in the in-expression body.
    *   @attribute declarations
    *              A list of variable or method declarations.
    *   @attribute OCLExpression

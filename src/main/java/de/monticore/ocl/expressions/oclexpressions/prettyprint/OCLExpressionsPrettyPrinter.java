@@ -52,7 +52,7 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   }
 
   @Override
-  public void handle(ASTSingleLogicalORExpr node) {
+  public void handle(ASTLogicalORExpr node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     node.getLeft().accept(getRealThis());
     getPrinter().print(" | ");
@@ -61,7 +61,7 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   }
 
   @Override
-  public void handle(ASTSingleLogicalANDExpr node) {
+  public void handle(ASTLogicalANDExpr node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     node.getLeft().accept(getRealThis());
     getPrinter().print(" & ");
