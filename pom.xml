@@ -23,7 +23,11 @@
 
     <!-- .. Libraries .................................................. -->
     <guava.version>18.0</guava.version>
+    <junit.jupiter.version>5.5.2</junit.jupiter.version>
+    <junit.vintage.version>${junit.jupiter.version}</junit.vintage.version>
     <junit.version>4.12</junit.version>
+    <junit.platform.version>1.1.0</junit.platform.version>
+    <assertj.version>3.7.0</assertj.version>
     <logback.version>1.1.2</logback.version>
     <jscience.version>4.3.1</jscience.version>
 
@@ -34,6 +38,8 @@
     <shade.plugin>2.4.3</shade.plugin>
     <jacoco.plugin>0.8.5</jacoco.plugin>
     <jacoco.reportPath>${project.basedir}/../target/jacoco.exec</jacoco.reportPath>
+    <surefire.plugin>3.0.0-M4</surefire.plugin>
+    <failsafe.plugin>3.0.0-M4</failsafe.plugin>
 
     <!-- Classifiers -->
     <grammars.classifier>grammars</grammars.classifier>
@@ -107,6 +113,27 @@
     </dependency>
 
     <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj.version}</version>
+      <!-- doc: http://joel-costigliola.github.io/assertj/ -->
+    </dependency>
+
+    <dependency>
       <groupId>de.monticore</groupId>
       <artifactId>monticore-runtime</artifactId>
       <version>${monticore.version}</version>
@@ -116,6 +143,15 @@
   </dependencies>
 
   <!-- == PROJECT BUILD SETTINGS =========================================== -->
+
+  <profiles>
+    <profile>
+      <id>skipTests</id>
+      <properties>
+        <skipTests>true</skipTests>
+      </properties>
+    </profile>
+  </profiles>
 
   <!-- Deploy Configuration -->
   <build>
@@ -248,6 +284,86 @@
               <includes>
               </includes>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Unit Tests -->
+      <!-- default folder is src/test/java/ -->
+      <!-- default incl. are "**/Test*.java", "**/*Test.java", "**/*TestCase.java" -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${surefire.plugin}</version>
+        <configuration>
+          <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
+          <skipTests>${skip.unit.tests}</skipTests>
+          <useSystemClassLoader>false</useSystemClassLoader>
+        </configuration>
+        <dependencies>
+          <!-- let JUnit vintage engine run JUnit 3 or JUnit 4 tests -->
+          <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit.vintage.version}</version>
+          </dependency>
+          <!-- let JUnit 5 engine run JUnit 5 tests -->
+          <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
+      <!-- Integration / Acceptance Tests -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${failsafe.plugin}</version>
+        <configuration>
+          <skipTests>${skip.integration.tests}</skipTests>
+          <includes>
+            <!-- Integration Tests -->
+            <!-- default folder is src/integration-test/java/ -->
+            <!-- default incl. are "**/IT*.java", "**/*IT.java", "**/*ITCase.java" -->
+            <include>**/IT*.java</include>
+            <include>**/*IT.java</include>
+            <include>**/*ITCase.java</include>
+            <!-- Acceptance Tests -->
+            <!-- default folder is src/acceptance-test/java/ -->
+            <!-- default incl. are "**/AT*.java", "**/*AT.java", "**/*ATCase.java" -->
+            <include>**/AT*.java</include>
+            <include>**/*AT.java</include>
+            <include>**/*ATCase.java</include>
+          </includes>
+          <useSystemClassLoader>false</useSystemClassLoader>
+        </configuration>
+        <dependencies>
+          <!-- let surefire run JUnit 4 but also JUnit 5 tests -->
+          <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-surefire-provider</artifactId>
+            <version>${junit.platform.version}</version>
+          </dependency>
+          <!-- let JUnit vintage engine run JUnit 3 or JUnit 4 tests -->
+          <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>${junit.vintage.version}</version>
+          </dependency>
+          <!-- let JUnit 5 engine run JUnit 5 tests -->
+          <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
