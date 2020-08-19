@@ -7,8 +7,10 @@
 plugins {
   id 'java'
   id 'monticore' version '6.1.0'
-  id "jacoco"
-  id 'com.adarshr.test-logger' version "2.0.0"
+  id 'com.github.johnrengelman.shadow' version '6.0.0'
+  id 'de.set.ecj' version '1.4.1' // Eclipse compiler as it's faster than javac
+  id 'jacoco'
+  id 'com.adarshr.test-logger' version '2.0.0'
   id 'maven-publish'
 }
 
@@ -64,7 +66,7 @@ repositories {
   mavenCentral()
 }
 
-sourceCompatibility = '1.8'
+//sourceCompatibility = '1.8'
 
 configurations { grammar }
 
@@ -106,6 +108,9 @@ tasks.withType(JavaCompile) {
   sourceCompatibility = JavaVersion.VERSION_1_8
   targetCompatibility = JavaVersion.VERSION_1_8
   options.encoding = 'UTF-8'
+  options.headerOutputDirectory.convention(null)
+  options.deprecation = false
+  options.warnings = false
 }
 
 fileTree(grammarDir).matching { include '**/*.mc4' }.each {
@@ -130,13 +135,42 @@ compileJava {
   dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
 }
 
-java {
-  //withJavadocJar()
-  withSourcesJar()
-  registerFeature("grammars") {
-    usingSourceSet(sourceSets.grammars)
-  }
+// Fixes issue with java plugin in projects without resources
+compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
+
+// build sources jar in addition
+task sourcesJar(type: Jar) {
+  from sourceSets.main.allJava
+  archiveClassifier = "sources"
 }
+
+// build javadoc jar in addition
+task javadocJar(type: Jar) {
+  from javadoc
+  archiveClassifier = "javadoc"
+}
+
+// generated java doc contains errors, disable for now
+javadoc.failOnError(false)
+
+// build grammar jar as well
+task grammarJar(type: Jar) {
+  from("$projectDir/src/main/grammars/") { include "**/*.mc4" }
+  archiveClassifier = "grammars"
+}
+
+
+// all in one cli-jar
+shadowJar {
+  manifest {
+    attributes "Main-Class": "de.monticore.${archiveBaseName.get().capitalize()}CLI"
+  }
+  archiveFileName = "${archiveBaseName.get()}-cli.${archiveExtension.get()}"
+  minimize()
+}
+
+jar.dependsOn shadowJar
+
 
 publishing {
   publications {
