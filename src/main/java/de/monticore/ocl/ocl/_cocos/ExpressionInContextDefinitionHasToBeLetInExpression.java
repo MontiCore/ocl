@@ -2,7 +2,7 @@
 
 package de.monticore.ocl.ocl._cocos;
 
-import de.monticore.expressions.oclexpressions._ast.ASTLetinExpr;
+import de.monticore.ocl.expressions.oclexpressionsbasis._ast.ASTLetinExpr;
 import de.monticore.ocl.ocl._ast.ASTOCLContextDefinition;
 import de.se_rwth.commons.logging.Log;
 

@@ -1,0 +1,67 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.ocl.expressions;
+
+/* Alpha-version: This is intended to become a MontiCore stable grammar. */
+
+import de.monticore.expressions.*;
+
+/**
+ * This grammar defines a expressions typical to UMLs OCL
+ */
+component grammar OCLExpressionsSetComprehensions
+          extends de.monticore.ocl.expressions.OCLExpressionsBasis
+{
+    /**
+     * ASTOCLComprehensionPrimary represents comprehensions.
+     *   @attribute SimpleReferenceType
+     *              Optional type of comprehension, e.g. Set, List or Collection.
+     *   @attribute expression
+     *              Expression of comprehension.
+     *   @attribute qualification
+     *              Optional Qualification.
+     */
+    OCLComprehensionPrimary implements OCLPrimary  <40> =
+        MCType?
+        "{" expression:OCLComprehensionExpr? "}"
+        ("." qualification:OCLPrimary)?
+        ;
+
+    /**
+     * ASTOCLComprehensionExpressionStyle defines a comprehension with given
+     *   characteristic.
+     *   @attribute expression
+     *              An expression (e.g. "x*x" or "x in Y").
+     *   @attribute comprehensionItems
+     *              Characterization of comprehension as a list of
+     *              comprehension-items. This can be generators, vardefinitions
+     *              or filters.
+     *   Note that we assume at least one generator (e.g. x in Y) in this AST.
+     */
+    OCLComprehensionExpressionStyle implements OCLComprehensionExpr <20> =
+      Expression "|"
+      (OCLComprehensionItem || ",")+
+      ;
+
+    OCLComprehensionItem =
+        generator:InExpr |
+        declaration:OCLVariableDeclaration |
+        filter:Expression
+        ;
+
+    /**
+     * ASTOCLComprehensionEnumerationStyle is used for an enumeration of
+     *   comprehension elements. Note that collection items are optional.
+     *   @attribute collectionItems
+     *              Enumerated elements as a list separated by , (comma).
+     *              (e.g.: "1..3, x, y..z")
+     */
+    OCLComprehensionEnumerationStyle implements OCLComprehensionExpr <10> =
+      OCLCollectionItem* (",")?
+      ;
+
+    OCLCollectionItem =
+        (Expression  ".."  Expression)
+        |
+        (Expression ("," Expression)*)
+        ;
+}

@@ -2,10 +2,10 @@
 package de.monticore.ocl.ocl._symboltable;
 
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
-import de.monticore.expressions.oclexpressions._ast.ASTLetinExpr;
-import de.monticore.expressions.oclexpressions._ast.ASTOCLParamDeclaration;
-import de.monticore.expressions.oclexpressions._ast.ASTOCLVariableDeclaration;
-import de.monticore.expressions.oclexpressions._symboltable.IOCLExpressionsScope;
+import de.monticore.ocl.expressions.oclexpressionsbasis._ast.ASTLetinExpr;
+import de.monticore.ocl.expressions.oclexpressionsbasis._ast.ASTOCLParamDeclaration;
+import de.monticore.ocl.expressions.oclexpressionsbasis._ast.ASTOCLVariableDeclaration;
+import de.monticore.ocl.expressions.oclexpressions._symboltable.IOCLExpressionsScope;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.symboltable.ImportStatement;

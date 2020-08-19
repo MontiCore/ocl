@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.ocl.expressions;
+
+/* Alpha-version: This is intended to become a MontiCore stable grammar. */
+
+import de.monticore.expressions.*;
+
+/**
+ * This grammar defines a expressions typical to UMLs OCL
+ */
+component grammar OCLExpressions
+          extends de.monticore.ocl.expressions.OCLExpressionsBasis,
+                  de.monticore.ocl.expressions.OCLExpressionsSetComprehensions,
+                  de.monticore.ocl.expressions.OCLExpressionsPrimaries
+{
+
+}

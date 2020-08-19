@@ -1,8 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package de.monticore.ocl.ocl.prettyprint;
+package de.monticore.ocl.expressions.prettyprint;
 
-import de.monticore.ocl.additionalexpressions._visitor.AdditionalExpressionsVisitor;
+import de.monticore.ocl.expressions.additionalexpressions._visitor.AdditionalExpressionsVisitor;
 import de.monticore.prettyprint.IndentPrinter;
 
 public class AdditionalExpressionsPrettyPrinter

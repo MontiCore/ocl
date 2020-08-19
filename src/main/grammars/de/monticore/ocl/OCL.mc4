@@ -9,8 +9,8 @@ grammar OCL extends
       de.monticore.types.MCCollectionTypes,
       de.monticore.expressions.CommonExpressions,
       de.monticore.expressions.SetExpressions,
-      de.monticore.expressions.OCLExpressions,
-      de.monticore.ocl.AdditionalExpressions
+      de.monticore.ocl.expressions.OCLExpressions,
+      de.monticore.ocl.expressions.AdditionalExpressions
 {
 	/*========================================================================*/
   /*============================ PRODUCTIONS  ==============================*/

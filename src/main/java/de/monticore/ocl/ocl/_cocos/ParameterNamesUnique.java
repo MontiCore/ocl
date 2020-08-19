@@ -2,7 +2,7 @@
 
 package de.monticore.ocl.ocl._cocos;
 
-import de.monticore.expressions.oclexpressions._ast.ASTOCLParamDeclaration;
+import de.monticore.ocl.expressions.oclexpressionsbasis._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.ocl._ast.ASTOCLParameters;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.logging.Log;

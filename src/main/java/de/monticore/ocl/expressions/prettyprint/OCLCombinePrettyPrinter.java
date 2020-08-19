@@ -1,21 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package de.monticore.ocl.ocl.prettyprint;
+package de.monticore.ocl.expressions.prettyprint;
 
 import de.monticore.MCCommonLiteralsPrettyPrinter;
 import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
-import de.monticore.expressions.prettyprint.OCLExpressionsPrettyPrinter;
+import de.monticore.ocl.expressions.oclexpressions.prettyprint.OCLExpressionsPrettyPrinter;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLFile;
 import de.monticore.ocl.ocl._visitor.OCLDelegatorVisitor;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.prettyprint.UMLStereotypePrettyPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
-import de.monticore.umlstereotype._visitor.UMLStereotypeVisitor;
-
-import java.util.Optional;
 
 public class OCLCombinePrettyPrinter
     extends OCLDelegatorVisitor {
