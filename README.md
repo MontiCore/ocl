@@ -1,6 +1,4 @@
 <!-- (c) https://github.com/MontiCore/monticore -->
-[![Java 8](https://img.shields.io/badge/java-8-blue.svg)](http://java.oracle.com)
-
 
 # OCL
 
