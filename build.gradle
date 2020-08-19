@@ -1,0 +1,151 @@
+// (c) https://github.com/MontiCore/monticore
+
+/* ============================================================ */
+/* ========================= Plugins ========================== */
+/* ============================================================ */
+
+plugins {
+  id 'java'
+  id 'monticore' version '6.1.0'
+  id "jacoco"
+  id 'com.adarshr.test-logger' version "2.0.0"
+  id 'maven-publish'
+}
+
+/* ============================================================ */
+/* ========================= Project ========================== */
+/* ============================================================ */
+
+group = 'de.monticore.lang.ocl'
+version = '1.2.0-SNAPSHOT'
+buildDir = "$projectDir/target"
+
+/* ============================================================ */
+/* ======================== Constants ========================= */
+/* ============================================================ */
+
+def grammarDir = "$projectDir/src/main/grammars"
+def reportsDir = "$buildDir/generated-sources/monticore/sourcecode/reports"
+
+/* ============================================================ */
+/* ======================= Configuration ====================== */
+/* ============================================================ */
+
+sourceSets {
+  main {
+    java.srcDirs += ["$buildDir/generated-sources/monticore/sourcecode"]
+  }
+  test {
+    java.srcDirs += ["$buildDir/generated-test-sources/monticore/sourcecode"]
+  }
+  grammars {
+    resources {
+      srcDirs(grammarDir, reportsDir)
+      include("**/*.mc4", "**/*.cd")
+    }
+  }
+}
+
+repositories {
+  mavenLocal()
+
+  maven {
+    credentials.username mavenUser
+    credentials.password mavenPassword
+    url sePublicRepo
+  }
+
+  maven {
+    credentials.username mavenUser
+    credentials.password mavenPassword
+    url sePrivateRepo
+  }
+
+  mavenCentral()
+}
+
+sourceCompatibility = '1.8'
+
+configurations { grammar }
+
+test {
+  useJUnitPlatform()
+  finalizedBy jacocoTestReport
+}
+
+/* ============================================================ */
+/* ======================= Dependencies ======================= */
+/* ============================================================ */
+
+
+dependencies {
+  grammar "de.monticore:monticore-grammar:$monticore_version:$grammars_classifier"
+
+  implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
+  implementation "com.google.guava:guava:$guava_version"
+  implementation "de.monticore.lang:cd4analysis:$cd4a_version"
+  implementation "org.antlr:antlr4-runtime:$antlr_version"
+  implementation "de.monticore:monticore-runtime:$monticore_version"
+  implementation "de.monticore:monticore-grammar:$monticore_version"
+  implementation "de.monticore:javaDSL:$javadsl_version"
+  implementation "org.apache.commons:commons-lang3:3.9"
+  implementation "org.assertj:assertj-core:$assertj_version"
+
+  testImplementation "junit:junit:$junit_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
+  testImplementation "de.monticore:monticore-runtime:$monticore_version"
+}
+
+/* ============================================================ */
+/* ========================== Tasks =========================== */
+/* ============================================================ */
+
+tasks.withType(JavaCompile) {
+  sourceCompatibility = JavaVersion.VERSION_1_8
+  targetCompatibility = JavaVersion.VERSION_1_8
+  options.encoding = 'UTF-8'
+}
+
+fileTree(grammarDir).matching { include '**/*.mc4' }.each {
+  def g = it
+  def grammarName = it.getName().substring(0, it.getName().lastIndexOf('.'))
+
+  task "generateGrammar$grammarName"(type: MCTask) {
+    grammar = file g
+    outputDir = file "$buildDir/generated-sources/monticore/sourcecode"
+    handcodedPath = [file("$projectDir/src/main/java")]
+    def grammarIncludingPackage = file(grammarDir).toURI().relativize(g.toURI()).toString()
+    def upToDate = incCheck(grammarIncludingPackage)
+    outputs.upToDateWhen { upToDate }
+  }
+}
+
+compileJava {
+  tasks.findAll { task -> task.name.startsWith("generateGrammar") }.each {
+    def grammarName = it.getName().substring("generateGrammar".length())
+  }
+
+  dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
+}
+
+java {
+  //withJavadocJar()
+  withSourcesJar()
+  registerFeature("grammars") {
+    usingSourceSet(sourceSets.grammars)
+  }
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) { from components.java }
+  }
+  repositories.maven {
+    name = "$SE_Nexus_ID"
+    credentials.username mavenUser
+    credentials.password mavenPassword
+    url = version.endsWith('SNAPSHOT') ? "$snapshotsRepoUrl" : "$releasesRepoUrl"
+  }
+}
