@@ -1,9 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-import example.CDs.AuctionCD.*;
-import example.CDs.DefaultTypes.*;
-
-context Auction a inv:
-    let
-        p = a.participants;
-    in
-        p.size > 0
