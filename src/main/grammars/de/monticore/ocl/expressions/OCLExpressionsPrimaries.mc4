@@ -12,10 +12,10 @@ component grammar OCLExpressionsPrimaries
           extends OCLExpressionsBasis
 {
   OCLIsNewPrimary implements OCLPrimary <100> =
-      "isnew" "(" Expression ")";
+    "isnew" "(" Expression ")";
 
   OCLDefinedPrimary implements OCLPrimary <100> =
-      "defined" "(" Expression ")";
+    "defined" "(" Expression ")";
 
   /**
    * ASTOCLQualifiedPrimary represents qualified identifier.
@@ -32,10 +32,10 @@ component grammar OCLExpressionsPrimaries
    *            name@pre
    */
   OCLQualifiedPrimary implements OCLPrimary <500> =
-      (Name || ".")+
-      postfix:OCLQualification?
-      ("." OCLQualifiedPrimary)?
-      ;
+    (Name || ".")+
+    postfix:OCLQualification?
+    ("." OCLQualifiedPrimary)?
+    ;
 
   /**
    * ASTOCLQualification defines qualification postfixes of a qualified
@@ -48,14 +48,14 @@ component grammar OCLExpressionsPrimaries
   interface OCLQualification;
 
   OCLArrayQualification implements OCLQualification =
-      ("[" arguments:Expression "]")+;
+    ("[" arguments:Expression "]")+;
 
   OCLArgumentQualification implements OCLQualification =
-      "(" (Expression || "," )* ")";
+    "(" (Expression || "," )* ")";
 
   OCLAtPreQualification implements OCLQualification =
-      atpre:["@pre"];
+    atpre:["@pre"];
 
   OCLTransitiveQualification implements OCLQualification =
-      transitive:["**"];
+    transitive:["**"];
 }

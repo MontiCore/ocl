@@ -22,6 +22,8 @@ grammar OCL extends MCCommonLiterals,
 
   /*====================== HEADER DEFINITIONS ==============================*/
 
+  OclMCModifier implements MCModifier = "DO-NOT-USE-ladjfhf9weq8zfh2-ljbf2uzh";
+
 	OCLCompilationUnit =
 		("package" package:(Name& || ".")+ ";")?
 		(MCImportStatement)*

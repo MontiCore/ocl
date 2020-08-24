@@ -4,10 +4,10 @@ package de.monticore.ocl.ocl._symboltable;
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
 import de.monticore.ocl.expressions.oclexpressionsbasis._ast.ASTLetinExpr;
 import de.monticore.ocl.expressions.oclexpressionsbasis._ast.ASTOCLParamDeclaration;
-import de.monticore.ocl.expressions.oclexpressionsbasis._ast.ASTOCLVariableDeclaration;
 import de.monticore.ocl.expressions.oclexpressions._symboltable.IOCLExpressionsScope;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.statements.mcvardeclarationstatements._ast.ASTLocalVariableDeclaration;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.DefsTypeBasic;
 import de.monticore.types.check.SymTypeExpression;
@@ -139,7 +139,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
   private boolean handleOCLInExpressions(IOCLExpressionsScope scope, List<ASTLetinExpr> exprList,
     String astType) {
     for (ASTLetinExpr expr : exprList) {
-      for (ASTOCLVariableDeclaration variable : expr.getOCLVariableDeclarationsList()) {
+      for (ASTLocalVariableDeclaration variable : expr.getLocalVariableDeclarationsList()) {
         final List<String> varNameList = variable.getVariableDeclaratorsList().stream()
           .map( v->v.getDeclaratorId().getName())
           .collect(Collectors.toList());

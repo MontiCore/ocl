@@ -2,15 +2,19 @@
 package de.monticore.ocl.expressions.oclexpressions.prettyprint;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.ocl.expressions.oclexpressions._visitor.OCLExpressionsVisitor;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
+import de.monticore.ocl.expressions.oclexpressions._visitor.OCLExpressionsVisitor;
 import de.monticore.ocl.expressions.oclexpressionsbasis._ast.*;
 import de.monticore.ocl.expressions.oclexpressionsprimaries._ast.*;
 import de.monticore.ocl.expressions.oclexpressionssetcomprehensions._ast.*;
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.statements.mcvardeclarationstatements._ast.ASTLocalVariableDeclaration;
+import de.monticore.statements.mcvardeclarationstatements._ast.ASTVariableDeclarator;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   implements OCLExpressionsVisitor {
@@ -28,7 +32,10 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
     if (node.isPresentMCType())
       node.getMCType().accept(getRealThis());
 
-    Iterator iter = node.getVarNameList().iterator();
+    List<String> variableNames = node.getLocalVariableDeclaration().getVariableDeclaratorsList().stream()
+      .map(t -> t.getDeclaratorId().getName())
+      .collect(Collectors.toList());
+    Iterator<String> iter = variableNames.iterator();
     getPrinter().print(iter.next());
     while (iter.hasNext()) {
       getPrinter().print(", ");
@@ -103,7 +110,7 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   public void handle(ASTLetinExpr node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     getPrinter().print("let ");
-    for (ASTOCLVariableDeclaration ast : node.getOCLVariableDeclarationsList()) {
+    for (ASTLocalVariableDeclaration ast : node.getLocalVariableDeclarationsList()) {
       ast.accept(getRealThis());
       getPrinter().print("; ");
     }
@@ -291,9 +298,11 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     if (node.isPresentGenerator()) {
       node.getGenerator().accept(getRealThis());
-    } else if (node.isPresentDeclaration()) {
+    }
+    else if (node.isPresentDeclaration()) {
       node.getDeclaration().accept(getRealThis());
-    } else if (node.isPresentFilter()) {
+    }
+    else if (node.isPresentFilter()) {
       node.getFilter().accept(getRealThis());
     }
     CommentPrettyPrinter.printPostComments(node, getPrinter());
@@ -309,11 +318,12 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   @Override
   public void handle(ASTOCLCollectionItem node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
-    if(node.sizeExpressions() == 2){
+    if (node.sizeExpressions() == 2) {
       node.getExpressions(0).accept(getRealThis());
       getPrinter().print(" .. ");
       node.getExpressions(1).accept(getRealThis());
-    }else {
+    }
+    else {
       for (int i = 0; i < node.getExpressionsList().size(); i++) {
         if (i != 0) {
           getPrinter().print(", ");

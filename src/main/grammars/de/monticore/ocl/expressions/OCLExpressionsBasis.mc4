@@ -13,17 +13,11 @@ component grammar OCLExpressionsBasis
           extends ExpressionsBasis,
                   MCVarDeclarationStatements
 {
-  // Similar to LocalVariableDeclaration from MCVarDeclarationStatements
-  // but without MCModifiers
-  OCLVariableDeclaration = MCType (VariableDeclarator || ",")+;
-
-  OclMCModifier implements MCModifier = "a";
-
   OCLParamDeclaration =
       MCType Name ("=" default:Expression)?;
 
-  InstanceOfExpression implements Expression <50> =
-      left:Expression "instanceof" MCType;
+  TypeCastExpression implements Expression <200> =
+      "(" MCType ")" Expression;
 
   TypeIfExpr implements Expression <100> =
       "typeif" condition:Expression
@@ -68,7 +62,7 @@ component grammar OCLExpressionsBasis
    *   @attribute OCLExpression
    *              The body of forall iteration as an expression.
    */
-  ForallExpr implements Expression <90> =
+  scope ForallExpr implements Expression <90> =
       "forall"
       (InExpr || ",")+
       ":"
@@ -86,7 +80,7 @@ component grammar OCLExpressionsBasis
    *   @attribute OCLExpression
    *              The body of exists iteration as an expression.
    */
-  ExistsExpr implements Expression <90> =
+  scope ExistsExpr implements Expression <90> =
       "exists"
       (InExpr || ",")+
       ":"
@@ -110,8 +104,8 @@ component grammar OCLExpressionsBasis
    *   @attribute OCLExpression
    *              An expression where previous declarations are used.
    */
-  LetinExpr implements Expression <100> =
-      "let" (OCLVariableDeclaration || ";")+
+  scope LetinExpr implements Expression <100> =
+      "let" (LocalVariableDeclaration || ";")+
       "in" Expression;
 
   /**
@@ -122,21 +116,19 @@ component grammar OCLExpressionsBasis
    *              The elements of a collection that will be iterated as an
    *              OCLCollectionVarDeclaration.
    *   @attribute initDeclarator
-   *              Definiton of a accumulation variable as an OCLVariableDeclaration.
+   *              Definiton of a accumulation variable as an LocalVariableDeclaration.
    *   @attribute accumulatorName
    *              Name of the accumulation assignment variable.
    *   @attribute accumulatorValue
    *              Right hand of the accumulation as an expression.
    */
-  IterateExpr implements Expression <100> =
+  scope IterateExpr implements Expression <100> =
       "iterate" "{"
       iteration:InExpr ";"
-      init:OCLVariableDeclaration ":"
+      init:LocalVariableDeclaration ":"
       Name "=" value:Expression
       "}";
 
-  TypeCastExpression implements Expression <200> =
-      "(" MCType ")" Expression;
 
   ParenthizedExpression implements Expression <400> =
       "(" Expression ")"
@@ -147,8 +139,8 @@ component grammar OCLExpressionsBasis
    *   shortform of "Auction a in Auction.allInstances").
    */
   InExpr implements Expression <50>
-      =   MCType  varName:(Name || ",")+
-      |   MCType? varName:(Name || ",")+ ("in" Expression)
+      =   LocalVariableDeclaration
+      |   MCType? (VariableDeclarator || ",")+ ("in" Expression)
       ;
 
   OCLEquivalentExpression implements Expression <107> =
