@@ -134,15 +134,6 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   }
 
   @Override
-  public void handle(ASTInstanceOfExpression node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
-    node.getLeft().accept(getRealThis());
-    getPrinter().print(" instanceof ");
-    node.getMCType().accept(getRealThis());
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
-  }
-
-  @Override
   public void handle(ASTThenExpressionPart node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     getPrinter().print(" then ");
