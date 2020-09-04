@@ -5,47 +5,9 @@ package de.monticore.ocl.expressions;
 
 import de.monticore.expressions.*;
 
-component grammar AdditionalExpressions
+component grammar OCLElvisExpressions
           extends de.monticore.expressions.CommonExpressions
 {
-  // token TElvis = '?' ':';
-
-  // indirect tokens
-  // TMax = { _input.LT(1).getText().equals("max") }? Name; // do not want to destroy the name
-  // TMin = { _input.LT(1).getText().equals("min") }? Name;
-
-  /**
-   * Set Expressions
-   */
-
-  MaxExpressionPrefix implements Expression <225> =
-    "max"
-    set:Expression; // normally this would be the best, but the precedence does not work yet
-
-  MinExpressionPrefix implements Expression <225> =
-    "min"
-    set:Expression;
-
-  SumExpressionPrefix implements Expression <225> =
-    "sum"
-    set:Expression;
-
-  SetXOrExpression implements Expression <225> =
-    "xor"
-    set:Expression;
-
-  /**
-   * Comparison Expressions
-   */
-  
-  // x ~~ y, is the same as x == y, except that the types of x and y must not be compatible
-   SimilarExpression implements Expression <130>, InfixExpression =
-   	left:Expression operator:"~~" right:Expression;
-
-  // x !~ y, is the same as x != y, except that the types of x and y must not be compatible
-  NotSimilarExpression implements Expression <130>, InfixExpression =
-    left:Expression operator:"!~" right:Expression;
-
   // `opt ?: 0W` is equals to `opt.isPresent ? opt.get : 0W`
   // this operator is right associative, so that multiple optionals can be chained:
   // x ?: y ?: 0 is the same as x ?; (y ?: 0)

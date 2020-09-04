@@ -2,14 +2,14 @@
 
 package de.monticore.ocl.ocl._cocos;
 
-import de.monticore.ocl.ocl._ast.ASTOCLFile;
+import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.se_rwth.commons.logging.Log;
 
-public class FileNameStartsWithLowerCaseLetter implements OCLASTOCLFileCoCo {
+public class FileNameStartsWithLowerCaseLetter implements OCLASTOCLArtifactCoCo {
 
   @Override
-  public void check(ASTOCLFile astFile) {
-    String fileName = astFile.isPresentFileName() ? astFile.getFileName() : "oclFile";
+  public void check(ASTOCLArtifact astFile) {
+    String fileName = astFile.getName() ;
     boolean startsWithUpperCase = Character.isUpperCase(fileName.charAt(0));
 
     if (startsWithUpperCase) {

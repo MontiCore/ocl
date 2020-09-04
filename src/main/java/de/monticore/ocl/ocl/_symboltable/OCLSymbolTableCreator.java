@@ -2,7 +2,7 @@
 package de.monticore.ocl.ocl._symboltable;
 
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
-import de.monticore.ocl.expressions.oclexpressionsbasis._ast.ASTLetinExpr;
+import de.monticore.ocl.expressions.oclexpressionsbasis._ast.ASTLetinExpression;
 import de.monticore.ocl.expressions.oclexpressionsbasis._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.expressions.oclexpressions._symboltable.IOCLExpressionsScope;
 import de.monticore.ocl.ocl._ast.*;
@@ -97,7 +97,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
       // TODO `this` is now the extType
     }
     else if (node.isPresentExpression()) {
-      ASTLetinExpr inExpression = (ASTLetinExpr) node.getExpression();
+      ASTLetinExpression inExpression = (ASTLetinExpression) node.getExpression();
 
       if (!handleOCLInExpressions(node.getEnclosingScope(), Collections.singletonList(inExpression),
         "OCLContextDefinition")) {
@@ -136,9 +136,9 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
     fields.forEach(f -> DefsTypeBasic.add2scope(enclosingScope, f));
   }
 
-  private boolean handleOCLInExpressions(IOCLExpressionsScope scope, List<ASTLetinExpr> exprList,
+  private boolean handleOCLInExpressions(IOCLExpressionsScope scope, List<ASTLetinExpression> exprList,
     String astType) {
-    for (ASTLetinExpr expr : exprList) {
+    for (ASTLetinExpression expr : exprList) {
       for (ASTLocalVariableDeclaration variable : expr.getLocalVariableDeclarationsList()) {
         final List<String> varNameList = variable.getVariableDeclaratorsList().stream()
           .map( v->v.getDeclaratorId().getName())

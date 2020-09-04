@@ -10,8 +10,10 @@ import de.monticore.expressions.*;
  */
 component grammar OCLExpressions
           extends OCLExpressionsBasis,
-                  OCLExpressionsSetComprehensions,
-                  OCLExpressionsPrimaries
+                  OCLSetComprehensions,
+                  OCLSetOperators,
+                  OCLExpressionsPrimaries,
+                  OCLElvisExpressions
 {
 
 }

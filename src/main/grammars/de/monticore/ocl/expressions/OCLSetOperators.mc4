@@ -1,0 +1,26 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.ocl.expressions;
+
+/* Alpha-version: This is intended to become a MontiCore stable grammar. */
+
+import de.monticore.expressions.*;
+
+component grammar OCLSetOperators
+          extends de.monticore.expressions.CommonExpressions
+{
+  MaxExpressionPrefix implements Expression <225> =
+    "max"
+    set:Expression;
+
+  MinExpressionPrefix implements Expression <225> =
+    "min"
+    set:Expression;
+
+  SumExpressionPrefix implements Expression <225> =
+    "sum"
+    set:Expression;
+
+  SetXOrExpression implements Expression <225> =
+    "xor"
+    set:Expression;
+}

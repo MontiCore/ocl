@@ -13,8 +13,7 @@ grammar OCL extends MCCommonLiterals,
                     MCCollectionTypes,
                     CommonExpressions,
                     SetExpressions,
-                    OCLExpressions,
-                    AdditionalExpressions
+                    OCLExpressions
 {
 	/*========================================================================*/
   /*============================ PRODUCTIONS  ==============================*/
@@ -22,31 +21,25 @@ grammar OCL extends MCCommonLiterals,
 
   /*====================== HEADER DEFINITIONS ==============================*/
 
-  OclMCModifier implements MCModifier = "DO-NOT-USE-ladjfhf9weq8zfh2-ljbf2uzh";
-
 	OCLCompilationUnit =
 		("package" package:(Name& || ".")+ ";")?
 		(MCImportStatement)*
-		OCLFile
+		OCLArtifact
   ;
 
   start OCLCompilationUnit;
 
 	/**
-	 * ASTOCLFile represents a file that contains an OCL-Constraint.
-   *   @attribute fileName
+	 * ASTOCLArtifact represents a file that contains an OCL-Constraint.
+   *   @attribute Name
    *              Name of OCLFile (necessary for MCCompilationUnit)
-   *   @attribute OCLConstraints
+   *   @attribute OCLConstraint
    *              List of OCL-constraints.
    */
-	scope OCLFile =
-    key("ocl")
-    (
-      fileName:Name "{"
-        OCLConstraint*
-      "}"
-    | OCLConstraint+
-    )
+	OCLArtifact =
+    key("ocl") Name "{"
+      OCLConstraint*
+    "}"
   ;
 
   /**
@@ -65,7 +58,7 @@ grammar OCL extends MCCommonLiterals,
 	 * ASTOCLOperationConstraint represents the typical method or constructor
    *   specifications with pre- and post-conditions.
    *   @attribute OCLOperationSignature
-   *              Operation Sinature (of a method or constructor).
+   *              Operation Signature (of a method or constructor).
    *   @attribute LetDeclaration
    *              Optional let-declarations.
    *   @attribute OCLPreStatement
@@ -77,8 +70,8 @@ grammar OCL extends MCCommonLiterals,
     "context"
     OCLOperationSignature
     Expression?
-    OCLPreStatement?
-    OCLPostStatement?
+    ("pre" pre:Name? ":" (preConditions:Expression+ ";")* )?
+    ("post" post:Name? ":" (postConditions:Expression+ ";")* )?
   ;
 
 	/**
@@ -87,26 +80,22 @@ grammar OCL extends MCCommonLiterals,
    *              Optional keyword definitions: (context|import) and class definition
    *   @attribute name
    *              Name of the invariant.
-   *   @attribute OCLParameters
-   *              Optional parameters of the invariant.
    *   @attribute statements
    *              List of boolean expressions.
    */
   OCLInvariant implements OCLConstraint =
-    OCLClassContext? "inv" name:Name?
-    OCLParameters? ":"
-    statements:(Expression || ";")+
-  ;
+    // class context
+    (
+      (context:["context"] | Import:["import"])
+      (OCLContextDefinition || ",")+
+    )?
 
-  /**
-   * ASTOCLClassContext represents the OCL-Context-Clause of an invariant.
-   *   @attribute contextType
-   *              Type of context (context or import)
-   *              For import look at http://mbse.se-rwth.de/book1/index.php?c=chapter3-1#x1-400003.1.1
-   */
-  OCLClassContext =
-    (context:["context"] | Import:["import"])
-    (OCLContextDefinition || ",")+
+    // invariant
+    "inv" name:Name?
+    ("(" params:(OCLParamDeclaration || ",")* ")")? ":"
+
+    // statements
+    (Expression || ";")+
   ;
 
   /**
@@ -119,77 +108,29 @@ grammar OCL extends MCCommonLiterals,
   ;
 
 	/**
-	 * ASTOCLPreStatement represents a list of pre-statements subsumed to a
-   *   pre-condition.
-   *   @attribute name
-   *              Optional name of pre-condition.
-   *   @attribute statements
-   *              List of boolean expressions.
-   */
-	OCLPreStatement  =
-    "pre" name:Name? ":"
-    (statements:Expression+ ";")+
-  ;
-
-  /**
-   * ASTOCLPostStatement represents a list of post-statements subsumed to a
-   *   post-condition.
-   *   @attribute name
-   *              Optional name of post-conditions.
-   *   @attribute statements
-   *              List of boolean expressions.
-   */
-  OCLPostStatement  =
-    "post" name:Name? ":"
-    (statements:Expression+ ";")+
-  ;
-
-	/**
 	 * ASTOCLMethodSignature defines the signature of a Java5 method.
    *   @attribute MCReturnType
    *              Optional complex type that is returned by given method
    *   @attribute methodName
    *              Name of given method.
-   *   @attribute OCLParameters
-   *              Parameter declarations of given method.
-   *   @attribute OCLThrowsClause
-   *              Optional throwables.
    *
    *   Example : context Person.addMessages(Message m):
    */
 	OCLMethodSignature implements OCLOperationSignature =
     MCReturnType?
     methodName:MCQualifiedName
-    OCLParameters
-    OCLThrowsClause?
+    "(" params:(OCLParamDeclaration || ",")* ")"
+    ("throws" throwables:(Name || ",")+)?
   ;
 
   /**
    * ASTOCLConstructorSignature defines signature of a constructor.
    *   @attribute ReferenceType
    *              Type of the Constructor.
-   *   @attribute OCLParameters
-   *              Parameters of constructor.
-   *   @attribute OCLThrowsClause
-   *              Optional throwables.
    */
   OCLConstructorSignature implements OCLOperationSignature =
     "new" referenceType:Name
-    OCLParameters
-    OCLThrowsClause?
+    "(" params:(OCLParamDeclaration || ",")* ")"
+    ("throws" throwables:(Name || ",")+)?
   ;
-
-  /**
-   * ASTOCLParameters defines a list of parameter declarations (can also be empty)
-   */
-  OCLParameters =
-    "(" params:(OCLParamDeclaration || ",")* ")";
-
-	/**
-	 * ASTOCLThrowsClause defines throwables for a method or constructor signature.
-   *   @attribute throwables
-   *              List of throwables.
-   */
-  OCLThrowsClause =
-    "throws" throwables:(Name || ",")+;
 }

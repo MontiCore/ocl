@@ -2,7 +2,7 @@
 
 package de.monticore.ocl.expressions.prettyprint;
 
-import de.monticore.ocl.expressions.additionalexpressions._visitor.AdditionalExpressionsVisitor;
+import de.monticore.ocl.expressions.additionalexpressions._visitorammar.AdditionalExpressionsVisitor;
 import de.monticore.prettyprint.IndentPrinter;
 
 public class AdditionalExpressionsPrettyPrinter

@@ -7,7 +7,7 @@ import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
 import de.monticore.ocl.expressions.oclexpressions.prettyprint.OCLExpressionsPrettyPrinter;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLFile;
+import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._visitor.OCLDelegatorVisitor;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
@@ -42,7 +42,7 @@ public class OCLCombinePrettyPrinter
     return getPrinter().getContent();
   }
 
-  public String prettyprint(ASTOCLFile node) {
+  public String prettyprint(ASTOCLArtifact node) {
     getPrinter().clearBuffer();
     node.accept(getRealThis());
     return getPrinter().getContent();

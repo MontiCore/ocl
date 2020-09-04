@@ -50,27 +50,23 @@ public class OCLPrettyPrinter implements OCLVisitor {
       unit.getMCImportStatementsList().forEach(i -> i.accept(getRealThis()));
       getPrinter().println();
     }
-    unit.getOCLFile().accept(getRealThis());
+    unit.getOCLArtifact().accept(getRealThis());
     CommentPrettyPrinter.printPostComments(unit, getPrinter());
   }
 
   @Override
-  public void handle(ASTOCLFile node) {
+  public void handle(ASTOCLArtifact node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     printer.print("ocl ");
 
-    if (node.isPresentFileName()) {
-      printer.println(node.getFileName() + " {");
-    }
+    printer.println(node.getName() + " {");
 
     node.getOCLConstraintsList().forEach(c -> {
       c.accept(getRealThis());
       printer.println();
     });
 
-    if (node.isPresentFileName()) {
-      printer.print(" }");
-    }
+    printer.print(" }");
 
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }

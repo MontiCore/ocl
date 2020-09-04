@@ -4,57 +4,58 @@ package de.monticore.ocl.expressions;
 /* Alpha-version: This is intended to become a MontiCore stable grammar. */
 
 import de.monticore.expressions.*;
-import de.monticore.statements.*;
+import de.monticore.types.*;
 
 /**
  * This grammar defines a expressions typical to UMLs OCL
  */
 component grammar OCLExpressionsBasis
           extends ExpressionsBasis,
-                  MCVarDeclarationStatements
+                  MCBasicTypes
 {
+  OCLVariableDeclaration =
+    MCType Name (dim:"[" "]")*;
+
   OCLParamDeclaration =
-      MCType Name ("=" default:Expression)?;
+    MCType Name ("=" Expression)?;
 
   TypeCastExpression implements Expression <200> =
-      "(" MCType ")" Expression;
+    "(" MCType ")" Expression;
 
-  TypeIfExpr implements Expression <100> =
-      "typeif" condition:Expression
-      ThenExpressionPart
-      ElseExpressionPart;
+  TypeIfExpression implements Expression <100> =
+    "typeif" condition:Expression
+    "then"   thenExpression:Expression
+    "else"   elseExpression:Expression
+    ;
 
-  // need own ASTNode for visitor to know when we are in then part and
-  // when we are in else part for
-  // typeif construction, b/c in then part we implicitly cast the type
-  // cf. http://mbse.se-rwth.de/book1/index.php?c=chapter3-3#x1-550003.3.5
-  ThenExpressionPart = "then" thenExpression:Expression;
-  ElseExpressionPart = "else" elseExpression:Expression;
-
-  IfThenElseExpr implements Expression <100> =
-      "if" condition:Expression
-      ThenExpressionPart
-      ElseExpressionPart;
+  IfThenElseExpression implements Expression <100> =
+    "if"   condition:Expression
+    "then" thenExpression:Expression
+    "else" elseExpression:Expression
+    ;
 
   ImpliesExpression implements Expression <60> =
-      left:Expression
-      key("implies")
-      right:Expression;
+    left:Expression
+    key("implies")
+    right:Expression
+    ;
 
-  LogicalORExpr implements Expression <80> =
-      left:Expression
-      "|"
-      right:Expression;
+  LogicalORExpression implements Expression <80> =
+    left:Expression
+    "|"
+    right:Expression
+    ;
 
-  LogicalANDExpr implements Expression <80> =
-      left:Expression
-      "&"
-      right:Expression;
+  LogicalANDExpression implements Expression <80> =
+    left:Expression
+    "&"
+    right:Expression
+    ;
 
   /**
-   * ASTForAllExpr defines a quantified expression for collections e.g.
+   * ASTForAllExpression defines a quantified expression for collections e.g.
    *   "forall x in Y : ...".
-   *   @attribute InExpr
+   *   @attribute InExpression
    *              List of collection variable declarations, e.g:
    *                "forall a in A: ..."
    *                "forall a in List <..> : ..."
@@ -62,17 +63,17 @@ component grammar OCLExpressionsBasis
    *   @attribute OCLExpression
    *              The body of forall iteration as an expression.
    */
-  scope ForallExpr implements Expression <90> =
-      "forall"
-      (InExpr || ",")+
-      ":"
-      Expression
-      ;
+  scope ForallExpression implements Expression <90> =
+    "forall"
+    (InExpression || ",")+
+    ":"
+    Expression
+    ;
 
   /**
-   * ASTExistsExpr defines a quantified expression for collections e.g.
+   * ASTExistsExpression defines a quantified expression for collections e.g.
    *   "exists x in Y : ...".
-   *   @attribute InExpr
+   *   @attribute InExpression
    *              List of collection variable declarations, e.g:
    *                "exists a in A: ..."
    *                "exists a in List <..> : ..."
@@ -80,71 +81,71 @@ component grammar OCLExpressionsBasis
    *   @attribute OCLExpression
    *              The body of exists iteration as an expression.
    */
-  scope ExistsExpr implements Expression <90> =
-      "exists"
-      (InExpr || ",")+
-      ":"
-      Expression
-      ;
+  scope ExistsExpression implements Expression <90> =
+    "exists"
+    (InExpression || ",")+
+    ":"
+    Expression
+    ;
 
   /**
-   * ASTOCLAnyExpr selects an element from a non-empty collection e.g.
+   * ASTOCLAnyExpression selects an element from a non-empty collection e.g.
    *   any x in set or any Auction. The result is underspecified.
    *   @attribute OCLExpression
    *              A collection defined by an expression.
    */
-  AnyExpr implements Expression <100> =
-      "any" Expression;
+  AnyExpression implements Expression <100> =
+    "any" Expression;
 
   /**
-   * ASTOCLLetinExpr are used to define local vars or methods. The defined
+   * ASTOCLLetinExpression are used to define local vars or methods. The defined
    *   vars and methods are visible in the in-expression body.
    *   @attribute declarations
    *              A list of variable or method declarations.
    *   @attribute OCLExpression
    *              An expression where previous declarations are used.
    */
-  scope LetinExpr implements Expression <100> =
-      "let" (LocalVariableDeclaration || ";")+
-      "in" Expression;
+  scope LetinExpression implements Expression <100> =
+    "let" (OCLVariableDeclaration || ";")+
+    "in" Expression;
 
   /**
-   * ASTOCLIterateExpr is used to iterate collections. It differs from Java5-Iterator.
+   * ASTOCLIterateExpression is used to iterate collections. It differs from Java5-Iterator.
    *   Example:
    *       iterate{ elem in Auction; int acc=0 : acc = acc+elem.numberOfBids }.
    *   @attribute iterationDeclarator
    *              The elements of a collection that will be iterated as an
    *              OCLCollectionVarDeclaration.
    *   @attribute initDeclarator
-   *              Definiton of a accumulation variable as an LocalVariableDeclaration.
+   *              Definiton of a accumulation variable as an OCLVariableDeclaration.
    *   @attribute accumulatorName
    *              Name of the accumulation assignment variable.
    *   @attribute accumulatorValue
    *              Right hand of the accumulation as an expression.
    */
-  scope IterateExpr implements Expression <100> =
-      "iterate" "{"
-      iteration:InExpr ";"
-      init:LocalVariableDeclaration ":"
-      Name "=" value:Expression
-      "}";
+  scope IterateExpression implements Expression <100> =
+    "iterate" "{"
+    iteration:InExpression ";"
+    init:OCLVariableDeclaration ":"
+    Name "=" value:Expression
+    "}";
 
 
   ParenthizedExpression implements Expression <400> =
-      "(" Expression ")"
-      ("." qualification:OCLPrimary)?;
+    "(" Expression ")"
+    ("." qualification:OCLPrimary)?;
 
   /**
-   * ASTInExpr defines a collection like "int x in y" or "Auction a" as
+   * ASTInExpression defines a collection like "int x in y" or "Auction a" as
    *   shortform of "Auction a in Auction.allInstances").
    */
-  InExpr implements Expression <50>
-      =   LocalVariableDeclaration
-      |   MCType? (VariableDeclarator || ",")+ ("in" Expression)
-      ;
+  InExpression implements Expression <50>
+    =   MCType  (Name || ",")+
+    |   MCType? (Name || ",")+ ("in" Expression)
+    ;
 
   OCLEquivalentExpression implements Expression <107> =
-          left:Expression operator:"<=>" right:Expression;
+    left:Expression operator:"<=>" right:Expression;
 
   /**
    * ASTOCLPrimary defines primaries of OCL.
@@ -152,11 +153,4 @@ component grammar OCLExpressionsBasis
   interface OCLPrimary extends Expression <10>;
 
 
-  /**
-   * ASTOCLComprehensionExpr defines comprehension kinds.
-   *   e.g.:
-   *       - {x * x | x in y} (OCLComprehensionExpressionStyle)
-   *       - {1..3, x..10, y} (OCLComprehensionEnumerationStyle)
-   */
-  interface OCLComprehensionExpr;
 }
