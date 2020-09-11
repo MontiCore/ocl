@@ -9,7 +9,7 @@
 
     <groupId>de.monticore.lang</groupId>
     <artifactId>ocl</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>6.2.0-SNAPSHOT</version>
 
     <!-- == PROJECT DEPENDENCIES ============================================= -->
 
