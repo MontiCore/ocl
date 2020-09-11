@@ -115,7 +115,7 @@ grammar OCL extends MCCommonLiterals,
    *
    *   Example : context Person.addMessages(Message m):
    */
-	OCLMethodSignature implements OCLOperationSignature =
+  OCLMethodSignature implements OCLOperationSignature =
     MCReturnType?
     methodName:MCQualifiedName
     "(" params:(OCLParamDeclaration || ",")* ")"
