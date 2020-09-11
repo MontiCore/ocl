@@ -20,7 +20,7 @@ plugins {
 /* ============================================================ */
 
 group = 'de.monticore.lang.ocl'
-version = '1.2.0-SNAPSHOT'
+version = "$monticore_version"
 buildDir = "$projectDir/target"
 
 /* ============================================================ */
