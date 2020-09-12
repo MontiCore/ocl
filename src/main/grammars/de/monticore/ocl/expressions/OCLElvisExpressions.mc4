@@ -23,19 +23,19 @@ component grammar OCLElvisExpressions
   // `x ?>= y` equals `x.isPresent implies x.get >= y` -> the other operators work the same way
 
   ElvisLessEqualExpression implements Expression <150>, InfixExpression =
-  	left:Expression operator:"?<=" right:Expression;
+    left:Expression operator:"?<=" right:Expression;
 
   ElvisGreaterEqualExpression implements Expression <150>, InfixExpression =
-  	left:Expression operator:"?>=" right:Expression;
+    left:Expression operator:"?>=" right:Expression;
 
   ElvisLessThanExpression implements Expression <150>, InfixExpression =
-  	left:Expression operator:"?<" right:Expression;
+    left:Expression operator:"?<" right:Expression;
 
   ElvisGreaterThanExpression implements Expression <150>, InfixExpression =
-  	left:Expression operator:"?>" right:Expression;
+    left:Expression operator:"?>" right:Expression;
 
   ElvisEqualsExpression implements Expression <130>, InfixExpression =
-  	left:Expression operator:"?==" right:Expression;
+    left:Expression operator:"?==" right:Expression;
 
   ElvisNotEqualsExpression implements Expression <130>, InfixExpression =
     left:Expression operator:"?!=" right:Expression;

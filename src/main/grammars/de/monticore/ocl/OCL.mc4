@@ -14,28 +14,28 @@ grammar OCL extends MCCommonLiterals,
                     SetExpressions,
                     OCLExpressions
 {
-	/*========================================================================*/
+  /*========================================================================*/
   /*============================ PRODUCTIONS  ==============================*/
   /*========================================================================*/
 
   /*====================== HEADER DEFINITIONS ==============================*/
 
-	OCLCompilationUnit =
-		("package" package:(Name& || ".")+ ";")?
-		(MCImportStatement)*
-		OCLArtifact
+  OCLCompilationUnit =
+    ("package" package:(Name& || ".")+ ";")?
+    (MCImportStatement)*
+    OCLArtifact
   ;
 
   start OCLCompilationUnit;
 
-	/**
-	 * ASTOCLArtifact represents a file that contains an OCL-Constraint.
+  /**
+   * ASTOCLArtifact represents a file that contains an OCL-Constraint.
    *   @attribute Name
    *              Name of OCLFile (necessary for MCCompilationUnit)
    *   @attribute OCLConstraint
    *              List of OCL-constraints.
    */
-	OCLArtifact =
+  OCLArtifact =
     key("ocl") Name "{"
       OCLConstraint*
     "}"
@@ -48,13 +48,13 @@ grammar OCL extends MCCommonLiterals,
    */
   interface scope OCLConstraint;
 
-	/**
-	 * ASTOCLOperationSignature subsumes method and constructor signatures.
+  /**
+   * ASTOCLOperationSignature subsumes method and constructor signatures.
    */
-	interface OCLOperationSignature;
+  interface OCLOperationSignature;
 
-	/**
-	 * ASTOCLOperationConstraint represents the typical method or constructor
+  /**
+   * ASTOCLOperationConstraint represents the typical method or constructor
    *   specifications with pre- and post-conditions.
    *   @attribute OCLOperationSignature
    *              Operation Signature (of a method or constructor).
@@ -65,7 +65,7 @@ grammar OCL extends MCCommonLiterals,
    *   @attribute OCLPostStatement
    *              Optional post-statements.
    */
-	OCLOperationConstraint implements OCLConstraint =
+  OCLOperationConstraint implements OCLConstraint =
     "context"
     OCLOperationSignature
     Expression?
@@ -73,8 +73,8 @@ grammar OCL extends MCCommonLiterals,
     ("post" post:Name? ":" (postConditions:Expression+ ";")* )?
   ;
 
-	/**
-	 * ASTOCLInvariant represents the typical invariant definitions of OCL.
+  /**
+   * ASTOCLInvariant represents the typical invariant definitions of OCL.
    *   @attribute OCLClassContext
    *              Optional keyword definitions: (context|import) and class definition
    *   @attribute name
@@ -102,12 +102,12 @@ grammar OCL extends MCCommonLiterals,
    *   Auction | Auction a | a in (...) | Auction a in (...)
    *   The rule is written as follows to avoid matching empty strings
    */
-	OCLContextDefinition =
-	    MCType | Expression
+  OCLContextDefinition =
+      MCType | Expression
   ;
 
-	/**
-	 * ASTOCLMethodSignature defines the signature of a Java5 method.
+  /**
+   * ASTOCLMethodSignature defines the signature of a Java5 method.
    *   @attribute MCReturnType
    *              Optional complex type that is returned by given method
    *   @attribute methodName
