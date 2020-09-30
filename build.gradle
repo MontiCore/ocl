@@ -6,7 +6,7 @@
 
 plugins {
   id 'java'
-  id 'monticore' version '6.2.0'
+  id 'monticore' version '6.4.0-SNAPSHOT'
   id 'com.github.johnrengelman.shadow' version '6.0.0'
   id 'de.set.ecj' version '1.4.1' // Eclipse compiler as it's faster than javac
   id 'jacoco'
