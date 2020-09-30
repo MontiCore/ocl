@@ -6,7 +6,7 @@ package de.monticore.ocl.expressions;
 import de.monticore.expressions.*;
 
 component grammar OCLSetOperators
-          extends de.monticore.expressions.CommonExpressions
+          extends CommonExpressions
 {
   MaxExpressionPrefix implements Expression <225> =
     "max"

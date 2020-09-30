@@ -10,7 +10,7 @@ import de.monticore.types.*;
  * This grammar defines a expressions typical to UMLs OCL
  */
 component grammar OCLExpressionsBasis
-          extends ExpressionsBasis,
+          extends CommonExpressions,
                   MCBasicTypes
 {
   OCLVariableDeclaration =
@@ -37,18 +37,6 @@ component grammar OCLExpressionsBasis
   ImpliesExpression implements Expression <60> =
     left:Expression
     key("implies")
-    right:Expression
-    ;
-
-  LogicalORExpression implements Expression <80> =
-    left:Expression
-    "|"
-    right:Expression
-    ;
-
-  LogicalANDExpression implements Expression <80> =
-    left:Expression
-    "&"
     right:Expression
     ;
 
