@@ -64,7 +64,7 @@ component grammar OCLSetComprehensions
    *              (e.g.: "1..3, x, y..z")
    */
   OCLComprehensionEnumerationStyle implements OCLComprehensionExpression <10> =
-    OCLCollectionItem* (",")?
+    (OCLCollectionItem || ",")*
     ;
 
   interface OCLCollectionItem;
