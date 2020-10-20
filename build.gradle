@@ -6,7 +6,7 @@
 
 plugins {
   id 'java'
-  id 'monticore' version '6.4.0-SNAPSHOT'
+  id 'monticore' version "$mc_version"
   id 'com.github.johnrengelman.shadow' version '6.0.0'
   id 'de.set.ecj' version '1.4.1' // Eclipse compiler as it's faster than javac
   id 'jacoco'
@@ -20,7 +20,6 @@ plugins {
 /* ============================================================ */
 
 group = 'de.monticore.lang.ocl'
-version = "$mc_version"
 buildDir = "$projectDir/target"
 
 /* ============================================================ */
