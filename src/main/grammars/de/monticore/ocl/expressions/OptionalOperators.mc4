@@ -5,7 +5,7 @@ package de.monticore.ocl.expressions;
 
 import de.monticore.expressions.*;
 
-component grammar OCLElvisExpressions
+component grammar OptionalOperators
           extends de.monticore.expressions.CommonExpressions
 {
   // `opt ?: 0W` is equals to `opt.isPresent ? opt.get : 0W`
@@ -17,10 +17,10 @@ component grammar OCLElvisExpressions
     operator:"?:"
     right:Expression;
 
-  // `x ?== y` is the same as `x.isPresent implies x.get == y`
+  // `x ?== y` is the same as `x.isPresent && x.get == y`
   // this is useful for underspecification relations, if it is underspecified (x.isAbsent) nothing must hold
   //
-  // `x ?>= y` equals `x.isPresent implies x.get >= y` -> the other operators work the same way
+  // `x ?>= y` equals `x.isPresent && x.get >= y` -> the other operators work the same way
 
   ElvisLessEqualExpression implements Expression <150>, InfixExpression =
     left:Expression operator:"?<=" right:Expression;

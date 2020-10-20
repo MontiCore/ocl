@@ -12,7 +12,8 @@ import de.monticore.literals.*;
 grammar OCL extends MCCommonLiterals,
                     MCCollectionTypes,
                     SetExpressions,
-                    OCLExpressions
+                    OCLExpressions,
+                    OptionalOperators
 {
   /*========================================================================*/
   /*============================ PRODUCTIONS  ==============================*/

@@ -12,8 +12,7 @@ component grammar OCLExpressions
           extends OCLExpressionsBasis,
                   OCLSetComprehensions,
                   OCLSetOperators,
-                  OCLExpressionsPrimaries,
-                  OCLElvisExpressions
+                  OCLExpressionsPrimaries
 {
 
 }
