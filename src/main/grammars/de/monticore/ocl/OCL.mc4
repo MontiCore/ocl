@@ -4,7 +4,6 @@ package de.monticore.ocl;
 /* Alpha-version: This is intended to become a MontiCore stable grammar. */
 
 import de.monticore.expressions.CommonExpressions;
-import de.monticore.expressions.SetExpressions;
 import de.monticore.ocl.expressions.*;
 import de.monticore.types.*;
 import de.monticore.literals.*;
