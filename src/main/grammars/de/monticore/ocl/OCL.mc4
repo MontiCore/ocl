@@ -14,6 +14,7 @@ grammar OCL extends MCCommonLiterals,
                     SetExpressions,
                     OCLExpressions,
                     OptionalOperators
+
 {
   /*========================================================================*/
   /*============================ PRODUCTIONS  ==============================*/
