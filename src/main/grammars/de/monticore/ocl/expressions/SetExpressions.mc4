@@ -4,18 +4,21 @@ package de.monticore.ocl.expressions;
 /* Alpha-version: This is intended to become a MontiCore stable grammar. */
 
 import de.monticore.expressions.*;
+import de.monticore.types.*;
+
 
 /**
  * This grammar defines a expressions typical to UMLs OCL
  */
 component grammar SetExpressions
-           extends CommonExpressions
+           extends CommonExpressions,
+                    MCBasicTypes
 {
-
+    external OCLVariableDeclaration;
     /*=================================================================*/
 
   // TODO: Unterschied IsInExpression und SetInExpression unklar:
-  // erklren oder Umbauen
+  // erklaeren oder Umbauen
 
     IsInExpression implements Expression <190> =
         elem:Expression
@@ -74,7 +77,7 @@ component grammar SetExpressions
    *       - {x * x | x in y} (OCLComprehensionExpressionStyle)
    *       - {1..3, x..10, y} (OCLComprehensionEnumerationStyle)
    */
-  //interface OCLComprehensionExpression;
+  interface OCLComprehensionExpression;
 
   /**
    * ASTOCLComprehension represents comprehensions.
@@ -85,11 +88,11 @@ component grammar SetExpressions
    *   @attribute qualification
    *              Optional Qualification.
    */
-  //OCLComprehension implements OCLPrimary  <40> =
-  //  MCType?
-  //  "{" expression:OCLComprehensionExpression? "}"
-   // ("." qualification:OCLPrimary)?
-   // ;
+  OCLComprehension implements Expression  <40> =
+    MCType?
+    "{" expression:OCLComprehensionExpression? "}"
+    ("." qualification:Expression)?
+    ;
 
   /**
    * ASTOCLComprehensionExpressionStyle defines a comprehension with given
@@ -102,16 +105,16 @@ component grammar SetExpressions
    *              or filters.
    *   Note that we assume at least one generator (e.g. x in Y) in this AST.
    */
-  //OCLComprehensionExpressionStyle implements OCLComprehensionExpression <20> =
-  //  Expression "|"
-  //  (OCLComprehensionItem || ",")+
-  //  ;
+  OCLComprehensionExpressionStyle implements OCLComprehensionExpression <20> =
+    Expression "|"
+    (OCLComprehensionItem || ",")+
+    ;
 
-  //OCLComprehensionItem =
-  //  generator:InExpression |
-  //  declaration:OCLVariableDeclaration |
-   // filter:Expression
-   // ;
+  OCLComprehensionItem =
+    generator:Expression |
+    declaration:OCLVariableDeclaration |
+    filter:Expression
+    ;
 
   /**
    * ASTOCLComprehensionEnumerationStyle is used for an enumeration of
@@ -120,9 +123,9 @@ component grammar SetExpressions
    *              Enumerated elements as a list separated by , (comma).
    *              (e.g.: "1..3, x, y..z")
    */
-  //OCLComprehensionEnumerationStyle implements OCLComprehensionExpression <10> =
-  //  (OCLCollectionItem || ",")*
-  // ;
+  OCLComprehensionEnumerationStyle implements OCLComprehensionExpression <10> =
+    (OCLCollectionItem || ",")*
+   ;
 
   interface OCLCollectionItem;
 
