@@ -133,4 +133,8 @@ grammar OCL extends MCCommonLiterals,
     "(" params:(OCLParamDeclaration || ",")* ")"
     ("throws" throwables:(Name || ",")+)?
   ;
+
+  //LocalVariableDeclaration requires MCModifiers to be implemented, but OCL doesn't have any
+  OCLModifiers implements MCModifier = "test";
+
 }

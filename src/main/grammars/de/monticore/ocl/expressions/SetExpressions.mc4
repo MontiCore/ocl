@@ -5,6 +5,7 @@ package de.monticore.ocl.expressions;
 
 import de.monticore.expressions.*;
 import de.monticore.types.*;
+import de.monticore.statements.*;
 
 
 /**
@@ -12,9 +13,9 @@ import de.monticore.types.*;
  */
 component grammar SetExpressions
            extends CommonExpressions,
-                    MCBasicTypes
+                    MCBasicTypes,
+                    MCVarDeclarationStatements
 {
-    external OCLVariableDeclaration;
     /*=================================================================*/
 
   // TODO: Unterschied IsInExpression und SetInExpression unklar:
@@ -112,7 +113,7 @@ component grammar SetExpressions
 
   OCLComprehensionItem =
     generator:Expression |
-    declaration:OCLVariableDeclaration |
+    declaration:LocalVariableDeclaration |
     filter:Expression
     ;
 

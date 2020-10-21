@@ -5,142 +5,146 @@ package de.monticore.ocl.expressions;
 
 import de.monticore.expressions.*;
 import de.monticore.types.*;
+import de.monticore.statements.*;
 
 /**
  * This grammar defines a expressions typical to UMLs OCL
  */
 component grammar OCLExpressions
           extends CommonExpressions,
-                  MCBasicTypes
+                  MCBasicTypes,
+                  MCVarDeclarationStatements
 
 {
 
-    OCLVariableDeclaration =
-        MCType Name (dim:"[" "]")*;
+    //OCLVariableDeclaration =
+    //    MCType Name (dim:"[" "]")*;
 
-      OCLParamDeclaration =
+
+
+    OCLParamDeclaration =
         MCType Name ("=" Expression)?;
 
-      TypeCastExpression implements Expression <200> =
+    TypeCastExpression implements Expression <200> =
         "(" MCType ")" Expression;
 
-      TypeIfExpression implements Expression <100> =
+    TypeIfExpression implements Expression <100> =
         "typeif" condition:Expression
         "then"   thenExpression:Expression
         "else"   elseExpression:Expression
         ;
 
-      IfThenElseExpression implements Expression <100> =
+    IfThenElseExpression implements Expression <100> =
         "if"   condition:Expression
         "then" thenExpression:Expression
         "else" elseExpression:Expression
         ;
 
-      ImpliesExpression implements Expression <60> =
+    ImpliesExpression implements Expression <60> =
         left:Expression
         key("implies")
         right:Expression
         ;
 
-      /**
-       * ASTForAllExpression defines a quantified expression for collections e.g.
-       *   "forall x in Y : ...".
-       *   @attribute InExpression
-       *              List of collection variable declarations, e.g:
-       *                "forall a in A: ..."
-       *                "forall a in List <..> : ..."
-       *                "forall a: ..."
-       *   @attribute OCLExpression
-       *              The body of forall iteration as an expression.
-       */
-      scope ForallExpression implements Expression <90> =
-        "forall"
-        (InExpression || ",")+
-        ":"
-        Expression
-        ;
+    /**
+     * ASTForAllExpression defines a quantified expression for collections e.g.
+     *   "forall x in Y : ...".
+     *   @attribute InExpression
+     *              List of collection variable declarations, e.g:
+     *                "forall a in A: ..."
+     *                "forall a in List <..> : ..."
+     *                "forall a: ..."
+     *   @attribute OCLExpression
+     *              The body of forall iteration as an expression.
+     */
+    scope ForallExpression implements Expression <90> =
+      "forall"
+      (InExpression || ",")+
+      ":"
+      Expression
+      ;
 
-      /**
-       * ASTExistsExpression defines a quantified expression for collections e.g.
-       *   "exists x in Y : ...".
-       *   @attribute InExpression
-       *              List of collection variable declarations, e.g:
-       *                "exists a in A: ..."
-       *                "exists a in List <..> : ..."
-       *                "exists a: ..."
-       *   @attribute OCLExpression
-       *              The body of exists iteration as an expression.
-       */
-      scope ExistsExpression implements Expression <90> =
-        "exists"
-        (InExpression || ",")+
-        ":"
-        Expression
-        ;
+    /**
+     * ASTExistsExpression defines a quantified expression for collections e.g.
+     *   "exists x in Y : ...".
+     *   @attribute InExpression
+     *              List of collection variable declarations, e.g:
+     *                "exists a in A: ..."
+     *                "exists a in List <..> : ..."
+     *                "exists a: ..."
+     *   @attribute OCLExpression
+     *              The body of exists iteration as an expression.
+     */
+    scope ExistsExpression implements Expression <90> =
+      "exists"
+      (InExpression || ",")+
+      ":"
+      Expression
+      ;
 
-      /**
-       * ASTOCLAnyExpression selects an element from a non-empty collection e.g.
-       *   any x in set or any Auction. The result is underspecified.
-       *   @attribute OCLExpression
-       *              A collection defined by an expression.
-       */
-      AnyExpression implements Expression <100> =
-        "any" Expression;
+    /**
+     * ASTOCLAnyExpression selects an element from a non-empty collection e.g.
+     *   any x in set or any Auction. The result is underspecified.
+     *   @attribute OCLExpression
+     *              A collection defined by an expression.
+     */
+    AnyExpression implements Expression <100> =
+      "any" Expression;
 
-      /**
-       * ASTOCLLetinExpression are used to define local vars or methods. The defined
-       *   vars and methods are visible in the in-expression body.
-       *   @attribute declarations
-       *              A list of variable or method declarations.
-       *   @attribute OCLExpression
-       *              An expression where previous declarations are used.
-       */
-      scope LetinExpression implements Expression <100> =
-        "let" (OCLVariableDeclaration || ";")+
-        "in" Expression;
+    /**
+     * ASTOCLLetinExpression are used to define local vars or methods. The defined
+     *   vars and methods are visible in the in-expression body.
+     *   @attribute declarations
+     *              A list of variable or method declarations.
+     *   @attribute OCLExpression
+     *              An expression where previous declarations are used.
+     */
+    scope LetinExpression implements Expression <100> =
+      "let" (LocalVariableDeclaration || ";")+
+      "in" Expression;
 
-      /**
-       * ASTOCLIterateExpression is used to iterate collections. It differs from Java5-Iterator.
-       *   Example:
-       *       iterate{ elem in Auction; int acc=0 : acc = acc+elem.numberOfBids }.
-       *   @attribute iterationDeclarator
-       *              The elements of a collection that will be iterated as an
-       *              OCLCollectionVarDeclaration.
-       *   @attribute initDeclarator
-       *              Definiton of a accumulation variable as an OCLVariableDeclaration.
-       *   @attribute accumulatorName
-       *              Name of the accumulation assignment variable.
-       *   @attribute accumulatorValue
-       *              Right hand of the accumulation as an expression.
-       */
-      scope IterateExpression implements Expression <100> =
-        "iterate" "{"
-        iteration:InExpression ";"
-        init:OCLVariableDeclaration ":"
-        Name "=" value:Expression
-        "}";
+    /**
+     * ASTOCLIterateExpression is used to iterate collections. It differs from Java5-Iterator.
+     *   Example:
+     *       iterate{ elem in Auction; int acc=0 : acc = acc+elem.numberOfBids }.
+     *   @attribute iterationDeclarator
+     *              The elements of a collection that will be iterated as an
+     *              OCLCollectionVarDeclaration.
+     *   @attribute initDeclarator
+     *              Definiton of a accumulation variable as an LocalVariableDeclaration.
+     *   @attribute accumulatorName
+     *              Name of the accumulation assignment variable.
+     *   @attribute accumulatorValue
+     *              Right hand of the accumulation as an expression.
+     */
+    scope IterateExpression implements Expression <100> =
+      "iterate" "{"
+      iteration:InExpression ";"
+      init:LocalVariableDeclaration ":"
+      Name "=" value:Expression
+      "}";
 
 
-      ParenthizedExpression implements Expression <400> =
-        "(" Expression ")"
-        ("." qualification:OCLPrimary)?;
+    ParenthizedExpression implements Expression <400> =
+      "(" Expression ")"
+      ("." qualification:OCLPrimary)?;
 
-      /**
-       * ASTInExpression defines a collection like "int x in y" or "Auction a" as
-       *   shortform of "Auction a in Auction.allInstances").
-       */
-      InExpression implements Expression <50>
-        =   MCType  (Name || ",")+
-        |   MCType? (Name || ",")+ ("in" Expression)
-        ;
+    /**
+     * ASTInExpression defines a collection like "int x in y" or "Auction a" as
+     *   shortform of "Auction a in Auction.allInstances").
+     */
+    InExpression implements Expression <50>
+      =   MCType  (Name || ",")+
+      |   MCType? (Name || ",")+ ("in" Expression)
+      ;
 
-      OCLEquivalentExpression implements Expression <107> =
-        left:Expression operator:"<=>" right:Expression;
+    OCLEquivalentExpression implements Expression <107> =
+      left:Expression operator:"<=>" right:Expression;
 
-      /**
-       * ASTOCLPrimary defines primaries of OCL.
-       */
-      interface OCLPrimary extends Expression <10>;
+    /**
+     * ASTOCLPrimary defines primaries of OCL.
+     */
+    interface OCLPrimary extends Expression <10>;
 
 
 
