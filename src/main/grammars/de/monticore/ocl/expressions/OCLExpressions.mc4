@@ -158,7 +158,7 @@ component grammar OCLExpressions
 
         /**
          * ASTOCLQualifiedPrimary represents qualified identifier.
-         *   @attribute qualifications
+         *   @attribute MCQualifiedName
          *              List of names of qualified identifier.
          *   @attribute postfixQualification
          *              Optional argument-, array- or atpre, **-qualifcation.
@@ -171,7 +171,7 @@ component grammar OCLExpressions
          *            name@pre
          */
         OCLQualifiedPrimary implements OCLPrimary <500> =
-          (Name || ".")+
+          MCQualifiedName
           postfix:OCLQualification?
           ("." OCLQualifiedPrimary)?
           ;
