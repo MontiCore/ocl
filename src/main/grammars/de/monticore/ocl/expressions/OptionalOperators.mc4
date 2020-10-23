@@ -12,7 +12,7 @@ component grammar OptionalOperators
   // this operator is right associative, so that multiple optionals can be chained:
   // x ?: y ?: 0 is the same as x ?; (y ?: 0)
   // and this means that if x is present it returns x.get other it tries if y is present if not it returns 0
-  ElvisExpressionPrefix implements Expression <140>, InfixExpression = <rightassoc> // priority between `==` and `<`
+  OptionalExpressionPrefix implements Expression <140>, InfixExpression = <rightassoc> // priority between `==` and `<`
     left:Expression
     operator:"?:"
     right:Expression;
@@ -22,29 +22,29 @@ component grammar OptionalOperators
   //
   // `x ?>= y` equals `x.isPresent && x.get >= y` -> the other operators work the same way
 
-  ElvisLessEqualExpression implements Expression <150>, InfixExpression =
+  OptionalLessEqualExpression implements Expression <150>, InfixExpression =
     left:Expression operator:"?<=" right:Expression;
 
-  ElvisGreaterEqualExpression implements Expression <150>, InfixExpression =
+  OptionalGreaterEqualExpression implements Expression <150>, InfixExpression =
     left:Expression operator:"?>=" right:Expression;
 
-  ElvisLessThanExpression implements Expression <150>, InfixExpression =
+  OptionalLessThanExpression implements Expression <150>, InfixExpression =
     left:Expression operator:"?<" right:Expression;
 
-  ElvisGreaterThanExpression implements Expression <150>, InfixExpression =
+  OptionalGreaterThanExpression implements Expression <150>, InfixExpression =
     left:Expression operator:"?>" right:Expression;
 
-  ElvisEqualsExpression implements Expression <130>, InfixExpression =
+  OptionalEqualsExpression implements Expression <130>, InfixExpression =
     left:Expression operator:"?==" right:Expression;
 
-  ElvisNotEqualsExpression implements Expression <130>, InfixExpression =
+  OptionalNotEqualsExpression implements Expression <130>, InfixExpression =
     left:Expression operator:"?!=" right:Expression;
 
   // x ?~~ y, is the same as x ?== y, except that the types of x and y must not be compatible
-  ElvisSimilarExpression implements Expression <130>, InfixExpression =
+  OptionalSimilarExpression implements Expression <130>, InfixExpression =
     left:Expression operator:"?~~" right:Expression;
 
   // x ?!~ y, is the same as x != y, except that the types of x and y must not be compatible
-  ElvisNotSimilarExpression implements Expression <130>, InfixExpression =
+  OptionalNotSimilarExpression implements Expression <130>, InfixExpression =
     left:Expression operator:"?!~" right:Expression;
 }
