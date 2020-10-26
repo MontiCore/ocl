@@ -148,14 +148,6 @@ component grammar OCLExpressions
 
 
 
-
-
-      OCLIsNewPrimary implements OCLPrimary <100> =
-          "isnew" "(" Expression ")";
-
-        OCLDefinedPrimary implements OCLPrimary <100> =
-          "defined" "(" Expression ")";
-
         /**
          * ASTOCLQualifiedPrimary represents qualified identifier.
          *   @attribute MCQualifiedName
