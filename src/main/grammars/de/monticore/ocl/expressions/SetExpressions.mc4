@@ -12,65 +12,54 @@ import de.monticore.statements.*;
  * This grammar defines a expressions typical to UMLs OCL
  */
 component grammar SetExpressions
-           extends CommonExpressions,
-                    MCBasicTypes,
-                    MCVarDeclarationStatements
+          extends CommonExpressions,
+                  MCBasicTypes,
+                  MCVarDeclarationStatements
 {
-    /*=================================================================*/
+  /*=================================================================*/
 
-  // TODO: Unterschied IsInExpression und SetInExpression unklar:
-  // erklaeren oder Umbauen
-
-    IsInExpression implements Expression <190> =
-        elem:Expression
-        operator:"isin"
-        set:Expression;
-
-    SetInExpression implements Expression <190> =
-        elem:Expression
-        operator:"in"
-        set:Expression;
+  SetInExpression implements Expression <190> =
+    elem:Expression
+    operator:"in"
+    set:Expression;
 
   // TODO: Prioritten konfligieren mit denen aus Common Expressions: anpassen auf
   // sinnvollere Werte
 
-    /*=================================================================*/
+  /*=================================================================*/
 
-    UnionExpressionInfix implements Expression <180> =
-        left:Expression
-        operator:"union"
-        right:Expression;
+  UnionExpressionInfix implements Expression <180> =
+    left:Expression
+    operator:"union"
+    right:Expression;
 
-    IntersectionExpressionInfix implements Expression <180> =
-        left:Expression
-        operator:"intersect"
-        right:Expression;
+  IntersectionExpressionInfix implements Expression <180> =
+    left:Expression
+    operator:"intersect"
+    right:Expression;
 
-    // We do not introduce a special operator for the
-    // difference, because the binary "-" operator can here be used as well
+  // We do not introduce a special operator for the
+  // difference, because the binary "-" operator can here be used as well
 
-    /*=================================================================*/
+  /*=================================================================*/
 
-    // sets of sets united (i.e. flattened) and intersected
-    UnionExpressionPrefix implements Expression <170> =
-        "union"  set:Expression;
+  // sets of sets united (i.e. flattened) and intersected
+  UnionExpressionPrefix implements Expression <170> =
+    "union" set:Expression;
 
-    IntersectionExpressionPrefix implements Expression <170> =
-        "intersect"  set:Expression;
+  IntersectionExpressionPrefix implements Expression <170> =
+    "intersect" set:Expression;
 
-    /*=================================================================*/
+  /*=================================================================*/
 
-    // Logical expressions extended to sets of arguments
-    SetAndExpression implements Expression <130> =
-        "setand" set:Expression;
+  // Logical expressions extended to sets of arguments
+  SetAndExpression implements Expression <130> =
+    "setand" set:Expression;
 
-    SetOrExpression implements Expression <130> =
-        "setor" set:Expression;
+  SetOrExpression implements Expression <130> =
+    "setor" set:Expression;
 
-
-
-
-
+  /*=================================================================*/
 
   /**
    * ASTOCLComprehensionExpression defines comprehension kinds.
@@ -126,7 +115,7 @@ component grammar SetExpressions
    */
   OCLComprehensionEnumerationStyle implements OCLComprehensionExpression <10> =
     (OCLCollectionItem || ",")*
-   ;
+    ;
 
   interface OCLCollectionItem;
 
