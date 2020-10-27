@@ -36,6 +36,14 @@ grammar OCL extends MCCommonLiterals,
     "}"
   ;
 
+  // Alternative aus MontiCore wäre LocalVariableDeclaration aus 
+  // MCVarDeclarationStatements. Da hängt aber auch der MCModifier
+  // mit dran, den man wieder per CoCo verbieten müsste und wäre 
+  // genauso wie bei der OCLVariableDeclaration die wir durch die 
+  // LocalVariableDeclaration würde aber auch das wieder verlangen
+  // dass MCModifier mit einer surrealen Produktion implementiert wird
+  OCLParamDeclaration = MCType Name ("=" Expression)?;
+
   /**
    * ASTOCLConstraint subsumes all OCL types that are used as embedded OCL.
    *   An OCLConstraint (Invariant or Method- or
@@ -128,7 +136,9 @@ grammar OCL extends MCCommonLiterals,
     ("throws" throwables:(Name || ",")+)?
   ;
 
-  //LocalVariableDeclaration requires MCModifiers to be implemented, but OCL doesn't have any
+  // Problem: MontiCore's LocalVariableDeclaration requires 
+  // MCModifiers to be implemented, but OCL doesn't have any.
+  // Hence, we now have a useless surreal production to fulfill 
+  // MontiCore's requirements...
   OCLModifiers implements MCModifier = "test";
-
 }

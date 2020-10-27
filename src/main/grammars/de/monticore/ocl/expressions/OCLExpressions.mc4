@@ -16,33 +16,66 @@ component grammar OCLExpressions
                   MCVarDeclarationStatements
 
 {
-
-  //OCLVariableDeclaration =
-  //    MCType Name (dim:"[" "]")*;
-
-  OCLParamDeclaration =
-    MCType Name ("=" Expression)?;
-
+  // Note: Existiert in ähnlicher Form in JavaClassExpressions
+  // Durch die anderen Nichtterminale darin (z.B. ClassExpression) 
+  // würden wir die OCL aber bis zu einem gewissen Grad an Java binden
+  // außerdem sind die externals von JavaClassExpressions aufwendiger 
+  // zu implementieren, als diese zwei Zeilen zu übernehmen
   TypeCastExpression implements Expression <200> =
     "(" MCType ")" Expression;
 
+  /**
+   * ASTTypeIfExpression
+   *   Type-safe version of type-cast for variables.
+   *     typeif m instanceof Subtype 
+   *       then (m known here as Subtype)
+   *       else (m here as only Supertype)
+   *
+   *   Example: 
+   *     typeif bm instanceof BidMesssage 
+   *     then   bm.auction==copper912 
+   *     else   false
+   */
   TypeIfExpression implements Expression <100> =
     "typeif" condition:Expression
     "then"   thenExpression:Expression
     "else"   elseExpression:Expression
     ;
 
+  /**
+   * IfThenElseExpression defines a logical implies operator.
+   *   If the condition is true, thenExpression will be returned,
+   *   otherwise the elseExpression will be returned.
+   *
+   *   Example: a.startTime >= Time.now() implies a.numberOfBids == 0
+   */
+  // Note: MontiCore's IfStatement from MCCommonStatements cannot be 
+  // used here as it would allow to start arbitrary (block) statements
+  // (OCL does not have statements) and does not enforce the "else" part
   IfThenElseExpression implements Expression <100> =
     "if"   condition:Expression
     "then" thenExpression:Expression
     "else" elseExpression:Expression
     ;
 
+  /**
+   * ASTImpliesExpression defines a logical implies operator.
+   *   Example: a.startTime >= Time.now() implies a.numberOfBids == 0
+   */
   ImpliesExpression implements Expression <60> =
     left:Expression
     key("implies")
     right:Expression
     ;
+
+  /** 
+   * ASTEquivalentExpression defines a logical equals operator.
+   *   Example: sa.equals(sb) <=> sa==sb
+   */
+  EquivalentExpression implements Expression <50> =
+    left:Expression operator:"<=>" right:Expression;
+
+  /*=================================================================*/
 
   /**
    * ASTForAllExpression defines a quantified expression for collections e.g.
@@ -122,11 +155,6 @@ component grammar OCLExpressions
     Name "=" value:Expression
     "}";
 
-
-  ParenthizedExpression implements Expression <400> =
-    "(" Expression ")"
-    ("." qualification:OCLPrimary)?;
-
   /**
    * ASTInExpression defines a collection like "int x in y" or "Auction a" as
    *   shortform of "Auction a in Auction.allInstances").
@@ -136,19 +164,16 @@ component grammar OCLExpressions
     | MCType? (Name || ",")+ ("in" Expression)
     ;
 
-  OCLEquivalentExpression implements Expression <107> =
-    left:Expression operator:"<=>" right:Expression;
+  /*=================================================================*/
+
+  ParenthizedExpression implements Expression <400> =
+    "(" Expression ")"
+    ("." qualification:OCLPrimary)?;
 
   /**
    * ASTOCLPrimary defines primaries of OCL.
    */
   interface OCLPrimary extends Expression <10>;
-
-  OCLIsNewPrimary implements OCLPrimary <100> =
-    "isnew" "(" Expression ")";
-
-  OCLDefinedPrimary implements OCLPrimary <100> =
-    "defined" "(" Expression ")";
 
   /**
    * ASTOCLQualifiedPrimary represents qualified identifier.
@@ -186,9 +211,25 @@ component grammar OCLExpressions
   OCLArgumentQualification implements OCLQualification =
     "(" (Expression || "," )* ")";
 
+  /**
+   * ASTOCLAtPreQualification
+   *   Value of the expression in the precondition
+   *   Example: post: messageList == messageList@pre.add(m)
+   */
   OCLAtPreQualification implements OCLQualification =
     atpre:["@pre"];
 
+  /**
+   * ASTOCLTransitiveQualification
+   *   Transitive closure of an association. The operator ** is 
+   *   only directly applied to a reflexive association. It 
+   *   cannot be applied on chains of associations of the form (a.b.c)**
+   *   The transitive closure of an association is also calculated if the
+   *   association’s source and target are not identical or even if they 
+   *   are not subclasses of each other. In that case, the transitive 
+   *   closure is identical to the initial association.
+   *   Example: this.clique = this.friend**
+   */
   OCLTransitiveQualification implements OCLQualification =
     transitive:["**"];
 }
