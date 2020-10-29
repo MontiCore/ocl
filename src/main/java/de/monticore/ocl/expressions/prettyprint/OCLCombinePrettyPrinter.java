@@ -28,7 +28,6 @@ public class OCLCombinePrettyPrinter
     setExpressionsBasisVisitor(new ExpressionsBasisPrettyPrinter(printer));
     setCommonExpressionsVisitor(new CommonExpressionsPrettyPrinter(printer));
     setOCLExpressionsVisitor(new OCLExpressionsPrettyPrinter(printer));
-    setAdditionalExpressionsVisitor(new AdditionalExpressionsPrettyPrinter(printer));
     setOCLVisitor(new OCLPrettyPrinter(printer));
   }
 
