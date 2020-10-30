@@ -2,8 +2,7 @@
 
 package de.monticore.ocl.ocl._cocos;
 
-import de.monticore.ocl.expressions.oclexpressionsbasis._ast.ASTOCLParamDeclaration;
-import de.monticore.ocl.ocl._ast.ASTOCLParameters;
+import de.monticore.ocl.ocl._ast.*;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.logging.Log;
 
@@ -11,16 +10,39 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ParameterNamesUnique implements OCLASTOCLParametersCoCo {
+public class ParameterNamesUnique implements OCLASTOCLConstraintCoCo {
 
   @Override
-  public void check(ASTOCLParameters astParameterDeclaration) {
-    final List<String> duplicateNames = astParameterDeclaration.getParamsList()
-        .stream().collect(Collectors.groupingBy(ASTOCLParamDeclaration::getName)).entrySet()
-        .stream().filter(e -> e.getValue().size() > 1).map(Map.Entry::getKey).collect(Collectors.toList());
-    if (!duplicateNames.isEmpty()) {
-      Log.error(String.format("0xOCL0C parameters need to have unique names, but following names are used more than once (%s).", Joiners.COMMA.join(duplicateNames)),
-          astParameterDeclaration.get_SourcePositionStart());
+  public void check(ASTOCLConstraint astoclConstraint) {
+    if(astoclConstraint instanceof ASTOCLInvariant){
+      final List<String> duplicateNames = ((ASTOCLInvariant) astoclConstraint).getParamsList()
+              .stream().collect(Collectors.groupingBy(ASTOCLParamDeclaration::getName)).entrySet()
+              .stream().filter(e -> e.getValue().size() > 1).map(Map.Entry::getKey).collect(Collectors.toList());
+      if (!duplicateNames.isEmpty()) {
+        Log.error(String.format("0xOCL0C parameters need to have unique names, but following names are used more than once (%s).", Joiners.COMMA.join(duplicateNames)),
+                astoclConstraint.get_SourcePositionStart());
+      }
+    }
+    else if(astoclConstraint instanceof ASTOCLOperationConstraint){
+      ASTOCLOperationConstraint astoclOperationConstraint = (ASTOCLOperationConstraint) astoclConstraint;
+      if(astoclOperationConstraint.getOCLOperationSignature() instanceof ASTOCLMethodSignature){
+        final List<String> duplicateNames = ((ASTOCLMethodSignature) astoclOperationConstraint.getOCLOperationSignature()).getParamsList()
+                .stream().collect(Collectors.groupingBy(ASTOCLParamDeclaration::getName)).entrySet()
+                .stream().filter(e -> e.getValue().size() > 1).map(Map.Entry::getKey).collect(Collectors.toList());
+        if (!duplicateNames.isEmpty()) {
+          Log.error(String.format("0xOCL0C parameters need to have unique names, but following names are used more than once (%s).", Joiners.COMMA.join(duplicateNames)),
+                  astoclConstraint.get_SourcePositionStart());
+        }
+      }
+      else if(astoclOperationConstraint.getOCLOperationSignature() instanceof ASTOCLConstructorSignature){
+        final List<String> duplicateNames = ((ASTOCLConstructorSignature) astoclOperationConstraint.getOCLOperationSignature()).getParamsList()
+                .stream().collect(Collectors.groupingBy(ASTOCLParamDeclaration::getName)).entrySet()
+                .stream().filter(e -> e.getValue().size() > 1).map(Map.Entry::getKey).collect(Collectors.toList());
+        if (!duplicateNames.isEmpty()) {
+          Log.error(String.format("0xOCL0C parameters need to have unique names, but following names are used more than once (%s).", Joiners.COMMA.join(duplicateNames)),
+                  astoclConstraint.get_SourcePositionStart());
+        }
+      }
     }
   }
 }
