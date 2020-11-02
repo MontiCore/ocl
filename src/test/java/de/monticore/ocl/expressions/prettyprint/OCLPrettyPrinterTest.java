@@ -8,7 +8,7 @@
 package de.monticore.ocl.expressions.prettyprint;
 
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLFile;
+import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
@@ -55,13 +55,13 @@ public class OCLPrettyPrinterTest {
   @Test
   public void testOCLFile() throws IOException {
     final OCLParser parser = new OCLParser();
-    final Optional<ASTOCLFile> ast = parser.parse_StringOCLFile("ocl TestOCL {}");
+    final Optional<ASTOCLArtifact> ast = parser.parse_StringOCLArtifact("ocl TestOCL {}");
     assertTrue(ast.isPresent());
     assertFalse(parser.hasErrors());
 
     final OCLCombinePrettyPrinter printer = new OCLCombinePrettyPrinter(new IndentPrinter());
     String output = printer.prettyprint(ast.get());
-    final Optional<ASTOCLFile> astPrint = parser.parse_StringOCLFile(output);
+    final Optional<ASTOCLArtifact> astPrint = parser.parse_StringOCLArtifact(output);
     assertFalse(parser.hasErrors());
     assertTrue(astPrint.isPresent());
     System.out.println("output: " + output);
