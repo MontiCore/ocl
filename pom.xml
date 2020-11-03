@@ -32,9 +32,10 @@
         <jscience.version>4.3.1</jscience.version>
 
         <!-- .. Plugins ....................................................... -->
-        <assembly.plugin>2.5.4</assembly.plugin>
-        <compiler.plugin>3.3</compiler.plugin>
-        <source.plugin>2.4</source.plugin>
+        <assembly.plugin>3.2.0</assembly.plugin>
+        <compiler.plugin>3.8.1</compiler.plugin>
+        <plexus.plugin>2.8.8</plexus.plugin>
+        <source.plugin>3.2.1</source.plugin>
         <shade.plugin>2.4.3</shade.plugin>
         <jacoco.plugin>0.8.5</jacoco.plugin>
         <jacoco.reportPath>${project.basedir}/../target/jacoco.exec</jacoco.reportPath>
@@ -170,7 +171,15 @@
                         <useIncrementalCompilation>true</useIncrementalCompilation>
                         <source>${java.version}</source>
                         <target>${java.version}</target>
+                        <compilerId>eclipse</compilerId>
                     </configuration>
+                    <dependencies>
+                      <dependency>
+                        <groupId>org.codehaus.plexus</groupId>
+                        <artifactId>plexus-compiler-eclipse</artifactId>
+                        <version>${plexus.plugin}</version>
+                      </dependency>
+                    </dependencies>
                 </plugin>
 
                 <plugin>
