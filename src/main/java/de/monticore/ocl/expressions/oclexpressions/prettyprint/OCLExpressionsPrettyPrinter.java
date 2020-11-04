@@ -7,7 +7,7 @@ import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
 import de.monticore.ocl.expressions.oclexpressions._visitor.OCLExpressionsVisitor;
 import de.monticore.ocl.expressions.oclexpressions._ast.*;
 import de.monticore.ocl.expressions.setexpressions._ast.*;
-import de.monticore.ocl.expressions.setexpressions._visitor.ISetExpressionsTraverser;
+import de.monticore.ocl.expressions.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.statements.mcvardeclarationstatements._ast.ASTLocalVariableDeclaration;
@@ -337,13 +337,13 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
 
   public String prettyprint(ASTSetComprehensionInner node) {
     getPrinter().clearBuffer();
-    node.accept((ISetExpressionsTraverser) getRealThis());
+    node.accept((SetExpressionsTraverser) getRealThis());
     return getPrinter().getContent();
   }
 
   public String prettyprint(ASTSetCollectionItem node) {
     getPrinter().clearBuffer();
-    node.accept((ISetExpressionsTraverser) getRealThis());
+    node.accept((SetExpressionsTraverser) getRealThis());
     return getPrinter().getContent();
   }
 
