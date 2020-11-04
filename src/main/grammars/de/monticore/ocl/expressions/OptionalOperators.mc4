@@ -9,18 +9,23 @@ component grammar OptionalOperators
           extends de.monticore.expressions.CommonExpressions
 {
   // `opt ?: 0W` is equals to `opt.isPresent ? opt.get : 0W`
-  // this operator is right associative, so that multiple optionals can be chained:
+  // this operator is right associative, so that multiple optionals can be 
+  // chained:
   // x ?: y ?: 0 is the same as x ?: (y ?: 0)
-  // and this means that if x is present it returns x.get other it tries if y is present if not it returns 0
-  OptionalExpressionPrefix implements Expression <140>, InfixExpression = <rightassoc> // priority between `==` and `<`
+  // and this means that if x is present it returns x.get other it tries if y is
+  // present if not it returns 0
+  OptionalExpressionPrefix implements Expression <140>, InfixExpression = 
+    <rightassoc> // priority between `==` and `<`
     left:Expression
     operator:"?:"
     right:Expression;
 
   // `x ?== y` is the same as `x.isPresent && x.get == y`
-  // this is useful for underspecification relations, if it is underspecified (x.isAbsent) nothing must hold
+  // this is useful for underspecification relations, if it is underspecified 
+  // (x.isAbsent) nothing must hold
   //
-  // `x ?>= y` equals `x.isPresent && x.get >= y` -> the other operators work the same way
+  // `x ?>= y` equals `x.isPresent && x.get >= y` -> the other operators work 
+  // the same way
 
   OptionalLessEqualExpression implements Expression <150>, InfixExpression =
     left:Expression operator:"?<=" right:Expression;
@@ -40,11 +45,13 @@ component grammar OptionalOperators
   OptionalNotEqualsExpression implements Expression <130>, InfixExpression =
     left:Expression operator:"?!=" right:Expression;
 
-  // x ?~~ y, is the same as x ?== y, except that the types of x and y must not be compatible
+  // x ?~~ y, is the same as x ?== y, except that the types of x and y must not 
+  // be compatible
   OptionalSimilarExpression implements Expression <130>, InfixExpression =
     left:Expression operator:"?~~" right:Expression;
 
-  // x ?!~ y, is the same as x != y, except that the types of x and y must not be compatible
+  // x ?!~ y, is the same as x != y, except that the types of x and y must not 
+  // be compatible
   OptionalNotSimilarExpression implements Expression <130>, InfixExpression =
     left:Expression operator:"?!~" right:Expression;
 }
