@@ -23,6 +23,9 @@ component grammar SetExpressions
     operator:"in"
     set:Expression;
 
+  // TODO: Prioritten konfligieren mit denen aus Common Expressions: anpassen auf
+  // sinnvollere Werte
+  
   /*=================================================================*/
 
   UnionExpression implements Expression <180> =
