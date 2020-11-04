@@ -18,10 +18,13 @@ component grammar SetExpressions
 {
   /*=================================================================*/
 
-  SetInExpression implements Expression <110> =
+  SetInExpression implements Expression <190> =
     elem:Expression
     operator:"in"
     set:Expression;
+
+  // TODO: Prioritten konfligieren mit denen aus Common Expressions: anpassen auf
+  // sinnvollere Werte
 
   /*=================================================================*/
 
