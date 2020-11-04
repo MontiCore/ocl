@@ -62,7 +62,7 @@ component grammar SetExpressions
    * ASTSetComprehensionInner defines comprehension kinds.
    *   e.g.:
    *       - {x * x | x in y} (SetComprehensionInnerStyle)
-   *       - {1..3, x..10, y} (SetComprehensionInnerStyle)
+   *       - {1..3, x..10, y} (SetComprehensionEnumeration)
    */
   interface SetComprehensionInner;
 
@@ -86,13 +86,13 @@ component grammar SetExpressions
    *   characteristic.
    *   @attribute expression
    *              An expression (e.g. "x*x" or "x in Y").
-   *   @attribute comprehensionItems
+   *   @attribute setComprehensionItems
    *              Characterization of comprehension as a list of
    *              comprehension-items. This can be generators, vardefinitions
    *              or filters.
    *   Note that we assume at least one generator (e.g. x in Y) in this AST.
    */
-  SetComprehensionExpressionStyle implements SetComprehensionExpression <20> =
+  SetComprehensionInnerStyle implements SetComprehensionInner <20> =
     Expression "|"
     (SetComprehensionItem || ",")+
     ;
@@ -104,13 +104,13 @@ component grammar SetExpressions
     ;
 
   /**
-   * ASTSetComprehensionInnerStyle is used for an enumeration of
+   * ASTSetComprehensionEnumeration is used for an enumeration of
    *   comprehension elements. Note that collection items are optional.
    *   @attribute collectionItems
    *              Enumerated elements as a list separated by , (comma).
    *              (e.g.: "1..3, x, y..z")
    */
-  SetComprehensionInnerStyle implements SetComprehensionExpression <10> =
+  SetComprehensionEnumeration implements SetComprehensionInner <10> =
     (SetCollectionItem || ",")*
     ;
 

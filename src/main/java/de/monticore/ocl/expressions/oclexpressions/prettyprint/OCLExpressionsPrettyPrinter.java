@@ -335,13 +335,13 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
     return getPrinter().getContent();
   }
 
-  public String prettyprint(ASTOCLComprehensionExpression node) {
+  public String prettyprint(ASTSetComprehensionInner node) {
     getPrinter().clearBuffer();
     node.accept((ISetExpressionsTraverser) getRealThis());
     return getPrinter().getContent();
   }
 
-  public String prettyprint(ASTOCLCollectionItem node) {
+  public String prettyprint(ASTSetCollectionItem node) {
     getPrinter().clearBuffer();
     node.accept((ISetExpressionsTraverser) getRealThis());
     return getPrinter().getContent();
