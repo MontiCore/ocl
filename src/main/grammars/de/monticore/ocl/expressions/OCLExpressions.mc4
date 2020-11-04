@@ -6,6 +6,7 @@ package de.monticore.ocl.expressions;
 import de.monticore.expressions.*;
 import de.monticore.types.*;
 import de.monticore.statements.*;
+import de.monticore.symbols.*;
 
 /**
  * This grammar defines a expressions typical to UMLs OCL
@@ -13,7 +14,8 @@ import de.monticore.statements.*;
 component grammar OCLExpressions
           extends ExpressionsBasis,
                   MCBasicTypes,
-                  MCVarDeclarationStatements
+                  MCVarDeclarationStatements,
+                  BasicSymbols
 
 {
   // Note: Existiert in ähnlicher Form in JavaClassExpressions
@@ -37,7 +39,7 @@ component grammar OCLExpressions
    *     else   false
    */
   TypeIfExpression implements Expression <100> =
-    "typeif" condition:Expression
+    "typeif" Variable "instanceof" MCType
     "then"   thenExpression:Expression
     "else"   elseExpression:Expression
     ;
@@ -200,7 +202,7 @@ component grammar OCLExpressions
    *   primary. A qualification is one of the three kinds:
    *       - x[0] (ArrayQualification)
    *       - x(y) (ArgumentQualification)
-   *       - x**  (TransitivQualification)
+   *       - x**  (TransitiveQualification)
    *       - x@pre (AtPreQualification)
    */
   interface OCLQualification;
