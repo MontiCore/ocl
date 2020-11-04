@@ -12,7 +12,7 @@ import de.monticore.statements.*;
  * This grammar defines a expressions typical to UMLs OCL
  */
 component grammar SetExpressions
-          extends CommonExpressions,
+          extends ExpressionsBasis,
                   MCBasicTypes,
                   MCVarDeclarationStatements
 {
@@ -23,17 +23,14 @@ component grammar SetExpressions
     operator:"in"
     set:Expression;
 
-  // TODO: Prioritten konfligieren mit denen aus Common Expressions: anpassen auf
-  // sinnvollere Werte
-
   /*=================================================================*/
 
-  UnionExpressionInfix implements Expression <180> =
+  UnionExpression implements Expression <180> =
     left:Expression
     operator:"union"
     right:Expression;
 
-  IntersectionExpressionInfix implements Expression <180> =
+  IntersectionExpression implements Expression <180> =
     left:Expression
     operator:"intersect"
     right:Expression;
@@ -44,10 +41,10 @@ component grammar SetExpressions
   /*=================================================================*/
 
   // sets of sets united (i.e. flattened) and intersected
-  UnionExpressionPrefix implements Expression <170> =
+  SetUnionExpression implements Expression <170> =
     "union" set:Expression;
 
-  IntersectionExpressionPrefix implements Expression <170> =
+  SetIntersectionExpression implements Expression <170> =
     "intersect" set:Expression;
 
   /*=================================================================*/
@@ -62,30 +59,30 @@ component grammar SetExpressions
   /*=================================================================*/
 
   /**
-   * ASTOCLComprehensionExpression defines comprehension kinds.
+   * ASTSetComprehensionInner defines comprehension kinds.
    *   e.g.:
-   *       - {x * x | x in y} (OCLComprehensionExpressionStyle)
-   *       - {1..3, x..10, y} (OCLComprehensionEnumerationStyle)
+   *       - {x * x | x in y} (SetComprehensionInnerStyle)
+   *       - {1..3, x..10, y} (SetComprehensionInnerStyle)
    */
-  interface OCLComprehensionExpression;
+  interface SetComprehensionInner;
 
   /**
-   * ASTOCLComprehension represents comprehensions.
-   *   @attribute SimpleReferenceType
+   * ASTSetComprehension represents comprehensions.
+   *   @attribute MCType
    *              Optional type of comprehension, e.g. Set, List or Collection.
    *   @attribute expression
    *              Expression of comprehension.
    *   @attribute qualification
    *              Optional Qualification.
    */
-  OCLComprehension implements Expression  <40> =
+  SetComprehension implements Expression  <40> =
     MCType?
-    "{" expression:OCLComprehensionExpression? "}"
+    "{" expression:SetComprehensionInner? "}"
     ("." qualification:Expression)?
     ;
 
   /**
-   * ASTOCLComprehensionExpressionStyle defines a comprehension with given
+   * ASTSetComprehensionInnerStyle defines a comprehension with given
    *   characteristic.
    *   @attribute expression
    *              An expression (e.g. "x*x" or "x in Y").
@@ -95,37 +92,37 @@ component grammar SetExpressions
    *              or filters.
    *   Note that we assume at least one generator (e.g. x in Y) in this AST.
    */
-  OCLComprehensionExpressionStyle implements OCLComprehensionExpression <20> =
+  SetComprehensionExpressionStyle implements SetComprehensionExpression <20> =
     Expression "|"
-    (OCLComprehensionItem || ",")+
+    (SetComprehensionItem || ",")+
     ;
 
-  OCLComprehensionItem =
+  SetComprehensionItem =
     generator:Expression |
     declaration:LocalVariableDeclaration |
     filter:Expression
     ;
 
   /**
-   * ASTOCLComprehensionEnumerationStyle is used for an enumeration of
+   * ASTSetComprehensionInnerStyle is used for an enumeration of
    *   comprehension elements. Note that collection items are optional.
    *   @attribute collectionItems
    *              Enumerated elements as a list separated by , (comma).
    *              (e.g.: "1..3, x, y..z")
    */
-  OCLComprehensionEnumerationStyle implements OCLComprehensionExpression <10> =
-    (OCLCollectionItem || ",")*
+  SetComprehensionInnerStyle implements SetComprehensionExpression <10> =
+    (SetCollectionItem || ",")*
     ;
 
-  interface OCLCollectionItem;
+  interface SetCollectionItem;
 
   // list of allowed values
-  OCLSetValueList implements OCLCollectionItem =
+  SetValueItem implements SetCollectionItem =
     (Expression || ",")+
     ;
 
   // range of allowed values
-  OCLSetValueRange implements OCLCollectionItem =
+  SetValueRange implements SetCollectionItem =
     lowerBound:Expression ".." upperBound:Expression
     ;
 }

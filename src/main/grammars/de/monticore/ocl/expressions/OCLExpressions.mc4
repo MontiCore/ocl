@@ -11,7 +11,7 @@ import de.monticore.statements.*;
  * This grammar defines a expressions typical to UMLs OCL
  */
 component grammar OCLExpressions
-          extends CommonExpressions,
+          extends ExpressionsBasis,
                   MCBasicTypes,
                   MCVarDeclarationStatements
 
