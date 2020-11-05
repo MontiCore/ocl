@@ -170,12 +170,7 @@ component grammar OCLExpressions
 
   ParenthizedExpression implements Expression <400> =
     "(" Expression ")"
-    ("." qualification:OCLPrimary)?;
-
-  /**
-   * ASTOCLPrimary defines primaries of OCL.
-   */
-  interface OCLPrimary extends Expression <10>;
+    ("." qualification:OCLQualifiedPrimary)?;
 
   /**
    * ASTOCLQualifiedPrimary represents qualified identifier.
@@ -191,7 +186,7 @@ component grammar OCLExpressions
    *            name**
    *            name@pre
    */
-  OCLQualifiedPrimary implements OCLPrimary <500> =
+  OCLQualifiedPrimary implements Expression <500> =
     MCQualifiedName
     postfix:OCLQualification?
     ("." OCLQualifiedPrimary)?
