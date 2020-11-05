@@ -18,11 +18,8 @@ component grammar OCLExpressions
                   BasicSymbols
 
 {
-  // Note: Existiert in ähnlicher Form in JavaClassExpressions
-  // Durch die anderen Nichtterminale darin (z.B. ClassExpression) 
-  // würden wir die OCL aber bis zu einem gewissen Grad an Java binden
-  // außerdem sind die externals von JavaClassExpressions aufwendiger 
-  // zu implementieren, als diese zwei Zeilen zu übernehmen
+  // TODO: mit Marita klären ob TypeCast aus JavaClassExpressions
+  // in eigene Grammatik kann zwecks Wiederverwendung
   TypeCastExpression implements Expression <200> =
     "(" MCType ")" Expression;
 
