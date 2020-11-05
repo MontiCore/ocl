@@ -25,6 +25,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
   DeriveSymTypeOfOCLCombineExpressions typeVisitor;
 
+  public OCLSymbolTableCreator(){super(); }
+
   public OCLSymbolTableCreator(IOCLScope enclosingScope) {
     super(enclosingScope);
   }
