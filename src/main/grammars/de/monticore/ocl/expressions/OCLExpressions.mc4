@@ -154,7 +154,7 @@ component grammar OCLExpressions
     "iterate" "{"
     iteration:InExpression ";"
     init:LocalVariableDeclaration ":"
-    Name "=" value:Expression
+    Name@Variable "=" value:Expression
     "}";
 
   /**
