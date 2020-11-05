@@ -134,14 +134,16 @@ component grammar OCLExpressions
     "in" Expression;
 
   /**
-   * ASTOCLIterateExpression is used to iterate collections. It differs from Java5-Iterator.
+   * ASTOCLIterateExpression is used to iterate collections. It differs from
+   * Java5-Iterator.
    *   Example:
    *       iterate{ elem in Auction; int acc=0 : acc = acc+elem.numberOfBids }.
    *   @attribute iterationDeclarator
    *              The elements of a collection that will be iterated as an
    *              OCLCollectionVarDeclaration.
    *   @attribute initDeclarator
-   *              Definiton of a accumulation variable as an LocalVariableDeclaration.
+   *              Definiton of a accumulation variable as an
+   *              LocalVariableDeclaration.
    *   @attribute accumulatorName
    *              Name of the accumulation assignment variable.
    *   @attribute accumulatorValue

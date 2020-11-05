@@ -77,8 +77,7 @@ component grammar SetExpressions
    */
   SetComprehension implements Expression  <40> =
     MCType?
-    "{" expression:SetComprehensionInner? "}"
-    ("." qualification:Expression)?
+    "{" SetComprehensionInner? "}" ("." Expression)?
     ;
 
   /**
