@@ -49,7 +49,9 @@ sourceSets {
 }
 
 repositories {
-  mavenLocal()
+  if(("true").equals(getProperty('useLocalRepo'))) {
+    mavenLocal()
+  }
 
   maven {
     credentials.username mavenUser
