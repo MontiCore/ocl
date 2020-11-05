@@ -30,7 +30,7 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   }
 
   @Override
-  public void handle(ASTInExpression node) {
+  public void handle(ASTInDeclaration node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     if (node.isPresentMCType())
       node.getMCType().accept(getRealThis());
@@ -85,7 +85,7 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   public void handle(ASTForallExpression node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     getPrinter().print("forall ");
-    node.getInExpressionList().forEach(e -> e.accept(getRealThis()));
+    node.getInDeclarationList().forEach(e -> e.accept(getRealThis()));
 
     getPrinter().print(":");
     node.getExpression().accept(getRealThis());
@@ -96,7 +96,7 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   public void handle(ASTExistsExpression node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     getPrinter().print("exists ");
-    node.getInExpressionList().forEach(e -> e.accept(getRealThis()));
+    node.getInDeclarationList().forEach(e -> e.accept(getRealThis()));
 
     getPrinter().print(":");
     node.getExpression().accept(getRealThis());

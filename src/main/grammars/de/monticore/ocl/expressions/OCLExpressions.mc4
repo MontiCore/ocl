@@ -79,7 +79,7 @@ component grammar OCLExpressions
   /**
    * ASTForAllExpression defines a quantified expression for collections e.g.
    *   "forall x in Y : ...".
-   *   @attribute InExpression
+   *   @attribute InDeclaration
    *              List of collection variable declarations, e.g:
    *                "forall a in A: ..."
    *                "forall a in List <..> : ..."
@@ -89,7 +89,7 @@ component grammar OCLExpressions
    */
   scope ForallExpression implements Expression <90> =
     "forall"
-    (InExpression || ",")+
+    (InDeclaration || ",")+
     ":"
     Expression
     ;
@@ -97,7 +97,7 @@ component grammar OCLExpressions
   /**
    * ASTExistsExpression defines a quantified expression for collections e.g.
    *   "exists x in Y : ...".
-   *   @attribute InExpression
+   *   @attribute InDeclaration
    *              List of collection variable declarations, e.g:
    *                "exists a in A: ..."
    *                "exists a in List <..> : ..."
@@ -107,7 +107,7 @@ component grammar OCLExpressions
    */
   scope ExistsExpression implements Expression <90> =
     "exists"
-    (InExpression || ",")+
+    (InDeclaration || ",")+
     ":"
     Expression
     ;
@@ -149,16 +149,16 @@ component grammar OCLExpressions
    */
   scope IterateExpression implements Expression <100> =
     "iterate" "{"
-    iteration:InExpression ";"
+    iteration:InDeclaration ";"
     init:LocalVariableDeclaration ":"
     Name@Variable "=" value:Expression
     "}";
 
   /**
-   * ASTInExpression defines a collection like "int x in y" or "Auction a" as
+   * ASTInDeclaration defines a collection like "int x in y" or "Auction a" as
    *   shortform of "Auction a in Auction.allInstances").
    */
-  InExpression
+  InDeclaration
     = MCType  (Variable || ",")+
     | MCType? (Variable || ",")+ ("in" Expression)
     ;
