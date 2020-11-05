@@ -161,9 +161,9 @@ component grammar OCLExpressions
    * ASTInExpression defines a collection like "int x in y" or "Auction a" as
    *   shortform of "Auction a in Auction.allInstances").
    */
-  InExpression implements Expression <50>
-    = MCType  (Name || ",")+
-    | MCType? (Name || ",")+ ("in" Expression)
+  InExpression
+    = MCType  (Variable || ",")+
+    | MCType? (Variable || ",")+ ("in" Expression)
     ;
 
   /*=================================================================*/

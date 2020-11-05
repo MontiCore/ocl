@@ -12,7 +12,9 @@ import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.statements.mcvardeclarationstatements._ast.ASTLocalVariableDeclaration;
 import de.monticore.statements.mcvardeclarationstatements._ast.ASTVariableDeclarator;
+import de.monticore.symbols.basicsymbols._ast.ASTVariable;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +35,11 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
     if (node.isPresentMCType())
       node.getMCType().accept(getRealThis());
 
-    List<String> variableNames = node.getNameList();
+    List<ASTVariable> variables = node.getVariableList();
+    List<String> variableNames = new ArrayList<>();
+    for (ASTVariable var : variables){
+      variableNames.add(var.getName());
+    }
     Iterator<String> iter = variableNames.iterator();
     getPrinter().print(iter.next());
     while (iter.hasNext()) {

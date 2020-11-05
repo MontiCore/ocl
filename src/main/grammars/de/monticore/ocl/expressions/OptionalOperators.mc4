@@ -46,7 +46,8 @@ component grammar OptionalOperators
     left:Expression operator:"?!=" right:Expression;
 
   // x ?~~ y, is the same as x ?== y, except that the types of x and y must not 
-  // be compatible
+  // be compatible. However, x ?~~ y only holds, if x and y are of the same
+  // actual type or both absent.
   OptionalSimilarExpression implements Expression <130>, InfixExpression =
     left:Expression operator:"?~~" right:Expression;
 
