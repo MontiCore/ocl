@@ -128,7 +128,7 @@ component grammar OCLExpressions
    * ASTOCLLetinExpression are used to define local vars or methods. The defined
    *   vars and methods are visible in the in-expression body.
    *   @attribute declarations
-   *              A list of variable or method declarations.
+   *              A list of variable declarations.
    *   @attribute OCLExpression
    *              An expression where previous declarations are used.
    */
