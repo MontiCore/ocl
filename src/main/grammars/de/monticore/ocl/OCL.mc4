@@ -79,7 +79,8 @@ grammar OCL extends MCCommonLiterals,
   /**
    * ASTOCLInvariant represents the typical invariant definitions of OCL.
    *   @attribute OCLClassContext
-   *              Optional keyword definitions: (context|import) and class definition
+   *              Optional keyword definitions: (context|import) and class 
+   *              definition
    *   @attribute name
    *              Name of the invariant.
    *   @attribute statements
