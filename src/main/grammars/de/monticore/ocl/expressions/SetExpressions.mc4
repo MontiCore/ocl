@@ -13,7 +13,7 @@ import de.monticore.statements.*;
  */
 component grammar SetExpressions
           extends ExpressionsBasis,
-                  MCBasicTypes,
+                  MCCollectionTypes,
                   MCVarDeclarationStatements
 {
   /*=================================================================*/
