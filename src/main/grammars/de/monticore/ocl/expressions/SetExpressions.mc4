@@ -73,10 +73,8 @@ component grammar SetExpressions
    */
   SetComprehension implements Expression  <40> =
     MCType?
-    "{"
-      ( Expression "|"
-      (SetComprehensionItem || ",")+ )
-    "}"
+    "{" Expression "|"
+                  (SetComprehensionItem || ",")+ "}"
     ;
 
   SetComprehensionItem =
