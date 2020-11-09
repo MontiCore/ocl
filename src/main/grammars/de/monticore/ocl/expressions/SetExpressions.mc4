@@ -71,7 +71,6 @@ component grammar SetExpressions
    *              or filters.
    *   Note that we assume at least one generator (e.g. x in Y) in this AST.
    */
-
   SetComprehension implements Expression  <40> =
     MCType?
     "{"
@@ -81,9 +80,8 @@ component grammar SetExpressions
     ;
 
   SetComprehensionItem =
-    generator:Expression |
-    declaration:LocalVariableDeclaration |
-    filter:Expression
+    Expression |
+    LocalVariableDeclaration
     ;
 
   /**
