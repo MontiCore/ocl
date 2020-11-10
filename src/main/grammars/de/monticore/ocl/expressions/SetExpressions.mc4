@@ -77,6 +77,20 @@ component grammar SetExpressions
                   (SetComprehensionItem || ",")+ "}"
     ;
 
+  /**
+   * ASTSetComprehensionItem defines the items that can occur 
+   * on the right hand side of a comprehension.
+   * This can be 
+   *   Boolean expressions that act as filter, e.g. x < 6
+   *   introductions on new local variables that act as
+   *     intermediate result, e.g. int y = 2*x
+   *   and generators that intoduce a new variable and let them
+   *     range over a set of values, e.g.  x in S,
+   *     y in 3..10, z in Set{3,5,10..20}
+   *     (because .in. is also a boolean expression, the
+   *      generator is syntactically covered by expression as well,
+   *      but here as an obviously different semantics)
+   */
   SetComprehensionItem =
     Expression |
     LocalVariableDeclaration
