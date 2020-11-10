@@ -36,10 +36,10 @@ grammar OCL extends MCCommonLiterals,
     "}"
   ;
 
-  // Alternative aus MontiCore wäre LocalVariableDeclaration aus 
+  // Alternative aus MontiCore wäre LocalVariableDeclaration aus
   // MCVarDeclarationStatements. Da hängt aber auch der MCModifier
-  // mit dran, den man wieder per CoCo verbieten müsste und wäre 
-  // genauso wie bei der OCLVariableDeclaration die wir durch die 
+  // mit dran, den man wieder per CoCo verbieten müsste und wäre
+  // genauso wie bei der OCLVariableDeclaration die wir durch die
   // LocalVariableDeclaration würde aber auch das wieder verlangen
   // dass MCModifier mit einer surrealen Produktion implementiert wird
   OCLParamDeclaration = MCType Name ("=" Expression)?;
@@ -98,16 +98,16 @@ grammar OCL extends MCCommonLiterals,
     ("(" params:(OCLParamDeclaration || ",")* ")")? ":"
 
     // statements
-    (Expression || ";")+
+    (Expression || ";")+";"
   ;
 
   /**
-   * ASTOCLContextDefinition can be of the followoing type.
+   * ASTOCLContextDefinition can be of the following type.
    *   Auction | Auction a | a in (...) | Auction a in (...)
    *   The rule is written as follows to avoid matching empty strings
    */
   OCLContextDefinition =
-      MCType | Expression
+      MCType | Expression | OCLParamDeclaration
   ;
 
   /**
