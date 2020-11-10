@@ -13,7 +13,7 @@ import de.monticore.symbols.*;
  */
 component grammar OCLExpressions
           extends ExpressionsBasis,
-                  MCBasicTypes,
+                  MCFullGenericTypes,
                   MCVarDeclarationStatements,
                   BasicSymbols
 
@@ -22,6 +22,8 @@ component grammar OCLExpressions
   // in eigene Grammatik kann zwecks Wiederverwendung
   TypeCastExpression implements Expression <200> =
     "(" MCType ")" Expression;
+
+  OCLVariableDeclaration = MCType? Name ("=" Expression)?;
 
   /**
    * ASTTypeIfExpression
@@ -130,8 +132,8 @@ component grammar OCLExpressions
    *              An expression where previous declarations are used.
    */
   scope LetinExpression implements Expression <100> =
-    "let" (LocalVariableDeclaration || ";")+
-    "in" Expression;
+    "let" (OCLVariableDeclaration || ";")+";"
+    ("in" Expression)? ;
 
   /**
    * ASTOCLIterateExpression is used to iterate collections. It differs from

@@ -92,10 +92,10 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   public void handle(ASTLetinExpression node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     getPrinter().print("let ");
-    for (ASTLocalVariableDeclaration ast : node.getLocalVariableDeclarationList()) {
+    /*for (ASTLocalVariableDeclaration ast : node.getOCLVariableDeclarationList()) {
       ast.accept(getRealThis());
       getPrinter().print("; ");
-    }
+    }*/
     getPrinter().print("in ");
     node.getExpression().accept(getRealThis());
     CommentPrettyPrinter.printPostComments(node, getPrinter());

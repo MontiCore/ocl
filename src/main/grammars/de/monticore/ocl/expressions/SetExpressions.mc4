@@ -58,6 +58,9 @@ component grammar SetExpressions
 
   /*=================================================================*/
 
+  SetVariableDeclaration =
+    MCType Name ("[]")*;
+
   /**
    * ASTSetComprehension defines a comprehension with given
    *   characteristic.
@@ -93,7 +96,7 @@ component grammar SetExpressions
    */
   SetComprehensionItem =
     Expression |
-    LocalVariableDeclaration
+    SetVariableDeclaration
     ;
 
   /**

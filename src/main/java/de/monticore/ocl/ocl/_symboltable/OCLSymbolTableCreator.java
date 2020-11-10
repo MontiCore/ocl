@@ -3,6 +3,7 @@ package de.monticore.ocl.ocl._symboltable;
 
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
 import de.monticore.ocl.expressions.oclexpressions._ast.ASTLetinExpression;
+import de.monticore.ocl.expressions.oclexpressions._ast.ASTOCLVariableDeclaration;
 import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.expressions.oclexpressions._symboltable.IOCLExpressionsScope;
 import de.monticore.ocl.ocl._ast.*;
@@ -141,9 +142,9 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
   private boolean handleOCLInExpressions(IOCLExpressionsScope scope, List<ASTLetinExpression> exprList,
     String astType) {
     for (ASTLetinExpression expr : exprList) {
-      for (ASTLocalVariableDeclaration variable : expr.getLocalVariableDeclarationList()) {
-        final List<String> varNameList = variable.getVariableDeclaratorList().stream()
-          .map( v->v.getDeclarator().getName())
+      for (ASTOCLVariableDeclaration variable : expr.getOCLVariableDeclarationList()) {
+        /*final List<String> varNameList = variable.OCLDeclaratorList().stream()
+          .map( v->v.getName().getName())
           .collect(Collectors.toList());
 
           typeVisitor.setScope(expr.getEnclosingScope());
@@ -159,7 +160,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
           Log.error("0xA32A0 The type of the Expression of the OCLInExpression of the " + astType
             + " could not be calculated");
           return false;
-        }
+        }*/
       }
     }
     return true;
