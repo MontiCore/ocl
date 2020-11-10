@@ -135,8 +135,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
       }
       fields.add(fieldSymbol);
     }
-
-    fields.forEach(f -> DefsTypeBasic.add2scope(enclosingScope, f));
+    //Todo: fix
+    //fields.forEach(f -> DefsTypeBasic.add2scope(enclosingScope, f));
   }
 
   private boolean handleOCLInExpressions(IOCLExpressionsScope scope, List<ASTLetinExpression> exprList,

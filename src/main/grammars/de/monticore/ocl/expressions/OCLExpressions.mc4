@@ -14,7 +14,6 @@ import de.monticore.symbols.*;
 component grammar OCLExpressions
           extends ExpressionsBasis,
                   MCFullGenericTypes,
-                  MCVarDeclarationStatements,
                   BasicSymbols
 
 {
@@ -23,7 +22,8 @@ component grammar OCLExpressions
   TypeCastExpression implements Expression <200> =
     "(" MCType ")" Expression;
 
-  OCLVariableDeclaration = MCType? Name ("[]")* ("=" Expression)?;
+  OCLVariableDeclaration implements Variable =
+    MCType? Name ("[]")* ("=" Expression)?;
 
   /**
    * ASTTypeIfExpression
@@ -38,7 +38,7 @@ component grammar OCLExpressions
    *     else   false
    */
   TypeIfExpression implements Expression <100> =
-    "typeif" Variable "instanceof" MCType
+    "typeif" Name@Variable "instanceof" MCType
     "then"   thenExpression:Expression
     "else"   elseExpression:Expression
     ;
@@ -145,7 +145,7 @@ component grammar OCLExpressions
    *              OCLCollectionVarDeclaration.
    *   @attribute initDeclarator
    *              Definiton of a accumulation variable as an
-   *              LocalVariableDeclaration.
+   *              OCLVariableDeclaration.
    *   @attribute accumulatorName
    *              Name of the accumulation assignment variable.
    *   @attribute accumulatorValue
@@ -154,7 +154,7 @@ component grammar OCLExpressions
   scope IterateExpression implements Expression <100> =
     "iterate" "{"
     iteration:InDeclaration ";"
-    init:LocalVariableDeclaration ":"
+    init:OCLVariableDeclaration ":"
     Name@Variable "=" value:Expression
     "}";
 

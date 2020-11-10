@@ -136,10 +136,4 @@ grammar OCL extends MCCommonLiterals,
     "(" params:(OCLParamDeclaration || ",")* ")"
     ("throws" throwables:(Name || ",")+)?
   ;
-
-  // Problem: MontiCore's LocalVariableDeclaration requires 
-  // MCModifiers to be implemented, but OCL doesn't have any.
-  // Hence, we now have a useless surreal production to fulfill 
-  // MontiCore's requirements...
-  OCLModifiers implements MCModifier = "test";
 }
