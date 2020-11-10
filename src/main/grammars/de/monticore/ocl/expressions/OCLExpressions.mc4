@@ -23,7 +23,7 @@ component grammar OCLExpressions
   TypeCastExpression implements Expression <200> =
     "(" MCType ")" Expression;
 
-  OCLVariableDeclaration = MCType? Name ("=" Expression)?;
+  OCLVariableDeclaration = MCType? Name ("[]")* ("=" Expression)?;
 
   /**
    * ASTTypeIfExpression
