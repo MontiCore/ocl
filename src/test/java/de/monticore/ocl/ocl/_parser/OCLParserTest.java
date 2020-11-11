@@ -2,8 +2,10 @@ package de.monticore.ocl.ocl._parser;
 
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Optional;
@@ -52,7 +54,18 @@ class OCLParserTest {
   public void shouldParseValidInput(String fileName) {
     this.parse(Paths.get(RELATIVE_MODEL_PATH, fileName).toString(), false);
   }
+  /*
+  @ParameterizedTest
+  @MethodSource("getValidModels")*/
+  public void shouldParseValidGrammarModels(String fileName) {
+    this.parse(Paths.get(RELATIVE_MODEL_PATH + "/example/validGrammarModels/" + fileName).toString(), false);
+  }
 
+  private static String[] getValidModels(){
+    File f = new File(RELATIVE_MODEL_PATH + "/example/validGrammarModels");
+    String[] filenames = f.list();
+    return filenames;
+  }
 
 
 }
