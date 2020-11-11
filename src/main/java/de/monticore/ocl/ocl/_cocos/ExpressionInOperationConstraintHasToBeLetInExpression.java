@@ -11,11 +11,12 @@ public class ExpressionInOperationConstraintHasToBeLetInExpression
 
   @Override
   public void check(ASTOCLOperationConstraint astoclOperationConstraint) {
-    if (astoclOperationConstraint.isPresentExpression()) {
-      if (!(astoclOperationConstraint.getExpression() instanceof ASTLetinExpression)) {
+    if (astoclOperationConstraint.isPresentLetDeclaration()) {
+      //todo: coco unnecessary with LetDeclaration nonterminal, delete(?)
+      /*if (!(astoclOperationConstraint.getLetDeclaration() instanceof ASTLetinExpression)) {
         Log.error(
-            String.format("0xOCL0A the expression in an OperationConstraint can only be a OCLInExpression, but was %s.", astoclOperationConstraint.getExpression().getClass().getName()));
-      }
+            String.format("0xOCL0A the expression in an OperationConstraint can only be a LetinExpression, but was %s.", astoclOperationConstraint.getExpression().getClass().getName()));
+      }*/
     }
   }
 }

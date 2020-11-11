@@ -81,8 +81,8 @@ public class OCLPrettyPrinter implements OCLVisitor {
     node.getOCLOperationSignature().accept(getRealThis());
     printer.println();
 
-    if (node.isPresentExpression()) {
-      node.getExpression().accept(getRealThis());
+    if (node.isPresentLetDeclaration()) {
+      node.getLetDeclaration().accept(getRealThis());
       printer.println();
     }
 

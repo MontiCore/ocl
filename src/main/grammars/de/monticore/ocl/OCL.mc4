@@ -71,7 +71,7 @@ grammar OCL extends MCCommonLiterals,
   OCLOperationConstraint implements OCLConstraint =
     "context"
     OCLOperationSignature
-    Expression?
+    LetDeclaration?
     ("pre" pre:Name? ":" (preConditions:Expression+ ";")* )?
     ("post" post:Name? ":" (postConditions:Expression+ ";")* )?
   ;

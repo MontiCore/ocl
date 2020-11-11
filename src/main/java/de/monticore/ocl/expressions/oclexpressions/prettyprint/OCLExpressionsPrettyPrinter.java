@@ -92,7 +92,7 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   public void handle(ASTLetinExpression node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     getPrinter().print("let ");
-    for (ASTOCLVariableDeclaration ast : node.getOCLVariableDeclarationList()) {
+    for (ASTOCLVariableDeclaration ast : node.getLetDeclaration().getOCLVariableDeclarationList()) {
       ast.accept(getRealThis());
       getPrinter().print("; ");
     }

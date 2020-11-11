@@ -142,7 +142,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
   private boolean handleOCLInExpressions(IOCLExpressionsScope scope, List<ASTLetinExpression> exprList,
     String astType) {
     for (ASTLetinExpression expr : exprList) {
-      for (ASTOCLVariableDeclaration variable : expr.getOCLVariableDeclarationList()) {
+      for (ASTOCLVariableDeclaration variable : expr.getLetDeclaration().getOCLVariableDeclarationList()) {
         /*final List<String> varNameList = variable.OCLDeclaratorList().stream()
           .map( v->v.getName().getName())
           .collect(Collectors.toList());

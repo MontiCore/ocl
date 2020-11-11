@@ -126,14 +126,17 @@ component grammar OCLExpressions
   /**
    * ASTOCLLetinExpression are used to define local vars or methods. The defined
    *   vars and methods are visible in the in-expression body.
-   *   @attribute declarations
+   *   @attribute letDeclaration
    *              A list of variable declarations.
-   *   @attribute OCLExpression
+   *   @attribute expression
    *              An expression where previous declarations are used.
    */
   scope LetinExpression implements Expression <100> =
-    "let" (OCLVariableDeclaration || ";")+";"
-    ("in" Expression)? ;
+    LetDeclaration
+    "in" Expression ;
+
+  LetDeclaration =
+    "let" ((OCLVariableDeclaration || ";")+";");
 
   /**
    * ASTOCLIterateExpression is used to iterate collections. It differs from
