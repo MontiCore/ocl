@@ -108,6 +108,10 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
       node.getMCType().accept(getRealThis());
       getPrinter().print(" ");
     }
+    for (int i = 0; i < node.getDimList().size(); i++){
+      getPrinter().print("[]");
+      getPrinter().print(" ");
+    }
     getPrinter().print(node.getName());
     if (node.isPresentExpression()){
       getPrinter().print(" = ");

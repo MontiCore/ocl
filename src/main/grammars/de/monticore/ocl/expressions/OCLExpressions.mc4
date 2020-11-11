@@ -13,7 +13,7 @@ import de.monticore.symbols.*;
  */
 component grammar OCLExpressions
           extends ExpressionsBasis,
-                  MCFullGenericTypes,
+                  MCBasicTypes,
                   BasicSymbols
 
 {
@@ -23,7 +23,7 @@ component grammar OCLExpressions
     "(" MCType ")" Expression;
 
   OCLVariableDeclaration implements Variable =
-    MCType? Name ("[]")* ("=" Expression)?;
+    MCType? Name (dim:"[" "]")* ("=" Expression)?;
 
   /**
    * ASTTypeIfExpression

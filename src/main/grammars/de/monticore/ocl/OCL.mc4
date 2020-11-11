@@ -9,7 +9,7 @@ import de.monticore.types.*;
 import de.monticore.literals.*;
 
 grammar OCL extends MCCommonLiterals,
-                    MCCollectionTypes,
+                    MCSimpleGenericTypes,
                     SetExpressions,
                     OCLExpressions,
                     OptionalOperators

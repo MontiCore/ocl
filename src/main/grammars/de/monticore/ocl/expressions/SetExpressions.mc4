@@ -13,7 +13,7 @@ import de.monticore.statements.*;
  */
 component grammar SetExpressions
           extends ExpressionsBasis,
-                  MCCollectionTypes
+                  MCBasicTypes
 {
   /*=================================================================*/
 
@@ -58,7 +58,7 @@ component grammar SetExpressions
   /*=================================================================*/
 
   SetVariableDeclaration =
-    MCType Name ("[]")*;
+    MCType Name (dim:"[" "]")*;
 
   /**
    * ASTSetComprehension defines a comprehension with given
