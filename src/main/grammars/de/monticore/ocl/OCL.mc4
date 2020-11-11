@@ -136,4 +136,6 @@ grammar OCL extends MCCommonLiterals,
     "(" params:(OCLParamDeclaration || ",")* ")"
     ("throws" throwables:(Name || ",")+)?
   ;
+
+  nokeyword "implies";
 }

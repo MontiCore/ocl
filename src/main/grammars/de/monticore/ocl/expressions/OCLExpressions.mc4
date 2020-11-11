@@ -62,10 +62,13 @@ component grammar OCLExpressions
   /**
    * ASTImpliesExpression defines a logical implies operator.
    *   Example: a.startTime >= Time.now() implies a.numberOfBids == 0
+   *
+   *   Note that it may be useful to use the "nokeyword"-keyword when
+   *   using this grammar in order to mark "implies" as temporary
    */
   ImpliesExpression implements Expression <60> =
     left:Expression
-    key("implies")
+    "implies"
     right:Expression
     ;
 
