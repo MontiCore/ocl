@@ -44,11 +44,9 @@ component grammar OCLExpressions
     ;
 
   /**
-   * IfThenElseExpression defines a logical implies operator.
+   * IfThenElseExpression defines a case distinction operator.
    *   If the condition is true, thenExpression will be returned,
    *   otherwise the elseExpression will be returned.
-   *
-   *   Example: a.startTime >= Time.now() implies a.numberOfBids == 0
    */
   // Note: MontiCore's IfStatement from MCCommonStatements cannot be 
   // used here as it would allow to start arbitrary (block) statements

@@ -60,7 +60,7 @@ component grammar SetExpressions
   /*=================================================================*/
 
   SetVariableDeclaration =
-    MCType Name (dim:"[" "]")*;
+    MCType? Name (dim:"[" "]")* ("=" Expression)?;
 
   /**
    * ASTSetComprehension defines a comprehension with given
@@ -77,7 +77,7 @@ component grammar SetExpressions
    */
   SetComprehension implements Expression  <40> =
     MCType?
-    "{" Expression "|"
+    "{" (Expression | SetVariableDeclaration) "|"
                   (SetComprehensionItem || ",")+ "}"
     ;
 

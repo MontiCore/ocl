@@ -3,16 +3,18 @@ package de.monticore.ocl;
 
 /* Alpha-version: This is intended to become a MontiCore stable grammar. */
 
-import de.monticore.expressions.CommonExpressions;
+import de.monticore.UMLStereotype;
 import de.monticore.ocl.expressions.*;
+import de.monticore.expressions.BitExpressions;
 import de.monticore.types.*;
 import de.monticore.literals.*;
 
-grammar OCL extends MCCommonLiterals,
+grammar OCL extends UMLStereotype,
                     MCSimpleGenericTypes,
                     SetExpressions,
                     OCLExpressions,
-                    OptionalOperators
+                    OptionalOperators,
+                    BitExpressions
 
 {
   OCLCompilationUnit =
@@ -69,6 +71,7 @@ grammar OCL extends MCCommonLiterals,
    *              Optional post-statements.
    */
   OCLOperationConstraint implements OCLConstraint =
+    (Stereotype)*
     "context"
     OCLOperationSignature
     LetDeclaration?
@@ -87,6 +90,7 @@ grammar OCL extends MCCommonLiterals,
    *              List of boolean expressions.
    */
   OCLInvariant implements OCLConstraint =
+    (Stereotype)*
     // class context
     (
       (context:["context"] | Import:["import"])
