@@ -17,6 +17,15 @@ grammar OCL extends UMLStereotype,
                     BitExpressions
 
 {
+  /**
+   *  ASTOCLCompilationUnit represents the entire content of an OCL model
+   *    @attribute package
+   *               The package declaration of the component model
+   *    @attribute importStatement
+   *               List of imported elements
+   *    @attribute OCLArtifact
+   *               wrapper for the ocl constraints
+   */
   OCLCompilationUnit =
     ("package" package:(Name& || ".")+ ";")?
     (MCImportStatement)*
@@ -26,7 +35,7 @@ grammar OCL extends UMLStereotype,
   start OCLCompilationUnit;
 
   /**
-   * ASTOCLArtifact represents a file that contains an OCL-Constraint.
+   * ASTOCLArtifact represents a file that contains OCL-constraints.
    *   @attribute Name
    *              Name of OCLFile (necessary for MCCompilationUnit)
    *   @attribute OCLConstraint
@@ -38,6 +47,15 @@ grammar OCL extends UMLStereotype,
     "}"
   ;
 
+  /**
+   * ASTOCLParamDeclaration defines a parameter for a method
+   *   @attribute MCType
+   *              Type of the parameter
+   *   @attribute Name
+   *              Name of the parameter
+   *   @attribute Expression
+   *              default value of the parameter
+   */
   OCLParamDeclaration = MCType Name ("=" Expression)?;
 
   /**
@@ -77,11 +95,14 @@ grammar OCL extends UMLStereotype,
 
   /**
    * ASTOCLInvariant represents the typical invariant definitions of OCL.
-   *   @attribute OCLClassContext
-   *              Optional keyword definitions: (context|import) and class 
-   *              definition
+   *   @attribute Stereotype
+   *              Optional stereotypes
+   *   @attribute OCLContextDefinition
+   *              Optional context in which to evaluate the invariant
    *   @attribute name
    *              Name of the invariant.
+   *   @attribute OCLParamDeclaration
+   *              parameters of the invariant
    *   @attribute statements
    *              List of boolean expressions.
    */
@@ -116,6 +137,10 @@ grammar OCL extends UMLStereotype,
    *              Optional complex type that is returned by given method
    *   @attribute methodName
    *              Name of given method.
+   *   @attribute params
+   *              Parameters of the method.
+   *   @attribute throwables
+   *              Possible exceptions of the method
    *
    *   Example : context Person.addMessages(Message m):
    */
@@ -130,6 +155,10 @@ grammar OCL extends UMLStereotype,
    * ASTOCLConstructorSignature defines signature of a constructor.
    *   @attribute ReferenceType
    *              Type of the Constructor.
+   *   @attribute params
+   *              Parameters of the method.
+   *   @attribute throwables
+   *              Possible exceptions of the method
    */
   OCLConstructorSignature implements OCLOperationSignature =
     "new" referenceType:Name
