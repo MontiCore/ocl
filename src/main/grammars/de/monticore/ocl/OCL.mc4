@@ -38,12 +38,6 @@ grammar OCL extends UMLStereotype,
     "}"
   ;
 
-  // Alternative aus MontiCore wäre LocalVariableDeclaration aus
-  // MCVarDeclarationStatements. Da hängt aber auch der MCModifier
-  // mit dran, den man wieder per CoCo verbieten müsste und wäre
-  // genauso wie bei der OCLVariableDeclaration die wir durch die
-  // LocalVariableDeclaration würde aber auch das wieder verlangen
-  // dass MCModifier mit einer surrealen Produktion implementiert wird
   OCLParamDeclaration = MCType Name ("=" Expression)?;
 
   /**
