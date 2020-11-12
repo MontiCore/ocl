@@ -3,6 +3,7 @@
 package de.monticore.ocl.expressions.prettyprint;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.ocl.expressions.oclexpressions._ast.ASTOCLVariableDeclaration;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLVisitor;
 import de.monticore.prettyprint.CommentPrettyPrinter;
@@ -81,8 +82,12 @@ public class OCLPrettyPrinter implements OCLVisitor {
     node.getOCLOperationSignature().accept(getRealThis());
     printer.println();
 
-    if (node.isPresentLetDeclaration()) {
-      node.getLetDeclaration().accept(getRealThis());
+    if (!node.isEmptyOCLVariableDeclarations()) {
+      printer.print("let: ");
+      for (ASTOCLVariableDeclaration vd : node.getOCLVariableDeclarationList()) {
+        vd.accept(getRealThis());
+        printer.println("; ");
+      }
       printer.println();
     }
 

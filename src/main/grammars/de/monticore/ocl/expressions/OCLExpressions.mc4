@@ -128,11 +128,8 @@ component grammar OCLExpressions
    *              An expression where previous declarations are used.
    */
   scope LetinExpression implements Expression <100> =
-    LetDeclaration
+    "let" ((OCLVariableDeclaration || ";")+";")
     "in" Expression ;
-
-  LetDeclaration =
-    "let" ((OCLVariableDeclaration || ";")+";");
 
   /**
    * ASTOCLIterateExpression is used to iterate collections. It differs from

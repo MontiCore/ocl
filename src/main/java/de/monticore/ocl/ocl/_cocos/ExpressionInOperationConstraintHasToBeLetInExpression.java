@@ -11,7 +11,7 @@ public class ExpressionInOperationConstraintHasToBeLetInExpression
 
   @Override
   public void check(ASTOCLOperationConstraint astoclOperationConstraint) {
-    if (astoclOperationConstraint.isPresentLetDeclaration()) {
+    if (!astoclOperationConstraint.isEmptyOCLVariableDeclarations()) {
       //todo: coco unnecessary with LetDeclaration nonterminal, delete(?)
       /*if (!(astoclOperationConstraint.getLetDeclaration() instanceof ASTLetinExpression)) {
         Log.error(
