@@ -55,10 +55,12 @@ grammar OCL extends UMLStereotype,
   /**
    * ASTOCLOperationConstraint represents the typical method or constructor
    *   specifications with pre- and post-conditions.
+   *   @attribute Stereotype
+   *              Optional stereotypes
    *   @attribute OCLOperationSignature
    *              Operation Signature (of a method or constructor).
-   *   @attribute LetDeclaration
-   *              Optional let-declarations.
+   *   @attribute OCLVariableDeclaration
+   *              Optional variable declarations.
    *   @attribute OCLPreStatement
    *              Optional pre-statements.
    *   @attribute OCLPostStatement
