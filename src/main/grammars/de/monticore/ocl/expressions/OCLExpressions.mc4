@@ -128,7 +128,7 @@ component grammar OCLExpressions
    *              An expression where previous declarations are used.
    */
   scope LetinExpression implements Expression <100> =
-    "let" ((OCLVariableDeclaration || ";")+";")
+    "let" (OCLVariableDeclaration || ";")+
     "in" Expression ;
 
   /**

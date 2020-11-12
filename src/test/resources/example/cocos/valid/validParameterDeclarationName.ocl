@@ -7,7 +7,7 @@ ocl validParameterDeclarationName {
   let 
     Company oldCo = company;
     Collection<Company> newCos = {co in Company | co.name == name};
-    Company newCo = any newCos;
+    Company newCo = any newCos
   pre: oldCo.name != name && newCos.size == 1;
   post: newCo.employees == newCo.employees@pre + 1 && oldCo.employees == oldCo.employees@pre - 1;
 }

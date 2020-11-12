@@ -3,7 +3,7 @@ ocl invalidParameterType {
   context boolean Person.changeCompany(int gehalt)
   let 
    min = a.startTime.lessThan(a.closingTime)
-              ? a.startTime : a.closingTime; 
+              ? a.startTime : a.closingTime
   pre: true;
   post: false;
   

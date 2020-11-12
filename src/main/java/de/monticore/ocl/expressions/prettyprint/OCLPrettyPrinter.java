@@ -11,6 +11,8 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 
+import java.util.Iterator;
+
 public class OCLPrettyPrinter implements OCLVisitor {
 
   protected OCLVisitor realThis;
@@ -84,9 +86,13 @@ public class OCLPrettyPrinter implements OCLVisitor {
 
     if (!node.isEmptyOCLVariableDeclarations()) {
       printer.print("let: ");
-      for (ASTOCLVariableDeclaration vd : node.getOCLVariableDeclarationList()) {
-        vd.accept(getRealThis());
-        printer.println("; ");
+
+      Iterator<ASTOCLVariableDeclaration> it = node.getOCLVariableDeclarationList().iterator();
+      while (it.hasNext()) {
+        it.next().accept(getRealThis());
+        if (it.hasNext()) {
+          printer.println("; ");
+        }
       }
       printer.println();
     }

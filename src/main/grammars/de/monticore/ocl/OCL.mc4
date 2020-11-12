@@ -70,7 +70,7 @@ grammar OCL extends UMLStereotype,
     (Stereotype)*
     "context"
     OCLOperationSignature
-    ("let" ((OCLVariableDeclaration || ";")+";"))?
+    ("let" (OCLVariableDeclaration || ";")+ )?
     ("pre" ":" (preConditions:Expression ";")+ )?
     ("post" ":" (postConditions:Expression ";")+ )?
   ;

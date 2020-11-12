@@ -5,6 +5,6 @@ ocl validConstructorName {
   context new Auction(Policy p)
     pre: p != null;
     post:
-      let a = any Auction;
+      let a = any Auction
       in a.policy == p && a.status == INITIAL && messages.isEmpty;
 }

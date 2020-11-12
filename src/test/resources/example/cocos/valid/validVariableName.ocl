@@ -2,7 +2,7 @@
 ocl validVariableName {
   context boolean Person.changeCompany(String name)
   let 
-    oldCo = company;
+    oldCo = company
   pre: true;
   post: false;
   
