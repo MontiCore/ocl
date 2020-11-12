@@ -17,9 +17,25 @@ component grammar OCLExpressions
                   BasicSymbols
 
 {
+  /**
+   * ASTTypeCastExpression casts an expression to a given type
+   *   @attribute MCType
+   *              type to cast the expression to
+   *   @attribute Expression
+   *              the expression that should be casted
+   */
   TypeCastExpression implements Expression <200> =
     "(" MCType ")" Expression;
 
+  /**
+   * ASTOCLVariableDeclaration defines a variable
+   *   @attribute MCType
+   *              type of the variable
+   *   @attribute Name
+   *              name of the variable
+   *   @attribute Expression
+   *              initial value of the variable
+   */
   OCLVariableDeclaration implements Variable =
     MCType? Name (dim:"[" "]")* ("=" Expression)?;
 
@@ -29,6 +45,17 @@ component grammar OCLExpressions
    *     typeif m instanceof Subtype 
    *       then (m known here as Subtype)
    *       else (m here as only Supertype)
+   *
+   *  @attribute Name@Variable
+   *             Name of a variable of which the type should be checked
+   *  @attribute MCType
+   *             The type to which the variable should be compared
+   *  @attribute thenExpression
+   *             resulting expression in which the variable can be used with
+   *             the type defined by MCType (if the type check returns true)
+   *  @attribute elseExpression
+   *             resulting expression which will be evaluated if the variable
+   *             is not of the type defined by MCType
    *
    *   Example: 
    *     typeif bm instanceof BidMesssage 
@@ -45,6 +72,13 @@ component grammar OCLExpressions
    * IfThenElseExpression defines a case distinction operator.
    *   If the condition is true, thenExpression will be returned,
    *   otherwise the elseExpression will be returned.
+   *
+   *   @attribute condition
+   *              the condition to be evaluated
+   *   @attribute thenExpression
+   *              the expression to return if the condition is true
+   *   @attribute elseExpression
+   *              the expression to return if the condition is false
    */
   IfThenElseExpression implements Expression <100> =
     "if"   condition:Expression
