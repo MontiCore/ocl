@@ -4,7 +4,7 @@ ocl invalidParameterType {
   let 
    min = a.startTime.lessThan(a.closingTime)
               ? a.startTime : a.closingTime; 
-  pre Test : true;
-  post Test : false;
+  pre: true;
+  post: false;
   
 }
