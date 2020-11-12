@@ -86,12 +86,8 @@ public class OCLPrettyPrinter implements OCLVisitor {
       printer.println();
     }
 
-    if (node.isPresentPre() || !node.getPreConditionsList().isEmpty()) {
-      printer.print("pre");
-      if(node.isPresentPre()){
-        printer.print(" " + node.getPre());
-      }
-      printer.print(": ");
+    if (!node.getPreConditionsList().isEmpty()) {
+      printer.print("pre: ");
       for (ASTExpression e : node.getPreConditionsList()){
         e.accept(getRealThis());
         printer.print("; ");
@@ -99,11 +95,8 @@ public class OCLPrettyPrinter implements OCLVisitor {
       printer.println();
     }
 
-    if (node.isPresentPost() || !node.getPostConditionsList().isEmpty()) {
-      printer.print("post");
-      if(node.isPresentPost()){
-        printer.print(" " + node.getPost());
-      }
+    if (!node.getPostConditionsList().isEmpty()) {
+      printer.print("post: ");
       printer.print(": ");
       for (ASTExpression e : node.getPostConditionsList()){
         e.accept(getRealThis());

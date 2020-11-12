@@ -12,8 +12,6 @@ public class OCLCoCos {
         .addCoCo(new MethSignatureStartsWithLowerCaseLetter())
         .addCoCo(new ConstructorNameStartsWithCapitalLetter())
         .addCoCo(new InvariantNameStartsWithCapitalLetter())
-        .addCoCo(new PreStatementNameStartsWithCapitalLetter())
-        .addCoCo(new PostStatementNameStartsWithCapitalLetter())
         .addCoCo(new ParameterNamesUnique())
         .addCoCo(new ExpressionInOperationConstraintHasToBeLetInExpression())
         .addCoCo(new ExpressionInContextDefinitionHasToBeLetInExpression())
