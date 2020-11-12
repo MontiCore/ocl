@@ -17,8 +17,6 @@ component grammar OCLExpressions
                   BasicSymbols
 
 {
-  // TODO: mit Marita klären ob TypeCast aus JavaClassExpressions
-  // in eigene Grammatik kann zwecks Wiederverwendung
   TypeCastExpression implements Expression <200> =
     "(" MCType ")" Expression;
 
@@ -48,9 +46,6 @@ component grammar OCLExpressions
    *   If the condition is true, thenExpression will be returned,
    *   otherwise the elseExpression will be returned.
    */
-  // Note: MontiCore's IfStatement from MCCommonStatements cannot be 
-  // used here as it would allow to start arbitrary (block) statements
-  // (OCL does not have statements) and does not enforce the "else" part
   IfThenElseExpression implements Expression <100> =
     "if"   condition:Expression
     "then" thenExpression:Expression
