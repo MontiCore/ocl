@@ -6,7 +6,7 @@ package de.monticore.ocl.expressions;
 import de.monticore.expressions.*;
 
 component grammar OptionalOperators
-          extends de.monticore.expressions.CommonExpressions
+          extends CommonExpressions
 {
   // `opt ?: 0W` is equals to `opt.isPresent ? opt.get : 0W`
   // this operator is right associative, so that multiple optionals can be 
