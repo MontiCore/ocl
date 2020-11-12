@@ -95,7 +95,7 @@ component grammar SetExpressions
   SetComprehensionItem =
     Expression |
     SetVariableDeclaration |
-    generator:GeneratorDeclaration
+    GeneratorDeclaration
     ;
 
   GeneratorDeclaration =
