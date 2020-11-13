@@ -40,7 +40,7 @@ grammar OCL extends UMLStereotype,
    *   @attribute OCLConstraint
    *              List of OCL-constraints.
    */
-  OCLArtifact =
+  OCLArtifact implements Diagram =
     key("ocl") Name "{"
       OCLConstraint*
     "}"
@@ -106,7 +106,7 @@ grammar OCL extends UMLStereotype,
    *   @attribute statements
    *              List of boolean expressions.
    */
-  OCLInvariant implements OCLConstraint =
+  symbol OCLInvariant implements OCLConstraint =
     (Stereotype)*
     // class context
     (
