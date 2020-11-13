@@ -15,7 +15,6 @@ component grammar OCLExpressions
           extends ExpressionsBasis,
                   MCBasicTypes,
                   BasicSymbols
-
 {
   /**
    * ASTTypeCastExpression casts an expression to a given type
@@ -176,9 +175,9 @@ component grammar OCLExpressions
    *   @attribute initDeclarator
    *              Definiton of a accumulation variable as an
    *              OCLVariableDeclaration.
-   *   @attribute accumulatorName
+   *   @attribute Name
    *              Name of the accumulation assignment variable.
-   *   @attribute accumulatorValue
+   *   @attribute value
    *              Right hand of the accumulation as an expression.
    */
   scope IterateExpression implements Expression <100> =
