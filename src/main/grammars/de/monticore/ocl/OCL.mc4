@@ -15,7 +15,6 @@ grammar OCL extends UMLStereotype,
                     OCLExpressions,
                     OptionalOperators,
                     BitExpressions
-
 {
   /**
    *  ASTOCLCompilationUnit represents the entire content of an OCL model
@@ -56,7 +55,8 @@ grammar OCL extends UMLStereotype,
    *   @attribute Expression
    *              default value of the parameter
    */
-  OCLParamDeclaration = MCType Name ("=" Expression)?;
+  OCLParamDeclaration implements Variable =
+    MCType Name ("=" Expression)?;
 
   /**
    * ASTOCLConstraint subsumes all OCL types that are used as embedded OCL.
@@ -115,7 +115,7 @@ grammar OCL extends UMLStereotype,
     )?
 
     // invariant
-    "inv" name:Name?
+    "inv" Name?
     ("(" params:(OCLParamDeclaration || ",")* ")")? ":"
 
     // statements
