@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl sor6 {
   inv:
-    {(a | b) | a in {(a | b)}, b isin {b}}.size > 0;
+    {(a | b) | a in {(a | b)}, b in {b}}.size > 0;
 }

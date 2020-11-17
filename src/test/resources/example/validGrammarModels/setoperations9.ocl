@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl setoperations9 {
   context Auction a inv:
-    !("BAD" isin a.bidder.company.name);
+    !("BAD" in a.bidder.company.name);
 }

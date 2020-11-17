@@ -2,7 +2,7 @@
 ocl comprehension13 {
   inv:
     let
-      Set<Auction> sa = Set{a in Auction | Time.now().lessThan(a.startTime)};
-    in
+      Set<Auction> sa = Set{a in Auction | Time.now().lessThan(a.startTime)}
+in
       this;
 }

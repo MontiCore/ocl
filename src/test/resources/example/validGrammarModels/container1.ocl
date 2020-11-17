@@ -6,7 +6,7 @@ ocl container1 {
       Set<Set<Integer> > ssi = {{}, {1}, {1, 2}, si};
       List<Set<Integer> > lsp = List{{1}, {}};
       Collection<Set<List<List> > > x = {};
-      Set<Collection<Set<List<List> > > > x = {};
-    in
+      Set<Collection<Set<List<List> > > > x = {}
+in
       this;
 }

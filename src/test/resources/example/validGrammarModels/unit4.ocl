@@ -1,5 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-ocl unit4 {
-    inv:
-        4000 g == 2 kg*m*s^-2 / 0.5m*s^-2;
-}

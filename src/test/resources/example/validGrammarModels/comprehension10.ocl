@@ -3,7 +3,7 @@ ocl comprehension10 {
   inv:
     let
       la = List{a | a in Set{1, 2}};
-      lb = List{a | a in Set{1, 2}};
-    in
+      lb = List{a | a in Set{1, 2}}
+in
       la == lb;
 }

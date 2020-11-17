@@ -7,7 +7,7 @@ ocl setoperations13 {
       Set<Person> competitors = p.auctions.bidder;
       List<Message> lpm = p.message;
       List<Message> lam = p.auctions.mnessges;
-      List<Auction> lma = p.messages.auctions;
-    in
+      List<Auction> lma = p.messages.auctions
+in
       this;
 }

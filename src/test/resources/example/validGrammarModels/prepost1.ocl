@@ -2,7 +2,7 @@
 ocl prepost1 {
   context boolean method() throws Exception
    let 
-    oldCo = company;
-  pre Pre : oldCo.name != name && newCos.size == 1;
-  post Post : newCo.employees == newCo.employees@pre + 1 && oldCo.employees == oldCo.employees@pre - 1;
+    oldCo = company
+  pre : oldCo.name != name && newCos.size == 1;
+  post : newCo.employees == newCo.employees@pre + 1 && oldCo.employees == oldCo.employees@pre - 1;
 }

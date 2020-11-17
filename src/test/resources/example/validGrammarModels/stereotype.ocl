@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl stereotype {
     context Test inv:
-        << msg="Test" >> blub.length < 10;
+         blub.length < 10;
 }

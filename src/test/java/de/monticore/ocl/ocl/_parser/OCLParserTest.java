@@ -54,9 +54,9 @@ class OCLParserTest {
   public void shouldParseValidInput(String fileName) {
     this.parse(Paths.get(RELATIVE_MODEL_PATH, fileName).toString(), false);
   }
-  /*
+
   @ParameterizedTest
-  @MethodSource("getValidModels")*/
+  @MethodSource("getValidModels")
   public void shouldParseValidGrammarModels(String fileName) {
     this.parse(Paths.get(RELATIVE_MODEL_PATH + "/example/validGrammarModels/" + fileName).toString(), false);
   }
