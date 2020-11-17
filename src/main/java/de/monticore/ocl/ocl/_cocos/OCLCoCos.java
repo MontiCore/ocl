@@ -15,7 +15,7 @@ public class OCLCoCos {
         .addCoCo(new ParameterNamesUnique())
         .addCoCo(new ExpressionInOperationConstraintHasToBeLetInExpression())
         .addCoCo(new ExpressionInContextDefinitionHasToBeLetInExpression())
-
+        .addCoCo(new IterateExpressionVariableUsageIsCorrect())
         .addCoCo(new ConstructorNameReferencesType())
         .addCoCo(new ValidTypes(typeChecker))
         ;
