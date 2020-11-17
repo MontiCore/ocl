@@ -42,7 +42,6 @@ class OCLParserTest {
     "example/cocos/valid/validConstructorName0.ocl",
     "example/cocos/valid/validFileName.ocl",
     "example/cocos/valid/validInvariantName.ocl",
-    //"example/cocos/valid/validMethodDeclarationName.ocl",
     "example/cocos/valid/validMethSigName.ocl",
     "example/cocos/valid/validParameterDeclarationName.ocl",
     "example/cocos/valid/validParameterType.ocl",
