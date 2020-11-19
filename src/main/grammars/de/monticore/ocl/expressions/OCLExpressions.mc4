@@ -92,7 +92,7 @@ component grammar OCLExpressions
    *   Note that it may be useful to use the "nokeyword"-keyword when
    *   using this grammar in order to mark "implies" as temporary
    */
-  ImpliesExpression implements Expression <60> =
+  ImpliesExpression implements Expression <116> =
     left:Expression
     "implies"
     right:Expression
@@ -102,7 +102,7 @@ component grammar OCLExpressions
    * ASTEquivalentExpression defines a logical equals operator.
    *   Example: sa.equals(sb) <=> sa==sb
    */
-  EquivalentExpression implements Expression <50> =
+  EquivalentExpression implements Expression <115> =
     left:Expression operator:"<=>" right:Expression;
 
   /*=================================================================*/
