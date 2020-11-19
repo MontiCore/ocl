@@ -2,6 +2,7 @@
 package de.monticore.ocl.expressions.oclexpressions.prettyprint;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.expressions.oclexpressions._ast.ASTOCLQualifiedPrimary;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
 import de.monticore.ocl.expressions.oclexpressions._visitor.OCLExpressionsVisitor;
 import de.monticore.ocl.expressions.oclexpressions._ast.*;
@@ -145,50 +146,12 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   }
 
   @Override
-  public void handle(ASTParenthizedExpression node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
-    getPrinter().print("(");
-    node.getExpression().accept(getRealThis());
-    getPrinter().print(")");
-    if (node.isPresentQualification()) {
-      getPrinter().print(".");
-      node.getQualification().accept(getRealThis());
-    }
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
-  }
-
-  @Override
   public void handle(ASTTypeCastExpression node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     getPrinter().print("(");
     node.getMCType().accept(getRealThis());
     getPrinter().print(")");
     node.getExpression().accept(getRealThis());
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
-  }
-
-  @Override
-  public void handle(ASTOCLArrayQualification node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
-    for (ASTExpression astExpression : node.getArgumentsList()) {
-      getPrinter().print("[");
-      astExpression.accept(getRealThis());
-      getPrinter().print("]");
-    }
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
-  }
-
-  @Override
-  public void handle(ASTOCLArgumentQualification node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
-    getPrinter().print("(");
-    for (int i = 0; i < node.getExpressionList().size(); i++) {
-      if (i != 0) {
-        getPrinter().print(", ");
-      }
-      node.getExpression(i).accept(getRealThis());
-    }
-    getPrinter().print(")");
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
 
@@ -203,21 +166,6 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   public void handle(ASTOCLTransitiveQualification node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     getPrinter().print("**");
-    CommentPrettyPrinter.printPostComments(node, getPrinter());
-  }
-
-  @Override
-  public void handle(ASTOCLQualifiedPrimary node) {
-    CommentPrettyPrinter.printPreComments(node, getPrinter());
-    String qualifiedName = String.join(".", node.getMCQualifiedName().getPartsList());
-    getPrinter().print(qualifiedName + " ");
-    if (node.isPresentPostfix()) {
-      node.getPostfix().accept(getRealThis());
-    }
-    if (node.isPresentOCLQualifiedPrimary()) {
-      getPrinter().print(".");
-      node.getOCLQualifiedPrimary().accept(getRealThis());
-    }
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
 

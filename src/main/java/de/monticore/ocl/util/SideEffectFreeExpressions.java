@@ -41,13 +41,7 @@ public class SideEffectFreeExpressions {
     if(e instanceof ASTIterateExpression){
       return true;
     }
-    if(e instanceof ASTParenthizedExpression){
-      return true;
-    }
     if(e instanceof ASTInstanceOfExpression){
-      return true;
-    }
-    if(e instanceof ASTOCLQualifiedPrimary){
       return true;
     }
     if(e instanceof ASTSetInExpression){
