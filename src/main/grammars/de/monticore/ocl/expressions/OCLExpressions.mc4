@@ -199,7 +199,7 @@ component grammar OCLExpressions
 
   /*=================================================================*/
 
-  InstanceOfExpression implements Expression <50> =
+  InstanceOfExpression implements Expression <150> =
     left:Expression "instanceof" MCType;
 
   /**
