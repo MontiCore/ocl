@@ -118,7 +118,7 @@ component grammar OCLExpressions
    *   @attribute OCLExpression
    *              The body of forall iteration as an expression.
    */
-  scope ForallExpression implements Expression <90> =
+  scope (non_exporting) ForallExpression implements Expression <90> =
     "forall"
     (InDeclaration || ",")+
     ":"
@@ -136,7 +136,7 @@ component grammar OCLExpressions
    *   @attribute OCLExpression
    *              The body of exists iteration as an expression.
    */
-  scope ExistsExpression implements Expression <90> =
+  scope (non_exporting) ExistsExpression implements Expression <90> =
     "exists"
     (InDeclaration || ",")+
     ":"
@@ -160,7 +160,7 @@ component grammar OCLExpressions
    *   @attribute expression
    *              An expression where previous declarations are used.
    */
-  scope LetinExpression implements Expression <100> =
+  scope (non_exporting) LetinExpression implements Expression <100> =
     "let" (OCLVariableDeclaration || ";")+
     "in" Expression ;
 
@@ -180,7 +180,7 @@ component grammar OCLExpressions
    *   @attribute value
    *              Right hand of the accumulation as an expression.
    */
-  scope IterateExpression implements Expression <100> =
+  scope (non_exporting) IterateExpression implements Expression <100> =
     "iterate" "{"
     iteration:InDeclaration ";"
     init:OCLVariableDeclaration ":"
