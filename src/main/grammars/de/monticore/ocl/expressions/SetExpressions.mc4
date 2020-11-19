@@ -97,16 +97,17 @@ component grammar SetExpressions
     SetVariableDeclaration |
     GeneratorDeclaration
     ;
+  
   /**
-     * ASTGeneratorDeclaration defines a generator that introduces a new
-     *   variable and lets it range over a set
-     *   @attribute MCType
-     *              Optional type of variable
-     *   @attribute Name
-     *              Name of the variable
-     *   @attribute Expression
-     *              Expression that describes or references a set
-     */
+   * ASTGeneratorDeclaration defines a generator that introduces a new
+   *   variable and lets it range over a set
+   *   @attribute MCType
+   *              Optional type of variable
+   *   @attribute Name
+   *              Name of the variable
+   *   @attribute Expression
+   *              Expression that describes or references a set
+   */
   GeneratorDeclaration implements Variable =
     MCType? Name "in" Expression;
 
