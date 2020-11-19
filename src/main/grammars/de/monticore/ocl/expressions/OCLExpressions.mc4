@@ -199,21 +199,37 @@ component grammar OCLExpressions
 
   /*=================================================================*/
 
+  /**
+   * ASTInstanceOfExpression checks if an expression has a certain type
+   *   evaluates to true if the expression has the type given by MCType
+   *   otherwise evaluates to false
+   *
+   *   @attribute Expression
+   *              expression whose type is to be checked
+   *   @attribute MCType
+   *              type against which the expression should be checked
+   */
   InstanceOfExpression implements Expression <150> =
-    left:Expression "instanceof" MCType;
+    Expression "instanceof" MCType;
 
   /**
    * ASTOCLQualification defines qualification postfixes of a qualified
    *   primary. A qualification is one of the three kinds:
-   *       - x[0] (ArrayQualification)
-   *       - x(y) (ArgumentQualification)
-   *       - x**  (TransitiveQualification)
-   *       - x@pre (AtPreQualification)
+   *       - x[0] (OCLArrayQualification)
+   *       - x(y) (CommonExpressions' CallExpression)
+   *       - x**  (OCLTransitiveQualification)
+   *       - x@pre (OCLAtPreQualification)
    */
   interface OCLQualification extends Expression;
 
   /**
-   * ASTOCLArrayQualification TODO: Kommentar schrieben
+   * ASTOCLArrayQualification is used to access elements of 
+   *   an array of elements. 
+   *
+   *   @attribute Expression
+   *              The expression whose elements will be accessed
+   *   @attribute arguments
+   *              The expression defining which element to access
    */
   OCLArrayQualification implements OCLQualification =
     Expression ("[" arguments:Expression "]")+;
