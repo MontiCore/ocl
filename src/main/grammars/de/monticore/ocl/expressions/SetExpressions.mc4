@@ -59,7 +59,7 @@ component grammar SetExpressions
 
   /*=================================================================*/
 
-  SetVariableDeclaration =
+  SetVariableDeclaration implements Variable=
     MCType? Name (dim:"[" "]")* ("=" Expression)?;
 
   /**
@@ -98,7 +98,7 @@ component grammar SetExpressions
     GeneratorDeclaration
     ;
 
-  GeneratorDeclaration =
+  GeneratorDeclaration implements Variable =
     MCType? Name@Variable "in" Expression;
 
   /**
