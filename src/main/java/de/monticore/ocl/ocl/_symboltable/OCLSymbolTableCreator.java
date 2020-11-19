@@ -9,6 +9,7 @@ import de.monticore.ocl.expressions.oclexpressions._symboltable.IOCLExpressionsS
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.statements.mcvardeclarationstatements._ast.ASTLocalVariableDeclaration;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.DefsTypeBasic;
 import de.monticore.types.check.SymTypeExpression;
@@ -68,7 +69,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
   @Override
   public void endVisit(final ASTOCLCompilationUnit compilationUnit) {
-    //removeCurrentScope();
+    removeCurrentScope();
 
     super.endVisit(compilationUnit);
   }
@@ -76,22 +77,22 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
   @Override
   public void visit(ASTOCLMethodSignature node) {
     super.visit(node);
-    //registerFields(node.getOCLParameters().getParamsList(), node.getEnclosingScope());
+    registerFields(node.getParamsList(), node.getEnclosingScope());
   }
 
   @Override
   public void visit(ASTOCLConstructorSignature node) {
     super.visit(node);
-    //registerFields(node.getOCLParameters().getParamsList().stream().map(p -> p.getName())., node.getEnclosingScope());
+    registerFields(node.getParamsList(), node.getEnclosingScope());
   }
 
   @Override
   public void visit(ASTOCLInvariant node) {
     super.visit(node);
 
-    //if (node.isPresentOCLParameters()) {
-    //  registerFields(node.getOCLParameters().getParamsList(), node.getEnclosingScope());
-    //}
+    if (node.isEmptyParams()) {
+      registerFields(node.getParamsList(), node.getEnclosingScope());
+    }
   }
 
   @Override
@@ -115,13 +116,11 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
     final String paramName = param.getName();
     typeVisitor.setScope((IExpressionsBasisScope) param.getMCType().getEnclosingScope());
     param.getMCType().accept(typeVisitor.getRealThis());
-    /*
-    if (!typeVisitor.getLastResult().isPresentLast()) {
+    if (!typeVisitor.getLastResult().isPresentCurrentResult()) {
       Log.error(
         "0xA3250 The type of the OCLDeclaration of the OCLMethodDeclaration could not be calculated");
       return null;
     }
-     */
     return DefsTypeBasic.field(paramName, typeVisitor.getLastResult().getCurrentResult());
   }
 
@@ -135,32 +134,30 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
       }
       fields.add(fieldSymbol);
     }
-    //Todo: fix
-    //fields.forEach(f -> DefsTypeBasic.add2scope(enclosingScope, f));
+    fields.forEach(f -> DefsTypeBasic.add2scope((IOOSymbolsScope) enclosingScope, f));
   }
 
   private boolean handleOCLInExpressions(IOCLExpressionsScope scope, List<ASTLetinExpression> exprList,
     String astType) {
     for (ASTLetinExpression expr : exprList) {
       for (ASTOCLVariableDeclaration variable : expr.getOCLVariableDeclarationList()) {
-        /*final List<String> varNameList = variable.OCLDeclaratorList().stream()
-          .map( v->v.getName().getName())
-          .collect(Collectors.toList());
+        List<String> varNameList = new ArrayList<>();
+        varNameList.add(variable.getName());
 
-          typeVisitor.setScope(expr.getEnclosingScope());
-          variable.getMCType().accept(typeVisitor.getRealThis());
+        typeVisitor.setScope(expr.getEnclosingScope());
+        variable.getMCType().accept(typeVisitor.getRealThis());
 
 
         if (typeVisitor.getLastResult().isPresentCurrentResult()) {
           final SymTypeExpression last = typeVisitor.getLastResult().getCurrentResult();
           varNameList.stream().map(name -> DefsTypeBasic.field(name, last))
-            .forEach(f -> DefsTypeBasic.add2scope(scope, f));
+            .forEach(f -> DefsTypeBasic.add2scope((IOOSymbolsScope) scope, f));
         }
         else {
           Log.error("0xA32A0 The type of the Expression of the OCLInExpression of the " + astType
             + " could not be calculated");
           return false;
-        }*/
+        }
       }
     }
     return true;
