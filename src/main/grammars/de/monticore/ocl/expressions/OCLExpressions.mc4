@@ -45,7 +45,7 @@ component grammar OCLExpressions
    *       then (m known here as Subtype)
    *       else (m here as only Supertype)
    *
-   *  @attribute Name@Variable
+   *  @attribute Name
    *             Name of a variable of which the type should be checked
    *  @attribute MCType
    *             The type to which the variable should be compared
@@ -172,11 +172,12 @@ component grammar OCLExpressions
    *   @attribute iterationDeclarator
    *              The elements of a collection that will be iterated as an
    *              OCLCollectionVarDeclaration.
-   *   @attribute initDeclarator
+   *   @attribute init
    *              Definiton of a accumulation variable as an
    *              OCLVariableDeclaration.
    *   @attribute Name
-   *              Name of the accumulation assignment variable.
+   *              Name of the accumulation assignment variable. This has to be
+   *              the variable introduced by init:OCLVariableDeclaration
    *   @attribute value
    *              Right hand of the accumulation as an expression.
    */
