@@ -198,32 +198,8 @@ component grammar OCLExpressions
 
   /*=================================================================*/
 
-  ParenthizedExpression implements Expression <400> =
-    "(" Expression ")"
-    ("." qualification:OCLQualifiedPrimary)?;
-
   InstanceOfExpression implements Expression <50> =
     left:Expression "instanceof" MCType;
-
-  /**
-   * ASTOCLQualifiedPrimary represents qualified identifier.
-   *   @attribute MCQualifiedName
-   *              List of names of qualified identifier.
-   *   @attribute postfixQualification
-   *              Optional argument-, array- or atpre, **-qualifcation.
-   *   @attribute OCLQualifiedPrimary
-   *              Optional recursive linkage of qualified primary.
-   *
-   *   example: name.name.name(argument).nextQualifiedPrimary
-   *            name.name[expr]
-   *            name**
-   *            name@pre
-   */
-  OCLQualifiedPrimary implements Expression <500> =
-    MCQualifiedName
-    postfix:OCLQualification?
-    ("." OCLQualifiedPrimary)?
-    ;
 
   /**
    * ASTOCLQualification defines qualification postfixes of a qualified
@@ -233,21 +209,21 @@ component grammar OCLExpressions
    *       - x**  (TransitiveQualification)
    *       - x@pre (AtPreQualification)
    */
-  interface OCLQualification;
+  interface OCLQualification extends Expression;
 
+  /**
+   * ASTOCLArrayQualification TODO: Kommentar schrieben
+   */
   OCLArrayQualification implements OCLQualification =
-    ("[" arguments:Expression "]")+;
-
-  OCLArgumentQualification implements OCLQualification =
-    "(" (Expression || "," )* ")";
+    Expression ("[" arguments:Expression "]")+;
 
   /**
    * ASTOCLAtPreQualification
    *   Value of the expression in the precondition
    *   Example: post: messageList == messageList@pre.add(m)
    */
-  OCLAtPreQualification implements OCLQualification =
-    atpre:["@pre"];
+  OCLAtPreQualification implements OCLQualification <400> =
+    Expression atpre:["@pre"];
 
   /**
    * ASTOCLTransitiveQualification
@@ -260,6 +236,6 @@ component grammar OCLExpressions
    *   closure is identical to the initial association.
    *   Example: this.clique = this.friend**
    */
-  OCLTransitiveQualification implements OCLQualification =
-    transitive:["**"];
+  OCLTransitiveQualification implements OCLQualification <400> =
+    Expression transitive:["**"];
 }
