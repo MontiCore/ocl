@@ -106,7 +106,12 @@ grammar OCL extends UMLStereotype,
    *   @attribute statements
    *              List of boolean expressions.
    */
-  symbol OCLInvariant implements OCLConstraint =
+  //symbol // kann erst benutzt werden sobald MontiCore Issue #2656 erledigt ist
+           // MontiCore erzeugt hier aktuell nicht-kompilierbaren Code
+           // Sobald Ticket erledigt ist => "symbol" keyword benutzen und
+           // diesen Kommentar löschen
+           // https://git.rwth-aachen.de/monticore/monticore/-/issues/2656
+  OCLInvariant implements OCLConstraint =
     (Stereotype)*
     // class context
     (
