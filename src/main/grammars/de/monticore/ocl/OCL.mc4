@@ -153,7 +153,7 @@ grammar OCL extends UMLStereotype,
     MCReturnType?
     methodName:MCQualifiedName
     "(" params:(OCLParamDeclaration || ",")* ")"
-    ("throws" throwables:(Name || ",")+)?
+    ("throws" throwables:(MCQualifiedName || ",")+)?
   ;
 
   /**
@@ -168,7 +168,7 @@ grammar OCL extends UMLStereotype,
   OCLConstructorSignature implements OCLOperationSignature =
     "new" referenceType:Name
     "(" params:(OCLParamDeclaration || ",")* ")"
-    ("throws" throwables:(Name || ",")+)?
+    ("throws" throwables:(MCQualifiedName || ",")+)?
   ;
 
   nokeyword "implies";
