@@ -192,10 +192,12 @@ component grammar OCLExpressions
    * ASTInDeclaration defines a collection like "int x in y" or "Auction a" as
    *   shortform of "Auction a in Auction.allInstances").
    */
-  InDeclaration
-    = MCType  (Variable || ",")+
-    | MCType? (Variable || ",")+ ("in" Expression)
+  InDeclaration =
+    MCType  (InDeclarationVariable || ",")+
+    | MCType? (InDeclarationVariable || ",")+ ("in" Expression)
     ;
+
+  InDeclarationVariable implements Variable = Name;
 
   /*=================================================================*/
 

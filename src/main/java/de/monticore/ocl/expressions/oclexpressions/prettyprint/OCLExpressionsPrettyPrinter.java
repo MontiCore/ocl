@@ -31,7 +31,7 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
     if (node.isPresentMCType())
       node.getMCType().accept(getRealThis());
 
-    List<ASTVariable> variables = node.getVariableList();
+    List<ASTInDeclarationVariable> variables = node.getInDeclarationVariableList();
     List<String> variableNames = new ArrayList<>();
     for (ASTVariable var : variables){
       variableNames.add(var.getName());
