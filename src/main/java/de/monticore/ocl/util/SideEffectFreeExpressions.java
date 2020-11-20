@@ -6,6 +6,7 @@ import de.monticore.expressions.bitexpressions._ast.ASTBinaryOrOpExpression;
 import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
+import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.ocl.expressions.oclexpressions._ast.*;
 import de.monticore.ocl.expressions.setexpressions._ast.*;
 
@@ -42,6 +43,9 @@ public class SideEffectFreeExpressions {
       return true;
     }
     if(e instanceof ASTInstanceOfExpression){
+      return true;
+    }
+    if(e instanceof ASTOCLQualification){
       return true;
     }
     if(e instanceof ASTSetInExpression){
@@ -96,6 +100,12 @@ public class SideEffectFreeExpressions {
       return true;
     }
     if(e instanceof ASTFieldAccessExpression){
+      return true;
+    }
+    if(e instanceof ASTNameExpression){
+      return true;
+    }
+    if(e instanceof ASTCallExpression){
       return true;
     }
     if(e instanceof ASTBinaryOrOpExpression){
