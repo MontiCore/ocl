@@ -13,7 +13,6 @@ public class OCLCoCos {
         .addCoCo(new ConstructorNameStartsWithCapitalLetter())
         .addCoCo(new InvariantNameStartsWithCapitalLetter())
         .addCoCo(new ParameterNamesUnique())
-        .addCoCo(new ExpressionInOperationConstraintHasToBeLetInExpression())
         .addCoCo(new ExpressionInContextDefinitionHasToBeLetInExpression())
         .addCoCo(new IterateExpressionVariableUsageIsCorrect())
         .addCoCo(new ConstructorNameReferencesType())
