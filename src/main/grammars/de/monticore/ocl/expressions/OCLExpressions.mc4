@@ -197,6 +197,14 @@ component grammar OCLExpressions
     | MCType? (InDeclarationVariable || ",")+ ("in" Expression)
     ;
 
+  /**
+   * ASTInDeclarationVariable defines the name of the variable
+   * used in the InDeclaration nonterminal
+   * ASTInDeclarationVariable also creates VariableSymbols.
+   *
+   * @attribute Name
+   *            name of the variable.
+   */
   InDeclarationVariable implements Variable = Name;
 
   /*=================================================================*/
