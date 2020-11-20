@@ -1,3 +1,5 @@
+/* (c) https://github.com/MontiCore/monticore */
+
 package de.monticore.ocl.types.check;
 
 import com.google.common.collect.Lists;
@@ -21,7 +23,7 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
 
   private SetExpressionsVisitor realThis;
 
-  protected final List<String> collections = Lists.newArrayList("List", "Set");
+  protected final List<String> collections = Lists.newArrayList("List", "Set", "Collection");
 
   public DeriveSymTypeOfSetExpressions() {
     this.realThis = this;

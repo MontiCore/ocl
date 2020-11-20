@@ -8,7 +8,6 @@ import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.expressions.oclexpressions._symboltable.IOCLExpressionsScope;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
-import de.monticore.statements.mcvardeclarationstatements._ast.ASTLocalVariableDeclaration;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.DefsTypeBasic;
@@ -114,14 +113,13 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
   public FieldSymbol handleParamDeclaration(ASTOCLParamDeclaration param) {
     final String paramName = param.getName();
-    typeVisitor.setScope((IExpressionsBasisScope) param.getMCType().getEnclosingScope());
     param.getMCType().accept(typeVisitor.getRealThis());
-    if (!typeVisitor.getLastResult().isPresentCurrentResult()) {
+    if (!typeVisitor.getTypeCheckResult().isPresentCurrentResult()) {
       Log.error(
         "0xA3250 The type of the OCLDeclaration of the OCLMethodDeclaration could not be calculated");
       return null;
     }
-    return DefsTypeBasic.field(paramName, typeVisitor.getLastResult().getCurrentResult());
+    return DefsTypeBasic.field(paramName, typeVisitor.getTypeCheckResult().getCurrentResult());
   }
 
   public void registerFields(List<ASTOCLParamDeclaration> params,
@@ -144,12 +142,11 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
         List<String> varNameList = new ArrayList<>();
         varNameList.add(variable.getName());
 
-        typeVisitor.setScope(expr.getEnclosingScope());
         variable.getMCType().accept(typeVisitor.getRealThis());
 
 
-        if (typeVisitor.getLastResult().isPresentCurrentResult()) {
-          final SymTypeExpression last = typeVisitor.getLastResult().getCurrentResult();
+        if (typeVisitor.getTypeCheckResult().isPresentCurrentResult()) {
+          final SymTypeExpression last = typeVisitor.getTypeCheckResult().getCurrentResult();
           varNameList.stream().map(name -> DefsTypeBasic.field(name, last))
             .forEach(f -> DefsTypeBasic.add2scope((IOOSymbolsScope) scope, f));
         }
