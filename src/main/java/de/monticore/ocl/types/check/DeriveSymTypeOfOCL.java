@@ -12,11 +12,12 @@ import de.monticore.types.check.DeriveSymTypeOfExpression;
 import de.monticore.types.check.ITypesCalculator;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.Optional;
 
 public class DeriveSymTypeOfOCL extends DeriveSymTypeOfExpression
-    implements OCLVisitor, ITypesCalculator {
+    implements OCLVisitor {
 
   private OCLVisitor realThis;
 
@@ -34,43 +35,17 @@ public class DeriveSymTypeOfOCL extends DeriveSymTypeOfExpression
     realThis = this;
   }
 
-  /*
-  @Override
-  public void traverse(MCType node) {
+  public void traverse(ASTMCType node) {
     node.accept(getRealThis());
   }
 
   @Override
   public void traverse(ASTOCLOperationConstraint node) {
-    ((ITypesCalculator) realThis).setScope(node.getEnclosingScope());
-
     OCLVisitor.super.traverse(node);
   }
 
   @Override
   public void traverse(ASTOCLInvariant node) {
-    ((ITypesCalculator) realThis).setScope(node.getEnclosingScope());
-
     OCLVisitor.super.traverse(node);
-  }
-   */
-
-  @Override
-  public Optional<SymTypeExpression> calculateType(ASTExpression ex) {
-    return ((ITypesCalculator) realThis).calculateType(ex);
-  }
-
-  @Override
-  public Optional<SymTypeExpression> calculateType(ASTLiteral lit) {
-    return ((ITypesCalculator) realThis).calculateType(lit);
-  }
-
-  @Override
-  public Optional<SymTypeExpression> calculateType(ASTSignedLiteral lit) {
-    return ((ITypesCalculator) realThis).calculateType(lit);
-  }
-
-  @Override public void init() {
-    
   }
 }

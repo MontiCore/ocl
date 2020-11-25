@@ -4,27 +4,32 @@ package de.monticore.ocl.ocl._symboltable;
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
 import de.monticore.ocl.expressions.oclexpressions._ast.ASTLetinExpression;
 import de.monticore.ocl.expressions.oclexpressions._ast.ASTOCLVariableDeclaration;
+import de.monticore.ocl.expressions.oclexpressions._ast.ASTTypeIfExpression;
 import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.expressions.oclexpressions._symboltable.IOCLExpressionsScope;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.DefsTypeBasic;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.types.check.SynthesizeSymTypeFromMCSimpleGenericTypes;
+import de.monticore.types.check.TypeCheck;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
   DeriveSymTypeOfOCLCombineExpressions typeVisitor;
+
+  SynthesizeSymTypeFromMCSimpleGenericTypes typeChecker = new SynthesizeSymTypeFromMCSimpleGenericTypes();
 
   public OCLSymbolTableCreator(){super(); }
 
@@ -34,6 +39,26 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
   public OCLSymbolTableCreator(Deque<? extends IOCLScope> scopeStack) {
     super(scopeStack);
+  }
+
+  @Override
+  public IOCLArtifactScope createFromAST(ASTOCLCompilationUnit node){
+    if(typeVisitor == null){
+      Log.error("Set the typeVisitor before building the symboltable");
+      return null;
+    }
+    else{
+      Log.errorIfNull(node, "0xA7004x51423 Error by creating of the OCLSymbolTableCreator symbol table: top ast node is null");
+      IOCLArtifactScope artifactScope = de.monticore.ocl.ocl.OCLMill.oCLArtifactScopeBuilder()
+              .setPackageName("")
+              .setImportsList(new ArrayList<>())
+              .build();
+      putOnStack(artifactScope);
+      addToScope(new VariableSymbol("this"));
+      addToScope(new VariableSymbol("super"));
+      node.accept(getRealThis());
+      return artifactScope;
+    }
   }
 
   public void setTypeVisitor(DeriveSymTypeOfOCLCombineExpressions typesCalculator) {
@@ -74,89 +99,30 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
   }
 
   @Override
-  public void visit(ASTOCLMethodSignature node) {
+  public void visit(ASTTypeIfExpression node){
     super.visit(node);
-    registerFields(node.getParamsList(), node.getEnclosingScope());
+    //node.accept(typeVisitor);
   }
 
   @Override
-  public void visit(ASTOCLConstructorSignature node) {
-    super.visit(node);
-    registerFields(node.getParamsList(), node.getEnclosingScope());
+  public void visit(ASTOCLParamDeclaration node){
+    VariableSymbol symbol = create_OCLParamDeclaration(node);
+    if(getCurrentScope().isPresent()){
+      symbol.setEnclosingScope(getCurrentScope().get());
+    }
+    addToScopeAndLinkWithNode(symbol, node);
+    initialize_OCLParamDeclaration(symbol, node);
   }
 
   @Override
-  public void visit(ASTOCLInvariant node) {
-    super.visit(node);
-
-    if (node.isEmptyParams()) {
-      registerFields(node.getParamsList(), node.getEnclosingScope());
+  public void initialize_OCLParamDeclaration(VariableSymbol symbol, ASTOCLParamDeclaration ast) {
+    ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
+    ast.getMCType().accept(this);
+    final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
+    if (!typeResult.isPresent()) {
+      Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
+    } else {
+      symbol.setType(typeResult.get());
     }
-  }
-
-  @Override
-  public void endVisit(ASTOCLContextDefinition node) {
-    if (node.isPresentMCType()) {
-      // TODO `this` is now the extType
-    }
-    else if (node.isPresentExpression()) {
-      ASTLetinExpression inExpression = (ASTLetinExpression) node.getExpression();
-
-      if (!handleOCLInExpressions(node.getEnclosingScope(), Collections.singletonList(inExpression),
-        "OCLContextDefinition")) {
-        return;
-      }
-    }
-
-    super.endVisit(node);
-  }
-
-  public FieldSymbol handleParamDeclaration(ASTOCLParamDeclaration param) {
-    final String paramName = param.getName();
-    param.getMCType().accept(typeVisitor.getRealThis());
-    if (!typeVisitor.getTypeCheckResult().isPresentCurrentResult()) {
-      Log.error(
-        "0xA3250 The type of the OCLDeclaration of the OCLMethodDeclaration could not be calculated");
-      return null;
-    }
-    return DefsTypeBasic.field(paramName, typeVisitor.getTypeCheckResult().getCurrentResult());
-  }
-
-  public void registerFields(List<ASTOCLParamDeclaration> params,
-    IOCLExpressionsScope enclosingScope) {
-    List<FieldSymbol> fields = new ArrayList<>();
-    for (ASTOCLParamDeclaration param : params) {
-      final FieldSymbol fieldSymbol = handleParamDeclaration(param);
-      if (fieldSymbol == null) {
-        return;
-      }
-      fields.add(fieldSymbol);
-    }
-    fields.forEach(f -> DefsTypeBasic.add2scope((IOOSymbolsScope) enclosingScope, f));
-  }
-
-  private boolean handleOCLInExpressions(IOCLExpressionsScope scope, List<ASTLetinExpression> exprList,
-    String astType) {
-    for (ASTLetinExpression expr : exprList) {
-      for (ASTOCLVariableDeclaration variable : expr.getOCLVariableDeclarationList()) {
-        List<String> varNameList = new ArrayList<>();
-        varNameList.add(variable.getName());
-
-        variable.getMCType().accept(typeVisitor.getRealThis());
-
-
-        if (typeVisitor.getTypeCheckResult().isPresentCurrentResult()) {
-          final SymTypeExpression last = typeVisitor.getTypeCheckResult().getCurrentResult();
-          varNameList.stream().map(name -> DefsTypeBasic.field(name, last))
-            .forEach(f -> DefsTypeBasic.add2scope((IOOSymbolsScope) scope, f));
-        }
-        else {
-          Log.error("0xA32A0 The type of the Expression of the OCLInExpression of the " + astType
-            + " could not be calculated");
-          return false;
-        }
-      }
-    }
-    return true;
   }
 }

@@ -11,6 +11,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._visitor.OCLDelegatorVisitor;
 import de.monticore.types.check.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.Optional;
 
@@ -37,17 +38,26 @@ public class DeriveSymTypeOfOCLCombineExpressions
 
   private DeriveSymTypeOfOCL deriveSymTypeOfOCL;
 
+  private SynthesizeSymTypeFromMCSimpleGenericTypes synthesizeSymTypeFromMCSimpleGenericTypes;
+
+  private SynthesizeSymTypeFromMCBasicTypes synthesizeSymTypeFromMCBasicTypes;
+
+  private SynthesizeSymTypeFromMCCollectionTypes synthesizeSymTypeFromMCCollectionTypes;
+
   public DeriveSymTypeOfOCLCombineExpressions() {
     setRealThis(this);
     this.typeCheckResult = new TypeCheckResult();
     init();
   }
 
-  @Override
-  public void handle(ASTMCQualifiedType node) {
-    getMCCollectionTypesVisitor().get().handle(node);
-    //final Optional<SymTypeExpression> result = getMCCollectionTypesVisitorAsSynthesizedType().getResult();
-    //result.ifPresent(r -> lastResult.setCurrentResult(r));
+  public Optional<SymTypeExpression> calculateType(ASTMCType type) {
+    type.accept(getRealThis());
+    if (getTypeCheckResult().isPresentCurrentResult()) {
+      return Optional.of(getTypeCheckResult().getCurrentResult());
+    }
+    else {
+      return Optional.empty();
+    }
   }
 
   public Optional<SymTypeExpression> calculateType(ASTOCLCompilationUnit node) {
@@ -126,7 +136,6 @@ public class DeriveSymTypeOfOCLCombineExpressions
     deriveSymTypeOfSetExpressions.setTypeCheckResult(typeCheckResult);
     setSetExpressionsVisitor(deriveSymTypeOfSetExpressions);
 
-
     deriveSymTypeOfOCLExpressions = new DeriveSymTypeOfOCLExpressions();
     deriveSymTypeOfOCLExpressions.setTypeCheckResult(typeCheckResult);
     setOCLExpressionsVisitor(deriveSymTypeOfOCLExpressions);
@@ -142,6 +151,18 @@ public class DeriveSymTypeOfOCLCombineExpressions
     deriveSymTypeOfOCL = new DeriveSymTypeOfOCL();
     deriveSymTypeOfOCL.setTypeCheckResult(typeCheckResult);
     setOCLVisitor(deriveSymTypeOfOCL);
+
+    synthesizeSymTypeFromMCSimpleGenericTypes = new SynthesizeSymTypeFromMCSimpleGenericTypes();
+    synthesizeSymTypeFromMCSimpleGenericTypes.setTypeCheckResult(typeCheckResult);
+    setMCSimpleGenericTypesVisitor(synthesizeSymTypeFromMCSimpleGenericTypes);
+
+    synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes();
+    synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(typeCheckResult);
+    setMCBasicTypesVisitor(synthesizeSymTypeFromMCBasicTypes);
+
+    synthesizeSymTypeFromMCCollectionTypes = new SynthesizeSymTypeFromMCCollectionTypes();
+    synthesizeSymTypeFromMCCollectionTypes.setTypeCheckResult(typeCheckResult);
+    setMCCollectionTypesVisitor(synthesizeSymTypeFromMCCollectionTypes);
   }
 
   public TypeCheckResult getTypeCheckResult(){
