@@ -9,7 +9,8 @@ import de.monticore.ocl.expressions.setexpressions._visitor.SetExpressionsVisito
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 import de.monticore.types.check.*;
-import jdk.internal.jline.internal.Log;
+import de.se_rwth.commons.logging.Log;
+
 
 import java.util.List;
 import java.util.Optional;

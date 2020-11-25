@@ -12,10 +12,10 @@ import de.monticore.ocl.ocl._symboltable.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.types.check.SynthesizeSymTypeFromMCSimpleGenericTypes;
 import de.monticore.types.check.TypeCheck;
+import de.se_rwth.commons.logging.Log;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.compiler.TypeChecker;
-import net.sourceforge.plantuml.Log;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -39,9 +39,9 @@ public class OCLCoCoTest {
     TypeCheck tc = new TypeCheck(new SynthesizeSymTypeFromMCSimpleGenericTypes(), new DeriveSymTypeOfOCLCombineExpressions());
     symbolTableCreator.setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
     symbolTableCreator.createFromAST(ast.get());
-    if(ast.get().getOCLArtifact().getOCLConstraint(0) instanceof ASTOCLInvariant && !((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getParamsList().isEmpty()){
+    /*if(ast.get().getOCLArtifact().getOCLConstraint(0) instanceof ASTOCLInvariant && !((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getParamsList().isEmpty()){
       Log.debug(String.valueOf(tc.symTypeFromAST(((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getParams(0).getMCType())));
-    }
+    }*/
     //OCLCoCoChecker checker = OCLCoCos.createChecker(new TypeChecker(, ClassPool.getDefault()));
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new ExpressionHasNoSideEffect());
