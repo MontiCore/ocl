@@ -38,6 +38,8 @@ public class DeriveSymTypeOfOCLCombineExpressions
 
   private DeriveSymTypeOfOCL deriveSymTypeOfOCL;
 
+  private DeriveSymTypeOfOptionalOperators deriveSymTypeOfOptionalOperators;
+
   private SynthesizeSymTypeFromMCSimpleGenericTypes synthesizeSymTypeFromMCSimpleGenericTypes;
 
   private SynthesizeSymTypeFromMCBasicTypes synthesizeSymTypeFromMCBasicTypes;
@@ -151,6 +153,10 @@ public class DeriveSymTypeOfOCLCombineExpressions
     deriveSymTypeOfOCL = new DeriveSymTypeOfOCL();
     deriveSymTypeOfOCL.setTypeCheckResult(typeCheckResult);
     setOCLVisitor(deriveSymTypeOfOCL);
+
+    deriveSymTypeOfOptionalOperators = new DeriveSymTypeOfOptionalOperators();
+    deriveSymTypeOfOptionalOperators.setTypeCheckResult(typeCheckResult);
+    setOptionalOperatorsVisitor(deriveSymTypeOfOptionalOperators);
 
     synthesizeSymTypeFromMCSimpleGenericTypes = new SynthesizeSymTypeFromMCSimpleGenericTypes();
     synthesizeSymTypeFromMCSimpleGenericTypes.setTypeCheckResult(typeCheckResult);
