@@ -4,13 +4,12 @@ package de.monticore.ocl.types.check;
 
 import com.google.common.collect.Lists;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.ocl.expressions.setexpressions._ast.ASTIntersectionExpression;
-import de.monticore.ocl.expressions.setexpressions._ast.ASTSetInExpression;
-import de.monticore.ocl.expressions.setexpressions._ast.ASTUnionExpression;
+import de.monticore.ocl.expressions.setexpressions._ast.*;
 import de.monticore.ocl.expressions.setexpressions._visitor.SetExpressionsVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 import de.monticore.types.check.*;
+import jdk.internal.jline.internal.Log;
 
 import java.util.List;
 import java.util.Optional;
@@ -110,5 +109,70 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
       }
     }
     return wholeResult;
+  }
+
+  @Override
+  public void endVisit(ASTSetAndExpression node){
+    storeResultOrLogError(Optional.of(acceptThisAndReturnSymTypeExpressionOrLogError(
+            node.getSet(), "0xA0296")), node, "0xA0297");
+  }
+
+  @Override
+  public void endVisit(ASTSetOrExpression node){
+    storeResultOrLogError(Optional.of(acceptThisAndReturnSymTypeExpressionOrLogError(
+            node.getSet(), "0xA0296")), node, "0xA0297");
+  }
+
+  @Override
+  public void traverse(ASTSetComprehension node){
+    SymTypeExpression result = null;
+    if(node.isPresentMCType()){
+      node.getMCType().accept(getRealThis());
+      if(typeCheckResult.isPresentCurrentResult()){
+        if (!typeCheckResult.isType()) {
+          typeCheckResult.reset();
+          Log.error("0xA0298 there must be a type at " + node.getMCType().get_SourcePositionStart());
+        }
+      }
+      else {
+        typeCheckResult.reset();
+        Log.error("0xA0299 could not determine type of " + node.getMCType().getClass().getName());
+      }
+    }
+    result = typeCheckResult.getCurrentResult();
+    typeCheckResult.reset();
+
+    //TODO: check stuff in brackets
+
+    if (result == null) {
+      result = SymTypeExpressionFactory.createTypeConstant("Set");
+    }
+    typeCheckResult.setCurrentResult(result);
+  }
+
+  public void traverse(ASTSetEnumeration node){
+    SymTypeExpression result = null;
+    if(node.isPresentMCType()){
+      node.getMCType().accept(getRealThis());
+      if(typeCheckResult.isPresentCurrentResult()){
+        if (!typeCheckResult.isType()) {
+          typeCheckResult.reset();
+          Log.error("0xA0298 there must be a type at " + node.getMCType().get_SourcePositionStart());
+        }
+      }
+      else {
+        typeCheckResult.reset();
+        Log.error("0xA0299 could not determine type of " + node.getMCType().getClass().getName());
+      }
+    }
+    result = typeCheckResult.getCurrentResult();
+    typeCheckResult.reset();
+
+    //TODO: check stuff in brackets
+
+    if (result == null) {
+      result = SymTypeExpressionFactory.createTypeConstant("Set");
+    }
+    typeCheckResult.setCurrentResult(result);
   }
 }
