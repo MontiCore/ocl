@@ -1,14 +1,17 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.ocl._symboltable;
 
+import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
 import de.monticore.ocl.expressions.oclexpressions._ast.ASTLetinExpression;
 import de.monticore.ocl.expressions.oclexpressions._ast.ASTOCLVariableDeclaration;
 import de.monticore.ocl.expressions.oclexpressions._ast.ASTTypeIfExpression;
+import de.monticore.ocl.expressions.oclexpressions._symboltable.OCLExpressionsSymbolTableCreator;
 import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.expressions.oclexpressions._symboltable.IOCLExpressionsScope;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symboltable.ImportStatement;
@@ -54,6 +57,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
               .setImportsList(new ArrayList<>())
               .build();
       putOnStack(artifactScope);
+      //TODO: add this and super to scope only if it is possible to use them
       addToScope(new VariableSymbol("this"));
       addToScope(new VariableSymbol("super"));
       node.accept(getRealThis());
@@ -98,11 +102,6 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
     super.endVisit(compilationUnit);
   }
 
-  @Override
-  public void visit(ASTTypeIfExpression node){
-    super.visit(node);
-    //node.accept(typeVisitor);
-  }
 
   @Override
   public void visit(ASTOCLParamDeclaration node){
