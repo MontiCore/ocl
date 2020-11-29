@@ -3,10 +3,7 @@ package de.monticore.ocl.ocl.cocos;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
-import de.monticore.ocl.ocl._cocos.ExpressionHasNoSideEffect;
-import de.monticore.ocl.ocl._cocos.IterateExpressionVariableUsageIsCorrect;
-import de.monticore.ocl.ocl._cocos.OCLCoCoChecker;
-import de.monticore.ocl.ocl._cocos.OCLCoCos;
+import de.monticore.ocl.ocl._cocos.*;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl._symboltable.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
@@ -35,9 +32,9 @@ public class OCLCoCoTest {
   public void checkExpressionHasNoSideEffectCoCo(String fileName) throws IOException {
     Optional<ASTOCLCompilationUnit> ast = new OCLParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/example/validGrammarModels/" + fileName).toString());
     setupGlobalScope();
-    OCLSymbolTableCreator symbolTableCreator = new OCLSymbolTableCreator(globalScope);
+    OCLSymbolTableCreatorDelegator symbolTableCreator = new OCLSymbolTableCreatorDelegator(globalScope);
+    ((OCLSymbolTableCreator)symbolTableCreator.getOCLVisitor().get()).setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
     TypeCheck tc = new TypeCheck(new SynthesizeSymTypeFromMCSimpleGenericTypes(), new DeriveSymTypeOfOCLCombineExpressions());
-    symbolTableCreator.setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
     symbolTableCreator.createFromAST(ast.get());
     /*if(ast.get().getOCLArtifact().getOCLConstraint(0) instanceof ASTOCLInvariant && !((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getParamsList().isEmpty()){
       Log.debug(String.valueOf(tc.symTypeFromAST(((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getParams(0).getMCType())));
@@ -45,6 +42,7 @@ public class OCLCoCoTest {
     //OCLCoCoChecker checker = OCLCoCos.createChecker(new TypeChecker(, ClassPool.getDefault()));
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new ExpressionHasNoSideEffect());
+    checker.addCoCo(new ValidTypes(new DeriveSymTypeOfOCLCombineExpressions()));
     checker.checkAll(ast.get());
   }
 
