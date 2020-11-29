@@ -1,5 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.expressions;
+//TODO: package de.monticore.ocl;
 
 /* Alpha-version: This is intended to become a MontiCore stable grammar. */
 
@@ -7,10 +8,39 @@ import de.monticore.expressions.*;
 import de.monticore.types.*;
 import de.monticore.statements.*;
 import de.monticore.symbols.*;
+//TODO: sind die imports notwendig, zB statements?;
 
 /**
- * This grammar defines a expressions typical to UMLs OCL
- */
+ * This grammar defines expressions typical to UMLs OCL
+ *
+ * This includes among others the 
+ *   * typeif, forall and exists quantifiers,
+ *   * set selection with any, iteration,
+ *   * @pre and transitive closure **
+ *
+ * OCL expressions can savely (i.e. as conservative extension) 
+ * be composed if with other forms of expressions  
+ * given in the MontiCore core project.
+ * Especially common expressions should be added.
+ *
+ * This grammar is part of a hierarchy of expressions, namely
+ * * expressions/ExpressionsBasis.mc4
+ * * --  expressions/CommonExpressions.mc4
+ * * --  --  expressions/JavaClassExpressions.mc4
+ * * --  expressions/AssignmentExpressions.mc4
+ * * --  expressions/BitExpressions.mc4
+ * * --  ocl/OCLExpressions.mc4
+ * * --  ocl/SetExpressions.mc4
+ * * --  ocl/OptionalOperators.mc4
+ *
+ * Care: other grammars may include a syntactically similar casting
+ * function. The parser then only takes one alternative (dependend
+ * on the priority (which is here <200>). 
+ *
+ * Note that it may be useful to use the "nokeyword"-keyword statement
+ * for a variety of keywords used here, such as "implies", "forall", "in"
+*/
+
 component grammar OCLExpressions
           extends ExpressionsBasis,
                   MCBasicTypes,
@@ -37,6 +67,8 @@ component grammar OCLExpressions
    */
   OCLVariableDeclaration implements Variable =
     MCType? Name (dim:"[" "]")* ("=" Expression)?;
+
+  /*=================================================================*/
 
   /**
    * ASTTypeIfExpression
@@ -85,12 +117,12 @@ component grammar OCLExpressions
     "else" elseExpression:Expression
     ;
 
+
+  /*=================================================================*/
+
   /**
    * ASTImpliesExpression defines a logical implies operator.
    *   Example: a.startTime >= Time.now() implies a.numberOfBids == 0
-   *
-   *   Note that it may be useful to use the "nokeyword"-keyword when
-   *   using this grammar in order to mark "implies" as temporary
    */
   ImpliesExpression implements Expression <116> =
     left:Expression
@@ -104,6 +136,7 @@ component grammar OCLExpressions
    */
   EquivalentExpression implements Expression <115> =
     left:Expression operator:"<=>" right:Expression;
+
 
   /*=================================================================*/
 
@@ -152,6 +185,9 @@ component grammar OCLExpressions
   AnyExpression implements Expression <100> =
     "any" Expression;
 
+
+  /*=================================================================*/
+
   /**
    * ASTOCLLetinExpression are used to define local vars or methods. The defined
    *   vars and methods are visible in the in-expression body.
@@ -188,6 +224,8 @@ component grammar OCLExpressions
     Name@Variable "=" value:Expression
     "}";
 
+  /*=================================================================*/
+
   /**
    * ASTInDeclaration defines a collection like "int x in y" or "Auction a" as
    *   shortform of "Auction a in Auction.allInstances").
@@ -204,6 +242,8 @@ component grammar OCLExpressions
    *
    * @attribute Name
    *            name of the variable.
+   * 
+   * Variable defines an according symbol.
    */
   InDeclarationVariable implements Variable = Name;
 
@@ -231,6 +271,7 @@ component grammar OCLExpressions
    *       - x@pre (OCLAtPreQualification)
    */
   interface OCLQualification extends Expression;
+//TODO: ist das interface noch notwendig oder kann man das wegexpandieren?
 
   /**
    * ASTOCLArrayQualification is used to access elements of 
@@ -265,4 +306,5 @@ component grammar OCLExpressions
    */
   OCLTransitiveQualification implements OCLQualification <400> =
     Expression transitive:["**"];
+    
 }
