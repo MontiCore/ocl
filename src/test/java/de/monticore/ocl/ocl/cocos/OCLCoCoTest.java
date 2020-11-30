@@ -1,6 +1,5 @@
 package de.monticore.ocl.ocl.cocos;
 
-import com.sun.org.apache.regexp.internal.RE;
 import de.monticore.cd.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
 import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
