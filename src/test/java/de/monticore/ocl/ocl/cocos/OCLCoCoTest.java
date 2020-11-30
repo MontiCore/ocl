@@ -1,5 +1,13 @@
 package de.monticore.ocl.ocl.cocos;
 
+import com.sun.org.apache.regexp.internal.RE;
+import de.monticore.cd.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd.cd4analysis._ast.ASTCDCompilationUnit;
+import de.monticore.cd.cd4analysis._parser.CD4AnalysisParser;
+import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisGlobalScope;
+import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisLanguage;
+import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisSymbolTableCreator;
+import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisSymbolTableCreatorDelegator;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
@@ -13,6 +21,7 @@ import de.se_rwth.commons.logging.Log;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.compiler.TypeChecker;
+import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -36,10 +45,6 @@ public class OCLCoCoTest {
     ((OCLSymbolTableCreator)symbolTableCreator.getOCLVisitor().get()).setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
     TypeCheck tc = new TypeCheck(new SynthesizeSymTypeFromMCSimpleGenericTypes(), new DeriveSymTypeOfOCLCombineExpressions());
     symbolTableCreator.createFromAST(ast.get());
-    /*if(ast.get().getOCLArtifact().getOCLConstraint(0) instanceof ASTOCLInvariant && !((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getParamsList().isEmpty()){
-      Log.debug(String.valueOf(tc.symTypeFromAST(((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getParams(0).getMCType())));
-    }*/
-    //OCLCoCoChecker checker = OCLCoCos.createChecker(new TypeChecker(, ClassPool.getDefault()));
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new ExpressionHasNoSideEffect());
     checker.addCoCo(new ValidTypes(new DeriveSymTypeOfOCLCombineExpressions()));
@@ -58,5 +63,4 @@ public class OCLCoCoTest {
             .setModelFileExtension("ocl")
             .build();
   }
-
 }

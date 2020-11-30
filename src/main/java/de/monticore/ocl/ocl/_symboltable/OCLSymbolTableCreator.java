@@ -1,14 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.ocl._symboltable;
 
-import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
-import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
-import de.monticore.ocl.expressions.oclexpressions._ast.ASTLetinExpression;
-import de.monticore.ocl.expressions.oclexpressions._ast.ASTOCLVariableDeclaration;
-import de.monticore.ocl.expressions.oclexpressions._ast.ASTTypeIfExpression;
-import de.monticore.ocl.expressions.oclexpressions._symboltable.OCLExpressionsSymbolTableCreator;
+
 import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
-import de.monticore.ocl.expressions.oclexpressions._symboltable.IOCLExpressionsScope;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;

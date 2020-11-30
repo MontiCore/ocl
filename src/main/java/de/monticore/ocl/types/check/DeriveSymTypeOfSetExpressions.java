@@ -4,8 +4,8 @@ package de.monticore.ocl.types.check;
 
 import com.google.common.collect.Lists;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.ocl.expressions.setexpressions._ast.*;
-import de.monticore.ocl.expressions.setexpressions._visitor.SetExpressionsVisitor;
+import de.monticore.ocl.setexpressions._ast.*;
+import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 import de.monticore.types.check.*;

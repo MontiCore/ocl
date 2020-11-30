@@ -1,9 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package de.monticore.ocl.expressions.prettyprint;
+package de.monticore.ocl.ocl.prettyprint;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.ocl.expressions.oclexpressions._ast.ASTOCLVariableDeclaration;
+import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLVisitor;
 import de.monticore.prettyprint.CommentPrettyPrinter;

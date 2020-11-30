@@ -5,7 +5,7 @@
  *  * can be found under https://github.com/MontiCore/monticore.
  */
 
-package de.monticore.ocl.expressions.prettyprint;
+package de.monticore.ocl.ocl.prettyprint;
 
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLArtifact;

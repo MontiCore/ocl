@@ -2,8 +2,8 @@ package de.monticore.ocl.types.check;
 
 import de.monticore.expressions.commonexpressions._ast.ASTInfixExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.ocl.expressions.optionaloperators._ast.*;
-import de.monticore.ocl.expressions.optionaloperators._visitor.OptionalOperatorsVisitor;
+import de.monticore.ocl.optionaloperators._ast.*;
+import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsVisitor;
 import de.monticore.types.check.DeriveSymTypeOfExpression;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;

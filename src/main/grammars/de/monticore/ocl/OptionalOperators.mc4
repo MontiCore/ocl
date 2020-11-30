@@ -1,6 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.ocl.expressions;
-//TODO: package de.monticore.ocl;
+package de.monticore.ocl;
 
 /* Alpha-version: This is intended to become a MontiCore stable grammar. */
 
@@ -30,8 +29,7 @@ import de.monticore.expressions.*;
 */
 
 component grammar OptionalOperators
-          extends CommonExpressions
-//TODO: Reicht hier nicht auch ExpressionBasis? --> sonst bitte Dokumentation umstellen
+          extends CommonExpressions //InfixExpression
 {
   /**
    * `val ?: 0W`     equals to   `val.isPresent ? val.get : 0W`

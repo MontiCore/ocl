@@ -7,8 +7,8 @@ import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
-import de.monticore.ocl.expressions.oclexpressions._ast.*;
-import de.monticore.ocl.expressions.setexpressions._ast.*;
+import de.monticore.ocl.oclexpressions._ast.*;
+import de.monticore.ocl.setexpressions._ast.*;
 
 public class SideEffectFreeExpressions {
   public static boolean sideEffectFree(ASTExpression e){

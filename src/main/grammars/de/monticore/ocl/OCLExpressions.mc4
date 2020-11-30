@@ -1,14 +1,11 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.ocl.expressions;
-//TODO: package de.monticore.ocl;
+package de.monticore.ocl;
 
 /* Alpha-version: This is intended to become a MontiCore stable grammar. */
 
 import de.monticore.expressions.*;
 import de.monticore.types.*;
-import de.monticore.statements.*;
 import de.monticore.symbols.*;
-//TODO: sind die imports notwendig, zB statements?;
 
 /**
  * This grammar defines expressions typical to UMLs OCL

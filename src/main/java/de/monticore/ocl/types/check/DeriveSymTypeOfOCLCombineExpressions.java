@@ -5,7 +5,7 @@ package de.monticore.ocl.types.check;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
 import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
-import de.monticore.ocl.expressions.oclexpressions._ast.ASTOCLExpressionsNode;
+import de.monticore.ocl.oclexpressions._ast.ASTOCLExpressionsNode;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._visitor.OCLDelegatorVisitor;

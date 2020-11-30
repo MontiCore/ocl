@@ -1,8 +1,8 @@
 package de.monticore.ocl.types.check;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.ocl.expressions.oclexpressions._ast.*;
-import de.monticore.ocl.expressions.oclexpressions._visitor.OCLExpressionsVisitor;
+import de.monticore.ocl.oclexpressions._ast.*;
+import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor;
 import de.monticore.types.check.*;
 import de.se_rwth.commons.logging.Log;
 

@@ -1,14 +1,12 @@
 // (c) https://github.com/MontiCore/monticore
-package de.monticore.ocl.expressions.oclexpressions.prettyprint;
+package de.monticore.ocl.oclexpressions.prettyprint;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.expressions.oclexpressions._ast.ASTOCLQualifiedPrimary;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
-import de.monticore.ocl.expressions.oclexpressions._visitor.OCLExpressionsVisitor;
-import de.monticore.ocl.expressions.oclexpressions._ast.*;
+import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor;
+import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.statements.mcvardeclarationstatements._ast.ASTLocalVariableDeclaration;
 import de.monticore.symbols.basicsymbols._ast.ASTVariable;
 
 import java.util.ArrayList;
