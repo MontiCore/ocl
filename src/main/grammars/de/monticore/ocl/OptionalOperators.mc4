@@ -14,17 +14,16 @@ import de.monticore.expressions.*;
  * Optional expressions can savely (i.e. as conservative extension) 
  * be composed if with other forms of expressions  
  * given in the MontiCore core project.
- * Especially common expressions should be added.
  *
  * This grammar is part of a hierarchy of expressions, namely
  * * expressions/ExpressionsBasis.mc4
  * * --  expressions/CommonExpressions.mc4
  * * --  --  expressions/JavaClassExpressions.mc4
+ * * --  --  ocl/OptionalOperators.mc4
  * * --  expressions/AssignmentExpressions.mc4
  * * --  expressions/BitExpressions.mc4
  * * --  ocl/OCLExpressions.mc4
  * * --  ocl/SetExpressions.mc4
- * * --  ocl/OptionalOperators.mc4
  *
 */
 

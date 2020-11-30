@@ -45,7 +45,13 @@ public class SideEffectFreeExpressions {
     if(e instanceof ASTInstanceOfExpression){
       return true;
     }
-    if(e instanceof ASTOCLQualification){
+    if(e instanceof ASTOCLArrayQualification){
+      return true;
+    }
+    if(e instanceof ASTOCLTransitiveQualification){
+      return true;
+    }
+    if(e instanceof ASTOCLAtPreQualification){
       return true;
     }
     if(e instanceof ASTSetInExpression){

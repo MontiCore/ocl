@@ -259,16 +259,7 @@ component grammar OCLExpressions
   InstanceOfExpression implements Expression <150> =
     Expression "instanceof" MCType;
 
-  /**
-   * ASTOCLQualification defines qualification postfixes of a qualified
-   *   primary. A qualification is one of the three kinds:
-   *       - x[0] (OCLArrayQualification)
-   *       - x(y) (CommonExpressions' CallExpression)
-   *       - x**  (OCLTransitiveQualification)
-   *       - x@pre (OCLAtPreQualification)
-   */
-  interface OCLQualification extends Expression;
-//TODO: ist das interface noch notwendig oder kann man das wegexpandieren?
+  /*=================================================================*/
 
   /**
    * ASTOCLArrayQualification is used to access elements of 
@@ -279,7 +270,7 @@ component grammar OCLExpressions
    *   @attribute arguments
    *              The expression defining which element to access
    */
-  OCLArrayQualification implements OCLQualification =
+  OCLArrayQualification implements Expression <250> =
     Expression ("[" arguments:Expression "]")+;
 
   /**
@@ -287,7 +278,7 @@ component grammar OCLExpressions
    *   Value of the expression in the precondition
    *   Example: post: messageList == messageList@pre.add(m)
    */
-  OCLAtPreQualification implements OCLQualification <400> =
+  OCLAtPreQualification implements Expression <400> =
     Expression atpre:["@pre"];
 
   /**
@@ -301,7 +292,7 @@ component grammar OCLExpressions
    *   closure is identical to the initial association.
    *   Example: this.clique = this.friend**
    */
-  OCLTransitiveQualification implements OCLQualification <400> =
+  OCLTransitiveQualification implements Expression <400> =
     Expression transitive:["**"];
     
 }
