@@ -26,9 +26,9 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   @Override
   public void handle(ASTInDeclaration node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
-    if (node.isPresentMCType())
+    if (node.isPresentMCType()) {
       node.getMCType().accept(getRealThis());
-
+    }
     List<ASTInDeclarationVariable> variables = node.getInDeclarationVariableList();
     List<String> variableNames = new ArrayList<>();
     for (ASTVariable var : variables){
@@ -138,7 +138,9 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     getPrinter().print("if ");
     node.getCondition().accept(getRealThis());
+    getPrinter().print(" then ");
     node.getThenExpression().accept(getRealThis());
+    getPrinter().print(" else ");
     node.getElseExpression().accept(getRealThis());
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
@@ -151,6 +153,19 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
     getPrinter().print(")");
     node.getExpression().accept(getRealThis());
     CommentPrettyPrinter.printPostComments(node, getPrinter());
+  }
+
+  @Override
+  public void handle(ASTOCLArrayQualification node){
+    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    node.getExpression().accept(getRealThis());
+    for (int i = 0; i < node.getArgumentsList().size(); i++){
+      getPrinter().print("[");
+      node.getArguments(i).accept(getRealThis());
+      getPrinter().print("]");
+    }
+    CommentPrettyPrinter.printPostComments(node, getPrinter());
+
   }
 
   @Override
@@ -175,6 +190,30 @@ public class OCLExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
     node.getRight().accept(getRealThis());
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
+
+  @Override
+  public void handle(ASTTypeIfExpression node){
+    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    getPrinter().print("typeif ");
+    getPrinter().print(node.getName());
+    getPrinter().print(" instanceof ");
+    node.getMCType().accept(getRealThis());
+    getPrinter().print(" then ");
+    node.getThenExpression().accept(getRealThis());
+    getPrinter().print(" else ");
+    node.getElseExpression().accept(getRealThis());
+    CommentPrettyPrinter.printPostComments(node, getPrinter());
+  }
+
+  @Override
+  public void handle(ASTInstanceOfExpression node) {
+    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    node.getExpression().accept(getRealThis());
+    getPrinter().print(" instanceof ");
+    node.getMCType().accept(getRealThis());
+    CommentPrettyPrinter.printPostComments(node, getPrinter());
+  }
+
 
   public IndentPrinter getPrinter() {
     return this.printer;
