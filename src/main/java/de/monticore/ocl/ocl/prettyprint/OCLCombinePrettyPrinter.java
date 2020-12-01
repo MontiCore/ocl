@@ -3,15 +3,20 @@
 package de.monticore.ocl.ocl.prettyprint;
 
 import de.monticore.MCCommonLiteralsPrettyPrinter;
+import de.monticore.expressions.prettyprint.BitExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
 import de.monticore.ocl.oclexpressions.prettyprint.OCLExpressionsPrettyPrinter;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._visitor.OCLDelegatorVisitor;
+import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsVisitor2;
+import de.monticore.ocl.setexpressions.prettyprint.SetExpressionsPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.prettyprint.UMLStereotypePrettyPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
+import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
 
 public class OCLCombinePrettyPrinter
     extends OCLDelegatorVisitor {
@@ -25,10 +30,15 @@ public class OCLCombinePrettyPrinter
     setMCCommonLiteralsVisitor(new MCCommonLiteralsPrettyPrinter(printer));
     setMCBasicTypesVisitor(new MCBasicTypesPrettyPrinter(printer));
     setMCCollectionTypesVisitor(new MCCollectionTypesPrettyPrinter(printer));
+    setMCSimpleGenericTypesVisitor(new MCSimpleGenericTypesPrettyPrinter(printer));
     setExpressionsBasisVisitor(new ExpressionsBasisPrettyPrinter(printer));
     setCommonExpressionsVisitor(new CommonExpressionsPrettyPrinter(printer));
+    setBitExpressionsVisitor(new BitExpressionsPrettyPrinter(printer));
     setOCLExpressionsVisitor(new OCLExpressionsPrettyPrinter(printer));
+    setSetExpressionsVisitor(new SetExpressionsPrettyPrinter(printer));
+    //setOptionalOperatorsVisitor(new OptionalOperatorsVisitor(printer));
     setOCLVisitor(new OCLPrettyPrinter(printer));
+    setUMLStereotypeVisitor(new UMLStereotypePrettyPrinter(printer));
   }
 
   public IndentPrinter getPrinter() {

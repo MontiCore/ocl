@@ -8,6 +8,7 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLVisitor;
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 
@@ -79,7 +80,10 @@ public class OCLPrettyPrinter implements OCLVisitor {
   public void handle(ASTOCLOperationConstraint node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
 
-    // TODO print stereotypes
+    for(ASTStereotype stereotype : node.getStereotypeList()){
+      stereotype.accept(getRealThis());
+    }
+
     printer.print("context ");
     node.getOCLOperationSignature().accept(getRealThis());
     printer.println();
@@ -122,6 +126,10 @@ public class OCLPrettyPrinter implements OCLVisitor {
   @Override
   public void handle(ASTOCLInvariant node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
+
+    for(ASTStereotype stereotype : node.getStereotypeList()){
+      stereotype.accept(getRealThis());
+    }
 
     if (node.isContext()) {
       printer.println("context");
