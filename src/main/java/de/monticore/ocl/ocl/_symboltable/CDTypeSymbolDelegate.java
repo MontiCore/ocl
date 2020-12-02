@@ -7,8 +7,8 @@
 
 package de.monticore.ocl.ocl._symboltable;
 
-import de.monticore.cd.cd4analysis._symboltable.CD4AnalysisGlobalScope;
-import de.monticore.cd.cd4analysis._symboltable.CDTypeSymbol;
+import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
+import de.monticore.cdbasis._symboltable.CDTypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.ITypeSymbolResolver;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;

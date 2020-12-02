@@ -130,7 +130,13 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
     if(node.isPresentMCType()){
       node.getMCType().accept(getRealThis());
       if(typeCheckResult.isPresentCurrentResult()){
-        if (!typeCheckResult.isType()) {
+        boolean correct = false;
+        for (String s : collections) {
+          if (typeCheckResult.getCurrentResult().getTypeInfo().getName().equals(s)) {
+            correct = true;
+          }
+        }
+        if (!correct) {
           typeCheckResult.reset();
           Log.error("0xA0298 there must be a type at " + node.getMCType().get_SourcePositionStart());
         }
@@ -156,7 +162,13 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
     if(node.isPresentMCType()){
       node.getMCType().accept(getRealThis());
       if(typeCheckResult.isPresentCurrentResult()){
-        if (!typeCheckResult.isType()) {
+        boolean correct = false;
+        for (String s : collections) {
+          if (typeCheckResult.getCurrentResult().getTypeInfo().getName().equals(s)) {
+            correct = true;
+          }
+        }
+        if (!correct) {
           typeCheckResult.reset();
           Log.error("0xA0298 there must be a type at " + node.getMCType().get_SourcePositionStart());
         }

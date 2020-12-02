@@ -7,7 +7,7 @@
 
 package de.monticore.ocl.ocl._symboltable;
 
-import de.monticore.cd.cd4analysis._symboltable.ICD4AnalysisScope;
+import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
 
 import java.util.List;
 

@@ -112,7 +112,6 @@ public class OCLPrettyPrinter implements OCLVisitor {
 
     if (!node.getPostConditionsList().isEmpty()) {
       printer.print("post: ");
-      printer.print(": ");
       for (ASTExpression e : node.getPostConditionsList()){
         e.accept(getRealThis());
         printer.print("; ");
