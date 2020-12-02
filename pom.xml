@@ -22,7 +22,7 @@
         <cd4analysis.version>6.5.0-SNAPSHOT</cd4analysis.version>
 
         <!-- .. Libraries .................................................. -->
-        <guava.version>18.0</guava.version>
+        <guava.version>25.1-jre</guava.version>
         <junit.jupiter.version>5.5.2</junit.jupiter.version>
         <junit.vintage.version>${junit.jupiter.version}</junit.vintage.version>
         <junit.version>4.12</junit.version>
