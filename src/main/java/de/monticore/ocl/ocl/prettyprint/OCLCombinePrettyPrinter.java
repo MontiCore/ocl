@@ -10,7 +10,7 @@ import de.monticore.ocl.oclexpressions.prettyprint.OCLExpressionsPrettyPrinter;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._visitor.OCLDelegatorVisitor;
-import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsVisitor2;
+import de.monticore.ocl.optionaloperators.prettyprint.OptionalOperatorsPrettyPrinter;
 import de.monticore.ocl.setexpressions.prettyprint.SetExpressionsPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.UMLStereotypePrettyPrinter;
@@ -36,7 +36,7 @@ public class OCLCombinePrettyPrinter
     setBitExpressionsVisitor(new BitExpressionsPrettyPrinter(printer));
     setOCLExpressionsVisitor(new OCLExpressionsPrettyPrinter(printer));
     setSetExpressionsVisitor(new SetExpressionsPrettyPrinter(printer));
-    //setOptionalOperatorsVisitor(new OptionalOperatorsVisitor(printer));
+    setOptionalOperatorsVisitor(new OptionalOperatorsPrettyPrinter(printer));
     setOCLVisitor(new OCLPrettyPrinter(printer));
     setUMLStereotypeVisitor(new UMLStereotypePrettyPrinter(printer));
   }
