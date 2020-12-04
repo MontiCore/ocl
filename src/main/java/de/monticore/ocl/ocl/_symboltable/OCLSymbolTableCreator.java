@@ -5,17 +5,10 @@ package de.monticore.ocl.ocl._symboltable;
 import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
 import de.monticore.symboltable.ImportStatement;
-import de.monticore.types.check.DefsTypeBasic;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.SynthesizeSymTypeFromMCSimpleGenericTypes;
-import de.monticore.types.check.TypeCheck;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
@@ -25,8 +18,6 @@ import java.util.stream.Collectors;
 public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
   DeriveSymTypeOfOCLCombineExpressions typeVisitor;
-
-  SynthesizeSymTypeFromMCSimpleGenericTypes typeChecker = new SynthesizeSymTypeFromMCSimpleGenericTypes();
 
   public OCLSymbolTableCreator(){super(); }
 
@@ -51,9 +42,6 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
               .setImportsList(new ArrayList<>())
               .build();
       putOnStack(artifactScope);
-      //TODO: add this and super to scope only if it is possible to use them
-      addToScope(new VariableSymbol("this"));
-      addToScope(new VariableSymbol("super"));
       node.accept(getRealThis());
       return artifactScope;
     }
@@ -117,6 +105,47 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
     } else {
       symbol.setType(typeResult.get());
       symbol.setIsReadOnly(false);
+    }
+  }
+
+  @Override
+  public void visit (ASTOCLInvariant node){
+    if (getCurrentScope().isPresent()) {
+      node.setEnclosingScope(getCurrentScope().get());
+    }
+    else {
+      Log.error("Could not set enclosing scope of ASTNode \"" + node
+              + "\", because no scope is set yet!");
+    }
+    //check whether symbols for "this" and "super" should be introduced
+    if (!node.isEmptyOCLContextDefinitions()){
+      for (ASTOCLContextDefinition cd : node.getOCLContextDefinitionList()){
+        if (!cd.isPresentExpression()){
+          //TODO: Only create symbols if cd is MCType?, use supertype for super instead of type?
+          ASTMCType type;
+          if (cd.isPresentOCLParamDeclaration()){
+            type = cd.getOCLParamDeclaration().getMCType();
+          }
+          else {
+            type = cd.getMCType();
+          }
+          type.setEnclosingScope(getCurrentScope().get());
+          final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(type);
+          if (!typeResult.isPresent()) {
+            Log.error(String.format("The type (%s) could not be calculated", type));
+          } else {
+            //create VariableSymbols for "this" and "super"
+            VariableSymbol t = new VariableSymbol("this");
+            t.setType(typeResult.get());
+            t.setIsReadOnly(false);
+            addToScope(t);
+            VariableSymbol s = new VariableSymbol("super");
+            t.setType(typeResult.get());
+            t.setIsReadOnly(false);
+            addToScope(t);
+          }
+        }
+      }
     }
   }
 }
