@@ -4,6 +4,7 @@ package example.CDs;
 classdiagram AuctionCD {
 
   public class AllData {
+    Auction auction;
   }
 
   public class Name {}
@@ -32,7 +33,7 @@ classdiagram AuctionCD {
 
 
   public class Person {
-    boolean lessThan(Person that);
+    //boolean lessThan(Person that);
   }
 
   public class Student extends Person {

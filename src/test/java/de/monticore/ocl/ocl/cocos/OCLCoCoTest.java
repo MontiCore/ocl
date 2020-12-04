@@ -5,7 +5,7 @@ import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCreatorDelegator;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
+import de.monticore.cd4analysis.trafo.CD4AnalysisTrafo4DefaultsDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -13,9 +13,12 @@ import de.monticore.ocl.ocl._cocos.*;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl._symboltable.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SynthesizeSymTypeFromMCSimpleGenericTypes;
 import de.monticore.types.check.TypeCheck;
 import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,16 +60,6 @@ public class OCLCoCoTest {
             .setModelFileExtension("ocl")
             .build();
 
-    /*TypeSymbolSurrogate allData = new TypeSymbolSurrogate("AllData");
-    OCLScope test = new OCLScope();
-    allData.setSpannedScope(test);
-    FieldSymbolSurrogate auction = new FieldSymbolSurrogate("auction");
-    auction.setEnclosingScope(test);
-    test.add(auction);
-
-
-
-    globalScope.add(allData);*/
   }
 
   public void initSymbolTable(String modelPath) throws IOException {
@@ -89,7 +82,9 @@ public class OCLCoCoTest {
 
     CD4AnalysisSymbolTableCreatorDelegator symbolTableCreatorDelegator = new CD4AnalysisSymbolTableCreatorDelegator(cd4AGlobalScope);
     Optional<ASTCDCompilationUnit> ast = new CD4AnalysisParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/example/CDs/AuctionCD.cd").toString());
-    ICD4AnalysisArtifactScope artifactScope = symbolTableCreatorDelegator.createFromAST(ast.get());
+    CD4AnalysisTrafo4DefaultsDelegator a = new CD4AnalysisTrafo4DefaultsDelegator();
+    a.transform(ast.get());
+    symbolTableCreatorDelegator.createFromAST(ast.get());
 
     CDTypeSymbolDelegate cdTypeSymbolDelegate = new CDTypeSymbolDelegate(cd4AGlobalScope);
 
@@ -97,7 +92,7 @@ public class OCLCoCoTest {
     globalScope.addAdaptedTypeSymbolResolver(cdTypeSymbolDelegate);
   }
 
-  //@Test
+  @Test
   public void testSymbolTable() throws IOException {
     Optional<ASTOCLCompilationUnit> ast = new OCLParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/example/validGrammarModels/let4.ocl").toString());
     initSymbolTable(RELATIVE_MODEL_PATH + "/example/CDs");

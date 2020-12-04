@@ -116,6 +116,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
       Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
     } else {
       symbol.setType(typeResult.get());
+      symbol.setIsReadOnly(false);
     }
   }
 }
