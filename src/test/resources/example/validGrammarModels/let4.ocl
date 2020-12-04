@@ -2,7 +2,7 @@
 ocl let4 {
   inv:
     5 == (let
-      int x = 2 + 3
+      x = 2 + 3
       in
       x);
 }

@@ -35,7 +35,6 @@ class OCLParserTest {
     return optAst;
   }
 
-  //Todo: test all models
   @ParameterizedTest
   @ValueSource(strings = {
     "example/cocos/valid/validConstructorName.ocl",
@@ -48,7 +47,6 @@ class OCLParserTest {
     "example/cocos/valid/validPostStatementName.ocl",
     "example/cocos/valid/validPrePost.ocl",
     "example/cocos/valid/validPreStatementName.ocl",
-    //"example/cocos/valid/validTypes.ocl",
     "example/cocos/valid/validVariableName.ocl"})
   public void shouldParseValidInput(String fileName) {
     this.parse(Paths.get(RELATIVE_MODEL_PATH, fileName).toString(), false);

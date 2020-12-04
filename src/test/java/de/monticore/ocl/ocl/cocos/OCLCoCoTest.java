@@ -94,7 +94,7 @@ public class OCLCoCoTest {
 
   @Test
   public void testSymbolTable() throws IOException {
-    Optional<ASTOCLCompilationUnit> ast = new OCLParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/example/validGrammarModels/let4.ocl").toString());
+    Optional<ASTOCLCompilationUnit> ast = new OCLParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/example/validGrammarModels/comprehension3.ocl").toString());
     initSymbolTable(RELATIVE_MODEL_PATH + "/example/CDs");
     OCLSymbolTableCreatorDelegator symbolTableCreator = new OCLSymbolTableCreatorDelegator(globalScope);
     ((OCLSymbolTableCreator)symbolTableCreator.getOCLVisitor().get()).setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
