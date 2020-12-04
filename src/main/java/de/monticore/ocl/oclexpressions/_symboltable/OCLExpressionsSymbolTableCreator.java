@@ -64,6 +64,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
       }
     } else {
       if(ast.isPresentExpression()){
+        ast.getExpression().accept(getRealThis());
         ast.getExpression().accept(typeVisitor);
         if(typeVisitor.getTypeCheckResult().isPresentCurrentResult()){
           symbol.setType(typeVisitor.getTypeCheckResult().getCurrentResult());
@@ -112,6 +113,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
       }
     } else {
       if(ast.isPresentExpression()){
+        ast.getExpression().accept(getRealThis());
         ast.getExpression().accept(typeVisitor);
         if(typeVisitor.getTypeCheckResult().isPresentCurrentResult()){
           symbol.setType(typeVisitor.getTypeCheckResult().getCurrentResult());
