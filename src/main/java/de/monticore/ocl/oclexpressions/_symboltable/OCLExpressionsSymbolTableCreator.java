@@ -4,6 +4,7 @@ import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclarationVariable;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
@@ -53,14 +54,26 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
 
   @Override
   public void initialize_OCLVariableDeclaration(VariableSymbol symbol, ASTOCLVariableDeclaration ast) {
-    ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
-    ast.getMCType().accept(this);
-    final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
-    if (!typeResult.isPresent()) {
-      Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
+    symbol.setIsReadOnly(false);
+    if(ast.isPresentMCType()) {
+      ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
+      ast.getMCType().accept(getRealThis());
+      final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
+      if (!typeResult.isPresent()) {
+        Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
+      } else {
+        symbol.setType(typeResult.get());
+      }
     } else {
-      symbol.setType(typeResult.get());
-      symbol.setIsReadOnly(false);
+      if(ast.isPresentExpression()){
+        ast.getExpression().accept(typeVisitor);
+        if(typeVisitor.getTypeCheckResult().isPresentCurrentResult()){
+          symbol.setType(typeVisitor.getTypeCheckResult().getCurrentResult());
+        }
+      }
+      else {
+        //TODO: no MCType and no "=" sign
+      }
     }
   }
 
@@ -88,16 +101,24 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
 
   public void initialize_InDeclarationVariable(VariableSymbol symbol, ASTInDeclaration ast) {
     symbol.setIsReadOnly(false);
-    if(!ast.isPresentMCType()){
-      symbol.setType(SymTypeExpressionFactory.createTypeOfNull());
-    } else {
+    if(ast.isPresentMCType()){
       ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
-      ast.getMCType().accept(this);
+      ast.getMCType().accept(getRealThis());
       final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
       if (!typeResult.isPresent()) {
         Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), symbol.getName()));
       } else {
         symbol.setType(typeResult.get());
+      }
+    } else {
+      if(ast.isPresentExpression()){
+        ast.getExpression().accept(typeVisitor);
+        if(typeVisitor.getTypeCheckResult().isPresentCurrentResult()){
+          symbol.setType(typeVisitor.getTypeCheckResult().getCurrentResult());
+        }
+      }
+      else {
+        //TODO: no MCType and no "=" sign
       }
     }
   }
