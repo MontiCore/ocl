@@ -8,5 +8,5 @@ ocl container1 {
       Collection<Set<List<List> > > x = {};
       Set<Collection<Set<List<List> > > > x = {}
     in
-      si != lsp;
+      si ?!= lsp;
 }
