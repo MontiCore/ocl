@@ -105,7 +105,7 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
         } else if(compatible(rightGeneric.getArgument(0), leftGeneric.getArgument(0))) {
           TypeSymbol loader = new TypeSymbolSurrogate(right);
           loader.setEnclosingScope(getScope(expr.getEnclosingScope()));
-          wholeResult = Optional.of(SymTypeExpressionFactory.createGenerics(loader,rightGeneric.getArgument(0).deepClone()));
+          wholeResult = Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
         }
       }
     }

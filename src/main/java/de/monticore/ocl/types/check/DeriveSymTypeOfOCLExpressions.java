@@ -333,8 +333,6 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
       typeCheckResult.setCurrentResult(initResult);
     }
   }
-  
-  //TODO: InDeclaration, InDeclarationVariable
 
   @Override
   public void traverse(ASTInstanceOfExpression node) {
