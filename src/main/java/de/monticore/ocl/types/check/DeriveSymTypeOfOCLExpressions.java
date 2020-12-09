@@ -1,6 +1,7 @@
 package de.monticore.ocl.types.check;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.ocl.ocl._symboltable.OCLScope;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor;
 import de.monticore.types.check.*;
@@ -31,6 +32,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     SymTypeExpression exprResult = null;
     SymTypeExpression typeResult = null;
 
+    //check type of Expression
     if (node.getExpression() != null) {
       node.getExpression().accept(getRealThis());
     }
@@ -43,6 +45,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
       return;
     }
 
+    //check type of type to cast expression to
     if (node.getMCType() != null) {
       node.getMCType().accept(getRealThis());
     }
@@ -55,12 +58,14 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
       return;
     }
 
+    //check whether typecast is possible
     if (!TypeCheck.compatible(typeResult, exprResult)) {
       typeCheckResult.reset();
       Log.error("0xA3082 The type of the expression of the OCLTypeCastExpression can't be cast to given type");
       return;
     }
     else {
+      //set result to typecasted expression
       typeCheckResult.setCurrentResult(typeResult.deepClone());
     }
   }
@@ -70,6 +75,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     SymTypeExpression thenResult = null;
     SymTypeExpression elseResult = null;
 
+    //resolve MCType to SymTypeExpression
     if (node.getMCType() != null) {
       node.getMCType().accept(getRealThis());
     }
@@ -380,10 +386,18 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
       }
       if (!typeCheckResult.isPresentCurrentResult()) {
         Log.error("0xA3001 The type of a expression in the arguments of the OCLArrayQualification could not be calculated");
+        typeCheckResult.reset();
+        return;
+      }
+      if(!isIntegralType(typeCheckResult.getCurrentResult())){
+        Log.error("0xA3001 The type of one of the arguments of the OCLArrayQualification is not integral");
+        typeCheckResult.reset();
         return;
       }
       typeCheckResult.reset();
     }
+    //TODO: getCorrectResultArrayExpression
+    exprResult.getTypeInfo().setEnclosingScope(new OCLScope());
     typeCheckResult.setCurrentResult(exprResult);
   }
 

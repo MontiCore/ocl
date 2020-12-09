@@ -4,11 +4,13 @@ package de.monticore.ocl.types.check;
 
 import com.google.common.collect.Lists;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.ocl.ocl._auxiliary.MCCollectionTypesMillForOCL;
 import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 import de.monticore.types.check.*;
+import de.monticore.types.mccollectiontypes.MCCollectionTypesMill;
 import de.se_rwth.commons.logging.Log;
 
 
@@ -146,13 +148,15 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
         Log.error("0xA0299 could not determine type of " + node.getMCType().getClass().getName());
       }
     }
-    result = typeCheckResult.getCurrentResult();
-    typeCheckResult.reset();
+    if(typeCheckResult.isPresentCurrentResult()){
+      result = typeCheckResult.getCurrentResult();
+      typeCheckResult.reset();
+    }
 
     //TODO: check stuff in brackets
 
     if (result == null) {
-      result = SymTypeExpressionFactory.createTypeConstant("Set");
+      result = SymTypeExpressionFactory.createGenerics("Set", getScope(node.getEnclosingScope()));
     }
     typeCheckResult.setCurrentResult(result);
   }
@@ -178,13 +182,15 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
         Log.error("0xA0299 could not determine type of " + node.getMCType().getClass().getName());
       }
     }
-    result = typeCheckResult.getCurrentResult();
-    typeCheckResult.reset();
+    if(typeCheckResult.isPresentCurrentResult()){
+      result = typeCheckResult.getCurrentResult();
+      typeCheckResult.reset();
+    }
 
     //TODO: check stuff in brackets
 
     if (result == null) {
-      result = SymTypeExpressionFactory.createTypeConstant("Set");
+      result = SymTypeExpressionFactory.createGenerics("Set", getScope(node.getEnclosingScope()));
     }
     typeCheckResult.setCurrentResult(result);
   }
