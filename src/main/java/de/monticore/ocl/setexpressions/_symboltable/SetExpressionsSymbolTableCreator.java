@@ -1,3 +1,5 @@
+/* (c) https://github.com/MontiCore/monticore */
+
 package de.monticore.ocl.setexpressions._symboltable;
 
 import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
@@ -71,6 +73,8 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
       }
       else {
         //TODO: no MCType and no "=" sign
+        //maybe use 'Object' type that all other types inherit from
+        //exists already?
       }
     }
   }
@@ -94,11 +98,21 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
       final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
       if (!typeResult.isPresent()) {
         Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
-      } else {
+      }
+      else {
         symbol.setType(typeResult.get());
       }
     } else {
-      //TODO: calculate type of elements in the set(ast.getExpression())
+      //TODO: calculate type of elements in the set(ast.getExpression()) (currently just type of set)
+      ast.getExpression().setEnclosingScope(ast.getEnclosingScope());
+      ast.getExpression().accept(getRealThis());
+      final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getExpression());
+      if(!typeResult.isPresent()){
+        Log.error(String.format("The type of the object (%s) could not be calculated", ast.getName()));
+      }
+      else {
+        symbol.setType(typeResult.get());
+      }
     }
   }
 }

@@ -1,13 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.types.check;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.ocl.ocl._symboltable.OCLScope;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor;
 import de.monticore.types.check.*;
 import de.se_rwth.commons.logging.Log;
-
-import java.util.Optional;
 
 public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression implements OCLExpressionsVisitor {
 
@@ -397,7 +395,6 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
       typeCheckResult.reset();
     }
     //TODO: getCorrectResultArrayExpression
-    exprResult.getTypeInfo().setEnclosingScope(new OCLScope());
     typeCheckResult.setCurrentResult(exprResult);
   }
 

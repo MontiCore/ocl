@@ -98,7 +98,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
   @Override
   public void initialize_OCLParamDeclaration(VariableSymbol symbol, ASTOCLParamDeclaration ast) {
     ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
-    ast.getMCType().accept(this);
+    ast.getMCType().accept(getRealThis());
     final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
     if (!typeResult.isPresent()) {
       Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
@@ -121,7 +121,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
     if (!node.isEmptyOCLContextDefinitions()){
       for (ASTOCLContextDefinition cd : node.getOCLContextDefinitionList()){
         if (!cd.isPresentExpression()){
-          //TODO: Only create symbols if cd is MCType?, use supertype for super instead of type?
+          //TODO: Only create symbols if cd is MCType?, use supertype for super instead of type?, case of 2 context definitions
           ASTMCType type;
           if (cd.isPresentOCLParamDeclaration()){
             type = cd.getOCLParamDeclaration().getMCType();
@@ -140,9 +140,9 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
             t.setIsReadOnly(false);
             addToScope(t);
             VariableSymbol s = new VariableSymbol("super");
-            t.setType(typeResult.get());
-            t.setIsReadOnly(false);
-            addToScope(t);
+            s.setType(typeResult.get());
+            s.setIsReadOnly(false);
+            addToScope(s);
           }
         }
       }

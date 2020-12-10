@@ -1,3 +1,5 @@
+/* (c) https://github.com/MontiCore/monticore */
+
 package de.monticore.ocl.oclexpressions._symboltable;
 
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
