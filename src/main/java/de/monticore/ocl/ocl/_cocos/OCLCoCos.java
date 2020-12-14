@@ -18,6 +18,7 @@ public class OCLCoCos {
         .addCoCo(new ConstructorNameReferencesType())
         .addCoCo(new ValidTypes(typeChecker))
         .addCoCo(new ExpressionHasNoSideEffect())
+        .addCoCo(new ContextVariableNamesAreUnique())
         ;
   }
 }
