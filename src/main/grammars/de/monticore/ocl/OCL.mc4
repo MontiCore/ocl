@@ -133,7 +133,7 @@ grammar OCL extends UMLStereotype,
    *   The rule is written as follows to avoid matching empty strings
    */
   OCLContextDefinition =
-      MCType | Expression | OCLParamDeclaration
+      MCType | GeneratorDeclaration | OCLParamDeclaration
   ;
 
   /**

@@ -183,8 +183,8 @@ public class OCLPrettyPrinter implements OCLVisitor {
     if (node.isPresentMCType()) {
       node.getMCType().accept(getRealThis());
     }
-    else if (node.isPresentExpression()) {
-      node.getExpression().accept(getRealThis());
+    else if (node.isPresentGeneratorDeclaration()) {
+      node.getGeneratorDeclaration().accept(getRealThis());
     }
 
     CommentPrettyPrinter.printPreComments(node, getPrinter());

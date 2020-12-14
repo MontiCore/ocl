@@ -13,13 +13,12 @@ public class OCLCoCos {
         .addCoCo(new ConstructorNameStartsWithCapitalLetter())
         .addCoCo(new InvariantNameStartsWithCapitalLetter())
         .addCoCo(new ParameterNamesUnique())
-        .addCoCo(new ExpressionInContextDefinitionHasToBeLetInExpression())
         .addCoCo(new IterateExpressionVariableUsageIsCorrect())
         .addCoCo(new ConstructorNameReferencesType())
         .addCoCo(new ValidTypes(typeChecker))
         .addCoCo(new ExpressionHasNoSideEffect())
         .addCoCo(new ContextVariableNamesAreUnique())
-        .addCoCo(new ContextHasOnlyOneType())    
+        .addCoCo(new ContextHasOnlyOneType())
         ;
   }
 }
