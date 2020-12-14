@@ -5,10 +5,12 @@ package de.monticore.ocl.ocl._symboltable;
 import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
@@ -139,7 +141,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
             addToScope(s);
 
             //create VariableSymbol for Name of Type
-            VariableSymbol typeName = new VariableSymbol(cd.getMCType().getClass().getSimpleName());
+            VariableSymbol typeName = new VariableSymbol(cd.getMCType().
+                    printType(new MCSimpleGenericTypesPrettyPrinter(new IndentPrinter())).toLowerCase());
             typeName.setType(typeResult.get());
             typeName.setIsReadOnly(true);
             addToScope(typeName);

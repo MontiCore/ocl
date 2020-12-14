@@ -2,6 +2,8 @@ package de.monticore.ocl.ocl._cocos;
 
 import de.monticore.ocl.ocl._ast.ASTOCLContextDefinition;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
+import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -15,23 +17,33 @@ public class ContextVariableNamesAreUnique implements OCLASTOCLInvariantCoCo{
     for (ASTOCLContextDefinition contextDefinition : node.getOCLContextDefinitionList()){
       if (contextDefinition.isPresentMCType()){
         for (String s : varNames){
-          if (s.equals(contextDefinition.getMCType().getClass().getName())){
-            Log.error(String.format("0xOCL22 Variable name '%s' occurs twice in invariant ",
-                    contextDefinition.getMCType().getClass().getName()));
+          if (s.equals(contextDefinition.getMCType().
+                  printType(new MCSimpleGenericTypesPrettyPrinter(new IndentPrinter())).toLowerCase())){
+            Log.error(String.format("0xOCL22 Variable name '%s' occurs twice in invariant ", contextDefinition.
+                    getMCType().printType(new MCSimpleGenericTypesPrettyPrinter(new IndentPrinter())).toLowerCase()));
           }
         }
-        varNames.add(contextDefinition.getMCType().getClass().getName());
+        varNames.add(contextDefinition.getMCType().
+                printType(new MCSimpleGenericTypesPrettyPrinter(new IndentPrinter())).toLowerCase());
       }
       else if (contextDefinition.isPresentOCLParamDeclaration()){
         for (String s : varNames){
-          if (s.equals(contextDefinition.getMCType().getClass().getName())){
+          if (s.equals(contextDefinition.getOCLParamDeclaration().getName())){
             Log.error(String.format("0xOCL22 Variable name '%s' occurs twice in invariant ",
-                    contextDefinition.getMCType().getClass().getName()));
+                    contextDefinition.getOCLParamDeclaration().getName()));
         }
       }
         varNames.add(contextDefinition.getOCLParamDeclaration().getName());
       }
-      //TODO: check "in" Expression (change grammar first)
+      else if (contextDefinition.isPresentGeneratorDeclaration()){
+        for (String s : varNames){
+          if (s.equals(contextDefinition.getGeneratorDeclaration().getName())){
+            Log.error(String.format("0xOCL22 Variable name '%s' occurs twice in invariant ",
+                    contextDefinition.getGeneratorDeclaration().getName()));
+          }
+        }
+        varNames.add(contextDefinition.getGeneratorDeclaration().getName());
+      }
     }
   }
 }
