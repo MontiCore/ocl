@@ -19,6 +19,7 @@ public class OCLCoCos {
         .addCoCo(new ValidTypes(typeChecker))
         .addCoCo(new ExpressionHasNoSideEffect())
         .addCoCo(new ContextVariableNamesAreUnique())
+        .addCoCo(new ContextHasOnlyOneType())    
         ;
   }
 }
