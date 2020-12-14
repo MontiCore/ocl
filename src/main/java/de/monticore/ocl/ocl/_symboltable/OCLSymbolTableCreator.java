@@ -120,15 +120,9 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
     //check whether symbols for "this" and "super" should be introduced
     if (!node.isEmptyOCLContextDefinitions()){
       for (ASTOCLContextDefinition cd : node.getOCLContextDefinitionList()){
-        if (!cd.isPresentExpression()){
-          //TODO: Only create symbols if cd is MCType?, use supertype for super instead of type?, case of 2 context definitions
-          ASTMCType type;
-          if (cd.isPresentOCLParamDeclaration()){
-            type = cd.getOCLParamDeclaration().getMCType();
-          }
-          else {
-            type = cd.getMCType();
-          }
+        if (cd.isPresentMCType()){
+          //TODO: use supertype for super instead of type?
+          ASTMCType type = cd.getMCType();
           type.setEnclosingScope(getCurrentScope().get());
           final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(type);
           if (!typeResult.isPresent()) {
@@ -137,12 +131,18 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
             //create VariableSymbols for "this" and "super"
             VariableSymbol t = new VariableSymbol("this");
             t.setType(typeResult.get());
-            t.setIsReadOnly(false);
+            t.setIsReadOnly(true);
             addToScope(t);
             VariableSymbol s = new VariableSymbol("super");
             s.setType(typeResult.get());
-            s.setIsReadOnly(false);
+            s.setIsReadOnly(true);
             addToScope(s);
+
+            //create VariableSymbol for Name of Type
+            VariableSymbol typeName = new VariableSymbol(cd.getMCType().getClass().getSimpleName());
+            typeName.setType(typeResult.get());
+            typeName.setIsReadOnly(true);
+            addToScope(typeName);
           }
         }
       }
