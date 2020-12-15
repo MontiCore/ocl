@@ -103,12 +103,7 @@ public class SetExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
       getPrinter().print(" ");
     }
     getPrinter().print("{");
-    if(node.isPresentExpression()){
-      node.getExpression().accept(getRealThis());
-    }
-    if(node.isPresentSetVariableDeclaration()){
-      node.getSetVariableDeclaration().accept(getRealThis());
-    }
+    node.getLeft().accept(getRealThis());
     getPrinter().print(" | ");
     for (ASTSetComprehensionItem setComprehensionItem : node.getSetComprehensionItemList()){
       setComprehensionItem.accept(getRealThis());
@@ -142,7 +137,7 @@ public class SetExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
       getPrinter().print(" ");
     }
     getPrinter().print(node.getName());
-    getPrinter().print(" in ");
+    getPrinter().print(" from ");
     node.getExpression().accept(getRealThis());
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }

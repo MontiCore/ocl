@@ -85,8 +85,9 @@ component grammar SetExpressions
    *   characteristic.
    *   @attribute MCType
    *              Optional type of comprehension, e.g. Set, List or Collection.
-   *   @attribute expression
-   *              An expression (e.g. "x*x" or "x in Y").
+   *   @attribute left
+   *              A comprehension-item (e.g. "x*x" or "x in Y") that describes
+   *              or introduces the elements stored in the set.
    *   @attribute setComprehensionItems
    *              Characterization of comprehension as a list of
    *              comprehension-items. This can be generators, vardefinitions
@@ -97,7 +98,7 @@ component grammar SetExpressions
    */
   SetComprehension implements Expression  <40> =
     MCType?
-    "{" (Expression | SetVariableDeclaration) "|"
+    "{" left:SetComprehensionItem "|"
                   (SetComprehensionItem || ",")+ "}"
     ;
 
@@ -110,7 +111,7 @@ component grammar SetExpressions
    *     intermediate result, e.g. int y = 2*x
    *   and generators that introduce a new variable and let them
    *     range over a set of values, e.g.  x in S,
-   *     y in 3..10, z in Set{3,5,10..20}
+   *     y in {3..10}, z in Set{3,5,10..20}
    */
   SetComprehensionItem =
     Expression |
@@ -129,7 +130,7 @@ component grammar SetExpressions
    *              Expression that describes or references a set
    */
   GeneratorDeclaration implements Variable =
-    MCType? Name "in" Expression;
+    MCType? Name "from" Expression;
 
   /**
    * ASTSetEnumeration is used for an enumeration of

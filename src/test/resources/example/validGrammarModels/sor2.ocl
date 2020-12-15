@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl sor2 {
   inv:
-    a | b in {a in B | a == true};
+    a | b in {a from B | a == true};
 }
