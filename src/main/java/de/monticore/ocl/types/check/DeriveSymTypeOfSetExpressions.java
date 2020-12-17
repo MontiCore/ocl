@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static de.monticore.types.check.SymTypeConstant.unbox;
-import static de.monticore.types.check.TypeCheck.compatible;
+import static de.monticore.ocl.types.check.OCLTypeCheck.compatible;
 
 
 public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression implements SetExpressionsVisitor {

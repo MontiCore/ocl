@@ -64,7 +64,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     }
 
     //check whether typecast is possible
-    if (!TypeCheck.compatible(typeResult, exprResult)) {
+    if (!OCLTypeCheck.compatible(typeResult, exprResult)) {
       typeCheckResult.reset();
       Log.error("0xA3082 The type of the expression of the OCLTypeCastExpression can't be cast to given type");
       return;
@@ -116,10 +116,10 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
       return;
     }
 
-    if (TypeCheck.compatible(thenResult, elseResult)) {
+    if (OCLTypeCheck.compatible(thenResult, elseResult)) {
       typeCheckResult.setCurrentResult(thenResult);
     }
-    else if (TypeCheck.isSubtypeOf(thenResult, elseResult)) {
+    else if (OCLTypeCheck.isSubtypeOf(thenResult, elseResult)) {
       typeCheckResult.setCurrentResult(elseResult);
     }
     else {
@@ -148,7 +148,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     }
 
     // the condition has to be boolean
-    if (!TypeCheck.isBoolean(conditionResult)) {
+    if (!OCLTypeCheck.isBoolean(conditionResult)) {
       typeCheckResult.reset();
       Log.error("0xA3041 The type of the condition of the OCLIfThenElseExpr has to be boolean");
       return;
@@ -177,11 +177,11 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
       return;
     }
 
-    if (TypeCheck.compatible(thenResult, elseResult)) {
+    if (OCLTypeCheck.compatible(thenResult, elseResult)) {
       // Type of else is subtype of/or same type as then -> return then-type
       typeCheckResult.setCurrentResult(thenResult);
     }
-    else if (TypeCheck.isSubtypeOf(thenResult, elseResult)) {
+    else if (OCLTypeCheck.isSubtypeOf(thenResult, elseResult)) {
       // Type of then is subtype of else -> return else-type
       typeCheckResult.setCurrentResult(elseResult);
     }
@@ -218,7 +218,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     else{
       Log.error("0xA3211 The type of the expression in the ForallExpression could not be calculated");
     }
-    if (!TypeCheck.isBoolean(exprResult)) {
+    if (!OCLTypeCheck.isBoolean(exprResult)) {
       typeCheckResult.reset();
       Log.error("0xA3212 The type of the expression in the ForallExpression has to be boolean");
       return;
@@ -242,7 +242,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     else{
       Log.error("0xA3211 The type of the expression in the ExistsExpression could not be calculated");
     }
-    if (!TypeCheck.isBoolean(exprResult)) {
+    if (!OCLTypeCheck.isBoolean(exprResult)) {
       typeCheckResult.reset();
       Log.error("0xA3212 The type of the expression in the ExistsExpression has to be boolean");
       return;
@@ -334,7 +334,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
       typeCheckResult.reset();
     }
 
-    if (!TypeCheck.compatible(initResult, valueResult)) {
+    if (!OCLTypeCheck.compatible(initResult, valueResult)) {
       typeCheckResult.reset();
       Log.error("0xA3074 The type of the value of the OCLIterateExpression (" + valueResult.print() +
               ") has to match the type of the init declaration (" + initResult.print() + ")");
@@ -455,7 +455,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
       return;
     }
 
-    if (!TypeCheck.isBoolean(leftResult)) {
+    if (!OCLTypeCheck.isBoolean(leftResult)) {
       typeCheckResult.reset();
       Log.error("0xA3201 The type of the left expression of the " + astType + " has to be boolean");
       return;
@@ -473,7 +473,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
       return;
     }
 
-    if (!TypeCheck.isBoolean(rightResult)) {
+    if (!OCLTypeCheck.isBoolean(rightResult)) {
       typeCheckResult.reset();
       Log.error("0xA3203 The type of the right expression of the " + astType + " has to be boolean");
       return;
