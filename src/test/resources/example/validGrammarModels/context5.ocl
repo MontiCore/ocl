@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl context5 {
   context Auction a inv:
-    a in a.bidder.auctions;
+    a isin a.bidder.auctions;
 }

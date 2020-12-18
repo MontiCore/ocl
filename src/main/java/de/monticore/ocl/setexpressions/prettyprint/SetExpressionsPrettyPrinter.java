@@ -21,7 +21,7 @@ public class SetExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
   public void handle(ASTSetInExpression node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     node.getElem().accept(getRealThis());
-    getPrinter().print(" in ");
+    getPrinter().print(" isin ");
     node.getSet().accept(getRealThis());
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
@@ -137,7 +137,7 @@ public class SetExpressionsPrettyPrinter extends ExpressionsBasisPrettyPrinter
       getPrinter().print(" ");
     }
     getPrinter().print(node.getName());
-    getPrinter().print(" from ");
+    getPrinter().print(" in ");
     node.getExpression().accept(getRealThis());
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }

@@ -37,7 +37,7 @@ component grammar SetExpressions
 
   SetInExpression implements Expression <110> =
     elem:Expression
-    operator:"in"
+    operator:"isin"
     set:Expression;
 
   /*=================================================================*/
@@ -130,7 +130,7 @@ component grammar SetExpressions
    *              Expression that describes or references a set
    */
   GeneratorDeclaration implements Variable =
-    MCType? Name "from" Expression;
+    MCType? Name "in" Expression;
 
   /**
    * ASTSetEnumeration is used for an enumeration of

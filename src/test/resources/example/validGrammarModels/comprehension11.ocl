@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl comprehension11 {
   inv:
-    List{a | a from Set{1, 2}} == Set{a | a from Set{1, 2}}.asList;
+    List{a | a in Set{1, 2}} == Set{a | a in Set{1, 2}}.asList;
 }

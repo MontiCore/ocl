@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl quantifiers7 {
   import Auction a, Person p inv Nachrichten5:
-    forall m in a.message: p in a.bidder implies m in p.message;
+    forall m in a.message: p isin a.bidder implies m isin p.message;
 }
