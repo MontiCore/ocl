@@ -106,12 +106,6 @@ public class OCLCLI {
         prettyPrint(oCLCompilationUnit, path);
       }
 
-      // -option reports
-      if (cmd.hasOption("r")) {
-        String path = cmd.getOptionValue("r");
-        report(oCLCompilationUnit, path);
-      }
-
       // -option syntax objects
       if (cmd.hasOption("so")) {
         String path = cmd.getOptionValue("so");
@@ -179,93 +173,7 @@ public class OCLCLI {
     print(OCL, file);
   }
 
-  /**
-   * Creates reports for the OCL-AST to stdout or a specified file.
-   *  @param oCLCompilationUnit The OCL-AST for which the reports are created
-   * @param path The target path of the directory for the report artifacts. If
-   */
-  public void report(ASTOCLCompilationUnit oCLCompilationUnit, String path) {
-    // calculate and print reports
-    //TODO: allPropertyNames, countedPropertyNames, topLevelPropertyNames methods
-    String aProps = allPropertyNames(oCLCompilationUnit);
-    print(aProps, path + "/" + REPORT_ALL_PROPS);
-
-    String cProps = countedPropertyNames(oCLCompilationUnit);
-    print(cProps, path + "/" + REPORT_COUNTED_PROPS);
-
-    String tlProps = topLevelPropertyNames(oCLCompilationUnit);
-    print(tlProps, path + "/" + REPORT_TOPLEVEL_PROPS);
-  }
-
-  // names of the reports:
-  public static final String REPORT_ALL_PROPS = "allProperties.txt";
-  public static final String REPORT_COUNTED_PROPS = "countedProperties.txt";
-  public static final String REPORT_TOPLEVEL_PROPS = "topLevelProperties.txt";
-
   /*=================================================================*/
-
-  /**
-   * Calculates all property names in the OCL-AST as ordered list.
-   *
-   * @param oCLCompilationUnit The OCL-AST to traverse
-   * @return A String containing all property names
-   */
-  private String allPropertyNames(ASTOCLCompilationUnit oCLCompilationUnit) {
-    /*FullPropertyCalculator fpc = new FullPropertyCalculator();
-    List<String> properties = fpc.getAllPropertyNames(oCLCompilationUnit);*/
-    String content = "";
-    /*for (int i = 0; i < properties.size(); i++) {
-      content += properties.get(i);
-      if (i < properties.size() - 1) {
-        content += ", ";
-      }
-    }*/
-    return content;
-  }
-
-  /**
-   * Calculates all property names in the OCL-AST as a set with additional
-   * number of their respective occurrence.
-   *
-   * @param oCLCompilationUnit The OCL-AST to traverse
-   * @return A String containing all property names with the number of
-   *         occurrence
-   */
-  public String countedPropertyNames(ASTOCLCompilationUnit oCLCompilationUnit) {
-    /*FullPropertyCalculator fpc = new FullPropertyCalculator();
-    Map<String, Integer> properties = fpc.getAllPropertyNamesCounted(oCLCompilationUnit);
-    Iterator<Entry<String, Integer>> it = properties.entrySet().iterator();*/
-    String content = "";
-    /*while (it.hasNext()) {
-      Entry<String, Integer> entry = it.next();
-      content += entry.getKey();
-      content += " (" + entry.getValue() + ")";
-      if (it.hasNext()) {
-        content += ", ";
-      }
-    }*/
-    return content;
-  }
-
-  /**
-   * Calculates all top-level property names in the OCL-AST as ordered list.
-   * Thus, only traverses the AST shallowly.
-   *
-   * @param oCLCompilationUnit The OCL-AST to traverse
-   * @return A String containing all top-level property names
-   */
-  public String topLevelPropertyNames(ASTOCLCompilationUnit oCLCompilationUnit) {
-    /*TopLevelPropertyCalculator tlpc = new TopLevelPropertyCalculator();
-    List<String> properties = tlpc.getTopLevelPropertyNames(oCLCompilationUnit);*/
-    String content = "";
-    /*for (int i = 0; i < properties.size(); i++) {
-      content += properties.get(i);
-      if (i < properties.size() - 1) {
-        content += ", ";
-      }
-    }*/
-    return content;
-  }
 
   /**
    * Creates the symbol table from the parsed AST.
@@ -388,17 +296,6 @@ public class OCLCLI {
     prettyprint.setOptionalArg(true);
     prettyprint.setArgs(1);
     options.addOption(prettyprint);
-
-    // print reports of OCL
-    Option report = new Option("r", "Prints reports of the OCL artifact to the specified directory (optional). Available reports:"
-                                + System.lineSeparator() + REPORT_ALL_PROPS + ": a list of all properties, "
-                                + System.lineSeparator() + REPORT_COUNTED_PROPS + ": a set of all properties with the number of occurrences, "
-                                + System.lineSeparator() + REPORT_TOPLEVEL_PROPS + ": a list of all top level properties");
-    report.setLongOpt("report");
-    report.setArgName("dir");
-    report.setOptionalArg(true);
-    report.setArgs(1);
-    options.addOption(report);
 
     // print object diagram
     Option syntaxobjects = new Option("so", "Prints an object diagram of the OCL-AST to stdout or the specified file (optional)");

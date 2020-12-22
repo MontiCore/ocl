@@ -6,10 +6,10 @@ import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclarationVariable;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.monticore.types.check.SymTypeOfObject;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
@@ -106,6 +106,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
 
   public void initialize_InDeclarationVariable(VariableSymbol symbol, ASTInDeclaration ast) {
     symbol.setIsReadOnly(false);
+    //TODO: check that MCType and Expression are compatible, initialize var for list etc...?
     if(ast.isPresentMCType()){
       ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
       ast.getMCType().accept(getRealThis());
@@ -120,7 +121,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
         ast.getExpression().accept(getRealThis());
         ast.getExpression().accept(typeVisitor);
         if(typeVisitor.getTypeCheckResult().isPresentCurrentResult()){
-          symbol.setType(typeVisitor.getTypeCheckResult().getCurrentResult());
+          symbol.setType(OCLTypeCheck.unwrapSet(typeVisitor.getTypeCheckResult().getCurrentResult()));
         } else {
           Log.error(String.format("The type of the object (%s) could not be calculated", symbol.getName()));
         }

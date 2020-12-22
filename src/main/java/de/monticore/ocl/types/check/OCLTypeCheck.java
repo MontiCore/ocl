@@ -74,7 +74,7 @@ public class OCLTypeCheck extends TypeCheck {
 
   public static Optional<SymTypeExpression> unwrapOptional(SymTypeExpression optional){
     //check that argument is of Type Optional
-    if (!optional.isGenericType() || optional.print().equals("Optional")){
+    if (!optional.isGenericType() || !optional.getTypeInfo().getName().equals("Optional")){
       Log.error("function optionalCompatible requires an Optional SymType " +
               "but was given " + optional.print());
       return Optional.empty();

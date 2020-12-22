@@ -4,6 +4,6 @@ ocl setoperations11 {
     let
       List<Time> tlist = a.message.time;
       int len = tlist.size
-in
+    in
       forall i in List{0 .. len - 2}: tlist.get(i).lessThan(tlist.get(i + 1));
 }
