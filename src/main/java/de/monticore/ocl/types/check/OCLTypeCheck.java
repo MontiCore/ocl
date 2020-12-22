@@ -1,9 +1,15 @@
 package de.monticore.ocl.types.check;
 
+import com.google.common.collect.Lists;
 import de.monticore.types.check.*;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.List;
+
 public class OCLTypeCheck extends TypeCheck {
+
+  protected static final List<String> collections = Lists.newArrayList("List", "Set", "Collection");
+
   public OCLTypeCheck(ISynthesize synthesizeSymType, ITypesCalculator iTypesCalculator) {
     super(synthesizeSymType, iTypesCalculator);
   }
@@ -63,5 +69,23 @@ public class OCLTypeCheck extends TypeCheck {
     //check whether value in optional argument and second argument are compatible
     SymTypeExpression leftUnwrapped = ((SymTypeOfGenerics) optional).getArgument(0);
     return compatible(leftUnwrapped, right);
+  }
+
+  public static SymTypeExpression unwrapSet(SymTypeExpression set){
+    //check that argument is of collection type
+    boolean correct = false;
+    for (String s : collections) {
+      if (set.isGenericType() && set.getTypeInfo().getName().equals(s)) {
+        correct = true;
+      }
+    }
+    if(!correct){
+      Log.error("function unwrapSet requires a Collection SymType " +
+              "but was given " + set.print());
+    }
+
+    //get SymType in Collection
+    SymTypeExpression unwrapped = ((SymTypeOfGenerics) set).getArgument(0);
+    return unwrapped;
   }
 }

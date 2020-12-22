@@ -4,22 +4,22 @@ package de.monticore.ocl.types.check;
 
 import com.google.common.collect.Lists;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.ocl.ocl._auxiliary.MCCollectionTypesMillForOCL;
+import de.monticore.ocl.ocl._visitor.NameExpressionsFromExpressionVisitor;
 import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 import de.monticore.types.check.*;
-import de.monticore.types.mccollectiontypes.MCCollectionTypesMill;
 import de.se_rwth.commons.logging.Log;
 
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static de.monticore.types.check.SymTypeConstant.unbox;
 import static de.monticore.ocl.types.check.OCLTypeCheck.compatible;
-
 
 public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression implements SetExpressionsVisitor {
 
@@ -149,20 +149,56 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
       }
     }
     if(typeCheckResult.isPresentCurrentResult()){
-      result = typeCheckResult.getCurrentResult();
+      result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
+              getTypeInfo().getName(), getScope(node.getEnclosingScope()));
       typeCheckResult.reset();
     }
 
-    //TODO: check stuff in brackets
+    SymTypeExpression leftType = null;
+    Set<String> varNames = new HashSet<>();
+    if(node.getLeft().isPresentExpression()){
+      NameExpressionsFromExpressionVisitor nameVisitor = new NameExpressionsFromExpressionVisitor();
+      node.getLeft().getExpression().accept(nameVisitor);
+      varNames = nameVisitor.getVarNames();
+      node.getLeft().getExpression().accept(getRealThis());
+      if (!typeCheckResult.isPresentCurrentResult()) {
+        Log.error("could not calculate type of expression on the left side of SetComprehension");
+      }
+      else{
+        leftType = typeCheckResult.getCurrentResult();
+      }
+    } else if(node.getLeft().isPresentGeneratorDeclaration()){
+      leftType = node.getLeft().getGeneratorDeclaration().getSymbol().getType();
+    } else{
+      leftType = node.getLeft().getSetVariableDeclaration().getSymbol().getType();
+    }
+
+    //check that all varNames are initialized on the right side
+    while (!varNames.isEmpty()) {
+      for (ASTSetComprehensionItem item : node.getSetComprehensionItemList()) {
+        if(item.isPresentGeneratorDeclaration()){
+          if(varNames.contains(item.getGeneratorDeclaration().getName())){
+            varNames.remove(item.getGeneratorDeclaration().getName());
+          }
+        }
+        else if(item.isPresentSetVariableDeclaration()){
+          if(varNames.contains(item.getSetVariableDeclaration().getName())){
+            varNames.remove(item.getSetVariableDeclaration().getName());
+          }
+        }
+      }
+    }
 
     if (result == null) {
       result = SymTypeExpressionFactory.createGenerics("Set", getScope(node.getEnclosingScope()));
     }
+    ((SymTypeOfGenerics) result).addArgument(leftType);
     typeCheckResult.setCurrentResult(result);
   }
 
   public void traverse(ASTSetEnumeration node){
     SymTypeExpression result = null;
+    SymTypeExpression innerResult = null;
     if(node.isPresentMCType()){
       node.getMCType().accept(getRealThis());
       if(typeCheckResult.isPresentCurrentResult()){
@@ -183,15 +219,57 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
       }
     }
     if(typeCheckResult.isPresentCurrentResult()){
-      result = typeCheckResult.getCurrentResult();
+      result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
+              getTypeInfo().getName(), getScope(node.getEnclosingScope()));
       typeCheckResult.reset();
     }
-
-    //TODO: check stuff in brackets
 
     if (result == null) {
       result = SymTypeExpressionFactory.createGenerics("Set", getScope(node.getEnclosingScope()));
     }
+
+    //check type of elements in set
+    for (ASTSetCollectionItem item : node.getSetCollectionItemList()){
+      if (item instanceof ASTSetValueItem) {
+        for (ASTExpression e : ((ASTSetValueItem) item).getExpressionList()) {
+          e.accept(getRealThis());
+        }
+        if (typeCheckResult.isPresentCurrentResult()) {
+          if (innerResult == null) {
+            innerResult = typeCheckResult.getCurrentResult();
+            typeCheckResult.reset();
+          } else if (!compatible(innerResult, typeCheckResult.getCurrentResult())) {
+            Log.error("different types in SetEnumeration");
+          }
+        } else {
+          Log.error("Could not determine type of an expression in SetEnumeration");
+        }
+      }
+      else {
+        item.accept(getRealThis());
+        if (typeCheckResult.isPresentCurrentResult()) {
+          if (innerResult == null) {
+            innerResult = typeCheckResult.getCurrentResult();
+            typeCheckResult.reset();
+          } else if (!compatible(innerResult, typeCheckResult.getCurrentResult())) {
+            Log.error("different types in SetEnumeration");
+          }
+        } else {
+          Log.error("Could not determine type of a SetValueRange in SetEnumeration");
+        }
+      }
+    }
+
+    ((SymTypeOfGenerics) result).addArgument(innerResult);
     typeCheckResult.setCurrentResult(result);
+  }
+
+  public void traverse (ASTSetValueRange node){
+    SymTypeExpression left = acceptThisAndReturnSymTypeExpressionOrLogError(node.getLowerBound(), "0xA0311");
+    SymTypeExpression right = acceptThisAndReturnSymTypeExpressionOrLogError(node.getUpperBound(), "0xA0312");
+    if (!isIntegralType(left) || !isIntegralType(right)){
+      Log.error("bounds in SetValueRange are not integral types, but have to be");
+    }
+    typeCheckResult.setCurrentResult(left);
   }
 }

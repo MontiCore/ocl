@@ -19,6 +19,7 @@ public class OCLCoCos {
         .addCoCo(new ExpressionHasNoSideEffect())
         .addCoCo(new ContextVariableNamesAreUnique())
         .addCoCo(new ContextHasOnlyOneType())
+        .addCoCo(new SetComprehensionHasGenerator())
         ;
   }
 }

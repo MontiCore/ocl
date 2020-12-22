@@ -15,7 +15,8 @@ import static de.monticore.ocl.types.check.OCLTypeCheck.*;
 
 public class DeriveSymTypeOfCommonExpressions extends de.monticore.types.check.DeriveSymTypeOfCommonExpressions {
 
-  /* All methods in this class are identical to the methods in
+  /**
+   * All methods in this class are identical to the methods in
    * de.monticore.types.check.DeriveSymTypeOfCommonExpressions.
    * This class is used to ensure that OCLTypeCheck methods are
    * used instead of the normal TypeCheck methods.

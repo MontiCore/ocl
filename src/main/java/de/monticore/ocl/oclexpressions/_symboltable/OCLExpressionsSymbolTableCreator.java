@@ -8,6 +8,8 @@ import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfObject;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
@@ -75,7 +77,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
         }
       }
       else {
-        //TODO: no MCType and no "=" sign
+        symbol.setType(SymTypeExpressionFactory.createTypeObject("Object", ast.getEnclosingScope()));
       }
     }
   }
@@ -124,7 +126,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
         }
       }
       else {
-        //TODO: no MCType and no "=" sign
+        symbol.setType(SymTypeExpressionFactory.createTypeObject("Object", ast.getEnclosingScope()));
       }
     }
   }

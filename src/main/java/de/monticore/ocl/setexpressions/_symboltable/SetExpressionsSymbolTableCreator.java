@@ -5,8 +5,10 @@ package de.monticore.ocl.setexpressions._symboltable;
 import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
 import de.monticore.ocl.setexpressions._ast.ASTSetVariableDeclaration;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
@@ -72,21 +74,27 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
         }
       }
       else {
-        //TODO: no MCType and no "=" sign
-        //maybe use 'Object' type that all other types inherit from
-        //exists already?
+        symbol.setType(SymTypeExpressionFactory.createTypeObject("Object", ast.getEnclosingScope()));
       }
     }
   }
 
   @Override
   public void visit(ASTGeneratorDeclaration node){
-    VariableSymbol symbol = create_GeneratorDeclaration(node);
-    if(getCurrentScope().isPresent()){
-      symbol.setEnclosingScope(getCurrentScope().get());
+    node.setEnclosingScope(getCurrentScope().get());
+    Optional<VariableSymbol> existingSymbol = node.getEnclosingScope().resolveVariable(node.getName());
+    if(!existingSymbol.isPresent()) {
+      VariableSymbol symbol = create_GeneratorDeclaration(node);
+      if (getCurrentScope().isPresent()) {
+        symbol.setEnclosingScope(getCurrentScope().get());
+      }
+      addToScopeAndLinkWithNode(symbol, node);
+      initialize_GeneratorDeclaration(symbol, node);
     }
-    addToScopeAndLinkWithNode(symbol, node);
-    initialize_GeneratorDeclaration(symbol, node);
+    else {
+      Log.error("Symbol " + existingSymbol.get().getName() + " introduced in " +
+              "GeneratorDeclarationalready exists");
+    }
   }
 
   @Override
@@ -103,15 +111,18 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
         symbol.setType(typeResult.get());
       }
     } else {
-      //TODO: calculate type of elements in the set(ast.getExpression()) (currently just type of set)
       ast.getExpression().setEnclosingScope(ast.getEnclosingScope());
       ast.getExpression().accept(getRealThis());
       final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getExpression());
       if(!typeResult.isPresent()){
         Log.error(String.format("The type of the object (%s) could not be calculated", ast.getName()));
       }
+      else if(typeResult.get().isTypeConstant()){
+        Log.error(String.format("Expression of object (%s) has to be a collection", ast.getName()));
+      }
       else {
-        symbol.setType(typeResult.get());
+        SymTypeExpression result = OCLTypeCheck.unwrapSet(typeResult.get());
+        symbol.setType(result);
       }
     }
   }
