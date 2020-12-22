@@ -5,6 +5,7 @@ import de.monticore.types.check.*;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
+import java.util.Optional;
 
 public class OCLTypeCheck extends TypeCheck {
 
@@ -71,6 +72,23 @@ public class OCLTypeCheck extends TypeCheck {
     return compatible(leftUnwrapped, right);
   }
 
+  public static Optional<SymTypeExpression> unwrapOptional(SymTypeExpression optional){
+    //check that argument is of Type Optional
+    if (!optional.isGenericType() || optional.print().equals("Optional")){
+      Log.error("function optionalCompatible requires an Optional SymType " +
+              "but was given " + optional.print());
+      return Optional.empty();
+    }
+
+    //return type of optional
+    if(!((SymTypeOfGenerics) optional).getArgumentList().isEmpty()){
+      return Optional.of(((SymTypeOfGenerics) optional).getArgument(0));
+    }
+    else {
+      return Optional.empty();
+    }
+  }
+
   public static SymTypeExpression unwrapSet(SymTypeExpression set){
     //check that argument is of collection type
     boolean correct = false;
@@ -84,7 +102,7 @@ public class OCLTypeCheck extends TypeCheck {
               "but was given " + set.print());
     }
 
-    //get SymType in Collection
+    //get SymType used in Collection
     SymTypeExpression unwrapped = ((SymTypeOfGenerics) set).getArgument(0);
     return unwrapped;
   }
