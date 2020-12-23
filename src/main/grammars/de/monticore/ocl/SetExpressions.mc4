@@ -96,7 +96,7 @@ component grammar SetExpressions
    *        {x * x | x in y, x < 10}
    *   Note that we assume at least one generator (e.g. x in Y) in this AST.
    */
-  SetComprehension implements Expression  <40> =
+  scope (non_exporting) SetComprehension implements Expression  <40> =
     MCType?
     "{" left:SetComprehensionItem "|"
                   (SetComprehensionItem || ",")+ "}"
