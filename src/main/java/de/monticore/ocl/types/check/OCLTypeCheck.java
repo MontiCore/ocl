@@ -98,6 +98,10 @@ public class OCLTypeCheck extends TypeCheck {
       }
     }
     if(!correct){
+      //not a set, return type of object (maybe change later?)
+      if(set.isObjectType()){
+        return set;
+      }
       Log.error("function unwrapSet requires a Collection SymType " +
               "but was given " + set.print());
     }

@@ -43,6 +43,11 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
 
   @Override
   public void visit(ASTSetVariableDeclaration node){
+
+  }
+
+  @Override
+  public void endVisit(ASTSetVariableDeclaration node){
     VariableSymbol symbol = create_SetVariableDeclaration(node);
     if(getCurrentScope().isPresent()){
       symbol.setEnclosingScope(getCurrentScope().get());
@@ -81,20 +86,17 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
 
   @Override
   public void visit(ASTGeneratorDeclaration node){
-    node.setEnclosingScope(getCurrentScope().get());
-    Optional<VariableSymbol> existingSymbol = node.getEnclosingScope().resolveVariable(node.getName());
-    if(!existingSymbol.isPresent()) {
-      VariableSymbol symbol = create_GeneratorDeclaration(node);
-      if (getCurrentScope().isPresent()) {
-        symbol.setEnclosingScope(getCurrentScope().get());
-      }
-      addToScopeAndLinkWithNode(symbol, node);
-      initialize_GeneratorDeclaration(symbol, node);
+
+  }
+
+  @Override
+  public void endVisit(ASTGeneratorDeclaration node){
+    VariableSymbol symbol = create_GeneratorDeclaration(node);
+    if (getCurrentScope().isPresent()) {
+      symbol.setEnclosingScope(getCurrentScope().get());
     }
-    else {
-      Log.error("Symbol " + existingSymbol.get().getName() + " introduced in " +
-              "GeneratorDeclarationalready exists");
-    }
+    addToScopeAndLinkWithNode(symbol, node);
+    initialize_GeneratorDeclaration(symbol, node);
   }
 
   @Override
@@ -111,8 +113,6 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
         symbol.setType(typeResult.get());
       }
     } else {
-      ast.getExpression().setEnclosingScope(ast.getEnclosingScope());
-      ast.getExpression().accept(getRealThis());
       final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getExpression());
       if(!typeResult.isPresent()){
         Log.error(String.format("The type of the object (%s) could not be calculated", ast.getName()));

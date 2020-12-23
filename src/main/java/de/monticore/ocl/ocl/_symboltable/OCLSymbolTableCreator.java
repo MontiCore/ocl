@@ -123,7 +123,6 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
     if (!node.isEmptyOCLContextDefinitions()){
       for (ASTOCLContextDefinition cd : node.getOCLContextDefinitionList()){
         if (cd.isPresentMCType()){
-          //TODO: use supertype for super instead of type?
           ASTMCType type = cd.getMCType();
           type.setEnclosingScope(getCurrentScope().get());
           final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(type);
@@ -135,10 +134,12 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
             t.setType(typeResult.get());
             t.setIsReadOnly(true);
             addToScope(t);
-            VariableSymbol s = new VariableSymbol("super");
-            s.setType(typeResult.get());
-            s.setIsReadOnly(true);
-            addToScope(s);
+            if(!typeResult.get().getTypeInfo().isEmptySuperTypes()){
+              VariableSymbol s = new VariableSymbol("super");
+              s.setType(typeResult.get().getTypeInfo().getSuperClass());
+              s.setIsReadOnly(true);
+              addToScope(s);
+            }
 
             //create VariableSymbol for Name of Type
             VariableSymbol typeName = new VariableSymbol(cd.getMCType().
