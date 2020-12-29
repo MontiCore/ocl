@@ -61,7 +61,7 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
     if (correct) {
       SymTypeOfGenerics genericResult = (SymTypeOfGenerics) setResult;
       if (compatible(genericResult.getArgument(0), elemResult)) {
-        wholeResult = Optional.of(genericResult.getArgument(0).deepClone());
+        wholeResult = Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
       }
     }
     return wholeResult;
@@ -142,16 +142,17 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
           typeCheckResult.reset();
           Log.error("0xA0298 there must be a type at " + node.getMCType().get_SourcePositionStart());
         }
+        else {
+          result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
+                  getTypeInfo().getName(), getScope(node.getEnclosingScope()));
+          typeCheckResult.reset();
+
+        }
       }
       else {
         typeCheckResult.reset();
         Log.error("0xA0299 could not determine type of " + node.getMCType().getClass().getName());
       }
-    }
-    if(typeCheckResult.isPresentCurrentResult()){
-      result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
-              getTypeInfo().getName(), getScope(node.getEnclosingScope()));
-      typeCheckResult.reset();
     }
 
     SymTypeExpression leftType = null;
@@ -212,17 +213,18 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
           typeCheckResult.reset();
           Log.error("0xA0298 there must be a type at " + node.getMCType().get_SourcePositionStart());
         }
+        else {
+          result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
+                  getTypeInfo().getName(), getScope(node.getEnclosingScope()));
+          typeCheckResult.reset();
+        }
       }
       else {
         typeCheckResult.reset();
         Log.error("0xA0299 could not determine type of " + node.getMCType().getClass().getName());
       }
     }
-    if(typeCheckResult.isPresentCurrentResult()){
-      result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
-              getTypeInfo().getName(), getScope(node.getEnclosingScope()));
-      typeCheckResult.reset();
-    }
+
 
     if (result == null) {
       result = SymTypeExpressionFactory.createGenerics("Set", getScope(node.getEnclosingScope()));

@@ -62,7 +62,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
   public void initialize_OCLVariableDeclaration(VariableSymbol symbol, ASTOCLVariableDeclaration ast) {
     symbol.setIsReadOnly(false);
     if(ast.isPresentMCType()) {
-      ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
+      ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
       ast.getMCType().accept(getRealThis());
       final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
       if (!typeResult.isPresent()) {
@@ -122,7 +122,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
     Optional<SymTypeExpression> typeResult = Optional.empty();
     //TODO: initialize var for list, Set, Collection?
     if(ast.isPresentMCType()){
-      ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
+      ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
       ast.getMCType().accept(getRealThis());
       typeResult = typeVisitor.calculateType(ast.getMCType());
       if (!typeResult.isPresent()) {
@@ -135,15 +135,16 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
       ast.getExpression().accept(typeVisitor);
       if(typeVisitor.getTypeCheckResult().isPresentCurrentResult()){
         //if MCType present: check that type of expression and MCType are compatible
-        if(typeResult.isPresent() && OCLTypeCheck.compatible(typeResult.get(),
+        if(typeResult.isPresent() && !OCLTypeCheck.compatible(typeResult.get(),
                 OCLTypeCheck.unwrapSet(typeVisitor.getTypeCheckResult().getCurrentResult()))){
-          Log.error(String.format("The MCType (%s) and the expression type (%s) in Symbol (%S) are not compatible",
+          Log.error(String.format("The MCType (%s) and the expression type (%s) in Symbol (%s) are not compatible",
                   ast.getMCType(), OCLTypeCheck.unwrapSet(typeVisitor.getTypeCheckResult().getCurrentResult()), symbol.getName()));
         }
         //if no MCType present: symbol has type of expression
         if(!typeResult.isPresent()){
           symbol.setType(OCLTypeCheck.unwrapSet(typeVisitor.getTypeCheckResult().getCurrentResult()));
         }
+        typeVisitor.getTypeCheckResult().reset();
       } else {
         Log.error(String.format("The type of the object (%s) could not be calculated", symbol.getName()));
       }

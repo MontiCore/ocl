@@ -269,7 +269,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     }
 
     if (exprResult instanceof SymTypeOfGenerics) {
-      typeCheckResult.setCurrentResult(exprResult);
+      typeCheckResult.setCurrentResult(OCLTypeCheck.unwrapSet(exprResult));
     }
     else {
       typeCheckResult.setCurrentResult(exprResult);

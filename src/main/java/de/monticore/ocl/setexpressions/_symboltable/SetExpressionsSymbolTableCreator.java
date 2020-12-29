@@ -60,7 +60,7 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
   public void initialize_SetVariableDeclaration(VariableSymbol symbol, ASTSetVariableDeclaration ast) {
     symbol.setIsReadOnly(false);
     if(ast.isPresentMCType()) {
-      ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
+      ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
       ast.getMCType().accept(getRealThis());
       final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
       if (!typeResult.isPresent()) {
@@ -103,7 +103,7 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
   public void initialize_GeneratorDeclaration(VariableSymbol symbol, ASTGeneratorDeclaration ast) {
     symbol.setIsReadOnly(false);
     if(ast.isPresentMCType()) {
-      ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
+      ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
       ast.getMCType().accept(getRealThis());
       final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
       if (!typeResult.isPresent()) {
