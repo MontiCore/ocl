@@ -35,7 +35,7 @@ component grammar SetExpressions
 {
   /*=================================================================*/
 
-  SetInExpression implements Expression <110> =
+  SetInExpression implements Expression <150> =
     elem:Expression
     operator:"isin"
     set:Expression;
