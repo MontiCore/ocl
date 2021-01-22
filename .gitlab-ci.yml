@@ -128,5 +128,6 @@ DeployNexus:
   stage: post-test
   only:
     - master
+    - develop 
   script:
     - mvn $MAVEN_CLI_OPTS deploy -Dmaven.test.skip=true
