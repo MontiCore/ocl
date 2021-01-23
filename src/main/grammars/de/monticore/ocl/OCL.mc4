@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl;
 
-/* Alpha-version: This is intended to become a MontiCore stable grammar. */
+/* Beta-version: This is intended to become a MontiCore stable grammar. */
 
 import de.monticore.UMLStereotype;
 import de.monticore.ocl.expressions.*;
@@ -20,18 +20,16 @@ grammar OCL extends UMLStereotype,
    *  ASTOCLCompilationUnit represents the entire content of an OCL model
    *    @attribute package
    *               The package declaration of the component model
-   *    @attribute importStatement
+   *    @attribute MCImportStatement
    *               List of imported elements
    *    @attribute OCLArtifact
    *               wrapper for the ocl constraints
    */
   OCLCompilationUnit =
     ("package" package:(Name& || ".")+ ";")?
-    (MCImportStatement)*
+    MCImportStatement*
     OCLArtifact
   ;
-
-  start OCLCompilationUnit;
 
   /**
    * ASTOCLArtifact represents a file that contains OCL-constraints.
@@ -41,7 +39,7 @@ grammar OCL extends UMLStereotype,
    *              List of OCL-constraints.
    */
   OCLArtifact implements Diagram =
-    key("ocl") Name "{"
+    "ocl" Name "{"
       OCLConstraint*
     "}"
   ;
@@ -85,12 +83,12 @@ grammar OCL extends UMLStereotype,
    *              Optional post-statements.
    */
   OCLOperationConstraint implements OCLConstraint =
-    (Stereotype)*
+    Stereotype* 
     "context"
     OCLOperationSignature
-    ("let" (OCLVariableDeclaration || ";")+ )?
-    ("pre" ":" (preConditions:Expression ";")+ )?
-    ("post" ":" (postConditions:Expression ";")+ )?
+    ("let"      (OCLVariableDeclaration || ";")+ )?
+    ("pre"  ":" ( preCondition:Expression ";")+ )?
+    ("post" ":" (postCondition:Expression ";")+ )?
   ;
 
   /**
@@ -106,24 +104,33 @@ grammar OCL extends UMLStereotype,
    *   @attribute statements
    *              List of boolean expressions.
    */
-  //symbol // kann erst benutzt werden sobald MontiCore Issue #2656 erledigt ist
+  //symbol // TODO:
+           // kann erst benutzt werden sobald MontiCore Issue #2656 erledigt ist
            // MontiCore erzeugt hier aktuell nicht-kompilierbaren Code
            // Sobald Ticket erledigt ist => "symbol" keyword benutzen und
            // diesen Kommentar löschen
            // https://git.rwth-aachen.de/monticore/monticore/-/issues/2656
   OCLInvariant implements OCLConstraint =
-    (Stereotype)*
+    Stereotype*
     // class context
     (
+      // TODO: wäre das nicht äquivalent zu:  (["context"] | ["import"])
+      // TODO: ausserdem ist capital bei "Import" nicht gut. (ggf besser: "_import")
       (context:["context"] | Import:["import"])
       (OCLContextDefinition || ",")+
     )?
 
     // invariant
     "inv" Name?
+    // TODO: streiche "params:"
     ("(" params:(OCLParamDeclaration || ",")* ")")? ":"
 
     // statements
+    // TODO, TODISCUSS: mehrere Expressions durch ";" getrennt: 
+    // da ist der abschließende ";" in anderen Kontexten evtl. nicht 
+    // eindeutig --> Parseprobleme bzw. lange Parsezeiten wg. Backtrack
+    // Ich könnte mir vorstellen "," als Trenner zu erlauben.
+    // wobei ein "and" es auch schon tut (und ja schon klappt).
     (Expression || ";")+";"
   ;
 
@@ -151,6 +158,7 @@ grammar OCL extends UMLStereotype,
    */
   OCLMethodSignature implements OCLOperationSignature =
     MCReturnType?
+    // TODO:  params wieder raus?
     methodName:MCQualifiedName
     "(" params:(OCLParamDeclaration || ",")* ")"
     ("throws" throwables:(MCQualifiedName || ",")+)?
@@ -158,7 +166,7 @@ grammar OCL extends UMLStereotype,
 
   /**
    * ASTOCLConstructorSignature defines signature of a constructor.
-   *   @attribute ReferenceType
+   *   @attribute name
    *              Type of the Constructor.
    *   @attribute params
    *              Parameters of the method.
@@ -166,10 +174,10 @@ grammar OCL extends UMLStereotype,
    *              Possible exceptions of the method
    */
   OCLConstructorSignature implements OCLOperationSignature =
-    "new" referenceType:Name
+    "new" Name
+    // TODO:  params, throwables raus?
     "(" params:(OCLParamDeclaration || ",")* ")"
     ("throws" throwables:(MCQualifiedName || ",")+)?
   ;
 
-  nokeyword "implies";
 }
