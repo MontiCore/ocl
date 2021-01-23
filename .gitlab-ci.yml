@@ -125,6 +125,7 @@ Code Quality:
       codequality: codeclimate.json
 
 DeployNexus:
+  image: registry.git.rwth-aachen.de/monticore/container-registry/maven:3-jdk-11
   stage: post-test
   only:
     - master
