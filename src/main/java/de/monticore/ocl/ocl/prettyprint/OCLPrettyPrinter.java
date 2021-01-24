@@ -101,18 +101,18 @@ public class OCLPrettyPrinter implements OCLVisitor {
       printer.println();
     }
 
-    if (!node.getPreConditionsList().isEmpty()) {
+    if (!node.getPreConditionList().isEmpty()) {
       printer.print("pre: ");
-      for (ASTExpression e : node.getPreConditionsList()){
+      for (ASTExpression e : node.getPreConditionList()){
         e.accept(getRealThis());
         printer.print("; ");
       }
       printer.println();
     }
 
-    if (!node.getPostConditionsList().isEmpty()) {
+    if (!node.getPostConditionList().isEmpty()) {
       printer.print("post: ");
-      for (ASTExpression e : node.getPostConditionsList()){
+      for (ASTExpression e : node.getPostConditionList()){
         e.accept(getRealThis());
         printer.print("; ");
       }
@@ -155,13 +155,13 @@ public class OCLPrettyPrinter implements OCLVisitor {
       printer.print(" " + node.getName());
     }
 
-    if (!node.getParamsList().isEmpty()) {
+    if (!node.getOCLParamDeclarationList().isEmpty()) {
       printer.print("(");
-      for (int i = 0; i < node.getParamsList().size(); i++) {
+      for (int i = 0; i < node.getOCLParamDeclarationList().size(); i++) {
         if (i != 0) {
           getPrinter().print(", ");
         }
-        node.getParams(i).accept(getRealThis());
+        node.getOCLParamDeclaration(i).accept(getRealThis());
       }
       printer.print(")");
     }
@@ -202,11 +202,11 @@ public class OCLPrettyPrinter implements OCLVisitor {
     printer.print(node.getMethodName());
 
     printer.print("(");
-    for (int i = 0; i < node.getParamsList().size(); i++) {
+    for (int i = 0; i < node.getOCLParamDeclarationList().size(); i++) {
       if (i != 0) {
         getPrinter().print(", ");
       }
-      node.getParams(i).accept(getRealThis());
+      node.getOCLParamDeclaration(i).accept(getRealThis());
     }
     printer.print(")");
 
@@ -222,13 +222,13 @@ public class OCLPrettyPrinter implements OCLVisitor {
   public void handle(ASTOCLConstructorSignature node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
 
-    printer.print("new " + node.getReferenceType());
+    printer.print("new " + node.getName());
     printer.print("(");
-    for (int i = 0; i < node.getParamsList().size(); i++) {
+    for (int i = 0; i < node.getOCLParamDeclarationList().size(); i++) {
       if (i != 0) {
         getPrinter().print(", ");
       }
-      node.getParams(i).accept(getRealThis());
+      node.getOCLParamDeclaration(i).accept(getRealThis());
     }
     printer.print(")");
 

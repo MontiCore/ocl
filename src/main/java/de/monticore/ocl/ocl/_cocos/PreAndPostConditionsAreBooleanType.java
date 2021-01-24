@@ -25,21 +25,21 @@ public class PreAndPostConditionsAreBooleanType implements OCLASTOCLOperationCon
     if (!typeVisitor.isPresent()){
       typeVisitor = Optional.of(new DeriveSymTypeOfOCLCombineExpressions());
     }
-    
+
     //check preconditions
-    for (ASTExpression e : node.getPreConditionsList()){
+    for (ASTExpression e : node.getPreConditionList()){
       Optional<SymTypeExpression> type = typeVisitor.get().calculateType(e);
       if(!type.isPresent()){
         Log.error("type of precondition expression " + e + " could not be calculated.");
       }
       if(!OCLTypeCheck.isBoolean(type.get())){
-        Log.error("type of precondition expression " + e + 
+        Log.error("type of precondition expression " + e +
                 " has to be boolean, but is " + type.get().print());
       }
     }
 
     //check postconditions
-    for (ASTExpression e : node.getPostConditionsList()){
+    for (ASTExpression e : node.getPostConditionList()){
       Optional<SymTypeExpression> type = typeVisitor.get().calculateType(e);
       if(!type.isPresent()){
         Log.error("type of postcondition expression " + e + " could not be calculated.");
@@ -50,7 +50,7 @@ public class PreAndPostConditionsAreBooleanType implements OCLASTOCLOperationCon
       }
     }
   }
-  
+
   public void setTypeVisitor(DeriveSymTypeOfOCLCombineExpressions typeVisitor){
     this.typeVisitor = Optional.of(typeVisitor);
   }

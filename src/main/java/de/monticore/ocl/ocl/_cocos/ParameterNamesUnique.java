@@ -15,7 +15,7 @@ public class ParameterNamesUnique implements OCLASTOCLConstraintCoCo {
   @Override
   public void check(ASTOCLConstraint astoclConstraint) {
     if(astoclConstraint instanceof ASTOCLInvariant){
-      final List<String> duplicateNames = ((ASTOCLInvariant) astoclConstraint).getParamsList()
+      final List<String> duplicateNames = ((ASTOCLInvariant) astoclConstraint).getOCLParamDeclarationList()
               .stream().collect(Collectors.groupingBy(ASTOCLParamDeclaration::getName)).entrySet()
               .stream().filter(e -> e.getValue().size() > 1).map(Map.Entry::getKey).collect(Collectors.toList());
       if (!duplicateNames.isEmpty()) {
@@ -26,7 +26,7 @@ public class ParameterNamesUnique implements OCLASTOCLConstraintCoCo {
     else if(astoclConstraint instanceof ASTOCLOperationConstraint){
       ASTOCLOperationConstraint astoclOperationConstraint = (ASTOCLOperationConstraint) astoclConstraint;
       if(astoclOperationConstraint.getOCLOperationSignature() instanceof ASTOCLMethodSignature){
-        final List<String> duplicateNames = ((ASTOCLMethodSignature) astoclOperationConstraint.getOCLOperationSignature()).getParamsList()
+        final List<String> duplicateNames = ((ASTOCLMethodSignature) astoclOperationConstraint.getOCLOperationSignature()).getOCLParamDeclarationList()
                 .stream().collect(Collectors.groupingBy(ASTOCLParamDeclaration::getName)).entrySet()
                 .stream().filter(e -> e.getValue().size() > 1).map(Map.Entry::getKey).collect(Collectors.toList());
         if (!duplicateNames.isEmpty()) {
@@ -35,7 +35,7 @@ public class ParameterNamesUnique implements OCLASTOCLConstraintCoCo {
         }
       }
       else if(astoclOperationConstraint.getOCLOperationSignature() instanceof ASTOCLConstructorSignature){
-        final List<String> duplicateNames = ((ASTOCLConstructorSignature) astoclOperationConstraint.getOCLOperationSignature()).getParamsList()
+        final List<String> duplicateNames = ((ASTOCLConstructorSignature) astoclOperationConstraint.getOCLOperationSignature()).getOCLParamDeclarationList()
                 .stream().collect(Collectors.groupingBy(ASTOCLParamDeclaration::getName)).entrySet()
                 .stream().filter(e -> e.getValue().size() > 1).map(Map.Entry::getKey).collect(Collectors.toList());
         if (!duplicateNames.isEmpty()) {

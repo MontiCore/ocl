@@ -114,16 +114,13 @@ grammar OCL extends UMLStereotype,
     Stereotype*
     // class context
     (
-      // TODO: wäre das nicht äquivalent zu:  (["context"] | ["import"])
-      // TODO: ausserdem ist capital bei "Import" nicht gut. (ggf besser: "_import")
-      (context:["context"] | Import:["import"])
+      (["context"] | ["import"])
       (OCLContextDefinition || ",")+
     )?
 
     // invariant
     "inv" Name?
-    // TODO: streiche "params:"
-    ("(" params:(OCLParamDeclaration || ",")* ")")? ":"
+    ("(" (OCLParamDeclaration || ",")* ")")? ":"
 
     // statements
     // TODO, TODISCUSS: mehrere Expressions durch ";" getrennt: 
@@ -149,7 +146,7 @@ grammar OCL extends UMLStereotype,
    *              Optional complex type that is returned by given method
    *   @attribute methodName
    *              Name of given method.
-   *   @attribute params
+   *   @attribute OCLParamDeclaration
    *              Parameters of the method.
    *   @attribute throwables
    *              Possible exceptions of the method
@@ -158,9 +155,8 @@ grammar OCL extends UMLStereotype,
    */
   OCLMethodSignature implements OCLOperationSignature =
     MCReturnType?
-    // TODO:  params wieder raus?
     methodName:MCQualifiedName
-    "(" params:(OCLParamDeclaration || ",")* ")"
+    "(" (OCLParamDeclaration || ",")* ")"
     ("throws" throwables:(MCQualifiedName || ",")+)?
   ;
 
@@ -168,15 +164,14 @@ grammar OCL extends UMLStereotype,
    * ASTOCLConstructorSignature defines signature of a constructor.
    *   @attribute name
    *              Type of the Constructor.
-   *   @attribute params
+   *   @attribute OCLParamDeclaration
    *              Parameters of the method.
    *   @attribute throwables
    *              Possible exceptions of the method
    */
   OCLConstructorSignature implements OCLOperationSignature =
     "new" Name
-    // TODO:  params, throwables raus?
-    "(" params:(OCLParamDeclaration || ",")* ")"
+    "(" (OCLParamDeclaration || ",")* ")"
     ("throws" throwables:(MCQualifiedName || ",")+)?
   ;
 
