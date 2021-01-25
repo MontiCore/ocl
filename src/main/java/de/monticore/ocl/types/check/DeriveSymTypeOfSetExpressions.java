@@ -6,7 +6,10 @@ import com.google.common.collect.Lists;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.ocl._visitor.NameExpressionsFromExpressionVisitor;
 import de.monticore.ocl.setexpressions._ast.*;
+import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
+import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor;
+import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 import de.monticore.types.check.*;
@@ -21,25 +24,13 @@ import java.util.Set;
 import static de.monticore.types.check.SymTypeConstant.unbox;
 import static de.monticore.ocl.types.check.OCLTypeCheck.compatible;
 
-public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression implements SetExpressionsVisitor {
+public class DeriveSymTypeOfSetExpressions
+  extends AbstractDeriveFromExpression
+  implements SetExpressionsVisitor2, SetExpressionsHandler {
 
-  private SetExpressionsVisitor realThis;
+  protected SetExpressionsTraverser traverser;
 
   protected final List<String> collections = Lists.newArrayList("List", "Set", "Collection");
-
-  public DeriveSymTypeOfSetExpressions() {
-    this.realThis = this;
-  }
-
-  @Override
-  public void setRealThis(SetExpressionsVisitor realThis) {
-    this.realThis = realThis;
-  }
-
-  @Override
-  public SetExpressionsVisitor getRealThis() {
-    return realThis;
-  }
 
   @Override
   public void traverse(ASTSetInExpression node) {
@@ -130,7 +121,7 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
   public void traverse(ASTSetComprehension node){
     SymTypeExpression result = null;
     if(node.isPresentMCType()){
-      node.getMCType().accept(getRealThis());
+      node.getMCType().accept(getTraverser());
       if(typeCheckResult.isPresentCurrentResult()){
         boolean correct = false;
         for (String s : collections) {
@@ -161,7 +152,7 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
       NameExpressionsFromExpressionVisitor nameVisitor = new NameExpressionsFromExpressionVisitor();
       node.getLeft().getExpression().accept(nameVisitor);
       varNames = nameVisitor.getVarNames();
-      node.getLeft().getExpression().accept(getRealThis());
+      node.getLeft().getExpression().accept(getTraverser());
       if (!typeCheckResult.isPresentCurrentResult()) {
         Log.error("could not calculate type of expression on the left side of SetComprehension");
       }
@@ -201,7 +192,7 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
     SymTypeExpression result = null;
     SymTypeExpression innerResult = null;
     if(node.isPresentMCType()){
-      node.getMCType().accept(getRealThis());
+      node.getMCType().accept(getTraverser());
       if(typeCheckResult.isPresentCurrentResult()){
         boolean correct = false;
         for (String s : collections) {
@@ -234,7 +225,7 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
     for (ASTSetCollectionItem item : node.getSetCollectionItemList()){
       if (item instanceof ASTSetValueItem) {
         for (ASTExpression e : ((ASTSetValueItem) item).getExpressionList()) {
-          e.accept(getRealThis());
+          e.accept(getTraverser());
         }
         if (typeCheckResult.isPresentCurrentResult()) {
           if (innerResult == null) {
@@ -248,7 +239,7 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
         }
       }
       else {
-        item.accept(getRealThis());
+        item.accept(getTraverser());
         if (typeCheckResult.isPresentCurrentResult()) {
           if (innerResult == null) {
             innerResult = typeCheckResult.getCurrentResult();
@@ -273,5 +264,13 @@ public class DeriveSymTypeOfSetExpressions extends DeriveSymTypeOfExpression imp
       Log.error("bounds in SetValueRange are not integral types, but have to be");
     }
     typeCheckResult.setCurrentResult(left);
+  }
+
+  @Override public SetExpressionsTraverser getTraverser() {
+    return traverser;
+  }
+
+  public void setTraverser(SetExpressionsTraverser traverser) {
+    this.traverser = traverser;
   }
 }

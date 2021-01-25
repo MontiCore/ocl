@@ -15,13 +15,13 @@ import java.util.Optional;
 import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelper;
 import de.monticore.ocl.ocl._od.OCL2OD;
 import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCreator;
-import de.monticore.ocl.ocl.prettyprint.OCLCombinePrettyPrinter;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
 import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCreatorDelegator;
+import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -168,7 +168,7 @@ public class OCLCLI {
    */
   public void prettyPrint(ASTOCLCompilationUnit oCLCompilationUnit, String file) {
     // pretty print AST
-    OCLCombinePrettyPrinter pp = new OCLCombinePrettyPrinter(new IndentPrinter());
+    OCLFullPrettyPrinter pp = new OCLFullPrettyPrinter(new IndentPrinter());
     String OCL = pp.prettyprint(oCLCompilationUnit);
     print(OCL, file);
   }
@@ -182,8 +182,8 @@ public class OCLCLI {
    * @return The artifact scope derived from the parsed AST
    */
   public IOCLArtifactScope createSymbolTable(ASTOCLCompilationUnit ast) {
-    IOCLGlobalScope globalScope = OCLMill.oCLGlobalScope();
-    globalScope.setModelFileExtension(".ocl");
+    IOCLGlobalScope globalScope = OCLMill.globalScope();
+    globalScope.setFileExt(".ocl");
 
     OCLSymbolTableCreatorDelegator symbolTable = OCLMill.oCLSymbolTableCreatorDelegator();
     ((OCLSymbolTableCreator)symbolTable.getOCLVisitor().get()).setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());

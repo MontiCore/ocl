@@ -13,7 +13,8 @@ import java.util.Optional;
 
 import static de.monticore.ocl.types.check.OCLTypeCheck.*;
 
-public class DeriveSymTypeOfCommonExpressions extends de.monticore.types.check.DeriveSymTypeOfCommonExpressions {
+public class DeriveSymTypeOfCommonExpressions
+  extends de.monticore.types.check.DeriveSymTypeOfCommonExpressions {
 
   /**
    * All methods in this class are identical to the methods in
@@ -67,7 +68,7 @@ public class DeriveSymTypeOfCommonExpressions extends de.monticore.types.check.D
       if (expr.getArguments().getExpressionList().size() == method.getParameterList().size()) {
         boolean success = true;
         for (int i = 0; i < method.getParameterList().size(); i++) {
-          expr.getArguments().getExpression(i).accept(getRealThis());
+          expr.getArguments().getExpression(i).accept(getTraverser());
           //test if every single argument is correct
           if (!method.getParameterList().get(i).getType().deepEquals(typeCheckResult.getCurrentResult()) &&
                   !compatible(method.getParameterList().get(i).getType(), typeCheckResult.getCurrentResult())) {

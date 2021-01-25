@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl numbers5 {
   context Object o inv:
-    o.heigth() < 0.5;
-    o.length() == 3.0;//0e+8;
+    o.heigth() < 0.5 &&
+    o.length() == 3.0  && //0e+8;
     o.width() > 3.0;//0E+8;
 }

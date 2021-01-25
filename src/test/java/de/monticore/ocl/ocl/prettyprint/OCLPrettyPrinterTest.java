@@ -43,7 +43,7 @@ public class OCLPrettyPrinterTest {
     assertTrue(ast.isPresent());
     assertFalse(parser.hasErrors());
 
-    final OCLCombinePrettyPrinter printer = new OCLCombinePrettyPrinter(new IndentPrinter());
+    final OCLFullPrettyPrinter printer = new OCLFullPrettyPrinter(new IndentPrinter());
     String output = printer.prettyprint(ast.get());
     final Optional<ASTOCLCompilationUnit> astPrint = parser.parse_StringOCLCompilationUnit(output);
     assertFalse(parser.hasErrors());
@@ -59,7 +59,7 @@ public class OCLPrettyPrinterTest {
     assertTrue(ast.isPresent());
     assertFalse(parser.hasErrors());
 
-    final OCLCombinePrettyPrinter printer = new OCLCombinePrettyPrinter(new IndentPrinter());
+    final OCLFullPrettyPrinter printer = new OCLFullPrettyPrinter(new IndentPrinter());
     String output = printer.prettyprint(ast.get());
     final Optional<ASTOCLArtifact> astPrint = parser.parse_StringOCLArtifact(output);
     assertFalse(parser.hasErrors());

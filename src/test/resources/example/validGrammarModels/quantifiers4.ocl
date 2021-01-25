@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl quantifiers4 {
   inv:
-    forall a in Auction: even(1 / 0);
-    forall a in Auction: false;
+    forall a in Auction: even(1 / 0) &&
+    forall a in Auction: false &&
       (forall x in Set{}: false) <=> true;
 }

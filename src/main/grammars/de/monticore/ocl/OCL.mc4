@@ -104,13 +104,7 @@ grammar OCL extends UMLStereotype,
    *   @attribute statements
    *              List of boolean expressions.
    */
-  //symbol // TODO:
-           // kann erst benutzt werden sobald MontiCore Issue #2656 erledigt ist
-           // MontiCore erzeugt hier aktuell nicht-kompilierbaren Code
-           // Sobald Ticket erledigt ist => "symbol" keyword benutzen und
-           // diesen Kommentar löschen
-           // https://git.rwth-aachen.de/monticore/monticore/-/issues/2656
-  OCLInvariant implements OCLConstraint =
+  symbol OCLInvariant implements OCLConstraint =
     Stereotype*
     // class context
     (
@@ -122,13 +116,8 @@ grammar OCL extends UMLStereotype,
     "inv" Name?
     ("(" (OCLParamDeclaration || ",")* ")")? ":"
 
-    // statements
-    // TODO, TODISCUSS: mehrere Expressions durch ";" getrennt: 
-    // da ist der abschließende ";" in anderen Kontexten evtl. nicht 
-    // eindeutig --> Parseprobleme bzw. lange Parsezeiten wg. Backtrack
-    // Ich könnte mir vorstellen "," als Trenner zu erlauben.
-    // wobei ein "and" es auch schon tut (und ja schon klappt).
-    (Expression || ";")+";"
+    // expression - chain multiple expressions using &&
+    Expression ";"
   ;
 
   /**

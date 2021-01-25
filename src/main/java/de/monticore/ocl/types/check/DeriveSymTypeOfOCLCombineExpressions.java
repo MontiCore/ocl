@@ -4,10 +4,11 @@ package de.monticore.ocl.types.check;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.mccommonliterals._ast.ASTSignedLiteral;
-import de.monticore.ocl.oclexpressions._ast.ASTOCLExpressionsNode;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._visitor.OCLDelegatorVisitor;
+import de.monticore.ocl.ocl._visitor.OCLTraverser;
+import de.monticore.ocl.oclexpressions._ast.ASTOCLExpressionsNode;
 import de.monticore.types.check.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
@@ -17,8 +18,9 @@ import java.util.Optional;
  * Delegator Visitor to test the combination of the grammars
  */
 public class DeriveSymTypeOfOCLCombineExpressions
-    extends OCLDelegatorVisitor
-    implements ITypesCalculator {
+  implements ITypesCalculator {
+
+  protected OCLTraverser traverser;
 
   private TypeCheckResult typeCheckResult;
 
@@ -45,13 +47,12 @@ public class DeriveSymTypeOfOCLCombineExpressions
   private SynthesizeSymTypeFromMCCollectionTypes synthesizeSymTypeFromMCCollectionTypes;
 
   public DeriveSymTypeOfOCLCombineExpressions() {
-    setRealThis(this);
     this.typeCheckResult = new TypeCheckResult();
     init();
   }
 
   public Optional<SymTypeExpression> calculateType(ASTMCType type) {
-    type.accept(getRealThis());
+    type.accept(getTraverser());
     if (getTypeCheckResult().isPresentCurrentResult()) {
       return Optional.of(getTypeCheckResult().getCurrentResult());
     }
@@ -61,7 +62,7 @@ public class DeriveSymTypeOfOCLCombineExpressions
   }
 
   public Optional<SymTypeExpression> calculateType(ASTOCLCompilationUnit node) {
-    node.accept(getRealThis());
+    node.accept(getTraverser());
     if (getTypeCheckResult().isPresentCurrentResult()) {
       return Optional.of(getTypeCheckResult().getCurrentResult());
     }
@@ -74,7 +75,7 @@ public class DeriveSymTypeOfOCLCombineExpressions
    * main method to calculate the type of an expression
    */
   public Optional<SymTypeExpression> calculateType(ASTExpression e) {
-    e.accept(getRealThis());
+    e.accept(getTraverser());
     if (getTypeCheckResult().isPresentCurrentResult()) {
       return Optional.of(getTypeCheckResult().getCurrentResult());
     }
@@ -84,7 +85,7 @@ public class DeriveSymTypeOfOCLCombineExpressions
   }
 
   public Optional<SymTypeExpression> calculateType(ASTOCLExpressionsNode e) {
-    e.accept(getRealThis());
+    e.accept(getTraverser());
     if (getTypeCheckResult().isPresentCurrentResult()) {
       return Optional.of(getTypeCheckResult().getCurrentResult());
     }
@@ -98,7 +99,7 @@ public class DeriveSymTypeOfOCLCombineExpressions
    */
   @Override
   public Optional<SymTypeExpression> calculateType(ASTLiteral lit) {
-    lit.accept(getRealThis());
+    lit.accept(getTraverser());
     if (getTypeCheckResult().isPresentCurrentResult()) {
       return Optional.of(getTypeCheckResult().getCurrentResult());
     }
@@ -109,7 +110,7 @@ public class DeriveSymTypeOfOCLCombineExpressions
 
   @Override
   public Optional<SymTypeExpression> calculateType(ASTSignedLiteral lit) {
-    lit.accept(getRealThis());
+    lit.accept(getTraverser());
     if (getTypeCheckResult().isPresentCurrentResult()) {
       return Optional.of(getTypeCheckResult().getCurrentResult());
     }
@@ -123,57 +124,73 @@ public class DeriveSymTypeOfOCLCombineExpressions
    */
   @Override
   public void init() {
+    traverser = OCLMill.traverser();
+
     //initializes visitors used for typechecking
     deriveSymTypeOfExpression = new DeriveSymTypeOfExpression();
     deriveSymTypeOfExpression.setTypeCheckResult(typeCheckResult);
-    setExpressionsBasisVisitor(deriveSymTypeOfExpression);
+    traverser.add4ExpressionsBasis(deriveSymTypeOfExpression);
+    traverser.setExpressionsBasisHandler(deriveSymTypeOfExpression);
 
     deriveSymTypeOfCommonExpressions = new DeriveSymTypeOfCommonExpressions();
     deriveSymTypeOfCommonExpressions.setTypeCheckResult(typeCheckResult);
-    setCommonExpressionsVisitor(deriveSymTypeOfCommonExpressions);
+    traverser.add4CommonExpressions(deriveSymTypeOfCommonExpressions);
+    traverser.setCommonExpressionsHandler(deriveSymTypeOfCommonExpressions);
 
     deriveSymTypeOfSetExpressions = new DeriveSymTypeOfSetExpressions();
     deriveSymTypeOfSetExpressions.setTypeCheckResult(typeCheckResult);
-    setSetExpressionsVisitor(deriveSymTypeOfSetExpressions);
+    traverser.add4SetExpressions(deriveSymTypeOfSetExpressions);
+    traverser.setSetExpressionsHandler(deriveSymTypeOfSetExpressions);
 
     deriveSymTypeOfOCLExpressions = new DeriveSymTypeOfOCLExpressions();
     deriveSymTypeOfOCLExpressions.setTypeCheckResult(typeCheckResult);
-    setOCLExpressionsVisitor(deriveSymTypeOfOCLExpressions);
+    traverser.setOCLExpressionsHandler(deriveSymTypeOfOCLExpressions);
 
     deriveSymTypeOfLiterals = new DeriveSymTypeOfLiterals();
     deriveSymTypeOfLiterals.setTypeCheckResult(typeCheckResult);
-    setMCLiteralsBasisVisitor(deriveSymTypeOfLiterals);
+    traverser.add4MCLiteralsBasis(deriveSymTypeOfLiterals);
 
     deriveSymTypeOfMCCommonLiterals = new DeriveSymTypeOfMCCommonLiterals();
     deriveSymTypeOfMCCommonLiterals.setTypeCheckResult(typeCheckResult);
-    setMCCommonLiteralsVisitor(deriveSymTypeOfMCCommonLiterals);
+    traverser.add4MCCommonLiterals(deriveSymTypeOfMCCommonLiterals);
 
     deriveSymTypeOfOCL = new DeriveSymTypeOfOCL();
     deriveSymTypeOfOCL.setTypeCheckResult(typeCheckResult);
-    setOCLVisitor(deriveSymTypeOfOCL);
+    traverser.setOCLHandler(deriveSymTypeOfOCL);
 
     deriveSymTypeOfOptionalOperators = new DeriveSymTypeOfOptionalOperators();
     deriveSymTypeOfOptionalOperators.setTypeCheckResult(typeCheckResult);
-    setOptionalOperatorsVisitor(deriveSymTypeOfOptionalOperators);
+    traverser.setOptionalOperatorsHandler(deriveSymTypeOfOptionalOperators);
 
     synthesizeSymTypeFromMCSimpleGenericTypes = new SynthesizeSymTypeFromMCSimpleGenericTypes();
     synthesizeSymTypeFromMCSimpleGenericTypes.setTypeCheckResult(typeCheckResult);
-    setMCSimpleGenericTypesVisitor(synthesizeSymTypeFromMCSimpleGenericTypes);
+    traverser.add4MCSimpleGenericTypes(synthesizeSymTypeFromMCSimpleGenericTypes);
+    traverser.setMCSimpleGenericTypesHandler(synthesizeSymTypeFromMCSimpleGenericTypes);
 
     synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes();
     synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(typeCheckResult);
-    setMCBasicTypesVisitor(synthesizeSymTypeFromMCBasicTypes);
+    traverser.add4MCBasicTypes(synthesizeSymTypeFromMCBasicTypes);
+    traverser.setMCBasicTypesHandler(synthesizeSymTypeFromMCBasicTypes);
 
     synthesizeSymTypeFromMCCollectionTypes = new SynthesizeSymTypeFromMCCollectionTypes();
     synthesizeSymTypeFromMCCollectionTypes.setTypeCheckResult(typeCheckResult);
-    setMCCollectionTypesVisitor(synthesizeSymTypeFromMCCollectionTypes);
+    traverser.add4MCCollectionTypes(synthesizeSymTypeFromMCCollectionTypes);
+    traverser.setMCCollectionTypesHandler(synthesizeSymTypeFromMCCollectionTypes);
   }
 
-  public TypeCheckResult getTypeCheckResult(){
+  public TypeCheckResult getTypeCheckResult() {
     return typeCheckResult;
   }
 
-  public void setTypeCheckResult(TypeCheckResult typeCheckResult){
+  public void setTypeCheckResult(TypeCheckResult typeCheckResult) {
     this.typeCheckResult = typeCheckResult;
+  }
+
+  @Override public OCLTraverser getTraverser() {
+    return traverser;
+  }
+
+  public void setTraverser(OCLTraverser traverser) {
+    this.traverser = traverser;
   }
 }

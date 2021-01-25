@@ -72,7 +72,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
       }
     } else {
       if(ast.isPresentExpression()){
-        ast.getExpression().accept(typeVisitor);
+        ast.getExpression().accept(typeVisitor.getTraverser());
         if(typeVisitor.getTypeCheckResult().isPresentCurrentResult()){
           symbol.setType(typeVisitor.getTypeCheckResult().getCurrentResult());
         } else {
@@ -132,7 +132,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
       }
     }
     if(ast.isPresentExpression()){
-      ast.getExpression().accept(typeVisitor);
+      ast.getExpression().accept(typeVisitor.getTraverser());
       if(typeVisitor.getTypeCheckResult().isPresentCurrentResult()){
         //if MCType present: check that type of expression and MCType are compatible
         if(typeResult.isPresent() && !OCLTypeCheck.compatible(typeResult.get(),

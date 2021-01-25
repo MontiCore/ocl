@@ -71,7 +71,7 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
     } else {
       if(ast.isPresentExpression()){
         ast.getExpression().accept(getRealThis());
-        ast.getExpression().accept(typeVisitor);
+        ast.getExpression().accept(typeVisitor.getTraverser());
         if(typeVisitor.getTypeCheckResult().isPresentCurrentResult()){
           symbol.setType(typeVisitor.getTypeCheckResult().getCurrentResult());
         } else {

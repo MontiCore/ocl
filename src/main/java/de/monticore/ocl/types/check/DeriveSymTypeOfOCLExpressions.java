@@ -6,6 +6,8 @@ import com.google.common.collect.Maps;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
 import de.monticore.ocl.oclexpressions._ast.*;
+import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsHandler;
+import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.types.check.*;
@@ -14,23 +16,11 @@ import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.Map;
 
-public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression implements OCLExpressionsVisitor {
+public class DeriveSymTypeOfOCLExpressions
+  extends AbstractDeriveFromExpression
+  implements OCLExpressionsHandler {
 
-  private OCLExpressionsVisitor realThis;
-
-  public DeriveSymTypeOfOCLExpressions() {
-    this.realThis = this;
-  }
-
-  @Override
-  public void setRealThis(OCLExpressionsVisitor realThis) {
-    this.realThis = realThis;
-  }
-
-  @Override
-  public OCLExpressionsVisitor getRealThis() {
-    return realThis;
-  }
+  protected OCLExpressionsTraverser traverser;
 
   @Override
   public void traverse(ASTTypeCastExpression node) {
@@ -39,7 +29,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
 
     //check type of Expression
     if (node.getExpression() != null) {
-      node.getExpression().accept(getRealThis());
+      node.getExpression().accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       exprResult = typeCheckResult.getCurrentResult();
@@ -52,7 +42,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
 
     //check type of type to cast expression to
     if (node.getMCType() != null) {
-      node.getMCType().accept(getRealThis());
+      node.getMCType().accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       typeResult = typeCheckResult.getCurrentResult();
@@ -82,7 +72,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
 
     //resolve MCType to SymTypeExpression
     if (node.getMCType() != null) {
-      node.getMCType().accept(getRealThis());
+      node.getMCType().accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       typeCheckResult.reset();
@@ -93,7 +83,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     }
 
     if (node.getThenExpression() != null) {
-      node.getThenExpression().accept(getRealThis());
+      node.getThenExpression().accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       thenResult = typeCheckResult.getCurrentResult();
@@ -105,7 +95,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     }
 
     if (node.getElseExpression() != null) {
-      node.getElseExpression().accept(getRealThis());
+      node.getElseExpression().accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       elseResult = typeCheckResult.getCurrentResult();
@@ -136,7 +126,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     SymTypeExpression elseResult = null;
 
     if (node.getCondition() != null) {
-      node.getCondition().accept(getRealThis());
+      node.getCondition().accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       conditionResult = typeCheckResult.getCurrentResult();
@@ -155,7 +145,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     }
 
     if (node.getThenExpression() != null) {
-      node.getThenExpression().accept(getRealThis());
+      node.getThenExpression().accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       thenResult = typeCheckResult.getCurrentResult();
@@ -166,7 +156,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     }
 
     if (node.getElseExpression() != null) {
-      node.getElseExpression().accept(getRealThis());
+      node.getElseExpression().accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       elseResult = typeCheckResult.getCurrentResult();
@@ -209,7 +199,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     SymTypeExpression exprResult = null;
     
     if(node.getExpression() != null){
-      node.getExpression().accept(getRealThis());
+      node.getExpression().accept(getTraverser());
     }
     if(typeCheckResult.isPresentCurrentResult()){
       exprResult = typeCheckResult.getCurrentResult();
@@ -233,7 +223,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     SymTypeExpression exprResult = null;
 
     if(node.getExpression() != null){
-      node.getExpression().accept(getRealThis());
+      node.getExpression().accept(getTraverser());
     }
     if(typeCheckResult.isPresentCurrentResult()){
       exprResult = typeCheckResult.getCurrentResult();
@@ -257,7 +247,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     SymTypeExpression exprResult = null;
 
     if (node.getExpression() != null) {
-      node.getExpression().accept(getRealThis());
+      node.getExpression().accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       exprResult = typeCheckResult.getCurrentResult();
@@ -282,7 +272,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
 
     if (node.getOCLVariableDeclarationList() != null && !node.getOCLVariableDeclarationList().isEmpty()) {
       for (ASTOCLVariableDeclaration dec : node.getOCLVariableDeclarationList()) {
-        dec.accept(getRealThis());
+        dec.accept(getTraverser());
         if (!typeCheckResult.isPresentCurrentResult()) {
           Log.error("0xA3060 The type of the OCLVariableDeclaration of the LetinExpr could not be calculated");
           return;
@@ -291,7 +281,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     }
 
     if (node.getExpression() != null) {
-      node.getExpression().accept(getRealThis());
+      node.getExpression().accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       exprResult = typeCheckResult.getCurrentResult();
@@ -311,7 +301,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     SymTypeExpression initResult = null;
 
     if (node.getInit() != null) {
-      node.getInit().accept(getRealThis());
+      node.getInit().accept(getTraverser());
     }
     if (!typeCheckResult.isPresentCurrentResult()) {
       Log.error("0xA3071 The type of the init of the OCLIterateExpression could not be calculated");
@@ -323,7 +313,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     }
 
     if (node.getValue() != null) {
-      node.getValue().accept(getRealThis());
+      node.getValue().accept(getTraverser());
     }
     if (!typeCheckResult.isPresentCurrentResult()) {
       Log.error("0xA3073 The type of the value of the OCLIterateExpression could not be calculated");
@@ -348,7 +338,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
   @Override
   public void traverse(ASTInstanceOfExpression node) {
     if (node.getExpression() != null) {
-      node.getExpression().accept(getRealThis());
+      node.getExpression().accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       typeCheckResult.reset();
@@ -359,7 +349,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     }
 
     if (node.getMCType() != null) {
-      node.getMCType().accept(getRealThis());
+      node.getMCType().accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       typeCheckResult.reset();
@@ -377,7 +367,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
   public void traverse(ASTOCLArrayQualification node){
     SymTypeExpression exprResult;
     if (node.getExpression() != null) {
-      node.getExpression().accept(getRealThis());
+      node.getExpression().accept(getTraverser());
     }
     if (!typeCheckResult.isPresentCurrentResult()) {
       Log.error("0xA3001 The type of the expression of the OCLArrayQualification could not be calculated");
@@ -387,7 +377,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     typeCheckResult.reset();
     for (ASTExpression e : node.getArgumentsList()){
       if (e != null) {
-        e.accept(getRealThis());
+        e.accept(getTraverser());
       }
       if (!typeCheckResult.isPresentCurrentResult()) {
         Log.error("0xA3001 The type of a expression in the arguments of the OCLArrayQualification could not be calculated");
@@ -413,7 +403,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
   public void traverse(ASTOCLAtPreQualification node){
     SymTypeExpression exprResult;
     if (node.getExpression() != null) {
-      node.getExpression().accept(getRealThis());
+      node.getExpression().accept(getTraverser());
     }
     if (!typeCheckResult.isPresentCurrentResult()) {
       Log.error("0xA3001 The type of the expression of the OCLAtPreQualification could not be calculated");
@@ -428,7 +418,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
   public void traverse(ASTOCLTransitiveQualification node){
     SymTypeExpression exprResult;
     if (node.getExpression() != null) {
-      node.getExpression().accept(getRealThis());
+      node.getExpression().accept(getTraverser());
     }
     if (!typeCheckResult.isPresentCurrentResult()) {
       Log.error("0xA3001 The type of the expression of the OCLTransitiveQualification could not be calculated");
@@ -444,7 +434,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     SymTypeExpression rightResult;
 
     if (left != null) {
-      left.accept(getRealThis());
+      left.accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       leftResult = typeCheckResult.getCurrentResult();
@@ -462,7 +452,7 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     }
 
     if (right != null) {
-      right.accept(getRealThis());
+      right.accept(getTraverser());
     }
     if (typeCheckResult.isPresentCurrentResult()) {
       rightResult = typeCheckResult.getCurrentResult();
@@ -540,5 +530,11 @@ public class DeriveSymTypeOfOCLExpressions extends DeriveSymTypeOfExpression imp
     return wholeResult;
   }
 
+  @Override public OCLExpressionsTraverser getTraverser() {
+    return traverser;
+  }
 
+  @Override public void setTraverser(OCLExpressionsTraverser traverser) {
+    this.traverser = traverser;
+  }
 }

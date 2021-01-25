@@ -10,6 +10,7 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mcsimplegenerictypes.MCSimpleGenericTypesMill;
 import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -39,10 +40,10 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
     }
     else{
       Log.errorIfNull(node, "0xA7004x51423 Error by creating of the OCLSymbolTableCreator symbol table: top ast node is null");
-      IOCLArtifactScope artifactScope = de.monticore.ocl.ocl.OCLMill.oCLArtifactScopeBuilder()
-              .setPackageName("")
-              .setImportsList(new ArrayList<>())
-              .build();
+      IOCLArtifactScope artifactScope = de.monticore.ocl.ocl.OCLMill.artifactScope();
+      artifactScope.setPackageName("");
+      artifactScope.setImportsList(new ArrayList<>());
+
       putOnStack(artifactScope);
       node.accept(getRealThis());
       return artifactScope;
@@ -143,7 +144,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
             //create VariableSymbol for Name of Type
             VariableSymbol typeName = new VariableSymbol(cd.getMCType().
-                    printType(new MCSimpleGenericTypesPrettyPrinter(new IndentPrinter())).toLowerCase());
+                    printType(MCSimpleGenericTypesMill.mcSimpleGenericTypesPrettyPrinter()).toLowerCase());
             typeName.setType(typeResult.get());
             typeName.setIsReadOnly(true);
             addToScope(typeName);

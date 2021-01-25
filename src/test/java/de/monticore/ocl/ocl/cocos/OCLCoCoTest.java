@@ -8,11 +8,13 @@ import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCreatorDelega
 import de.monticore.cd4analysis.trafo.CD4AnalysisTrafo4DefaultsDelegator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._cocos.*;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl._symboltable.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.ocl.types.check.FullSynthesizeSymTypeFromMCSimpleGenericTypes;
 import de.monticore.types.check.SynthesizeSymTypeFromMCSimpleGenericTypes;
 import de.monticore.types.check.TypeCheck;
 import org.junit.Test;
@@ -39,7 +41,7 @@ public class OCLCoCoTest {
     initSymbolTable(RELATIVE_MODEL_PATH + "/example/CDs");
     OCLSymbolTableCreatorDelegator symbolTableCreator = new OCLSymbolTableCreatorDelegator(globalScope);
     ((OCLSymbolTableCreator)symbolTableCreator.getOCLVisitor().get()).setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
-    TypeCheck tc = new TypeCheck(new SynthesizeSymTypeFromMCSimpleGenericTypes(), new DeriveSymTypeOfOCLCombineExpressions());
+    TypeCheck tc = new TypeCheck(new FullSynthesizeSymTypeFromMCSimpleGenericTypes(), new DeriveSymTypeOfOCLCombineExpressions());
     symbolTableCreator.createFromAST(ast.get());
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new ExpressionHasNoSideEffect());
@@ -54,11 +56,9 @@ public class OCLCoCoTest {
   }
 
   private void setupGlobalScope() {
-    this.globalScope = new OCLGlobalScopeBuilder()
-            .setModelPath(new ModelPath(Paths.get(RELATIVE_MODEL_PATH)))
-            .setModelFileExtension("ocl")
-            .build();
-
+    this.globalScope = OCLMill.globalScope();
+    this.globalScope.setModelPath(new ModelPath(Paths.get(RELATIVE_MODEL_PATH)));
+    this.globalScope.setFileExt("ocl");
   }
 
   public void initSymbolTable(String modelPath) throws IOException {
@@ -74,10 +74,9 @@ public class OCLCoCoTest {
 
     final ModelPath mp = new ModelPath(p);
 
-    CD4AnalysisGlobalScope cd4AGlobalScope = (CD4AnalysisGlobalScope) CD4AnalysisMill.cD4AnalysisGlobalScopeBuilder()
-            .setModelPath(mp)
-            .setModelFileExtension("cd")
-            .build();
+    CD4AnalysisGlobalScope cd4AGlobalScope = (CD4AnalysisGlobalScope) CD4AnalysisMill.globalScope();
+    cd4AGlobalScope.setModelPath(mp);
+    cd4AGlobalScope.setFileExt("cd");
 
     CD4AnalysisSymbolTableCreatorDelegator symbolTableCreatorDelegator = new CD4AnalysisSymbolTableCreatorDelegator(cd4AGlobalScope);
     Optional<ASTCDCompilationUnit> ast = new CD4AnalysisParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/example/CDs/AuctionCD.cd").toString());
@@ -97,7 +96,7 @@ public class OCLCoCoTest {
     initSymbolTable(RELATIVE_MODEL_PATH + "/example/CDs");
     OCLSymbolTableCreatorDelegator symbolTableCreator = new OCLSymbolTableCreatorDelegator(globalScope);
     ((OCLSymbolTableCreator)symbolTableCreator.getOCLVisitor().get()).setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
-    TypeCheck tc = new TypeCheck(new SynthesizeSymTypeFromMCSimpleGenericTypes(), new DeriveSymTypeOfOCLCombineExpressions());
+    TypeCheck tc = new TypeCheck(new FullSynthesizeSymTypeFromMCSimpleGenericTypes(), new DeriveSymTypeOfOCLCombineExpressions());
     symbolTableCreator.createFromAST(ast.get());
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new ExpressionHasNoSideEffect());

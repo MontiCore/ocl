@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl quantifiers11 {
   inv:
-    exists int x: x * x > 5;
+    exists int x: x * x > 5  &&
     forall int x: x != 5;
 }

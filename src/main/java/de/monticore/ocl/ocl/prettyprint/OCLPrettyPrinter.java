@@ -3,6 +3,8 @@
 package de.monticore.ocl.ocl.prettyprint;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.ocl.ocl._visitor.OCLHandler;
+import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLVisitor;
@@ -14,34 +16,13 @@ import de.se_rwth.commons.Names;
 
 import java.util.Iterator;
 
-public class OCLPrettyPrinter implements OCLVisitor {
+public class OCLPrettyPrinter implements OCLHandler {
 
-  protected OCLVisitor realThis;
   protected IndentPrinter printer;
+  protected OCLTraverser traverser;
 
   public OCLPrettyPrinter(IndentPrinter printer) {
     this.printer = printer;
-    realThis = this;
-  }
-
-  @Override
-  public void setRealThis(OCLVisitor realThis) {
-    this.realThis = realThis;
-  }
-
-  @Override
-  public OCLVisitor getRealThis() {
-    return realThis;
-  }
-
-  public IndentPrinter getPrinter() {
-    return printer;
-  }
-
-  public String prettyprint(ASTOCLCompilationUnit compilationUnit) {
-    getPrinter().clearBuffer();
-    compilationUnit.accept(getRealThis());
-    return getPrinter().getContent();
   }
 
   @Override
@@ -52,10 +33,10 @@ public class OCLPrettyPrinter implements OCLVisitor {
           .println("package " + Names.getQualifiedName(unit.getPackageList()) + ";\n");
     }
     if (unit.getMCImportStatementList() != null && !unit.getMCImportStatementList().isEmpty()) {
-      unit.getMCImportStatementList().forEach(i -> i.accept(getRealThis()));
+      unit.getMCImportStatementList().forEach(i -> i.accept(getTraverser()));
       getPrinter().println();
     }
-    unit.getOCLArtifact().accept(getRealThis());
+    unit.getOCLArtifact().accept(getTraverser());
     CommentPrettyPrinter.printPostComments(unit, getPrinter());
   }
 
@@ -67,7 +48,7 @@ public class OCLPrettyPrinter implements OCLVisitor {
     printer.println(node.getName() + " {");
 
     node.getOCLConstraintList().forEach(c -> {
-      c.accept(getRealThis());
+      c.accept(getTraverser());
       printer.println();
     });
 
@@ -81,11 +62,11 @@ public class OCLPrettyPrinter implements OCLVisitor {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
 
     for(ASTStereotype stereotype : node.getStereotypeList()){
-      stereotype.accept(getRealThis());
+      stereotype.accept(getTraverser());
     }
 
     printer.print("context ");
-    node.getOCLOperationSignature().accept(getRealThis());
+    node.getOCLOperationSignature().accept(getTraverser());
     printer.println();
 
     if (!node.isEmptyOCLVariableDeclarations()) {
@@ -93,7 +74,7 @@ public class OCLPrettyPrinter implements OCLVisitor {
 
       Iterator<ASTOCLVariableDeclaration> it = node.getOCLVariableDeclarationList().iterator();
       while (it.hasNext()) {
-        it.next().accept(getRealThis());
+        it.next().accept(getTraverser());
         if (it.hasNext()) {
           printer.println("; ");
         }
@@ -104,7 +85,7 @@ public class OCLPrettyPrinter implements OCLVisitor {
     if (!node.getPreConditionList().isEmpty()) {
       printer.print("pre: ");
       for (ASTExpression e : node.getPreConditionList()){
-        e.accept(getRealThis());
+        e.accept(getTraverser());
         printer.print("; ");
       }
       printer.println();
@@ -113,7 +94,7 @@ public class OCLPrettyPrinter implements OCLVisitor {
     if (!node.getPostConditionList().isEmpty()) {
       printer.print("post: ");
       for (ASTExpression e : node.getPostConditionList()){
-        e.accept(getRealThis());
+        e.accept(getTraverser());
         printer.print("; ");
       }
       printer.println();
@@ -127,13 +108,13 @@ public class OCLPrettyPrinter implements OCLVisitor {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
 
     for(ASTStereotype stereotype : node.getStereotypeList()){
-      stereotype.accept(getRealThis());
+      stereotype.accept(getTraverser());
     }
 
     if (node.isContext()) {
       printer.println("context");
       node.getOCLContextDefinitionList().forEach(c -> {
-        c.accept(getRealThis());
+        c.accept(getTraverser());
         printer.println();
       });
       printer.print(" ");
@@ -141,7 +122,7 @@ public class OCLPrettyPrinter implements OCLVisitor {
     else if (node.isImport()) {
       printer.println("import");
       node.getOCLContextDefinitionList().forEach(c -> {
-        c.accept(getRealThis());
+        c.accept(getTraverser());
         printer.println();
       });
       printer.print(" ");
@@ -161,17 +142,15 @@ public class OCLPrettyPrinter implements OCLVisitor {
         if (i != 0) {
           getPrinter().print(", ");
         }
-        node.getOCLParamDeclaration(i).accept(getRealThis());
+        node.getOCLParamDeclaration(i).accept(getTraverser());
       }
       printer.print(")");
     }
 
     printer.println(":");
 
-    node.getExpressionList().forEach(s -> {
-      s.accept(getRealThis());
-      printer.println();
-    });
+    node.getExpression().accept(getTraverser());
+    printer.println();
 
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
@@ -181,10 +160,10 @@ public class OCLPrettyPrinter implements OCLVisitor {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
 
     if (node.isPresentMCType()) {
-      node.getMCType().accept(getRealThis());
+      node.getMCType().accept(getTraverser());
     }
     else if (node.isPresentGeneratorDeclaration()) {
-      node.getGeneratorDeclaration().accept(getRealThis());
+      node.getGeneratorDeclaration().accept(getTraverser());
     }
 
     CommentPrettyPrinter.printPreComments(node, getPrinter());
@@ -195,7 +174,7 @@ public class OCLPrettyPrinter implements OCLVisitor {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
 
     if (node.isPresentMCReturnType()) {
-      node.getMCReturnType().accept(getRealThis());
+      node.getMCReturnType().accept(getTraverser());
       printer.print(" ");
     }
 
@@ -206,7 +185,7 @@ public class OCLPrettyPrinter implements OCLVisitor {
       if (i != 0) {
         getPrinter().print(", ");
       }
-      node.getOCLParamDeclaration(i).accept(getRealThis());
+      node.getOCLParamDeclaration(i).accept(getTraverser());
     }
     printer.print(")");
 
@@ -228,7 +207,7 @@ public class OCLPrettyPrinter implements OCLVisitor {
       if (i != 0) {
         getPrinter().print(", ");
       }
-      node.getOCLParamDeclaration(i).accept(getRealThis());
+      node.getOCLParamDeclaration(i).accept(getTraverser());
     }
     printer.print(")");
 
@@ -238,5 +217,25 @@ public class OCLPrettyPrinter implements OCLVisitor {
     }
 
     CommentPrettyPrinter.printPreComments(node, getPrinter());
+  }
+
+  /* ============================================================ */
+  /* ======================= GENERATED CODE ===================== */
+  /* ============================================================ */
+
+  public IndentPrinter getPrinter() {
+    return printer;
+  }
+
+  public void setPrinter(IndentPrinter printer) {
+    this.printer = printer;
+  }
+
+  @Override public OCLTraverser getTraverser() {
+    return traverser;
+  }
+
+  @Override public void setTraverser(OCLTraverser traverser) {
+    this.traverser = traverser;
   }
 }

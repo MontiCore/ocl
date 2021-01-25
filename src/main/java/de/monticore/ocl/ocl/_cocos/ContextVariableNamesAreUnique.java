@@ -3,6 +3,8 @@ package de.monticore.ocl.ocl._cocos;
 import de.monticore.ocl.ocl._ast.ASTOCLContextDefinition;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.mcsimplegenerictypes.MCSimpleGenericTypesMill;
+import de.monticore.types.prettyprint.MCSimpleGenericTypesFullPrettyPrinter;
 import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 
@@ -18,13 +20,13 @@ public class ContextVariableNamesAreUnique implements OCLASTOCLInvariantCoCo{
       if (contextDefinition.isPresentMCType()){
         for (String s : varNames){
           if (s.equals(contextDefinition.getMCType().
-                  printType(new MCSimpleGenericTypesPrettyPrinter(new IndentPrinter())).toLowerCase())){
+                  printType(MCSimpleGenericTypesMill.mcSimpleGenericTypesPrettyPrinter()).toLowerCase())){
             Log.error(String.format("0xOCL22 Variable name '%s' occurs twice in invariant ", contextDefinition.
-                    getMCType().printType(new MCSimpleGenericTypesPrettyPrinter(new IndentPrinter())).toLowerCase()));
+                    getMCType().printType(MCSimpleGenericTypesMill.mcSimpleGenericTypesPrettyPrinter()).toLowerCase()));
           }
         }
         varNames.add(contextDefinition.getMCType().
-                printType(new MCSimpleGenericTypesPrettyPrinter(new IndentPrinter())).toLowerCase());
+                printType(MCSimpleGenericTypesMill.mcSimpleGenericTypesPrettyPrinter()).toLowerCase());
       }
       else if (contextDefinition.isPresentOCLParamDeclaration()){
         for (String s : varNames){

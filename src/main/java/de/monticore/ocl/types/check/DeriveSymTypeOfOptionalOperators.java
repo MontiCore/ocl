@@ -3,7 +3,10 @@ package de.monticore.ocl.types.check;
 import de.monticore.expressions.commonexpressions._ast.ASTInfixExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.optionaloperators._ast.*;
+import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsHandler;
+import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsTraverser;
 import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsVisitor;
+import de.monticore.types.check.AbstractDeriveFromExpression;
 import de.monticore.types.check.DeriveSymTypeOfExpression;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
@@ -14,23 +17,11 @@ import java.util.Optional;
 import static de.monticore.types.check.TypeCheck.compatible;
 import static de.monticore.types.check.TypeCheck.isBoolean;
 
-public class DeriveSymTypeOfOptionalOperators extends DeriveSymTypeOfExpression implements OptionalOperatorsVisitor {
+public class DeriveSymTypeOfOptionalOperators
+  extends AbstractDeriveFromExpression
+  implements OptionalOperatorsHandler {
 
-  private OptionalOperatorsVisitor realThis;
-
-  public DeriveSymTypeOfOptionalOperators(){
-    this.realThis = this;
-  }
-
-  @Override
-  public OptionalOperatorsVisitor getRealThis(){
-    return realThis;
-  }
-
-  @Override
-  public void setRealThis(OptionalOperatorsVisitor realThis) {
-    this.realThis = realThis;
-  }
+  private OptionalOperatorsTraverser traverser;
 
   @Override
   public void traverse(ASTOptionalExpressionPrefix node){
@@ -153,5 +144,14 @@ public class DeriveSymTypeOfOptionalOperators extends DeriveSymTypeOfExpression 
     }
     //should never happen, no valid result, error will be handled in traverse
     return Optional.empty();
+  }
+
+  @Override public OptionalOperatorsTraverser getTraverser() {
+    return traverser;
+  }
+
+  @Override public void setTraverser(
+    OptionalOperatorsTraverser traverser) {
+    this.traverser = traverser;
   }
 }
