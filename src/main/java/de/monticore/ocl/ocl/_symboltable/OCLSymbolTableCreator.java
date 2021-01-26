@@ -7,17 +7,17 @@ import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcsimplegenerictypes.MCSimpleGenericTypesMill;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static de.monticore.ocl.ocl._symboltable.OCLSymbolTableHelper.getImportStatements;
 
 public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
@@ -42,14 +42,8 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
     else{
       Log.errorIfNull(node, "0xA7004x51423 Error by creating of the OCLSymbolTableCreator symbol table: top ast node is null");
       IOCLArtifactScope artifactScope = OCLMill.artifactScope();
-
-      String packageName = String.join(".", node.getPackageList());
-      artifactScope.setPackageName(packageName);
-
-      List<ImportStatement> imports = new ArrayList<>();
-      for (ASTMCImportStatement importStatement : node.getMCImportStatementList()) {
-        imports.add(new ImportStatement(importStatement.getQName(), importStatement.isStar()));
-      }
+      artifactScope.setPackageName(node.getPackage());
+      List<ImportStatement> imports = getImportStatements(node.getMCImportStatementList());
       artifactScope.setImportsList(imports);
 
       putOnStack(artifactScope);
