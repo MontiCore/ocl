@@ -112,19 +112,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
 
   @Override
   public void visit (ASTOCLInvariant node){
-    if (getCurrentScope().isPresent()) {
-      node.setEnclosingScope(getCurrentScope().get());
-    }
-    else {
-      Log.error("Could not set enclosing scope of ASTNode \"" + node
-              + "\", because no scope is set yet!");
-    }
-
-    //create invariant symbol if the invariant has a name
-    if (node.isPresentName()) {
-      de.monticore.ocl.ocl._symboltable.OCLInvariantSymbol symbol = create_OCLInvariant(node);
-      addToScopeAndLinkWithNode(symbol, node);
-    }
+    super.visit(node);
 
     //check whether symbols for "this" and "super" should be introduced
     if (!node.isEmptyOCLContextDefinitions()){
