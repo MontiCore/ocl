@@ -20,6 +20,7 @@ public class OCLCoCos {
         .addCoCo(new ContextVariableNamesAreUnique())
         .addCoCo(new ContextHasOnlyOneType())
         .addCoCo(new SetComprehensionHasGenerator())
+        .addCoCo(new UnnamedInvariantDoesNotHaveParameters())
         .addCoCo(new PreAndPostConditionsAreBooleanType(typeChecker))
         ;
   }

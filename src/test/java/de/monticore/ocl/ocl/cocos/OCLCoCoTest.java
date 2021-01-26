@@ -98,9 +98,7 @@ public class OCLCoCoTest {
     ((OCLSymbolTableCreator)symbolTableCreator.getOCLVisitor().get()).setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
     TypeCheck tc = new TypeCheck(new FullSynthesizeSymTypeFromMCSimpleGenericTypes(), new DeriveSymTypeOfOCLCombineExpressions());
     symbolTableCreator.createFromAST(ast.get());
-    OCLCoCoChecker checker = new OCLCoCoChecker();
-    checker.addCoCo(new ExpressionHasNoSideEffect());
-    checker.addCoCo(new ValidTypes(new DeriveSymTypeOfOCLCombineExpressions()));
+    OCLCoCoChecker checker = OCLCoCos.createChecker(new DeriveSymTypeOfOCLCombineExpressions());
     checker.checkAll(ast.get());
   }
 }
