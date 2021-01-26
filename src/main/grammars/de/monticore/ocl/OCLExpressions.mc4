@@ -187,7 +187,7 @@ component grammar OCLExpressions
   /*=================================================================*/
 
   /**
-   * ASTOCLLetinExpression are used to define local vars or methods. The defined
+   * ASTLetinExpression are used to define local vars or methods. The defined
    *   vars and methods are visible in the in-expression body.
    *   @attribute letDeclaration
    *              A list of variable declarations.
@@ -199,7 +199,7 @@ component grammar OCLExpressions
     "in" Expression ;
 
   /**
-   * ASTOCLIterateExpression is used to iterate collections. It differs from
+   * ASTIterateExpression is used to iterate collections. It differs from
    * Java5-Iterator.
    *   Example:
    *       iterate{ elem in Auction; int acc=0 : acc = acc+elem.numberOfBids }.
