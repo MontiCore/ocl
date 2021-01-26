@@ -1,10 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.ocl._symboltable;
 
-import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLContextDefinition;
-import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
-import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
+import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ImportStatement;
@@ -159,6 +156,24 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
             addToScope(typeName);
           }
         }
+      }
+    }
+  }
+
+  @Override
+  public void visit(ASTOCLMethodSignature node){
+    super.visit(node);
+    if(node.isPresentMCReturnType()){
+      //create VariableSymbol for result of method
+      final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(node.getMCReturnType().getMCType());
+      if (!typeResult.isPresent()) {
+        Log.error(String.format("The type (%s) could not be calculated", node.getMCReturnType().getMCType()
+                .printType(MCSimpleGenericTypesMill.mcSimpleGenericTypesPrettyPrinter())));
+      } else {
+        VariableSymbol result = new VariableSymbol("result");
+        result.setType(typeResult.get());
+        result.setIsReadOnly(true);
+        addToScope(result);
       }
     }
   }
