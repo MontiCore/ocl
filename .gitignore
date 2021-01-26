@@ -6,4 +6,5 @@ nppBackup
 .idea
 .git
 
+.gradle
 *.iml

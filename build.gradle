@@ -167,9 +167,9 @@ task grammarJar(type: Jar) {
 // all in one cli-jar
 shadowJar {
   manifest {
-    attributes "Main-Class": "de.monticore.${archiveBaseName.get().capitalize()}CLI"
+    attributes "Main-Class": "de.monticore.ocl.${archiveBaseName.get().capitalize()}CLI"
   }
-  archiveFileName = "${archiveBaseName.get()}-cli.${archiveExtension.get()}"
+  archiveFileName = "${archiveBaseName.get()}CLI.${archiveExtension.get()}"
   minimize()
 }
 

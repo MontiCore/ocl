@@ -412,7 +412,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>ocl.cli.OCLCDTool</mainClass>
+                                    <mainClass>de.monticore.ocl.OCLCLI</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
