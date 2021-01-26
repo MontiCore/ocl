@@ -117,7 +117,7 @@ grammar OCL extends UMLStereotype,
     "inv" Name?
     ("(" (OCLParamDeclaration || ",")* ")")? ":"
 
-    // expression - chain multiple expressions using &&
+    // expression: we can chain multiple expressions using &&
     Expression ";"
   ;
 
