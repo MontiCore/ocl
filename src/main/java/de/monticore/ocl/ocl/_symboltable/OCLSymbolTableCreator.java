@@ -1,11 +1,13 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.ocl._symboltable;
 
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcsimplegenerictypes.MCSimpleGenericTypesMill;
 import de.se_rwth.commons.Names;
@@ -39,9 +41,16 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
     }
     else{
       Log.errorIfNull(node, "0xA7004x51423 Error by creating of the OCLSymbolTableCreator symbol table: top ast node is null");
-      IOCLArtifactScope artifactScope = de.monticore.ocl.ocl.OCLMill.artifactScope();
-      artifactScope.setPackageName("");
-      artifactScope.setImportsList(new ArrayList<>());
+      IOCLArtifactScope artifactScope = OCLMill.artifactScope();
+
+      String packageName = String.join(".", node.getPackageList());
+      artifactScope.setPackageName(packageName);
+
+      List<ImportStatement> imports = new ArrayList<>();
+      for (ASTMCImportStatement importStatement : node.getMCImportStatementList()) {
+        imports.add(new ImportStatement(importStatement.getQName(), importStatement.isStar()));
+      }
+      artifactScope.setImportsList(imports);
 
       putOnStack(artifactScope);
       node.accept(getRealThis());
