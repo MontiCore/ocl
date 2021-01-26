@@ -123,10 +123,11 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
               + "\", because no scope is set yet!");
     }
 
-    // TODO Anno: Create symbol
-    //OCLInvariantSymbol symbol = create_OCLInvariant(node);
-    //initialize_OCLInvariant(symbol, node);
-    //addToScopeAndLinkWithNode(symbol, node);
+    //create invariant symbol if the invariant has a name
+    if (node.isPresentName()) {
+      de.monticore.ocl.ocl._symboltable.OCLInvariantSymbol symbol = create_OCLInvariant(node);
+      addToScopeAndLinkWithNode(symbol, node);
+    }
 
     //check whether symbols for "this" and "super" should be introduced
     if (!node.isEmptyOCLContextDefinitions()){
