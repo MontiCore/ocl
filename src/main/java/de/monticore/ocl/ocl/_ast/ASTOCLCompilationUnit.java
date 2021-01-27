@@ -5,4 +5,8 @@ public class ASTOCLCompilationUnit extends ASTOCLCompilationUnitTOP {
   public String getPackage() {
     return String.join(".", this.getPackageList());
   }
+
+  public boolean isPresentPackage() {
+    return getPackageList().size() > 0;
+  }
 }

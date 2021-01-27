@@ -6,6 +6,10 @@ import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 
 public class OCLCoCos {
 
+  public static OCLCoCoChecker createChecker() {
+    return createChecker(new DeriveSymTypeOfOCLCombineExpressions());
+  }
+
   public static OCLCoCoChecker createChecker(DeriveSymTypeOfOCLCombineExpressions typeChecker) {
     return new OCLCoCoChecker()
         .addCoCo(new FileNameStartsWithLowerCaseLetter())

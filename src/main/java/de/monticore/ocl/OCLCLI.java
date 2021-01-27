@@ -1,40 +1,34 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl;
 
+import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
+import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelper;
+import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
+import de.monticore.io.FileReaderWriter;
+import de.monticore.io.paths.ModelPath;
+import de.monticore.ocl.ocl.OCLMill;
+import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._od.OCL2OD;
+import de.monticore.ocl.ocl._parser.OCLParser;
+import de.monticore.ocl.ocl._symboltable.*;
+import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
+import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.prettyprint.IndentPrinter;
+import de.se_rwth.commons.logging.Log;
+import org.apache.commons.cli.*;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
-
-import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelper;
-import de.monticore.ocl.ocl._od.OCL2OD;
-import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCreator;
-import de.monticore.ocl.ocl.OCLMill;
-import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._parser.OCLParser;
-import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
-import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
-import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCreatorDelegator;
-import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
-import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-
-import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
-import de.monticore.io.paths.ModelPath;
-import de.monticore.prettyprint.IndentPrinter;
-import de.se_rwth.commons.logging.Log;
+import java.util.stream.Collectors;
 
 /**
  * Command line interface for the OCL language and corresponding tooling.
@@ -65,6 +59,7 @@ public class OCLCLI {
    */
   public void run(String[] args) {
 
+    OCLTool tool = new OCLTool();
     Options options = initOptions();
 
     try {
@@ -89,34 +84,94 @@ public class OCLCLI {
       // -option developer logging
       if (cmd.hasOption("d")) {
         Log.initDEBUG();
-      } else {
+      }
+      else {
         Log.init();
+      }
+
+      // we need the global scope for symbols and cocos
+      ModelPath modelPath = new ModelPath(Paths.get(""));
+      if (cmd.hasOption("mp")) {
+        modelPath = new ModelPath(Arrays.stream(cmd.getOptionValues("mp"))
+          .map(x -> Paths.get(x))
+          .collect(Collectors.toList())
+        );
       }
 
       // parse input file, which is now available
       // (only returns if successful)
-      ASTOCLCompilationUnit oCLCompilationUnit = parseFile(cmd.getOptionValue("i"));
-
-      // create the symbol table
-      createSymbolTable(oCLCompilationUnit);
+      List<ASTOCLCompilationUnit> inputOCLs = new ArrayList<>();
+      for (String inputFileName : cmd.getOptionValues("i")) {
+        Optional<ASTOCLCompilationUnit> ast = tool.parseOCL(inputFileName);
+        if (ast.isPresent()) {
+          inputOCLs.add(ast.get());
+        }
+        else {
+          Log.error("0xOCL30 File '" + inputFileName + "' cannot be parsed");
+        }
+      }
 
       // -option pretty print
       if (cmd.hasOption("pp")) {
         String path = cmd.getOptionValue("pp");
-        prettyPrint(oCLCompilationUnit, path);
+        for (ASTOCLCompilationUnit compUnit : inputOCLs) {
+          prettyprint(compUnit, path);
+        }
       }
+
+      //
+      // Parsing and pretty printing can be done without a symbol table
+      // but executing the following options requires a symbol table
+      //
+
+      // create the symbol table and check cocos
+      IOCLGlobalScope globalScope = tool.processModels(Paths.get(cmd.getOptionValue("mp")));
+      inputOCLs = IOCLGlobalScopeHelper.getCompilationUnits(globalScope);
 
       // -option syntax objects
       if (cmd.hasOption("so")) {
         String path = cmd.getOptionValue("so");
-        ocl2od(oCLCompilationUnit, getModelNameFromFile(cmd.getOptionValue("i")), path);
+        for (ASTOCLCompilationUnit compUnit : inputOCLs) {
+          ocl2od(compUnit, getModelNameFromFile(cmd.getOptionValue("i")), path);
+        }
       }
 
-    } catch (ParseException e) {
+      // store symbols
+      if (cmd.hasOption("s")) {
+        if (cmd.getOptionValues("s") == null || cmd.getOptionValues("s").length == 0) {
+          for (int i = 0; i < inputOCLs.size(); i++) {
+            ASTOCLCompilationUnit ocl = inputOCLs.get(i);
+            OCLScopeDeSer deSer = new OCLScopeDeSer();
+            String serialized = deSer.serialize((OCLArtifactScope) ocl.getEnclosingScope());
+
+            String fileName = cmd.getOptionValues("i")[i];
+            String symbolFile = FilenameUtils.getName(fileName) + "sym";
+            String symbol_out = "target/symbols";
+            String packagePath = ocl.isPresentPackage() ? ocl.getPackage().replace('.', '/') : "";
+            Path filePath = Paths.get(symbol_out, packagePath, symbolFile);
+            FileReaderWriter.storeInFile(filePath, serialized);
+          }
+        }
+        else if (cmd.getOptionValues("s").length != inputOCLs.size()) {
+          Log.error(String.format("Received '%s' output files for the storesymbols option. "
+              + "Expected that '%s' many output files are specified. "
+              + "If output files for the storesymbols option are specified, then the number "
+              + " of specified output files must be equal to the number of specified input files.",
+            cmd.getOptionValues("s").length, inputOCLs.size()));
+        }
+        else {
+          for (int i = 0; i < inputOCLs.size(); i++) {
+            ASTOCLCompilationUnit ocl_i = inputOCLs.get(i);
+            storeSymbols(ocl_i, cmd.getOptionValues("s")[i]);
+          }
+        }
+      }
+
+    }
+    catch (ParseException e) {
       // ann unexpected error from the apache CLI parser:
       Log.error("0xA7101 Could not process CLI parameters: " + e.getMessage());
     }
-
   }
 
   /**
@@ -163,10 +218,10 @@ public class OCLCLI {
    * Prints the contents of the OCL-AST to stdout or a specified file.
    *
    * @param oCLCompilationUnit The OCL-AST to be pretty printed
-   * @param file The target file name for printing the OCL artifact. If empty,
-   *          the content is printed to stdout instead
+   * @param file               The target file name for printing the OCL artifact. If empty,
+   *                           the content is printed to stdout instead
    */
-  public void prettyPrint(ASTOCLCompilationUnit oCLCompilationUnit, String file) {
+  public void prettyprint(ASTOCLCompilationUnit oCLCompilationUnit, String file) {
     // pretty print AST
     OCLFullPrettyPrinter pp = new OCLFullPrettyPrinter(new IndentPrinter());
     String OCL = pp.prettyprint(oCLCompilationUnit);
@@ -181,15 +236,34 @@ public class OCLCLI {
    * @param ast The top OCL model element.
    * @return The artifact scope derived from the parsed AST
    */
-  public IOCLArtifactScope createSymbolTable(ASTOCLCompilationUnit ast) {
+  public IOCLArtifactScope createSymbolTable(ASTOCLCompilationUnit ast, ModelPath mp) {
     IOCLGlobalScope globalScope = OCLMill.globalScope();
     globalScope.setFileExt(".ocl");
+    globalScope.setModelPath(mp);
+
+    ICD4AnalysisGlobalScope cdGlobalScope = CD4AnalysisMill.globalScope();
+    cdGlobalScope.setModelPath(mp);
+    cdGlobalScope.setFileExt(".cd");
 
     OCLSymbolTableCreatorDelegator symbolTable = OCLMill.oCLSymbolTableCreatorDelegator();
-    ((OCLSymbolTableCreator)symbolTable.getOCLVisitor().get()).setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
-
+    ((OCLSymbolTableCreator) symbolTable.getOCLVisitor().get())
+      .setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
 
     return symbolTable.createFromAST(ast);
+  }
+
+  /**
+   * Stores the symbols for ast in the symbol file filename.
+   * For example, if filename = "target/symbolfiles/file.sdsym", then the symbol file corresponding to
+   * ast is stored in the file "target/symbolfiles/file.sdsym".
+   *
+   * @param ast      The ast of the SD.
+   * @param filename The name of the produced symbol file.
+   */
+  public void storeSymbols(ASTOCLCompilationUnit ast, String filename) {
+    OCLScopeDeSer deSer = new OCLScopeDeSer();
+    String serialized = deSer.serialize((OCLArtifactScope) ast.getEnclosingScope());
+    FileReaderWriter.storeInFile(Paths.get(filename), serialized);
   }
 
   /**
@@ -215,9 +289,9 @@ public class OCLCLI {
    * Creates an object diagram for the OCL-AST to stdout or a specified file.
    *
    * @param oCLCompilationUnit The OCL-AST for which the object diagram is created
-   * @param modelName The derived model name for the OCL-AST
-   * @param file The target file name for printing the object diagram. If empty,
-   *          the content is printed to stdout instead
+   * @param modelName          The derived model name for the OCL-AST
+   * @param file               The target file name for printing the object diagram. If empty,
+   *                           the content is printed to stdout instead
    */
   public void ocl2od(ASTOCLCompilationUnit oCLCompilationUnit, String modelName, String file) {
     // initialize OCL2od printer
@@ -236,14 +310,15 @@ public class OCLCLI {
    * the file is Optional.empty()).
    *
    * @param content The String to be printed
-   * @param path The target path to the file for printing the content. If empty,
-   *          the content is printed to stdout instead
+   * @param path    The target path to the file for printing the content. If empty,
+   *                the content is printed to stdout instead
    */
   public void print(String content, String path) {
     // print to stdout or file
     if (path == null || path.isEmpty()) {
       System.out.println(content);
-    } else {
+    }
+    else {
       File f = new File(path);
       // create directories (logs error otherwise)
       f.getAbsoluteFile().getParentFile().mkdirs();
@@ -253,7 +328,8 @@ public class OCLCLI {
         writer = new FileWriter(f);
         writer.write(content);
         writer.close();
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         Log.error("0xA7105 Could not write to file " + f.getAbsolutePath());
       }
     }
@@ -277,28 +353,60 @@ public class OCLCLI {
     options.addOption(help);
 
     // developer level logging
-    Option dev = new Option("d", "Specifies whether developer level logging should be used (default is false)");
+    Option dev = new Option("d",
+      "Specifies whether developer level logging should be used (default is false)");
     dev.setLongOpt("dev");
     options.addOption(dev);
 
     // parse input file
-    Option parse = new Option("i", "Reads the source file (mandatory) and parses the contents as OCL");
-    parse.setLongOpt("input");
-    parse.setArgName("file");
-    parse.setOptionalArg(true);
-    parse.setArgs(1);
+    Option parse = Option.builder("i")
+      .longOpt("input")
+      .hasArgs()
+      .desc("Processes the list of OCL input artifacts. " +
+        "Argument list is space separated. CoCos are not checked automatically (see -c).")
+      .build();
     options.addOption(parse);
 
+    // model paths
+    Option path = new Option("mp", "Sets the artifact path for imported symbols, space separated.");
+    path.setLongOpt("modelpath");
+    path.setArgName("directory");
+    path.setOptionalArg(true);
+    path.setArgs(1);
+    options.addOption(path);
+
     // pretty print OCL
-    Option prettyprint = new Option("pp", "Prints the OCL-AST to stdout or the specified file (optional)");
+    Option prettyprint = new Option("pp",
+      "Prints the OCL-AST to stdout or the specified file (optional)");
     prettyprint.setLongOpt("prettyprint");
     prettyprint.setArgName("file");
     prettyprint.setOptionalArg(true);
     prettyprint.setArgs(1);
     options.addOption(prettyprint);
 
+    // check CoCos
+    Option cocos = new Option("c",
+      "Checks the context conditions for the input artifact.");
+    cocos.setLongOpt("cocos");
+    cocos.setArgName("file");
+    cocos.setOptionalArg(true);
+    cocos.setArgs(1);
+    options.addOption(cocos);
+
+    // create and store symboltable
+    Option symboltable = Option.builder("s")
+      .longOpt("symboltable")
+      .optionalArg(true)
+      .hasArgs()
+      .desc("Stores the symbol tables of the input OCL artifacts in the specified files. " +
+        "The n-th input OCL (-i option) is stored in the file as specified by the n-th argument " +
+        "of this option. Default is 'target/symbols/{packageName}/{artifactName}.sdsym'.")
+      .build();
+    options.addOption(symboltable);
+
     // print object diagram
-    Option syntaxobjects = new Option("so", "Prints an object diagram of the OCL-AST to stdout or the specified file (optional)");
+    Option syntaxobjects = new Option("so",
+      "Prints an object diagram of the OCL-AST to stdout or the specified file (optional)");
     syntaxobjects.setLongOpt("syntaxobjects");
     syntaxobjects.setArgName("file");
     syntaxobjects.setOptionalArg(true);

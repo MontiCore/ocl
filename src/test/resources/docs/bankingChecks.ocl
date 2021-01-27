@@ -1,7 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package example.docs;
-
-import docs.Banking.*;
+package docs;
 
 ocl bankingChecks {
   context Bank b inv OverallBalanceCorrect:
