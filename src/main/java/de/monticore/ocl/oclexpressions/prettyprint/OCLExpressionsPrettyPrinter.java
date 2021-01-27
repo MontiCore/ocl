@@ -92,7 +92,7 @@ public class OCLExpressionsPrettyPrinter
   @Override
   public void handle(ASTAnyExpression node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
-    getPrinter().println("any ");
+    getPrinter().print("any ");
     node.getExpression().accept(getTraverser());
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
