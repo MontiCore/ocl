@@ -3,11 +3,10 @@
 package de.monticore.ocl.ocl.prettyprint;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLHandler;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
-import de.monticore.ocl.ocl._ast.*;
-import de.monticore.ocl.ocl._visitor.OCLVisitor;
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlstereotype._ast.ASTStereotype;
@@ -52,7 +51,7 @@ public class OCLPrettyPrinter implements OCLHandler {
       printer.println();
     });
 
-    printer.print(" }");
+    printer.print("}");
 
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
