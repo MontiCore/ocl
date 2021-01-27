@@ -1,0 +1,18 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testinput.typeInferringModels;
+
+import example.CDs.DefaultTypes;
+import example.CDs.EmbeddedMontiArc;
+
+ocl embeddedMA {
+
+context Component cmp inv B1:
+    let
+        subDefs = {i.componentType.referencedSymbol | i in cmp.subComponents};
+    in
+        forall cmp1, cmp2 in subDefs:
+            forall p in cmp.portsList:
+                (cmp1.name == cmp2.name implies cmp1 == cmp2 &&
+                cmp1.name != p.name);
+}
+

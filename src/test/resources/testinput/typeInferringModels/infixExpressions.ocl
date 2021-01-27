@@ -1,0 +1,27 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testinput.typeInferringModels;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl infixExpressions {
+  inv test1:
+        5N == 5.0kg*m/s^2
+
+  inv test2:
+        20m / 2s == 10 m/s
+
+  inv test3:
+        20m / (2s * 2s) == 5 m/s^2
+
+  inv test4:
+        2 < 5 + 3.0
+
+  inv test5:
+        (3 * (3 + 5)) > (0)
+
+  inv test6:
+        1 - 1 - 1 * 0 == 0
+}
+
+

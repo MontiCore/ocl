@@ -1,0 +1,19 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testinput.typeInferringModels;
+
+import example.CDs.MontiArc.*;
+import example.CDs.DefaultTypes.*;
+
+ocl simpleTypes {
+  inv test:
+    let
+        numberUnit = 0 W;
+        number = 0.4;
+        i = 2;
+        s = "String";
+        c = 'c';
+    in
+        true;
+}
+
+

@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testinput.typeInferringModels;
+
+import example.CDs.AuctionCD;
+import example.CDs.DefaultTypes;
+
+ocl staticMethods {
+  inv test1:
+    let
+        t = Time.now();
+    in
+        true;
+}
+
+

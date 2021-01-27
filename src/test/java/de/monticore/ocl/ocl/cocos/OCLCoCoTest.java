@@ -39,8 +39,8 @@ public class OCLCoCoTest extends AbstractTest {
   /*@ParameterizedTest
   @MethodSource("getValidModels")*/
   public void checkExpressionHasNoSideEffectCoCo(String fileName) throws IOException {
-    Optional<ASTOCLCompilationUnit> ast = new OCLParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/example/validGrammarModels/" + fileName).toString());
-    initSymbolTable("/example/CDs/AuctionCD.cd", RELATIVE_MODEL_PATH + "/example/CDs");
+    Optional<ASTOCLCompilationUnit> ast = new OCLParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/testinput/validGrammarModels/" + fileName).toString());
+    initSymbolTable("/testinput/CDs/AuctionCD.cd", RELATIVE_MODEL_PATH + "/testinput/CDs");
     OCLSymbolTableCreatorDelegator symbolTableCreator = new OCLSymbolTableCreatorDelegator(globalScope);
     ((OCLSymbolTableCreator)symbolTableCreator.getOCLVisitor().get()).setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
     TypeCheck tc = new TypeCheck(new FullSynthesizeSymTypeFromMCSimpleGenericTypes(), new DeriveSymTypeOfOCLCombineExpressions());
@@ -88,8 +88,8 @@ public class OCLCoCoTest extends AbstractTest {
 
   @Test
   public void testSymbolTable() throws IOException {
-    Optional<ASTOCLCompilationUnit> ast = new OCLParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/example/validGrammarModels/container1.ocl").toString());
-    initSymbolTable("/example/CDs/AuctionCD.cd", RELATIVE_MODEL_PATH + "/example/CDs");
+    Optional<ASTOCLCompilationUnit> ast = new OCLParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/testinput/validGrammarModels/container1.ocl").toString());
+    initSymbolTable("/testinput/CDs/AuctionCD.cd", RELATIVE_MODEL_PATH + "/testinput/CDs");
     OCLSymbolTableCreatorDelegator symbolTableCreator = new OCLSymbolTableCreatorDelegator(globalScope);
     ((OCLSymbolTableCreator)symbolTableCreator.getOCLVisitor().get()).setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
     TypeCheck tc = new TypeCheck(new FullSynthesizeSymTypeFromMCSimpleGenericTypes(), new DeriveSymTypeOfOCLCombineExpressions());

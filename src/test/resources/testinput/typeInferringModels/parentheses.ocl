@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testinput.typeInferringModels;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl parentheses {
+  context Person inv test:
+    let
+        name = ((company.name == "myCompany") ? "myCompany" : company.name);
+    in
+        true;
+}
+
+

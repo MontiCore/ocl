@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testinput.typeInferringModels;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl overwriteVariables {
+  context Company var inv test:
+    let
+        var = var.name;
+    in
+        true;
+}
+
+

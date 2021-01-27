@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testinput.cocos.valid;
+
+import example.CDs.AuctionCD.*;
+
+ocl validConstructorName {
+  context new Auction(Policy p)
+    pre: p != null;
+}

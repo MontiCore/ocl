@@ -1,0 +1,63 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testinput.CDs;
+
+classdiagram EmbeddedMontiArc {
+
+  public class Component {
+    String name;
+    List getPortsList();
+  }
+
+  public class ComponentReference;
+  public class ComponentInstance;
+  public class ComponentInstantiation;
+
+  public class Port {
+    String name;
+    boolean isInPort();
+    boolean isOutPort();
+  }
+
+  public class PortInstance {
+    boolean isInPort();
+    boolean isOutPort();
+  }
+
+  public class Connector;
+  public class Effector;
+
+  public class ConnectorInstance;
+  public class EffectorInstance;
+
+
+  association [1..*] ComponentInstance (instances) <-> (definition) Component [1];
+  association [1..*] PortInstance (instances) <-> (definition) Port [1];
+  association [1..*] ConnectorInstance (instances) <-> (definition) Connector [1];
+  association [1..*] EffectorInstance (instances) <-> (definition) Effector [1];
+
+  association [0..1] Component (parent) <-> Component [*];
+  association [1] Component -> (subComponents) ComponentInstantiation [*] ;
+  association [1] Component -> ComponentInstance [*] ;
+  association [1] Component <-> (portsList) Port [*] ;
+  association [1] Component <-> Connector [*] ;
+  association [1] Component <-> Effector [*] ;
+
+  association [1] ComponentInstantiation -> (componentType) ComponentReference [1];
+  association [*] ComponentReference -> (referencedSymbol) Component [1];
+
+  association [0..1] ComponentInstance (parent) <-> ComponentInstance [*];
+  association [1] ComponentInstance <-> PortInstance [*];
+  association [1] ComponentInstance <-> ConnectorInstance [*];
+  association [1] ComponentInstance <-> EffectorInstance [*];
+
+  association [1] Connector -> (sourcePort) Port [1];
+  association [1] Connector -> (targetPort) Port [1];
+  association source [1] Effector -> (sourcePort) Port [1];
+  association target [1] Effector -> (targetPort) Port [1];
+
+  association sourceInstance [1] ConnectorInstance -> (sourcePort) PortInstance [1];
+  association targetInstance [1] ConnectorInstance -> (targetPort) PortInstance [1];
+  association sourceInstance [1] EffectorInstance -> (sourcePort) PortInstance [1];
+  association targetInstance [1] EffectorInstance -> (targetPort) PortInstance [1];
+
+}

@@ -14,14 +14,14 @@ public abstract class AbstractTest {
   protected static final String RELATIVE_MODEL_PATH = "src/test/resources";
 
   public static String[] getValidModels() {
-    File f = new File(RELATIVE_MODEL_PATH + "/example/validGrammarModels");
+    File f = new File(RELATIVE_MODEL_PATH + "/testinput/validGrammarModels");
     String[] filenames = f.list();
     assertThat(filenames).isNotNull();
     return filenames;
   }
 
   public static String prefixValidModelsPath(String fileName) {
-    return RELATIVE_MODEL_PATH + "/example/validGrammarModels/" + fileName;
+    return RELATIVE_MODEL_PATH + "/testinput/validGrammarModels/" + fileName;
   }
 
   public Optional<ASTOCLCompilationUnit> parse(String relativeFilePath,

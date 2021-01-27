@@ -1,0 +1,16 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testinput.symbolTableTestFiles;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl test2 {
+  context boolean Person.changeCompany(int gehalt) throws RecognitionException
+  let 
+    ClassName oldCo = company;
+    int newCos = {co in Company | co.name == name};
+    newCo = any newCos;
+    Class min(int x, int y) = x.lessThan(y) ? x : y ;
+  pre PreTest : oldCo.name != name && newCos.size == 1;
+  post PostTest : newCo.employees == newCo.employees@pre + 1 && oldCo.employees == oldCo.employees@pre - 1;
+}

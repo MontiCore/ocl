@@ -1,0 +1,19 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testinput.typeInferringModels;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl comprehensions {
+  context Auction a inv test:
+    let
+        comp = Set{p.company.name | p in a.bidder};
+        comp2 = Set{1, 3, 2..10};
+        comp3 = {p in a.bidder | p.company.name == "myCompany"}; // `a.bidder` resolves to `Collection<Person>`` -> `p in a.bidder` resolves to `Person` -> `comp3` is `Collection<Person>`
+        s = {"one", "two"}.size;
+        comp4 = {"one", "two"}.addAll({"three", "four"});
+    in
+        true;
+}
+
+

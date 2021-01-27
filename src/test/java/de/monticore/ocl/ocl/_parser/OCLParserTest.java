@@ -13,17 +13,17 @@ class OCLParserTest extends AbstractTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-    "example/cocos/valid/validConstructorName.ocl",
-    "example/cocos/valid/validConstructorName0.ocl",
-    "example/cocos/valid/validFileName.ocl",
-    "example/cocos/valid/validInvariantName.ocl",
-    "example/cocos/valid/validMethSigName.ocl",
-    "example/cocos/valid/validParameterDeclarationName.ocl",
-    "example/cocos/valid/validParameterType.ocl",
-    "example/cocos/valid/validPostStatementName.ocl",
-    "example/cocos/valid/validPrePost.ocl",
-    "example/cocos/valid/validPreStatementName.ocl",
-    "example/cocos/valid/validVariableName.ocl"})
+    "testinput/cocos/valid/validConstructorName.ocl",
+    "testinput/cocos/valid/validConstructorName0.ocl",
+    "testinput/cocos/valid/validFileName.ocl",
+    "testinput/cocos/valid/validInvariantName.ocl",
+    "testinput/cocos/valid/validMethSigName.ocl",
+    "testinput/cocos/valid/validParameterDeclarationName.ocl",
+    "testinput/cocos/valid/validParameterType.ocl",
+    "testinput/cocos/valid/validPostStatementName.ocl",
+    "testinput/cocos/valid/validPrePost.ocl",
+    "testinput/cocos/valid/validPreStatementName.ocl",
+    "testinput/cocos/valid/validVariableName.ocl"})
   public void shouldParseValidInput(String fileName) {
     this.parse(Paths.get(RELATIVE_MODEL_PATH, fileName).toString(), false);
   }

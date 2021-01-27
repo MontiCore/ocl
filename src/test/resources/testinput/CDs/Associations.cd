@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testinput.CDs;
+
+classdiagram Associations {
+
+  public class A {}
+  public class B {}
+  public class C {}
+  public class D {}
+
+  association [*] A (a) <-> (b) B [0..1];
+  association [0..1] C (c) <-> (d) D [*];
+
+}

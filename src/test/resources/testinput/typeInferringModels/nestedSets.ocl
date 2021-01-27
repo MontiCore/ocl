@@ -1,0 +1,42 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testinput.typeInferringModels;
+
+import example.CDs.DefaultTypes.*;
+
+ocl nestedSets {
+
+inv X:
+  let
+    chain1 = {1.1, 1.2, 1.3, 1.4};
+    chain2 = {2.1, 2.2, 2.3, 2.4};
+    chain3 = {3.1, 3.2, 3.3, 3.4};
+    chain4 = {4.1, 4.2, 4.3, 4.4};
+
+    partition1A = {chain1, chain2 };
+    partition2A = {chain3, chain4 };
+    singleCombA = { partition1A, partition2A };
+
+    partition1B = {chain1, chain3 };
+    partition2B = {chain2, chain4 };
+    singleCombB = { partition1B, partition2B };
+
+    partition1C = {chain1};
+    partition2C = {chain2, chain3};
+    partition3C = {chain4};
+    singleCombC = { partition1C, partition2C, partition3C };
+
+    combChains = { singleCombA, singleCombB, singleCombC };
+
+    combSubs = { { {chain | chain in partition}.flatten.asSet | // chain is `Collection<Double>`
+               partition in singleComb } |                      // partition is `Collection<Collection<Double>>`
+             singleComb in combChains };                        // singleComb is `Collection<Collection<Collection<Double>>>`
+  // {chain | chain in partition} equals to { `Collection<Double>` } equals to `Collection<Collection<Double>>`
+  //    -> {chain | chain in partition}.flatten equals to `Collection<Double>``
+  //         -> {chain | chain in partition}.flatten.asSet equals to `Set<Double>`
+  //              -> { {chain | chain in partition}.flatten.asSet | partition in singleComb } equals to { `Set<Double>` | | partition in singleComb } equals to `Collection<Set<Double>>`
+  //                  -> { { {chain | chain in partition}.flatten.asSet | partition in singleComb } | singleComb in combChains }  equals to { `Collection<Set<Double>>` } equals to `Collection<Collection<Set<Double>>>`
+
+  in
+    1 == 1
+
+}

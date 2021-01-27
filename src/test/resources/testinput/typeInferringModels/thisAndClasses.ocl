@@ -1,0 +1,18 @@
+/* (c) https://github.com/MontiCore/monticore */
+package testinput.typeInferringModels;
+
+import example.CDs.AuctionCD.*;
+import example.CDs.DefaultTypes.*;
+
+ocl thisAndClasses {
+  context Person inv test:
+    let
+        a = this.auctions;
+        a2 = auctions;
+        s = Company;
+        s2 = Company.size;
+    in
+        true;
+}
+
+
