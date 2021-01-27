@@ -14,10 +14,12 @@ import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
 
 import java.util.Iterator;
+import java.util.List;
 
 public class OCLPrettyPrinter implements OCLHandler {
 
   protected IndentPrinter printer;
+
   protected OCLTraverser traverser;
 
   public OCLPrettyPrinter(IndentPrinter printer) {
@@ -28,8 +30,7 @@ public class OCLPrettyPrinter implements OCLHandler {
   public void handle(ASTOCLCompilationUnit unit) {
     CommentPrettyPrinter.printPreComments(unit, getPrinter());
     if (unit.getPackageList() != null && !unit.getPackageList().isEmpty()) {
-      printer
-          .println("package " + Names.getQualifiedName(unit.getPackageList()) + ";\n");
+      getPrinter().println("package " + Names.getQualifiedName(unit.getPackageList()) + ";\n");
     }
     if (unit.getMCImportStatementList() != null && !unit.getMCImportStatementList().isEmpty()) {
       unit.getMCImportStatementList().forEach(i -> i.accept(getTraverser()));
@@ -42,16 +43,21 @@ public class OCLPrettyPrinter implements OCLHandler {
   @Override
   public void handle(ASTOCLArtifact node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
-    printer.print("ocl ");
+    getPrinter().print("ocl ");
 
-    printer.println(node.getName() + " {");
+    getPrinter().println(node.getName() + " {");
+    getPrinter().indent();
 
-    node.getOCLConstraintList().forEach(c -> {
+    for (int i = 0; i < node.getOCLConstraintList().size(); i++) {
+      if (i != 0) {
+        getPrinter().println();
+      }
+      ASTOCLConstraint c = node.getOCLConstraint(i);
       c.accept(getTraverser());
-      printer.println();
-    });
+    }
 
-    printer.print("}");
+    getPrinter().unindent();
+    getPrinter().print("}");
 
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
@@ -60,44 +66,46 @@ public class OCLPrettyPrinter implements OCLHandler {
   public void handle(ASTOCLOperationConstraint node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
 
-    for(ASTStereotype stereotype : node.getStereotypeList()){
+    for (ASTStereotype stereotype : node.getStereotypeList()) {
       stereotype.accept(getTraverser());
     }
 
-    printer.print("context ");
+    getPrinter().print("context ");
     node.getOCLOperationSignature().accept(getTraverser());
-    printer.println();
+    getPrinter().println();
 
+    getPrinter().indent();
     if (!node.isEmptyOCLVariableDeclarations()) {
-      printer.print("let: ");
+      getPrinter().print("let ");
 
       Iterator<ASTOCLVariableDeclaration> it = node.getOCLVariableDeclarationList().iterator();
       while (it.hasNext()) {
         it.next().accept(getTraverser());
         if (it.hasNext()) {
-          printer.println("; ");
+          getPrinter().println("; ");
         }
       }
-      printer.println();
+      getPrinter().println();
     }
 
     if (!node.getPreConditionList().isEmpty()) {
-      printer.print("pre: ");
-      for (ASTExpression e : node.getPreConditionList()){
+      getPrinter().print("pre: ");
+      for (ASTExpression e : node.getPreConditionList()) {
         e.accept(getTraverser());
-        printer.print("; ");
+        getPrinter().print("; ");
       }
-      printer.println();
+      getPrinter().println();
     }
 
     if (!node.getPostConditionList().isEmpty()) {
-      printer.print("post: ");
-      for (ASTExpression e : node.getPostConditionList()){
+      getPrinter().print("post: ");
+      for (ASTExpression e : node.getPostConditionList()) {
         e.accept(getTraverser());
-        printer.print("; ");
+        getPrinter().print("; ");
       }
-      printer.println();
+      getPrinter().println();
     }
+    getPrinter().unindent();
 
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
@@ -106,50 +114,44 @@ public class OCLPrettyPrinter implements OCLHandler {
   public void handle(ASTOCLInvariant node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
 
-    for(ASTStereotype stereotype : node.getStereotypeList()){
+    for (ASTStereotype stereotype : node.getStereotypeList()) {
       stereotype.accept(getTraverser());
     }
 
     if (node.isContext()) {
-      printer.println("context");
-      node.getOCLContextDefinitionList().forEach(c -> {
-        c.accept(getTraverser());
-        printer.println();
-      });
-      printer.print(" ");
+      getPrinter().print("context ");
     }
     else if (node.isImport()) {
-      printer.println("import");
-      node.getOCLContextDefinitionList().forEach(c -> {
-        c.accept(getTraverser());
-        printer.println();
-      });
-      printer.print(" ");
+      getPrinter().print("import ");
     }
 
+    for (int i = 0; i < node.getOCLContextDefinitionList().size(); i++) {
+      ASTOCLContextDefinition c = node.getOCLContextDefinition(i);
+      c.accept(getTraverser());
+      if (i < node.getOCLContextDefinitionList().size() - 1) {
+        getPrinter().print(", ");
+      }
+    }
+    if (node.isContext() || node.isImport()) {
+      getPrinter().println();
+    }
 
-
-    printer.print("inv");
+    getPrinter().print("inv");
 
     if (node.isPresentName()) {
-      printer.print(" " + node.getName());
+      getPrinter().print(" " + node.getName());
     }
 
     if (!node.getOCLParamDeclarationList().isEmpty()) {
-      printer.print("(");
-      for (int i = 0; i < node.getOCLParamDeclarationList().size(); i++) {
-        if (i != 0) {
-          getPrinter().print(", ");
-        }
-        node.getOCLParamDeclaration(i).accept(getTraverser());
-      }
-      printer.print(")");
+      printOCLParamDeclarationList(node.getOCLParamDeclarationList());
     }
 
-    printer.println(":");
+    getPrinter().println(":");
 
+    getPrinter().indent();
     node.getExpression().accept(getTraverser());
-    printer.println();
+    getPrinter().println(";");
+    getPrinter().unindent();
 
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
@@ -164,6 +166,9 @@ public class OCLPrettyPrinter implements OCLHandler {
     else if (node.isPresentGeneratorDeclaration()) {
       node.getGeneratorDeclaration().accept(getTraverser());
     }
+    else if (node.isPresentOCLParamDeclaration()) {
+      node.getOCLParamDeclaration().accept(getTraverser());
+    }
 
     CommentPrettyPrinter.printPreComments(node, getPrinter());
   }
@@ -174,23 +179,15 @@ public class OCLPrettyPrinter implements OCLHandler {
 
     if (node.isPresentMCReturnType()) {
       node.getMCReturnType().accept(getTraverser());
-      printer.print(" ");
+      getPrinter().print(" ");
     }
 
-    printer.print(node.getMethodName());
-
-    printer.print("(");
-    for (int i = 0; i < node.getOCLParamDeclarationList().size(); i++) {
-      if (i != 0) {
-        getPrinter().print(", ");
-      }
-      node.getOCLParamDeclaration(i).accept(getTraverser());
-    }
-    printer.print(")");
+    getPrinter().print(node.getMethodName());
+    printOCLParamDeclarationList(node.getOCLParamDeclarationList());
 
     if (!node.getThrowablesList().isEmpty()) {
-      printer.print(" ");
-      printer.print("throws " + Joiners.COMMA.join(node.getThrowablesList()));
+      getPrinter().print(" ");
+      getPrinter().print("throws " + Joiners.COMMA.join(node.getThrowablesList()));
     }
 
     CommentPrettyPrinter.printPreComments(node, getPrinter());
@@ -200,22 +197,35 @@ public class OCLPrettyPrinter implements OCLHandler {
   public void handle(ASTOCLConstructorSignature node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
 
-    printer.print("new " + node.getName());
-    printer.print("(");
-    for (int i = 0; i < node.getOCLParamDeclarationList().size(); i++) {
-      if (i != 0) {
-        getPrinter().print(", ");
-      }
-      node.getOCLParamDeclaration(i).accept(getTraverser());
-    }
-    printer.print(")");
+    getPrinter().print("new " + node.getName());
+    printOCLParamDeclarationList(node.getOCLParamDeclarationList());
 
     if (!node.getThrowablesList().isEmpty()) {
-      printer.print(" ");
-      printer.print("throws " + Joiners.COMMA.join(node.getThrowablesList()));
+      getPrinter().print(" ");
+      getPrinter().print("throws " + Joiners.COMMA.join(node.getThrowablesList()));
     }
 
     CommentPrettyPrinter.printPreComments(node, getPrinter());
+  }
+
+  @Override public void handle(ASTOCLParamDeclaration node) {
+    node.getMCType().accept(getTraverser());
+    getPrinter().print(" " + node.getName());
+    if (node.isPresentExpression()) {
+      getPrinter().print(" = ");
+      node.getExpression().accept(getTraverser());
+    }
+  }
+
+  protected void printOCLParamDeclarationList(List<ASTOCLParamDeclaration> listToPrint) {
+    getPrinter().print("(");
+    for (int i = 0; i < listToPrint.size(); i++) {
+      if (i != 0) {
+        getPrinter().print(", ");
+      }
+      listToPrint.get(i).accept(getTraverser());
+    }
+    getPrinter().print(")");
   }
 
   /* ============================================================ */

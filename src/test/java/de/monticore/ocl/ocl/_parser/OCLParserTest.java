@@ -1,39 +1,15 @@
 package de.monticore.ocl.ocl._parser;
 
-import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl.AbstractTest;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-class OCLParserTest {
+class OCLParserTest extends AbstractTest {
 
   protected static final String RELATIVE_MODEL_PATH = "src/test/resources";
-
-  public Optional<ASTOCLCompilationUnit> parse(String relativeFilePath,
-    boolean expParserErrors) {
-    OCLParser parser = new OCLParser();
-    Optional<ASTOCLCompilationUnit> optAst;
-    try {
-      optAst = parser.parse(relativeFilePath);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-    if (expParserErrors) {
-      assertThat(parser.hasErrors()).isTrue();
-      assertThat(optAst).isNotPresent();
-    } else {
-      assertThat(parser.hasErrors()).isFalse();
-      assertThat(optAst).isPresent();
-    }
-    return optAst;
-  }
 
   @ParameterizedTest
   @ValueSource(strings = {
@@ -54,15 +30,7 @@ class OCLParserTest {
 
   @ParameterizedTest
   @MethodSource("getValidModels")
-  public void shouldParseValidGrammarModels(String fileName) {
-    this.parse(Paths.get(RELATIVE_MODEL_PATH + "/example/validGrammarModels/" + fileName).toString(), false);
+  public void shouldParseValidGrammarModels(String filename) {
+    this.parse(Paths.get(prefixValidModelsPath(filename)).toString(), false);
   }
-
-  private static String[] getValidModels(){
-    File f = new File(RELATIVE_MODEL_PATH + "/example/validGrammarModels");
-    String[] filenames = f.list();
-    return filenames;
-  }
-
-
 }

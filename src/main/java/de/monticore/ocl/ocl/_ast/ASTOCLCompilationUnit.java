@@ -7,6 +7,6 @@ public class ASTOCLCompilationUnit extends ASTOCLCompilationUnitTOP {
   }
 
   public boolean isPresentPackage() {
-    return getPackageList().size() > 0;
+    return !getPackageList().isEmpty();
   }
 }

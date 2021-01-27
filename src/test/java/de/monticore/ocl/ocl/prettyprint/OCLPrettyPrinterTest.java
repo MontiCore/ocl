@@ -7,23 +7,24 @@
 
 package de.monticore.ocl.ocl.prettyprint;
 
+import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.util.Optional;
 
-import static org.junit.Assert.assertFalse;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertTrue;
 
-public class OCLPrettyPrinterTest {
+public class OCLPrettyPrinterTest extends AbstractTest {
 
   @BeforeClass
   public static void init() {
@@ -36,35 +37,21 @@ public class OCLPrettyPrinterTest {
     Log.getFindings().clear();
   }
 
-  @Test
-  public void testOCLCompilationUnit() throws IOException {
-    final OCLParser parser = new OCLParser();
-    final Optional<ASTOCLCompilationUnit> ast = parser.parse_StringOCLCompilationUnit("package blub; import foo; ocl TestOCL {}");
-    assertTrue(ast.isPresent());
-    assertFalse(parser.hasErrors());
-
+  @ParameterizedTest
+  @MethodSource("getValidModels")
+  public void testOCLCompilationUnit(String filename) throws IOException {
+    // given
+    final Optional<ASTOCLCompilationUnit> ast = parse(prefixValidModelsPath(filename), false);
     final OCLFullPrettyPrinter printer = new OCLFullPrettyPrinter(new IndentPrinter());
+    assertThat(ast).isNotNull();
+
+    // when
     String output = printer.prettyprint(ast.get());
+
+    // then
+    OCLParser parser = new OCLParser();
     final Optional<ASTOCLCompilationUnit> astPrint = parser.parse_StringOCLCompilationUnit(output);
-    assertFalse(parser.hasErrors());
     assertTrue(astPrint.isPresent());
-    System.out.println("output: " + output);
-    assertTrue(ast.get().deepEquals(astPrint.get()));
-  }
-
-  @Test
-  public void testOCLFile() throws IOException {
-    final OCLParser parser = new OCLParser();
-    final Optional<ASTOCLArtifact> ast = parser.parse_StringOCLArtifact("ocl TestOCL {}");
-    assertTrue(ast.isPresent());
-    assertFalse(parser.hasErrors());
-
-    final OCLFullPrettyPrinter printer = new OCLFullPrettyPrinter(new IndentPrinter());
-    String output = printer.prettyprint(ast.get());
-    final Optional<ASTOCLArtifact> astPrint = parser.parse_StringOCLArtifact(output);
-    assertFalse(parser.hasErrors());
-    assertTrue(astPrint.isPresent());
-    System.out.println("output: " + output);
     assertTrue(ast.get().deepEquals(astPrint.get()));
   }
 }
