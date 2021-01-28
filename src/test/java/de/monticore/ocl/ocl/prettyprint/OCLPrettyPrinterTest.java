@@ -47,7 +47,6 @@ public class OCLPrettyPrinterTest extends AbstractTest {
 
     // when
     String output = printer.prettyprint(ast.get());
-    System.out.println(output);
 
     // then
     OCLParser parser = new OCLParser();

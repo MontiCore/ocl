@@ -1,0 +1,38 @@
+/* (c) https://github.com/MontiCore/monticore */
+package docs;
+
+classdiagram Bookshop {
+  class Shop;
+
+  class Book {
+    String name;
+    String iban;
+    double cost;
+    double price;
+  }
+
+  class Stock {
+    void addBook(Book b);
+    Invoice sellBook(Book bookToSell, int discountPercent, Customer buyer);
+  }
+
+  class Customer {
+    String name;
+    String phoneNumber;
+    int customerNumber;
+    boolean allowedToOrder;
+    void payInvoice(double moneyWired, Invoice invoice);
+  }
+
+  class Invoice {
+    int invoiceNumber;
+    double total;
+    double moneyPayed;
+  }
+
+  association [1] Stock -> (booksInStock) Book [*];
+  association [1] Shop -> (invoices) Invoice [*];
+  association [1] Shop -> (customers) Customer [*];
+  association [1] Invoice <-> (buyer) Customer [1];
+  association [1] Invoice <-> (soldBook) Book [1];
+}

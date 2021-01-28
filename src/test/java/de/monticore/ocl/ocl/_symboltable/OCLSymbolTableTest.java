@@ -22,10 +22,31 @@ public class OCLSymbolTableTest extends AbstractTest {
     initSymbolTable("/testinput/CDs/AuctionCD.cd", RELATIVE_MODEL_PATH + "/testinput/CDs");
 
     // when
-    OCLSymbolTableCreatorDelegator symbolTableCreator = new OCLSymbolTableCreatorDelegator(globalScope);
-    ((OCLSymbolTableCreator)symbolTableCreator.getOCLVisitor().get()).setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
+    OCLSymbolTableCreatorDelegator symbolTableCreator = new OCLSymbolTableCreatorDelegator(
+      globalScope);
+    ((OCLSymbolTableCreator) symbolTableCreator.getOCLVisitor().get())
+      .setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
     symbolTableCreator.createFromAST(ast.get());
 
+    OCLCoCoChecker checker = new OCLCoCoChecker();
+    checker.addCoCo(new ExpressionHasNoSideEffect());
+    checker.addCoCo(new ValidTypes(new DeriveSymTypeOfOCLCombineExpressions()));
+    checker.checkAll(ast.get());
+  }
+
+  //@Test
+  public void shouldCreateSymTabForValidModels() throws IOException {
+    // given
+    final Optional<ASTOCLCompilationUnit> ast = parse(RELATIVE_MODEL_PATH + "/docs/bookshop.ocl",
+      false);
+    initSymbolTable("/docs/Bookshop.cd", RELATIVE_MODEL_PATH + "/docs");
+
+    // when
+    OCLSymbolTableCreatorDelegator symbolTableCreator = new OCLSymbolTableCreatorDelegator(
+      globalScope);
+    ((OCLSymbolTableCreator) symbolTableCreator.getOCLVisitor().get())
+      .setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
+    symbolTableCreator.createFromAST(ast.get());
 
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new ExpressionHasNoSideEffect());

@@ -3,6 +3,8 @@ import EmbeddedMontiArc.*;
 
 // slide Ch04_PortValue
 
+ocl EmaOcl {
+
 context NaturalNumber inv:
   value >= 1 && unit.quantity instanceof Dimensionless &&
   !isPlusInf && !isMinusInf
@@ -661,3 +663,5 @@ context CnCModel cncm, CnCView cncv inv:
               ap.dimension.min ?<= p.dimension &&
               ap.dimension.max ?>= p.dimension))
        // &&  ... (other OCL constraints)
+
+}

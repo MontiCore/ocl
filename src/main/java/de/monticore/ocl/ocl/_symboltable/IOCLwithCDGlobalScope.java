@@ -7,12 +7,12 @@
 
 package de.monticore.ocl.ocl._symboltable;
 
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
+import de.monticore.cd4code._symboltable.ICD4CodeScope;
 
 import java.util.List;
 
 public interface IOCLwithCDGlobalScope
-extends ICD4AnalysisScope, IOCLScope {
+extends ICD4CodeScope, IOCLScope {
 
   @Override
   List<? extends IOCLwithCDGlobalScope> getSubScopes();

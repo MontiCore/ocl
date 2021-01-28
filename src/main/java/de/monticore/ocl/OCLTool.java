@@ -2,15 +2,15 @@
 package de.monticore.ocl;
 
 import com.google.common.base.Preconditions;
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCreatorDelegator;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
-import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
-import de.monticore.cd4analysis.resolver.CD4AnalysisResolver;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
+import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
+import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.ICD4CodeScope;
+import de.monticore.cd4code.cocos.CD4CodeCoCos;
+import de.monticore.cd4code.resolver.CD4CodeResolver;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.io.paths.ModelPath;
@@ -36,7 +36,7 @@ import java.util.Optional;
 public class OCLTool {
   protected OCLCoCoChecker oclChecker;
 
-  protected CD4AnalysisCoCoChecker cdChecker;
+  protected CD4CodeCoCoChecker cdChecker;
 
   protected boolean isSymTabInitialized;
 
@@ -47,11 +47,11 @@ public class OCLTool {
   protected static final String TOOL_NAME = "OCLTool";
 
   public OCLTool() {
-    this(OCLCoCos.createChecker(), new CD4AnalysisCoCos().createNewChecker());
+    this(OCLCoCos.createChecker(), new CD4CodeCoCos().createNewChecker());
   }
 
   public OCLTool(OCLCoCoChecker oclChecker,
-    CD4AnalysisCoCoChecker cdChecker) {
+    CD4CodeCoCoChecker cdChecker) {
     Preconditions.checkArgument(oclChecker != null);
     Preconditions.checkArgument(cdChecker != null);
     this.oclChecker = oclChecker;
@@ -63,7 +63,7 @@ public class OCLTool {
     return this.oclChecker;
   }
 
-  protected CD4AnalysisCoCoChecker getCdChecker() {
+  protected CD4CodeCoCoChecker getCdChecker() {
     return this.cdChecker;
   }
 
@@ -71,7 +71,7 @@ public class OCLTool {
     Preconditions.checkArgument(modelPaths != null);
     Preconditions.checkArgument(!Arrays.asList(modelPaths).contains(null));
     ModelPath mp = new ModelPath(Arrays.asList(modelPaths));
-    ICD4AnalysisGlobalScope cdGlobalScope = CD4AnalysisMill.globalScope();
+    ICD4CodeGlobalScope cdGlobalScope = CD4CodeMill.globalScope();
     cdGlobalScope.setModelPath(mp);
     cdGlobalScope.setFileExt(CD_FILE_EXTENSION);
 
@@ -87,8 +87,8 @@ public class OCLTool {
   }
 
   protected void linkResolvingDelegates(IOCLGlobalScope oclGlobalScope,
-    ICD4AnalysisGlobalScope cdGlobalScope) {
-    CD4AnalysisResolver cdTypeSymbolDelegate = new CD4AnalysisResolver(cdGlobalScope);
+    ICD4CodeGlobalScope cdGlobalScope) {
+    CD4CodeResolver cdTypeSymbolDelegate = new CD4CodeResolver(cdGlobalScope);
     oclGlobalScope.addAdaptedTypeSymbolResolver(cdTypeSymbolDelegate);
   }
 
@@ -100,10 +100,10 @@ public class OCLTool {
     }
   }
 
-  public void processModels(ICD4AnalysisGlobalScope scope) {
+  public void processModels(ICD4CodeGlobalScope scope) {
     Preconditions.checkArgument(scope != null);
-    for (ICD4AnalysisArtifactScope a : this.createSymbolTable(scope)) {
-      for (ICD4AnalysisScope as : a.getSubScopes()) {
+    for (ICD4CodeArtifactScope a : this.createSymbolTable(scope)) {
+      for (ICD4CodeScope as : a.getSubScopes()) {
         ASTCDPackage astNode = (ASTCDPackage) as.getSpanningSymbol().getAstNode();
         astNode.accept(this.getCdChecker());
       }
@@ -130,11 +130,11 @@ public class OCLTool {
     return result;
   }
 
-  public Collection<ICD4AnalysisArtifactScope> createSymbolTable(ICD4AnalysisGlobalScope scope) {
+  public Collection<ICD4CodeArtifactScope> createSymbolTable(ICD4CodeGlobalScope scope) {
     Preconditions.checkArgument(scope != null);
-    Collection<ICD4AnalysisArtifactScope> result = new HashSet<>();
+    Collection<ICD4CodeArtifactScope> result = new HashSet<>();
     for (ASTCDCompilationUnit ast : parseModels(scope)) {
-      CD4AnalysisSymbolTableCreatorDelegator symTab = new CD4AnalysisSymbolTableCreatorDelegator(
+      CD4CodeSymbolTableCreatorDelegator symTab = new CD4CodeSymbolTableCreatorDelegator(
         scope);
       result.add(symTab.createFromAST(ast));
     }
@@ -146,9 +146,9 @@ public class OCLTool {
       .parseModels(scope, OCL_FILE_EXTENSION, new OCLParser());
   }
 
-  public Collection<ASTCDCompilationUnit> parseModels(ICD4AnalysisGlobalScope scope) {
+  public Collection<ASTCDCompilationUnit> parseModels(ICD4CodeGlobalScope scope) {
     return (Collection<ASTCDCompilationUnit>) ParserUtil
-      .parseModels(scope, CD_FILE_EXTENSION, new CD4AnalysisParser());
+      .parseModels(scope, CD_FILE_EXTENSION, new CD4CodeParser());
   }
 
   public Optional<ASTOCLCompilationUnit> parseOCL(String filename) {
@@ -156,7 +156,7 @@ public class OCLTool {
   }
 
   public Optional<ASTCDCompilationUnit> parseCD(String filename) {
-    return (Optional<ASTCDCompilationUnit>) ParserUtil.parse(filename, new CD4AnalysisParser());
+    return (Optional<ASTCDCompilationUnit>) ParserUtil.parse(filename, new CD4CodeParser());
   }
 
   public Collection<ASTOCLCompilationUnit> parseOCL(Path path) {
@@ -166,6 +166,6 @@ public class OCLTool {
 
   public Collection<ASTCDCompilationUnit> parseCD(Path path) {
     return (Collection<ASTCDCompilationUnit>) ParserUtil
-      .parse(path, CD_FILE_EXTENSION, new CD4AnalysisParser());
+      .parse(path, CD_FILE_EXTENSION, new CD4CodeParser());
   }
 }
