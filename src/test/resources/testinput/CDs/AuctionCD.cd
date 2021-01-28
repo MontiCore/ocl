@@ -3,12 +3,9 @@ package testinput.CDs;
 
 classdiagram AuctionCD {
 
-  public class AllData {
-    Auction auction;
-  }
+  public class AllData;
 
   public class Name {}
-
 
   public class Company {
     String name;
@@ -30,7 +27,6 @@ classdiagram AuctionCD {
   }
 
   public class Policy;
-
 
   public class Person {
     //boolean lessThan(Person that);

@@ -7,6 +7,7 @@ import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcsimplegenerictypes.MCSimpleGenericTypesMill;
 import de.se_rwth.commons.Names;
@@ -45,6 +46,7 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
       artifactScope.setPackageName(node.getPackage());
       List<ImportStatement> imports = getImportStatements(node.getMCImportStatementList());
       artifactScope.setImportsList(imports);
+      artifactScope.setName(node.getOCLArtifact().getName());
 
       putOnStack(artifactScope);
       node.accept(getRealThis());
@@ -156,11 +158,19 @@ public class OCLSymbolTableCreator extends OCLSymbolTableCreatorTOP {
     super.visit(node);
     if(node.isPresentMCReturnType()){
       //create VariableSymbol for result of method
-      final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(node.getMCReturnType().getMCType());
-      if (!typeResult.isPresent()) {
-        Log.error(String.format("The type (%s) could not be calculated", node.getMCReturnType().getMCType()
-                .printType(MCSimpleGenericTypesMill.mcSimpleGenericTypesPrettyPrinter())));
+      final Optional<SymTypeExpression> typeResult;
+      if (node.isPresentMCReturnType()) {
+        ASTMCReturnType returnType = node.getMCReturnType();
+        if (returnType.isPresentMCVoidType()) {
+          typeResult = Optional.empty();
+        } else {
+          typeResult = typeVisitor.calculateType(returnType.getMCType());
+        }
       } else {
+        // method has no explicit return type
+        typeResult = Optional.empty();
+      }
+      if (typeResult.isPresent()) {
         VariableSymbol result = new VariableSymbol("result");
         result.setType(typeResult.get());
         result.setIsReadOnly(true);
