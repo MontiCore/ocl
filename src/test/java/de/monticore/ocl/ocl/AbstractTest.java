@@ -37,7 +37,7 @@ public abstract class AbstractTest {
     filenames = Arrays.stream(filenames)
       .sorted()
       .collect(Collectors.toList())
-      .toArray(String[]::new);
+      .toArray(filenames);
 
     return filenames;
   }
