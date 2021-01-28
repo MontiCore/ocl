@@ -18,9 +18,10 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 public class OCLCoCoTest extends AbstractTest {
-  
-  /*@ParameterizedTest
-  @MethodSource("getValidModels")*/
+
+  // TODO: Wait for CD4A symbol table and type check fixes
+  //@ParameterizedTest
+  //@MethodSource("getValidModels")
   public void checkExpressionHasNoSideEffectCoCo(String fileName) throws IOException {
     Optional<ASTOCLCompilationUnit> ast = new OCLParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/testinput/validGrammarModels/" + fileName).toString());
     initSymbolTable("/testinput/CDs/AuctionCD.cd", RELATIVE_MODEL_PATH + "/testinput/CDs");
