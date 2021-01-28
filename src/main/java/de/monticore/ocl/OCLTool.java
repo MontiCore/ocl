@@ -10,6 +10,7 @@ import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisScope;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCos;
+import de.monticore.cd4analysis.resolver.CD4AnalysisResolver;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDPackage;
 import de.monticore.io.paths.ModelPath;
@@ -18,7 +19,10 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._cocos.OCLCoCoChecker;
 import de.monticore.ocl.ocl._cocos.OCLCoCos;
 import de.monticore.ocl.ocl._parser.OCLParser;
-import de.monticore.ocl.ocl._symboltable.*;
+import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
+import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
+import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCreator;
+import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCreatorDelegator;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.ocl.util.ParserUtil;
 import de.se_rwth.commons.logging.Log;
@@ -84,7 +88,7 @@ public class OCLTool {
 
   protected void linkResolvingDelegates(IOCLGlobalScope oclGlobalScope,
     ICD4AnalysisGlobalScope cdGlobalScope) {
-    CDTypeSymbolDelegate cdTypeSymbolDelegate = new CDTypeSymbolDelegate(cdGlobalScope);
+    CD4AnalysisResolver cdTypeSymbolDelegate = new CD4AnalysisResolver(cdGlobalScope);
     oclGlobalScope.addAdaptedTypeSymbolResolver(cdTypeSymbolDelegate);
   }
 
