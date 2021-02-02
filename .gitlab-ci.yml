@@ -50,6 +50,7 @@ Unit Test Gradle:
   image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.5.1-jdk8
   stage: test
   allow_failure: true
+  needs: ["Validate Gradle"]
   dependencies:
     - Validate Gradle #download artifacts from build
   script:
@@ -64,6 +65,7 @@ Unit Test Gradle:
     - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, "instructions covered"; print 100*covered/instructions, "% covered" }' ./target/site/jacoco/jacoco.csv
   dependencies:
     - Validate Maven #download artifacts from build
+  needs: ["Validate Maven"]
   artifacts:
     reports:
       junit:
@@ -97,6 +99,7 @@ Code Quality:
     DOCKER_DRIVER: overlay2
   allow_failure: true
   cache: {}
+  needs: [] # can run immediately 
   retry: 2
   tags:
     - shell
