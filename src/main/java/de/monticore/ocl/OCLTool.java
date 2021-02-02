@@ -96,7 +96,7 @@ public class OCLTool {
     Preconditions.checkArgument(scope != null);
     for (IOCLArtifactScope as : this.createSymbolTable(scope)) {
       ASTOCLCompilationUnit a = (ASTOCLCompilationUnit) as.getAstNode();
-      a.accept(this.getOCLChecker());
+      a.accept(this.getOCLChecker().getTraverser());
     }
   }
 
@@ -105,7 +105,7 @@ public class OCLTool {
     for (ICD4CodeArtifactScope a : this.createSymbolTable(scope)) {
       for (ICD4CodeScope as : a.getSubScopes()) {
         ASTCDPackage astNode = (ASTCDPackage) as.getSpanningSymbol().getAstNode();
-        astNode.accept(this.getCdChecker());
+        astNode.accept(this.getCdChecker().getTraverser());
       }
     }
   }

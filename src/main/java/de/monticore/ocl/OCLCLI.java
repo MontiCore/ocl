@@ -182,7 +182,7 @@ public class OCLCLI {
         if (cmd.getOptionValues("s") == null || cmd.getOptionValues("s").length == 0) {
           for (int i = 0; i < inputOCLs.size(); i++) {
             ASTOCLCompilationUnit ocl = inputOCLs.get(i);
-            OCLScopeDeSer deSer = new OCLScopeDeSer();
+            OCLDeSer deSer = new OCLDeSer();
             String serialized = deSer.serialize((OCLArtifactScope) ocl.getEnclosingScope());
 
             String fileName = cmd.getOptionValues("i")[i];
@@ -284,7 +284,6 @@ public class OCLCLI {
    */
   public void checkIntraModelCoCos(ASTOCLCompilationUnit ast) {
     OCLCoCoChecker checker = new OCLCoCoChecker();
-    checker.addCoCo(new FileNameStartsWithLowerCaseLetter());
     checker.addCoCo(new MethSignatureStartsWithLowerCaseLetter());
     checker.addCoCo(new ConstructorNameStartsWithCapitalLetter());
     checker.addCoCo(new InvariantNameStartsWithCapitalLetter());
@@ -365,7 +364,7 @@ public class OCLCLI {
    * @param filename The name of the produced symbol file.
    */
   public void storeSymbols(ASTOCLCompilationUnit ast, String filename) {
-    OCLScopeDeSer deSer = new OCLScopeDeSer();
+    OCLDeSer deSer = new OCLDeSer();
     String serialized = deSer.serialize((OCLArtifactScope) ast.getEnclosingScope());
     FileReaderWriter.storeInFile(Paths.get(filename), serialized);
   }

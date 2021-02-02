@@ -1,5 +1,4 @@
-/* (c) https://github.com/MontiCore/monticore */
-
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.setexpressions._symboltable;
 
 import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
@@ -14,22 +13,19 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Deque;
 import java.util.Optional;
 
-public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableCreatorTOP {
+public class SetExpressionsScopesGenitor extends SetExpressionsScopesGenitorTOP {
   protected DeriveSymTypeOfOCLCombineExpressions typeVisitor;
 
-  public SetExpressionsSymbolTableCreator(){
+  public SetExpressionsScopesGenitor(){
     super();
-    typeVisitor = new DeriveSymTypeOfOCLCombineExpressions();
   }
 
-  public SetExpressionsSymbolTableCreator(ISetExpressionsScope enclosingScope) {
+  public SetExpressionsScopesGenitor(ISetExpressionsScope enclosingScope) {
     super(enclosingScope);
-    typeVisitor = new DeriveSymTypeOfOCLCombineExpressions();
   }
 
-  public SetExpressionsSymbolTableCreator(Deque<? extends ISetExpressionsScope> scopeStack) {
+  public SetExpressionsScopesGenitor(Deque<? extends ISetExpressionsScope> scopeStack) {
     super(scopeStack);
-    typeVisitor = new DeriveSymTypeOfOCLCombineExpressions();
   }
 
   public void setTypeVisitor(DeriveSymTypeOfOCLCombineExpressions typesCalculator) {
@@ -48,7 +44,7 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
 
   @Override
   public void endVisit(ASTSetVariableDeclaration node){
-    VariableSymbol symbol = create_SetVariableDeclaration(node);
+    VariableSymbol symbol = create_SetVariableDeclaration(node).build();
     if(getCurrentScope().isPresent()){
       symbol.setEnclosingScope(getCurrentScope().get());
     }
@@ -56,12 +52,11 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
     initialize_SetVariableDeclaration(symbol, node);
   }
 
-  @Override
   public void initialize_SetVariableDeclaration(VariableSymbol symbol, ASTSetVariableDeclaration ast) {
     symbol.setIsReadOnly(false);
     if(ast.isPresentMCType()) {
       ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
-      ast.getMCType().accept(getRealThis());
+      ast.getMCType().accept(getTraverser());
       final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
       if (!typeResult.isPresent()) {
         Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
@@ -70,7 +65,7 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
       }
     } else {
       if(ast.isPresentExpression()){
-        ast.getExpression().accept(getRealThis());
+        ast.getExpression().accept(getTraverser());
         ast.getExpression().accept(typeVisitor.getTraverser());
         if(typeVisitor.getTypeCheckResult().isPresentCurrentResult()){
           symbol.setType(typeVisitor.getTypeCheckResult().getCurrentResult());
@@ -91,7 +86,7 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
 
   @Override
   public void endVisit(ASTGeneratorDeclaration node){
-    VariableSymbol symbol = create_GeneratorDeclaration(node);
+    VariableSymbol symbol = create_GeneratorDeclaration(node).build();
     if (getCurrentScope().isPresent()) {
       symbol.setEnclosingScope(getCurrentScope().get());
     }
@@ -99,12 +94,11 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
     initialize_GeneratorDeclaration(symbol, node);
   }
 
-  @Override
   public void initialize_GeneratorDeclaration(VariableSymbol symbol, ASTGeneratorDeclaration ast) {
     symbol.setIsReadOnly(false);
     if(ast.isPresentMCType()) {
       ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
-      ast.getMCType().accept(getRealThis());
+      ast.getMCType().accept(getTraverser());
       final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
       if (!typeResult.isPresent()) {
         Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
@@ -126,4 +120,5 @@ public class SetExpressionsSymbolTableCreator extends SetExpressionsSymbolTableC
       }
     }
   }
+
 }

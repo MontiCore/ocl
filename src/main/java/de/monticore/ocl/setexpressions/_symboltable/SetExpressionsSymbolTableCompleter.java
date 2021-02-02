@@ -1,8 +1,8 @@
 // (c) https://github.com/MontiCore/monticore
-package de.monticore.ocl.ocl._symboltable;
+package de.monticore.ocl.setexpressions._symboltable;
 
-import de.monticore.ocl.ocl._visitor.OCLHandler;
-import de.monticore.ocl.ocl._visitor.OCLTraverser;
+import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
+import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.util.CompleterUtil;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
@@ -10,7 +10,8 @@ import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 
 import java.util.List;
 
-public class OCLSymbolTableCompleter implements BasicSymbolsVisitor2, OCLHandler {
+public class SetExpressionsSymbolTableCompleter
+  implements BasicSymbolsVisitor2, SetExpressionsHandler {
   protected static final String USED_BUT_UNDEFINED = "0xB0028: Type '%s' is used but not defined.";
 
   protected static final String DEFINED_MUTLIPLE_TIMES = "0xB0031: Type '%s' is defined more than once.";
@@ -19,27 +20,27 @@ public class OCLSymbolTableCompleter implements BasicSymbolsVisitor2, OCLHandler
 
   protected final String packageDeclaration;
 
-  protected OCLTraverser traverser;
+  protected SetExpressionsTraverser traverser;
 
-  public OCLSymbolTableCompleter(List<ASTMCImportStatement> imports, String packageDeclaration) {
+  public SetExpressionsSymbolTableCompleter(List<ASTMCImportStatement> imports, String packageDeclaration) {
     this.imports = imports;
     this.packageDeclaration = packageDeclaration;
   }
 
   @Override
-  public OCLTraverser getTraverser() {
+  public SetExpressionsTraverser getTraverser() {
     return traverser;
   }
 
   @Override
-  public void setTraverser(OCLTraverser traverser) {
+  public void setTraverser(SetExpressionsTraverser traverser) {
     this.traverser = traverser;
   }
 
   @Override
-  public void traverse(IOCLScope node) {
-    OCLHandler.super.traverse(node);
-    for (IOCLScope subscope : node.getSubScopes()) {
+  public void traverse(ISetExpressionsScope node) {
+    SetExpressionsHandler.super.traverse(node);
+    for (ISetExpressionsScope subscope : node.getSubScopes()) {
       subscope.accept(this.getTraverser());
     }
   }

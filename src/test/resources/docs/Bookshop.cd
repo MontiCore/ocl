@@ -26,7 +26,7 @@ classdiagram Bookshop {
 
   class Invoice {
     int invoiceNumber;
-    double total;
+    double invoiceAmount;
     double moneyPayed;
   }
 

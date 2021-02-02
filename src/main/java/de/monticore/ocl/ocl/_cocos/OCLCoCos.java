@@ -11,21 +11,20 @@ public class OCLCoCos {
   }
 
   public static OCLCoCoChecker createChecker(DeriveSymTypeOfOCLCombineExpressions typeChecker) {
-    return new OCLCoCoChecker()
-        .addCoCo(new FileNameStartsWithLowerCaseLetter())
-        .addCoCo(new MethSignatureStartsWithLowerCaseLetter())
-        .addCoCo(new ConstructorNameStartsWithCapitalLetter())
-        .addCoCo(new InvariantNameStartsWithCapitalLetter())
-        .addCoCo(new ParameterNamesUnique())
-        .addCoCo(new IterateExpressionVariableUsageIsCorrect())
-        .addCoCo(new ConstructorNameReferencesType())
-        .addCoCo(new ValidTypes(typeChecker))
-        .addCoCo(new ExpressionHasNoSideEffect())
-        .addCoCo(new ContextVariableNamesAreUnique())
-        .addCoCo(new ContextHasOnlyOneType())
-        .addCoCo(new SetComprehensionHasGenerator())
-        .addCoCo(new UnnamedInvariantDoesNotHaveParameters())
-        .addCoCo(new PreAndPostConditionsAreBooleanType(typeChecker))
-        ;
+    OCLCoCoChecker checker = new OCLCoCoChecker();
+    checker.addCoCo(new MethSignatureStartsWithLowerCaseLetter());
+    checker.addCoCo(new ConstructorNameStartsWithCapitalLetter());
+    checker.addCoCo(new InvariantNameStartsWithCapitalLetter());
+    checker.addCoCo(new ParameterNamesUnique());
+    checker.addCoCo(new IterateExpressionVariableUsageIsCorrect());
+    checker.addCoCo(new ConstructorNameReferencesType());
+    checker.addCoCo(new ValidTypes(typeChecker));
+    checker.addCoCo(new ExpressionHasNoSideEffect());
+    checker.addCoCo(new ContextVariableNamesAreUnique());
+    checker.addCoCo(new ContextHasOnlyOneType());
+    checker.addCoCo(new SetComprehensionHasGenerator());
+    checker.addCoCo(new UnnamedInvariantDoesNotHaveParameters());
+    checker.addCoCo(new PreAndPostConditionsAreBooleanType(typeChecker));
+    return checker;
   }
 }
