@@ -2,12 +2,11 @@
 package de.monticore.ocl.ocl;
 
 import com.google.common.collect.Sets;
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisGlobalScope;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCreatorDelegator;
-import de.monticore.cd4analysis.resolver.CD4AnalysisResolver;
-import de.monticore.cd4analysis.trafo.CD4AnalysisTrafo4DefaultsDelegator;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
+import de.monticore.cd4code.resolver.CD4CodeResolver;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -84,17 +83,17 @@ public abstract class AbstractTest {
 
     final ModelPath mp = new ModelPath(p);
 
-    CD4AnalysisGlobalScope cd4AGlobalScope = (CD4AnalysisGlobalScope) CD4AnalysisMill.globalScope();
+    CD4CodeGlobalScope cd4AGlobalScope = (CD4CodeGlobalScope) CD4CodeMill.globalScope();
     cd4AGlobalScope.setModelPath(mp);
     cd4AGlobalScope.setFileExt("cd");
 
-    CD4AnalysisSymbolTableCreatorDelegator symbolTableCreatorDelegator = new CD4AnalysisSymbolTableCreatorDelegator(cd4AGlobalScope);
-    Optional<ASTCDCompilationUnit> ast = new CD4AnalysisParser().parse(Paths.get(RELATIVE_MODEL_PATH + model).toString());
-    CD4AnalysisTrafo4DefaultsDelegator a = new CD4AnalysisTrafo4DefaultsDelegator();
-    a.transform(ast.get());
+    CD4CodeSymbolTableCreatorDelegator symbolTableCreatorDelegator = new CD4CodeSymbolTableCreatorDelegator(cd4AGlobalScope);
+    Optional<ASTCDCompilationUnit> ast = new CD4CodeParser().parse(Paths.get(RELATIVE_MODEL_PATH + model).toString());
+    //CD4CodeTrafo4DefaultsDelegator a = new CD4CodeTrafo4DefaultsDelegator();
+    //a.transform(ast.get());
     symbolTableCreatorDelegator.createFromAST(ast.get());
 
-    CD4AnalysisResolver cdResolver = new CD4AnalysisResolver(cd4AGlobalScope);
+    CD4CodeResolver cdResolver = new CD4CodeResolver(cd4AGlobalScope);
 
     setupGlobalScope();
     globalScope.addAdaptedTypeSymbolResolver(cdResolver);

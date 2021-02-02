@@ -1,5 +1,4 @@
-/* (c) https://github.com/MontiCore/monticore */
-
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.oclexpressions._symboltable;
 
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
@@ -15,23 +14,20 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Deque;
 import java.util.Optional;
 
-public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableCreatorTOP {
+public class OCLExpressionsScopesGenitor extends OCLExpressionsScopesGenitorTOP {
 
   protected DeriveSymTypeOfOCLCombineExpressions typeVisitor;
 
-  public OCLExpressionsSymbolTableCreator(){
+  public OCLExpressionsScopesGenitor(){
     super();
-    typeVisitor = new DeriveSymTypeOfOCLCombineExpressions();
   }
 
-  public OCLExpressionsSymbolTableCreator(IOCLExpressionsScope enclosingScope) {
+  public OCLExpressionsScopesGenitor(IOCLExpressionsScope enclosingScope) {
     super(enclosingScope);
-    typeVisitor = new DeriveSymTypeOfOCLCombineExpressions();
   }
 
-  public OCLExpressionsSymbolTableCreator(Deque<? extends IOCLExpressionsScope> scopeStack) {
+  public OCLExpressionsScopesGenitor(Deque<? extends IOCLExpressionsScope> scopeStack) {
     super(scopeStack);
-    typeVisitor = new DeriveSymTypeOfOCLCombineExpressions();
   }
 
   public void setTypeVisitor(DeriveSymTypeOfOCLCombineExpressions typesCalculator) {
@@ -50,7 +46,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
 
   @Override
   public void endVisit(ASTOCLVariableDeclaration node){
-    VariableSymbol symbol = create_OCLVariableDeclaration(node);
+    VariableSymbol symbol = create_OCLVariableDeclaration(node).build();
     if(getCurrentScope().isPresent()){
       symbol.setEnclosingScope(getCurrentScope().get());
     }
@@ -58,12 +54,11 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
     initialize_OCLVariableDeclaration(symbol, node);
   }
 
-  @Override
   public void initialize_OCLVariableDeclaration(VariableSymbol symbol, ASTOCLVariableDeclaration ast) {
     symbol.setIsReadOnly(false);
     if(ast.isPresentMCType()) {
       ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
-      ast.getMCType().accept(getRealThis());
+      ast.getMCType().accept(getTraverser());
       final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
       if (!typeResult.isPresent()) {
         Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
@@ -93,7 +88,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
   @Override
   public void endVisit(ASTInDeclaration node){
     for(int i = 0; i < node.getInDeclarationVariableList().size(); i++){
-      VariableSymbol symbol = create_InDeclarationVariable(node.getInDeclarationVariable(i));
+      VariableSymbol symbol = create_InDeclarationVariable(node.getInDeclarationVariable(i)).build();
       if(getCurrentScope().isPresent()){
         symbol.setEnclosingScope(getCurrentScope().get());
       }
@@ -112,7 +107,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
 
   }
 
-  @Override
+
   public void initialize_InDeclarationVariable(VariableSymbol symbol, ASTInDeclarationVariable ast){
 
   }
@@ -123,7 +118,7 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
     //TODO: initialize var for list, Set, Collection?
     if(ast.isPresentMCType()){
       ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
-      ast.getMCType().accept(getRealThis());
+      ast.getMCType().accept(getTraverser());
       typeResult = typeVisitor.calculateType(ast.getMCType());
       if (!typeResult.isPresent()) {
         Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), symbol.getName()));
@@ -136,9 +131,9 @@ public class OCLExpressionsSymbolTableCreator extends OCLExpressionsSymbolTableC
       if(typeVisitor.getTypeCheckResult().isPresentCurrentResult()){
         //if MCType present: check that type of expression and MCType are compatible
         if(typeResult.isPresent() && !OCLTypeCheck.compatible(typeResult.get(),
-                OCLTypeCheck.unwrapSet(typeVisitor.getTypeCheckResult().getCurrentResult()))){
+          OCLTypeCheck.unwrapSet(typeVisitor.getTypeCheckResult().getCurrentResult()))){
           Log.error(String.format("The MCType (%s) and the expression type (%s) in Symbol (%s) are not compatible",
-                  ast.getMCType(), OCLTypeCheck.unwrapSet(typeVisitor.getTypeCheckResult().getCurrentResult()), symbol.getName()));
+            ast.getMCType(), OCLTypeCheck.unwrapSet(typeVisitor.getTypeCheckResult().getCurrentResult()), symbol.getName()));
         }
         //if no MCType present: symbol has type of expression
         if(!typeResult.isPresent()){

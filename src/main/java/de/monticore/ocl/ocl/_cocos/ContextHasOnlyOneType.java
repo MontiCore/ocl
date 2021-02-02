@@ -12,7 +12,7 @@ public class ContextHasOnlyOneType implements OCLASTOCLInvariantCoCo{
     for (ASTOCLContextDefinition contextDefinition : node.getOCLContextDefinitionList()){
       if (contextDefinition.isPresentMCType()){
         if (typeFound){
-          Log.error(String.format("0xOCL23 Invariant uses more than one MCType as Context Definition." ));
+          Log.error(String.format("0xOCL23 Invariant uses more than one MCType as context definition." ));
         }
         else {
           typeFound = true;

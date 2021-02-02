@@ -1,17 +1,19 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl;
 
-import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisGlobalScope;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelper;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.io.FileReaderWriter;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._cocos.*;
 import de.monticore.ocl.ocl._od.OCL2OD;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl._symboltable.*;
+import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.prettyprint.IndentPrinter;
@@ -24,10 +26,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -68,14 +67,7 @@ public class OCLCLI {
       CommandLine cmd = cliparser.parse(options, args);
 
       // help: when --help
-      if (cmd.hasOption("h")) {
-        printHelp(options);
-        // do not continue, when help is printed
-        return;
-      }
-
-      // if -i input is missing: also print help and stop
-      if (!cmd.hasOption("i")) {
+      if (cmd.hasOption("h") || !cmd.hasOption("i")) {
         printHelp(options);
         // do not continue, when help is printed
         return;
@@ -87,15 +79,6 @@ public class OCLCLI {
       }
       else {
         Log.init();
-      }
-
-      // we need the global scope for symbols and cocos
-      ModelPath modelPath = new ModelPath(Paths.get(""));
-      if (cmd.hasOption("mp")) {
-        modelPath = new ModelPath(Arrays.stream(cmd.getOptionValues("mp"))
-          .map(x -> Paths.get(x))
-          .collect(Collectors.toList())
-        );
       }
 
       // parse input file, which is now available
@@ -119,14 +102,72 @@ public class OCLCLI {
         }
       }
 
+      // we need the global scope for symbols and cocos
+      ModelPath modelPath = new ModelPath(Paths.get(""));
+      if (cmd.hasOption("mp")) {
+        modelPath = new ModelPath(Arrays.stream(cmd.getOptionValues("mp"))
+          .map(x -> Paths.get(x))
+          .collect(Collectors.toList())
+        );
+      }
+
+      IOCLGlobalScope globalScope = OCLMill.globalScope();
+      globalScope.setModelPath(modelPath);
+
       //
       // Parsing and pretty printing can be done without a symbol table
       // but executing the following options requires a symbol table
       //
 
+      //IOCLGlobalScope globalScope = tool.processModels(Paths.get(cmd.getOptionValue("mp")));
+      //inputOCLs = IOCLGlobalScopeHelper.getCompilationUnits(globalScope);
+
+
+      Set<String> cocoOptionValues = new HashSet<>();
+      if (cmd.hasOption("c") && cmd.getOptionValues("c") != null) {
+        cocoOptionValues.addAll(Arrays.asList(cmd.getOptionValues("c")));
+      }
+      if (cmd.hasOption("c") || cmd.hasOption("s")) {
+        for (ASTOCLCompilationUnit ocl : inputOCLs) {
+          deriveSymbolSkeleton(ocl);
+        }
+
+        if (cocoOptionValues.isEmpty() || cocoOptionValues.contains("type") || cmd.hasOption("s")) {
+          for (ASTOCLCompilationUnit ocl : inputOCLs) {
+            OCLSymbolTableCompleter stCompleter = new OCLSymbolTableCompleter(
+              ocl.getMCImportStatementList(), ocl.getPackage()
+            );
+            OCLTraverser t = OCLMill.traverser();
+            t.add4BasicSymbols(stCompleter);
+            t.setOCLHandler(stCompleter);
+            stCompleter.setTraverser(t);
+            globalScope.accept(t);
+          }
+        }
+      }
+
       // create the symbol table and check cocos
-      IOCLGlobalScope globalScope = tool.processModels(Paths.get(cmd.getOptionValue("mp")));
-      inputOCLs = IOCLGlobalScopeHelper.getCompilationUnits(globalScope);
+      if (cmd.hasOption("c") || cmd.hasOption("s")) {
+        if (cmd.hasOption("s") || cocoOptionValues.isEmpty() || cocoOptionValues.contains("type")) {
+          for (ASTOCLCompilationUnit sd : inputOCLs) {
+            checkAllCoCos(sd);
+          }
+        }
+        else if (cocoOptionValues.contains("inter")) {
+          for (ASTOCLCompilationUnit sd : inputOCLs) {
+            checkAllExceptTypeCoCos(sd);
+          }
+        }
+        else if (cocoOptionValues.contains("intra")) {
+          for (ASTOCLCompilationUnit sd : inputOCLs) {
+            checkIntraModelCoCos(sd);
+          }
+        }
+        else {
+          Log.error(String.format("Received unexpected arguments '%s' for option 'coco'. "
+            + "Possible arguments are 'type', 'inter', and 'intra'.", cocoOptionValues.toString()));
+        }
+      }
 
       // -option syntax objects
       if (cmd.hasOption("so")) {
@@ -141,7 +182,7 @@ public class OCLCLI {
         if (cmd.getOptionValues("s") == null || cmd.getOptionValues("s").length == 0) {
           for (int i = 0; i < inputOCLs.size(); i++) {
             ASTOCLCompilationUnit ocl = inputOCLs.get(i);
-            OCLScopeDeSer deSer = new OCLScopeDeSer();
+            OCLDeSer deSer = new OCLDeSer();
             String serialized = deSer.serialize((OCLArtifactScope) ocl.getEnclosingScope());
 
             String fileName = cmd.getOptionValues("i")[i];
@@ -228,6 +269,68 @@ public class OCLCLI {
     print(OCL, file);
   }
 
+  /**
+   * Derives symbols for ast and adds them to the globalScope.
+   */
+  public void deriveSymbolSkeleton(ASTOCLCompilationUnit ast) {
+    OCLScopesGenitor genitor = new OCLScopesGenitor();
+    genitor.setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
+    genitor.setTraverser(OCLMill.traverser());
+    genitor.createFromAST(ast);
+  }
+
+  /**
+   * Checks whether ast satisfies the intra-model CoCos.
+   */
+  public void checkIntraModelCoCos(ASTOCLCompilationUnit ast) {
+    OCLCoCoChecker checker = new OCLCoCoChecker();
+    checker.addCoCo(new MethSignatureStartsWithLowerCaseLetter());
+    checker.addCoCo(new ConstructorNameStartsWithCapitalLetter());
+    checker.addCoCo(new InvariantNameStartsWithCapitalLetter());
+    checker.addCoCo(new ParameterNamesUnique());
+    checker.addCoCo(new IterateExpressionVariableUsageIsCorrect());
+    checker.addCoCo(new ExpressionHasNoSideEffect());
+    checker.addCoCo(new ContextVariableNamesAreUnique());
+    checker.addCoCo(new ContextHasOnlyOneType());
+    checker.addCoCo(new SetComprehensionHasGenerator());
+    checker.addCoCo(new UnnamedInvariantDoesNotHaveParameters());
+    checker.checkAll(ast);
+  }
+
+  /**
+   * Checks whether ast satisfies the CoCos not targeting type correctness.
+   * This method checks all CoCos except the CoCos, which check that used types
+   * (for objects and variables) are defined.
+   */
+  public void checkAllExceptTypeCoCos(ASTOCLCompilationUnit ast) {
+    checkIntraModelCoCos(ast);
+    OCLCoCoChecker checker = new OCLCoCoChecker();
+    checker.addCoCo(new ConstructorNameReferencesType());
+    checker.checkAll(ast);
+  }
+
+  /**
+   * Checks whether ast satisfies all CoCos.
+   */
+  public void checkAllCoCos(ASTOCLCompilationUnit ast) {
+    checkAllExceptTypeCoCos(ast);
+    DeriveSymTypeOfOCLCombineExpressions typeChecker = new DeriveSymTypeOfOCLCombineExpressions();
+    OCLCoCoChecker checker = new OCLCoCoChecker();
+    checker.addCoCo(new ValidTypes(typeChecker));
+    checker.addCoCo(new PreAndPostConditionsAreBooleanType(typeChecker));
+    checker.checkAll(ast);
+  }
+
+  /**
+   * Loads the symbols from the symbol file filename and returns the symbol table.
+   *
+   * @param filename Name of the symbol file to load.
+   */
+  public IOCLArtifactScope loadSymbols(String filename) {
+    OCLSymbols2Json deSer = new OCLSymbols2Json();
+    return deSer.load(filename);
+  }
+
   /*=================================================================*/
 
   /**
@@ -241,7 +344,7 @@ public class OCLCLI {
     globalScope.setFileExt(".ocl");
     globalScope.setModelPath(mp);
 
-    ICD4AnalysisGlobalScope cdGlobalScope = CD4AnalysisMill.globalScope();
+    ICD4CodeGlobalScope cdGlobalScope = CD4CodeMill.globalScope();
     cdGlobalScope.setModelPath(mp);
     cdGlobalScope.setFileExt(".cd");
 
@@ -261,7 +364,7 @@ public class OCLCLI {
    * @param filename The name of the produced symbol file.
    */
   public void storeSymbols(ASTOCLCompilationUnit ast, String filename) {
-    OCLScopeDeSer deSer = new OCLScopeDeSer();
+    OCLDeSer deSer = new OCLDeSer();
     String serialized = deSer.serialize((OCLArtifactScope) ast.getEnclosingScope());
     FileReaderWriter.storeInFile(Paths.get(filename), serialized);
   }
@@ -317,6 +420,7 @@ public class OCLCLI {
     // print to stdout or file
     if (path == null || path.isEmpty()) {
       System.out.println(content);
+      System.out.println();
     }
     else {
       File f = new File(path);
@@ -361,6 +465,7 @@ public class OCLCLI {
     // parse input file
     Option parse = Option.builder("i")
       .longOpt("input")
+      .argName("file")
       .hasArgs()
       .desc("Processes the list of OCL input artifacts. " +
         "Argument list is space separated. CoCos are not checked automatically (see -c).")
@@ -385,18 +490,22 @@ public class OCLCLI {
     options.addOption(prettyprint);
 
     // check CoCos
-    Option cocos = new Option("c",
-      "Checks the context conditions for the input artifact.");
-    cocos.setLongOpt("cocos");
-    cocos.setArgName("file");
-    cocos.setOptionalArg(true);
-    cocos.setArgs(1);
+    Option cocos = Option.builder("c").
+      longOpt("coco").
+      optionalArg(true).
+      numberOfArgs(3).
+      desc("Checks the CoCos for the input. Optional arguments are:\n"
+        + "-c intra to check only the intra-model CoCos,\n"
+        + "-c inter checks also inter-model CoCos,\n"
+        + "-c type (default) checks all CoCos.")
+      .build();
     options.addOption(cocos);
 
     // create and store symboltable
     Option symboltable = Option.builder("s")
       .longOpt("symboltable")
       .optionalArg(true)
+      .argName("file")
       .hasArgs()
       .desc("Stores the symbol tables of the input OCL artifacts in the specified files. " +
         "The n-th input OCL (-i option) is stored in the file as specified by the n-th argument " +
