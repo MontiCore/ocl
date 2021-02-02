@@ -83,7 +83,9 @@ test {
 
 
 dependencies {
-  grammar "de.monticore:monticore-grammar:$mc_version:$grammars_classifier"
+  grammar ("de.monticore:monticore-grammar:$mc_version") {capabilities {
+    requireCapability("de.monticore:monticore-grammar-grammars") }
+  }
 
   implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
   implementation "com.google.guava:guava:$guava_version"
@@ -91,7 +93,6 @@ dependencies {
   implementation "org.antlr:antlr4-runtime:$antlr_version"
   implementation "de.monticore:monticore-runtime:$mc_version"
   implementation "de.monticore:monticore-grammar:$mc_version"
-  implementation "de.monticore:javaDSL:$javadsl_version"
   implementation "org.apache.commons:commons-lang3:3.9"
   implementation "commons-cli:commons-cli:1.4"
   implementation "org.antlr:antlr4:4.7.1"
