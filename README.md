@@ -13,38 +13,24 @@ the detailed documentation.
 # An Example Model
 
 ``` 
-ocl bookshop {
-  context Shop s inv CustomersWithUnpaidInvoicesMayNotOrder:
-    forall Customer c in s.customers:
+ocl Bookshop {
+  context Shop s inv CustomerPaysBeforeNewOrder:      // invariant
+    forall Customer c in s.customers:                 // quantifiers available
       c.allowedToOrder implies !exists Invoice i in s.invoices:
-        i.customer == c && i.moneyPayed < i.totalPrice
-    ;
+        i.customer == c && i.moneyPayed < i.invoiceAmount ;
 
-  context Invoice Stock.sellBook(String iban, int discountPercent, Customer c) 
-    let 
-      availableBooks = 
-        { book | Book book in booksInStock, bookToSell.iban == iban }
-    
-    pre:
-      // Only sell books that are in stock 
-      availableBooks.size > 0;
-      
-      // Only sell to customers who have paid their past invoices
-      c.allowedToOrder;
-
-    post: 
-      // Do not make a loss by applying coupons
-      let b = result.soldBook
-      in b.cost <= b.price * (100 - discountPercent)/100;
-
-      // Selling a book removes this book (and only this book) from the stock
-      !(result.soldBook isin booksInStock);
-      booksInStock.size@pre == booksInStock.size + 1;
-
-      // Invoice is correct
-      result.soldBook.iban == iban;
-      result.total == result.soldBook.price * (100 - discountPercent)/100;
-      result.buyer == c;
+  // Method specification for selling a book
+  context Invoice Stock.sellBook(String iban, int discountPercent, Customer c)
+    let availableBooks =                              // set comprehension
+          { book | Book book in booksInStock, book.iban == iban }
+    pre:  !availableBooks.isEmpty &&                  // precondition
+          c.allowedToOrder;
+    post: let discount = (100 - discountPercent)/100; // postcondition, let
+              b = result.soldBook                     // result variable
+          in
+              !(b isin booksInStock) &&
+              booksInStock.size@pre == booksInStock.size + 1 &&  // @pre
+              result.invoiceAmount == b.price * discount;
 }
 ```
 
@@ -80,7 +66,7 @@ classdiagram Bookshop {
 
   class Invoice {
     int invoiceNumber;
-    double total;
+    double invoiceAmount;
     double moneyPayed;
   }
 
@@ -283,21 +269,21 @@ command.
 This means that the model satisfies all context condtions. 
 
 Let us now consider a more complex example.
-Recall the OCL `bookshop` from the `An Example Model` section above.
-For continuing, copy the textual representation of the OCL `bookshop` and 
-save it in a file `bookshop.ocl` in the directory where the file `OCLCLI.jar` 
+Recall the OCL `Bookshop` from the `An Example Model` section above.
+For continuing, copy the textual representation of the OCL `Bookshop` and 
+save it in a file `Bookshop.ocl` in the directory where the file `OCLCLI.jar` 
 is located.
 
 You can check the different kinds of context conditions, using the 
 `-c,--coco <arg>` option:
 ```
-java -jar OCLCLI.jar -i bookshop.ocl -c intra
+java -jar OCLCLI.jar -i Bookshop.ocl -c intra
 ```
 ```
-java -jar OCLCLI.jar -i bookshop.ocl -c inter
+java -jar OCLCLI.jar -i Bookshop.ocl -c inter
 ```
 ```
-java -jar OCLCLI.jar -i bookshop.ocl -c type
+java -jar OCLCLI.jar -i Bookshop.ocl -c type
 ```
 After executing the last command, you may notice that the CLI tool produces 
 some output.
