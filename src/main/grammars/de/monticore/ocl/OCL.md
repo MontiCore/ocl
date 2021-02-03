@@ -125,9 +125,9 @@ accessing optional values (i.e. potentially absent values).
 These operators are also known as [Elvis operators][ElvisRef]
 
 The grammar [OptionalOperators](./OptionalOperators.mc4) defines the syntax for
-* accessing optionals in a possibly chained manner("?:"),
-* equality and inequality checks on optionals ("?<=", "?==", etc.), and
-* type checks on optionals ("?~~", "?!~"), 
+* accessing optionals in a possibly chained manner(`?:`),
+* equality and inequality checks on optionals (`?<=`, `?==`, etc.), and
+* type checks on optionals (`?~~`, `?!~`), 
 
 The grammar [OptionalOperators](./OptionalOperators.mc4) extends the grammars
 * [CommonExpressions][CommonExpressionsRef] for declaring optional operators as
