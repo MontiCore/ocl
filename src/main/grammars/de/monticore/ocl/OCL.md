@@ -9,7 +9,7 @@ constraint language (OCL) project is located
 We recommend that **language engineers** read this documentation for 
 **modelers** before reading this documentation.
 
-# Object Constraint Langauge for Programming (OCL/P) 
+# Object Constraint Language for Programming (OCL/P)
 The module described in this document defines a MontiCore language for OCL. 
 OCL/P is an OCL variant that is suited e.g. for the modeling of tests and 
 (in combination e.g. with class diagrams) for desired and unwanted behavior 
@@ -265,5 +265,6 @@ serializing the symbol table instance depicted in "An Example Model":
 [UMLStereotypeRef]:https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/UMLStereotype.mc4
 [MCCommonLiteralsRef]:https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/literals/MCCommonLiterals.mc4
 [CommonExpressionsRef]:https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/expressions/CommonExpressions.mc4
-[OCLExpressionsRef]:https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/expressions/OCLExpressions.mc4
+[MCSimpleGenericTypesRef]:https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/types/MCSimpleGenericTypes.mc4
+[BitExpressionsRef]:https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/expressions/BitExpressions.mc4
 [ElvisRef]:https://en.wikipedia.org/wiki/Elvis_operator
