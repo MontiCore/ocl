@@ -220,12 +220,17 @@ Locally, OCL further introduces symbols for
   in invariants using a type with as context.
 
 
-## Symbol kinds used by the OCL (importable or subclassed):
+## Symbol kinds used by the OCL (subclassed; not importable):
+The OCL uses symbols of kind [```VariableSymbol```][BasicSymbolsRef]
+for declaring parameters and local variables.
+As these are only valid in their local scopes, they cannot be imported.
+
+## Symbol kinds used by the OCL (importable):
 The OCL uses symbols of kind [```TypeSymbol```][BasicSymbolsRef] and 
 [```MethodSymbol```][OOSymbolsRef] to reference types and methods in 
 constraints.
 
-// TODO: MethodSymbol wird aktuell nicht wirklich importiert. OCL.mc4 müsste dazu auch OOTypeSymbols extenden
+// TODO: Wird aktuell nicht wirklich importiert. OCL.mc4 müsste für MethodSymbol auch OOTypeSymbols extenden...
 
 ## Symbol kinds defined by the OCL (exported):
 * OCL exports  an `InvariantSymbol` for every named invariant.
