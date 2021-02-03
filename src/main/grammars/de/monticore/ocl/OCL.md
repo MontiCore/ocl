@@ -209,11 +209,11 @@ OCL introduces symbols for all named invariants.
 Locally, OCL further introduces symbols for
 * local variable declarations ([```VariableSymbol```][BasicSymbolsRef]),
 * parameters declarations ([```VariableSymbol```][BasicSymbolsRef]),
-* an implicit read-only "result" variable ([```VariableSymbol```][BasicSymbolsRef]) 
+* an implicit read-only `result` variable ([```VariableSymbol```][BasicSymbolsRef]) 
   in constraints using a method as context,
-* an implicit read-only "this" variable ([```VariableSymbol```][BasicSymbolsRef]) 
+* an implicit read-only `this` variable ([```VariableSymbol```][BasicSymbolsRef]) 
   in invariants using a type as context,
-* an implicit read-only "super" variable ([```VariableSymbol```][BasicSymbolsRef]) 
+* an implicit read-only `super` variable ([```VariableSymbol```][BasicSymbolsRef]) 
   in invariants using a type with a supertype as context, and
 * an implicit read-only variable with the name of the referenced type starting 
   with a lowercase letter ([```VariableSymbol```][BasicSymbolsRef]) 
