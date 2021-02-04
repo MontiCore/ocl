@@ -160,8 +160,12 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
       if (node.isPresentMCReturnType()) {
         ASTMCReturnType returnType = node.getMCReturnType();
         if (returnType.isPresentMCVoidType()) {
+          returnType.getMCVoidType().setEnclosingScope(getCurrentScope().get());
+          returnType.getMCVoidType().accept(getTraverser());
           typeResult = Optional.empty();
         } else {
+          returnType.getMCType().setEnclosingScope(getCurrentScope().get());
+          returnType.getMCType().accept(getTraverser());
           typeResult = typeVisitor.calculateType(returnType.getMCType());
         }
       } else {

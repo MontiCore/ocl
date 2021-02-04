@@ -54,6 +54,7 @@ public class OCLTool {
     CD4CodeCoCoChecker cdChecker) {
     Preconditions.checkArgument(oclChecker != null);
     Preconditions.checkArgument(cdChecker != null);
+    OCLMill.init();
     this.oclChecker = oclChecker;
     this.cdChecker = cdChecker;
     this.isSymTabInitialized = false;

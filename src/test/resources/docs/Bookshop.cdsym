@@ -1,0 +1,564 @@
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "Bookshop",
+  "symbols": [
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDPackageSymbol",
+      "name": "docs",
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+            "name": "Shop",
+            "isClass": true,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+                  "name": "invoices",
+                  "isDefinitiveNavigable": true,
+                  "cardinality": "[*]",
+                  "association": 5061861,
+                  "typeQualifier": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Stock.addBook.Customer.Invoice"
+                  }
+                },
+                {
+                  "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+                  "name": "customers",
+                  "isDefinitiveNavigable": true,
+                  "cardinality": "[*]",
+                  "association": 31222037,
+                  "typeQualifier": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Stock.addBook.Customer"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "invoices",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Stock.addBook.Customer.Invoice"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "customers",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Stock.addBook.Customer"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "invoices",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Stock.addBook.Customer.Invoice"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "customers",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Stock.addBook.Customer"
+                  }
+                }
+              ],
+              "furtherObjects": {
+                "5061861": {
+                  "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+                  "isAssociation": true,
+                  "isComposition": false
+                },
+                "31222037": {
+                  "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+                  "isAssociation": true,
+                  "isComposition": false
+                }
+              }
+            }
+          },
+          {
+            "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+            "name": "Book",
+            "isClass": true,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+                  "name": "stock",
+                  "cardinality": "[1]",
+                  "association": 27186906,
+                  "isLeft": true,
+                  "typeQualifier": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Stock"
+                  }
+                },
+                {
+                  "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+                  "name": "invoice",
+                  "isDefinitiveNavigable": true,
+                  "cardinality": "[1]",
+                  "association": 6400259,
+                  "isLeft": true,
+                  "typeQualifier": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Stock.addBook.Customer.Invoice"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "stock",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Stock"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "invoice",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Stock.addBook.Customer.Invoice"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "name",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "java.lang.String"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "iban",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "java.lang.String"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "cost",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeConstant",
+                    "constName": "double"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "price",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeConstant",
+                    "constName": "double"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "stock",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Stock"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "invoice",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Stock.addBook.Customer.Invoice"
+                  }
+                }
+              ],
+              "furtherObjects": {
+                "6400259": {
+                  "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+                  "isAssociation": true,
+                  "isComposition": false
+                },
+                "27186906": {
+                  "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+                  "isAssociation": true,
+                  "isComposition": false
+                }
+              }
+            }
+          },
+          {
+            "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+            "name": "Stock",
+            "isClass": true,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+                  "name": "booksInStock",
+                  "isDefinitiveNavigable": true,
+                  "cardinality": "[*]",
+                  "association": 27186906,
+                  "typeQualifier": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Book"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "booksInStock",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Book"
+                  }
+                },
+                {
+                  "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+                  "name": "addBook",
+                  "isMethod": true,
+                  "returnType": "voidType",
+                  "spannedScope": {
+                    "isShadowingScope": false,
+                    "symbols": [
+                      {
+                        "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+                        "name": "Customer",
+                        "isClass": true,
+                        "spannedScope": {
+                          "isShadowingScope": false,
+                          "symbols": [
+                            {
+                              "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+                              "name": "shop",
+                              "cardinality": "[1]",
+                              "association": 31222037,
+                              "isLeft": true,
+                              "typeQualifier": {
+                                "kind": "de.monticore.types.check.SymTypeOfObject",
+                                "objName": "docs.Shop"
+                              }
+                            },
+                            {
+                              "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+                              "name": "invoice",
+                              "isDefinitiveNavigable": true,
+                              "cardinality": "[1]",
+                              "association": 29375880,
+                              "isLeft": true,
+                              "typeQualifier": {
+                                "kind": "de.monticore.types.check.SymTypeOfObject",
+                                "objName": "docs.Stock.addBook.Customer.Invoice"
+                              }
+                            },
+                            {
+                              "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+                              "name": "Invoice",
+                              "isClass": true,
+                              "spannedScope": {
+                                "isShadowingScope": false,
+                                "symbols": [
+                                  {
+                                    "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+                                    "name": "shop",
+                                    "cardinality": "[1]",
+                                    "association": 5061861,
+                                    "isLeft": true,
+                                    "typeQualifier": {
+                                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                                      "objName": "docs.Shop"
+                                    }
+                                  },
+                                  {
+                                    "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+                                    "name": "buyer",
+                                    "isDefinitiveNavigable": true,
+                                    "cardinality": "[1]",
+                                    "association": 29375880,
+                                    "typeQualifier": {
+                                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                                      "objName": "docs.Stock.addBook.Customer"
+                                    }
+                                  },
+                                  {
+                                    "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+                                    "name": "soldBook",
+                                    "isDefinitiveNavigable": true,
+                                    "cardinality": "[1]",
+                                    "association": 6400259,
+                                    "typeQualifier": {
+                                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                                      "objName": "docs.Book"
+                                    }
+                                  },
+                                  {
+                                    "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                                    "name": "shop",
+                                    "type": {
+                                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                                      "objName": "docs.Shop"
+                                    }
+                                  },
+                                  {
+                                    "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                                    "name": "buyer",
+                                    "type": {
+                                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                                      "objName": "docs.Stock.addBook.Customer"
+                                    }
+                                  },
+                                  {
+                                    "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                                    "name": "soldBook",
+                                    "type": {
+                                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                                      "objName": "docs.Book"
+                                    }
+                                  },
+                                  {
+                                    "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                                    "name": "invoiceNumber",
+                                    "type": {
+                                      "kind": "de.monticore.types.check.SymTypeConstant",
+                                      "constName": "int"
+                                    }
+                                  },
+                                  {
+                                    "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                                    "name": "invoiceAmount",
+                                    "type": {
+                                      "kind": "de.monticore.types.check.SymTypeConstant",
+                                      "constName": "double"
+                                    }
+                                  },
+                                  {
+                                    "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                                    "name": "moneyPayed",
+                                    "type": {
+                                      "kind": "de.monticore.types.check.SymTypeConstant",
+                                      "constName": "double"
+                                    }
+                                  },
+                                  {
+                                    "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                                    "name": "shop",
+                                    "type": {
+                                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                                      "objName": "docs.Shop"
+                                    }
+                                  },
+                                  {
+                                    "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                                    "name": "buyer",
+                                    "type": {
+                                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                                      "objName": "docs.Stock.addBook.Customer"
+                                    }
+                                  },
+                                  {
+                                    "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                                    "name": "soldBook",
+                                    "type": {
+                                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                                      "objName": "docs.Book"
+                                    }
+                                  }
+                                ],
+                                "furtherObjects": {
+                                  "6400259": {
+                                    "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+                                    "isAssociation": true,
+                                    "isComposition": false
+                                  },
+                                  "27186906": {
+                                    "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+                                    "isAssociation": true,
+                                    "isComposition": false
+                                  },
+                                  "29375880": {
+                                    "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+                                    "isAssociation": true,
+                                    "isComposition": false
+                                  },
+                                  "5061861": {
+                                    "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+                                    "isAssociation": true,
+                                    "isComposition": false
+                                  },
+                                  "31222037": {
+                                    "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+                                    "isAssociation": true,
+                                    "isComposition": false
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                              "name": "shop",
+                              "type": {
+                                "kind": "de.monticore.types.check.SymTypeOfObject",
+                                "objName": "docs.Shop"
+                              }
+                            },
+                            {
+                              "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                              "name": "invoice",
+                              "type": {
+                                "kind": "de.monticore.types.check.SymTypeOfObject",
+                                "objName": "docs.Stock.addBook.Customer.Invoice"
+                              }
+                            },
+                            {
+                              "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+                              "name": "payInvoice",
+                              "isMethod": true,
+                              "returnType": "voidType",
+                              "spannedScope": {
+                                "isShadowingScope": false,
+                                "symbols": [
+                                  {
+                                    "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                                    "name": "moneyWired",
+                                    "type": {
+                                      "kind": "de.monticore.types.check.SymTypeConstant",
+                                      "constName": "double"
+                                    }
+                                  },
+                                  {
+                                    "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                                    "name": "invoice",
+                                    "type": {
+                                      "kind": "de.monticore.types.check.SymTypeOfObject",
+                                      "objName": "docs.Stock.addBook.Customer.Invoice"
+                                    }
+                                  }
+                                ]
+                              }
+                            },
+                            {
+                              "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                              "name": "name",
+                              "type": {
+                                "kind": "de.monticore.types.check.SymTypeOfObject",
+                                "objName": "java.lang.String"
+                              }
+                            },
+                            {
+                              "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                              "name": "phoneNumber",
+                              "type": {
+                                "kind": "de.monticore.types.check.SymTypeOfObject",
+                                "objName": "java.lang.String"
+                              }
+                            },
+                            {
+                              "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                              "name": "customerNumber",
+                              "type": {
+                                "kind": "de.monticore.types.check.SymTypeConstant",
+                                "constName": "int"
+                              }
+                            },
+                            {
+                              "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                              "name": "allowedToOrder",
+                              "type": {
+                                "kind": "de.monticore.types.check.SymTypeConstant",
+                                "constName": "boolean"
+                              }
+                            },
+                            {
+                              "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                              "name": "shop",
+                              "type": {
+                                "kind": "de.monticore.types.check.SymTypeOfObject",
+                                "objName": "docs.Shop"
+                              }
+                            },
+                            {
+                              "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                              "name": "invoice",
+                              "type": {
+                                "kind": "de.monticore.types.check.SymTypeOfObject",
+                                "objName": "docs.Stock.addBook.Customer.Invoice"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+                        "name": "sellBook",
+                        "isMethod": true,
+                        "returnType": {
+                          "kind": "de.monticore.types.check.SymTypeOfObject",
+                          "objName": "docs.Stock.addBook.Customer.Invoice"
+                        },
+                        "spannedScope": {
+                          "isShadowingScope": false,
+                          "symbols": [
+                            {
+                              "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                              "name": "bookToSell",
+                              "type": {
+                                "kind": "de.monticore.types.check.SymTypeOfObject",
+                                "objName": "docs.Book"
+                              }
+                            },
+                            {
+                              "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                              "name": "discountPercent",
+                              "type": {
+                                "kind": "de.monticore.types.check.SymTypeConstant",
+                                "constName": "int"
+                              }
+                            },
+                            {
+                              "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                              "name": "buyer",
+                              "type": {
+                                "kind": "de.monticore.types.check.SymTypeOfObject",
+                                "objName": "docs.Stock.addBook.Customer"
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                        "name": "b",
+                        "type": {
+                          "kind": "de.monticore.types.check.SymTypeOfObject",
+                          "objName": "docs.Book"
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "booksInStock",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "docs.Book"
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
+      "name": "Bookshop"
+    }
+  ]
+}

@@ -4,6 +4,8 @@ package de.monticore.ocl.ocl._symboltable;
 import de.monticore.ocl.ocl._visitor.OCLHandler;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.util.CompleterUtil;
+import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
@@ -47,5 +49,15 @@ public class OCLSymbolTableCompleter implements BasicSymbolsVisitor2, OCLHandler
   @Override
   public void visit(VariableSymbol var) {
     CompleterUtil.visit(var, imports, packageDeclaration);
+  }
+
+  @Override
+  public void visit(TypeSymbol type) {
+    CompleterUtil.visit(type, imports, packageDeclaration);
+  }
+
+  @Override
+  public void visit(FunctionSymbol function) {
+    CompleterUtil.visit(function, imports, packageDeclaration);
   }
 }

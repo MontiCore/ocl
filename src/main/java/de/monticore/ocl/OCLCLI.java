@@ -15,6 +15,7 @@ import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl._symboltable.*;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
+import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
@@ -131,8 +132,8 @@ public class OCLCLI {
         for (ASTOCLCompilationUnit ocl : inputOCLs) {
           deriveSymbolSkeleton(ocl);
         }
-
         if (cocoOptionValues.isEmpty() || cocoOptionValues.contains("type") || cmd.hasOption("s")) {
+          loadSymbols("src/test/resources/docs/Bookshop.cdsym");
           for (ASTOCLCompilationUnit ocl : inputOCLs) {
             OCLSymbolTableCompleter stCompleter = new OCLSymbolTableCompleter(
               ocl.getMCImportStatementList(), ocl.getPackage()
@@ -273,9 +274,7 @@ public class OCLCLI {
    * Derives symbols for ast and adds them to the globalScope.
    */
   public void deriveSymbolSkeleton(ASTOCLCompilationUnit ast) {
-    OCLScopesGenitor genitor = new OCLScopesGenitor();
-    genitor.setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
-    genitor.setTraverser(OCLMill.traverser());
+    OCLScopesGenitorDelegator genitor = new OCLScopesGenitorDelegator();
     genitor.createFromAST(ast);
   }
 

@@ -3,8 +3,10 @@ package de.monticore.ocl.util;
 
 import com.google.common.collect.Iterables;
 import de.monticore.ocl.ocl._symboltable.OCLScope;
+import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.Names;
@@ -48,6 +50,55 @@ public class CompleterUtil {
     fqNameCandidates.add(simpleName);
 
     return fqNameCandidates;
+  }
+
+  public static void visit(FunctionSymbol function, List<ASTMCImportStatement> imports, String packageDeclaration){
+    String typeName = function.getReturnType().getTypeInfo().getName();
+    Set<TypeSymbol> typeSymbols = new HashSet<>();
+    for (String fqNameCandidate : calcFQNameCandidates(imports, packageDeclaration, typeName)) {
+      OCLScope scope = (OCLScope) function.getEnclosingScope();
+      typeSymbols.addAll(scope.resolveTypeMany(fqNameCandidate));
+      //typeSymbols.addAll(scope.resolveOOTypeMany(fqNameCandidate));
+    }
+
+    if (typeSymbols.isEmpty()) {
+      Log.error(String.format(USED_BUT_UNDEFINED, typeName),
+          function.getAstNode().get_SourcePositionStart());
+    }
+    else if (typeSymbols.size() > 1) {
+      Log.error(String.format(DEFINED_MUTLIPLE_TIMES, typeName),
+          function.getAstNode().get_SourcePositionStart());
+    }
+    else {
+      TypeSymbol typeSymbol = Iterables.getFirst(typeSymbols, null);
+      function.setReturnType(SymTypeExpressionFactory.createTypeExpression(typeSymbol));
+    }
+  }
+
+  public static void visit(TypeSymbol type, List<ASTMCImportStatement> imports, String packageDeclaration){
+    for(SymTypeExpression sym:type.getSuperTypesList()){
+      String typeName = sym.getTypeInfo().getName();
+      Set<TypeSymbol> typeSymbols = new HashSet<>();
+      for (String fqNameCandidate : calcFQNameCandidates(imports, packageDeclaration, typeName)) {
+        OCLScope scope = (OCLScope) type.getEnclosingScope();
+        typeSymbols.addAll(scope.resolveTypeMany(fqNameCandidate));
+        //typeSymbols.addAll(scope.resolveOOTypeMany(fqNameCandidate));
+      }
+
+      if (typeSymbols.isEmpty()) {
+        Log.error(String.format(USED_BUT_UNDEFINED, typeName),
+            type.getAstNode().get_SourcePositionStart());
+      }
+      else if (typeSymbols.size() > 1) {
+        Log.error(String.format(DEFINED_MUTLIPLE_TIMES, typeName),
+            type.getAstNode().get_SourcePositionStart());
+      }
+      else {
+        List<SymTypeExpression> superTypes = type.getSuperTypesList();
+        superTypes.remove(sym);
+        superTypes.add(SymTypeExpressionFactory.createTypeExpression(Iterables.getFirst(typeSymbols, null)));
+      }
+    }
   }
 
   public static void visit(VariableSymbol var, List<ASTMCImportStatement> imports, String packageDeclaration) {
