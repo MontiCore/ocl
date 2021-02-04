@@ -19,7 +19,7 @@ plugins {
 /* ========================= Project ========================== */
 /* ============================================================ */
 
-group = 'de.monticore.lang.ocl'
+group = 'de.monticore.lang'
 buildDir = "$projectDir/target"
 
 /* ============================================================ */
@@ -144,33 +144,26 @@ compileJava {
 compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
 
 // build sources jar in addition
-task sourcesJar(type: Jar) {
-  from sourceSets.main.allJava
-  archiveClassifier = "sources"
+java {
+  withJavadocJar()
+  withSourcesJar()
+  registerFeature('grammars') {
+    usingSourceSet(sourceSets.grammars)
+  }
 }
 
-// build javadoc jar in addition
-task javadocJar(type: Jar) {
-  from javadoc
-  archiveClassifier = "javadoc"
-}
 
 // generated java doc contains errors, disable for now
 javadoc.failOnError(false)
-
-// build grammar jar as well
-task grammarJar(type: Jar) {
-  from("$projectDir/src/main/grammars/") { include "**/*.mc4" }
-  archiveClassifier = "grammars"
-}
 
 
 // all in one cli-jar
 shadowJar {
   manifest {
-    attributes "Main-Class": "de.monticore.ocl.${archiveBaseName.get().capitalize()}CLI"
+    attributes "Main-Class": "de.monticore.ocl.${archiveBaseName.get().toUpperCase()}CLI"
   }
-  archiveFileName = "${archiveBaseName.get()}CLI.${archiveExtension.get()}"
+  archiveFileName = "${archiveBaseName.get().toUpperCase()}CLI.${archiveExtension.get()}"
+  archiveClassifier = "cli"
   minimize()
 }
 

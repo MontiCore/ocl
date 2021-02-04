@@ -128,10 +128,10 @@ Code Quality:
       codequality: codeclimate.json
 
 DeployNexus:
-  image: registry.git.rwth-aachen.de/monticore/container-registry/maven:3-jdk-11
+  image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.5.1-jdk8
   stage: post-test
   only:
     - master
     - develop 
   script:
-    - mvn $MAVEN_CLI_OPTS deploy -Dmaven.test.skip=true
+    - gradle publish 
