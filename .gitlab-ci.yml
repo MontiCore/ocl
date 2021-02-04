@@ -134,4 +134,4 @@ DeployNexus:
     - master
     - develop 
   script:
-    - gradle publish 
+    - gradle publish -PmavenPassword=$pass -PmavenUser=$user
