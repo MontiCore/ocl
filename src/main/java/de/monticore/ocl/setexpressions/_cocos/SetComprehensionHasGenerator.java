@@ -1,8 +1,7 @@
-package de.monticore.ocl.ocl._cocos;
+package de.monticore.ocl.setexpressions._cocos;
 
 import de.monticore.ocl.setexpressions._ast.ASTSetComprehension;
 import de.monticore.ocl.setexpressions._ast.ASTSetComprehensionItem;
-import de.monticore.ocl.setexpressions._cocos.SetExpressionsASTSetComprehensionCoCo;
 import de.se_rwth.commons.logging.Log;
 
 public class SetComprehensionHasGenerator implements SetExpressionsASTSetComprehensionCoCo {

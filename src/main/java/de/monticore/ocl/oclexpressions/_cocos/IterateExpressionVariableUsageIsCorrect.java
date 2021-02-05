@@ -1,7 +1,6 @@
-package de.monticore.ocl.ocl._cocos;
+package de.monticore.ocl.oclexpressions._cocos;
 
 import de.monticore.ocl.oclexpressions._ast.ASTIterateExpression;
-import de.monticore.ocl.oclexpressions._cocos.OCLExpressionsASTIterateExpressionCoCo;
 import de.se_rwth.commons.logging.Log;
 
 public class IterateExpressionVariableUsageIsCorrect

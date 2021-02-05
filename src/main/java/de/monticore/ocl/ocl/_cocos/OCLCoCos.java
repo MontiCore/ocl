@@ -2,6 +2,8 @@
 
 package de.monticore.ocl.ocl._cocos;
 
+import de.monticore.ocl.oclexpressions._cocos.IterateExpressionVariableUsageIsCorrect;
+import de.monticore.ocl.setexpressions._cocos.SetComprehensionHasGenerator;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 
 public class OCLCoCos {
