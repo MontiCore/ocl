@@ -5,24 +5,26 @@ package de.monticore.ocl.types.check;
 import com.google.common.collect.Lists;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.ocl._visitor.NameExpressionsFromExpressionVisitor;
+import de.monticore.ocl.setexpressions.SetExpressionsMill;
 import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
-import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
-import de.monticore.types.check.*;
+import de.monticore.types.check.AbstractDeriveFromExpression;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfGenerics;
 import de.se_rwth.commons.logging.Log;
-
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static de.monticore.types.check.SymTypeConstant.unbox;
 import static de.monticore.ocl.types.check.OCLTypeCheck.compatible;
+import static de.monticore.types.check.SymTypeConstant.unbox;
 
 public class DeriveSymTypeOfSetExpressions
   extends AbstractDeriveFromExpression
@@ -149,8 +151,10 @@ public class DeriveSymTypeOfSetExpressions
     SymTypeExpression leftType = null;
     Set<String> varNames = new HashSet<>();
     if(node.getLeft().isPresentExpression()){
+      SetExpressionsTraverser traverser = SetExpressionsMill.traverser();
       NameExpressionsFromExpressionVisitor nameVisitor = new NameExpressionsFromExpressionVisitor();
-      node.getLeft().getExpression().accept(nameVisitor);
+      traverser.add4ExpressionsBasis(nameVisitor);
+      node.getLeft().getExpression().accept(traverser);
       varNames = nameVisitor.getVarNames();
       node.getLeft().getExpression().accept(getTraverser());
       if (!typeCheckResult.isPresentCurrentResult()) {

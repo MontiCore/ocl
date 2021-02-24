@@ -8,7 +8,6 @@ import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisS
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsHandler;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
-import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.types.check.*;
 import de.se_rwth.commons.logging.Log;

@@ -1,7 +1,6 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.oclexpressions._symboltable;
 
-import de.monticore.ocl.ocl._visitor.OCLVisitor2;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclarationVariable;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;

@@ -1,13 +1,6 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl;
 
-import com.google.common.collect.Sets;
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._parser.CD4CodeParser;
-import de.monticore.cd4code._symboltable.CD4CodeGlobalScope;
-import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCreatorDelegator;
-import de.monticore.cd4code.resolver.CD4CodeResolver;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.io.paths.ModelPath;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
@@ -15,11 +8,9 @@ import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,10 +61,11 @@ public abstract class AbstractTest {
     this.globalScope.setFileExt("ocl");
   }
 
+  //TODO: Klappt nicht ohne DeSer
+  /*
   public void initSymbolTable(String model, String modelPath) throws IOException {
     initSymbolTable(model, Paths.get(modelPath).toFile());
   }
-
 
   public void initSymbolTable(String model, File... modelPaths) throws IOException {
     Set<Path> p = Sets.newHashSet();
@@ -98,4 +90,5 @@ public abstract class AbstractTest {
     setupGlobalScope();
     globalScope.addAdaptedTypeSymbolResolver(cdResolver);
   }
+ */
 }

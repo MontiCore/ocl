@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl;
 
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.ICD4CodeGlobalScope;
 import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelper;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.io.FileReaderWriter;
@@ -18,6 +16,7 @@ import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.oclexpressions._cocos.IterateExpressionVariableUsageIsCorrect;
 import de.monticore.ocl.setexpressions._cocos.SetComprehensionHasGenerator;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.ocl.util.ParserUtil;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
@@ -60,7 +59,6 @@ public class OCLCLI {
    */
   public void run(String[] args) {
 
-    OCLTool tool = new OCLTool();
     Options options = initOptions();
 
     try {
@@ -87,7 +85,8 @@ public class OCLCLI {
       // (only returns if successful)
       List<ASTOCLCompilationUnit> inputOCLs = new ArrayList<>();
       for (String inputFileName : cmd.getOptionValues("i")) {
-        Optional<ASTOCLCompilationUnit> ast = tool.parseOCL(inputFileName);
+        Optional<ASTOCLCompilationUnit> ast = (Optional<ASTOCLCompilationUnit>) ParserUtil
+          .parse(inputFileName, new OCLParser());
         if (ast.isPresent()) {
           inputOCLs.add(ast.get());
         }
@@ -121,10 +120,6 @@ public class OCLCLI {
       // but executing the following options requires a symbol table
       //
 
-      //IOCLGlobalScope globalScope = tool.processModels(Paths.get(cmd.getOptionValue("mp")));
-      //inputOCLs = IOCLGlobalScopeHelper.getCompilationUnits(globalScope);
-
-
       Set<String> cocoOptionValues = new HashSet<>();
       if (cmd.hasOption("c") && cmd.getOptionValues("c") != null) {
         cocoOptionValues.addAll(Arrays.asList(cmd.getOptionValues("c")));
@@ -134,7 +129,6 @@ public class OCLCLI {
           deriveSymbolSkeleton(ocl);
         }
         if (cocoOptionValues.isEmpty() || cocoOptionValues.contains("type") || cmd.hasOption("s")) {
-          loadSymbols("src/test/resources/docs/Bookshop.cdsym");
           for (ASTOCLCompilationUnit ocl : inputOCLs) {
             OCLSymbolTableCompleter stCompleter = new OCLSymbolTableCompleter(
               ocl.getMCImportStatementList(), ocl.getPackage()
@@ -332,28 +326,6 @@ public class OCLCLI {
   }
 
   /*=================================================================*/
-
-  /**
-   * Creates the symbol table from the parsed AST.
-   *
-   * @param ast The top OCL model element.
-   * @return The artifact scope derived from the parsed AST
-   */
-  public IOCLArtifactScope createSymbolTable(ASTOCLCompilationUnit ast, ModelPath mp) {
-    IOCLGlobalScope globalScope = OCLMill.globalScope();
-    globalScope.setFileExt(".ocl");
-    globalScope.setModelPath(mp);
-
-    ICD4CodeGlobalScope cdGlobalScope = CD4CodeMill.globalScope();
-    cdGlobalScope.setModelPath(mp);
-    cdGlobalScope.setFileExt(".cd");
-
-    OCLSymbolTableCreatorDelegator symbolTable = OCLMill.oCLSymbolTableCreatorDelegator();
-    ((OCLSymbolTableCreator) symbolTable.getOCLVisitor().get())
-      .setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
-
-    return symbolTable.createFromAST(ast);
-  }
 
   /**
    * Stores the symbols for ast in the symbol file filename.

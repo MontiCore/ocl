@@ -1,10 +1,8 @@
 package de.monticore.ocl.optionaloperators.prettyprint;
 
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.optionaloperators._ast.*;
 import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsHandler;
 import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsTraverser;
-import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsVisitor;
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 

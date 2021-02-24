@@ -3,14 +3,8 @@ package de.monticore.ocl.optionaloperators.prettyprint;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
-import de.monticore.ocl.oclexpressions.OCLExpressionsMill;
-import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
-import de.monticore.ocl.oclexpressions.prettyprint.OCLExpressionsPrettyPrinter;
 import de.monticore.ocl.optionaloperators.OptionalOperatorsMill;
-import de.monticore.ocl.optionaloperators._ast.*;
 import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsTraverser;
-import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsVisitor;
-import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.MCBasicsPrettyPrinter;
 

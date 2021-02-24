@@ -6,9 +6,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
 import de.monticore.ocl.ocl._visitor.OCLHandler;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
-import de.monticore.ocl.ocl._visitor.OCLVisitor;
 import de.monticore.types.check.AbstractDeriveFromExpression;
-import de.monticore.types.check.DeriveSymTypeOfExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 public class DeriveSymTypeOfOCL

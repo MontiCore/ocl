@@ -5,14 +5,10 @@ import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclarationVariable;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
-import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.SymTypeExpressionFactory;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Deque;
-import java.util.Optional;
 
 public class OCLExpressionsScopesGenitor extends OCLExpressionsScopesGenitorTOP {
 
