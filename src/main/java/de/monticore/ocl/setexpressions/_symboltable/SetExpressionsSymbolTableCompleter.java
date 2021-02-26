@@ -1,26 +1,42 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.setexpressions._symboltable;
 
+import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
+import de.monticore.ocl.setexpressions._ast.ASTSetVariableDeclaration;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
-import de.monticore.ocl.util.CompleterUtil;
+import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
+import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
+import java.util.Optional;
 
 public class SetExpressionsSymbolTableCompleter
-  implements BasicSymbolsVisitor2, SetExpressionsHandler {
-  protected static final String USED_BUT_UNDEFINED = "0xB0028: Type '%s' is used but not defined.";
+  implements SetExpressionsVisitor2, BasicSymbolsVisitor2, SetExpressionsHandler {
 
-  protected static final String DEFINED_MUTLIPLE_TIMES = "0xB0031: Type '%s' is defined more than once.";
+  DeriveSymTypeOfOCLCombineExpressions typeVisitor;
 
   protected final List<ASTMCImportStatement> imports;
 
   protected final String packageDeclaration;
 
   protected SetExpressionsTraverser traverser;
+
+  public void setTypeVisitor(DeriveSymTypeOfOCLCombineExpressions typesCalculator) {
+    if (typesCalculator != null) {
+      this.typeVisitor = typesCalculator;
+    }
+    else {
+      Log.error("0xA3201 The typesVisitor has to be set");
+    }
+  }
 
   public SetExpressionsSymbolTableCompleter(List<ASTMCImportStatement> imports, String packageDeclaration) {
     this.imports = imports;
@@ -46,7 +62,71 @@ public class SetExpressionsSymbolTableCompleter
   }
 
   @Override
-  public void visit(VariableSymbol var) {
-    CompleterUtil.visit(var, imports, packageDeclaration);
+  public void visit(ASTSetVariableDeclaration node){
+
+  }
+
+  @Override
+  public void endVisit(ASTSetVariableDeclaration node){
+    initialize_SetVariableDeclaration(node.getSymbol(), node);
+  }
+
+  public void initialize_SetVariableDeclaration(VariableSymbol symbol, ASTSetVariableDeclaration ast) {
+    symbol.setIsReadOnly(false);
+    if(ast.isPresentMCType()) {
+      ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
+      ast.getMCType().accept(getTraverser());
+      final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
+      if (!typeResult.isPresent()) {
+        Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
+      } else {
+        symbol.setType(typeResult.get());
+      }
+    } else {
+      if(ast.isPresentExpression()){
+        ast.getExpression().accept(getTraverser());
+        ast.getExpression().accept(typeVisitor.getTraverser());
+        if(typeVisitor.getTypeCheckResult().isPresentCurrentResult()){
+          symbol.setType(typeVisitor.getTypeCheckResult().getCurrentResult());
+        } else {
+          Log.error(String.format("The type of the object (%s) could not be calculated", ast.getName()));
+        }
+      }
+      else {
+        symbol.setType(SymTypeExpressionFactory.createTypeObject("Object", ast.getEnclosingScope()));
+      }
+    }
+  }
+
+  @Override
+  public void endVisit(ASTGeneratorDeclaration node){
+    initialize_GeneratorDeclaration(node.getSymbol(), node);
+  }
+
+  public void initialize_GeneratorDeclaration(VariableSymbol symbol, ASTGeneratorDeclaration ast) {
+    symbol.setIsReadOnly(false);
+    if(ast.isPresentMCType()) {
+      ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
+      ast.getMCType().accept(getTraverser());
+      final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
+      if (!typeResult.isPresent()) {
+        Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
+      }
+      else {
+        symbol.setType(typeResult.get());
+      }
+    } else {
+      final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getExpression());
+      if(!typeResult.isPresent()){
+        Log.error(String.format("The type of the object (%s) could not be calculated", ast.getName()));
+      }
+      else if(typeResult.get().isTypeConstant()){
+        Log.error(String.format("Expression of object (%s) has to be a collection", ast.getName()));
+      }
+      else {
+        SymTypeExpression result = OCLTypeCheck.unwrapSet(typeResult.get());
+        symbol.setType(result);
+      }
+    }
   }
 }

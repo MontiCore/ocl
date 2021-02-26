@@ -133,8 +133,10 @@ public class OCLCLI {
             OCLSymbolTableCompleter stCompleter = new OCLSymbolTableCompleter(
               ocl.getMCImportStatementList(), ocl.getPackage()
             );
+            stCompleter.setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
             OCLTraverser t = OCLMill.traverser();
             t.add4BasicSymbols(stCompleter);
+            t.add4OCL(stCompleter);
             t.setOCLHandler(stCompleter);
             stCompleter.setTraverser(t);
             globalScope.accept(t);

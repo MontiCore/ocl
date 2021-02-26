@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public class OCLTypeCheck extends TypeCheck {
 
-  protected static final List<String> collections = Lists.newArrayList("List", "Set", "Collection");
+  protected static final List<String> collections = Lists.newArrayList("java.util.List", "java.util.Set", "java.util.Collection", "java.util.Map", "List", "Set", "Collection", "Map");
 
   public OCLTypeCheck(ISynthesize synthesizeSymType, ITypesCalculator iTypesCalculator) {
     super(synthesizeSymType, iTypesCalculator);

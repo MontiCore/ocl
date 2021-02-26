@@ -111,6 +111,12 @@
             <classifier>${grammars.classifier}</classifier>
         </dependency>
 
+        <dependency>
+            <groupId>de.monticore</groupId>
+            <artifactId>class2mc</artifactId>
+            <version>${monticore.version}</version>
+        </dependency>
+
         <!-- .. Test Libraries ............................................... -->
         <dependency>
             <groupId>junit</groupId>

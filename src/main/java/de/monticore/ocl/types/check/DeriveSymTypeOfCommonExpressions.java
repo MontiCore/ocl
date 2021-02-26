@@ -1,7 +1,5 @@
 package de.monticore.ocl.types.check;
 
-import de.monticore.cdassociation._ast.ASTCDRole;
-import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTConditionalExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
@@ -68,21 +66,6 @@ public class DeriveSymTypeOfCommonExpressions
         if (!fieldSymbols.isEmpty()) {
           VariableSymbol var = fieldSymbols.get(0);
           SymTypeExpression type = var.getType();
-
-          //TODO: Fixt dass CD4A keine Arraytypen für Assiziationen setzt
-          if (var.getAstNode() instanceof ASTCDRole) {
-            ASTCDRole astRole = (ASTCDRole) var.getAstNode();
-            CDRoleSymbol symbol = astRole.getSymbol();
-            if (symbol.isPresentCardinality()) {
-              if (symbol.getCardinality().isMult() ||
-                symbol.getCardinality().isAtLeastOne()) {
-                type = SymTypeExpressionFactory
-                  .createTypeArray(type.getTypeInfo(), symbol.getCardinality().getUpperBound(),
-                    type);
-              }
-            }
-          }
-
           typeCheckResult.setField();
           typeCheckResult.setCurrentResult(type);
         }

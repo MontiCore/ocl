@@ -25,6 +25,7 @@ public class OCLCoCoTest extends AbstractTest {
 
   //@Test
   public void testBanking() throws IOException {
+
     /*
     Optional<ASTOCLCompilationUnit> ast = new OCLParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/docs/bankingChecks.ocl").toString());
     initSymbolTable("/docs/Banking.cd", RELATIVE_MODEL_PATH + "/docs");

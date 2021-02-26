@@ -9,7 +9,6 @@ import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.ocl.types.check.OCLTypeCheck;
-import de.monticore.ocl.util.CompleterUtil;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
 import de.monticore.types.check.SymTypeExpression;
@@ -34,6 +33,15 @@ public class OCLExpressionsSymbolTableCompleter
 
   protected DeriveSymTypeOfOCLCombineExpressions typeVisitor;
 
+  public void setTypeVisitor(DeriveSymTypeOfOCLCombineExpressions typesCalculator) {
+    if (typesCalculator != null) {
+      this.typeVisitor = typesCalculator;
+    }
+    else {
+      Log.error("0xA3201 The typesVisitor has to be set");
+    }
+  }
+
   public OCLExpressionsSymbolTableCompleter(List<ASTMCImportStatement> imports, String packageDeclaration) {
     this.imports = imports;
     this.packageDeclaration = packageDeclaration;
@@ -56,11 +64,6 @@ public class OCLExpressionsSymbolTableCompleter
     for (IOCLExpressionsScope subscope : node.getSubScopes()) {
       subscope.accept(this.getTraverser());
     }
-  }
-
-  @Override
-  public void visit(VariableSymbol var) {
-    CompleterUtil.visit(var, imports, packageDeclaration);
   }
 
   @Override

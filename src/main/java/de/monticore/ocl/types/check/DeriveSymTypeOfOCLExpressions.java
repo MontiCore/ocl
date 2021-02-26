@@ -390,12 +390,26 @@ public class DeriveSymTypeOfOCLExpressions
       }
       typeCheckResult.reset();
     }
-    if(!(exprResult instanceof SymTypeArray)){
-      Log.error("0xA3001 The type of the expression of the OCLArrayQualification has to be SymTypeArray");
+    if (exprResult instanceof SymTypeArray) {
+      exprResult =  getCorrectResultArrayExpression(node.getEnclosingScope(), exprResult, (SymTypeArray) exprResult);
+      typeCheckResult.setCurrentResult(exprResult);
       return;
     }
-    exprResult =  getCorrectResultArrayExpression(node.getEnclosingScope(), exprResult, (SymTypeArray) exprResult);
-    typeCheckResult.setCurrentResult(exprResult);
+    if (exprResult instanceof SymTypeOfGenerics) {
+      SymTypeOfGenerics collection = (SymTypeOfGenerics) exprResult;
+      if (collection.getArgumentList().size() > 1
+        && !collection.getTypeConstructorFullName().equals("java.util.Map")) {
+        Log.error("0xA3002 Array qualifications can only be used with one type argument or a map");
+      }
+      if (collection.getTypeConstructorFullName().equals("java.util.Map")) {
+        typeCheckResult.setCurrentResult(collection.getArgument(1));
+      } else {
+        typeCheckResult.setCurrentResult(collection.getArgument(0));
+      }
+      return;
+    }
+
+    Log.error("0xA3001 The type of the expression of the OCLArrayQualification has to be SymTypeArray");
   }
 
   @Override
@@ -476,7 +490,8 @@ public class DeriveSymTypeOfOCLExpressions
     return SymTypeExpressionFactory.createTypeConstant("boolean");
   }
 
-  private SymTypeExpression getCorrectResultArrayExpression(IExpressionsBasisScope scope, SymTypeExpression arrayTypeResult, SymTypeArray arrayResult) {
+  private SymTypeExpression getCorrectResultArrayExpression(IExpressionsBasisScope scope,
+    SymTypeExpression arrayTypeResult, SymTypeArray arrayResult) {
     SymTypeExpression wholeResult;
     if(arrayResult.getDim()>1){
       //case 1: A[][] bar -> bar[3] returns the type A[] -> decrease the dimension of the array by 1
