@@ -12,6 +12,7 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
 import de.monticore.ocl.setexpressions._symboltable.SetExpressionsSymbolTableCompleter;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -30,6 +31,7 @@ public class OCLSymbolTableTest extends AbstractTest {
     OCLMill.reset();
     OCLMill.init();
     OCLMill.globalScope().clear();
+    BasicSymbolsMill.initializePrimitives();
 
     Java2MCResolver resolver = new Java2MCResolver(OOSymbolsMill.globalScope());
     OCLMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
