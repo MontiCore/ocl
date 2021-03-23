@@ -40,7 +40,7 @@
             "name": "now",
             "returnType": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Time.now.Time"
+              "objName": "Time"
             },
             "isConstructor": false,
             "isMethod": true,
@@ -79,7 +79,7 @@
                   "isFinal": false,
                   "type": {
                     "kind": "de.monticore.types.check.SymTypeOfObject",
-                    "objName": "Time.lessThan.Time"
+                    "objName": "Time"
                   },
                   "isReadOnly": false
                 }
@@ -343,6 +343,20 @@
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "numberOfBids",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "int"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "auctionIdent",
             "isPrivate": false,
             "isProtected": false,
@@ -365,7 +379,49 @@
             "isFinal": false,
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Auction.AuctionStatus"
+              "objName": "AuctionStatus"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "startTime",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Time"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "closingTime",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Time"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "finishTime",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Time"
             },
             "isReadOnly": false
           },
@@ -451,7 +507,7 @@
             "isFinal": true,
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "AuctionStatus.AuctionStatus"
+              "objName": "AuctionStatus"
             },
             "isReadOnly": true
           },
@@ -465,7 +521,7 @@
             "isFinal": true,
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "AuctionStatus.AuctionStatus"
+              "objName": "AuctionStatus"
             },
             "isReadOnly": true
           },
@@ -479,7 +535,7 @@
             "isFinal": true,
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "AuctionStatus.AuctionStatus"
+              "objName": "AuctionStatus"
             },
             "isReadOnly": true
           }
@@ -549,7 +605,7 @@
             "isFinal": false,
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Message.Time"
+              "objName": "Time"
             },
             "isReadOnly": false
           },
@@ -716,6 +772,20 @@
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "isActive",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "allData",
             "isPrivate": false,
             "isProtected": false,
@@ -822,6 +892,72 @@
           "objName": "Person"
         }
       ]
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Building",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": true,
+      "isStatic": false,
+      "isFinal": false,
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "height",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "double"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "width",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "double"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "length",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "double"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          }
+        ]
+      }
     },
     {
       "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",

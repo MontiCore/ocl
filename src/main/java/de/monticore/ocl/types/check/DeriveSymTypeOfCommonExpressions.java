@@ -11,6 +11,7 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
@@ -28,7 +29,21 @@ public class DeriveSymTypeOfCommonExpressions
   extends de.monticore.types.check.DeriveSymTypeOfCommonExpressions {
 
   /**
-   * All methods in this class are identical to the methods in
+   * OCL doesn't now OOTypes. Therefore we just accept function symbols parsed
+   * from a class diagrams as static methods in type checks
+   */
+  @Override protected List<FunctionSymbol> filterStaticMethodSymbols(
+    List<FunctionSymbol> fittingMethods) {
+    // Method symbols
+    List<FunctionSymbol> result = super.filterStaticMethodSymbols(fittingMethods);
+    // Function symbols (cannot be cast - we'll just accept it)
+    result.addAll(fittingMethods.stream().filter(m -> !(m instanceof MethodSymbol))
+      .collect(Collectors.toList()));
+    return result;
+  }
+
+  /**
+   * All below methods in this class are identical to the methods in
    * de.monticore.types.check.DeriveSymTypeOfCommonExpressions.
    * This class is used to ensure that OCLTypeCheck methods are
    * used instead of the normal TypeCheck methods.

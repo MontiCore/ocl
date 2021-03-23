@@ -41,8 +41,9 @@ public class OCLSymbolTableTest extends AbstractTest {
     OOSymbolsMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
 
     OCLSymbols2Json deSer = new OCLSymbols2Json();
-    IOCLArtifactScope cdScope = deSer.load(cdSymbols);
-    OCLMill.globalScope().addSubScope(cdScope);
+    OCLMill.globalScope().addSubScope(deSer.load(cdSymbols));
+    OCLMill.globalScope()
+      .addSubScope(deSer.load("src/test/resources/testinput/CDs/DefaultTypes.cdsym"));
 
     // when
     OCLScopesGenitorDelegator genitor = OCLMill.scopesGenitorDelegator();

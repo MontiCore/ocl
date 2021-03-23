@@ -21,8 +21,12 @@ classdiagram AuctionCD {
   }
 
   public class Auction {
+    int numberOfBids;
     int auctionIdent;
     AuctionStatus status;
+    Time startTime;
+    Time closingTime;
+    Time finishTime;
   }
 
   public enum AuctionStatus {
@@ -39,12 +43,19 @@ classdiagram AuctionCD {
 
   public class Person {
     //boolean lessThan(Person that);
+    boolean isActive;
   }
 
   public class Student extends Person {
   }
 
   public class Betreuer extends Person{
+  }
+
+  public class Building {
+    double height();
+    double width();
+    double length();
   }
 
 

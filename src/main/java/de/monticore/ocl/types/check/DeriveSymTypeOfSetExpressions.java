@@ -32,7 +32,9 @@ public class DeriveSymTypeOfSetExpressions
 
   protected SetExpressionsTraverser traverser;
 
-  protected final List<String> collections = Lists.newArrayList("List", "Set", "Collection");
+  protected final List<String> collections = Lists
+    .newArrayList("List", "Set", "Collection", "java.util.List", "java.util.Set",
+      "java.util.Collection");
 
   @Override
   public void traverse(ASTSetInExpression node) {

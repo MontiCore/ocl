@@ -2,7 +2,8 @@
 ocl let3 {
   context Auction a inv Time3:
     let
-      test//Time min(Time x, Time y) = x.lessThan(y) ? x : y
-in
-      min(a.startTime, min(a.closingTime, a.finishTime)) == a.startTime;
+      min = a.closingTime.lessThan(a.finishTime) ? a.closingTime : a.finishTime;
+      min2 = a.startTime.lessThan(min) ? a.startTime : min
+    in
+      min2 == a.startTime;
 }
