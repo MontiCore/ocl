@@ -2,6 +2,7 @@
 package de.monticore.ocl.ocl._symboltable;
 
 import de.monticore.class2mc.Java2MCResolver;
+import de.monticore.io.paths.ModelPath;
 import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -18,6 +19,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 public class OCLSymbolTableTest extends AbstractTest {
@@ -27,12 +29,13 @@ public class OCLSymbolTableTest extends AbstractTest {
   public void shouldCreateSymTabForValidModels(String filename) throws IOException {
     // given
     final Optional<ASTOCLCompilationUnit> ast = parse(prefixValidModelsPath(filename), false);
-    final String cdSymbols = "src/test/resources/testinput/CDs/Auction.cdsym";
+    final String cdSymbols = "src/test/resources/testinput/CDs/AuctionCD.cdsym";
     OCLMill.reset();
     OCLMill.init();
     OCLMill.globalScope().clear();
     BasicSymbolsMill.initializePrimitives();
 
+    OOSymbolsMill.globalScope().setModelPath(new ModelPath(Paths.get(prefixValidModelsPath(""))));
     Java2MCResolver resolver = new Java2MCResolver(OOSymbolsMill.globalScope());
     OCLMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
     OOSymbolsMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
@@ -67,7 +70,6 @@ public class OCLSymbolTableTest extends AbstractTest {
     t.add4BasicSymbols(stCompleter2);
     t.add4OCLExpressions(stCompleter2);
     t.add4BasicSymbols(stCompleter3);
-    t.setSetExpressionsHandler(stCompleter3);
     t.add4SetExpressions(stCompleter3);
     ast.get().accept(t);
 

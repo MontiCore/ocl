@@ -3,7 +3,7 @@ ocl comprehension1 {
   inv:
     List{-3..3} == List{-3, -2, -1, 0, 1, 2, 3} &&
     List{1..1} == List{1} &&
-    List{9..5} == List{} &&
+    List{9..5} == List{9, 8, 7, 6, 5} &&
     List{'a'..'c'} == List{'a', 'b', 'c'} &&
     List{3, 5..7, 2} == List{3, 5, 6, 7, 2} &&
     List{3..5, 7..9} == List{3, 4, 5, 7, 8, 9} &&

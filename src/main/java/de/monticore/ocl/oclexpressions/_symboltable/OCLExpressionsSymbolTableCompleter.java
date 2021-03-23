@@ -121,6 +121,7 @@ public class OCLExpressionsSymbolTableCompleter
       }
     } else {
       if(ast.isPresentExpression()){
+        ast.getExpression().accept(getTraverser());
         ast.getExpression().accept(typeVisitor.getTraverser());
         if(typeVisitor.getTypeCheckResult().isPresentCurrentResult()){
           symbol.setType(typeVisitor.getTypeCheckResult().getCurrentResult());
