@@ -135,10 +135,10 @@ Change the directory to the root directory of the cloned sources:
 cd OCL
 ```
 
-Afterwards, build the source files with gradle (if `./gradlew.bat` is not 
-recognized as a command in your shell, then use `./gradlew`):
+Then build the project by running (Info: you need to have Gradle 
+installed for this):
 ```
-./gradlew.bat build
+gradle build
 ```
 Congratulations! You can now find the executable JAR file `OCLCLI.jar` in
  the directory `target/libs` (accessible via `cd target/libs`).
@@ -428,20 +428,17 @@ So remember that the `-cd4c` flag can reduce this to only
 java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -c type -cd4c
 ```
 
-# TODO AB HIER VON SEQUENCE DIAGRAM ÜBERNOMMEN ; ANPASSEN FÜR OCL
-
 ### Step 5: Storing Symbols
 The previous section describes how to load symbols from an existing symbol file.
 Now, we will use the CLI tool to store a symbol file for our `Bookshop.ocl` model.
 The stored symbol file will contain information about the objects defined in the 
-SD.
+OCL file.
 It can be imported by other models for using the symbols introduced by these 
-object definitions,
-similar to how we changed the file `Bookshop.ocl` for importing the symbols contained 
-in the symbol file `Types.typessym`.
+object definitions, similar to how we changed the file `Bookshop.ocl` for 
+importing the symbols contained in the symbol file `Bookshop.sym`.
 
-Using the `-s,-symboltable <arg>` option builds the symbol tables of the input 
-models and stores them in the file paths given as arguments.
+Using the `-s,-symboltable <file>` option builds the symbol tables of the 
+input models and stores them in the file paths given as arguments.
 Either no file paths must be provided or exactly one file path has to be 
 provided for each input model.
 The symbol file for the i-th input model is stored in the file defined by the 
@@ -457,21 +454,21 @@ Furthermore, please notice that in order to store the symbols properly, the
 model has to be well-formed in all regards, and therefore all context conditions 
 are checked beforehand.
 
-For storing the symbol file of `Bid.ocl`, execute the following command 
+For storing the symbol file of `Bookshop.ocl`, execute the following command 
 (the implicit context condition checks require using the model path option):
 ```
-java -jar OCLCLI.jar -i Bid.ocl -path mytypes -s
+java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -cd4c -s
 ```
-The CLI tool produces the file `target/symbols/Bid.oclsym`, which can now be 
-imported by other models, e.g., by models that need to use some of the objects 
-defined in the SD `Bid`.
+The CLI tool produces the file `target/symbols/docs/Bookshop.oclsym`, which 
+can now be imported by other models, e.g., by models that need to use some 
+of the objects defined in the OCL file `Bookshop`.
 
-For storing the symbol file of `Bid.ocl` in the file `syms/BidSyms.oclsym`, 
-for example, execute the following command
+For storing the symbol file of `Bookshop.ocl` in the file 
+`syms/Bookshop.oclsym`, for example, execute the following command
 (again, the implicit context condition checks require using the model path 
 option):
 ```
-java -jar OCLCLI.jar -i Bid.ocl -path mytypes -s syms/BidSyms.oclsym
+java -jar OCLCLI.jar -i Bookshop.ocl -path mytypes -s syms/Bookshop.oclsym
 ```
 
 Congratulations, you have just finished the tutorial about saving SD symbol 
