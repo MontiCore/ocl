@@ -334,8 +334,6 @@ $ java -jar OCLCLI.jar  -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd
 
 Please remember to undo the "mistake". 
 
-# TODO AB HIER VON SEQUENCE DIAGRAM ÜBERNOMMEN ; ANPASSEN FÜR OCL
-
 ### Step 4: Using the Model Path to Resolve Symbols
 
 In this section we make use of the model path and provide the CLI tool with
@@ -344,10 +342,24 @@ necessary type information.
 
 Create a new directory `mytypes` in the directory where the CLI tool 
 `OCLCLI.jar` is located.
-The symbol file `Types.typesym` of a model, which provides all necessary type 
-information, can be found [here](doc/Types.typesym).
-Download the file, name it `Types.typesym`, and move it into the directory 
-`mytypes`.
+For example, the `Bookshop.ocl` example from the first section required a 
+class diagram that specified its datatypes. 
+You can find this class diagram file under 
+[src/test/resources/docs/Bookshop/Bookshop.cd](src/test/resources/docs/Bookshop/Bookshop.cd). 
+
+To use it in OCL, you first need to convert it info a symbol file.
+The symbol file `Bookshop.sym` of the class diagram provides all necessary type 
+information to use its types in OCL. 
+If you don't want to get involved with the CDCLI at this point, you can also find the 
+ready-to-use file under 
+[src/test/resources/docs/Bookshop/Bookshop.sym](src/test/resources/docs/Bookshop/Bookshop.sym).
+Just copy it into your `mytypes` folder.
+Otherwise, to convert the class diagram into a symbol file you need to use the 
+`CDCLI.jar` from the 
+[CD4Analysis Project][cd4c] and convert the class diagram file using the following command:
+```
+java -jar CDCLI.jar -d false --fieldfromrole navigable -i src/test/resources/docs/Bookshop/Bookshop.cd mytypes/Bookshop.sym
+```
 
 The contents of the symbol file are of minor importance for you as a language 
 user. 
@@ -364,49 +376,68 @@ called the "Model Path".
 If we provide the model path to the tool, it will search for symbols in symbol 
 files, which are stored in directories contained in the model path.
 So, if we want the tool to find our symbol file, we have to provide the model 
-path to the tool via the `-path <arg>` option:
+path to the tool via the `--path <arg>` option.
+You can try that out using the `mytypes` folder you just created:
 ```
-java -jar OCLCLI.jar -i Bid.ocl -c type -path <MODELPATH>
+java -jar OCLCLI.jar -i Bookshop.ocl --path <MODELPATH> -c type -cd4c
 ```
 where `<MODELPATH>` is the path where you stored the downloaded symbol file.
 In our example, in case you stored the model in the directory `mytypes`,
 execute the following command:
 ```
-java -jar OCLCLI.jar -i Bid.ocl -c type -path mytypes
+java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -c type -cd4c
 ```
 
-Well, executing the above command still produces the same error message.
-This is because the symbol file needs to be imported first, just like in Java.
-Therefore, we add the following import statement to the beginning of the 
-contents contained in the file `Bid.ocl` containing the SD `Bid`:
+Notice that this command also uses the `-cd4c` flag. 
+To interpret the symbolfiles provided to the OCL CLI, the OCL CLI 
+needs to understand how to interpret the symbols stored by the 
+CDCLI.
+The  `-cd4c` flag is a shorthand for doing this for CD4Code.
+You can also do it manually by using the `--typeSymbol`, 
+`--functionSymbol`, and `--variableSymbol` flags followed by 
+the symbol kinds that should be interpreted as `TypeSymbol`, 
+`FunctionSymbol` and `VariableSymbol`:
 ```
-import Types.*;
-
-ocl Bid {
-  ...
-}
+java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -c type --typeSymbol <TYPE_SYMBOL_KINDS> --variableSymbol <VAR_SYMBOL_KINDS> --functionSymbol <FUNC_SYMBOL_KINDS>
 ```
-The added import statement means that the file containing the SD imports all 
-symbols that are stored in the symbol file `Types`. 
-Note that you may have to change the name here, depending on how you named the 
-symbol file from above.
-The concrete file ending `.typesym` is not important 
-in this case. However, the file ending of the symbol file must end with `sym`, 
-i.e., the name of the symbol file must be compatible to the pattern `*.*sym`.
-If you strictly followed the instructions of this tutorial, then you are fine.
+where `<TYPE_SYMBOL_KINDS>`, `<VAR_SYMBOL_KINDS>`, and 
+`<FUNC_SYMBOL_KINDS>` are the fully qualified names of the symbols. 
+In case you want to provide multiple symbol types, just add them 
+separated by a space.
+In our example, declaring the symbols from CD4Analysis 
+would look like this:
+```
+java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -c type --typeSymbol de.monticore.cdbasis._symboltable.CDTypeSymbol --variableSymbol de.monticore.symbols.oosymbols._symboltable.FieldSymbol --functionSymbol de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol
+```
 
-If we now execute the command again, the CLI tool will print no output. 
-This means that it processed the model successfully without any context 
-condition violations. Great! 
+Notice that the CLI now produces a lot of warnings on symbols 
+that could not be interpreted. 
+Not every symbol of a differnt language might be interesting in 
+OCL.
+To suppress these unintended warnings, you can tell the OCL CLI
+for which symbol kinds you do not want to receive them using the 
+`--ignoreSymKind <SYM_KINDS_TO_IGNORE>` option. 
+In our example, this would look like this:
+```
+java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -c type --typeSymbol de.monticore.cdbasis._symboltable.CDTypeSymbol --variableSymbol de.monticore.symbols.oosymbols._symboltable.FieldSymbol --functionSymbol de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol --ignoreSymKind de.monticore.cdassociation._symboltable.CDAssociationSymbol de.monticore.cdassociation._symboltable.CDRoleSymbol
+```
+
+For everyday use, this is a little complicated. 
+So remember that the `-cd4c` flag can reduce this to only
+```
+java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -c type -cd4c
+```
+
+# TODO AB HIER VON SEQUENCE DIAGRAM ÜBERNOMMEN ; ANPASSEN FÜR OCL
 
 ### Step 5: Storing Symbols
 The previous section describes how to load symbols from an existing symbol file.
-Now, we will use the CLI tool to store a symbol file for our `Bid.ocl` model.
+Now, we will use the CLI tool to store a symbol file for our `Bookshop.ocl` model.
 The stored symbol file will contain information about the objects defined in the 
 SD.
 It can be imported by other models for using the symbols introduced by these 
 object definitions,
-similar to how we changed the file `Bid.ocl` for importing the symbols contained 
+similar to how we changed the file `Bookshop.ocl` for importing the symbols contained 
 in the symbol file `Types.typessym`.
 
 Using the `-s,-symboltable <arg>` option builds the symbol tables of the input 
@@ -456,3 +487,4 @@ files!
 * [Publications about MBSE and MontiCore](https://www.se-rwth.de/publications/)
 * [Licence definition](https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md)
 
+[cd4c]: https://github.com/MontiCore/cd4analysis
