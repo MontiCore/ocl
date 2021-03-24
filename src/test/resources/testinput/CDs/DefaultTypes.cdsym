@@ -1,0 +1,865 @@
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "DefaultTypes",
+  "symbols": [
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Class",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Object",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Collection",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false,
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "containsAll",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "c",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Collection.containsAll.Collection"
+                  },
+                  "isReadOnly": false
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "contains",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "c",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Collection.contains.Collection"
+                  },
+                  "isReadOnly": false
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "size",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "int"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "isEmpty",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "addAll",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Collection.addAll.Collection"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "c",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Collection.addAll.Collection"
+                  },
+                  "isReadOnly": false
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "asSet",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Collection.asSet.Set"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "flatten",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Collection.flatten.Collection"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "List",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false,
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "Collection"
+        }
+      ],
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "nonEmpty",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "addAll",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "List.addAll.List"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "c",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "List.addAll.List"
+                  },
+                  "isReadOnly": false
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "add",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "List.add.List"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "o",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "List.add.Object"
+                  },
+                  "isReadOnly": false
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Set",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false,
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "Collection"
+        }
+      ],
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "addAll",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Set.addAll.Set"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "c",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Set.addAll.Set"
+                  },
+                  "isReadOnly": false
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "asList",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Set.asList.List"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "add",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Set.add.Set"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "o",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Set.add.Object"
+                  },
+                  "isReadOnly": false
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Optional",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false,
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "isAbsent",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "isPresent",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Date",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Number",
+      "isClass": false,
+      "isInterface": true,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Integer",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false,
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "Number"
+        }
+      ],
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "toString",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Integer.toString.String"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Double",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false,
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "Number"
+        }
+      ],
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "toString",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Double.toString.String"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Float",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false,
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "Number"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Long",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false,
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "Number"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Boolean",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Character",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "String",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false,
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "contains",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "s",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "String.contains.String"
+                  },
+                  "isReadOnly": false
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "replaceAll",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "String.replaceAll.String"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "s1",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "String.replaceAll.String"
+                  },
+                  "isReadOnly": false
+                },
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "s2",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "String.replaceAll.String"
+                  },
+                  "isReadOnly": false
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "replace",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "String.replace.String"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "s1",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "String.replace.String"
+                  },
+                  "isReadOnly": false
+                },
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "s2",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "String.replace.String"
+                  },
+                  "isReadOnly": false
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "endsWith",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "s",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "String.endsWith.String"
+                  },
+                  "isReadOnly": false
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "length",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "int"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
+      "name": "DefaultTypes"
+    }
+  ]
+}
