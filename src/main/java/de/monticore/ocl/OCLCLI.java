@@ -437,7 +437,6 @@ public class OCLCLI {
     // print to stdout or file
     if (path == null || path.isEmpty()) {
       System.out.println(content);
-      System.out.println();
     }
     else {
       File f = new File(path);
