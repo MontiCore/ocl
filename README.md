@@ -90,7 +90,7 @@ for
 * pretty-printing, 
 * creating symbol tables, 
 * storing symbols in symbol files, and  
-* loading symbols from symbol files.    // TODO: In CLI Programmieren
+* loading symbols from symbol files.  
 
 The requirements for building and using the OCL CLI tool are that (at least) 
 JDK 8 (JDK 11 and JDK 14 are also officially supported by us), Git, and Gradle 
@@ -112,6 +112,8 @@ under the name `OCLCLI.jar` in your working directory:
 ```
 wget "https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=ocl&maven.extension=jar&maven.classifier=cli" -O OCLCLI.jar
 ``` 
+** //TODO: Nach CLI Release auf monticore.de Link ersetzen **
+
 
 ## Building the CLI Tool from the Sources
  
@@ -126,7 +128,7 @@ First, clone the repository:
 ```
 git clone git@git.rwth-aachen.de:monticore/languages/OCL.git
 ```
-//TODO: Nach GitHub Release Link ersetzen 
+**//TODO: Nach GitHub Release Link ersetzen**
 
 Change the directory to the root directory of the cloned sources:
 ```
@@ -161,14 +163,14 @@ usage: OCLCLI
                               -c intra to check only the intra-model CoCos,
                               -c inter checks also inter-model CoCos,
                               -c type (default) checks all CoCos.
- -cd4c                        Load symbol types from cd4c. Shortcut for loading
+ -cd4c,--cd4code              Load symbol types from cd4c. Shortcut for loading
                               CDTypeSymbol as TypeSymbol,
                               CDMethodSignatureSymbol as FunctionSymbol, and
                               FieldSymbol as VariableSymbol. Furthermore,
                               warnings about not deserializing
                               CDAssociationSymbol and CDRoleSymbol will be
                               ignored.
- -d,--cd4code                 Specifies whether developer level logging should
+ -d,--dev                     Specifies whether developer level logging should
                               be used (default is false)
  -fs,--functionSymbol <fqn>   Takes the fully qualified name of one or more
                               symbol kind(s) that should be treated as
@@ -201,7 +203,6 @@ usage: OCLCLI
  -vs,--variableSymbol <fqn>   Takes the fully qualified name of one or more
                               symbol kind(s) that should be treated as
                               VariableSymbol when deserializing symbol files.
-
 ```
 To work properly, the CLI tool needs the mandatory argument `-i,--input <arg>`, 
 which takes the file paths of at least one input file containing SD models.
@@ -296,60 +297,44 @@ is located.
 For this you will need a symbol file containing the symbols of a class diagram
 corresponding to the `Bookshop.ocl`. 
 This will be explained in more detail in the following section. 
-For now, just add `-p src/test/resources/docs/ -cd4c` to the command to use tell 
+For now, just add `-p src/test/resources/docs/Bookshop/ -cd4c` to the command to use tell 
 the CLI where to find the symbol file prepared for this example and how to 
 process it.
 
 You can check the different kinds of context conditions, using the 
 `-c,--coco <arg>` option:
 ```
-java -jar OCLCLI.jar -i Bookshop.ocl -p src/test/resources/docs/ -cd4c -c intra
+java -jar OCLCLI.jar -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd4c -c intra
 ```
 ```
-java -jar OCLCLI.jar -i Bookshop.ocl -p src/test/resources/docs/ -cd4c -c inter
+java -jar OCLCLI.jar -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd4c -c inter
 ```
 ```
-java -jar OCLCLI.jar -i Bookshop.ocl -p src/test/resources/docs/ -cd4c -c type
+java -jar OCLCLI.jar -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd4c -c type
 ```
 None of these commands should produce output. 
 
+To see an error lets add a mistake to the model. 
+Replace this line in `Bookshop.ocl`
+```
+{ book | Book book in booksInStock, book.iban == iban }
+```
+by 
+```
+{ book2 | Book book in booksInStock, book.iban == iban }
+```
+As `book2` is undefined, the CLI should now print an Error message when 
+checking the cocos:
+
+```
+$ java -jar OCLCLI.jar  -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd4c -c
+[INFO]  DeriveSymTypeOfExpression package suspected
+[ERROR] 0xA0309 Bookshop.ocl:<13,12> Could not calculate type of expression "book2" on the left side of SetComprehension
+```
+
+Please remember to undo the "mistake". 
+
 # TODO AB HIER VON SEQUENCE DIAGRAM ÜBERNOMMEN ; ANPASSEN FÜR OCL
-
-After executing the last command, you may notice that the CLI tool produces 
-some output.
-The output states the reasons why a few context conditions are not satisfied 
-by the model.
-For instance, the output contains the following error message: 
-```
-... ERROR ROOT - bookshop.ocl:<3,2>: TODO echte Fehlermeldung einfügen
-```
-The error message indicates that there is a problem in the third line, i.e., 
-there seems to be a problem with the statement `kupfer912:Auction;`.
-And indeed, the tool tries to load some type information about the `Auction` 
-type.
-However, we never defined this type at any place, and therefore the tool is not 
-able to find any information of the `Auction` type.
-
-There must be another model defining the type `Auction`. 
-The model must provide the information about the definition of this type to its 
-environment via storing this information in its symbol file (its symbol table 
-stored in the file system).
-
-The symbol file of this model has to be imported by the SD model for accessing 
-the type.
-For the SD language, we have not fixed a language for defining types.
-Instead, the types can be defined in arbitrary models of arbitrary languages, 
-as long as the information about the definitions of the types are stored in the 
-symbol files of the models and the SD imports these symbol files. 
-This may sound complicated at this point, but conceptually it is actually quite 
-simple. 
-This has even a huge advantage because it allows us to use the SD language with 
-any other language that defines types. You could even use languages that are not 
-defined with MontiCore, as long as suitable symbol files are generated 
-from the models of these languages.
-
-The following subsection describes how to fix the error in the example model 
-`Bid.ocl` by importing a symbol file defining the (yet undefined) types. 
 
 ### Step 4: Using the Model Path to Resolve Symbols
 
