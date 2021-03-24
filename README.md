@@ -17,13 +17,13 @@ ocl Bookshop {
   context Shop s inv CustomerPaysBeforeNewOrder:      // invariant
     forall Customer c in s.customers:                 // quantifiers available
       c.allowedToOrder implies !exists Invoice i in s.invoices:
-        i.customer == c && i.moneyPayed < i.invoiceAmount ;
+        i.buyer == c && i.moneyPayed < i.invoiceAmount ;
 
   // Method specification for selling a book
   context Invoice Stock.sellBook(String iban, int discountPercent, Customer c)
     let availableBooks =                              // set comprehension
           { book | Book book in booksInStock, book.iban == iban }
-    pre:  !availableBooks.isEmpty &&                  // precondition
+    pre:  !availableBooks.isEmpty() &&                  // precondition
           c.allowedToOrder;
     post: let discount = (100 - discountPercent)/100; // postcondition, let
               b = result.soldBook                     // result variable
@@ -288,25 +288,33 @@ You may notice that the CLI prints nothing to the console when executing this
 command.
 This means that the model satisfies all context condtions. 
 
-# TODO AB HIER VON SEQUENCE DIAGRAM ÜBERNOMMEN ; ANPASSEN FÜR OCL
-
 Let us now consider a more complex example.
 Recall the OCL `Bookshop` from the `An Example Model` section above.
 For continuing, copy the textual representation of the OCL `Bookshop` and 
 save it in a file `Bookshop.ocl` in the directory where the file `OCLCLI.jar` 
-is located.
+is located. 
+For this you will need a symbol file containing the symbols of a class diagram
+corresponding to the `Bookshop.ocl`. 
+This will be explained in more detail in the following section. 
+For now, just add `-p src/test/resources/docs/ -cd4c` to the command to use tell 
+the CLI where to find the symbol file prepared for this example and how to 
+process it.
 
 You can check the different kinds of context conditions, using the 
 `-c,--coco <arg>` option:
 ```
-java -jar OCLCLI.jar -i Bookshop.ocl -c intra
+java -jar OCLCLI.jar -i Bookshop.ocl -p src/test/resources/docs/ -cd4c -c intra
 ```
 ```
-java -jar OCLCLI.jar -i Bookshop.ocl -c inter
+java -jar OCLCLI.jar -i Bookshop.ocl -p src/test/resources/docs/ -cd4c -c inter
 ```
 ```
-java -jar OCLCLI.jar -i Bookshop.ocl -c type
+java -jar OCLCLI.jar -i Bookshop.ocl -p src/test/resources/docs/ -cd4c -c type
 ```
+None of these commands should produce output. 
+
+# TODO AB HIER VON SEQUENCE DIAGRAM ÜBERNOMMEN ; ANPASSEN FÜR OCL
+
 After executing the last command, you may notice that the CLI tool produces 
 some output.
 The output states the reasons why a few context conditions are not satisfied 
