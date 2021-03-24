@@ -17,7 +17,6 @@
 
         <!-- .. SE-Libraries .................................................. -->
         <monticore.version>6.8.0-SNAPSHOT</monticore.version>
-        <cd4analysis.version>6.8.0-SNAPSHOT</cd4analysis.version>
         <se-commons.version>1.7.9</se-commons.version>
         <mc.grammars.assembly.version>0.0.10</mc.grammars.assembly.version>
 
@@ -86,12 +85,6 @@
         </dependency>
 
         <!-- MontiCore Dependencies -->
-        <dependency>
-            <groupId>de.monticore.lang</groupId>
-            <artifactId>cd4analysis</artifactId>
-            <version>${cd4analysis.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>de.monticore</groupId>
             <artifactId>monticore-runtime</artifactId>
