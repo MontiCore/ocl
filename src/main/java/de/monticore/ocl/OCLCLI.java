@@ -166,7 +166,7 @@ public class OCLCLI {
           for (Path path : modelPath.getFullPathOfEntries()) {
             try {
               Files.walk(path)
-                .filter(file -> file.toString().toLowerCase().endsWith(".sym"))
+                .filter(file -> file.toString().toLowerCase().matches(".*\\.[a-z]*sym$"))
                 .forEach(file -> SymbolTableUtil.loadSymbolFile(file.toString()));
             }
             catch (IOException e) {
@@ -374,8 +374,8 @@ public class OCLCLI {
 
   /**
    * Stores the symbols for ast in the symbol file filename.
-   * For example, if filename = "target/symbolfiles/file.sdsym", then the symbol file corresponding to
-   * ast is stored in the file "target/symbolfiles/file.sdsym".
+   * For example, if filename = "target/symbolfiles/file.oclsym", then the symbol file corresponding to
+   * ast is stored in the file "target/symbolfiles/file.oclsym".
    *
    * @param ast      The ast of the SD.
    * @param filename The name of the produced symbol file.
