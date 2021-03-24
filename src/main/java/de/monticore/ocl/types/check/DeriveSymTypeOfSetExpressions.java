@@ -188,7 +188,7 @@ public class DeriveSymTypeOfSetExpressions
     }
 
     if (result == null) {
-      result = SymTypeExpressionFactory.createGenerics("Set", getScope(node.getEnclosingScope()));
+      result = SymTypeExpressionFactory.createGenerics("java.util.Set", getScope(node.getEnclosingScope()));
     }
     ((SymTypeOfGenerics) result).addArgument(leftType);
     typeCheckResult.setCurrentResult(result);
@@ -224,7 +224,7 @@ public class DeriveSymTypeOfSetExpressions
 
 
     if (result == null) {
-      result = SymTypeExpressionFactory.createGenerics("Set", getScope(node.getEnclosingScope()));
+      result = SymTypeExpressionFactory.createGenerics("java.util.Set", getScope(node.getEnclosingScope()));
     }
 
     //check type of elements in set

@@ -18,6 +18,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcsimplegenerictypes.MCSimpleGenericTypesMill;
+import de.monticore.utils.Names;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
@@ -124,6 +125,14 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
 
   @Override
   public void visit(ASTOCLMethodSignature node) {
+    String typeName = Names.getQualifier(node.getMethodName().getQName());
+    Optional<TypeSymbol> type = node.getEnclosingScope().resolveType(typeName);
+    if (type.isPresent()) {
+      for (VariableSymbol var : type.get().getVariableList()) {
+        node.getEnclosingScope().add(var);
+      }
+    }
+
     if (node.isPresentMCReturnType()) {
       //create VariableSymbol for result of method
       final Optional<SymTypeExpression> typeResult;

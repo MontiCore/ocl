@@ -18,6 +18,7 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -108,8 +109,44 @@ public class DeriveSymTypeOfCommonExpressions
         }
       }
       else {
-        typeCheckResult.reset();
-        logError("0xA0306", expr.get_SourcePositionStart());
+        if (typeCheckResult.isPresentCurrentResult()) {
+          innerResult = typeCheckResult.getCurrentResult();
+          //resolve methods with name of the inner expression
+          List<FunctionSymbol> fittingMethods = innerResult.getMethodList(expr.getName(), typeCheckResult.isType());
+          //if the last result is static then filter for static methods
+          if(typeCheckResult.isType()){
+            fittingMethods = filterStaticMethodSymbols(fittingMethods);
+          }
+          //there can only be one method with the correct arguments and return type
+          if (!fittingMethods.isEmpty()) {
+            if (fittingMethods.size() > 1) {
+              SymTypeExpression returnType = fittingMethods.get(0).getReturnType();
+              for (FunctionSymbol method : fittingMethods) {
+                if (!returnType.deepEquals(method.getReturnType())) {
+                  logError("0xA0238", expr.get_SourcePositionStart());
+                }
+              }
+            }
+            SymTypeExpression result = fittingMethods.get(0).getReturnType();
+            typeCheckResult.setMethod();
+            typeCheckResult.setCurrentResult(result);
+          } else {
+            typeCheckResult.reset();
+            logError("0xA0239", expr.get_SourcePositionStart());
+          }
+        } else {
+          Collection<FunctionSymbol> methodcollection = getScope(expr.getEnclosingScope()).resolveFunctionMany(expr.getName());
+          List<FunctionSymbol> fittingMethods = new ArrayList<>(methodcollection);
+          //there can only be one method with the correct arguments and return type
+          if (fittingMethods.size() == 1) {
+            Optional<SymTypeExpression> wholeResult = Optional.of(fittingMethods.get(0).getReturnType());
+            typeCheckResult.setMethod();
+            typeCheckResult.setCurrentResult(wholeResult.get());
+          } else {
+            typeCheckResult.reset();
+            logError("0xA0240", expr.get_SourcePositionStart());
+          }
+        }
       }
     }
     else {
@@ -199,7 +236,7 @@ public class DeriveSymTypeOfCommonExpressions
     return Optional.empty();
   }
 
-  private List<FunctionSymbol> getFittingMethods
+  protected List<FunctionSymbol> getFittingMethods
     (List<FunctionSymbol> methodlist, ASTCallExpression expr) {
     List<FunctionSymbol> fittingMethods = new ArrayList<>();
     for (FunctionSymbol method : methodlist) {
