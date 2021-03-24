@@ -43,7 +43,7 @@ public class OCLCoCoTest extends AbstractTest {
   public void testBanking() throws IOException {
 
     /*
-    Optional<ASTOCLCompilationUnit> ast = new OCLParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/docs/bankingChecks.ocl").toString());
+    Optional<ASTOCLCompilationUnit> ast = new OCLParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/docs/Banking.ocl").toString());
     initSymbolTable("/docs/Banking.cd", RELATIVE_MODEL_PATH + "/docs");
     OCLScopesGenitorDelegator genitor = new OCLScopesGenitorDelegator();
     TypeCheck tc = new TypeCheck(new FullSynthesizeSymTypeFromMCSimpleGenericTypes(), new DeriveSymTypeOfOCLCombineExpressions());

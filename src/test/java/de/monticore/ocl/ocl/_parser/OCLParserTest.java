@@ -13,7 +13,7 @@ class OCLParserTest extends AbstractTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-    "docs/Bookshop.ocl",
+    "docs/Bookshop/Bookshop.ocl",
     "testinput/cocos/valid/validConstructorName.ocl",
     "testinput/cocos/valid/validConstructorName0.ocl",
     "testinput/cocos/valid/validFileName.ocl",
