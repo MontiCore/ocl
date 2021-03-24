@@ -142,21 +142,14 @@ public class OCLCLI {
         }
       }
 
-      if (cmd.hasOption("cd4c")) {
-        SymbolTableUtil.addCd4cSymbols();
+      if (cmd.hasOption("is")) {
+        for (String symbol : cmd.getOptionValues("is")) {
+          SymbolTableUtil.ignoreSymbolKind(symbol);
+        }
       }
 
-      // Deserialize *.sym files
-      for (Path path : modelPath.getFullPathOfEntries()) {
-        try {
-          Files.walk(path)
-            .filter(file -> file.toString().toLowerCase().endsWith(".sym"))
-            .forEach(file -> SymbolTableUtil.loadSymbolFile(file.toString()));
-        }
-        catch (IOException e) {
-          e.printStackTrace();
-          Log.error("0xA7106 Could not deserialize symbol files");
-        }
+      if (cmd.hasOption("cd4c")) {
+        SymbolTableUtil.addCd4cSymbols();
       }
 
       Set<String> cocoOptionValues = new HashSet<>();
@@ -168,6 +161,21 @@ public class OCLCLI {
           deriveSymbolSkeleton(ocl);
         }
         if (cocoOptionValues.isEmpty() || cocoOptionValues.contains("type") || cmd.hasOption("s")) {
+
+          // Deserialize *.sym files
+          for (Path path : modelPath.getFullPathOfEntries()) {
+            try {
+              Files.walk(path)
+                .filter(file -> file.toString().toLowerCase().endsWith(".sym"))
+                .forEach(file -> SymbolTableUtil.loadSymbolFile(file.toString()));
+            }
+            catch (IOException e) {
+              e.printStackTrace();
+              Log.error("0xA7106 Could not deserialize symbol files");
+            }
+          }
+
+          // Complete symbol table
           for (ASTOCLCompilationUnit ocl : inputOCLs) {
             SymbolTableUtil.runSymTabCompleter(ocl);
           }
@@ -484,7 +492,7 @@ public class OCLCLI {
     // model paths
     Option path = new Option("p", "Sets the artifact path for imported symbols."
       + "Directory will be searched recursively for files with the ending "
-      + "\".sym\"");
+      + "\".sym\". Defaults to the current folder.");
     path.setLongOpt("path");
     path.setArgName("directory");
     path.setOptionalArg(true);
@@ -530,7 +538,7 @@ public class OCLCLI {
       .optionalArg(true)
       .argName("fqn")
       .hasArgs()
-      .desc("Takes the fully qualified name of one or more symbol type(s) that should be "
+      .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
         + "treated as TypeSymbol when deserializing symbol files.")
       .build();
     options.addOption(typeSymbols);
@@ -541,7 +549,7 @@ public class OCLCLI {
       .optionalArg(true)
       .argName("fqn")
       .hasArgs()
-      .desc("Takes the fully qualified name of one or more symbol type(s) that should be "
+      .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
         + "treated as VariableSymbol when deserializing symbol files.")
       .build();
     options.addOption(varSymbols);
@@ -552,15 +560,28 @@ public class OCLCLI {
       .optionalArg(true)
       .argName("fqn")
       .hasArgs()
-      .desc("Takes the fully qualified name of one or more symbol type(s) that should be "
+      .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
         + "treated as FunctionSymbol when deserializing symbol files.")
       .build();
     options.addOption(funcSymbols);
 
+    // accept FunctionSymbols
+    Option ignoreSymbols = Option.builder("is")
+      .longOpt("ignoreSymKind")
+      .optionalArg(true)
+      .argName("fqn")
+      .hasArgs()
+      .desc("Takes the fully qualified name of one or more symbol kind(s) for which no warnings "
+        + "about not being able to deserialize them shall be printed. Allows cleaner CLI outputs.")
+      .build();
+    options.addOption(ignoreSymbols);
+
     // developer level logging
     Option cd4c = new Option("cd4c",
       "Load symbol types from cd4c. Shortcut for loading CDTypeSymbol as TypeSymbol, "
-        + "CDMethodSignatureSymbol as FunctionSymbol, and FieldSymbol as VariableSymbol.");
+        + "CDMethodSignatureSymbol as FunctionSymbol, and FieldSymbol as VariableSymbol. "
+        + "Furthermore, warnings about not deserializing CDAssociationSymbol and CDRoleSymbol "
+        + "will be ignored.");
     dev.setLongOpt("cd4code");
     options.addOption(cd4c);
 
