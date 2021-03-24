@@ -4,6 +4,6 @@ ocl comprehension10 {
     let
       la = List{a | a in Set{1, 2}};
       lb = List{a | a in Set{1, 2}}
-in
+    in
       la == lb;
 }

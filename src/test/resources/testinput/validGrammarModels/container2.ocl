@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl container2 {
-  inv:
-    Auction.size < 1700;
+  context AllData ad inv:
+    ad.auction.size() < 1700;
 }

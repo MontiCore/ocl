@@ -1,15 +1,14 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl;
 
-import de.monticore.io.paths.ModelPath;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -20,7 +19,7 @@ public abstract class AbstractTest {
 
   protected IOCLGlobalScope globalScope;
 
-  public static String[] getValidModels() {
+  public static String[] getParsableModels() {
     File f = new File(RELATIVE_MODEL_PATH + "/testinput/validGrammarModels");
     String[] filenames = f.list();
     assertThat(filenames).isNotNull();
@@ -30,6 +29,15 @@ public abstract class AbstractTest {
       .toArray(filenames);
 
     return filenames;
+  }
+
+  public static String[] getModelsWithValidSymTab() {
+    List<String> files = Arrays.stream(getParsableModels())
+      .filter(f -> f.matches("^[a-n].*"))
+      .collect(Collectors.toList());
+    String[] result = new String[files.size()];
+    files.toArray(result);
+    return result;
   }
 
   public static String prefixValidModelsPath(String fileName) {
@@ -54,41 +62,4 @@ public abstract class AbstractTest {
     }
     return optAst;
   }
-
-  public void setupGlobalScope() {
-    this.globalScope = OCLMill.globalScope();
-    this.globalScope.setModelPath(new ModelPath(Paths.get(RELATIVE_MODEL_PATH)));
-    this.globalScope.setFileExt("ocl");
-  }
-
-  //TODO: Klappt nicht ohne DeSer
-  /*
-  public void initSymbolTable(String model, String modelPath) throws IOException {
-    initSymbolTable(model, Paths.get(modelPath).toFile());
-  }
-
-  public void initSymbolTable(String model, File... modelPaths) throws IOException {
-    Set<Path> p = Sets.newHashSet();
-    for (File mP : modelPaths) {
-      p.add(Paths.get(mP.getAbsolutePath()));
-    }
-
-    final ModelPath mp = new ModelPath(p);
-
-    CD4CodeGlobalScope cd4AGlobalScope = (CD4CodeGlobalScope) CD4CodeMill.globalScope();
-    cd4AGlobalScope.setModelPath(mp);
-    cd4AGlobalScope.setFileExt("cd");
-
-    CD4CodeSymbolTableCreatorDelegator symbolTableCreatorDelegator = new CD4CodeSymbolTableCreatorDelegator(cd4AGlobalScope);
-    Optional<ASTCDCompilationUnit> ast = new CD4CodeParser().parse(Paths.get(RELATIVE_MODEL_PATH + model).toString());
-    //CD4CodeTrafo4DefaultsDelegator a = new CD4CodeTrafo4DefaultsDelegator();
-    //a.transform(ast.get());
-    symbolTableCreatorDelegator.createFromAST(ast.get());
-
-    CD4CodeResolver cdResolver = new CD4CodeResolver(cd4AGlobalScope);
-
-    setupGlobalScope();
-    globalScope.addAdaptedTypeSymbolResolver(cdResolver);
-  }
- */
 }

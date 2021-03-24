@@ -1,0 +1,999 @@
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "AuctionCD",
+  "symbols": [
+    {
+      "kind": "de.monticore.cdassociation._symboltable.CDAssociationSymbol",
+      "name": "participants",
+      "association": 397071633
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Date",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Time",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false,
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "now",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Time"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": true,
+            "isFinal": false,
+            "isElliptic": false
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "lessThan",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false,
+            "spannedScope": {
+              "isShadowingScope": false,
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name": "that",
+                  "isPrivate": false,
+                  "isProtected": false,
+                  "isPublic": false,
+                  "isStatic": false,
+                  "isFinal": false,
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfObject",
+                    "objName": "Time"
+                  },
+                  "isReadOnly": false
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "AllData",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": true,
+      "isStatic": false,
+      "isFinal": false,
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "person",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "field": "AllData.person",
+            "association": 1689730682,
+            "isOrdered": false,
+            "isLeft": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Person"
+            },
+            "isReadOnly": false,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "welcomeMsg",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Message"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "auction",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "java.util.List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeOfObject",
+                  "objName": "Auction"
+                }
+              ]
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "person",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "java.util.Set",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeOfObject",
+                  "objName": "Person"
+                }
+              ]
+            },
+            "isReadOnly": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Name",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": true,
+      "isStatic": false,
+      "isFinal": false
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Company",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": true,
+      "isStatic": false,
+      "isFinal": false,
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "person",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "field": "Company.person",
+            "association": 317562294,
+            "isOrdered": false,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Person"
+            },
+            "isReadOnly": false,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "name",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "java.lang.String"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "person",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "java.util.Set",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeOfObject",
+                  "objName": "Person"
+                }
+              ]
+            },
+            "isReadOnly": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Auction",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": true,
+      "isStatic": false,
+      "isFinal": false,
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "bidder",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "field": "Auction.bidder",
+            "association": 397071633,
+            "isOrdered": false,
+            "isLeft": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Person"
+            },
+            "isReadOnly": false,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "message",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "field": "Auction.message",
+            "association": 1346799731,
+            "isOrdered": false,
+            "isLeft": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Message"
+            },
+            "isReadOnly": false,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "policy",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "field": "Auction.policy",
+            "association": 342198178,
+            "isOrdered": false,
+            "isLeft": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Policy"
+            },
+            "isReadOnly": false,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "numberOfBids",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "int"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "auctionIdent",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "int"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "status",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "AuctionStatus"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "startTime",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Time"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "closingTime",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Time"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "finishTime",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Time"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "bidder",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "java.util.Set",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeOfObject",
+                  "objName": "Person"
+                }
+              ]
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "message",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "java.util.Set",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeOfObject",
+                  "objName": "Message"
+                }
+              ]
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "policy",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Policy"
+            },
+            "isReadOnly": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "AuctionStatus",
+      "isClass": false,
+      "isInterface": false,
+      "isEnum": true,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": true,
+      "isStatic": false,
+      "isFinal": false,
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "INITIAL",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": true,
+            "isStatic": true,
+            "isFinal": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "AuctionStatus"
+            },
+            "isReadOnly": true
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "RUNNING",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": true,
+            "isStatic": true,
+            "isFinal": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "AuctionStatus"
+            },
+            "isReadOnly": true
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "FINISHED",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": true,
+            "isStatic": true,
+            "isFinal": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "AuctionStatus"
+            },
+            "isReadOnly": true
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Message",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": true,
+      "isStatic": false,
+      "isFinal": false,
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "bidder",
+            "isDefinitiveNavigable": true,
+            "field": "Message.bidder",
+            "association": 1832669781,
+            "isOrdered": false,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Person"
+            },
+            "isReadOnly": false,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "auction",
+            "isDefinitiveNavigable": true,
+            "field": "Message.auction",
+            "association": 1346799731,
+            "isOrdered": false,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Auction"
+            },
+            "isReadOnly": false,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "time",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Time"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "bidder",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Person"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "auction",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Auction"
+            },
+            "isReadOnly": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Policy",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": true,
+      "isStatic": false,
+      "isFinal": false,
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "auction",
+            "isDefinitiveNavigable": false,
+            "association": 342198178,
+            "isOrdered": false,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Auction"
+            },
+            "isReadOnly": false,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Person",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": true,
+      "isStatic": false,
+      "isFinal": false,
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "allData",
+            "isDefinitiveNavigable": true,
+            "field": "Person.allData",
+            "association": 1689730682,
+            "isOrdered": false,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "AllData"
+            },
+            "isReadOnly": false,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "auctions",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "field": "Person.auctions",
+            "association": 397071633,
+            "isOrdered": false,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Auction"
+            },
+            "isReadOnly": false,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "company",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "field": "Person.company",
+            "association": 317562294,
+            "isOrdered": false,
+            "isLeft": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Company"
+            },
+            "isReadOnly": false,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "message",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "field": "Person.message",
+            "association": 1832669781,
+            "isOrdered": false,
+            "isLeft": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Message"
+            },
+            "isReadOnly": false,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "isActive",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "allData",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "AllData"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "auctions",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "java.util.Set",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeOfObject",
+                  "objName": "Auction"
+                }
+              ]
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "company",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "Company"
+            },
+            "isReadOnly": false
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "message",
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "java.util.Set",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeOfObject",
+                  "objName": "Message"
+                }
+              ]
+            },
+            "isReadOnly": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Student",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": true,
+      "isStatic": false,
+      "isFinal": false,
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "Person"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Betreuer",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": true,
+      "isStatic": false,
+      "isFinal": false,
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "Person"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "Building",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": true,
+      "isStatic": false,
+      "isFinal": false,
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "height",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "double"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "width",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "double"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "length",
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "double"
+            },
+            "isConstructor": false,
+            "isMethod": true,
+            "isPrivate": false,
+            "isProtected": false,
+            "isPublic": false,
+            "isStatic": false,
+            "isFinal": false,
+            "isElliptic": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
+      "name": "AuctionCD"
+    }
+  ],
+  "furtherObjects": {
+    "1346799731": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true,
+      "isComposition": false
+    },
+    "342198178": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true,
+      "isComposition": false
+    },
+    "1832669781": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true,
+      "isComposition": false
+    },
+    "397071633": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true,
+      "isComposition": false
+    },
+    "317562294": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true,
+      "isComposition": false
+    },
+    "1689730682": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true,
+      "isComposition": false
+    }
+  }
+}

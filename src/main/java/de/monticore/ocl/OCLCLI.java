@@ -11,12 +11,12 @@ import de.monticore.ocl.ocl._cocos.*;
 import de.monticore.ocl.ocl._od.OCL2OD;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl._symboltable.*;
-import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.oclexpressions._cocos.IterateExpressionVariableUsageIsCorrect;
 import de.monticore.ocl.setexpressions._cocos.SetComprehensionHasGenerator;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.ocl.util.ParserUtil;
+import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.cli.*;
@@ -25,6 +25,7 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -60,6 +61,8 @@ public class OCLCLI {
   public void run(String[] args) {
 
     Options options = initOptions();
+
+    SymbolTableUtil.prepareMill();
 
     try {
       // create CLI parser and parse input options from command line
@@ -105,20 +108,49 @@ public class OCLCLI {
 
       // we need the global scope for symbols and cocos
       ModelPath modelPath = new ModelPath(Paths.get(""));
-      if (cmd.hasOption("mp")) {
-        modelPath = new ModelPath(Arrays.stream(cmd.getOptionValues("mp"))
+      if (cmd.hasOption("p")) {
+        modelPath = new ModelPath(Arrays.stream(cmd.getOptionValues("p"))
           .map(x -> Paths.get(x))
           .collect(Collectors.toList())
         );
       }
 
-      IOCLGlobalScope globalScope = OCLMill.globalScope();
-      globalScope.setModelPath(modelPath);
-
       //
       // Parsing and pretty printing can be done without a symbol table
       // but executing the following options requires a symbol table
       //
+
+      IOCLGlobalScope globalScope = OCLMill.globalScope();
+      globalScope.setModelPath(modelPath);
+
+      // Add custom symbols to deserialize
+      if (cmd.hasOption("ts")) {
+        for (String symbol : cmd.getOptionValues("ts")) {
+          SymbolTableUtil.addTypeSymbol(symbol);
+        }
+      }
+
+      if (cmd.hasOption("vs")) {
+        for (String symbol : cmd.getOptionValues("vs")) {
+          SymbolTableUtil.addVariableSymbol(symbol);
+        }
+      }
+
+      if (cmd.hasOption("fs")) {
+        for (String symbol : cmd.getOptionValues("fs")) {
+          SymbolTableUtil.addFunctionSymbol(symbol);
+        }
+      }
+
+      if (cmd.hasOption("is")) {
+        for (String symbol : cmd.getOptionValues("is")) {
+          SymbolTableUtil.ignoreSymbolKind(symbol);
+        }
+      }
+
+      if (cmd.hasOption("cd4c")) {
+        SymbolTableUtil.addCd4cSymbols();
+      }
 
       Set<String> cocoOptionValues = new HashSet<>();
       if (cmd.hasOption("c") && cmd.getOptionValues("c") != null) {
@@ -129,15 +161,23 @@ public class OCLCLI {
           deriveSymbolSkeleton(ocl);
         }
         if (cocoOptionValues.isEmpty() || cocoOptionValues.contains("type") || cmd.hasOption("s")) {
+
+          // Deserialize *.sym files
+          for (Path path : modelPath.getFullPathOfEntries()) {
+            try {
+              Files.walk(path)
+                .filter(file -> file.toString().toLowerCase().endsWith(".sym"))
+                .forEach(file -> SymbolTableUtil.loadSymbolFile(file.toString()));
+            }
+            catch (IOException e) {
+              e.printStackTrace();
+              Log.error("0xA7106 Could not deserialize symbol files");
+            }
+          }
+
+          // Complete symbol table
           for (ASTOCLCompilationUnit ocl : inputOCLs) {
-            OCLSymbolTableCompleter stCompleter = new OCLSymbolTableCompleter(
-              ocl.getMCImportStatementList(), ocl.getPackage()
-            );
-            OCLTraverser t = OCLMill.traverser();
-            t.add4BasicSymbols(stCompleter);
-            t.setOCLHandler(stCompleter);
-            stCompleter.setTraverser(t);
-            globalScope.accept(t);
+            SymbolTableUtil.runSymTabCompleter(ocl);
           }
         }
       }
@@ -231,6 +271,7 @@ public class OCLCLI {
    * Parses the contents of a given file as OCL.
    *
    * @param path The path to the OCL-file as String
+   * @return parsed AST
    */
   public ASTOCLCompilationUnit parseFile(String path) {
     Optional<ASTOCLCompilationUnit> OCLCompilationUnit = Optional.empty();
@@ -267,14 +308,15 @@ public class OCLCLI {
 
   /**
    * Derives symbols for ast and adds them to the globalScope.
+   * @param ast AST to create symtab for
    */
   public void deriveSymbolSkeleton(ASTOCLCompilationUnit ast) {
-    OCLScopesGenitorDelegator genitor = new OCLScopesGenitorDelegator();
-    genitor.createFromAST(ast);
+    SymbolTableUtil.runSymTabGenitor(ast);
   }
 
   /**
    * Checks whether ast satisfies the intra-model CoCos.
+   * @param ast AST to check intra-model cocos for
    */
   public void checkIntraModelCoCos(ASTOCLCompilationUnit ast) {
     OCLCoCoChecker checker = new OCLCoCoChecker();
@@ -295,6 +337,7 @@ public class OCLCLI {
    * Checks whether ast satisfies the CoCos not targeting type correctness.
    * This method checks all CoCos except the CoCos, which check that used types
    * (for objects and variables) are defined.
+   * @param ast AST to check cocos for
    */
   public void checkAllExceptTypeCoCos(ASTOCLCompilationUnit ast) {
     checkIntraModelCoCos(ast);
@@ -305,6 +348,7 @@ public class OCLCLI {
 
   /**
    * Checks whether ast satisfies all CoCos.
+   * @param ast AST to check cocos for
    */
   public void checkAllCoCos(ASTOCLCompilationUnit ast) {
     checkAllExceptTypeCoCos(ast);
@@ -319,6 +363,7 @@ public class OCLCLI {
    * Loads the symbols from the symbol file filename and returns the symbol table.
    *
    * @param filename Name of the symbol file to load.
+   * @return the symbol table
    */
   public IOCLArtifactScope loadSymbols(String filename) {
     OCLSymbols2Json deSer = new OCLSymbols2Json();
@@ -445,8 +490,10 @@ public class OCLCLI {
     options.addOption(parse);
 
     // model paths
-    Option path = new Option("mp", "Sets the artifact path for imported symbols, space separated.");
-    path.setLongOpt("modelpath");
+    Option path = new Option("p", "Sets the artifact path for imported symbols."
+      + "Directory will be searched recursively for files with the ending "
+      + "\".sym\". Defaults to the current folder.");
+    path.setLongOpt("path");
     path.setArgName("directory");
     path.setOptionalArg(true);
     path.setArgs(1);
@@ -484,6 +531,59 @@ public class OCLCLI {
         "of this option. Default is 'target/symbols/{packageName}/{artifactName}.sdsym'.")
       .build();
     options.addOption(symboltable);
+
+    // accept TypeSymbols
+    Option typeSymbols = Option.builder("ts")
+      .longOpt("typeSymbol")
+      .optionalArg(true)
+      .argName("fqn")
+      .hasArgs()
+      .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
+        + "treated as TypeSymbol when deserializing symbol files.")
+      .build();
+    options.addOption(typeSymbols);
+
+    // accept VariableSymbols
+    Option varSymbols = Option.builder("vs")
+      .longOpt("variableSymbol")
+      .optionalArg(true)
+      .argName("fqn")
+      .hasArgs()
+      .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
+        + "treated as VariableSymbol when deserializing symbol files.")
+      .build();
+    options.addOption(varSymbols);
+
+    // accept FunctionSymbols
+    Option funcSymbols = Option.builder("fs")
+      .longOpt("functionSymbol")
+      .optionalArg(true)
+      .argName("fqn")
+      .hasArgs()
+      .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
+        + "treated as FunctionSymbol when deserializing symbol files.")
+      .build();
+    options.addOption(funcSymbols);
+
+    // accept FunctionSymbols
+    Option ignoreSymbols = Option.builder("is")
+      .longOpt("ignoreSymKind")
+      .optionalArg(true)
+      .argName("fqn")
+      .hasArgs()
+      .desc("Takes the fully qualified name of one or more symbol kind(s) for which no warnings "
+        + "about not being able to deserialize them shall be printed. Allows cleaner CLI outputs.")
+      .build();
+    options.addOption(ignoreSymbols);
+
+    // developer level logging
+    Option cd4c = new Option("cd4c",
+      "Load symbol types from cd4c. Shortcut for loading CDTypeSymbol as TypeSymbol, "
+        + "CDMethodSignatureSymbol as FunctionSymbol, and FieldSymbol as VariableSymbol. "
+        + "Furthermore, warnings about not deserializing CDAssociationSymbol and CDRoleSymbol "
+        + "will be ignored.");
+    dev.setLongOpt("cd4code");
+    options.addOption(cd4c);
 
     // print object diagram
     Option syntaxobjects = new Option("so",

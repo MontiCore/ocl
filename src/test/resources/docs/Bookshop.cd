@@ -5,8 +5,8 @@ classdiagram Bookshop {
   class Shop;
 
   class Book {
-    String name;
-    String iban;
+    java.lang.String name;
+    java.lang.String iban;
     double cost;
     double price;
   }
@@ -17,8 +17,8 @@ classdiagram Bookshop {
   }
 
   class Customer {
-    String name;
-    String phoneNumber;
+    java.lang.String name;
+    java.lang.String phoneNumber;
     int customerNumber;
     boolean allowedToOrder;
     void payInvoice(double moneyWired, Invoice invoice);

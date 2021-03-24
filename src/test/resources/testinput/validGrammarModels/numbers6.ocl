@@ -1,8 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-ocl numbers6 {
-  context Object d, Object e, Object l, Object f inv:
-    d.heigth() < 0.5 &&
-    defined(e) &&
-    defined(l) &&
-    defined(f);
-}

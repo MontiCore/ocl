@@ -2,7 +2,7 @@
 ocl comprehension7 {
   context Auction a inv MessageTime2:
     let
-      List<Long> tlist = List{t | m in a.message, t = m.time.asMsec(), t < a.startTime.asMsec()}
+      List<Long> tlist = List{t | m in a.message, t = m.time, t < a.startTime}
     in
-      this;
+      true;
 }
