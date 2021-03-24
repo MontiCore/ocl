@@ -581,7 +581,7 @@ public class OCLCLI {
         + "CDMethodSignatureSymbol as FunctionSymbol, and FieldSymbol as VariableSymbol. "
         + "Furthermore, warnings about not deserializing CDAssociationSymbol and CDRoleSymbol "
         + "will be ignored.");
-    dev.setLongOpt("cd4code");
+    cd4c.setLongOpt("cd4code");
     options.addOption(cd4c);
 
     // print object diagram
