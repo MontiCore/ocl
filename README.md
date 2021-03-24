@@ -156,30 +156,52 @@ tool to the console:
 ```
 $ java -jar OCLCLI.jar
 usage: OCLCLI
- -c,--coco <arg>               Checks the CoCos for the input. Optional
-                               arguments are:
-                               -c intra to check only the intra-model CoCos,
-                               -c inter checks also inter-model CoCos,
-                               -c type (default) checks all CoCos.
- -d,--dev                      Specifies whether developer level logging should
-                               be used (default is false)
- -h,--help                     Prints this help dialog
- -i,--input <arg>              Processes the list of OCL input artifacts.
-                               Argument list is space separated. CoCos are not
-                               checked automatically (see -c).
- -mp,--modelpath <directory>   Sets the artifact path for imported symbols,
-                               space separated.
- -pp,--prettyprint <file>      Prints the OCL-AST to stdout or the specified
-                               file (optional)
- -s,--symboltable <arg>        Stores the symbol tables of the input OCL
-                               artifacts in the specified files. The n-th input
-                               OCL (-i option) is stored in the file as
-                               specified by the n-th argument of this option.
-                               Default is
-                               'target/symbols/{packageName}/{artifactName}.sdsy
-                               m'.
- -so,--syntaxobjects <file>    Prints an object diagram of the OCL-AST to stdout
-                               or the specified file (optional)
+ -c,--coco <arg>              Checks the CoCos for the input. Optional arguments
+                              are:
+                              -c intra to check only the intra-model CoCos,
+                              -c inter checks also inter-model CoCos,
+                              -c type (default) checks all CoCos.
+ -cd4c                        Load symbol types from cd4c. Shortcut for loading
+                              CDTypeSymbol as TypeSymbol,
+                              CDMethodSignatureSymbol as FunctionSymbol, and
+                              FieldSymbol as VariableSymbol. Furthermore,
+                              warnings about not deserializing
+                              CDAssociationSymbol and CDRoleSymbol will be
+                              ignored.
+ -d,--cd4code                 Specifies whether developer level logging should
+                              be used (default is false)
+ -fs,--functionSymbol <fqn>   Takes the fully qualified name of one or more
+                              symbol kind(s) that should be treated as
+                              FunctionSymbol when deserializing symbol files.
+ -h,--help                    Prints this help dialog
+ -i,--input <file>            Processes the list of OCL input artifacts.
+                              Argument list is space separated. CoCos are not
+                              checked automatically (see -c).
+ -is,--ignoreSymKind <fqn>    Takes the fully qualified name of one or more
+                              symbol kind(s) for which no warnings about not
+                              being able to deserialize them shall be printed.
+                              Allows cleaner CLI outputs.
+ -p,--path <directory>        Sets the artifact path for imported
+                              symbols.Directory will be searched recursively for
+                              files with the ending ".sym". Defaults to the
+                              current folder.
+ -pp,--prettyprint <file>     Prints the OCL-AST to stdout or the specified file
+                              (optional)
+ -s,--symboltable <file>      Stores the symbol tables of the input OCL
+                              artifacts in the specified files. The n-th input
+                              OCL (-i option) is stored in the file as specified
+                              by the n-th argument of this option. Default is
+                              'target/symbols/{packageName}/{artifactName}.sdsym
+                              '.
+ -so,--syntaxobjects <file>   Prints an object diagram of the OCL-AST to stdout
+                              or the specified file (optional)
+ -ts,--typeSymbol <fqn>       Takes the fully qualified name of one or more
+                              symbol kind(s) that should be treated as
+                              TypeSymbol when deserializing symbol files.
+ -vs,--variableSymbol <fqn>   Takes the fully qualified name of one or more
+                              symbol kind(s) that should be treated as
+                              VariableSymbol when deserializing symbol files.
+
 ```
 To work properly, the CLI tool needs the mandatory argument `-i,--input <arg>`, 
 which takes the file paths of at least one input file containing SD models.
@@ -238,8 +260,6 @@ java -jar OCLCLI.jar -i Example.ocl -pp Output.ocl
 The command prints the pretty-printed model contained in the input file into the 
 file `Output.ocl`.
 
-# TODO AB HIER VON SEQUENCE DIAGRAM ÜBERNOMMEN ; ANPASSEN FÜR OCL
-
 ### Step 3: Checking Context Conditions
 For checking context conditions, the `-c,--coco <arg>` option can be used. 
 Using this option without any arguments checks whether the model satisfies all 
@@ -253,7 +273,7 @@ arguments `intra`, `inter`, and `type`.
   violations of intra-model context conditions.
   These context conditions, for example, check naming conventions. 
 * Using the argument `inter` executes all intra-model context conditions and 
-  additionally checks whether imported `Variables`, i.e., objects, are defined.
+  additionally checks whether type names in constructor signatures are defined.
 * Using the argument `type` executes all context coniditions. 
   These context conditions include checking whether used types and methods 
   exist. 
@@ -262,11 +282,13 @@ arguments `intra`, `inter`, and `type`.
 
 Execute the following command for trying out a simple example:
 ```
-java -jar OCLCLI.jar -i Example.ocl -c
+java -jar OCLCLI.jar -i Example.ocl -c -cd4c
 ```
 You may notice that the CLI prints nothing to the console when executing this 
 command.
 This means that the model satisfies all context condtions. 
+
+# TODO AB HIER VON SEQUENCE DIAGRAM ÜBERNOMMEN ; ANPASSEN FÜR OCL
 
 Let us now consider a more complex example.
 Recall the OCL `Bookshop` from the `An Example Model` section above.
