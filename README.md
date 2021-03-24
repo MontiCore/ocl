@@ -23,7 +23,7 @@ ocl Bookshop {
   context Invoice Stock.sellBook(String iban, int discountPercent, Customer c)
     let availableBooks =                              // set comprehension
           { book | Book book in booksInStock, book.iban == iban }
-    pre:  !availableBooks.isEmpty() &&                  // precondition
+    pre:  !availableBooks.isEmpty &&                  // precondition
           c.allowedToOrder;
     post: let discount = (100 - discountPercent)/100; // postcondition, let
               b = result.soldBook                     // result variable
