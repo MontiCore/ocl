@@ -4,19 +4,19 @@ package docs;
 classdiagram Banking {
 
   class Bank {
-    String bic;
+    java.lang.String bic;
     double overallBalance; // money of all accounts together
   }
 
   class Account {
-    String iban;
+    java.lang.String iban;
     double balance; // money in the account
   }
 
   class Customer {
-    String name;
-    String address;
-    String phoneNumber;
+    java.lang.String name;
+    java.lang.String address;
+    java.lang.String phoneNumber;
   }
 
   // sends money from sourceAccount to targetAccount

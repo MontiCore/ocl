@@ -6,9 +6,9 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._symboltable.OCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLDeSer;
 import de.monticore.ocl.util.SymbolTableUtil;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,11 +18,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class DocsTest extends AbstractTest {
 
-  @Test
-  public void shouldProcessBookshopExample() throws IOException {
+  @ParameterizedTest
+  @CsvSource({
+    "src/test/resources/docs/Bookshop/Bookshop.ocl, src/test/resources/docs/Bookshop/Bookshop.sym",
+    "src/test/resources/docs/Banking/Banking.ocl, src/test/resources/docs/Banking/Banking.cdsym",
+  })
+  public void shouldProcessExampleFromDocs(final String oclFile, final String cdFile) {
     // given
-    final String oclFile = "src/test/resources/docs/Bookshop/Bookshop.ocl";
-    final String cdFile = "src/test/resources/docs/Bookshop/Bookshop.sym";
 
     // when (parse)
     final Optional<ASTOCLCompilationUnit> ast = parse(oclFile, false);
