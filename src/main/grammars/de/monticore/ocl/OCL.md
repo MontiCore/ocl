@@ -226,11 +226,10 @@ for declaring parameters and local variables.
 As these are only valid in their local scopes, they cannot be imported.
 
 ## Symbol kinds used by the OCL (importable):
-The OCL uses symbols of kind [```TypeSymbol```][BasicSymbolsRef] and 
-[```MethodSymbol```][OOSymbolsRef] to reference types and methods in 
-constraints.
-
-// TODO: Wird aktuell nicht wirklich importiert. OCL.mc4 müsste für MethodSymbol auch OOTypeSymbols extenden...
+The OCL uses symbols of kind [```TypeSymbol```][BasicSymbolsRef], 
+[```VariableSymbol```][BasicSymbolsRef] and 
+[```FunctionSymbol```][BasicSymbolsRef] to reference types, fields 
+and methods in constraints.
 
 ## Symbol kinds defined by the OCL (exported):
 * OCL exports  an `InvariantSymbol` for every named invariant.
@@ -243,12 +242,38 @@ Local varibles and paramters are not exported (they are only known in the
 respective expressions that define them.
 Therefore, the corresponding variable symbols are not serialized, i.e., they
 are not part of the corresponding symbol file. 
-For example, the following depicts an excerpt of the symbol file obtained from 
+For example, the following the symbol file obtained from 
 serializing the symbol table instance depicted in "An Example Model":
 
 ```json
-{ 
-  //TODO: waits for CD4A Symbol Table fixes
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "Bookshop",
+  "package": "docs",
+  "symbols": [
+    {
+      "kind": "de.monticore.ocl.ocl._symboltable.OCLInvariantSymbol",
+      "name": "CustomerPaysBeforeNewOrder",
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+            "name": "s",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "docs.CustomerPaysBeforeNewOrder.Shop"
+            },
+            "isReadOnly": false
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
+      "name": "Bookshop"
+    }
+  ]
 }
 ```
 
