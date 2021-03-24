@@ -87,6 +87,7 @@ dependencies {
     requireCapability("de.monticore:monticore-grammar-grammars") }
   }
 
+  implementation "de.monticore:class2mc:$mc_version"
   implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
   implementation "com.google.guava:guava:$guava_version"
   implementation "de.monticore.lang:cd4analysis:$cd4a_version"

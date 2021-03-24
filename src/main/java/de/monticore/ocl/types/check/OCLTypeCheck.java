@@ -28,6 +28,10 @@ public class OCLTypeCheck extends TypeCheck {
   /**
    * Test whether 2 types are compatible by using TypeCheck class
    * and extending it by checking whether FullQualifiedNames are different.
+   *
+   * @param left expression that should be assigned a value
+   * @param right expression that should be assigned to left
+   * @return true iff right is compatible to left
    */
   public static boolean compatible(SymTypeExpression left, SymTypeExpression right) {
     if (!left.isTypeConstant() && right.isNullType()) {
