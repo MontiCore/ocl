@@ -43,11 +43,30 @@ public class DeriveSymTypeOfSetExpressions
     storeResultOrLogError(wholeResult, node, "0xA0291");
   }
 
+  @Override
+  public void traverse(ASTSetNotInExpression node) {
+    Optional<SymTypeExpression> wholeResult = calculateSetNotInExpression(node);
+    storeResultOrLogError(wholeResult, node, "0xA0291");
+  }
+
+  protected Optional<SymTypeExpression> calculateSetNotInExpression(ASTSetNotInExpression node) {
+    SymTypeExpression elemResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getElem(),
+      "0xA0289");
+    SymTypeExpression setResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getSet(),
+      "0xA0290");
+    return calculateSetInExpressionHelper(elemResult, setResult);
+  }
+
   protected Optional<SymTypeExpression> calculateSetInExpression(ASTSetInExpression node) {
     SymTypeExpression elemResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getElem(),
       "0xA0289");
     SymTypeExpression setResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getSet(),
       "0xA0290");
+    return calculateSetInExpressionHelper(elemResult, setResult);
+  }
+
+  protected Optional<SymTypeExpression> calculateSetInExpressionHelper(SymTypeExpression elemResult,
+    SymTypeExpression setResult) {
     Optional<SymTypeExpression> wholeResult = Optional.empty();
 
     boolean correct = false;
@@ -79,13 +98,17 @@ public class DeriveSymTypeOfSetExpressions
   @Override
   public void traverse(ASTIntersectionExpression node) {
     //intersection of two sets -> both sets need to have the same type or their types need to be sub/super types
-    Optional<SymTypeExpression> wholeResult = calculateIntersectionExpressionInfix(node);
+    Optional<SymTypeExpression> wholeResult =
+      calculateUnionAndIntersectionInfix(node, node.getLeft(), node.getRight());
     storeResultOrLogError(wholeResult, node, "0xA0293");
   }
 
-  protected Optional<SymTypeExpression> calculateIntersectionExpressionInfix(
-    ASTIntersectionExpression node) {
-    return calculateUnionAndIntersectionInfix(node, node.getLeft(), node.getRight());
+  @Override
+  public void traverse(ASTSetMinusExpression node) {
+    //set minus of two sets -> both sets need to have the same type or their types need to be sub/super types
+    Optional<SymTypeExpression> wholeResult =
+      calculateUnionAndIntersectionInfix(node, node.getLeft(), node.getRight());
+    storeResultOrLogError(wholeResult, node, "0xA0293");
   }
 
   public Optional<SymTypeExpression> calculateUnionAndIntersectionInfix(ASTExpression expr,

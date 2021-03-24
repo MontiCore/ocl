@@ -41,6 +41,11 @@ component grammar SetExpressions
     operator:"isin"
     set:Expression;
 
+  SetNotInExpression implements Expression <150> =
+    elem:Expression
+    operator:"notin"
+    set:Expression;
+
   /*=================================================================*/
 
   UnionExpression implements Expression <180> =
@@ -53,8 +58,10 @@ component grammar SetExpressions
     operator:"intersect"
     right:Expression;
 
-  // We do not introduce a special operator for the
-  // difference, because the binary "-" operator can here be used as well
+  SetMinusExpression implements Expression <180> =
+    left:Expression
+    "\\" // no "operator:" prefix, see MontiCore Ticket #2792
+    right:Expression;
 
   /*=================================================================*/
 

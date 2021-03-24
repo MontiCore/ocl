@@ -1,0 +1,5 @@
+/* (c) https://github.com/MontiCore/monticore */
+ocl aaa {
+  inv:
+    7 notin {1, 4, 9, 16, 25};
+}

@@ -48,31 +48,37 @@ public class SideEffectFreeExpressions {
     if(e instanceof ASTOCLArrayQualification){
       return true;
     }
-    if(e instanceof ASTOCLTransitiveQualification){
+    if (e instanceof ASTOCLTransitiveQualification) {
       return true;
     }
-    if(e instanceof ASTOCLAtPreQualification){
+    if (e instanceof ASTOCLAtPreQualification) {
       return true;
     }
-    if(e instanceof ASTSetInExpression){
+    if (e instanceof ASTSetInExpression) {
       return true;
     }
-    if(e instanceof ASTUnionExpression){
+    if (e instanceof ASTSetNotInExpression) {
       return true;
     }
-    if(e instanceof ASTIntersectionExpression){
+    if (e instanceof ASTUnionExpression) {
       return true;
     }
-    if(e instanceof ASTSetUnionExpression){
+    if (e instanceof ASTIntersectionExpression) {
       return true;
     }
-    if(e instanceof ASTSetIntersectionExpression){
+    if (e instanceof ASTSetUnionExpression) {
       return true;
     }
-    if(e instanceof ASTSetAndExpression){
+    if (e instanceof ASTSetIntersectionExpression) {
       return true;
     }
-    if(e instanceof ASTSetOrExpression){
+    if (e instanceof ASTSetMinusExpression) {
+      return true;
+    }
+    if (e instanceof ASTSetAndExpression) {
+      return true;
+    }
+    if (e instanceof ASTSetOrExpression) {
       return true;
     }
     if(e instanceof ASTSetComprehension){
