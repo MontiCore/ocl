@@ -195,8 +195,6 @@ usage: OCLCLI
                               by the n-th argument of this option. Default is
                               'target/symbols/{packageName}/{artifactName}.sdsym
                               '.
- -so,--syntaxobjects <file>   Prints an object diagram of the OCL-AST to stdout
-                              or the specified file (optional)
  -ts,--typeSymbol <fqn>       Takes the fully qualified name of one or more
                               symbol kind(s) that should be treated as
                               TypeSymbol when deserializing symbol files.

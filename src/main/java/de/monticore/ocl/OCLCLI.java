@@ -205,14 +205,6 @@ public class OCLCLI {
         }
       }
 
-      // -option syntax objects
-      if (cmd.hasOption("so")) {
-        String path = cmd.getOptionValue("so");
-        for (ASTOCLCompilationUnit compUnit : inputOCLs) {
-          ocl2od(compUnit, getModelNameFromFile(cmd.getOptionValue("i")), path);
-        }
-      }
-
       // store symbols
       if (cmd.hasOption("s")) {
         if (cmd.getOptionValues("s") == null || cmd.getOptionValues("s").length == 0) {
@@ -583,15 +575,6 @@ public class OCLCLI {
         + "will be ignored.");
     cd4c.setLongOpt("cd4code");
     options.addOption(cd4c);
-
-    // print object diagram
-    Option syntaxobjects = new Option("so",
-      "Prints an object diagram of the OCL-AST to stdout or the specified file (optional)");
-    syntaxobjects.setLongOpt("syntaxobjects");
-    syntaxobjects.setArgName("file");
-    syntaxobjects.setOptionalArg(true);
-    syntaxobjects.setArgs(1);
-    options.addOption(syntaxobjects);
 
     return options;
   }
