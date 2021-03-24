@@ -228,8 +228,8 @@ As these are only valid in their local scopes, they cannot be imported.
 ## Symbol kinds used by the OCL (importable):
 The OCL uses symbols of kind [```TypeSymbol```][BasicSymbolsRef], 
 [```VariableSymbol```][BasicSymbolsRef] and 
-[```FunctionSymbol```][BasicSymbolsRef] to reference types and methods in 
-constraints.
+[```FunctionSymbol```][BasicSymbolsRef] to reference types, fields 
+and methods in constraints.
 
 ## Symbol kinds defined by the OCL (exported):
 * OCL exports  an `InvariantSymbol` for every named invariant.
