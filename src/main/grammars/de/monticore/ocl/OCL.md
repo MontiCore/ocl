@@ -246,7 +246,6 @@ For example, the following the symbol file obtained from
 serializing the symbol table instance depicted in "An Example Model":
 
 ```json
-{ 
 {
   "generated-using": "www.MontiCore.de technology",
   "name": "Bookshop",
@@ -275,7 +274,6 @@ serializing the symbol table instance depicted in "An Example Model":
       "name": "Bookshop"
     }
   ]
-}
 }
 ```
 
