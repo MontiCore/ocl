@@ -185,8 +185,8 @@ public class OCLCLI {
       // create the symbol table and check cocos
       if (cmd.hasOption("c") || cmd.hasOption("s")) {
         if (cmd.hasOption("s") || cocoOptionValues.isEmpty() || cocoOptionValues.contains("type")) {
-          for (ASTOCLCompilationUnit sd : inputOCLs) {
-            checkAllCoCos(sd);
+          for (ASTOCLCompilationUnit ocl : inputOCLs) {
+            checkAllCoCos(ocl);
           }
         }
         else if (cocoOptionValues.contains("inter")) {
