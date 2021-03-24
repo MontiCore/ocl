@@ -30,7 +30,7 @@ class OCLParserTest extends AbstractTest {
   }
 
   @ParameterizedTest
-  @MethodSource("getValidModels")
+  @MethodSource("getParsableModels")
   public void shouldParseValidGrammarModels(String filename) {
     this.parse(Paths.get(prefixValidModelsPath(filename)).toString(), false);
   }

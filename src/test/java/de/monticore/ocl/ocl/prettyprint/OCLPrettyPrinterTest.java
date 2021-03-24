@@ -38,8 +38,11 @@ public class OCLPrettyPrinterTest extends AbstractTest {
   }
 
   @ParameterizedTest
-  @MethodSource("getValidModels")
+  @MethodSource("getParsableModels")
   public void testOCLCompilationUnit(String filename) throws IOException {
+
+    getParsableModels();
+
     // given
     final Optional<ASTOCLCompilationUnit> ast = parse(prefixValidModelsPath(filename), false);
     final OCLFullPrettyPrinter printer = new OCLFullPrettyPrinter(new IndentPrinter());
