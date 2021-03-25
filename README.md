@@ -332,9 +332,9 @@ $ java -jar OCLCLI.jar  -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd
 
 Please remember to undo the "mistake". 
 
-### Step 4: Using the Model Path to Resolve Symbols
+### Step 4: Using the Symbol Path to Resolve Symbols
 
-In this section we make use of the model path and provide the CLI tool with
+In this section we make use of the symbol path and provide the CLI tool with
 a symbol file (stored symbol table) of another model, which contains the 
 necessary type information.
 
@@ -370,16 +370,16 @@ contents of these files and you, as a language user, must not be concerned with
 their contents. 
   
 The path containing the directory structure that contains the symbol file is 
-called the "Model Path".
-If we provide the model path to the tool, it will search for symbols in symbol 
-files, which are stored in directories contained in the model path.
+called the "Symbol Path".
+If we provide the symbol path to the tool, it will search for symbols in symbol 
+files, which are stored in directories contained in the symbol path.
 So, if we want the tool to find our symbol file, we have to provide the model 
 path to the tool via the `--path <arg>` option.
 You can try that out using the `mytypes` folder you just created:
 ```
-java -jar OCLCLI.jar -i Bookshop.ocl --path <MODELPATH> -c type -cd4c
+java -jar OCLCLI.jar -i Bookshop.ocl --path <SYMBOLPATH> -c type -cd4c
 ```
-where `<MODELPATH>` is the path where you stored the downloaded symbol file.
+where `<SYMBOLPATH>` is the path where you stored the downloaded symbol file.
 In our example, in case you stored the model in the directory `mytypes`,
 execute the following command:
 ```
@@ -453,7 +453,7 @@ model has to be well-formed in all regards, and therefore all context conditions
 are checked beforehand.
 
 For storing the symbol file of `Bookshop.ocl`, execute the following command 
-(the implicit context condition checks require using the model path option):
+(the implicit context condition checks require using the symbol path option):
 ```
 java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -cd4c -s
 ```
@@ -463,7 +463,7 @@ of the objects defined in the OCL file `Bookshop`.
 
 For storing the symbol file of `Bookshop.ocl` in the file 
 `syms/Bookshop.oclsym`, for example, execute the following command
-(again, the implicit context condition checks require using the model path 
+(again, the implicit context condition checks require using the symbol path 
 option):
 ```
 java -jar OCLCLI.jar -i Bookshop.ocl -path mytypes -cd4c -s syms/Bookshop.oclsym
