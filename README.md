@@ -202,7 +202,7 @@ usage: OCLCLI
                               symbol kind(s) that should be treated as
                               VariableSymbol when deserializing symbol files.
 ```
-To work properly, the CLI tool needs the mandatory argument `-i,--input <arg>`, 
+To work properly, the CLI tool needs the mandatory argument `-i,--input <file>`, 
 which takes the file paths of at least one input file containing SD models.
 If no other arguments are specified, the CLI tool solely parses the model(s).
 
@@ -374,7 +374,7 @@ called the "Symbol Path".
 If we provide the symbol path to the tool, it will search for symbols in symbol 
 files, which are stored in directories contained in the symbol path.
 So, if we want the tool to find our symbol file, we have to provide the model 
-path to the tool via the `--path <arg>` option.
+path to the tool via the `--path <directory>` option.
 You can try that out using the `mytypes` folder you just created:
 ```
 java -jar OCLCLI.jar -i Bookshop.ocl --path <SYMBOLPATH> -c type -cd4c
