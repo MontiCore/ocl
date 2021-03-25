@@ -466,7 +466,7 @@ For storing the symbol file of `Bookshop.ocl` in the file
 (again, the implicit context condition checks require using the model path 
 option):
 ```
-java -jar OCLCLI.jar -i Bookshop.ocl -path mytypes -s syms/Bookshop.oclsym
+java -jar OCLCLI.jar -i Bookshop.ocl -path mytypes -cd4c -s syms/Bookshop.oclsym
 ```
 
 Congratulations, you have just finished the tutorial about saving SD symbol 
