@@ -141,6 +141,9 @@ DeployDocker:
   variables:
     DOCKER_DRIVER: overlay2
   cache: {}
+  only:
+    - master
+    - develop 
   tags:
     - shell
     - docker
