@@ -147,4 +147,5 @@ DeployDocker:
     - node2
   script:
     - docker login -u sebot -p $sebot $CI_REGISTRY
-    - docker build -t $CI_REGISTRY_IMAGE/ocl:latest --push .
+    - docker build -t $CI_REGISTRY_IMAGE/ocl:latest .
+    - docker image push $CI_REGISTRY_IMAGE/ocl:latest
