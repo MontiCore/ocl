@@ -118,11 +118,11 @@ wget "https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sor
 
 ## Downloading the Latest Version of the CLI Tool Using Docker
 
-The CLI's docker image can be obtained using 
+The latest version of the CLI's Docker image can be obtained using 
 ```
 docker pull registry.git.rwth-aachen.de/monticore/languages/ocl/ocl
 ```
-** //TODO: Nach GitHub Release durch Docker Hub Link ersetzen **
+** //TODO: Nach Release durch Docker Hub Link ersetzen ** 
 ** Solange nicht auf Docker Hub erst `docker login registry.git.rwth-aachen.de` aufrufen **
 
 In case you're using Docker, replace `java -jar OCLCLI.jar` in the following 
