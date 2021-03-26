@@ -163,7 +163,7 @@ usage: OCLCLI
                               -c intra to check only the intra-model CoCos,
                               -c inter checks also inter-model CoCos,
                               -c type (default) checks all CoCos.
- -cd4c,--cd4code              Load symbol types from cd4c. Shortcut for loading
+ -cd4c,--cd4code              Load symbol kinds from CD4C. Shortcut for loading
                               CDTypeSymbol as TypeSymbol,
                               CDMethodSignatureSymbol as FunctionSymbol, and
                               FieldSymbol as VariableSymbol. Furthermore,

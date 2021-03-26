@@ -569,7 +569,7 @@ public class OCLCLI {
 
     // developer level logging
     Option cd4c = new Option("cd4c",
-      "Load symbol types from cd4c. Shortcut for loading CDTypeSymbol as TypeSymbol, "
+      "Load symbol kinds from CD4C. Shortcut for loading CDTypeSymbol as TypeSymbol, "
         + "CDMethodSignatureSymbol as FunctionSymbol, and FieldSymbol as VariableSymbol. "
         + "Furthermore, warnings about not deserializing CDAssociationSymbol and CDRoleSymbol "
         + "will be ignored.");
