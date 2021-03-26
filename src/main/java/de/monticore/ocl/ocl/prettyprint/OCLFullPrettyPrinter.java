@@ -2,6 +2,7 @@
 
 package de.monticore.ocl.ocl.prettyprint;
 
+import de.monticore.ast.ASTNode;
 import de.monticore.expressions.prettyprint.BitExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
@@ -12,7 +13,6 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions.prettyprint.OCLExpressionsPrettyPrinter;
 import de.monticore.ocl.optionaloperators.prettyprint.OptionalOperatorsPrettyPrinter;
-import de.monticore.ocl.setexpressions._ast.ASTSetComprehensionItem;
 import de.monticore.ocl.setexpressions.prettyprint.SetExpressionsPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.MCBasicsPrettyPrinter;
@@ -86,7 +86,7 @@ public class OCLFullPrettyPrinter {
     return getPrinter().getContent();
   }
 
-  public String prettyprint(ASTSetComprehensionItem node) {
+  public String prettyprint(ASTNode node) {
     getPrinter().clearBuffer();
     node.accept(getTraverser());
     return getPrinter().getContent();

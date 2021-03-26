@@ -4,6 +4,10 @@ package de.monticore.ocl.ocl;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
+import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
+import org.junit.Before;
+import org.junit.BeforeClass;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +19,18 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class AbstractTest {
+
+  @BeforeClass
+  public static void init() {
+    LogStub.init();
+    Log.enableFailQuick(false);
+  }
+
+  @Before
+  public void setUp() {
+    Log.getFindings().clear();
+  }
+
   protected static final String RELATIVE_MODEL_PATH = "src/test/resources";
 
   protected IOCLGlobalScope globalScope;

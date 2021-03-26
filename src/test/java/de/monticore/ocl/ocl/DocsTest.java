@@ -5,6 +5,7 @@ import de.monticore.ocl.OCLCLI;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._symboltable.OCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLDeSer;
+import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.util.SymbolTableUtil;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -29,6 +30,9 @@ public class DocsTest extends AbstractTest {
     // when (parse)
     final Optional<ASTOCLCompilationUnit> ast = parse(oclFile, false);
     assertThat(ast).isPresent();
+
+    // when (prettyprint)
+    new OCLFullPrettyPrinter().prettyprint(ast.get());
 
     // when (create symbol table)
     SymbolTableUtil.prepareMill();
