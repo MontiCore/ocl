@@ -95,12 +95,14 @@ for
 The requirements for building and using the OCL CLI tool are that (at least) 
 JDK 8 (JDK 11 and JDK 14 are also officially supported by us), Git, and Gradle 
 are installed and available for use in Bash. 
+If you're using Docker, you can also use the CLI Docker container without 
+installing Java, Git, or Gradle. 
 
 The following subsection describes how to download the CLI tool.
 Then, this document describes how to build the CLI tool from the source files.
 Afterwards, this document contains a tutorial for using the CLI tool.  
 
-## Downloading the Latest Version of the CLI Tool
+## Downloading the Latest Version of the CLI Tool as JAR
 A ready to use version of the CLI tool can be downloaded in the form of an 
 executable JAR file.
 You can use [**this download link**](https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=ocl&maven.extension=jar&maven.classifier=cli) 
@@ -113,6 +115,35 @@ under the name `OCLCLI.jar` in your working directory:
 wget "https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=ocl&maven.extension=jar&maven.classifier=cli" -O OCLCLI.jar
 ``` 
 ** //TODO: Nach CLI Release auf monticore.de Link ersetzen **
+
+## Downloading the Latest Version of the CLI Tool Using Docker
+
+The latest version of the CLI's Docker image can be obtained using 
+```
+docker pull registry.git.rwth-aachen.de/monticore/languages/ocl/ocl
+```
+** //TODO: Nach Release durch Docker Hub Link ersetzen ** 
+** Solange nicht auf Docker Hub erst `docker login registry.git.rwth-aachen.de` aufrufen **
+
+In case you're using Docker, replace `java -jar OCLCLI.jar` in the following 
+by (for Windows PowerShell, Mac Terminal, or Linux Bash)
+```
+docker run --rm -v ${PWD}:/input -w /input registry.git.rwth-aachen.de/monticore/languages/ocl/ocl
+```
+or (for Windows Command Line)
+```
+docker run --rm -v %CD%:/input -w /input registry.git.rwth-aachen.de/monticore/languages/ocl/ocl
+```
+
+For example, this command from Step 2 of this tutorial
+```
+java -jar OCLCLI.jar -i Example.ocl -pp
+```
+becomes
+```
+docker run --rm -v ${PWD}:/input -w /input registry.git.rwth-aachen.de/monticore/languages/ocl/ocl -i Example.ocl -pp
+```
+when using Docker.
 
 
 ## Building the CLI Tool from the Sources
