@@ -201,7 +201,7 @@ public class DeriveSymTypeOfCommonExpressions
     return Optional.empty();
   }
 
-  private List<FunctionSymbol> getFittingMethods
+  protected List<FunctionSymbol> getFittingMethods
     (List<FunctionSymbol> methodlist, ASTCallExpression expr) {
     List<FunctionSymbol> fittingMethods = new ArrayList<>();
     for (FunctionSymbol method : methodlist) {

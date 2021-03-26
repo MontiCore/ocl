@@ -104,7 +104,8 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
   public void initialize_OCLParamDeclaration(VariableSymbol symbol, ASTOCLParamDeclaration ast) {
     ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
     ast.getMCType().accept(getTraverser());
-    final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
+    ast.getMCType().accept(typeVisitor.getTraverser());
+    final Optional<SymTypeExpression> typeResult = typeVisitor.getResult();
     if (!typeResult.isPresent()) {
       Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
     } else {
@@ -123,7 +124,8 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
         if (cd.isPresentMCType()){
           ASTMCType type = cd.getMCType();
           type.setEnclosingScope(getCurrentScope().get());
-          final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(type);
+          type.accept(typeVisitor.getTraverser());
+          final Optional<SymTypeExpression> typeResult = typeVisitor.getResult();
           if (!typeResult.isPresent()) {
             Log.error(String.format("The type (%s) could not be calculated", type));
           } else {
@@ -166,7 +168,8 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
         } else {
           returnType.getMCType().setEnclosingScope(getCurrentScope().get());
           returnType.getMCType().accept(getTraverser());
-          typeResult = typeVisitor.calculateType(returnType.getMCType());
+          returnType.getMCType().accept(typeVisitor.getTraverser());
+          typeResult = typeVisitor.getResult();
         }
       } else {
         // method has no explicit return type

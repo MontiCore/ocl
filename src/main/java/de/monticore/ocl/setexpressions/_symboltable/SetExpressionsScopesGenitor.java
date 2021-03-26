@@ -57,7 +57,8 @@ public class SetExpressionsScopesGenitor extends SetExpressionsScopesGenitorTOP 
     if(ast.isPresentMCType()) {
       ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
       ast.getMCType().accept(getTraverser());
-      final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
+      ast.getMCType().accept(typeVisitor.getTraverser());
+      final Optional<SymTypeExpression> typeResult = typeVisitor.getResult();
       if (!typeResult.isPresent()) {
         Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
       } else {
@@ -99,7 +100,8 @@ public class SetExpressionsScopesGenitor extends SetExpressionsScopesGenitorTOP 
     if(ast.isPresentMCType()) {
       ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
       ast.getMCType().accept(getTraverser());
-      final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
+      ast.getMCType().accept(typeVisitor.getTraverser());
+      final Optional<SymTypeExpression> typeResult = typeVisitor.getResult();
       if (!typeResult.isPresent()) {
         Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
       }
@@ -107,7 +109,8 @@ public class SetExpressionsScopesGenitor extends SetExpressionsScopesGenitorTOP 
         symbol.setType(typeResult.get());
       }
     } else {
-      final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getExpression());
+      ast.getExpression().accept(typeVisitor.getTraverser());
+      final Optional<SymTypeExpression> typeResult = typeVisitor.getResult();
       if(!typeResult.isPresent()){
         Log.error(String.format("The type of the object (%s) could not be calculated", ast.getName()));
       }

@@ -11,16 +11,8 @@ public class OCLTypeCheck extends TypeCheck {
 
   protected static final List<String> collections = Lists.newArrayList("List", "Set", "Collection");
 
-  public OCLTypeCheck(ISynthesize synthesizeSymType, ITypesCalculator iTypesCalculator) {
-    super(synthesizeSymType, iTypesCalculator);
-  }
-
-  public OCLTypeCheck(ISynthesize synthesizeSymType) {
-    super(synthesizeSymType);
-  }
-
-  public OCLTypeCheck(ITypesCalculator iTypesCalculator) {
-    super(iTypesCalculator);
+  public OCLTypeCheck(ISynthesize synthesizeSymType, IDerive iDerive) {
+    super(synthesizeSymType, iDerive);
   }
 
   /**
