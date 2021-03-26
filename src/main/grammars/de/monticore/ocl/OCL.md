@@ -232,7 +232,7 @@ The OCL uses symbols of kind [```TypeSymbol```][BasicSymbolsRef],
 and methods in constraints.
 
 ## Symbol kinds defined by the OCL (exported):
-* OCL exports  an `InvariantSymbol` for every named invariant.
+* OCL exports  an `OCLInvariantSymbol` for every named invariant.
 
 ## Serialization and De-serialization of Symbol Tables
 
