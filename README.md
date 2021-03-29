@@ -31,6 +31,18 @@ ocl Bookshop {
               !(b isin booksInStock) &&
               booksInStock.size@pre == booksInStock.size + 1 &&  // @pre
               result.invoiceAmount == b.price * discount;
+
+  // Further expression examples: 
+     a + 3*4 ^ 2;                 // number expressions
+     a >= b; a < 3; a = "myName"; // equalities
+     b implies (c && a) || d;     // boolean expressions
+     forall a in S: foo(a) > 3;   // quantifiers
+     exists a in S: foo(a) > 3;
+     XXX TODO + TOCHECK:                             // elvis expressions (dealing with optionals)
+     S.first; S.size; S.union(T); // 30 operators for Lists
+     a in S; S.add(a);            // + more for Sets 
+     max(S) > 3;                  // + more for numbers
+               
 }
 ```
 
