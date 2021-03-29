@@ -209,7 +209,7 @@ The OCL uses the built-in symbol types
 types][TypeSymbolsRef] of MontiCore. 
 
 OCL introduces symbols for
-* named invariants ([```OCLInvariantSymbol```][XXX]).
+* named invariants ([```OCLInvariantSymbol```](./OCL.mc4)).
 * local variable declarations ([```VariableSymbol```][BasicSymbolsRef]),
 * parameters declarations ([```VariableSymbol```][BasicSymbolsRef]),
 * an implicit read-only `result` variable ([```VariableSymbol```][BasicSymbolsRef]) 
