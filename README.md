@@ -116,16 +116,15 @@ Afterwards, this document contains a tutorial for using the CLI tool.
 ## Downloading the Latest Version of the CLI Tool as JAR
 A ready to use version of the CLI tool can be downloaded in the form of an 
 executable JAR file.
-You can use [**this download link**](https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=ocl&maven.extension=jar&maven.classifier=cli) 
+You can use [**this download link**][cli] 
 for downloading the CLI tool. 
 
 Alternatively, you can download the CLI tool using `wget`.
 The following command downloads the latest version of the CLI tool and saves it 
 under the name `OCLCLI.jar` in your working directory:
 ```
-wget "https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=ocl&maven.extension=jar&maven.classifier=cli" -O OCLCLI.jar
+wget "monticore.de/download/OCLCLI.jar" -O OCLCLI.jar
 ``` 
-** //TODO: Nach CLI Release auf monticore.de Link ersetzen **
 
 ## Downloading the Latest Version of the CLI Tool Using Docker
 
@@ -542,3 +541,4 @@ files!
 * [Licence definition](https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md)
 
 [cd4c]: https://github.com/MontiCore/cd4analysis
+[cli]: http://monticore.de/download/OCLCLI.jar
