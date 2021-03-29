@@ -200,49 +200,65 @@ tool to the console:
 ```
 $ java -jar OCLCLI.jar
 usage: OCLCLI
- -c,--coco <arg>              Checks the CoCos for the input. Optional arguments
-                              are:
-                              -c intra to check only the intra-model CoCos,
-                              -c inter checks also inter-model CoCos,
-                              -c type (default) checks all CoCos.
- -cd4c,--cd4code              Load symbol kinds from CD4C. Shortcut for loading
-                              CDTypeSymbol as TypeSymbol,
-                              CDMethodSignatureSymbol as FunctionSymbol, and
-                              FieldSymbol as VariableSymbol. Furthermore,
-                              warnings about not deserializing
-                              CDAssociationSymbol and CDRoleSymbol will be
-                              ignored.
- -d,--dev                     Specifies whether developer level logging should
-                              be used (default is false)
- -fs,--functionSymbol <fqn>   Takes the fully qualified name of one or more
-                              symbol kind(s) that should be treated as
-                              FunctionSymbol when deserializing symbol files.
- -h,--help                    Prints this help dialog
- -i,--input <file>            Processes the list of OCL input artifacts.
-                              Argument list is space separated. CoCos are not
-                              checked automatically (see -c).
- -is,--ignoreSymKind <fqn>    Takes the fully qualified name of one or more
-                              symbol kind(s) for which no warnings about not
-                              being able to deserialize them shall be printed.
-                              Allows cleaner CLI outputs.
- -p,--path <directory>        Sets the artifact path for imported
-                              symbols.Directory will be searched recursively for
-                              files with the ending ".sym". Defaults to the
-                              current folder.
- -pp,--prettyprint <file>     Prints the OCL-AST to stdout or the specified file
-                              (optional)
- -s,--symboltable <file>      Stores the symbol tables of the input OCL
-                              artifacts in the specified files. The n-th input
-                              OCL (-i option) is stored in the file as specified
-                              by the n-th argument of this option. Default is
-                              'target/symbols/{packageName}/{artifactName}.sdsym
-                              '.
- -ts,--typeSymbol <fqn>       Takes the fully qualified name of one or more
-                              symbol kind(s) that should be treated as
-                              TypeSymbol when deserializing symbol files.
- -vs,--variableSymbol <fqn>   Takes the fully qualified name of one or more
-                              symbol kind(s) that should be treated as
-                              VariableSymbol when deserializing symbol files.
+ -c,--coco <arg>               Checks the CoCos for the input. Optional
+                               arguments are:
+                               -c intra to check only the intra-model CoCos,
+                               -c inter checks also inter-model CoCos,
+                               -c type (default) checks all CoCos.
+ -cd4c,--cd4code               Load symbol kinds from CD4C. Shortcut for loading
+                               CDTypeSymbol as TypeSymbol,
+                               CDMethodSignatureSymbol as FunctionSymbol, and
+                               FieldSymbol as VariableSymbol. Furthermore,
+                               warnings about not deserializing
+                               CDAssociationSymbol and CDRoleSymbol will be
+                               ignored.
+ -d,--dev                      Specifies whether developer level logging should
+                               be used (default is false)
+ -fs,--functionSymbol <fqns>   Takes the fully qualified name of one or more
+                               symbol kind(s) that should be treated as
+                               FunctionSymbol when deserializing symbol files.
+                               Multiple symbol kinds should be separated by
+                               spaces.
+ -h,--help                     Prints this help dialog
+ -i,--input <files>            Processes the list of OCL input artifacts.
+                               Argument list is space separated. CoCos are not
+                               checked automatically (see -c).
+ -is,--ignoreSymKind <fqns>    Takes the fully qualified name of one or more
+                               symbol kind(s) for which no warnings about not
+                               being able to deserialize them shall be printed.
+                               Allows cleaner CLI outputs. Multiple symbol kinds
+                               should be separated by spaces.
+ -p,--path <directory>         Sets the artifact path for imported symbols.
+                               Directory will be searched recursively for files
+                               with the ending ".*sym" (for example ".cdsym" or
+                               ".sym"). Defaults to the current folder.
+ -pp,--prettyprint <files>     Prints the OCL model to stdout or the specified
+                               file(s) (optional). Multiple files should be
+                               separated by spaces and will be used in the same
+                               order in which the input files (-i option) are
+                               provided.
+ -s,--symboltable <files>      Stores the symbol tables of the input OCL
+                               artifacts in the specified files. For each input
+                               OCL artifact (-i option) please provide one
+                               output symbol file (using same order in which the
+                               input artifacts are provided) to store its
+                               symbols in. For example, -i x.ocl y.ocl -s
+                               a.oclsym b.oclsym will store the symbols of x.ocl
+                               to a.oclsym and the symbols of y.ocl to b.oclsym.
+                               Arguments are separated by spaces. If no
+                               arguments are given, output is stored to
+                               'target/symbols/{packageName}/{artifactName}.ocls
+                               ym'.
+ -ts,--typeSymbol <fqns>       Takes the fully qualified name of one or more
+                               symbol kind(s) that should be treated as
+                               TypeSymbol when deserializing symbol files.
+                               Multiple symbol kinds should be separated by
+                               spaces.
+ -vs,--variableSymbol <fqns>   Takes the fully qualified name of one or more
+                               symbol kind(s) that should be treated as
+                               VariableSymbol when deserializing symbol files.
+                               Multiple symbol kinds should be separated by
+                               spaces.
 ```
 To work properly, the CLI tool needs the mandatory argument `-i,--input <file>`, 
 which takes the file paths of at least one input file containing SD models.
