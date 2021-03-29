@@ -42,8 +42,6 @@ class diagram:
 
 ```
 classdiagram Bookshop {
-  class Shop;
-
   class Book {
     String name;
     String iban;
@@ -51,10 +49,15 @@ classdiagram Bookshop {
     double price;
   }
 
+  class Shop;
+  association [1] Shop -> (invoices) Invoice [*];
+  association [1] Shop -> (customers) Customer [*];
+
   class Stock {
     void addBook(Book b);
     Invoice sellBook(Book bookToSell, int discountPercent, Customer buyer);
   }
+  association [1] Stock -> (booksInStock) Book [*];
 
   class Customer {
     String name;
@@ -69,10 +72,6 @@ classdiagram Bookshop {
     double invoiceAmount;
     double moneyPayed;
   }
-
-  association [1] Stock -> (booksInStock) Book [*];
-  association [1] Shop -> (invoices) Invoice [*];
-  association [1] Shop -> (customers) Customer [*];
   association [1] Invoice <-> (buyer) Customer [1];
   association [1] Invoice <-> (soldBook) Book [1];
 }
