@@ -1,7 +1,8 @@
-/* (c) https://github.com/MontiCore/monticore */
+// (c) https://github.com/MontiCore/monticore
 
 package de.monticore.ocl.ocl.prettyprint;
 
+import de.monticore.ast.ASTNode;
 import de.monticore.expressions.prettyprint.BitExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.CommonExpressionsPrettyPrinter;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
@@ -80,6 +81,12 @@ public class OCLFullPrettyPrinter {
   }
 
   public String prettyprint(ASTOCLArtifact node) {
+    getPrinter().clearBuffer();
+    node.accept(getTraverser());
+    return getPrinter().getContent();
+  }
+
+  public String prettyprint(ASTNode node) {
     getPrinter().clearBuffer();
     node.accept(getTraverser());
     return getPrinter().getContent();

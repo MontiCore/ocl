@@ -1,3 +1,4 @@
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types.check;
 
 import de.monticore.expressions.commonexpressions._ast.ASTInfixExpression;
@@ -5,10 +6,10 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.optionaloperators._ast.*;
 import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsHandler;
 import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsTraverser;
+import de.monticore.ocl.util.LogHelper;
 import de.monticore.types.check.AbstractDeriveFromExpression;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class DeriveSymTypeOfOptionalOperators
 
     //check compatibility of type of optional and expression
     if(wholeResult.isPresent() && !OCLTypeCheck.compatible(wholeResult.get(), exprResult)){
-      Log.error("types of OptionalExpressionPrefix are not compatible!");
+      LogHelper.error(node, "0xA0330", "types of OptionalExpressionPrefix are not compatible!");
     }
     
     storeResultOrLogError(wholeResult, node, "0xA0302");
@@ -76,7 +77,7 @@ public class DeriveSymTypeOfOptionalOperators
     //no compatiblity check necessary, therefore only check for optional
     SymTypeExpression leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getLeft(), "0xA0241");
     if(!OCLTypeCheck.unwrapOptional(leftResult).isPresent()) {
-      Log.error("Couldn't determine type of Optional");
+      LogHelper.error(node, "0xA0331", "Couldn't determine type of Optional");
     }
     acceptThisAndReturnSymTypeExpressionOrLogError(node.getRight(), "0xA0242");
     Optional<SymTypeExpression> wholeResult = Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));;
@@ -88,7 +89,7 @@ public class DeriveSymTypeOfOptionalOperators
     //no compatiblity check necessary, therefore only check for optional
     SymTypeExpression leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getLeft(), "0xA0241");
     if(!OCLTypeCheck.unwrapOptional(leftResult).isPresent()) {
-      Log.error("Couldn't determine type of Optional");
+      LogHelper.error(node, "0xA0332", "Couldn't determine type of Optional");
     }
     acceptThisAndReturnSymTypeExpressionOrLogError(node.getRight(), "0xA0242");
     Optional<SymTypeExpression> wholeResult = Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));;

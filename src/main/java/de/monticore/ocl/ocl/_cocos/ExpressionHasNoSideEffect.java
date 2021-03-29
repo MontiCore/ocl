@@ -1,3 +1,4 @@
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl._cocos;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;

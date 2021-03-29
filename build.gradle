@@ -10,8 +10,7 @@ plugins {
   id 'com.github.johnrengelman.shadow' version '6.0.0'
   id 'de.set.ecj' version '1.4.1' // Eclipse compiler as it's faster than javac
   id 'jacoco'
-  // com.adarshr.test-logger seems to be incompatible with MontiCore 6.2 :(
-  //id 'com.adarshr.test-logger' version '2.1.0'
+  id 'com.adarshr.test-logger' version '2.1.0'
   id 'maven-publish'
 }
 
@@ -87,9 +86,9 @@ dependencies {
     requireCapability("de.monticore:monticore-grammar-grammars") }
   }
 
+  implementation "de.monticore:class2mc:$mc_version"
   implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
   implementation "com.google.guava:guava:$guava_version"
-  implementation "de.monticore.lang:cd4analysis:$cd4a_version"
   implementation "org.antlr:antlr4-runtime:$antlr_version"
   implementation "de.monticore:monticore-runtime:$mc_version"
   implementation "de.monticore:monticore-grammar:$mc_version"

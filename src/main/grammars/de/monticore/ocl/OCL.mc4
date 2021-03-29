@@ -1,4 +1,4 @@
-/* (c) https://github.com/MontiCore/monticore */
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl;
 
 /* This is a MontiCore stable grammar.
@@ -62,7 +62,7 @@ grammar OCL extends UMLStereotype,
    *   An OCLConstraint (Invariant or Method- or
    *   ConstructorSpec) or an abstract expression (expression).
    */
-  interface scope OCLConstraint;
+  interface OCLConstraint;
 
   /**
    * ASTOCLOperationSignature subsumes method and constructor signatures.
@@ -83,7 +83,7 @@ grammar OCL extends UMLStereotype,
    *   @attribute OCLPostStatement
    *              Optional post-statements.
    */
-  OCLOperationConstraint implements OCLConstraint =
+  scope OCLOperationConstraint implements OCLConstraint =
     Stereotype* 
     "context"
     OCLOperationSignature
@@ -105,7 +105,7 @@ grammar OCL extends UMLStereotype,
    *   @attribute statements
    *              List of boolean expressions.
    */
-  symbol OCLInvariant implements OCLConstraint =
+  symbol scope OCLInvariant implements OCLConstraint =
     Stereotype*
     // class context
     (

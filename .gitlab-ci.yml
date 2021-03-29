@@ -135,3 +135,20 @@ DeployNexus:
     - develop 
   script:
     - gradle publish -PmavenPassword=$pass -PmavenUser=$user
+
+DeployDocker:
+  stage: post-test
+  variables:
+    DOCKER_DRIVER: overlay2
+  cache: {}
+  only:
+    - master
+    - develop 
+  tags:
+    - shell
+    - docker
+    - node2
+  script:
+    - docker login -u sebot -p $sebot $CI_REGISTRY
+    - docker build -t $CI_REGISTRY_IMAGE/ocl:latest .
+    - docker image push $CI_REGISTRY_IMAGE/ocl:latest

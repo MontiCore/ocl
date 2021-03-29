@@ -1,3 +1,4 @@
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl._parser;
 
 import de.monticore.ocl.ocl.AbstractTest;
@@ -13,7 +14,7 @@ class OCLParserTest extends AbstractTest {
 
   @ParameterizedTest
   @ValueSource(strings = {
-    "docs/Bookshop.ocl",
+    "docs/Bookshop/Bookshop.ocl",
     "testinput/cocos/valid/validConstructorName.ocl",
     "testinput/cocos/valid/validConstructorName0.ocl",
     "testinput/cocos/valid/validFileName.ocl",
@@ -30,7 +31,7 @@ class OCLParserTest extends AbstractTest {
   }
 
   @ParameterizedTest
-  @MethodSource("getValidModels")
+  @MethodSource("getParsableModels")
   public void shouldParseValidGrammarModels(String filename) {
     this.parse(Paths.get(prefixValidModelsPath(filename)).toString(), false);
   }

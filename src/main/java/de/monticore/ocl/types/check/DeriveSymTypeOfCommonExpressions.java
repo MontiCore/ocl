@@ -1,7 +1,6 @@
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types.check;
 
-import de.monticore.cdassociation._ast.ASTCDRole;
-import de.monticore.cdassociation._symboltable.CDRoleSymbol;
 import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTConditionalExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
@@ -13,12 +12,14 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,7 +31,21 @@ public class DeriveSymTypeOfCommonExpressions
   extends de.monticore.types.check.DeriveSymTypeOfCommonExpressions {
 
   /**
-   * All methods in this class are identical to the methods in
+   * OCL doesn't now OOTypes. Therefore we just accept function symbols parsed
+   * from a class diagrams as static methods in type checks
+   */
+  @Override protected List<FunctionSymbol> filterStaticMethodSymbols(
+    List<FunctionSymbol> fittingMethods) {
+    // Method symbols
+    List<FunctionSymbol> result = super.filterStaticMethodSymbols(fittingMethods);
+    // Function symbols (cannot be cast - we'll just accept it)
+    result.addAll(fittingMethods.stream().filter(m -> !(m instanceof MethodSymbol))
+      .collect(Collectors.toList()));
+    return result;
+  }
+
+  /**
+   * All below methods in this class are identical to the methods in
    * de.monticore.types.check.DeriveSymTypeOfCommonExpressions.
    * This class is used to ensure that OCLTypeCheck methods are
    * used instead of the normal TypeCheck methods.
@@ -68,21 +83,6 @@ public class DeriveSymTypeOfCommonExpressions
         if (!fieldSymbols.isEmpty()) {
           VariableSymbol var = fieldSymbols.get(0);
           SymTypeExpression type = var.getType();
-
-          //TODO: Fixt dass CD4A keine Arraytypen für Assiziationen setzt
-          if (var.getAstNode() instanceof ASTCDRole) {
-            ASTCDRole astRole = (ASTCDRole) var.getAstNode();
-            CDRoleSymbol symbol = astRole.getSymbol();
-            if (symbol.isPresentCardinality()) {
-              if (symbol.getCardinality().isMult() ||
-                symbol.getCardinality().isAtLeastOne()) {
-                type = SymTypeExpressionFactory
-                  .createTypeArray(type.getTypeInfo(), symbol.getCardinality().getUpperBound(),
-                    type);
-              }
-            }
-          }
-
           typeCheckResult.setField();
           typeCheckResult.setCurrentResult(type);
         }
@@ -110,8 +110,44 @@ public class DeriveSymTypeOfCommonExpressions
         }
       }
       else {
-        typeCheckResult.reset();
-        logError("0xA0306", expr.get_SourcePositionStart());
+        if (typeCheckResult.isPresentCurrentResult()) {
+          innerResult = typeCheckResult.getCurrentResult();
+          //resolve methods with name of the inner expression
+          List<FunctionSymbol> fittingMethods = innerResult.getMethodList(expr.getName(), typeCheckResult.isType());
+          //if the last result is static then filter for static methods
+          if(typeCheckResult.isType()){
+            fittingMethods = filterStaticMethodSymbols(fittingMethods);
+          }
+          //there can only be one method with the correct arguments and return type
+          if (!fittingMethods.isEmpty()) {
+            if (fittingMethods.size() > 1) {
+              SymTypeExpression returnType = fittingMethods.get(0).getReturnType();
+              for (FunctionSymbol method : fittingMethods) {
+                if (!returnType.deepEquals(method.getReturnType())) {
+                  logError("0xA0238", expr.get_SourcePositionStart());
+                }
+              }
+            }
+            SymTypeExpression result = fittingMethods.get(0).getReturnType();
+            typeCheckResult.setMethod();
+            typeCheckResult.setCurrentResult(result);
+          } else {
+            typeCheckResult.reset();
+            logError("0xA0239", expr.get_SourcePositionStart());
+          }
+        } else {
+          Collection<FunctionSymbol> methodcollection = getScope(expr.getEnclosingScope()).resolveFunctionMany(expr.getName());
+          List<FunctionSymbol> fittingMethods = new ArrayList<>(methodcollection);
+          //there can only be one method with the correct arguments and return type
+          if (fittingMethods.size() == 1) {
+            Optional<SymTypeExpression> wholeResult = Optional.of(fittingMethods.get(0).getReturnType());
+            typeCheckResult.setMethod();
+            typeCheckResult.setCurrentResult(wholeResult.get());
+          } else {
+            typeCheckResult.reset();
+            logError("0xA0240", expr.get_SourcePositionStart());
+          }
+        }
       }
     }
     else {
