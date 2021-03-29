@@ -14,16 +14,8 @@ public class OCLTypeCheck extends TypeCheck {
     .newArrayList("java.util.List", "java.util.Set", "java.util.Collection", "java.util.Map",
       "List", "Set", "Collection", "Map");
 
-  public OCLTypeCheck(ISynthesize synthesizeSymType, ITypesCalculator iTypesCalculator) {
-    super(synthesizeSymType, iTypesCalculator);
-  }
-
-  public OCLTypeCheck(ISynthesize synthesizeSymType) {
-    super(synthesizeSymType);
-  }
-
-  public OCLTypeCheck(ITypesCalculator iTypesCalculator) {
-    super(iTypesCalculator);
+  public OCLTypeCheck(ISynthesize synthesizeSymType, IDerive iDerive) {
+    super(synthesizeSymType, iDerive);
   }
 
   /**

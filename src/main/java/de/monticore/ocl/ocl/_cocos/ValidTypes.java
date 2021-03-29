@@ -16,6 +16,6 @@ public class ValidTypes
 
   @Override
   public void check(ASTOCLCompilationUnit node) {
-    typeVisitor.calculateType(node);
+    node.accept(typeVisitor.getTraverser());
   }
 }
