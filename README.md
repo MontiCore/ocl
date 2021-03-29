@@ -7,7 +7,7 @@ languages.
 A detailed documentation for **language engineers** using or extending the 
 OCL language is 
 located **[here](src/main/grammars/de/monticore/ocl/OCL.md)**.
-We recommend that **language engineers** read this documentation before reading 
+We recommend that language engineers read this documentation before reading 
 the detailed documentation.
 
 # An Example Model
