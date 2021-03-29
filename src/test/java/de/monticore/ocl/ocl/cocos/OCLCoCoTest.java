@@ -1,3 +1,4 @@
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl.cocos;
 
 import de.monticore.ocl.ocl.AbstractTest;

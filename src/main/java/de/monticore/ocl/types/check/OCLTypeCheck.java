@@ -1,3 +1,4 @@
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types.check;
 
 import com.google.common.collect.Lists;
