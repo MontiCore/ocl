@@ -14,13 +14,15 @@ import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCom
 import de.monticore.ocl.setexpressions._symboltable.SetExpressionsSymbolTableCompleter;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
-import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbolDeSer;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolDeSer;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbolDeSer;
+import de.monticore.symbols.basicsymbols._symboltable.*;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
 import de.se_rwth.commons.logging.Log;
 
 import java.nio.file.Paths;
+import java.util.Optional;
 
 /**
  * Contains helpers that execute MontiCore API that are almost always called together
@@ -38,6 +40,8 @@ public class SymbolTableUtil {
     Java2MCResolver resolver = new Java2MCResolver(OOSymbolsMill.globalScope());
     OCLMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
     OOSymbolsMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
+
+    addMethodsToList();
   }
 
   static public void runSymTabGenitor(ASTOCLCompilationUnit ast) {
@@ -100,5 +104,67 @@ public class SymbolTableUtil {
     Log.debug("Read symbol file \"" + filePath + "\"", "SymbolTableUtil");
     OCLSymbols2Json deSer = new OCLSymbols2Json();
     OCLMill.globalScope().addSubScope(deSer.load(filePath));
+  }
+
+  protected static void addMethodsToList(){
+    //resolve for List
+    Optional<TypeSymbol> optList = OCLMill.globalScope().resolveType("java.util.List");
+    if(optList.isPresent()){
+      OOTypeSymbol list = (OOTypeSymbol) optList.get();
+      //remove list from its enclosing scope, otherwise the changes would not be committed to the symbol table
+      IBasicSymbolsScope enclosingScope = list.getEnclosingScope();
+      enclosingScope.remove((OOTypeSymbol) list);
+      //method prepend
+      FunctionSymbol prepend = OCLMill.functionSymbolBuilder()
+        .setName("prepend")
+        .setEnclosingScope(list.getSpannedScope())
+        .setSpannedScope(OCLMill.scope())
+        .build();
+
+      //type variable of List is E
+      Optional<TypeVarSymbol> optE = list.getSpannedScope().resolveTypeVar("E");
+      if(optE.isPresent()){
+        //parameter o of type E
+        VariableSymbol o = OCLMill.variableSymbolBuilder()
+          .setName("o")
+          .setEnclosingScope(prepend.getSpannedScope())
+          //the type of the parameter is E
+          .setType(SymTypeExpressionFactory.createTypeVariable(optE.get()))
+          .build();
+
+        //add parameter o to method prepend
+        prepend.getSpannedScope().add(o);
+
+        //create and set return type of the method
+        SymTypeExpression returnType = SymTypeExpressionFactory
+          .createGenerics(list, SymTypeExpressionFactory.createTypeVariable(optE.get()));
+        prepend.setReturnType(returnType);
+      }
+      //add method prepend to List
+      list.getSpannedScope().add(prepend);
+
+
+      //method asSet
+      FunctionSymbol asSet = OCLMill.functionSymbolBuilder()
+        .setName("asSet")
+        .setEnclosingScope(list.getSpannedScope())
+        .setSpannedScope(OCLMill.scope())
+        .build();
+
+      //resolve for Set as its type symbol is needed for the return type
+      Optional<TypeSymbol> optSet = OCLMill.globalScope().resolveType("java.util.Set");
+      if(optSet.isPresent() && optE.isPresent()){
+        TypeSymbol set = optSet.get();
+        //create and set return type Set<E>
+        SymTypeExpression returnType = SymTypeExpressionFactory
+          .createGenerics(set, SymTypeExpressionFactory.createTypeVariable(optE.get()));
+        asSet.setReturnType(returnType);
+      }
+
+      //add method asSet to List
+      list.getSpannedScope().add(asSet);
+      //add list again to its enclosing scope
+      enclosingScope.add(list);
+    }
   }
 }

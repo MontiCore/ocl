@@ -2,8 +2,13 @@
 package de.monticore.ocl.ocl._symboltable;
 
 import de.monticore.ocl.ocl.AbstractTest;
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.util.SymbolTableUtil;
+import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import org.junit.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -11,6 +16,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OCLSymbolTableTest extends AbstractTest {
 
@@ -29,5 +36,33 @@ public class OCLSymbolTableTest extends AbstractTest {
     // when / then
     SymbolTableUtil.runSymTabGenitor(ast.get());
     SymbolTableUtil.runSymTabCompleter(ast.get());
+  }
+
+  @Test
+  public void testAddedMethods(){
+    //add resolver and methods
+    SymbolTableUtil.prepareMill();
+
+    //resolve for List
+    Optional<TypeSymbol> optList = OCLMill.globalScope().resolveType("java.util.List");
+    assertTrue(optList.isPresent());
+    TypeSymbol list = optList.get();
+
+    //resolve for prepend, test for correct parameters and return type
+    Optional<FunctionSymbol> optPrepend = list.getSpannedScope().resolveFunction("prepend");
+    assertTrue(optPrepend.isPresent());
+    FunctionSymbol prepend = optPrepend.get();
+    assertEquals("List<E>", prepend.getReturnType().print());
+    assertEquals(1,prepend.getParameterList().size());
+    VariableSymbol o = prepend.getParameterList().get(0);
+    assertEquals("o", o.getName());
+    assertEquals("E", o.getType().print());
+
+    //resolve for asSet, test for correct parameters and return type
+    Optional<FunctionSymbol> optAsSet = list.getSpannedScope().resolveFunction("asSet");
+    assertTrue(optAsSet.isPresent());
+    FunctionSymbol asSet = optAsSet.get();
+    assertEquals("Set<E>", asSet.getReturnType().print());
+    assertEquals(0, asSet.getParameterList().size());
   }
 }
