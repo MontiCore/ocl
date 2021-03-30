@@ -38,9 +38,8 @@ public class SymbolTableUtil {
 
     OOSymbolsMill.globalScope().setModelPath(new ModelPath(Paths.get("")));
     Java2MCResolver resolver = new Java2MCResolver(OOSymbolsMill.globalScope());
-    OCLMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
     OOSymbolsMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
-
+    OCLMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
     addMethodsToList();
   }
 
@@ -89,7 +88,7 @@ public class SymbolTableUtil {
   }
 
   public static void ignoreSymbolKind(String symbolFqn) {
-    ((OCLDeSer)OCLMill.globalScope().getDeSer()).ignoreSymbolKind(symbolFqn);
+    ((OCLDeSer) OCLMill.globalScope().getDeSer()).ignoreSymbolKind(symbolFqn);
   }
 
   public static void addCd4cSymbols() {
@@ -106,10 +105,46 @@ public class SymbolTableUtil {
     OCLMill.globalScope().addSubScope(deSer.load(filePath));
   }
 
-  protected static void addMethodsToList(){
+  protected static void addMethodsToList() {
     //resolve for List
+    TypeSymbol listSymbol = OCLMill.typeSymbolBuilder()
+      .setName("List")
+      .setEnclosingScope(OCLMill.globalScope())
+      .setSpannedScope(OCLMill.scope())
+      .build();
+    TypeVarSymbol typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
+    listSymbol.addTypeVarSymbol(typeVarSymbol);
+
+    FunctionSymbol prependFunc = OCLMill.functionSymbolBuilder()
+      .setName("prepend")
+      .setEnclosingScope(listSymbol.getSpannedScope())
+      .setSpannedScope(OCLMill.scope())
+      .build();
+
+    //parameter o of type E
+    VariableSymbol oParam = OOSymbolsMill.variableSymbolBuilder()
+      .setName("o")
+      .setEnclosingScope(prependFunc.getSpannedScope())
+      //the type of the parameter is E
+      .setType(SymTypeExpressionFactory.createTypeVariable(typeVarSymbol))
+      .build();
+
+    //add parameter o to method prepend
+    prependFunc.getSpannedScope().add(oParam);
+
+    //create and set return type of the method
+    SymTypeExpression returnTypePrepend = SymTypeExpressionFactory
+      .createGenerics(listSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    prependFunc.setReturnType(returnTypePrepend);
+
+    listSymbol.getSpannedScope().add(prependFunc);
+
+    OCLMill.globalScope().add(listSymbol);
+
+    OCLMill.globalScope().resolveFunction("List.prepend");
+
     Optional<TypeSymbol> optList = OCLMill.globalScope().resolveType("java.util.List");
-    if(optList.isPresent()){
+    if (optList.isPresent()) {
       OOTypeSymbol list = (OOTypeSymbol) optList.get();
       //remove list from its enclosing scope, otherwise the changes would not be committed to the symbol table
       IBasicSymbolsScope enclosingScope = list.getEnclosingScope();
