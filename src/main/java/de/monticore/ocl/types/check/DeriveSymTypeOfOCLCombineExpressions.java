@@ -42,7 +42,7 @@ public class DeriveSymTypeOfOCLCombineExpressions
 
   private SynthesizeSymTypeFromMCSimpleGenericTypes synthesizeSymTypeFromMCSimpleGenericTypes;
 
-  private SynthesizeSymTypeFromMCBasicTypes synthesizeSymTypeFromMCBasicTypes;
+  private SynthesizeSymTypeFromMCBasicTypes4OCL synthesizeSymTypeFromMCBasicTypes;
 
   private SynthesizeSymTypeFromMCCollectionTypes synthesizeSymTypeFromMCCollectionTypes;
 
@@ -107,7 +107,7 @@ public class DeriveSymTypeOfOCLCombineExpressions
     traverser.add4MCSimpleGenericTypes(synthesizeSymTypeFromMCSimpleGenericTypes);
     traverser.setMCSimpleGenericTypesHandler(synthesizeSymTypeFromMCSimpleGenericTypes);
 
-    synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes();
+    synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes4OCL();
     synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(typeCheckResult);
     traverser.add4MCBasicTypes(synthesizeSymTypeFromMCBasicTypes);
     traverser.setMCBasicTypesHandler(synthesizeSymTypeFromMCBasicTypes);

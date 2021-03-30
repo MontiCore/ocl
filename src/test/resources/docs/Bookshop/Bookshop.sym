@@ -701,6 +701,19 @@
       }
     },
     {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "String",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": false,
+      "isStatic": false,
+      "isFinal": false,
+    },
+    {
       "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
       "name": "Bookshop"
     }
