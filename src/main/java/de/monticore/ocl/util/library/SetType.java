@@ -42,7 +42,7 @@ public class SetType {
   }
 
   protected void addFunctionAdd() {
-    FunctionSymbol prependFunc = OCLMill.functionSymbolBuilder()
+    FunctionSymbol function = OCLMill.functionSymbolBuilder()
       .setName("add")
       .setEnclosingScope(setSymbol.getSpannedScope())
       .setSpannedScope(OCLMill.scope())
@@ -51,20 +51,20 @@ public class SetType {
     //parameter o of type X
     VariableSymbol oParam = OOSymbolsMill.variableSymbolBuilder()
       .setName("o")
-      .setEnclosingScope(prependFunc.getSpannedScope())
+      .setEnclosingScope(function.getSpannedScope())
       //the type of the parameter is X
       .setType(SymTypeExpressionFactory.createTypeVariable(typeVarSymbol))
       .build();
 
     //add parameter o to method prepend
-    prependFunc.getSpannedScope().add(oParam);
+    function.getSpannedScope().add(oParam);
 
     //create and set return type of the method
     SymTypeExpression returnTypePrepend = SymTypeExpressionFactory
       .createGenerics(setSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    prependFunc.setReturnType(returnTypePrepend);
+    function.setReturnType(returnTypePrepend);
 
-    setSymbol.getSpannedScope().add(prependFunc);
+    setSymbol.getSpannedScope().add(function);
   }
 
   protected void addFieldIsEmpty() {

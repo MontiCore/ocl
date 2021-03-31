@@ -47,7 +47,7 @@ public class ListType {
   }
 
   protected void addFunctionAdd() {
-    FunctionSymbol prependFunc = OCLMill.functionSymbolBuilder()
+    FunctionSymbol function = OCLMill.functionSymbolBuilder()
       .setName("add")
       .setEnclosingScope(listSymbol.getSpannedScope())
       .setSpannedScope(OCLMill.scope())
@@ -56,24 +56,24 @@ public class ListType {
     //parameter o of type X
     VariableSymbol oParam = OOSymbolsMill.variableSymbolBuilder()
       .setName("o")
-      .setEnclosingScope(prependFunc.getSpannedScope())
+      .setEnclosingScope(function.getSpannedScope())
       //the type of the parameter is X
       .setType(SymTypeExpressionFactory.createTypeVariable(typeVarSymbol))
       .build();
 
     //add parameter o to method prepend
-    prependFunc.getSpannedScope().add(oParam);
+    function.getSpannedScope().add(oParam);
 
     //create and set return type of the method
-    SymTypeExpression returnTypePrepend = SymTypeExpressionFactory
+    SymTypeExpression returnType = SymTypeExpressionFactory
       .createGenerics(listSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    prependFunc.setReturnType(returnTypePrepend);
+    function.setReturnType(returnType);
 
-    listSymbol.getSpannedScope().add(prependFunc);
+    listSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionAdd2() {
-    FunctionSymbol prependFunc = OCLMill.functionSymbolBuilder()
+    FunctionSymbol function = OCLMill.functionSymbolBuilder()
       .setName("add")
       .setEnclosingScope(listSymbol.getSpannedScope())
       .setSpannedScope(OCLMill.scope())
@@ -82,7 +82,7 @@ public class ListType {
     //parameter o of type X
     VariableSymbol indexParam = OOSymbolsMill.variableSymbolBuilder()
       .setName("index")
-      .setEnclosingScope(prependFunc.getSpannedScope())
+      .setEnclosingScope(function.getSpannedScope())
       //the type of the parameter is X
       .setType(getIntSymType())
       .build();
@@ -90,25 +90,25 @@ public class ListType {
     //parameter o of type X
     VariableSymbol oParam = OOSymbolsMill.variableSymbolBuilder()
       .setName("o")
-      .setEnclosingScope(prependFunc.getSpannedScope())
+      .setEnclosingScope(function.getSpannedScope())
       //the type of the parameter is X
       .setType(SymTypeExpressionFactory.createTypeVariable(typeVarSymbol))
       .build();
 
     //add parameters to method prepend
-    prependFunc.getSpannedScope().add(indexParam);
-    prependFunc.getSpannedScope().add(oParam);
+    function.getSpannedScope().add(indexParam);
+    function.getSpannedScope().add(oParam);
 
     //create and set return type of the method
-    SymTypeExpression returnTypePrepend = SymTypeExpressionFactory
+    SymTypeExpression returnType = SymTypeExpressionFactory
       .createGenerics(listSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    prependFunc.setReturnType(returnTypePrepend);
+    function.setReturnType(returnType);
 
-    listSymbol.getSpannedScope().add(prependFunc);
+    listSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionPrepend() {
-    FunctionSymbol prependFunc = OCLMill.functionSymbolBuilder()
+    FunctionSymbol function = OCLMill.functionSymbolBuilder()
       .setName("prepend")
       .setEnclosingScope(listSymbol.getSpannedScope())
       .setSpannedScope(OCLMill.scope())
@@ -117,20 +117,20 @@ public class ListType {
     //parameter o of type X
     VariableSymbol oParam = OOSymbolsMill.variableSymbolBuilder()
       .setName("o")
-      .setEnclosingScope(prependFunc.getSpannedScope())
+      .setEnclosingScope(function.getSpannedScope())
       //the type of the parameter is X
       .setType(SymTypeExpressionFactory.createTypeVariable(typeVarSymbol))
       .build();
 
     //add parameter o to method prepend
-    prependFunc.getSpannedScope().add(oParam);
+    function.getSpannedScope().add(oParam);
 
     //create and set return type of the method
-    SymTypeExpression returnTypePrepend = SymTypeExpressionFactory
+    SymTypeExpression returnType = SymTypeExpressionFactory
       .createGenerics(listSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    prependFunc.setReturnType(returnTypePrepend);
+    function.setReturnType(returnType);
 
-    listSymbol.getSpannedScope().add(prependFunc);
+    listSymbol.getSpannedScope().add(function);
   }
 
   protected void addFieldFirst() {
