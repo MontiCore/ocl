@@ -112,6 +112,7 @@ public class SymbolTableUtil {
       .setEnclosingScope(OCLMill.globalScope())
       .setSpannedScope(OCLMill.scope())
       .build();
+    listSymbol.getSpannedScope().setName("List");
     TypeVarSymbol typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
     listSymbol.addTypeVarSymbol(typeVarSymbol);
 
@@ -140,6 +141,8 @@ public class SymbolTableUtil {
     listSymbol.getSpannedScope().add(prependFunc);
 
     OCLMill.globalScope().add(listSymbol);
+
+    OCLMill.globalScope().addSubScope(listSymbol.getSpannedScope());
 
     OCLMill.globalScope().resolveFunction("List.prepend");
 
