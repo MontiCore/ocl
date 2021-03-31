@@ -27,10 +27,10 @@ ocl Bookshop {
           c.allowedToOrder;
     post: let discount = (100 - discountPercent)/100; // postcondition, let
               b = result.soldBook                     // result variable
-          in
-              !(b isin booksInStock) &&
-              booksInStock.size@pre == booksInStock.size + 1 &&  // @pre
-              result.invoiceAmount == b.price * discount;           
+    in
+        !(b isin booksInStock) &&
+        booksInStock.size@pre == booksInStock.size + 1 &&  // @pre
+        result.invoiceAmount == b.price * discount;           
 }
 ```
 
