@@ -30,24 +30,25 @@ ocl Bookshop {
           in
               !(b isin booksInStock) &&
               booksInStock.size@pre == booksInStock.size + 1 &&  // @pre
-              result.invoiceAmount == b.price * discount;
-
-  // Further expression examples: 
-     a + 3*4 ^ 2;                 // number expressions
-     a >= b; a < 3; a = "myName"; // equalities
-     b implies (c && a) || d;     // boolean expressions
-     forall a in S: foo(a) > 3;   // quantifiers
-     exists a in S: foo(a) > 3;
-     XXX TODO + TOCHECK:                             // elvis expressions (dealing with optionals)
-     S.first; S.size; S.union(T); // 30 operators for Lists
-     a in S; S.add(a);            // + more for Sets 
-     max(S) > 3;                  // + more for numbers
-               
+              result.invoiceAmount == b.price * discount;           
 }
 ```
 
-The textual OCL representation mostly relies on the definition in [Rum16, 
-Rum17]. 
+Further expression examples (including MontiCore's [CommonExpressions][common-expr]):
+```
+a + 3*4;                       // number expressions
+a >= b; a < 3; a == "myName";  // equalities
+b implies (c && a) || d;       // boolean expressions
+forall a in S: foo(a) > 3;     // quantifiers
+exists a in S: foo(a) > 3;
+a ?== b; c ?<= d               // elvis operators (dealing with optionals)
+S.first; S.size; S.addAll(T);  // 30 operators for Lists
+a in S; S.add(a);              // + more for Sets 
+max(S) > 3;                    // + more for numbers
+```
+
+The textual OCL representation mostly relies on the definition in [[Rum16, 
+Rum17]][mbse-books]. 
 OCL is used to check the correctness of other models.
 Here, the `Book` and `Customer` types are, for example, defined by a 
 class diagram:
@@ -88,6 +89,8 @@ classdiagram Bookshop {
   association [1] Invoice <-> (soldBook) Book [1];
 }
 ```
+
+
 
 
 # Command Line Interface (CLI)
@@ -541,4 +544,6 @@ files!
 * [Licence definition](https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md)
 
 [cd4c]: https://github.com/MontiCore/cd4analysis
+[common-expr]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/expressions/CommonExpressions.mc4
 [cli]: http://monticore.de/download/OCLCLI.jar
+[mbse-books]: http://mbse.se-rwth.de/
