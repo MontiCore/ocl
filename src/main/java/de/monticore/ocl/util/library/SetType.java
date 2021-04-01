@@ -10,7 +10,6 @@ import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
-import sun.jvm.hotspot.debugger.cdbg.Sym;
 
 import static de.monticore.ocl.util.library.TypeUtil.*;
 
@@ -23,16 +22,19 @@ public class SetType {
   TypeVarSymbol typeVarSymbol;
 
   public void addSetType() {
+    typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
+
     SymTypeOfGenerics superType = SymTypeExpressionFactory
       .createGenerics(getCollectionType(),
         SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+
     setSymbol = OCLMill.typeSymbolBuilder()
       .setName("Set")
       .setEnclosingScope(OCLMill.globalScope())
       .setSpannedScope(OCLMill.scope())
+      .addSuperTypes(superType)
       .build();
     setSymbol.getSpannedScope().setName("Set");
-    typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
     setSymbol.addTypeVarSymbol(typeVarSymbol);
 
     OCLMill.globalScope().add(setSymbol);

@@ -17,16 +17,16 @@ public class TypeUtil {
     return SymTypeExpressionFactory.createTypeConstant("boolean");
   }
 
+  protected static TypeSymbol getCollectionType() {
+    return SymTypeExpressionFactory.createTypeConstant("Collection").getTypeInfo();
+  }
+
   protected static TypeSymbol getListType() {
     return SymTypeExpressionFactory.createTypeConstant("List").getTypeInfo();
   }
 
   protected static TypeSymbol getSetType() {
     return SymTypeExpressionFactory.createTypeConstant("Set").getTypeInfo();
-  }
-
-  protected static TypeSymbol getCollectionType() {
-    return SymTypeExpressionFactory.createTypeConstant("Collection").getTypeInfo();
   }
 
   protected static void addParam(FunctionSymbol function, String paramName,

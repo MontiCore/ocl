@@ -9,6 +9,7 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfGenerics;
 
 import static de.monticore.ocl.util.library.TypeUtil.*;
 
@@ -21,13 +22,19 @@ public class ListType {
   protected TypeVarSymbol typeVarSymbol;
 
   public void addListType() {
+    typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
+
+    SymTypeOfGenerics superType = SymTypeExpressionFactory
+      .createGenerics(getCollectionType(),
+        SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+
     listSymbol = OCLMill.typeSymbolBuilder()
       .setName("List")
       .setEnclosingScope(OCLMill.globalScope())
       .setSpannedScope(OCLMill.scope())
+      .addSuperTypes(superType)
       .build();
     listSymbol.getSpannedScope().setName("List");
-    typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
     listSymbol.addTypeVarSymbol(typeVarSymbol);
 
     OCLMill.globalScope().add(listSymbol);
