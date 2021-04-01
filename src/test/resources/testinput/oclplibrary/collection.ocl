@@ -1,20 +1,20 @@
 ocl collection {
   inv:
     let
-      la = Collection{1, 2, 3};
-      lb = Collection{4, 5, 6}
+      ca = Collection{1, 2, 3};
+      cb = Collection{4, 5, 6}
     in
-      (la.add(2) == lb.add(2) &&
-      la.addAll(lb) == lb.addAll(lb) &&
-      la.contains(1) &&
-      la.containsAll(lb) == lb.isEmpty &&
-      la.count(1) == 1 &&
-      la.remove(2)== lb) &&
-      (la.removeAll(lb) == la &&
-      la.retainAll(lb) == lb.retainAll(la) &&
-      la.size == lb.size() &&
-      la.asSet == lb.asSet &&
-      la.asList == lb.asList)
+      (ca.add(2) == cb.add(2) &&
+      ca.addAll(cb) == cb.addAll(cb) &&
+      ca.contains(1) &&
+      ca.containsAll(cb) == cb.isEmpty &&
+      ca.count(1) == 1 &&
+      ca.remove(2)== cb) &&
+      (ca.removeAll(cb) == ca &&
+      ca.retainAll(cb) == cb.retainAll(ca) &&
+      ca.size == cb.size() &&
+      ca.asSet == cb.asSet &&
+      ca.asList == cb.asList)
     ;
 
 }
