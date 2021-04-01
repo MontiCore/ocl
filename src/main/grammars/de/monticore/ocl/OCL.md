@@ -271,9 +271,9 @@ serializing the symbol table instance depicted in "An Example Model":
             "name": "s",
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "docs.CustomerPaysBeforeNewOrder.Shop"
+              "objName": "Shop"
             },
-            "isReadOnly": false
+            "isReadOnly": true
           }
         ]
       }
