@@ -5,8 +5,6 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
@@ -47,9 +45,14 @@ public class SetType {
     addFunctionContains();
     addFunctionContainsAll();
     addFunctionCount();
-    addFieldIsEmpty();
-    addFieldSize();
-    addFieldAsList();
+    addFunctionIsEmpty();
+    addFunctionRemove();
+    addFunctionRemoveAll();
+    addFunctionRetainAll();
+    addFunctionSymmetricDifference();
+    addFunctionSize();
+    addFunctionFlatten();
+    addFunctionAsList();
   }
 
   /* ============================================================ */
@@ -74,6 +77,11 @@ public class SetType {
       .createGenerics(getCollectionType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
   }
 
+  protected SymTypeExpression getListOfXSymType(){
+    return SymTypeExpressionFactory
+      .createGenerics(getListType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+  }
+
   /* ============================================================ */
   /* ========================== METHODS ========================= */
   /* ============================================================ */
@@ -85,61 +93,83 @@ public class SetType {
     setSymbol.getSpannedScope().add(function);
   }
 
-  private void addFunctionAddAll() {
+  protected void addFunctionAddAll() {
     FunctionSymbol function = createMethod("addAll");
     addParam(function, "c", getCollectionOfXSymType());
     function.setReturnType(getSetOfXSymType());
     setSymbol.getSpannedScope().add(function);
   }
 
-  private void addFunctionContains() {
+  protected void addFunctionContains() {
     FunctionSymbol function = createMethod("contains");
+    addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    function.setReturnType(getBoolSymType());
+    setSymbol.getSpannedScope().add(function);
+  }
+
+  protected void addFunctionContainsAll() {
+    FunctionSymbol function = createMethod("containsAll");
+    addParam(function, "c", getCollectionOfXSymType());
+    function.setReturnType(getBoolSymType());
+    setSymbol.getSpannedScope().add(function);
+  }
+
+  protected void addFunctionCount() {
+    FunctionSymbol function = createMethod("count");
+    addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    function.setReturnType(getIntSymType());
+    setSymbol.getSpannedScope().add(function);
+  }
+
+  protected void addFunctionIsEmpty() {
+    FunctionSymbol function = createMethod("isEmpty");
+    function.setReturnType(getBoolSymType());
+    setSymbol.getSpannedScope().add(function);
+  }
+
+  protected void addFunctionRemove() {
+    FunctionSymbol function = createMethod("remove");
     addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
     function.setReturnType(getSetOfXSymType());
     setSymbol.getSpannedScope().add(function);
   }
 
-  private void addFunctionCount() {
+  protected void addFunctionRemoveAll() {
+    FunctionSymbol function = createMethod("removeAll");
+    addParam(function, "c", getCollectionOfXSymType());
+    function.setReturnType(getSetOfXSymType());
+    setSymbol.getSpannedScope().add(function);
   }
 
-  private void addFunctionContainsAll() {
+  protected void addFunctionRetainAll() {
+    FunctionSymbol function = createMethod("retainAll");
+    addParam(function, "c", getCollectionOfXSymType());
+    function.setReturnType(getSetOfXSymType());
+    setSymbol.getSpannedScope().add(function);
   }
 
-  /* ============================================================ */
-  /* ========================== FIELDS ========================== */
-  /* ============================================================ */
-
-  protected void addFieldIsEmpty() {
-    VariableSymbol field = OOSymbolsMill.variableSymbolBuilder()
-      .setName("isEmpty")
-      .setEnclosingScope(setSymbol.getSpannedScope())
-      .setType(getBoolSymType())
-      .build();
-
-    setSymbol.getSpannedScope().add(field);
+  protected void addFunctionSymmetricDifference() {
+    FunctionSymbol function = createMethod("symmetricDifference");
+    addParam(function, "s", getSetOfXSymType());
+    function.setReturnType(getSetOfXSymType());
+    setSymbol.getSpannedScope().add(function);
   }
 
-  protected void addFieldSize() {
-    VariableSymbol sizeField = OOSymbolsMill.variableSymbolBuilder()
-      .setName("size")
-      .setEnclosingScope(setSymbol.getSpannedScope())
-      .setType(getIntSymType())
-      .build();
-
-    setSymbol.getSpannedScope().add(sizeField);
+  protected void addFunctionSize() {
+    FunctionSymbol function = createMethod("size");
+    function.setReturnType(getIntSymType());
+    setSymbol.getSpannedScope().add(function);
   }
 
-  protected void addFieldAsList() {
-    SymTypeExpression returnType = SymTypeExpressionFactory
-      .createGenerics(getListType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-
-    VariableSymbol field = OOSymbolsMill.variableSymbolBuilder()
-      .setName("asList")
-      .setEnclosingScope(setSymbol.getSpannedScope())
-      .setType(returnType)
-      .build();
-
-    setSymbol.getSpannedScope().add(field);
+  protected void addFunctionFlatten() {
+    FunctionSymbol function = createMethod("flatten");
+    function.setReturnType(SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    setSymbol.getSpannedScope().add(function);
   }
 
+  protected void addFunctionAsList(){
+    FunctionSymbol function = createMethod("asList");
+    function.setReturnType(getListOfXSymType());
+    setSymbol.getSpannedScope().add(function);
+  }
 }
