@@ -1,0 +1,10 @@
+ocl collection {
+  inv:
+    let
+      la = Collection{1, 2, 3};
+      lb = Collection{4, 5, 6}
+    in
+      la.size == lb.size
+      && la.isEmpty == lb.isEmpty;
+
+}

@@ -13,6 +13,7 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
 import de.monticore.ocl.setexpressions._symboltable.SetExpressionsSymbolTableCompleter;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.ocl.util.library.CollectionType;
 import de.monticore.ocl.util.library.ListType;
 import de.monticore.ocl.util.library.SetType;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
@@ -41,11 +42,17 @@ public class SymbolTableUtil {
     OOSymbolsMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
     OCLMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
 
-    // OCL/P Collections
+    addOclpLibrary();
+  }
+
+  protected static void addOclpLibrary() {
+    CollectionType c = new CollectionType();
     ListType l = new ListType();
     SetType s = new SetType();
+    c.addCollectionType();
     l.addListType();
     s.addSetType();
+    c.addMethodsAndFields();
     l.addMethodsAndFields();
     s.addMethodsAndFields();
   }
