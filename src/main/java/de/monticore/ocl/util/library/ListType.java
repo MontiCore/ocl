@@ -53,16 +53,7 @@ public class ListType {
       .setSpannedScope(OCLMill.scope())
       .build();
 
-    //parameter o of type X
-    VariableSymbol oParam = OOSymbolsMill.variableSymbolBuilder()
-      .setName("o")
-      .setEnclosingScope(function.getSpannedScope())
-      //the type of the parameter is X
-      .setType(SymTypeExpressionFactory.createTypeVariable(typeVarSymbol))
-      .build();
-
-    //add parameter o to method prepend
-    function.getSpannedScope().add(oParam);
+    addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
 
     //create and set return type of the method
     SymTypeExpression returnType = SymTypeExpressionFactory
@@ -79,25 +70,8 @@ public class ListType {
       .setSpannedScope(OCLMill.scope())
       .build();
 
-    //parameter o of type X
-    VariableSymbol indexParam = OOSymbolsMill.variableSymbolBuilder()
-      .setName("index")
-      .setEnclosingScope(function.getSpannedScope())
-      //the type of the parameter is X
-      .setType(getIntSymType())
-      .build();
-
-    //parameter o of type X
-    VariableSymbol oParam = OOSymbolsMill.variableSymbolBuilder()
-      .setName("o")
-      .setEnclosingScope(function.getSpannedScope())
-      //the type of the parameter is X
-      .setType(SymTypeExpressionFactory.createTypeVariable(typeVarSymbol))
-      .build();
-
-    //add parameters to method prepend
-    function.getSpannedScope().add(indexParam);
-    function.getSpannedScope().add(oParam);
+    addParam(function, "index", getIntSymType());
+    addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
 
     //create and set return type of the method
     SymTypeExpression returnType = SymTypeExpressionFactory
@@ -114,16 +88,7 @@ public class ListType {
       .setSpannedScope(OCLMill.scope())
       .build();
 
-    //parameter o of type X
-    VariableSymbol oParam = OOSymbolsMill.variableSymbolBuilder()
-      .setName("o")
-      .setEnclosingScope(function.getSpannedScope())
-      //the type of the parameter is X
-      .setType(SymTypeExpressionFactory.createTypeVariable(typeVarSymbol))
-      .build();
-
-    //add parameter o to method prepend
-    function.getSpannedScope().add(oParam);
+    addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
 
     //create and set return type of the method
     SymTypeExpression returnType = SymTypeExpressionFactory

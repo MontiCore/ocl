@@ -49,15 +49,7 @@ public class SetType {
       .build();
 
     //parameter o of type X
-    VariableSymbol oParam = OOSymbolsMill.variableSymbolBuilder()
-      .setName("o")
-      .setEnclosingScope(function.getSpannedScope())
-      //the type of the parameter is X
-      .setType(SymTypeExpressionFactory.createTypeVariable(typeVarSymbol))
-      .build();
-
-    //add parameter o to method prepend
-    function.getSpannedScope().add(oParam);
+    addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
 
     //create and set return type of the method
     SymTypeExpression returnTypePrepend = SymTypeExpressionFactory
