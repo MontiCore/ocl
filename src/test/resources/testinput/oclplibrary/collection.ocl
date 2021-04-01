@@ -4,7 +4,17 @@ ocl collection {
       la = Collection{1, 2, 3};
       lb = Collection{4, 5, 6}
     in
-      la.size == lb.size
-      && la.isEmpty == lb.isEmpty;
+      la.add(2) == lb.add(2) &&
+      la.addAll(lb) == lb.addAll(lb) &&
+      la.contains(1) &&
+      la.containsAll(lb) &&
+      la.count(1) == 1 &&
+      la.remove(2)== lb &&
+      la.removeAll(lb) == la &&
+      la.retainAll(lb) == lb.retainAll(la) &&
+      la.size == lb.size() &&
+      la.asSet == lb.asSet &&
+      la.asList == lb.asList
+    ;
 
 }
