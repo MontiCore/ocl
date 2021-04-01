@@ -22,6 +22,8 @@ public class SetType {
   TypeVarSymbol typeVarSymbol;
 
   public void addSetType() {
+    typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
+
     SymTypeOfGenerics superType = SymTypeExpressionFactory
       .createGenerics(getCollectionType(),
         SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
@@ -33,7 +35,6 @@ public class SetType {
       .addSuperTypes(superType)
       .build();
     setSymbol.getSpannedScope().setName("Set");
-    typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
     setSymbol.addTypeVarSymbol(typeVarSymbol);
 
     OCLMill.globalScope().add(setSymbol);

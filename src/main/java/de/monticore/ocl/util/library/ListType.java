@@ -22,6 +22,8 @@ public class ListType {
   protected TypeVarSymbol typeVarSymbol;
 
   public void addListType() {
+    typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
+
     SymTypeOfGenerics superType = SymTypeExpressionFactory
       .createGenerics(getCollectionType(),
         SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
@@ -33,7 +35,6 @@ public class ListType {
       .addSuperTypes(superType)
       .build();
     listSymbol.getSpannedScope().setName("List");
-    typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
     listSymbol.addTypeVarSymbol(typeVarSymbol);
 
     OCLMill.globalScope().add(listSymbol);
