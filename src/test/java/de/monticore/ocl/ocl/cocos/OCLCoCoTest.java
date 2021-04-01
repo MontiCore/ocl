@@ -64,19 +64,4 @@ public class OCLCoCoTest extends AbstractTest {
     checker.addCoCo(new ValidTypes(new DeriveSymTypeOfOCLCombineExpressions()));
     checker.checkAll(ast.get());
   }
-
-  //@Test
-  public void testBanking() throws IOException {
-
-    /*
-    Optional<ASTOCLCompilationUnit> ast = new OCLParser().parse(Paths.get(RELATIVE_MODEL_PATH + "/docs/Banking.ocl").toString());
-    initSymbolTable("/docs/Banking.cd", RELATIVE_MODEL_PATH + "/docs");
-    OCLScopesGenitorDelegator genitor = new OCLScopesGenitorDelegator();
-    TypeCheck tc = new TypeCheck(new FullSynthesizeSymTypeFromMCSimpleGenericTypes(), new DeriveSymTypeOfOCLCombineExpressions());
-    genitor.createFromAST(ast.get());
-    OCLCoCoChecker checker = OCLCoCos.createChecker(new DeriveSymTypeOfOCLCombineExpressions());
-    checker.checkAll(ast.get());
-
-     */
-  }
 }
