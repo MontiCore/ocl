@@ -13,7 +13,8 @@ ocl list {
       (la.rest == la.set(1, 1) &&
       la.indexOf(2) == la.lastIndexOf(2) &&
       la.isEmpty == false &&
-      //la.count(1) == la.flatten &&
+      la.count(1) == 1 &&
+      la.flatten() == la &&
       la.remove(3) == la.removeAtIndex(2) &&
       la.removeAll(lb) == la.retainAll(lb))
     ;
