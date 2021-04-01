@@ -11,7 +11,7 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 import static de.monticore.ocl.util.library.TypeUtil.*;
 
 /**
- * Adds symbols for OCL/P sets
+ * Adds symbols for OCL/P collections
  */
 public class CollectionType {
   TypeSymbol collectionSymbol;

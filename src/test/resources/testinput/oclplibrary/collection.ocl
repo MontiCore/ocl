@@ -7,7 +7,7 @@ ocl collection {
       la.add(2) == lb.add(2) &&
       la.addAll(lb) == lb.addAll(lb) &&
       la.contains(1) &&
-      la.containsAll(lb) &&
+      la.containsAll(lb) == lb.isEmpty &&
       la.count(1) == 1 &&
       la.remove(2)== lb &&
       la.removeAll(lb) == la &&

@@ -72,7 +72,6 @@ public class OCLExpressionsSymbolTableCompleter
       VariableSymbol symbol = node.getSymbol();
       symbol.setIsReadOnly(false);
       Optional<SymTypeExpression> typeResult = Optional.empty();
-      //TODO: initialize var for list, Set, Collection?
       if (ast.isPresentMCType()) {
         ast.getMCType().accept(typeVisitor.getTraverser());
         typeResult = typeVisitor.getResult();
