@@ -60,7 +60,7 @@ component grammar SetExpressions
 
   SetMinusExpression implements Expression <180> =
     left:Expression
-    "\\" // no "operator:" prefix, see MontiCore Ticket #2792
+    operator:"\\"
     right:Expression;
 
   /*=================================================================*/
