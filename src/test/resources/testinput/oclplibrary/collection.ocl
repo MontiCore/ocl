@@ -1,0 +1,20 @@
+ocl collection {
+  inv:
+    let
+      ca = Collection{1, 2, 3};
+      cb = Collection{4, 5, 6}
+    in
+      (ca.add(2) == cb.add(2) &&
+      ca.addAll(cb) == cb.addAll(cb) &&
+      ca.contains(1) &&
+      ca.containsAll(cb) == cb.isEmpty &&
+      ca.count(1) == 1 &&
+      ca.remove(2)== cb) &&
+      (ca.removeAll(cb) == ca &&
+      ca.retainAll(cb) == cb.retainAll(ca) &&
+      ca.size == cb.size() &&
+      ca.asSet == cb.asSet &&
+      ca.asList == cb.asList)
+    ;
+
+}

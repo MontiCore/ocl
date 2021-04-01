@@ -1,3 +1,4 @@
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl._visitor;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;

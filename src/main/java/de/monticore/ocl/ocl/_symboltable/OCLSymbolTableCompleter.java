@@ -72,12 +72,13 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
   public void initialize_OCLParamDeclaration(VariableSymbol symbol, ASTOCLParamDeclaration ast) {
     ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
     ast.getMCType().accept(getTraverser());
-    final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
+    ast.getMCType().accept(typeVisitor.getTraverser());
+    final Optional<SymTypeExpression> typeResult = typeVisitor.getResult();
     if (!typeResult.isPresent()) {
       Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
     } else {
       symbol.setType(typeResult.get());
-      symbol.setIsReadOnly(false);
+      symbol.setIsReadOnly(true);
     }
   }
 
@@ -95,7 +96,8 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
         if (cd.isPresentMCType()){
           ASTMCType type = cd.getMCType();
           type.setEnclosingScope(cd.getEnclosingScope());
-          final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(type);
+          type.accept(typeVisitor.getTraverser());
+          final Optional<SymTypeExpression> typeResult = typeVisitor.getResult();
           if (!typeResult.isPresent()) {
             Log.error(String.format("The type (%s) could not be calculated", type));
           } else {
@@ -146,7 +148,8 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
         else {
           returnType.getMCType().setEnclosingScope(node.getEnclosingScope());
           returnType.getMCType().accept(getTraverser());
-          typeResult = typeVisitor.calculateType(returnType.getMCType());
+          returnType.getMCType().accept(typeVisitor.getTraverser());
+          typeResult = typeVisitor.getResult();
         }
       }
       else {

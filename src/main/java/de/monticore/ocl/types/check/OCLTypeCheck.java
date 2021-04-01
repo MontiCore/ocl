@@ -1,3 +1,4 @@
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types.check;
 
 import com.google.common.collect.Lists;
@@ -13,16 +14,8 @@ public class OCLTypeCheck extends TypeCheck {
     .newArrayList("java.util.List", "java.util.Set", "java.util.Collection", "java.util.Map",
       "List", "Set", "Collection", "Map");
 
-  public OCLTypeCheck(ISynthesize synthesizeSymType, ITypesCalculator iTypesCalculator) {
-    super(synthesizeSymType, iTypesCalculator);
-  }
-
-  public OCLTypeCheck(ISynthesize synthesizeSymType) {
-    super(synthesizeSymType);
-  }
-
-  public OCLTypeCheck(ITypesCalculator iTypesCalculator) {
-    super(iTypesCalculator);
+  public OCLTypeCheck(ISynthesize synthesizeSymType, IDerive iDerive) {
+    super(synthesizeSymType, iDerive);
   }
 
   /**

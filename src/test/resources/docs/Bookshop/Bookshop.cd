@@ -30,6 +30,10 @@ classdiagram Bookshop {
     double moneyPayed;
   }
 
+  class String {
+
+  }
+
   association [1] Stock -> (booksInStock) Book [*];
   association [1] Shop -> (invoices) Invoice [*];
   association [1] Shop -> (customers) Customer [*];

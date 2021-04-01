@@ -4,13 +4,19 @@
 /* ========================= Plugins ========================== */
 /* ============================================================ */
 
+buildscript {
+  dependencies {
+    classpath 'org.fusesource.jansi:jansi:2.3.2'
+  }
+}
+
 plugins {
   id 'java'
   id 'monticore' version "$mc_version"
   id 'com.github.johnrengelman.shadow' version '6.0.0'
   id 'de.set.ecj' version '1.4.1' // Eclipse compiler as it's faster than javac
   id 'jacoco'
-  id 'com.adarshr.test-logger' version '2.1.0'
+  id 'com.adarshr.test-logger' version '2.1.1'
   id 'maven-publish'
 }
 
@@ -96,6 +102,7 @@ dependencies {
   implementation "commons-cli:commons-cli:1.4"
   implementation "org.antlr:antlr4:4.7.1"
   implementation "org.assertj:assertj-core:$assertj_version"
+  
 
   testImplementation "junit:junit:$junit_version"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"

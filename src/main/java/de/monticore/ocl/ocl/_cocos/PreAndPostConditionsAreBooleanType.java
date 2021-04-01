@@ -1,3 +1,4 @@
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl._cocos;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
@@ -28,7 +29,8 @@ public class PreAndPostConditionsAreBooleanType implements OCLASTOCLOperationCon
 
     //check preconditions
     for (ASTExpression e : node.getPreConditionList()){
-      Optional<SymTypeExpression> type = typeVisitor.get().calculateType(e);
+      e.accept(typeVisitor.get().getTraverser());
+      Optional<SymTypeExpression> type = typeVisitor.get().getResult();
       if(!type.isPresent()){
         Log.error("type of precondition expression " + e + " could not be calculated.");
       }
@@ -40,7 +42,8 @@ public class PreAndPostConditionsAreBooleanType implements OCLASTOCLOperationCon
 
     //check postconditions
     for (ASTExpression e : node.getPostConditionList()){
-      Optional<SymTypeExpression> type = typeVisitor.get().calculateType(e);
+      e.accept(typeVisitor.get().getTraverser());
+      Optional<SymTypeExpression> type = typeVisitor.get().getResult();
       if(!type.isPresent()){
         Log.error("type of postcondition expression " + e + " could not be calculated.");
       }

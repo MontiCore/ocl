@@ -1,4 +1,4 @@
-/* (c) https://github.com/MontiCore/monticore */
+// (c) https://github.com/MontiCore/monticore
 
 package de.monticore.ocl.types.check;
 
@@ -11,6 +11,7 @@ import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
+import de.monticore.ocl.util.LogHelper;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 import de.monticore.types.check.AbstractDeriveFromExpression;
@@ -126,10 +127,8 @@ public class DeriveSymTypeOfSetExpressions
       String right = rightGeneric.getTypeInfo().getName();
       if (collections.contains(left) && unbox(left).equals(unbox(right))) {
         if (compatible(leftGeneric.getArgument(0), rightGeneric.getArgument(0))) {
-          TypeSymbol loader = new TypeSymbolSurrogate(left);
-          loader.setEnclosingScope(getScope(expr.getEnclosingScope()));
           wholeResult = Optional.of(SymTypeExpressionFactory
-            .createGenerics(loader, leftGeneric.getArgument(0).deepClone()));
+            .createGenerics(leftGeneric.getTypeInfo(), leftGeneric.getArgument(0).deepClone()));
         }
         else if (compatible(rightGeneric.getArgument(0), leftGeneric.getArgument(0))) {
           TypeSymbol loader = new TypeSymbolSurrogate(right);
@@ -172,7 +171,7 @@ public class DeriveSymTypeOfSetExpressions
         }
         else {
           result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
-            getTypeInfo().getName(), getScope(node.getEnclosingScope()));
+            getTypeInfo());
           typeCheckResult.reset();
 
         }
@@ -252,7 +251,7 @@ public class DeriveSymTypeOfSetExpressions
         }
         else {
           result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
-            getTypeInfo().getName(), getScope(node.getEnclosingScope()));
+            getTypeInfo());
           typeCheckResult.reset();
         }
       }
@@ -279,11 +278,12 @@ public class DeriveSymTypeOfSetExpressions
             typeCheckResult.reset();
           }
           else if (!compatible(innerResult, typeCheckResult.getCurrentResult())) {
-            Log.error("different types in SetEnumeration");
+            LogHelper.error(node, "0xA0333", "different types in SetEnumeration");
           }
         }
         else {
-          Log.error("Could not determine type of an expression in SetEnumeration");
+          LogHelper
+            .error(node, "0xA0334", "Could not determine type of an expression in SetEnumeration");
         }
       }
       else {
@@ -294,11 +294,12 @@ public class DeriveSymTypeOfSetExpressions
             typeCheckResult.reset();
           }
           else if (!compatible(innerResult, typeCheckResult.getCurrentResult())) {
-            Log.error("different types in SetEnumeration");
+            LogHelper.error(node, "0xA0335", "different types in SetEnumeration");
           }
         }
         else {
-          Log.error("Could not determine type of a SetValueRange in SetEnumeration");
+          LogHelper.error(node, "0xA0336",
+            "Could not determine type of a SetValueRange in SetEnumeration");
         }
       }
     }
@@ -313,7 +314,8 @@ public class DeriveSymTypeOfSetExpressions
     SymTypeExpression right = acceptThisAndReturnSymTypeExpressionOrLogError(node.getUpperBound(),
       "0xA0312");
     if (!isIntegralType(left) || !isIntegralType(right)) {
-      Log.error("bounds in SetValueRange are not integral types, but have to be");
+      LogHelper
+        .error(node, "0xA0337", "bounds in SetValueRange are not integral types, but have to be");
     }
     typeCheckResult.setCurrentResult(left);
   }

@@ -1,3 +1,4 @@
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types.check;
 
 import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
@@ -33,10 +34,10 @@ public class DeriveSymTypeOfCommonExpressions
    * OCL doesn't now OOTypes. Therefore we just accept function symbols parsed
    * from a class diagrams as static methods in type checks
    */
-  @Override protected List<FunctionSymbol> filterStaticMethodSymbols(
+  @Override protected List<FunctionSymbol> filterModifiersFunctions(
     List<FunctionSymbol> fittingMethods) {
     // Method symbols
-    List<FunctionSymbol> result = super.filterStaticMethodSymbols(fittingMethods);
+    List<FunctionSymbol> result = super.filterModifiersFunctions(fittingMethods);
     // Function symbols (cannot be cast - we'll just accept it)
     result.addAll(fittingMethods.stream().filter(m -> !(m instanceof MethodSymbol))
       .collect(Collectors.toList()));
@@ -99,7 +100,7 @@ public class DeriveSymTypeOfCommonExpressions
         }
         if (match) {
           SymTypeExpression wholeResult = SymTypeExpressionFactory
-            .createTypeExpression(typeSymbol.getName(), typeSymbol.getEnclosingScope());
+            .createTypeExpression(typeSymbol);
           typeCheckResult.setType();
           typeCheckResult.setCurrentResult(wholeResult);
         }
@@ -115,7 +116,7 @@ public class DeriveSymTypeOfCommonExpressions
           List<FunctionSymbol> fittingMethods = innerResult.getMethodList(expr.getName(), typeCheckResult.isType());
           //if the last result is static then filter for static methods
           if(typeCheckResult.isType()){
-            fittingMethods = filterStaticMethodSymbols(fittingMethods);
+            fittingMethods = filterModifiersFunctions(fittingMethods);
           }
           //there can only be one method with the correct arguments and return type
           if (!fittingMethods.isEmpty()) {
@@ -157,7 +158,7 @@ public class DeriveSymTypeOfCommonExpressions
       if (typeSymbolOpt.isPresent()) {
         TypeSymbol typeSymbol = typeSymbolOpt.get();
         SymTypeExpression type = SymTypeExpressionFactory
-          .createTypeExpression(typeSymbol.getName(), typeSymbol.getEnclosingScope());
+          .createTypeExpression(typeSymbol);
         typeCheckResult.setType();
         typeCheckResult.setCurrentResult(type);
       }

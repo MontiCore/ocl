@@ -876,6 +876,25 @@
     },
     {
       "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "BidMessage",
+      "isClass": true,
+      "isInterface": false,
+      "isEnum": false,
+      "isAbstract": false,
+      "isPrivate": false,
+      "isProtected": false,
+      "isPublic": true,
+      "isStatic": false,
+      "isFinal": false,
+      "superTypes": [
+        {
+          "kind": "de.monticore.types.check.SymTypeOfObject",
+          "objName": "Message"
+        }
+      ]
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
       "name": "Betreuer",
       "isClass": true,
       "isInterface": false,

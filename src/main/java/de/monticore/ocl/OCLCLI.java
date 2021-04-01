@@ -1,4 +1,4 @@
-/* (c) https://github.com/MontiCore/monticore */
+// (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl;
 
 import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelper;
@@ -100,9 +100,23 @@ public class OCLCLI {
 
       // -option pretty print
       if (cmd.hasOption("pp")) {
-        String path = cmd.getOptionValue("pp");
+        int ppArgs = cmd.getOptionValues("pp") == null ? 0 : cmd.getOptionValues("pp").length;
+        int iArgs = cmd.getOptionValues("i") == null ? 0 : cmd.getOptionValues("i").length;
+        if (ppArgs != 0 && ppArgs != iArgs) {
+          Log.error("0xOCL31 Number of arguments of -pp (which is " + ppArgs
+            + ") must match number of arguments of -i (which is " + iArgs + "). "
+            + "Or provide no arguments to print to stdout.");
+        }
+
+        String[] paths = cmd.getOptionValues("pp");
+        int i = 0;
         for (ASTOCLCompilationUnit compUnit : inputOCLs) {
-          prettyprint(compUnit, path);
+          String currentPath = "";
+          if (cmd.getOptionValues("pp") != null && cmd.getOptionValues("pp").length != 0) {
+            currentPath = paths[i];
+            i++;
+          }
+          prettyprint(compUnit, currentPath);
         }
       }
 
@@ -473,7 +487,7 @@ public class OCLCLI {
     // parse input file
     Option parse = Option.builder("i")
       .longOpt("input")
-      .argName("file")
+      .argName("files")
       .hasArgs()
       .desc("Processes the list of OCL input artifacts. " +
         "Argument list is space separated. CoCos are not checked automatically (see -c).")
@@ -481,9 +495,9 @@ public class OCLCLI {
     options.addOption(parse);
 
     // model paths
-    Option path = new Option("p", "Sets the artifact path for imported symbols."
+    Option path = new Option("p", "Sets the artifact path for imported symbols. "
       + "Directory will be searched recursively for files with the ending "
-      + "\".sym\". Defaults to the current folder.");
+      + "\".*sym\" (for example \".cdsym\" or \".sym\"). Defaults to the current folder.");
     path.setLongOpt("path");
     path.setArgName("directory");
     path.setOptionalArg(true);
@@ -492,18 +506,20 @@ public class OCLCLI {
 
     // pretty print OCL
     Option prettyprint = new Option("pp",
-      "Prints the OCL-AST to stdout or the specified file (optional)");
+      "Prints the OCL model to stdout or the specified file(s) (optional). "
+        + "Multiple files should be separated by spaces and will be used in the same order "
+        + "in which the input files (-i option) are provided.");
     prettyprint.setLongOpt("prettyprint");
-    prettyprint.setArgName("file");
+    prettyprint.setArgName("files");
     prettyprint.setOptionalArg(true);
-    prettyprint.setArgs(1);
+    prettyprint.setArgs(Option.UNLIMITED_VALUES);
     options.addOption(prettyprint);
 
     // check CoCos
     Option cocos = Option.builder("c").
       longOpt("coco").
       optionalArg(true).
-      numberOfArgs(3).
+      numberOfArgs(1).
       desc("Checks the CoCos for the input. Optional arguments are:\n"
         + "-c intra to check only the intra-model CoCos,\n"
         + "-c inter checks also inter-model CoCos,\n"
@@ -515,11 +531,16 @@ public class OCLCLI {
     Option symboltable = Option.builder("s")
       .longOpt("symboltable")
       .optionalArg(true)
-      .argName("file")
+      .argName("files")
       .hasArgs()
-      .desc("Stores the symbol tables of the input OCL artifacts in the specified files. " +
-        "The n-th input OCL (-i option) is stored in the file as specified by the n-th argument " +
-        "of this option. Default is 'target/symbols/{packageName}/{artifactName}.sdsym'.")
+      .desc("Stores the symbol tables of the input OCL artifacts in the specified files. "
+        + "For each input OCL artifact (-i option) please provide one output symbol file "
+        + "(using same order in which the input artifacts are provided) to store its symbols in. "
+        + "For example, -i x.ocl y.ocl -s a.oclsym b.oclsym will store the symbols of x.ocl to "
+        + "a.oclsym and the symbols of y.ocl to b.oclsym. "
+        + "Arguments are separated by spaces. "
+        + "If no arguments are given, output is stored to "
+        + "'target/symbols/{packageName}/{artifactName}.oclsym'.")
       .build();
     options.addOption(symboltable);
 
@@ -527,10 +548,11 @@ public class OCLCLI {
     Option typeSymbols = Option.builder("ts")
       .longOpt("typeSymbol")
       .optionalArg(true)
-      .argName("fqn")
+      .argName("fqns")
       .hasArgs()
       .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
-        + "treated as TypeSymbol when deserializing symbol files.")
+        + "treated as TypeSymbol when deserializing symbol files. Multiple symbol kinds "
+        + "should be separated by spaces.")
       .build();
     options.addOption(typeSymbols);
 
@@ -538,10 +560,11 @@ public class OCLCLI {
     Option varSymbols = Option.builder("vs")
       .longOpt("variableSymbol")
       .optionalArg(true)
-      .argName("fqn")
+      .argName("fqns")
       .hasArgs()
       .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
-        + "treated as VariableSymbol when deserializing symbol files.")
+        + "treated as VariableSymbol when deserializing symbol files. Multiple symbol kinds "
+        + "should be separated by spaces.")
       .build();
     options.addOption(varSymbols);
 
@@ -549,10 +572,11 @@ public class OCLCLI {
     Option funcSymbols = Option.builder("fs")
       .longOpt("functionSymbol")
       .optionalArg(true)
-      .argName("fqn")
+      .argName("fqns")
       .hasArgs()
       .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
-        + "treated as FunctionSymbol when deserializing symbol files.")
+        + "treated as FunctionSymbol when deserializing symbol files. Multiple symbol kinds "
+        + "should be separated by spaces.")
       .build();
     options.addOption(funcSymbols);
 
@@ -560,16 +584,17 @@ public class OCLCLI {
     Option ignoreSymbols = Option.builder("is")
       .longOpt("ignoreSymKind")
       .optionalArg(true)
-      .argName("fqn")
+      .argName("fqns")
       .hasArgs()
       .desc("Takes the fully qualified name of one or more symbol kind(s) for which no warnings "
-        + "about not being able to deserialize them shall be printed. Allows cleaner CLI outputs.")
+        + "about not being able to deserialize them shall be printed. Allows cleaner CLI outputs. "
+        + "Multiple symbol kinds should be separated by spaces. ")
       .build();
     options.addOption(ignoreSymbols);
 
     // developer level logging
     Option cd4c = new Option("cd4c",
-      "Load symbol types from cd4c. Shortcut for loading CDTypeSymbol as TypeSymbol, "
+      "Load symbol kinds from CD4C. Shortcut for loading CDTypeSymbol as TypeSymbol, "
         + "CDMethodSignatureSymbol as FunctionSymbol, and FieldSymbol as VariableSymbol. "
         + "Furthermore, warnings about not deserializing CDAssociationSymbol and CDRoleSymbol "
         + "will be ignored.");

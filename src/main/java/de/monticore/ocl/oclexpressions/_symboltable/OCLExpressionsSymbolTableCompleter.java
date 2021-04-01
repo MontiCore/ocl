@@ -72,9 +72,9 @@ public class OCLExpressionsSymbolTableCompleter
       VariableSymbol symbol = node.getSymbol();
       symbol.setIsReadOnly(false);
       Optional<SymTypeExpression> typeResult = Optional.empty();
-      //TODO: initialize var for list, Set, Collection?
       if (ast.isPresentMCType()) {
-        typeResult = typeVisitor.calculateType(ast.getMCType());
+        ast.getMCType().accept(typeVisitor.getTraverser());
+        typeResult = typeVisitor.getResult();
         if (!typeResult.isPresent()) {
           Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), symbol.getName()));
         } else {
@@ -113,7 +113,8 @@ public class OCLExpressionsSymbolTableCompleter
     if(ast.isPresentMCType()) {
       ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
       ast.getMCType().accept(getTraverser());
-      final Optional<SymTypeExpression> typeResult = typeVisitor.calculateType(ast.getMCType());
+      ast.getMCType().accept(typeVisitor.getTraverser());
+      final Optional<SymTypeExpression> typeResult = typeVisitor.getResult();
       if (!typeResult.isPresent()) {
         Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
       } else {

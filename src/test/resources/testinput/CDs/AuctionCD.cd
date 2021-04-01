@@ -29,6 +29,10 @@ classdiagram AuctionCD {
     Time finishTime;
   }
 
+  public class BidMessage extends Message {
+
+  }
+
   public enum AuctionStatus {
     INITIAL,
     RUNNING,

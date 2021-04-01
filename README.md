@@ -7,7 +7,7 @@ languages.
 A detailed documentation for **language engineers** using or extending the 
 OCL language is 
 located **[here](src/main/grammars/de/monticore/ocl/OCL.md)**.
-We recommend that **language engineers** read this documentation before reading 
+We recommend that language engineers read this documentation before reading 
 the detailed documentation.
 
 # An Example Model
@@ -27,23 +27,34 @@ ocl Bookshop {
           c.allowedToOrder;
     post: let discount = (100 - discountPercent)/100; // postcondition, let
               b = result.soldBook                     // result variable
-          in
-              !(b isin booksInStock) &&
-              booksInStock.size@pre == booksInStock.size + 1 &&  // @pre
-              result.invoiceAmount == b.price * discount;
+    in
+        !(b isin booksInStock) &&
+        booksInStock.size@pre == booksInStock.size + 1 &&  // @pre
+        result.invoiceAmount == b.price * discount;           
 }
 ```
 
-The textual OCL representation mostly relies on the definition in [Rum16, 
-Rum17]. 
+Further expression examples (including MontiCore's [CommonExpressions][common-expr]):
+```
+a + 3*4;                       // number expressions
+a >= b; a < 3; a == "myName";  // equalities
+b implies (c && a) || d;       // boolean expressions
+forall a in S: foo(a) > 3;     // quantifiers
+exists a in S: foo(a) > 3;
+a ?== b; c ?<= d               // elvis operators (dealing with optionals)
+S.first; S.size; S.addAll(T);  // 30 operators for Lists
+a in S; S.add(a);              // + more for Sets 
+max(S) > 3;                    // + more for numbers
+```
+
+The textual OCL representation mostly relies on the definition in [[Rum16, 
+Rum17]][mbse-books]. 
 OCL is used to check the correctness of other models.
 Here, the `Book` and `Customer` types are, for example, defined by a 
 class diagram:
 
 ```
 classdiagram Bookshop {
-  class Shop;
-
   class Book {
     String name;
     String iban;
@@ -51,10 +62,15 @@ classdiagram Bookshop {
     double price;
   }
 
+  class Shop;
+  association [1] Shop -> (invoices) Invoice [*];
+  association [1] Shop -> (customers) Customer [*];
+
   class Stock {
     void addBook(Book b);
     Invoice sellBook(Book bookToSell, int discountPercent, Customer buyer);
   }
+  association [1] Stock -> (booksInStock) Book [*];
 
   class Customer {
     String name;
@@ -69,14 +85,12 @@ classdiagram Bookshop {
     double invoiceAmount;
     double moneyPayed;
   }
-
-  association [1] Stock -> (booksInStock) Book [*];
-  association [1] Shop -> (invoices) Invoice [*];
-  association [1] Shop -> (customers) Customer [*];
   association [1] Invoice <-> (buyer) Customer [1];
   association [1] Invoice <-> (soldBook) Book [1];
 }
 ```
+
+
 
 
 # Command Line Interface (CLI)
@@ -95,24 +109,54 @@ for
 The requirements for building and using the OCL CLI tool are that (at least) 
 JDK 8 (JDK 11 and JDK 14 are also officially supported by us), Git, and Gradle 
 are installed and available for use in Bash. 
+If you're using Docker, you can also use the CLI Docker container without 
+installing Java, Git, or Gradle. 
 
 The following subsection describes how to download the CLI tool.
 Then, this document describes how to build the CLI tool from the source files.
 Afterwards, this document contains a tutorial for using the CLI tool.  
 
-## Downloading the Latest Version of the CLI Tool
+## Downloading the Latest Version of the CLI Tool as JAR
 A ready to use version of the CLI tool can be downloaded in the form of an 
 executable JAR file.
-You can use [**this download link**](https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=ocl&maven.extension=jar&maven.classifier=cli) 
+You can use [**this download link**][cli] 
 for downloading the CLI tool. 
 
 Alternatively, you can download the CLI tool using `wget`.
 The following command downloads the latest version of the CLI tool and saves it 
 under the name `OCLCLI.jar` in your working directory:
 ```
-wget "https://nexus.se.rwth-aachen.de/service/rest/v1/search/assets/download?sort=version&repository=monticore-snapshots&maven.groupId=de.monticore.lang&maven.artifactId=ocl&maven.extension=jar&maven.classifier=cli" -O OCLCLI.jar
+wget "monticore.de/download/OCLCLI.jar" -O OCLCLI.jar
 ``` 
-** //TODO: Nach CLI Release auf monticore.de Link ersetzen **
+
+## Downloading the Latest Version of the CLI Tool Using Docker
+
+The latest version of the CLI's Docker image can be obtained using 
+```
+docker pull registry.git.rwth-aachen.de/monticore/languages/ocl/ocl
+```
+** //TODO: Nach Release durch Docker Hub Link ersetzen ** 
+** Solange nicht auf Docker Hub erst `docker login registry.git.rwth-aachen.de` aufrufen **
+
+In case you're using Docker, replace `java -jar OCLCLI.jar` in the following 
+by (for Windows PowerShell, Mac Terminal, or Linux Bash)
+```
+docker run --rm -v ${PWD}:/input -w /input registry.git.rwth-aachen.de/monticore/languages/ocl/ocl
+```
+or (for Windows Command Line)
+```
+docker run --rm -v %CD%:/input -w /input registry.git.rwth-aachen.de/monticore/languages/ocl/ocl
+```
+
+For example, this command from Step 2 of this tutorial
+```
+java -jar OCLCLI.jar -i Example.ocl -pp
+```
+becomes
+```
+docker run --rm -v ${PWD}:/input -w /input registry.git.rwth-aachen.de/monticore/languages/ocl/ocl -i Example.ocl -pp
+```
+when using Docker.
 
 
 ## Building the CLI Tool from the Sources
@@ -158,51 +202,67 @@ tool to the console:
 ```
 $ java -jar OCLCLI.jar
 usage: OCLCLI
- -c,--coco <arg>              Checks the CoCos for the input. Optional arguments
-                              are:
-                              -c intra to check only the intra-model CoCos,
-                              -c inter checks also inter-model CoCos,
-                              -c type (default) checks all CoCos.
- -cd4c,--cd4code              Load symbol types from cd4c. Shortcut for loading
-                              CDTypeSymbol as TypeSymbol,
-                              CDMethodSignatureSymbol as FunctionSymbol, and
-                              FieldSymbol as VariableSymbol. Furthermore,
-                              warnings about not deserializing
-                              CDAssociationSymbol and CDRoleSymbol will be
-                              ignored.
- -d,--dev                     Specifies whether developer level logging should
-                              be used (default is false)
- -fs,--functionSymbol <fqn>   Takes the fully qualified name of one or more
-                              symbol kind(s) that should be treated as
-                              FunctionSymbol when deserializing symbol files.
- -h,--help                    Prints this help dialog
- -i,--input <file>            Processes the list of OCL input artifacts.
-                              Argument list is space separated. CoCos are not
-                              checked automatically (see -c).
- -is,--ignoreSymKind <fqn>    Takes the fully qualified name of one or more
-                              symbol kind(s) for which no warnings about not
-                              being able to deserialize them shall be printed.
-                              Allows cleaner CLI outputs.
- -p,--path <directory>        Sets the artifact path for imported
-                              symbols.Directory will be searched recursively for
-                              files with the ending ".sym". Defaults to the
-                              current folder.
- -pp,--prettyprint <file>     Prints the OCL-AST to stdout or the specified file
-                              (optional)
- -s,--symboltable <file>      Stores the symbol tables of the input OCL
-                              artifacts in the specified files. The n-th input
-                              OCL (-i option) is stored in the file as specified
-                              by the n-th argument of this option. Default is
-                              'target/symbols/{packageName}/{artifactName}.sdsym
-                              '.
- -ts,--typeSymbol <fqn>       Takes the fully qualified name of one or more
-                              symbol kind(s) that should be treated as
-                              TypeSymbol when deserializing symbol files.
- -vs,--variableSymbol <fqn>   Takes the fully qualified name of one or more
-                              symbol kind(s) that should be treated as
-                              VariableSymbol when deserializing symbol files.
+ -c,--coco <arg>               Checks the CoCos for the input. Optional
+                               arguments are:
+                               -c intra to check only the intra-model CoCos,
+                               -c inter checks also inter-model CoCos,
+                               -c type (default) checks all CoCos.
+ -cd4c,--cd4code               Load symbol kinds from CD4C. Shortcut for loading
+                               CDTypeSymbol as TypeSymbol,
+                               CDMethodSignatureSymbol as FunctionSymbol, and
+                               FieldSymbol as VariableSymbol. Furthermore,
+                               warnings about not deserializing
+                               CDAssociationSymbol and CDRoleSymbol will be
+                               ignored.
+ -d,--dev                      Specifies whether developer level logging should
+                               be used (default is false)
+ -fs,--functionSymbol <fqns>   Takes the fully qualified name of one or more
+                               symbol kind(s) that should be treated as
+                               FunctionSymbol when deserializing symbol files.
+                               Multiple symbol kinds should be separated by
+                               spaces.
+ -h,--help                     Prints this help dialog
+ -i,--input <files>            Processes the list of OCL input artifacts.
+                               Argument list is space separated. CoCos are not
+                               checked automatically (see -c).
+ -is,--ignoreSymKind <fqns>    Takes the fully qualified name of one or more
+                               symbol kind(s) for which no warnings about not
+                               being able to deserialize them shall be printed.
+                               Allows cleaner CLI outputs. Multiple symbol kinds
+                               should be separated by spaces.
+ -p,--path <directory>         Sets the artifact path for imported symbols.
+                               Directory will be searched recursively for files
+                               with the ending ".*sym" (for example ".cdsym" or
+                               ".sym"). Defaults to the current folder.
+ -pp,--prettyprint <files>     Prints the OCL model to stdout or the specified
+                               file(s) (optional). Multiple files should be
+                               separated by spaces and will be used in the same
+                               order in which the input files (-i option) are
+                               provided.
+ -s,--symboltable <files>      Stores the symbol tables of the input OCL
+                               artifacts in the specified files. For each input
+                               OCL artifact (-i option) please provide one
+                               output symbol file (using same order in which the
+                               input artifacts are provided) to store its
+                               symbols in. For example, -i x.ocl y.ocl -s
+                               a.oclsym b.oclsym will store the symbols of x.ocl
+                               to a.oclsym and the symbols of y.ocl to b.oclsym.
+                               Arguments are separated by spaces. If no
+                               arguments are given, output is stored to
+                               'target/symbols/{packageName}/{artifactName}.ocls
+                               ym'.
+ -ts,--typeSymbol <fqns>       Takes the fully qualified name of one or more
+                               symbol kind(s) that should be treated as
+                               TypeSymbol when deserializing symbol files.
+                               Multiple symbol kinds should be separated by
+                               spaces.
+ -vs,--variableSymbol <fqns>   Takes the fully qualified name of one or more
+                               symbol kind(s) that should be treated as
+                               VariableSymbol when deserializing symbol files.
+                               Multiple symbol kinds should be separated by
+                               spaces.
 ```
-To work properly, the CLI tool needs the mandatory argument `-i,--input <arg>`, 
+To work properly, the CLI tool needs the mandatory argument `-i,--input <file>`, 
 which takes the file paths of at least one input file containing SD models.
 If no other arguments are specified, the CLI tool solely parses the model(s).
 
@@ -332,9 +392,9 @@ $ java -jar OCLCLI.jar  -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd
 
 Please remember to undo the "mistake". 
 
-### Step 4: Using the Model Path to Resolve Symbols
+### Step 4: Using the Symbol Path to Resolve Symbols
 
-In this section we make use of the model path and provide the CLI tool with
+In this section we make use of the symbol path and provide the CLI tool with
 a symbol file (stored symbol table) of another model, which contains the 
 necessary type information.
 
@@ -370,16 +430,16 @@ contents of these files and you, as a language user, must not be concerned with
 their contents. 
   
 The path containing the directory structure that contains the symbol file is 
-called the "Model Path".
-If we provide the model path to the tool, it will search for symbols in symbol 
-files, which are stored in directories contained in the model path.
+called the "Symbol Path".
+If we provide the symbol path to the tool, it will search for symbols in symbol 
+files, which are stored in directories contained in the symbol path.
 So, if we want the tool to find our symbol file, we have to provide the model 
-path to the tool via the `--path <arg>` option.
+path to the tool via the `--path <directory>` option.
 You can try that out using the `mytypes` folder you just created:
 ```
-java -jar OCLCLI.jar -i Bookshop.ocl --path <MODELPATH> -c type -cd4c
+java -jar OCLCLI.jar -i Bookshop.ocl --path <SYMBOLPATH> -c type -cd4c
 ```
-where `<MODELPATH>` is the path where you stored the downloaded symbol file.
+where `<SYMBOLPATH>` is the path where you stored the downloaded symbol file.
 In our example, in case you stored the model in the directory `mytypes`,
 execute the following command:
 ```
@@ -453,7 +513,7 @@ model has to be well-formed in all regards, and therefore all context conditions
 are checked beforehand.
 
 For storing the symbol file of `Bookshop.ocl`, execute the following command 
-(the implicit context condition checks require using the model path option):
+(the implicit context condition checks require using the symbol path option):
 ```
 java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -cd4c -s
 ```
@@ -463,10 +523,10 @@ of the objects defined in the OCL file `Bookshop`.
 
 For storing the symbol file of `Bookshop.ocl` in the file 
 `syms/Bookshop.oclsym`, for example, execute the following command
-(again, the implicit context condition checks require using the model path 
+(again, the implicit context condition checks require using the symbol path 
 option):
 ```
-java -jar OCLCLI.jar -i Bookshop.ocl -path mytypes -s syms/Bookshop.oclsym
+java -jar OCLCLI.jar -i Bookshop.ocl -path mytypes -cd4c -s syms/Bookshop.oclsym
 ```
 
 Congratulations, you have just finished the tutorial about saving SD symbol 
@@ -484,3 +544,6 @@ files!
 * [Licence definition](https://github.com/MontiCore/monticore/blob/master/00.org/Licenses/LICENSE-MONTICORE-3-LEVEL.md)
 
 [cd4c]: https://github.com/MontiCore/cd4analysis
+[common-expr]: https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/grammars/de/monticore/expressions/CommonExpressions.mc4
+[cli]: http://monticore.de/download/OCLCLI.jar
+[mbse-books]: http://mbse.se-rwth.de/

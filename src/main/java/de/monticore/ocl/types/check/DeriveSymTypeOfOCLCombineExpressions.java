@@ -1,4 +1,4 @@
-/* (c) https://github.com/MontiCore/monticore */
+// (c) https://github.com/MontiCore/monticore
 
 package de.monticore.ocl.types.check;
 
@@ -18,7 +18,7 @@ import java.util.Optional;
  * Delegator Visitor to test the combination of the grammars
  */
 public class DeriveSymTypeOfOCLCombineExpressions
-  implements ITypesCalculator {
+  implements IDerive {
 
   protected OCLTraverser traverser;
 
@@ -42,7 +42,7 @@ public class DeriveSymTypeOfOCLCombineExpressions
 
   private SynthesizeSymTypeFromMCSimpleGenericTypes synthesizeSymTypeFromMCSimpleGenericTypes;
 
-  private SynthesizeSymTypeFromMCBasicTypes synthesizeSymTypeFromMCBasicTypes;
+  private SynthesizeSymTypeFromMCBasicTypes4OCL synthesizeSymTypeFromMCBasicTypes;
 
   private SynthesizeSymTypeFromMCCollectionTypes synthesizeSymTypeFromMCCollectionTypes;
 
@@ -51,72 +51,12 @@ public class DeriveSymTypeOfOCLCombineExpressions
     init();
   }
 
-  public Optional<SymTypeExpression> calculateType(ASTMCType type) {
-    type.accept(getTraverser());
-    if (getTypeCheckResult().isPresentCurrentResult()) {
-      return Optional.of(getTypeCheckResult().getCurrentResult());
-    }
-    else {
-      return Optional.empty();
-    }
-  }
-
-  public Optional<SymTypeExpression> calculateType(ASTOCLCompilationUnit node) {
-    node.accept(getTraverser());
-    if (getTypeCheckResult().isPresentCurrentResult()) {
-      return Optional.of(getTypeCheckResult().getCurrentResult());
-    }
-    else {
-      return Optional.empty();
-    }
-  }
-
-  /**
-   * main method to calculate the type of an expression
-   */
-  public Optional<SymTypeExpression> calculateType(ASTExpression e) {
-    e.accept(getTraverser());
-    if (getTypeCheckResult().isPresentCurrentResult()) {
-      return Optional.of(getTypeCheckResult().getCurrentResult());
-    }
-    else {
-      return Optional.empty();
-    }
-  }
-
-  public Optional<SymTypeExpression> calculateType(ASTOCLExpressionsNode e) {
-    e.accept(getTraverser());
-    if (getTypeCheckResult().isPresentCurrentResult()) {
-      return Optional.of(getTypeCheckResult().getCurrentResult());
-    }
-    else {
-      return Optional.empty();
-    }
-  }
-
-  /**
-   * main method to calculate the type of a literal
-   */
   @Override
-  public Optional<SymTypeExpression> calculateType(ASTLiteral lit) {
-    lit.accept(getTraverser());
-    if (getTypeCheckResult().isPresentCurrentResult()) {
-      return Optional.of(getTypeCheckResult().getCurrentResult());
+  public Optional<SymTypeExpression> getResult() {
+    if(typeCheckResult.isPresentCurrentResult()){
+      return Optional.ofNullable(typeCheckResult.getCurrentResult());
     }
-    else {
-      return Optional.empty();
-    }
-  }
-
-  @Override
-  public Optional<SymTypeExpression> calculateType(ASTSignedLiteral lit) {
-    lit.accept(getTraverser());
-    if (getTypeCheckResult().isPresentCurrentResult()) {
-      return Optional.of(getTypeCheckResult().getCurrentResult());
-    }
-    else {
-      return Optional.empty();
-    }
+    return Optional.empty();
   }
 
   /**
@@ -167,7 +107,7 @@ public class DeriveSymTypeOfOCLCombineExpressions
     traverser.add4MCSimpleGenericTypes(synthesizeSymTypeFromMCSimpleGenericTypes);
     traverser.setMCSimpleGenericTypesHandler(synthesizeSymTypeFromMCSimpleGenericTypes);
 
-    synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes();
+    synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes4OCL();
     synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(typeCheckResult);
     traverser.add4MCBasicTypes(synthesizeSymTypeFromMCBasicTypes);
     traverser.setMCBasicTypesHandler(synthesizeSymTypeFromMCBasicTypes);
