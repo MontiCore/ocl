@@ -94,10 +94,13 @@ public class SetType {
   }
 
   protected void addFieldAsList() {
+    SymTypeExpression returnType = SymTypeExpressionFactory
+      .createGenerics(getListType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+
     VariableSymbol field = OOSymbolsMill.variableSymbolBuilder()
       .setName("asList")
       .setEnclosingScope(setSymbol.getSpannedScope())
-      .setType(getSetOfXSymType())
+      .setType(returnType)
       .build();
 
     setSymbol.getSpannedScope().add(field);
