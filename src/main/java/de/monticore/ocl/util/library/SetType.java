@@ -77,7 +77,7 @@ public class SetType {
       .createGenerics(getCollectionType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
   }
 
-  protected SymTypeExpression getListOfXSymType(){
+  protected SymTypeExpression getListOfXSymType() {
     return SymTypeExpressionFactory
       .createGenerics(getListType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
   }

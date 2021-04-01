@@ -4,7 +4,17 @@ ocl list {
       la = List{1, 2, 3};
       lb = List{4, 5, 6}
     in
-      la.size == lb.rest.size
-      && la.isEmpty == lb.isEmpty;
-
+      la.add(3) == lb.add(3, 2) &&
+      la.prepend(3) == la.addAll(lb) &&
+      la.addAll(2, lb) == la.subList(0,1) &&
+      la.contains(2) == la.containsAll(lb) &&
+      la.get(0) == la.first &&
+      la.last() == la.size &&
+      la.rest == la.set(1, 1) &&
+      la.indexOf(2) == la.lastIndexOf(2) &&
+      la.isEmpty == false &&
+      //la.count(1) == la.flatten &&
+      la.remove(3) == la.removeAtIndex(2) &&
+      la.removeAll(lb) == la.retainAll(lb)
+    ;
 }
