@@ -535,7 +535,7 @@ public class DeriveSymTypeOfOCLExpressions
     if (arrayResult.getDim() > 1) {
       //case 1: A[][] bar -> bar[3] returns the type A[] -> decrease the dimension of the array by 1
       wholeResult = SymTypeExpressionFactory
-        .createTypeArray(arrayTypeResult.getTypeInfo().getName(), getScope(scope),
+        .createTypeArray(arrayTypeResult.getTypeInfo(),
           arrayResult.getDim() - 1, SymTypeExpressionFactory.createTypeConstant("int"));
     }
     else {
@@ -550,17 +550,17 @@ public class DeriveSymTypeOfOCLExpressions
         else {
           //if the return type is an object
           wholeResult = SymTypeExpressionFactory
-            .createTypeObject(arrayResult.getTypeInfo().getName(), getScope(scope));
+            .createTypeObject(arrayResult.getTypeInfo());
         }
       }
       else {
         //the return type must be a generic
         List<SymTypeExpression> typeArgs = Lists.newArrayList();
         for (TypeVarSymbol s : arrayResult.getTypeInfo().getTypeParameterList()) {
-          typeArgs.add(SymTypeExpressionFactory.createTypeVariable(s.getName(), getScope(scope)));
+          typeArgs.add(SymTypeExpressionFactory.createTypeVariable(s));
         }
         wholeResult = SymTypeExpressionFactory
-          .createGenerics(arrayResult.getTypeInfo().getName(), getScope(scope), typeArgs);
+          .createGenerics(arrayResult.getTypeInfo(), typeArgs);
         wholeResult = replaceTypeVariables(wholeResult, typeArgs,
           ((SymTypeOfGenerics) arrayResult.getArgument()).getArgumentList());
       }

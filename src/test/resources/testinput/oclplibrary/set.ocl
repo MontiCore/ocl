@@ -1,0 +1,20 @@
+ocl set {
+  inv:
+    let
+      sa = Set{1, 2, 3};
+      sb = Set{4, 5, 6}
+    in
+      (sa.add(5) == sb &&
+      sa.addAll(sb) == sb &&
+      sa.contains(2) &&
+      sa.containsAll(sb) &&
+      sa.count(2) == 1 &&
+      sa.isEmpty == false) &&
+      (sa.remove(3) == sa.remove(1) &&
+      sa.removeAll(sb) == sa &&
+      sa.retainAll(sb) == sb.retainAll(sa) &&
+      sa.symmetricDifference(sb) == sb &&
+      sa.size == sb.size() &&
+      sa.flatten == 1)
+    ;
+}

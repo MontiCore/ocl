@@ -13,6 +13,10 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
 import de.monticore.ocl.setexpressions._symboltable.SetExpressionsSymbolTableCompleter;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.ocl.util.library.CollectionType;
+import de.monticore.ocl.util.library.GlobalQueries;
+import de.monticore.ocl.util.library.ListType;
+import de.monticore.ocl.util.library.SetType;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbolDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolDeSer;
@@ -36,8 +40,24 @@ public class SymbolTableUtil {
 
     OOSymbolsMill.globalScope().setModelPath(new ModelPath(Paths.get("")));
     Java2MCResolver resolver = new Java2MCResolver(OOSymbolsMill.globalScope());
-    OCLMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
     OOSymbolsMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
+    OCLMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
+
+    addOclpLibrary();
+  }
+
+  protected static void addOclpLibrary() {
+    CollectionType c = new CollectionType();
+    ListType l = new ListType();
+    SetType s = new SetType();
+    GlobalQueries g = new GlobalQueries();
+    c.addCollectionType();
+    l.addListType();
+    s.addSetType();
+    c.addMethodsAndFields();
+    l.addMethodsAndFields();
+    s.addMethodsAndFields();
+    g.addMethodsAndFields();
   }
 
   static public void runSymTabGenitor(ASTOCLCompilationUnit ast) {
@@ -85,7 +105,7 @@ public class SymbolTableUtil {
   }
 
   public static void ignoreSymbolKind(String symbolFqn) {
-    ((OCLDeSer)OCLMill.globalScope().getDeSer()).ignoreSymbolKind(symbolFqn);
+    ((OCLDeSer) OCLMill.globalScope().getDeSer()).ignoreSymbolKind(symbolFqn);
   }
 
   public static void addCd4cSymbols() {

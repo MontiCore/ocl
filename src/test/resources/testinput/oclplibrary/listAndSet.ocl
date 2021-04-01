@@ -1,0 +1,12 @@
+ocl listAndSet {
+  inv:
+    let
+      la = List{1, 2, 3};
+      sa = Set{1, 2, 3}
+    in
+      la.asSet == sa &&
+      la.asSet.asList.asSet == sa &&
+      sa.asList == la &&
+      sa.asList.asSet == sa
+    ;
+}

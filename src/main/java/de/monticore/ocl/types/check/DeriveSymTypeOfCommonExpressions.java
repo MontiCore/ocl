@@ -100,7 +100,7 @@ public class DeriveSymTypeOfCommonExpressions
         }
         if (match) {
           SymTypeExpression wholeResult = SymTypeExpressionFactory
-            .createTypeExpression(typeSymbol.getName(), typeSymbol.getEnclosingScope());
+            .createTypeExpression(typeSymbol);
           typeCheckResult.setType();
           typeCheckResult.setCurrentResult(wholeResult);
         }
@@ -158,7 +158,7 @@ public class DeriveSymTypeOfCommonExpressions
       if (typeSymbolOpt.isPresent()) {
         TypeSymbol typeSymbol = typeSymbolOpt.get();
         SymTypeExpression type = SymTypeExpressionFactory
-          .createTypeExpression(typeSymbol.getName(), typeSymbol.getEnclosingScope());
+          .createTypeExpression(typeSymbol);
         typeCheckResult.setType();
         typeCheckResult.setCurrentResult(type);
       }
