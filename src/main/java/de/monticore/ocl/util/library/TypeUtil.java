@@ -25,6 +25,10 @@ public class TypeUtil {
     return SymTypeExpressionFactory.createTypeConstant("Set").getTypeInfo();
   }
 
+  protected static TypeSymbol getCollectionType() {
+    return SymTypeExpressionFactory.createTypeConstant("Collection").getTypeInfo();
+  }
+
   protected static void addParam(FunctionSymbol function, String paramName,
     SymTypeExpression paramType) {
     VariableSymbol oParam = OOSymbolsMill.variableSymbolBuilder()

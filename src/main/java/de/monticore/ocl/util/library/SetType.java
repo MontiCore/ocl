@@ -9,6 +9,8 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfGenerics;
+import sun.jvm.hotspot.debugger.cdbg.Sym;
 
 import static de.monticore.ocl.util.library.TypeUtil.*;
 
@@ -21,6 +23,9 @@ public class SetType {
   TypeVarSymbol typeVarSymbol;
 
   public void addSetType() {
+    SymTypeOfGenerics superType = SymTypeExpressionFactory
+      .createGenerics(getCollectionType(),
+        SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
     setSymbol = OCLMill.typeSymbolBuilder()
       .setName("Set")
       .setEnclosingScope(OCLMill.globalScope())
@@ -36,6 +41,10 @@ public class SetType {
 
   public void addMethodsAndFields() {
     addFunctionAdd();
+    addFunctionAddAll();
+    addFunctionContains();
+    addFunctionContainsAll();
+    addFunctionCount();
     addFieldIsEmpty();
     addFieldSize();
     addFieldAsList();
@@ -58,6 +67,11 @@ public class SetType {
       .createGenerics(setSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
   }
 
+  protected SymTypeExpression getCollectionOfXSymType() {
+    return SymTypeExpressionFactory
+      .createGenerics(getCollectionType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+  }
+
   /* ============================================================ */
   /* ========================== METHODS ========================= */
   /* ============================================================ */
@@ -67,6 +81,26 @@ public class SetType {
     addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
     function.setReturnType(getSetOfXSymType());
     setSymbol.getSpannedScope().add(function);
+  }
+
+  private void addFunctionAddAll() {
+    FunctionSymbol function = createMethod("addAll");
+    addParam(function, "c", getCollectionOfXSymType());
+    function.setReturnType(getSetOfXSymType());
+    setSymbol.getSpannedScope().add(function);
+  }
+
+  private void addFunctionContains() {
+    FunctionSymbol function = createMethod("contains");
+    addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    function.setReturnType(getSetOfXSymType());
+    setSymbol.getSpannedScope().add(function);
+  }
+
+  private void addFunctionCount() {
+  }
+
+  private void addFunctionContainsAll() {
   }
 
   /* ============================================================ */
