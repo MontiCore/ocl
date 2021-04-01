@@ -41,23 +41,37 @@ public class SetType {
     addFieldAsList();
   }
 
-  protected void addFunctionAdd() {
-    FunctionSymbol function = OCLMill.functionSymbolBuilder()
-      .setName("add")
+  /* ============================================================ */
+  /* ========================= HELPERS ========================== */
+  /* ============================================================ */
+
+  protected FunctionSymbol createMethod(String name) {
+    return OCLMill.functionSymbolBuilder()
+      .setName(name)
       .setEnclosingScope(setSymbol.getSpannedScope())
       .setSpannedScope(OCLMill.scope())
       .build();
+  }
 
-    //parameter o of type X
-    addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-
-    //create and set return type of the method
-    SymTypeExpression returnTypePrepend = SymTypeExpressionFactory
+  protected SymTypeExpression getSetOfXSymType() {
+    return SymTypeExpressionFactory
       .createGenerics(setSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(returnTypePrepend);
+  }
 
+  /* ============================================================ */
+  /* ========================== METHODS ========================= */
+  /* ============================================================ */
+
+  protected void addFunctionAdd() {
+    FunctionSymbol function = createMethod("add");
+    addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    function.setReturnType(getSetOfXSymType());
     setSymbol.getSpannedScope().add(function);
   }
+
+  /* ============================================================ */
+  /* ========================== FIELDS ========================== */
+  /* ============================================================ */
 
   protected void addFieldIsEmpty() {
     VariableSymbol field = OOSymbolsMill.variableSymbolBuilder()
@@ -73,7 +87,6 @@ public class SetType {
     VariableSymbol sizeField = OOSymbolsMill.variableSymbolBuilder()
       .setName("size")
       .setEnclosingScope(setSymbol.getSpannedScope())
-      //the type of the parameter is X
       .setType(getIntSymType())
       .build();
 
@@ -81,13 +94,10 @@ public class SetType {
   }
 
   protected void addFieldAsList() {
-    SymTypeExpression returnType = SymTypeExpressionFactory
-      .createGenerics(getListType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-
     VariableSymbol field = OOSymbolsMill.variableSymbolBuilder()
       .setName("asList")
       .setEnclosingScope(setSymbol.getSpannedScope())
-      .setType(returnType)
+      .setType(getSetOfXSymType())
       .build();
 
     setSymbol.getSpannedScope().add(field);

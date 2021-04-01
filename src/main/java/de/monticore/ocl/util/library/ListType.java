@@ -46,57 +46,52 @@ public class ListType {
     addFieldAsSet();
   }
 
-  protected void addFunctionAdd() {
-    FunctionSymbol function = OCLMill.functionSymbolBuilder()
-      .setName("add")
+  /* ============================================================ */
+  /* ========================= HELPERS ========================== */
+  /* ============================================================ */
+
+  protected FunctionSymbol createMethod(String name) {
+    return OCLMill.functionSymbolBuilder()
+      .setName(name)
       .setEnclosingScope(listSymbol.getSpannedScope())
       .setSpannedScope(OCLMill.scope())
       .build();
+  }
 
-    addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-
-    //create and set return type of the method
-    SymTypeExpression returnType = SymTypeExpressionFactory
+  protected SymTypeExpression getListOfXSymType() {
+    return SymTypeExpressionFactory
       .createGenerics(listSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(returnType);
+  }
 
+  /* ============================================================ */
+  /* ========================== METHODS ========================= */
+  /* ============================================================ */
+
+  protected void addFunctionAdd() {
+    FunctionSymbol function = createMethod("add");
+    addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    function.setReturnType(getListOfXSymType());
     listSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionAdd2() {
-    FunctionSymbol function = OCLMill.functionSymbolBuilder()
-      .setName("add")
-      .setEnclosingScope(listSymbol.getSpannedScope())
-      .setSpannedScope(OCLMill.scope())
-      .build();
-
+    FunctionSymbol function = createMethod("add");
     addParam(function, "index", getIntSymType());
     addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-
-    //create and set return type of the method
-    SymTypeExpression returnType = SymTypeExpressionFactory
-      .createGenerics(listSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(returnType);
-
+    function.setReturnType(getListOfXSymType());
     listSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionPrepend() {
-    FunctionSymbol function = OCLMill.functionSymbolBuilder()
-      .setName("prepend")
-      .setEnclosingScope(listSymbol.getSpannedScope())
-      .setSpannedScope(OCLMill.scope())
-      .build();
-
+    FunctionSymbol function = createMethod("add");
     addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-
-    //create and set return type of the method
-    SymTypeExpression returnType = SymTypeExpressionFactory
-      .createGenerics(listSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(returnType);
-
+    function.setReturnType(getListOfXSymType());
     listSymbol.getSpannedScope().add(function);
   }
+
+  /* ============================================================ */
+  /* ========================== FIELDS ========================== */
+  /* ============================================================ */
 
   protected void addFieldFirst() {
     VariableSymbol field = OOSymbolsMill.variableSymbolBuilder()
@@ -119,13 +114,10 @@ public class ListType {
   }
 
   protected void addFieldRest() {
-    SymTypeExpression returnType = SymTypeExpressionFactory
-      .createGenerics(listSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-
     VariableSymbol field = OOSymbolsMill.variableSymbolBuilder()
       .setName("rest")
       .setEnclosingScope(listSymbol.getSpannedScope())
-      .setType(returnType)
+      .setType(getListOfXSymType())
       .build();
 
     listSymbol.getSpannedScope().add(field);
@@ -145,7 +137,6 @@ public class ListType {
     VariableSymbol sizeField = OOSymbolsMill.variableSymbolBuilder()
       .setName("size")
       .setEnclosingScope(listSymbol.getSpannedScope())
-      //the type of the parameter is X
       .setType(getIntSymType())
       .build();
 
@@ -153,13 +144,10 @@ public class ListType {
   }
 
   protected void addFieldAsSet() {
-    SymTypeExpression returnType = SymTypeExpressionFactory
-      .createGenerics(getSetType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-
     VariableSymbol field = OOSymbolsMill.variableSymbolBuilder()
       .setName("asSet")
       .setEnclosingScope(listSymbol.getSpannedScope())
-      .setType(returnType)
+      .setType(getListOfXSymType())
       .build();
 
     listSymbol.getSpannedScope().add(field);
