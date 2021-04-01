@@ -104,10 +104,8 @@ public class DeriveSymTypeOfSetExpressions
       String right = rightGeneric.getTypeInfo().getName();
       if (collections.contains(left) && unbox(left).equals(unbox(right))) {
         if (compatible(leftGeneric.getArgument(0), rightGeneric.getArgument(0))) {
-          TypeSymbol loader = new TypeSymbolSurrogate(left);
-          loader.setEnclosingScope(getScope(expr.getEnclosingScope()));
           wholeResult = Optional.of(SymTypeExpressionFactory
-            .createGenerics(loader, leftGeneric.getArgument(0).deepClone()));
+            .createGenerics(leftGeneric.getTypeInfo(), leftGeneric.getArgument(0).deepClone()));
         }
         else if (compatible(rightGeneric.getArgument(0), leftGeneric.getArgument(0))) {
           TypeSymbol loader = new TypeSymbolSurrogate(right);
@@ -150,7 +148,7 @@ public class DeriveSymTypeOfSetExpressions
         }
         else {
           result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
-            getTypeInfo().getName(), getScope(node.getEnclosingScope()));
+            getTypeInfo());
           typeCheckResult.reset();
 
         }
@@ -230,7 +228,7 @@ public class DeriveSymTypeOfSetExpressions
         }
         else {
           result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
-            getTypeInfo().getName(), getScope(node.getEnclosingScope()));
+            getTypeInfo());
           typeCheckResult.reset();
         }
       }

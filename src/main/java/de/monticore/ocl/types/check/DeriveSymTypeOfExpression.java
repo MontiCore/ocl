@@ -6,10 +6,9 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypeExpressionFactory;
 
 import java.util.Optional;
-
-import static de.monticore.types.check.SymTypeExpressionFactory.*;
 
 public class DeriveSymTypeOfExpression
   extends de.monticore.types.check.DeriveSymTypeOfExpression {
@@ -21,7 +20,7 @@ public class DeriveSymTypeOfExpression
       .resolveTypeVar(expr.getName());
     Optional<TypeSymbol> optType = getScope(expr.getEnclosingScope()).resolveType(expr.getName());
     if (expr.getName().equals("null")) {
-      SymTypeExpression res = createTypeOfNull();
+      SymTypeExpression res = SymTypeExpressionFactory.createTypeOfNull();
       return Optional.of(res);
     }
     else if (optVar.isPresent()) {
@@ -34,14 +33,14 @@ public class DeriveSymTypeOfExpression
     }
     else if (optTypeVar.isPresent()) {
       TypeVarSymbol typeVar = optTypeVar.get();
-      SymTypeExpression res = createTypeVariable(typeVar);
+      SymTypeExpression res = SymTypeExpressionFactory.createTypeVariable(typeVar);
       typeCheckResult.setType();
       return Optional.of(res);
     }
     else if (optType.isPresent()) {
       //no variable found, test if name is type
       TypeSymbol type = optType.get();
-      SymTypeExpression res = createTypeExpression(type);
+      SymTypeExpression res = SymTypeExpressionFactory.createTypeExpression(type);
       typeCheckResult.setType();
       return Optional.of(res);
     }
