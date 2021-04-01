@@ -13,6 +13,10 @@ public class TypeUtil {
     return SymTypeExpressionFactory.createTypeConstant("int");
   }
 
+  protected static SymTypeExpression getLongSymType() {
+    return SymTypeExpressionFactory.createTypeConstant("long");
+  }
+
   protected static SymTypeExpression getBoolSymType() {
     return SymTypeExpressionFactory.createTypeConstant("boolean");
   }

@@ -46,7 +46,8 @@ public class OCLCoCoTest extends AbstractTest {
     "src/test/resources/testinput/oclplibrary/collection.ocl",
     "src/test/resources/testinput/oclplibrary/list.ocl",
     "src/test/resources/testinput/oclplibrary/listAndSet.ocl",
-    "src/test/resources/testinput/oclplibrary/set.ocl"
+    "src/test/resources/testinput/oclplibrary/set.ocl",
+    "src/test/resources/testinput/oclplibrary/staticQueries.ocl"
   })
   public void shouldAcceptOclpLibrary(final String oclFile) {
     // given

@@ -14,6 +14,7 @@ import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCom
 import de.monticore.ocl.setexpressions._symboltable.SetExpressionsSymbolTableCompleter;
 import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.ocl.util.library.CollectionType;
+import de.monticore.ocl.util.library.GlobalQueries;
 import de.monticore.ocl.util.library.ListType;
 import de.monticore.ocl.util.library.SetType;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
@@ -49,12 +50,14 @@ public class SymbolTableUtil {
     CollectionType c = new CollectionType();
     ListType l = new ListType();
     SetType s = new SetType();
+    GlobalQueries g = new GlobalQueries();
     c.addCollectionType();
     l.addListType();
     s.addSetType();
     c.addMethodsAndFields();
     l.addMethodsAndFields();
     s.addMethodsAndFields();
+    g.addMethodsAndFields();
   }
 
   static public void runSymTabGenitor(ASTOCLCompilationUnit ast) {
