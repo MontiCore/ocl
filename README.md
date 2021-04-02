@@ -416,7 +416,7 @@ Otherwise, to convert the class diagram into a symbol file you need to use the
 `CDCLI.jar` from the 
 [CD4Analysis Project][cd4c] and convert the class diagram file using the following command:
 ```
-java -jar CDCLI.jar -d false --fieldfromrole navigable -i src/test/resources/docs/Bookshop/Bookshop.cd mytypes/Bookshop.sym
+java -jar CDCLI.jar -d false --fieldfromrole navigable -i src/test/resources/docs/Bookshop/Bookshop.cd -s mytypes/Bookshop.sym
 ```
 
 The contents of the symbol file are of minor importance for you as a language 
