@@ -7,7 +7,6 @@ import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.Deque;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,14 +15,6 @@ import static de.monticore.ocl.ocl._symboltable.OCLSymbolTableHelper.getImportSt
 public class OCLScopesGenitor extends OCLScopesGenitorTOP {
   public OCLScopesGenitor() {
     super();
-  }
-
-  public OCLScopesGenitor(IOCLScope enclosingScope) {
-    super(enclosingScope);
-  }
-
-  public OCLScopesGenitor(Deque<? extends IOCLScope> scopeStack) {
-    super(scopeStack);
   }
 
   @Override
@@ -71,8 +62,28 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
   @Override
   public  void visit (de.monticore.ocl.ocl._ast.ASTOCLInvariant node)  {
     if (node.isPresentName()) {
-      OCLInvariantSymbol symbol = create_OCLInvariant(node).build();
-      addToScopeAndLinkWithNode(symbol, node);
+      OCLInvariantSymbol symbol = OCLMill.oCLInvariantSymbolBuilder().setName(node.getName()).build();
+      if (getCurrentScope().isPresent()) {
+        getCurrentScope().get().add(symbol);
+      } else {
+        Log.warn("0xA50212 Symbol cannot be added to current scope, since no scope exists.");
+      }
+      IOCLScope scope = createScope(false);
+      putOnStack(scope);
+      symbol.setSpannedScope(scope);
+      // symbol -> ast
+      symbol.setAstNode(node);
+
+      // ast -> symbol
+      node.setSymbol(symbol);
+      node.setEnclosingScope(symbol.getEnclosingScope());
+
+      // ast -> spannedScope
+      // scope -> ast
+      scope.setAstNode(node);
+
+      // ast -> scope
+      node.setSpannedScope(scope);
     }
   }
 }
