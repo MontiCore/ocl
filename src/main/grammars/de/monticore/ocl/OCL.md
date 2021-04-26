@@ -170,7 +170,7 @@ This is needed, because we deliberately choose to use the same
 expression sublanguage as e.g. Java does and thus rule out side effects
 via this condition.
 
-* [```IterateExpressionVariableUsageIsCorrect```](../../../../java/de/monticore/ocl/ocl/_cocos/IterateExpressionVariableUsageIsCorrect.java)  
+* [```IterateExpressionVariableUsageIsCorrect```](../../../../java/de/monticore/ocl/oclexpressions/_cocos/IterateExpressionVariableUsageIsCorrect.java)  
 checks the variable introduced by an iterate expression is used in the accumulator part of the expression.
 
 * [```ParameterNamesUnique```](../../../../java/de/monticore/ocl/ocl/_cocos/ParameterNamesUnique.java)  
@@ -179,7 +179,7 @@ checks the names of parameters are not already declared.
 * [```PreAndPostConditionsAreBooleanType```](../../../../java/de/monticore/ocl/ocl/_cocos/PreAndPostConditionsAreBooleanType.java)  
 checks the expressions used in pre- and postconditions return booleans.
 
-* [```SetComprehensionHasGenerator```](../../../../java/de/monticore/ocl/ocl/_cocos/SetComprehensionHasGenerator.java)  
+* [```SetComprehensionHasGenerator```](../../../../java/de/monticore/ocl/setexpressions/_cocos/SetComprehensionHasGenerator.java)  
 checks the set comprehensions always have a generator part.
 
 * [```UnnamedInvariantDoesNotHaveParameters```](../../../../java/de/monticore/ocl/ocl/_cocos/UnnamedInvariantDoesNotHaveParameters.java)  
