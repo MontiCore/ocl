@@ -163,6 +163,6 @@ Check MD Links:
     - "linkCheckRes=$(java -jar MDLinkCheckerCLI.jar -url $url -t $secibuildtoken)"
     - "echo \"$linkCheckRes\""
     - "if [[ $linkCheckRes == *\"ERROR\"* ]]; then exit 1; fi"
-  only:
-    - develop
+  #only:
+  #  - develop
 
