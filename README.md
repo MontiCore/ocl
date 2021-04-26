@@ -170,9 +170,8 @@ available in GitHub, execute the following commands.
 
 First, clone the repository:
 ```
-git clone git@git.rwth-aachen.de:monticore/languages/OCL.git
+git clone https://github.com/MontiCore/ocl.git
 ```
-**//TODO: Nach GitHub Release Link ersetzen**
 
 Change the directory to the root directory of the cloned sources:
 ```
