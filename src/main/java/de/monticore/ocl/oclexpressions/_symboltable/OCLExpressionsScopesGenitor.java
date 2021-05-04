@@ -1,6 +1,8 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.oclexpressions._symboltable;
 
+import de.monticore.ocl.ocl._symboltable.IOCLScope;
+import de.monticore.ocl.oclexpressions.OCLExpressionsMill;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclarationVariable;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
@@ -8,22 +10,12 @@ import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.Deque;
-
 public class OCLExpressionsScopesGenitor extends OCLExpressionsScopesGenitorTOP {
 
   protected DeriveSymTypeOfOCLCombineExpressions typeVisitor;
 
   public OCLExpressionsScopesGenitor(){
     super();
-  }
-
-  public OCLExpressionsScopesGenitor(IOCLExpressionsScope enclosingScope) {
-    super(enclosingScope);
-  }
-
-  public OCLExpressionsScopesGenitor(Deque<? extends IOCLExpressionsScope> scopeStack) {
-    super(scopeStack);
   }
 
   public void setTypeVisitor(DeriveSymTypeOfOCLCombineExpressions typesCalculator) {
@@ -42,11 +34,21 @@ public class OCLExpressionsScopesGenitor extends OCLExpressionsScopesGenitorTOP 
 
   @Override
   public void endVisit(ASTOCLVariableDeclaration node){
-    VariableSymbol symbol = create_OCLVariableDeclaration(node).build();
+    VariableSymbol symbol = OCLExpressionsMill.variableSymbolBuilder().setName(node.getName()).build();
     if(getCurrentScope().isPresent()){
       symbol.setEnclosingScope(getCurrentScope().get());
     }
-    addToScopeAndLinkWithNode(symbol, node);
+    if (getCurrentScope().isPresent()) {
+      getCurrentScope().get().add(symbol);
+    } else {
+      Log.warn("0xA50212 Symbol cannot be added to current scope, since no scope exists.");
+    }
+    // symbol -> ast
+    symbol.setAstNode(node);
+
+    // ast -> symbol
+    node.setSymbol(symbol);
+    node.setEnclosingScope(symbol.getEnclosingScope());
   }
 
   @Override
@@ -57,11 +59,21 @@ public class OCLExpressionsScopesGenitor extends OCLExpressionsScopesGenitorTOP 
   @Override
   public void endVisit(ASTInDeclaration node){
     for(int i = 0; i < node.getInDeclarationVariableList().size(); i++){
-      VariableSymbol symbol = create_InDeclarationVariable(node.getInDeclarationVariable(i)).build();
+      VariableSymbol symbol = OCLExpressionsMill.variableSymbolBuilder().setName(node.getInDeclarationVariable(i).getName()).build();
       if(getCurrentScope().isPresent()){
         symbol.setEnclosingScope(getCurrentScope().get());
       }
-      addToScopeAndLinkWithNode(symbol, node.getInDeclarationVariable(i));
+      if (getCurrentScope().isPresent()) {
+        getCurrentScope().get().add(symbol);
+      } else {
+        Log.warn("0xA50212 Symbol cannot be added to current scope, since no scope exists.");
+      }
+      // symbol -> ast
+      symbol.setAstNode(node.getInDeclarationVariable(i));
+
+      // ast -> symbol
+      node.getInDeclarationVariable(i).setSymbol(symbol);
+      node.getInDeclarationVariable(i).setEnclosingScope(symbol.getEnclosingScope());
       if (node.isPresentMCType()) {
         node.getMCType().setEnclosingScope(symbol.getEnclosingScope());
         node.getMCType().accept(getTraverser());

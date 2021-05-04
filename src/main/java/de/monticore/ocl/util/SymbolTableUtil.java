@@ -33,6 +33,9 @@ import java.nio.file.Paths;
  */
 public class SymbolTableUtil {
   static public void prepareMill() {
+    OOSymbolsMill.reset();
+    OOSymbolsMill.init();
+
     OCLMill.reset();
     OCLMill.init();
     OCLMill.globalScope().clear();

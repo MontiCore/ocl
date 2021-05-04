@@ -9,14 +9,14 @@
 
     <groupId>de.monticore.lang</groupId>
     <artifactId>ocl</artifactId>
-    <version>6.8.0-SNAPSHOT</version>
+    <version>7.1.0-SNAPSHOT</version>
 
     <!-- == PROJECT DEPENDENCIES ============================================= -->
 
     <properties>
 
         <!-- .. SE-Libraries .................................................. -->
-        <monticore.version>6.8.0-SNAPSHOT</monticore.version>
+        <monticore.version>7.1.0-SNAPSHOT</monticore.version>
         <se-commons.version>1.7.9</se-commons.version>
         <mc.grammars.assembly.version>0.0.10</mc.grammars.assembly.version>
 

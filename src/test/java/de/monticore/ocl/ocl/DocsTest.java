@@ -5,6 +5,7 @@ import de.monticore.ocl.OCLCLI;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._symboltable.OCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLDeSer;
+import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.util.SymbolTableUtil;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,10 +47,10 @@ public class DocsTest extends AbstractTest {
     cli.checkAllCoCos(ast.get());
 
     // when (serialize)
-    OCLDeSer deSer = new OCLDeSer();
-    String serialized = deSer.serialize((OCLArtifactScope) ast.get().getEnclosingScope());
+    OCLSymbols2Json symbols2Json = new OCLSymbols2Json();
+    String serialized = symbols2Json.serialize((OCLArtifactScope) ast.get().getEnclosingScope());
 
     // when (deserialize)
-    deSer.deserialize(serialized);
+    symbols2Json.deserialize(serialized);
   }
 }

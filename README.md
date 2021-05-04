@@ -133,19 +133,17 @@ wget "monticore.de/download/OCLCLI.jar" -O OCLCLI.jar
 
 The latest version of the CLI's Docker image can be obtained using 
 ```
-docker pull registry.git.rwth-aachen.de/monticore/languages/ocl/ocl
+docker pull monticore/ocl
 ```
-** //TODO: Nach Release durch Docker Hub Link ersetzen ** 
-** Solange nicht auf Docker Hub erst `docker login registry.git.rwth-aachen.de` aufrufen **
 
 In case you're using Docker, replace `java -jar OCLCLI.jar` in the following 
 by (for Windows PowerShell, Mac Terminal, or Linux Bash)
 ```
-docker run --rm -v ${PWD}:/input -w /input registry.git.rwth-aachen.de/monticore/languages/ocl/ocl
+docker run --rm -v ${PWD}:/input -w /input monticore/ocl
 ```
 or (for Windows Command Line)
 ```
-docker run --rm -v %CD%:/input -w /input registry.git.rwth-aachen.de/monticore/languages/ocl/ocl
+docker run --rm -v %CD%:/input -w /input monticore/ocl
 ```
 
 For example, this command from Step 2 of this tutorial
@@ -154,7 +152,7 @@ java -jar OCLCLI.jar -i Example.ocl -pp
 ```
 becomes
 ```
-docker run --rm -v ${PWD}:/input -w /input registry.git.rwth-aachen.de/monticore/languages/ocl/ocl -i Example.ocl -pp
+docker run --rm -v ${PWD}:/input -w /input monticore/ocl -i Example.ocl -pp
 ```
 when using Docker.
 
@@ -170,9 +168,8 @@ available in GitHub, execute the following commands.
 
 First, clone the repository:
 ```
-git clone git@git.rwth-aachen.de:monticore/languages/OCL.git
+git clone https://github.com/MontiCore/ocl.git
 ```
-**//TODO: Nach GitHub Release Link ersetzen**
 
 Change the directory to the root directory of the cloned sources:
 ```
@@ -416,7 +413,7 @@ Otherwise, to convert the class diagram into a symbol file you need to use the
 `CDCLI.jar` from the 
 [CD4Analysis Project][cd4c] and convert the class diagram file using the following command:
 ```
-java -jar CDCLI.jar -d false --fieldfromrole navigable -i src/test/resources/docs/Bookshop/Bookshop.cd mytypes/Bookshop.sym
+java -jar CDCLI.jar -d false --fieldfromrole navigable -i src/test/resources/docs/Bookshop/Bookshop.cd -s mytypes/Bookshop.sym
 ```
 
 The contents of the symbol file are of minor importance for you as a language 
