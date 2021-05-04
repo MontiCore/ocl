@@ -53,8 +53,6 @@ component grammar SetExpressions
     operator:"intersect"
     right:Expression;
 
-  // We do not introduce a special operator for the
-  // difference, because the binary "-" operator can here be used as well
 
   /*=================================================================*/
 

@@ -1,5 +1,5 @@
 #Build CLI
-FROM gradle:6.5.1-jdk8 as build
+FROM gradle:6.5-jdk11 as build
 ADD . /app
 WORKDIR /app
 RUN gradle build -x test -x javadoc

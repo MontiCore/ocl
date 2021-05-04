@@ -224,8 +224,8 @@ public class OCLCLI {
         if (cmd.getOptionValues("s") == null || cmd.getOptionValues("s").length == 0) {
           for (int i = 0; i < inputOCLs.size(); i++) {
             ASTOCLCompilationUnit ocl = inputOCLs.get(i);
-            OCLDeSer deSer = new OCLDeSer();
-            String serialized = deSer.serialize((OCLArtifactScope) ocl.getEnclosingScope());
+            OCLSymbols2Json symbols2Json = new OCLSymbols2Json();
+            String serialized = symbols2Json.serialize((OCLArtifactScope) ocl.getEnclosingScope());
 
             String fileName = cmd.getOptionValues("i")[i];
             String symbolFile = FilenameUtils.getName(fileName) + "sym";
@@ -372,8 +372,8 @@ public class OCLCLI {
    * @return the symbol table
    */
   public IOCLArtifactScope loadSymbols(String filename) {
-    OCLSymbols2Json deSer = new OCLSymbols2Json();
-    return deSer.load(filename);
+    OCLSymbols2Json symbols2Json = new OCLSymbols2Json();
+    return symbols2Json.load(filename);
   }
 
   /*=================================================================*/
@@ -387,8 +387,8 @@ public class OCLCLI {
    * @param filename The name of the produced symbol file.
    */
   public void storeSymbols(ASTOCLCompilationUnit ast, String filename) {
-    OCLDeSer deSer = new OCLDeSer();
-    String serialized = deSer.serialize((OCLArtifactScope) ast.getEnclosingScope());
+    OCLSymbols2Json symbols2Json = new OCLSymbols2Json();
+    String serialized = symbols2Json.serialize((OCLArtifactScope) ast.getEnclosingScope());
     FileReaderWriter.storeInFile(Paths.get(filename), serialized);
   }
 

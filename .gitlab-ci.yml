@@ -127,7 +127,7 @@ Code Quality:
     reports:
       codequality: codeclimate.json
 
-DeployNexus:
+Deploy Nexus:
   image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.5.1-jdk8
   stage: post-test
   only:
@@ -136,7 +136,7 @@ DeployNexus:
   script:
     - gradle publish -PmavenPassword=$pass -PmavenUser=$user
 
-DeployDocker:
+Deploy Docker:
   stage: post-test
   variables:
     DOCKER_DRIVER: overlay2
@@ -152,3 +152,18 @@ DeployDocker:
     - docker login -u sebot -p $sebot $CI_REGISTRY
     - docker build -t $CI_REGISTRY_IMAGE/ocl:latest .
     - docker image push $CI_REGISTRY_IMAGE/ocl:latest
+
+
+Check MD Links:
+  stage: post-test
+  needs: [] # can run immediately 
+  image: registry.git.rwth-aachen.de/monticore/container-registry/maven:3.5.4-jdk-8-alpine
+  script:
+    - "curl --location --header \"PRIVATE-TOKEN: $secibuildtoken\" \"https://git.rwth-aachen.de/api/v4/projects/monticore%2Fmdlinkchecker/jobs/artifacts/master/raw/target/libs/MDLinkCheckerCLI.jar?job=build\" --output MDLinkCheckerCLI.jar"
+    - "url=https://git.rwth-aachen.de/monticore/languages/OCL/-/tree/develop"
+    - "linkCheckRes=$(java -jar MDLinkCheckerCLI.jar -url $url -t $secibuildtoken)"
+    - "echo \"$linkCheckRes\""
+    - "if [[ $linkCheckRes == *\"ERROR\"* ]]; then exit 1; fi"
+  only:
+    - develop
+
