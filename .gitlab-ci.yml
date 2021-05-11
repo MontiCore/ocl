@@ -192,7 +192,8 @@ githubmirror:
     - git clone git@github.com:MontiCore/ocl.git
     - cd ..
     - rm -r tmp/ocl/*
-    - mv ocl/* tmp/ocl/
+    - dir
+    - mv OCL/* tmp/ocl/
     - cd tmp/ocl
     - git add --all
     - "(git commit -m 'Updated branch with most recent version.') || true"
