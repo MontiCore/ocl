@@ -4,7 +4,7 @@ package de.monticore.ocl;
 import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelper;
 import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.io.FileReaderWriter;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._cocos.*;
@@ -121,9 +121,9 @@ public class OCLCLI {
       }
 
       // we need the global scope for symbols and cocos
-      ModelPath modelPath = new ModelPath(Paths.get(""));
+      MCPath symbolPath = new MCPath(Paths.get(""));
       if (cmd.hasOption("p")) {
-        modelPath = new ModelPath(Arrays.stream(cmd.getOptionValues("p"))
+        symbolPath = new MCPath(Arrays.stream(cmd.getOptionValues("p"))
           .map(x -> Paths.get(x))
           .collect(Collectors.toList())
         );
@@ -135,7 +135,7 @@ public class OCLCLI {
       //
 
       IOCLGlobalScope globalScope = OCLMill.globalScope();
-      globalScope.setModelPath(modelPath);
+      globalScope.setSymbolPath(symbolPath);
 
       // Add custom symbols to deserialize
       if (cmd.hasOption("ts")) {
@@ -177,7 +177,7 @@ public class OCLCLI {
         if (cocoOptionValues.isEmpty() || cocoOptionValues.contains("type") || cmd.hasOption("s")) {
 
           // Deserialize *.sym files
-          for (Path path : modelPath.getFullPathOfEntries()) {
+          for (Path path : symbolPath.getEntries()) {
             try {
               Files.walk(path)
                 .filter(file -> file.toString().toLowerCase().matches(".*\\.[a-z]*sym$"))

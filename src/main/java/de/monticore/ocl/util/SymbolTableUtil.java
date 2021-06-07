@@ -1,8 +1,9 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.util;
 
+import de.monticore.class2mc.Class2MCResolver;
 import de.monticore.class2mc.Java2MCResolver;
-import de.monticore.io.paths.ModelPath;
+import de.monticore.io.paths.MCPath;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._symboltable.OCLDeSer;
@@ -41,8 +42,9 @@ public class SymbolTableUtil {
     OCLMill.globalScope().clear();
     BasicSymbolsMill.initializePrimitives();
 
-    OOSymbolsMill.globalScope().setModelPath(new ModelPath(Paths.get("")));
-    Java2MCResolver resolver = new Java2MCResolver(OOSymbolsMill.globalScope());
+    OOSymbolsMill.globalScope().setSymbolPath(new MCPath(Paths.get("")));
+    Class2MCResolver resolver = new Class2MCResolver();
+    OOSymbolsMill.globalScope().addAdaptedOOTypeSymbolResolver(resolver);
     OOSymbolsMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
     OCLMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
 
