@@ -55,7 +55,7 @@ public class ParserUtil {
   public static Collection<? extends ASTNode> parseModels(IGlobalScope scope, String fileEnding,
     MCConcreteParser parser) {
     Preconditions.checkArgument(scope != null);
-    return scope.getModelPath().getFullPathOfEntries().stream()
+    return scope.getSymbolPath().getEntries().stream()
       .flatMap(p -> parse(p, fileEnding, parser).stream())
       .collect(Collectors.toSet());
   }
