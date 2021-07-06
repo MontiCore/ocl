@@ -1,0 +1,5 @@
+/* (c) https://github.com/MontiCore/monticore */
+ocl setoperations18 {
+  inv:
+    {1, 4, 9, 16, 25} \ {16, 25} == {1, 4, 9};
+}

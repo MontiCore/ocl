@@ -146,8 +146,6 @@ compileJava {
   dependsOn project.collect { it.tasks.findAll { task -> task.name.startsWith("generateGrammar") } }
 }
 
-// Fixes issue with java plugin in projects without resources
-compileTestJava.doFirst { mkdir sourceSets.main.output.resourcesDir }
 
 // build sources jar in addition
 java {
@@ -157,6 +155,8 @@ java {
     usingSourceSet(sourceSets.grammars)
   }
 }
+
+sourcesJar.dependsOn project.collect { it.tasks.withType(MCTask)}
 
 
 // generated java doc contains errors, disable for now

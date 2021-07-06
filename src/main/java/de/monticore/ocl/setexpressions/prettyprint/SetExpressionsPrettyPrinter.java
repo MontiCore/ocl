@@ -29,6 +29,15 @@ public class SetExpressionsPrettyPrinter
   }
 
   @Override
+  public void handle(ASTSetNotInExpression node) {
+    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    node.getElem().accept(getTraverser());
+    getPrinter().print(" notin ");
+    node.getSet().accept(getTraverser());
+    CommentPrettyPrinter.printPostComments(node, getPrinter());
+  }
+
+  @Override
   public void handle(ASTUnionExpression node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     node.getLeft().accept(getTraverser());
@@ -42,6 +51,15 @@ public class SetExpressionsPrettyPrinter
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     node.getLeft().accept(getTraverser());
     getPrinter().print(" intersect ");
+    node.getRight().accept(getTraverser());
+    CommentPrettyPrinter.printPostComments(node, getPrinter());
+  }
+
+  @Override
+  public void handle(ASTSetMinusExpression node) {
+    CommentPrettyPrinter.printPreComments(node, getPrinter());
+    node.getLeft().accept(getTraverser());
+    getPrinter().print(" \\ ");
     node.getRight().accept(getTraverser());
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
