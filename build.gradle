@@ -166,7 +166,7 @@ javadoc.failOnError(false)
 // all in one cli-jar
 shadowJar {
   manifest {
-    attributes "Main-Class": "de.monticore.ocl.${archiveBaseName.get().toUpperCase()}CLI"
+    attributes "Main-Class": "de.monticore.ocl.ocl.${archiveBaseName.get().toUpperCase()}CLI"
   }
   archiveFileName = "${archiveBaseName.get().toUpperCase()}CLI.${archiveExtension.get()}"
   archiveClassifier = "cli"
