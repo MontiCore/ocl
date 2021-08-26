@@ -169,7 +169,6 @@ Check MD Links:
     - develop
 
 githubmirror:
-  image: maven:3-jdk-8
   stage: mirror
   dependencies:
     - Check MD Links
@@ -193,7 +192,8 @@ githubmirror:
     - cd ..
     - rm -r tmp/ocl/*
     - dir
-    - mv OCL/* tmp/ocl/
+    - shopt -s extglob
+    - mv OCL/!(MDLinkChangerCLI.jar) tmp/ocl/
     - cd tmp/ocl
     - git add --all
     - "(git commit -m 'Updated branch with most recent version.') || true"
