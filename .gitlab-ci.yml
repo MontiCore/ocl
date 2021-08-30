@@ -15,27 +15,6 @@ stages:
   - post-test
   - mirror
 
-variables:
-  # This will supress any download for dependencies and plugins or upload messages which would clutter the console log.
-  # `showDateTime` will show the passed time in milliseconds. You need to specify `--batch-mode` to make this work.
-  MAVEN_OPTS: "-Xmx4096m -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
-  # `installAtEnd` and `deployAtEnd`are only effective with recent version of the corresponding plugins.
-  MAVEN_CLI_OPTS: "-U -s settings.xml --batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true"
-
-
-# This will only validate and compile stuff and run e.g. maven-enforcer-plugin.
-# Because some enforcer rules might check dependency convergence and class duplications
-# we use `test-compile` here instead of `validate`, so the correct classpath is picked up.
-Validate Maven:
-  image: registry.git.rwth-aachen.de/monticore/container-registry/maven:3-jdk-8
-  stage: build
-  script:
-    - mvn $MAVEN_CLI_OPTS compile -Dmaven.test.skip=true
-  artifacts:
-    paths:
-      - ./target/
-    expire_in: 1 week
-
 Validate Gradle:
   image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.5.1-jdk8
   stage: build
@@ -62,11 +41,11 @@ Unit Test Gradle:
   stage: test
   coverage: '/\d+.\d+ \% covered/'
   script:
-    - mvn $MAVEN_CLI_OPTS test
+    - gradle test
     - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, "instructions covered"; print 100*covered/instructions, "% covered" }' ./target/site/jacoco/jacoco.csv
   dependencies:
-    - Validate Maven #download artifacts from build
-  needs: ["Validate Maven"]
+    - Validate Gradle #download artifacts from build
+  needs: ["Validate Gradle"]
   artifacts:
     reports:
       junit:
