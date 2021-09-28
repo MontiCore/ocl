@@ -111,7 +111,6 @@ Deploy Nexus:
   image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.5.1-jdk8
   stage: post-test
   only:
-    - master
     - develop 
   script:
     - gradle publish -PmavenPassword=$pass -PmavenUser=$user
