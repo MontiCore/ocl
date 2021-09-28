@@ -72,7 +72,7 @@ public class OCLDeSer extends OCLDeSerTOP {
         scope.add(s5);
       }
       else {
-        Log.warn("0xA1634xx97163 Unable to integrate deserialization with DeSer for kind `" + kind
+        Log.warn("0xA8F45 Unable to integrate deserialization with DeSer for kind `" + kind
           + "`. The following will be ignored: " + symbol);
       }
     }

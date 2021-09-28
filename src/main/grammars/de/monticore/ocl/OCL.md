@@ -55,7 +55,7 @@ ocl Bookshop {
 
 ## Command Line Interface (CLI) Usage
 
-The class [```OCLCLI```](../../../../java/de/monticore/ocl/OCLCLI.java) 
+The class [```OCLCLI```](../../../../java/de/monticore/ocl/ocl/OCLCLI.java) 
 provides typical functionality used when processing models. 
 To this effect, the class provides methods for parsing, pretty-printing, 
 creating symbol tables, storing symbols, and loading symbols. 

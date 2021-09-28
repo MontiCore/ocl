@@ -1,16 +1,15 @@
-// (c) https://github.com/MontiCore/monticore
-package de.monticore.ocl;
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.ocl.ocl;
 
-import de.monticore.generating.templateengine.reporting.commons.ASTNodeIdentHelper;
-import de.monticore.generating.templateengine.reporting.commons.ReportingRepository;
 import de.monticore.io.FileReaderWriter;
 import de.monticore.io.paths.MCPath;
-import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._cocos.*;
-import de.monticore.ocl.ocl._od.OCL2OD;
 import de.monticore.ocl.ocl._parser.OCLParser;
-import de.monticore.ocl.ocl._symboltable.*;
+import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
+import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
+import de.monticore.ocl.ocl._symboltable.OCLArtifactScope;
+import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.oclexpressions._cocos.IterateExpressionVariableUsageIsCorrect;
 import de.monticore.ocl.setexpressions._cocos.SetComprehensionHasGenerator;
@@ -19,11 +18,8 @@ import de.monticore.ocl.util.ParserUtil;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.cli.*;
 import org.apache.commons.io.FilenameUtils;
-
-import java.io.File;
-import java.io.FileWriter;
+import org.apache.commons.cli.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,26 +27,11 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * Command line interface for the OCL language and corresponding tooling.
- * Defines, handles, and executes the corresponding command line options and
- * arguments, such as --help
- */
-public class OCLCLI {
-
+public class OCLCLI extends OCLCLITOP {
   /*=================================================================*/
   /* Part 1: Handling the arguments and options
   /*=================================================================*/
 
-  /**
-   * Main method that is called from command line and runs the OCL tool.
-   *
-   * @param args The input parameters for configuring the OCL tool.
-   */
-  public static void main(String[] args) {
-    OCLCLI cli = new OCLCLI();
-    cli.run(args);
-  }
 
   /**
    * Processes user input from command line and delegates to the corresponding
@@ -58,8 +39,9 @@ public class OCLCLI {
    *
    * @param args The input parameters for configuring the OCL tool.
    */
+  @Override
   public void run(String[] args) {
-
+    init();
     Options options = initOptions();
 
     SymbolTableUtil.prepareMill();
@@ -79,8 +61,7 @@ public class OCLCLI {
       // -option developer logging
       if (cmd.hasOption("d")) {
         Log.initDEBUG();
-      }
-      else {
+      } else {
         Log.init();
       }
 
@@ -88,14 +69,8 @@ public class OCLCLI {
       // (only returns if successful)
       List<ASTOCLCompilationUnit> inputOCLs = new ArrayList<>();
       for (String inputFileName : cmd.getOptionValues("i")) {
-        Optional<ASTOCLCompilationUnit> ast = (Optional<ASTOCLCompilationUnit>) ParserUtil
-          .parse(inputFileName, new OCLParser());
-        if (ast.isPresent()) {
-          inputOCLs.add(ast.get());
-        }
-        else {
-          Log.error("0xOCL30 File '" + inputFileName + "' cannot be parsed");
-        }
+        ASTOCLCompilationUnit ast = parse(inputFileName);
+        inputOCLs.add(ast);
       }
 
       // -option pretty print
@@ -104,8 +79,8 @@ public class OCLCLI {
         int iArgs = cmd.getOptionValues("i") == null ? 0 : cmd.getOptionValues("i").length;
         if (ppArgs != 0 && ppArgs != iArgs) {
           Log.error("0xOCL31 Number of arguments of -pp (which is " + ppArgs
-            + ") must match number of arguments of -i (which is " + iArgs + "). "
-            + "Or provide no arguments to print to stdout.");
+              + ") must match number of arguments of -i (which is " + iArgs + "). "
+              + "Or provide no arguments to print to stdout.");
         }
 
         String[] paths = cmd.getOptionValues("pp");
@@ -116,7 +91,7 @@ public class OCLCLI {
             currentPath = paths[i];
             i++;
           }
-          prettyprint(compUnit, currentPath);
+          prettyPrint(compUnit, currentPath);
         }
       }
 
@@ -124,8 +99,8 @@ public class OCLCLI {
       MCPath symbolPath = new MCPath(Paths.get(""));
       if (cmd.hasOption("p")) {
         symbolPath = new MCPath(Arrays.stream(cmd.getOptionValues("p"))
-          .map(x -> Paths.get(x))
-          .collect(Collectors.toList())
+            .map(x -> Paths.get(x))
+            .collect(Collectors.toList())
         );
       }
 
@@ -172,7 +147,7 @@ public class OCLCLI {
       }
       if (cmd.hasOption("c") || cmd.hasOption("s")) {
         for (ASTOCLCompilationUnit ocl : inputOCLs) {
-          deriveSymbolSkeleton(ocl);
+          createSymbolTable(ocl);
         }
         if (cocoOptionValues.isEmpty() || cocoOptionValues.contains("type") || cmd.hasOption("s")) {
 
@@ -180,10 +155,9 @@ public class OCLCLI {
           for (Path path : symbolPath.getEntries()) {
             try {
               Files.walk(path)
-                .filter(file -> file.toString().toLowerCase().matches(".*\\.[a-z]*sym$"))
-                .forEach(file -> SymbolTableUtil.loadSymbolFile(file.toString()));
-            }
-            catch (IOException e) {
+                  .filter(file -> file.toString().toLowerCase().matches(".*\\.[a-z]*sym$"))
+                  .forEach(file -> SymbolTableUtil.loadSymbolFile(file.toString()));
+            } catch (IOException e) {
               e.printStackTrace();
               Log.error("0xA7106 Could not deserialize symbol files");
             }
@@ -202,20 +176,17 @@ public class OCLCLI {
           for (ASTOCLCompilationUnit ocl : inputOCLs) {
             checkAllCoCos(ocl);
           }
-        }
-        else if (cocoOptionValues.contains("inter")) {
+        } else if (cocoOptionValues.contains("inter")) {
           for (ASTOCLCompilationUnit sd : inputOCLs) {
             checkAllExceptTypeCoCos(sd);
           }
-        }
-        else if (cocoOptionValues.contains("intra")) {
+        } else if (cocoOptionValues.contains("intra")) {
           for (ASTOCLCompilationUnit sd : inputOCLs) {
             checkIntraModelCoCos(sd);
           }
-        }
-        else {
+        } else {
           Log.error(String.format("Received unexpected arguments '%s' for option 'coco'. "
-            + "Possible arguments are 'type', 'inter', and 'intra'.", cocoOptionValues.toString()));
+              + "Possible arguments are 'type', 'inter', and 'intra'.", cocoOptionValues.toString()));
         }
       }
 
@@ -234,15 +205,13 @@ public class OCLCLI {
             Path filePath = Paths.get(symbol_out, packagePath, symbolFile);
             FileReaderWriter.storeInFile(filePath, serialized);
           }
-        }
-        else if (cmd.getOptionValues("s").length != inputOCLs.size()) {
+        } else if (cmd.getOptionValues("s").length != inputOCLs.size()) {
           Log.error(String.format("Received '%s' output files for the storesymbols option. "
-              + "Expected that '%s' many output files are specified. "
-              + "If output files for the storesymbols option are specified, then the number "
-              + " of specified output files must be equal to the number of specified input files.",
-            cmd.getOptionValues("s").length, inputOCLs.size()));
-        }
-        else {
+                  + "Expected that '%s' many output files are specified. "
+                  + "If output files for the storesymbols option are specified, then the number "
+                  + " of specified output files must be equal to the number of specified input files.",
+              cmd.getOptionValues("s").length, inputOCLs.size()));
+        } else {
           for (int i = 0; i < inputOCLs.size(); i++) {
             ASTOCLCompilationUnit ocl_i = inputOCLs.get(i);
             storeSymbols(ocl_i, cmd.getOptionValues("s")[i]);
@@ -250,23 +219,10 @@ public class OCLCLI {
         }
       }
 
-    }
-    catch (ParseException e) {
+    } catch (ParseException e) {
       // ann unexpected error from the apache CLI parser:
       Log.error("0xA7101 Could not process CLI parameters: " + e.getMessage());
     }
-  }
-
-  /**
-   * Processes user input from command line and delegates to the corresponding
-   * tools.
-   *
-   * @param options The input parameters and options.
-   */
-  public void printHelp(Options options) {
-    HelpFormatter formatter = new HelpFormatter();
-    formatter.setWidth(80);
-    formatter.printHelp("OCLCLI", options);
   }
 
   /*=================================================================*/
@@ -279,7 +235,8 @@ public class OCLCLI {
    * @param path The path to the OCL-file as String
    * @return parsed AST
    */
-  public ASTOCLCompilationUnit parseFile(String path) {
+  @Override
+  public ASTOCLCompilationUnit parse(String path) {
     Optional<ASTOCLCompilationUnit> OCLCompilationUnit = Optional.empty();
 
     // disable fail-quick to find all parsing errors
@@ -288,8 +245,7 @@ public class OCLCLI {
       Path model = Paths.get(path);
       OCLParser parser = new OCLParser();
       OCLCompilationUnit = parser.parse(model.toString());
-    }
-    catch (IOException | NullPointerException e) {
+    } catch (IOException | NullPointerException e) {
       Log.error("0xA7102 Input file '" + path + "' not found.");
     }
 
@@ -299,13 +255,29 @@ public class OCLCLI {
   }
 
   /**
+   * Stores the symbols for ast in the symbol file filename.
+   * For example, if filename = "target/symbolfiles/file.oclsym", then the symbol file corresponding to
+   * ast is stored in the file "target/symbolfiles/file.oclsym".
+   *
+   * @param ast      The ast of the SD.
+   * @param filename The name of the produced symbol file.
+   */
+  public void storeSymbols(ASTOCLCompilationUnit ast, String filename) {
+    OCLSymbols2Json symbols2Json = new OCLSymbols2Json();
+    String serialized = symbols2Json.serialize((OCLArtifactScope) ast.getEnclosingScope());
+    FileReaderWriter.storeInFile(Paths.get(filename), serialized);
+  }
+
+
+  /**
    * Prints the contents of the OCL-AST to stdout or a specified file.
    *
    * @param oCLCompilationUnit The OCL-AST to be pretty printed
    * @param file               The target file name for printing the OCL artifact. If empty,
    *                           the content is printed to stdout instead
    */
-  public void prettyprint(ASTOCLCompilationUnit oCLCompilationUnit, String file) {
+  @Override
+  public void prettyPrint(ASTOCLCompilationUnit oCLCompilationUnit, String file) {
     // pretty print AST
     OCLFullPrettyPrinter pp = new OCLFullPrettyPrinter(new IndentPrinter());
     String OCL = pp.prettyprint(oCLCompilationUnit);
@@ -313,15 +285,8 @@ public class OCLCLI {
   }
 
   /**
-   * Derives symbols for ast and adds them to the globalScope.
-   * @param ast AST to create symtab for
-   */
-  public void deriveSymbolSkeleton(ASTOCLCompilationUnit ast) {
-    SymbolTableUtil.runSymTabGenitor(ast);
-  }
-
-  /**
    * Checks whether ast satisfies the intra-model CoCos.
+   *
    * @param ast AST to check intra-model cocos for
    */
   public void checkIntraModelCoCos(ASTOCLCompilationUnit ast) {
@@ -343,6 +308,7 @@ public class OCLCLI {
    * Checks whether ast satisfies the CoCos not targeting type correctness.
    * This method checks all CoCos except the CoCos, which check that used types
    * (for objects and variables) are defined.
+   *
    * @param ast AST to check cocos for
    */
   public void checkAllExceptTypeCoCos(ASTOCLCompilationUnit ast) {
@@ -354,6 +320,7 @@ public class OCLCLI {
 
   /**
    * Checks whether ast satisfies all CoCos.
+   *
    * @param ast AST to check cocos for
    */
   public void checkAllCoCos(ASTOCLCompilationUnit ast) {
@@ -378,126 +345,37 @@ public class OCLCLI {
 
   /*=================================================================*/
 
-  /**
-   * Stores the symbols for ast in the symbol file filename.
-   * For example, if filename = "target/symbolfiles/file.oclsym", then the symbol file corresponding to
-   * ast is stored in the file "target/symbolfiles/file.oclsym".
-   *
-   * @param ast      The ast of the SD.
-   * @param filename The name of the produced symbol file.
-   */
-  public void storeSymbols(ASTOCLCompilationUnit ast, String filename) {
-    OCLSymbols2Json symbols2Json = new OCLSymbols2Json();
-    String serialized = symbols2Json.serialize((OCLArtifactScope) ast.getEnclosingScope());
-    FileReaderWriter.storeInFile(Paths.get(filename), serialized);
-  }
-
-  /**
-   * Extracts the model name from a given file name. The model name corresponds
-   * to the unqualified file name without file extension.
-   *
-   * @param file The path to the input file
-   * @return The extracted model name
-   */
-  public String getModelNameFromFile(String file) {
-    String modelName = new File(file).getName();
-    // cut file extension if present
-    if (modelName.length() > 0) {
-      int lastIndex = modelName.lastIndexOf(".");
-      if (lastIndex != -1) {
-        modelName = modelName.substring(0, lastIndex);
-      }
-    }
-    return modelName;
-  }
-
-  /**
-   * Creates an object diagram for the OCL-AST to stdout or a specified file.
-   *
-   * @param oCLCompilationUnit The OCL-AST for which the object diagram is created
-   * @param modelName          The derived model name for the OCL-AST
-   * @param file               The target file name for printing the object diagram. If empty,
-   *                           the content is printed to stdout instead
-   */
-  public void ocl2od(ASTOCLCompilationUnit oCLCompilationUnit, String modelName, String file) {
-    // initialize OCL2od printer
-    IndentPrinter printer = new IndentPrinter();
-    ASTNodeIdentHelper identifierHelper = new ASTNodeIdentHelper();
-    ReportingRepository repository = new ReportingRepository(identifierHelper);
-    OCL2OD OCL2od = new OCL2OD(printer, repository);
-
-    // print object diagram
-    String od = OCL2od.printObjectDiagram((new File(modelName)).getName(), oCLCompilationUnit);
-    print(od, file);
-  }
-
-  /**
-   * Prints the given content to a target file (if specified) or to stdout (if
-   * the file is Optional.empty()).
-   *
-   * @param content The String to be printed
-   * @param path    The target path to the file for printing the content. If empty,
-   *                the content is printed to stdout instead
-   */
-  public void print(String content, String path) {
-    // print to stdout or file
-    if (path == null || path.isEmpty()) {
-      System.out.println(content);
-    }
-    else {
-      File f = new File(path);
-      // create directories (logs error otherwise)
-      f.getAbsoluteFile().getParentFile().mkdirs();
-
-      FileWriter writer;
-      try {
-        writer = new FileWriter(f);
-        writer.write(content);
-        writer.close();
-      }
-      catch (IOException e) {
-        Log.error("0xA7105 Could not write to file " + f.getAbsolutePath());
-      }
-    }
-  }
-
   /*=================================================================*/
   /* Part 3: Defining the options incl. help-texts
   /*=================================================================*/
 
   /**
-   * Initializes the available CLI options for the OCL tool.
+   * Initializes the standard CLI options for the OCL tool.
    *
    * @return The CLI options with arguments.
    */
-  protected Options initOptions() {
-    Options options = new Options();
+  @Override
+  public org.apache.commons.cli.Options addStandardOptions(org.apache.commons.cli.Options options) {
 
     // help dialog
     Option help = new Option("h", "Prints this help dialog");
     help.setLongOpt("help");
     options.addOption(help);
 
-    // developer level logging
-    Option dev = new Option("d",
-      "Specifies whether developer level logging should be used (default is false)");
-    dev.setLongOpt("dev");
-    options.addOption(dev);
-
     // parse input file
     Option parse = Option.builder("i")
-      .longOpt("input")
-      .argName("files")
-      .hasArgs()
-      .desc("Processes the list of OCL input artifacts. " +
-        "Argument list is space separated. CoCos are not checked automatically (see -c).")
-      .build();
+        .longOpt("input")
+        .argName("files")
+        .hasArgs()
+        .desc("Processes the list of OCL input artifacts. " +
+            "Argument list is space separated. CoCos are not checked automatically (see -c).")
+        .build();
     options.addOption(parse);
 
     // model paths
     Option path = new Option("p", "Sets the artifact path for imported symbols. "
-      + "Directory will be searched recursively for files with the ending "
-      + "\".*sym\" (for example \".cdsym\" or \".sym\"). Defaults to the current folder.");
+        + "Directory will be searched recursively for files with the ending "
+        + "\".*sym\" (for example \".cdsym\" or \".sym\"). Defaults to the current folder.");
     path.setLongOpt("path");
     path.setArgName("directory");
     path.setOptionalArg(true);
@@ -506,101 +384,119 @@ public class OCLCLI {
 
     // pretty print OCL
     Option prettyprint = new Option("pp",
-      "Prints the OCL model to stdout or the specified file(s) (optional). "
-        + "Multiple files should be separated by spaces and will be used in the same order "
-        + "in which the input files (-i option) are provided.");
+        "Prints the OCL model to stdout or the specified file(s) (optional). "
+            + "Multiple files should be separated by spaces and will be used in the same order "
+            + "in which the input files (-i option) are provided.");
     prettyprint.setLongOpt("prettyprint");
     prettyprint.setArgName("files");
     prettyprint.setOptionalArg(true);
     prettyprint.setArgs(Option.UNLIMITED_VALUES);
     options.addOption(prettyprint);
 
-    // check CoCos
-    Option cocos = Option.builder("c").
-      longOpt("coco").
-      optionalArg(true).
-      numberOfArgs(1).
-      desc("Checks the CoCos for the input. Optional arguments are:\n"
-        + "-c intra to check only the intra-model CoCos,\n"
-        + "-c inter checks also inter-model CoCos,\n"
-        + "-c type (default) checks all CoCos.")
-      .build();
-    options.addOption(cocos);
-
     // create and store symboltable
     Option symboltable = Option.builder("s")
-      .longOpt("symboltable")
-      .optionalArg(true)
-      .argName("files")
-      .hasArgs()
-      .desc("Stores the symbol tables of the input OCL artifacts in the specified files. "
-        + "For each input OCL artifact (-i option) please provide one output symbol file "
-        + "(using same order in which the input artifacts are provided) to store its symbols in. "
-        + "For example, -i x.ocl y.ocl -s a.oclsym b.oclsym will store the symbols of x.ocl to "
-        + "a.oclsym and the symbols of y.ocl to b.oclsym. "
-        + "Arguments are separated by spaces. "
-        + "If no arguments are given, output is stored to "
-        + "'target/symbols/{packageName}/{artifactName}.oclsym'.")
-      .build();
+        .longOpt("symboltable")
+        .optionalArg(true)
+        .argName("files")
+        .hasArgs()
+        .desc("Stores the symbol tables of the input OCL artifacts in the specified files. "
+            + "For each input OCL artifact (-i option) please provide one output symbol file "
+            + "(using same order in which the input artifacts are provided) to store its symbols in. "
+            + "For example, -i x.ocl y.ocl -s a.oclsym b.oclsym will store the symbols of x.ocl to "
+            + "a.oclsym and the symbols of y.ocl to b.oclsym. "
+            + "Arguments are separated by spaces. "
+            + "If no arguments are given, output is stored to "
+            + "'target/symbols/{packageName}/{artifactName}.oclsym'.")
+        .build();
     options.addOption(symboltable);
+    return options;
+  }
+
+  /**
+   * Initializes the additional CLI options for the OCL tool.
+   *
+   * @return The CLI options with arguments.
+   */
+  @Override
+  public org.apache.commons.cli.Options addAdditionalOptions(org.apache.commons.cli.Options options) {
 
     // accept TypeSymbols
     Option typeSymbols = Option.builder("ts")
-      .longOpt("typeSymbol")
-      .optionalArg(true)
-      .argName("fqns")
-      .hasArgs()
-      .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
-        + "treated as TypeSymbol when deserializing symbol files. Multiple symbol kinds "
-        + "should be separated by spaces.")
-      .build();
+        .longOpt("typeSymbol")
+        .optionalArg(true)
+        .argName("fqns")
+        .hasArgs()
+        .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
+            + "treated as TypeSymbol when deserializing symbol files. Multiple symbol kinds "
+            + "should be separated by spaces.")
+        .build();
     options.addOption(typeSymbols);
 
     // accept VariableSymbols
     Option varSymbols = Option.builder("vs")
-      .longOpt("variableSymbol")
-      .optionalArg(true)
-      .argName("fqns")
-      .hasArgs()
-      .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
-        + "treated as VariableSymbol when deserializing symbol files. Multiple symbol kinds "
-        + "should be separated by spaces.")
-      .build();
+        .longOpt("variableSymbol")
+        .optionalArg(true)
+        .argName("fqns")
+        .hasArgs()
+        .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
+            + "treated as VariableSymbol when deserializing symbol files. Multiple symbol kinds "
+            + "should be separated by spaces.")
+        .build();
     options.addOption(varSymbols);
 
     // accept FunctionSymbols
     Option funcSymbols = Option.builder("fs")
-      .longOpt("functionSymbol")
-      .optionalArg(true)
-      .argName("fqns")
-      .hasArgs()
-      .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
-        + "treated as FunctionSymbol when deserializing symbol files. Multiple symbol kinds "
-        + "should be separated by spaces.")
-      .build();
+        .longOpt("functionSymbol")
+        .optionalArg(true)
+        .argName("fqns")
+        .hasArgs()
+        .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
+            + "treated as FunctionSymbol when deserializing symbol files. Multiple symbol kinds "
+            + "should be separated by spaces.")
+        .build();
     options.addOption(funcSymbols);
 
     // accept FunctionSymbols
     Option ignoreSymbols = Option.builder("is")
-      .longOpt("ignoreSymKind")
-      .optionalArg(true)
-      .argName("fqns")
-      .hasArgs()
-      .desc("Takes the fully qualified name of one or more symbol kind(s) for which no warnings "
-        + "about not being able to deserialize them shall be printed. Allows cleaner CLI outputs. "
-        + "Multiple symbol kinds should be separated by spaces. ")
-      .build();
+        .longOpt("ignoreSymKind")
+        .optionalArg(true)
+        .argName("fqns")
+        .hasArgs()
+        .desc("Takes the fully qualified name of one or more symbol kind(s) for which no warnings "
+            + "about not being able to deserialize them shall be printed. Allows cleaner CLI outputs. "
+            + "Multiple symbol kinds should be separated by spaces. ")
+        .build();
     options.addOption(ignoreSymbols);
 
     // developer level logging
     Option cd4c = new Option("cd4c",
-      "Load symbol kinds from CD4C. Shortcut for loading CDTypeSymbol as TypeSymbol, "
-        + "CDMethodSignatureSymbol as FunctionSymbol, and FieldSymbol as VariableSymbol. "
-        + "Furthermore, warnings about not deserializing CDAssociationSymbol and CDRoleSymbol "
-        + "will be ignored.");
+        "Load symbol kinds from CD4C. Shortcut for loading CDTypeSymbol as TypeSymbol, "
+            + "CDMethodSignatureSymbol as FunctionSymbol, and FieldSymbol as VariableSymbol. "
+            + "Furthermore, warnings about not deserializing CDAssociationSymbol and CDRoleSymbol "
+            + "will be ignored.");
     cd4c.setLongOpt("cd4code");
     options.addOption(cd4c);
+
+    // check CoCos
+    Option cocos = Option.builder("c").
+        longOpt("coco").
+        optionalArg(true).
+        numberOfArgs(1).
+        desc("Checks the CoCos for the input. Optional arguments are:\n"
+            + "-c intra to check only the intra-model CoCos,\n"
+            + "-c inter checks also inter-model CoCos,\n"
+            + "-c type (default) checks all CoCos.")
+        .build();
+    options.addOption(cocos);
+
+    // developer level logging
+    Option dev = new Option("d",
+        "Specifies whether developer level logging should be used (default is false)");
+    dev.setLongOpt("dev");
+    options.addOption(dev);
 
     return options;
   }
 }
+
+

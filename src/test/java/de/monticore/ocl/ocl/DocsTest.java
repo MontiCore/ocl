@@ -1,7 +1,7 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl;
 
-import de.monticore.ocl.OCLCLI;
+import de.monticore.ocl.ocl.OCLCLI;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._symboltable.OCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLDeSer;

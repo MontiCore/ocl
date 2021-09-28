@@ -20,7 +20,7 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
   @Override
   public IOCLArtifactScope createFromAST(ASTOCLCompilationUnit node) {
     Log.errorIfNull(node,
-      "0xA7004x51423 Error by creating of the OCLScopesGenitor symbol table: top ast node is null");
+      "0xAE884 Error by creating of the OCLScopesGenitor symbol table: top ast node is null");
     IOCLArtifactScope artifactScope = OCLMill.artifactScope();
     artifactScope.setPackageName(node.getPackage());
     List<ImportStatement> imports = getImportStatements(node.getMCImportStatementList());

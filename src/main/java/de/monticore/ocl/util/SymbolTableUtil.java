@@ -2,7 +2,6 @@
 package de.monticore.ocl.util;
 
 import de.monticore.class2mc.Class2MCResolver;
-import de.monticore.class2mc.Java2MCResolver;
 import de.monticore.io.paths.MCPath;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
