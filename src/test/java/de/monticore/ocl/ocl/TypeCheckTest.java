@@ -6,9 +6,8 @@ import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
 import de.monticore.ocl.types.check.FullSynthesizeSymTypeFromMCSimpleGenericTypes;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.types.check.TypeCheck;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -17,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TypeCheckTest extends AbstractTest {
 
+  @Disabled
   @Test
   public void shouldCreateSymTabForValidModels() throws IOException {
     String filename = "list.ocl";
