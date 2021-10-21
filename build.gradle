@@ -102,7 +102,9 @@ dependencies {
   implementation "commons-cli:commons-cli:1.4"
   implementation "org.antlr:antlr4:4.7.1"
   implementation "org.assertj:assertj-core:$assertj_version"
-  
+
+    
+  testImplementation "org.slf4j:slf4j-simple:1.7.21"
 
   testImplementation "junit:junit:$junit_version"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
