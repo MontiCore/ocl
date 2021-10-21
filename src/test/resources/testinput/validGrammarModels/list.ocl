@@ -1,0 +1,11 @@
+ocl list {
+  inv:
+    let
+      List<int> la = List{1, 2, 3}
+    in
+      //(la.add(3) == la &&
+      //la.get(4) == 3)
+
+      (la.add(3).get(1) == 5)
+    ;
+}
