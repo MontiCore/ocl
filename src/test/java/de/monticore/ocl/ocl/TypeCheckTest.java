@@ -18,7 +18,7 @@ public class TypeCheckTest extends AbstractTest {
 
   @Disabled
   @Test
-  public void shouldCreateSymTabForValidModels() throws IOException {
+  public void testTypCheckForGenericMethodCalls() throws IOException {
     String filename = "list.ocl";
 
     // given
@@ -37,6 +37,7 @@ public class TypeCheckTest extends AbstractTest {
     TypeCheck typeCheck = new TypeCheck(new FullSynthesizeSymTypeFromMCSimpleGenericTypes(),
         new DeriveSymTypeOfOCLCombineExpressions());
 
-    System.out.println(typeCheck.typeOf(((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getExpression()));
+    assertThat(typeCheck.typeOf(((ASTOCLInvariant) ast.get().getOCLArtifact()
+        .getOCLConstraint(0)).getExpression()).print()).isEqualTo("boolean");
   }
 }
