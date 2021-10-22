@@ -8,6 +8,7 @@ import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheck;
 import de.se_rwth.commons.logging.Log;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
 
@@ -42,12 +43,12 @@ public class TypeCheckTest extends AbstractTest {
     TypeCheck typeCheck = new TypeCheck(new FullSynthesizeSymTypeFromMCSimpleGenericTypes(),
         new DeriveSymTypeOfOCLCombineExpressions());
 
-    // NullpointerException, weil TypeCheck eigentlich schon vorher mit Log.error abbrechen sollte
+    // NullpointerException, weil TypeCheck eigentlich schon vorher mit Log.error abgebrochen waere
     try {
       SymTypeExpression t =
           typeCheck.typeOf(((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getExpression());
-    } catch(NullPointerException e) {
-      Log.error("This should not happen. The model was valid. All types were loaded. What "
+    } catch(Exception e) {
+      Assertions.fail("This should not happen. The model was valid. All types were loaded. What "
           + "happened?");
     }
 
