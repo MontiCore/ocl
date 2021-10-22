@@ -19,7 +19,7 @@ public class TypeCheckTest extends AbstractTest {
 
   @Disabled
   @Test
-  public void testTypCheckForGenericMethodCalls(String arg) {
+  public void testTypCheckForGenericMethodCalls() {
     String filename = "list.ocl";
 
     Log.enableFailQuick(false);
