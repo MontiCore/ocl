@@ -27,7 +27,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class OCLCLI extends OCLCLITOP {
+public class OCLTool extends OCLToolTOP {
   /*=================================================================*/
   /* Part 1: Handling the arguments and options
   /*=================================================================*/
