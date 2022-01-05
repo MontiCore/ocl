@@ -61,9 +61,9 @@ To this effect, the class provides methods for parsing, pretty-printing,
 creating symbol tables, storing symbols, and loading symbols. 
 
 The class provides a `main` method and can thus be used from the command line. 
-Building this gradle project yields the executable jar `OCLTool.jar`, which can 
+Building this gradle project yields the executable jar `OCLCLI.jar`, which can 
 be found in the directory `target/libs`. 
-The usage of the `OCLTool` tool and detailed instructions for building the tool 
+The usage of the `OCLCLI` tool and detailed instructions for building the tool 
 from the source files are described **[here](../../../../../../README.md)**. 
 
 ## Grammars

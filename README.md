@@ -124,9 +124,9 @@ for downloading the tool.
 
 Alternatively, you can download the tool using `wget`.
 The following command downloads the latest version of the tool and saves it 
-under the name `OCLTool.jar` in your working directory:
+under the name `OCLCLI.jar` in your working directory:
 ```
-wget "monticore.de/download/OCLCLI.jar" -O OCLTool.jar
+wget "monticore.de/download/OCLCLI.jar" -O OCLCLI.jar
 ``` 
 
 ## Downloading the Latest Version of the Tool Using Docker
@@ -136,7 +136,7 @@ The latest version of the tools's Docker image can be obtained using
 docker pull monticore/ocl
 ```
 
-In case you're using Docker, replace `java -jar OCLTool.jar` in the following 
+In case you're using Docker, replace `java -jar OCLCLI.jar` in the following 
 by (for Windows PowerShell, Mac Terminal, or Linux Bash)
 ```
 docker run --rm -v ${PWD}:/input -w /input monticore/ocl
@@ -148,7 +148,7 @@ docker run --rm -v %CD%:/input -w /input monticore/ocl
 
 For example, this command from Step 2 of this tutorial
 ```
-java -jar OCLTool.jar -i Example.ocl -pp
+java -jar OCLCLI.jar -i Example.ocl -pp
 ```
 becomes
 ```
@@ -181,14 +181,14 @@ installed for this):
 ```
 gradle build
 ```
-Congratulations! You can now find the executable JAR file `OCLTool.jar` in
+Congratulations! You can now find the executable JAR file `OCLCLI.jar` in
  the directory `target/libs` (accessible via `cd target/libs`).
 
 ## Tutorial: Getting Started Using the OCL Tool
 The previous sections describe how to obtain an executable JAR file
 (OCL command line tool). This section provides a tutorial for
 using the OCL tool. The following examples assume
-that you locally named the tool `OCLTool`.
+that you locally named the tool `OCLCLI`.
 If you build the tool from the sources or used the `wget`
 command above, then you are fine. If you manually downloaded 
 the tool, then you should consider renaming the downloaded JAR.   
@@ -197,7 +197,7 @@ the tool, then you should consider renaming the downloaded JAR.
 Executing the Jar file without any options prints usage information of the  
 tool to the console:
 ```
-$ java -jar OCLTool.jar
+$ java -jar OCLCLI.jar
 usage: OCLTool
  -c,--coco <arg>               Checks the CoCos for the input. Optional
                                arguments are:
@@ -263,7 +263,7 @@ To work properly, the tool needs the mandatory argument `-i,--input <file>`,
 which takes the file paths of at least one input file containing SD models.
 If no other arguments are specified, the tool solely parses the model(s).
 
-For trying this out, copy the `OCLTool.jar` into a directory of your 
+For trying this out, copy the `OCLCLI.jar` into a directory of your 
 choice. 
 Afterwards, create  containing the following simple OCL :
 ```
@@ -271,12 +271,12 @@ ocl Example {
 }
 ```
 
-Save the text file as `Example.ocl` in the directory where `OCLTool.jar` is 
+Save the text file as `Example.ocl` in the directory where `OCLCLI.jar` is 
 located. 
 
 Now execute the following command:
 ```
-java -jar OCLTool.jar -i Example.ocl
+java -jar OCLCLI.jar -i Example.ocl
 ```
 
 You may notice that the tool prints no output to the console.
@@ -292,7 +292,7 @@ input files to the console.
 
 Execute the following command for trying this out:
 ```
-java -jar OCLTool.jar -i Example.ocl -pp
+java -jar OCLCLI.jar -i Example.ocl -pp
 ```
 The command prints the pretty-printed model contained in the input file to the 
 console:
@@ -311,7 +311,7 @@ The i-th input file is pretty-printed into the i-th output file.
 
 Execute the following command for trying this out:
 ```
-java -jar OCLTool.jar -i Example.ocl -pp Output.ocl
+java -jar OCLCLI.jar -i Example.ocl -pp Output.ocl
 ```
 The command prints the pretty-printed model contained in the input file into the 
 file `Output.ocl`.
@@ -338,7 +338,7 @@ arguments `intra`, `inter`, and `type`.
 
 Execute the following command for trying out a simple example:
 ```
-java -jar OCLTool.jar -i Example.ocl -c -cd4c
+java -jar OCLCLI.jar -i Example.ocl -c -cd4c
 ```
 You may notice that the tool prints nothing to the console when executing this 
 command.
@@ -347,7 +347,7 @@ This means that the model satisfies all context condtions.
 Let us now consider a more complex example.
 Recall the OCL `Bookshop` from the `An Example Model` section above.
 For continuing, copy the textual representation of the OCL `Bookshop` and 
-save it in a file `Bookshop.ocl` in the directory where the file `OCLTool.jar` 
+save it in a file `Bookshop.ocl` in the directory where the file `OCLCLI.jar` 
 is located. 
 For this you will need a symbol file containing the symbols of a class diagram
 corresponding to the `Bookshop.ocl`. 
@@ -359,13 +359,13 @@ process it.
 You can check the different kinds of context conditions, using the 
 `-c,--coco <arg>` option:
 ```
-java -jar OCLTool.jar -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd4c -c intra
+java -jar OCLCLI.jar -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd4c -c intra
 ```
 ```
-java -jar OCLTool.jar -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd4c -c inter
+java -jar OCLCLI.jar -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd4c -c inter
 ```
 ```
-java -jar OCLTool.jar -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd4c -c type
+java -jar OCLCLI.jar -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd4c -c type
 ```
 None of these commands should produce output. 
 
@@ -382,7 +382,7 @@ As `book2` is undefined, the tool should now print an Error message when
 checking the cocos:
 
 ```
-$ java -jar OCLTool.jar  -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd4c -c
+$ java -jar OCLCLI.jar  -i Bookshop.ocl -p src/test/resources/docs/Bookshop/ -cd4c -c
 [INFO]  DeriveSymTypeOfExpression package suspected
 [ERROR] 0xA0309 Bookshop.ocl:<13,12> Could not calculate type of expression "book2" on the left side of SetComprehension
 ```
@@ -396,7 +396,7 @@ a symbol file (stored symbol table) of another model, which contains the
 necessary type information.
 
 Create a new directory `mytypes` in the directory where the tool 
-`OCLTool.jar` is located.
+`OCLCLI.jar` is located.
 For example, the `Bookshop.ocl` example from the first section required a 
 class diagram that specified its datatypes. 
 You can find this class diagram file under 
@@ -405,15 +405,15 @@ You can find this class diagram file under
 To use it in OCL, you first need to convert it info a symbol file.
 The symbol file `Bookshop.sym` of the class diagram provides all necessary type 
 information to use its types in OCL. 
-If you don't want to get involved with the CDTool at this point, you can also find the 
+If you don't want to get involved with the CDCLI at this point, you can also find the 
 ready-to-use file under 
 [src/test/resources/docs/Bookshop/Bookshop.sym](src/test/resources/docs/Bookshop/Bookshop.sym).
 Just copy it into your `mytypes` folder.
 Otherwise, to convert the class diagram into a symbol file you need to use the 
-`CDTool.jar` from the 
+`CDCLI.jar` from the 
 [CD4Analysis Project][cd4c] and convert the class diagram file using the following command:
 ```
-java -jar CDTool.jar -d false --fieldfromrole navigable -i src/test/resources/docs/Bookshop/Bookshop.cd -s mytypes/Bookshop.sym
+java -jar CDCLI.jar -d false --fieldfromrole navigable -i src/test/resources/docs/Bookshop/Bookshop.cd -s mytypes/Bookshop.sym
 ```
 
 The contents of the symbol file are of minor importance for you as a language 
@@ -434,26 +434,26 @@ So, if we want the tool to find our symbol file, we have to provide the model
 path to the tool via the `--path <directory>` option.
 You can try that out using the `mytypes` folder you just created:
 ```
-java -jar OCLTool.jar -i Bookshop.ocl --path <SYMBOLPATH> -c type -cd4c
+java -jar OCLCLI.jar -i Bookshop.ocl --path <SYMBOLPATH> -c type -cd4c
 ```
 where `<SYMBOLPATH>` is the path where you stored the downloaded symbol file.
 In our example, in case you stored the model in the directory `mytypes`,
 execute the following command:
 ```
-java -jar OCLTool.jar -i Bookshop.ocl --path mytypes -c type -cd4c
+java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -c type -cd4c
 ```
 
 Notice that this command also uses the `-cd4c` flag. 
 To interpret the symbolfiles provided to the OCL tool, it 
 needs to understand how to interpret the symbols stored by the 
-CDTool.
+CDCLI.
 The  `-cd4c` flag is a shorthand for doing this for CD4Code.
 You can also do it manually by using the `--typeSymbol`, 
 `--functionSymbol`, and `--variableSymbol` flags followed by 
 the symbol kinds that should be interpreted as `TypeSymbol`, 
 `FunctionSymbol` and `VariableSymbol`:
 ```
-java -jar OCLTool.jar -i Bookshop.ocl --path mytypes -c type --typeSymbol <TYPE_SYMBOL_KINDS> --variableSymbol <VAR_SYMBOL_KINDS> --functionSymbol <FUNC_SYMBOL_KINDS>
+java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -c type --typeSymbol <TYPE_SYMBOL_KINDS> --variableSymbol <VAR_SYMBOL_KINDS> --functionSymbol <FUNC_SYMBOL_KINDS>
 ```
 where `<TYPE_SYMBOL_KINDS>`, `<VAR_SYMBOL_KINDS>`, and 
 `<FUNC_SYMBOL_KINDS>` are the fully qualified names of the symbols. 
@@ -462,7 +462,7 @@ separated by a space.
 In our example, declaring the symbols from CD4Analysis 
 would look like this:
 ```
-java -jar OCLTool.jar -i Bookshop.ocl --path mytypes -c type --typeSymbol de.monticore.cdbasis._symboltable.CDTypeSymbol --variableSymbol de.monticore.symbols.oosymbols._symboltable.FieldSymbol --functionSymbol de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol
+java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -c type --typeSymbol de.monticore.cdbasis._symboltable.CDTypeSymbol --variableSymbol de.monticore.symbols.oosymbols._symboltable.FieldSymbol --functionSymbol de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol
 ```
 
 Notice that the tool now produces a lot of warnings on symbols 
@@ -474,13 +474,13 @@ for which symbol kinds you do not want to receive them using the
 `--ignoreSymKind <SYM_KINDS_TO_IGNORE>` option. 
 In our example, this would look like this:
 ```
-java -jar OCLTool.jar -i Bookshop.ocl --path mytypes -c type --typeSymbol de.monticore.cdbasis._symboltable.CDTypeSymbol --variableSymbol de.monticore.symbols.oosymbols._symboltable.FieldSymbol --functionSymbol de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol --ignoreSymKind de.monticore.cdassociation._symboltable.CDAssociationSymbol de.monticore.cdassociation._symboltable.CDRoleSymbol
+java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -c type --typeSymbol de.monticore.cdbasis._symboltable.CDTypeSymbol --variableSymbol de.monticore.symbols.oosymbols._symboltable.FieldSymbol --functionSymbol de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol --ignoreSymKind de.monticore.cdassociation._symboltable.CDAssociationSymbol de.monticore.cdassociation._symboltable.CDRoleSymbol
 ```
 
 For everyday use, this is a little complicated. 
 So remember that the `-cd4c` flag can reduce this to only
 ```
-java -jar OCLTool.jar -i Bookshop.ocl --path mytypes -c type -cd4c
+java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -c type -cd4c
 ```
 
 ### Step 5: Storing Symbols
@@ -512,7 +512,7 @@ are checked beforehand.
 For storing the symbol file of `Bookshop.ocl`, execute the following command 
 (the implicit context condition checks require using the symbol path option):
 ```
-java -jar OCLTool.jar -i Bookshop.ocl --path mytypes -cd4c -s
+java -jar OCLCLI.jar -i Bookshop.ocl --path mytypes -cd4c -s
 ```
 The tool produces the file `target/symbols/docs/Bookshop.oclsym`, which 
 can now be imported by other models, e.g., by models that need to use some 
@@ -523,7 +523,7 @@ For storing the symbol file of `Bookshop.ocl` in the file
 (again, the implicit context condition checks require using the symbol path 
 option):
 ```
-java -jar OCLTool.jar -i Bookshop.ocl -path mytypes -cd4c -s syms/Bookshop.oclsym
+java -jar OCLCLI.jar -i Bookshop.ocl -path mytypes -cd4c -s syms/Bookshop.oclsym
 ```
 
 Congratulations, you have just finished the tutorial about saving SD symbol 
