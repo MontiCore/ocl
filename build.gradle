@@ -175,13 +175,13 @@ sourcesJar.dependsOn project.collect { it.tasks.withType(MCTask)}
 javadoc.failOnError(false)
 
 
-// all in one cli-jar
+// all in one tool-jar
 shadowJar {
   manifest {
     attributes "Main-Class": "de.monticore.ocl.ocl.${archiveBaseName.get().toUpperCase()}Tool"
   }
-  archiveFileName = "${archiveBaseName.get().toUpperCase()}CLI.${archiveExtension.get()}"
-  archiveClassifier = "cli"
+  archiveFileName = "${archiveBaseName.get().toUpperCase()}Tool.${archiveExtension.get()}"
+  archiveClassifier = "tool"
   minimize()
 }
 

@@ -41,8 +41,8 @@ public class DocsTest extends AbstractTest {
     SymbolTableUtil.runSymTabCompleter(ast.get());
 
     // when (cocos)
-    OCLTool cli = new OCLTool();
-    cli.checkAllCoCos(ast.get());
+    OCLTool tool = new OCLTool();
+    tool.checkAllCoCos(ast.get());
 
     // when (serialize)
     OCLSymbols2Json symbols2Json = new OCLSymbols2Json();
