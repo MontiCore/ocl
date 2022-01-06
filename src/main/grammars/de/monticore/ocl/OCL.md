@@ -24,7 +24,7 @@ This OCL language component contains
 * a symbol table infrastructure including functionality for 
   creating symbol tables and (de-)serializing symbol tables, 
 * pretty-printers, and
-* a command-line interface (CLI). 
+* a command-line tool. 
 
 ## An Example Model
 
@@ -55,12 +55,12 @@ ocl Bookshop {
 
 ## Command Line Interface (CLI) Usage
 
-The class [```OCLCLI```](../../../../java/de/monticore/ocl/ocl/OCLCLI.java) 
+The class [```OCLTool```](../../../../java/de/monticore/ocl/ocl/OCLTool.java) 
 provides typical functionality used when processing models. 
 To this effect, the class provides methods for parsing, pretty-printing, 
 creating symbol tables, storing symbols, and loading symbols. 
 
-The class provides a `main` method and can thus be used as a CLI. 
+The class provides a `main` method and can thus be used from the command line. 
 Building this gradle project yields the executable jar `OCLCLI.jar`, which can 
 be found in the directory `target/libs`. 
 The usage of the `OCLCLI` tool and detailed instructions for building the tool 

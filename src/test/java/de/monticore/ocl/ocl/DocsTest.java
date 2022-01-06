@@ -1,10 +1,8 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl;
 
-import de.monticore.ocl.ocl.OCLCLI;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._symboltable.OCLArtifactScope;
-import de.monticore.ocl.ocl._symboltable.OCLDeSer;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.util.SymbolTableUtil;
@@ -43,8 +41,8 @@ public class DocsTest extends AbstractTest {
     SymbolTableUtil.runSymTabCompleter(ast.get());
 
     // when (cocos)
-    OCLCLI cli = new OCLCLI();
-    cli.checkAllCoCos(ast.get());
+    OCLTool tool = new OCLTool();
+    tool.checkAllCoCos(ast.get());
 
     // when (serialize)
     OCLSymbols2Json symbols2Json = new OCLSymbols2Json();
