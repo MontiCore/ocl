@@ -1,0 +1,36 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package invariants;
+
+import cd.DefaultTypes;
+
+inv(List<String> names):
+    forall name in names:
+        name.length() > 0
+
+inv(List<String> names):
+    exists name in names:
+        name.length() > 0
+
+inv:
+    let
+        a = 2;
+        b = 3;
+    in
+        a < b
+
+inv(Number n, int a):
+     (Integer) n < a
+
+inv(int a, int b, int c):
+    (a + b) * c > 0
+
+inv:
+    ("abc" + "def").length()
+
+inv:
+    ("a" + "b").length() > 0
+
+inv:
+    true;
+    false

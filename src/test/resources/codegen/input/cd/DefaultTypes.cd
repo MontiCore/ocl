@@ -1,0 +1,105 @@
+/* (c) https://github.com/MontiCore/monticore */
+package cd;
+
+classdiagram DefaultTypes {
+
+  class Class;
+
+  class Object;
+  class Collection {
+    boolean containsAll(Collection c);
+    boolean contains(Collection c);
+    int size();
+    boolean isEmpty();
+    boolean addAll(Collection c);
+  }
+
+  class List extends Collection {
+      boolean nonEmpty();
+      boolean addAll(List c);
+      Set asSet();
+      boolean add(Object o);
+  }
+
+  class Set extends Collection {
+      boolean addAll(Set c);
+      List asList();
+      boolean add(Object o);
+  }
+
+  class Optional {
+    boolean isAbsent();
+    boolean isPresent();
+  }
+
+  class Date;
+  class Time {
+      static Time now();
+      boolean lessThan(Time that);
+  }
+
+  interface Number extends Amount;
+  class Integer implements Number;
+  class Double implements Number;
+  class Float implements Number;
+  class Long implements Number;
+  class Boolean;
+  class Character;
+  class String {
+    boolean equals(String s);
+    boolean contains(String s);
+    String replaceAll(String s1, String s2);
+    String replace(String s1, String s2);
+    boolean endsWith(String s);
+    int length();
+  }
+
+  // support for units comes with the jscience library
+  // http://jscience.org/api/javax/measure/quantity/Quantity.html
+  interface Amount;
+  class Acceleration implements Amount;
+  class Angle implements Amount;
+  class AmountOfSubstance implements Amount;
+  class AngularAcceleration implements Amount;
+  class AngularVelocity implements Amount;
+  class Area implements Amount;
+  class CatalyticActivity implements Amount;
+  class DataAmount implements Amount;
+  class DataRate implements Amount;
+  class Dimensionless implements Amount;
+  class Duration implements Amount;
+  class DynamicViscosity implements Amount;
+  class ElectricCapacitance implements Amount;
+  class ElectricCharge implements Amount;
+  class ElectricConductance implements Amount;
+  class ElectricCurrent implements Amount;
+  class ElectricInductance implements Amount;
+  class ElectricPotential implements Amount;
+  class ElectricResistance implements Amount;
+  class Energy implements Amount;
+  class Force implements Amount;
+  class Frequency implements Amount;
+  class Illuminance implements Amount;
+  class KinematicViscosity implements Amount;
+  class Length implements Amount;
+  class LuminousFlux implements Amount;
+  class LuminousIntensity implements Amount;
+  class MagneticFlux implements Amount;
+  class MagneticFluxDensity implements Amount;
+  class Mass implements Amount;
+  class MassFlowRate implements Amount;
+  class Money implements Amount;
+  class Power implements Amount;
+  class Pressure implements Amount;
+  class RadiationDoseAbsorbed implements Amount;
+  class RadiationDoseEffective implements Amount;
+  class RadioactiveActivity implements Amount;
+  class SolidAngle implements Amount;
+  class Temperature implements Amount;
+  class Torque implements Amount;
+  class Velocity implements Amount;
+  class Volume implements Amount;
+  class VolumetricDensity implements Amount;
+  class VolumetricFlowRate implements Amount;
+
+}

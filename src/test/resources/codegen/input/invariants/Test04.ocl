@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package invariants;
+
+import cd.DefaultTypes;
+
+inv(boolean a, boolean b):
+    if a==b then a else b;
+    a==b ? a : b;
+    a instanceof Boolean;
+    a implies b;

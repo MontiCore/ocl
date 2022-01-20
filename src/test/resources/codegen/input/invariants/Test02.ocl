@@ -1,0 +1,19 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package invariants;
+
+import cd.DefaultTypes;
+
+inv(int a, int b):
+    a + b != 0;
+    a - b != 0;
+    a * b != 0;
+    a / b != 0;
+    a % b != 0;
+
+inv(Duration a, Duration b):
+    a + b != 0 s;
+    a - b != 0 s;
+    a * b != 0 s;
+    a / b != 0 s;
+

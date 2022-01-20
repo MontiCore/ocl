@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+package invariants;
+
+import cd.DefaultTypes;
+
+inv(int a, int b):
+    a > b;
+    a >= b;
+    a < b;
+    a <= b;
+    a == b;
+    a != b;
+
+inv(Duration a, Duration b):
+    a > b;
+    a >= b;
+    a < b;
+    a <= b;
+    a == b;
+    a != b;
+
