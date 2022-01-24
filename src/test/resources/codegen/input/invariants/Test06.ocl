@@ -2,23 +2,25 @@
 
 package invariants;
 
-import cd.DefaultTypes;
-import cd.EmbeddedMontiArc;
+import cd.DefaultTypes.*;
+import cd.EmbeddedMontiArc.*;
 import de.monticore.lang.embeddedmontiarc.embeddedmontiarc._symboltable.cncModel.*;
 
-inv(Component cmp):
-    cmp != null
+ocl Test06 {
+  inv(Component cmp):
+    cmp != null;
 
-context Component cmp inv:
-    cmp.name != ""
+  context Component cmp inv:
+    cmp.name != "";
 
-context Component inv:
-    this.name.length() > 0;
+  context Component inv:
+    this.name.length() > 0 &&
     name.length() > 0;
 
-context Component cmp inv:
-    cmp.subComponents.size() > 0;
-    cmp.getPortsList().size() > 0
+  context Component cmp inv:
+    cmp.subComponents.size() > 0 &&
+    cmp.getPortsList().size() > 0;
 
-context Component cmp inv:
+  context Component cmp inv:
     !cmp.name.replace("Component", "").contains("Component");
+}

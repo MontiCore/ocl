@@ -2,21 +2,22 @@
 
 package invariants;
 
-import cd.DefaultTypes;
+import cd.DefaultTypes.*;
 
-inv(int a, int b):
-    a > b;
-    a >= b;
-    a < b;
-    a <= b;
-    a == b;
+ocl Test01 {
+  inv(int a, int b):
+    a > b &&
+    a >= b &&
+    a < b &&
+    a <= b &&
+    a == b &&
     a != b;
 
-inv(Duration a, Duration b):
-    a > b;
-    a >= b;
-    a < b;
-    a <= b;
-    a == b;
+  inv(Duration a, Duration b):
+    a > b &&
+    a >= b &&
+    a < b &&
+    a <= b &&
+    a == b &&
     a != b;
-
+}

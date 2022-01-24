@@ -2,19 +2,24 @@
 
 package invariants;
 
-import cd.DefaultTypes;
-import cd.EmbeddedMontiArc;
+import cd.DefaultTypes.*;
+import cd.EmbeddedMontiArc.*;
 
-inv(Set<String> names):
+ocl Test08 {
+// ?
+/*
+  inv(Set<String> names):
     let
-        a = {};
-        b = Set{n.length() | n in names, i = 0, n.length() > i};
+      a = {};
+      b = Set{n.length() | n in names, i = 0, n.length() > i};
     in
-        a.size() < b.size()
+      a.size() < b.size();
 
-inv(Set<String> names):
+  inv(Set<String> names):
     let
-        a = {}.size();
-        b = Set{n.length() | n in names, i = 0, n.length() > i};
+      a = {}.size();
+      b = Set{n.length() | n in names, i = 0, n.length() > i};
     in
-        a < b.size()
+      a < b.size();
+/**/
+}

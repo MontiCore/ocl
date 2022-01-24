@@ -2,10 +2,12 @@
 
 package invariants;
 
-import cd.DefaultTypes;
+import cd.DefaultTypes.*;
 
-inv(boolean a, boolean b):
-    a || b;
-    a && b;
-    !a;
+ocl Test03 {
+  inv(boolean a, boolean b):
+    a || b &&
+    a && b &&
+    !a &&
     ~a;
+}

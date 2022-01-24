@@ -2,20 +2,21 @@
 
 package invariants;
 
-import cd.DefaultTypes;
-import cd.EmbeddedMontiArc;
+import cd.DefaultTypes.*;
+import cd.EmbeddedMontiArc.*;
 import de.monticore.lang.embeddedmontiarc.embeddedmontiarc._symboltable.cncModel.*;
 
-inv(List<Component> cmps):
+ocl Test07 {
+  inv(List<Component> cmps):
     forall cmp in cmps:
-        cmp.name.length() > 0
+      cmp.name.length() > 0;
 
-inv(List<Component> cmps):
+  inv(List<Component> cmps):
     forall cmp in cmps:
-        forall cmp2 in cmps:
-            (cmp != cmp2 implies cmp.name != cmp2.name)
+      forall cmp2 in cmps:
+        cmp != cmp2 implies cmp.name != cmp2.name;
 
-inv(List<Component> cmps):
+  inv(List<Component> cmps):
     forall cmp, cmp2 in cmps:
-        (cmp != cmp2 implies cmp.name != cmp2.name)
-
+      cmp != cmp2 implies cmp.name != cmp2.name;
+}

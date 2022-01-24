@@ -2,10 +2,12 @@
 
 package invariants;
 
-import cd.DefaultTypes;
+import cd.DefaultTypes.*;
 
-inv(boolean a, boolean b):
-    if a==b then a else b;
-    a==b ? a : b;
-    a instanceof Boolean;
+ocl Test04 {
+  inv(boolean a, boolean b):
+    if a==b then a else b &&
+    a==b ? a : b &&
+    a instanceof Boolean &&
     a implies b;
+}
