@@ -13,18 +13,15 @@ ocl Test05 {
     exists name in names:
       name.length() > 0;
 
-// ?
-/*
   inv:
     let
       a = 2;
-      b = 3;
+      b = 3
     in
       a < b;
-/**/
 
   inv(Number n, int a):
-     (Integer) n < a;
+    (Integer) n < a;
 
   inv(int a, int b, int c):
     (a + b) * c > 0;

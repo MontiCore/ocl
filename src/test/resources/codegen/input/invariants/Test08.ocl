@@ -6,20 +6,17 @@ import cd.DefaultTypes.*;
 import cd.EmbeddedMontiArc.*;
 
 ocl Test08 {
-// ?
-/*
   inv(Set<String> names):
     let
       a = {};
-      b = Set{n.length() | n in names, i = 0, n.length() > i};
+      b = Set{n.length() | n in names, i = 0, n.length() > i}
     in
       a.size() < b.size();
 
   inv(Set<String> names):
     let
       a = {}.size();
-      b = Set{n.length() | n in names, i = 0, n.length() > i};
+      b = Set{n.length() | n in names, i = 0, n.length() > i}
     in
       a < b.size();
-/**/
 }
