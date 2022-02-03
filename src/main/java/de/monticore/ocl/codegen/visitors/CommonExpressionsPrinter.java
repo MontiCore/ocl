@@ -65,7 +65,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
     Preconditions.checkNotNull(operator);
     Preconditions.checkNotNull(amountMethod);
     Preconditions.checkArgument(!operator.isEmpty());
-    this.getStringBuilder().append("Dummy").append(" ").append(this.getNaming().getName(node));
+    this.getStringBuilder().append("Dummy "/*TODO*/).append(" ").append(this.getNaming().getName(node));
     this.getStringBuilder().append(" = ");
     this.getStringBuilder().append(this.getNaming().getName(node.getLeft()));
     this.getStringBuilder().append(" ").append(operator).append(" ");
@@ -77,7 +77,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   public void endVisit(ASTGreaterThanExpression node) {
     handleInfixExpression(node, ">=", "isGreaterThan");
 
-    /*
+    /*TODO
     if(OCLHelper.isAmount((node.getLeftExpression()))) {
       StringBuilder sb = getStringBuilder();
       OCLVariableNaming varNaming = getVarNaming();

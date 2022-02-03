@@ -108,7 +108,8 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
     }
     this.getStringBuilder().append(")").append(" { ").append(System.lineSeparator());
     this.getStringBuilder().append("Map<String, Object> witnessElements = new HashMap<>();\n");
-    /*if(node.isPresentOCLClassContext()) {
+    /*TODO
+    if(node.isPresentOCLClassContext()) {
       addContextVarsToWitness(sb, node.getOCLClassContext());
     }
     if(node.isPresentOCLParameters()) {
@@ -117,7 +118,7 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
     this.getStringBuilder().append("Boolean ").append(this.getNaming().getName(node)).append(" = true;\n");
     this.getStringBuilder().append("try {\n");
 
-    /*
+    /*TODO
     for(ASTExpression expression : node.getStatementsList()) {
       expression.accept(getRealThis());
       this.getStringBuilder().append(this.getNaming().getName(node)).append(" &= ");
