@@ -87,7 +87,7 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
   }
 
   @Override
-  public void traverse(ASTOCLInvariant node) {
+  public void handle(ASTOCLInvariant node) {
     this.getStringBuilder().append("@SuppressWarnings(\"unchecked\")\n");
     this.getStringBuilder().append("public static Boolean check");
 
@@ -118,13 +118,7 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
     this.getStringBuilder().append("Boolean ").append(this.getNaming().getName(node)).append(" = true;\n");
     this.getStringBuilder().append("try {\n");
 
-    /*TODO
-    for(ASTExpression expression : node.getStatementsList()) {
-      expression.accept(getRealThis());
-      this.getStringBuilder().append(this.getNaming().getName(node)).append(" &= ");
-      this.getStringBuilder().append(this.getNaming().getName(expression));
-      this.getStringBuilder().append(";\n");
-    }*/
+    node.getExpression().accept(this.getTraverser());
 
     this.getStringBuilder().append("} catch (Exception ").append(this.getNaming().getName(node)).append("Exception) {\n");
     this.getStringBuilder().append(this.getNaming().getName(node)).append(" = false;\n");
