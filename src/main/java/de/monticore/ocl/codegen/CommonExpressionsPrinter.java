@@ -7,27 +7,29 @@ import de.monticore.expressions.commonexpressions._ast.ASTInfixExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTLogicalNotExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTMultExpression;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsHandler;
+import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTraverser;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 
-public class OCL2JavaCommonExpressions implements CommonExpressionsHandler, CommonExpressionsVisitor2 {
+public class CommonExpressionsPrinter extends AbstractPrinter implements CommonExpressionsHandler, CommonExpressionsVisitor2 {
 
-  protected StringBuilder stringBuilder;
+  protected CommonExpressionsTraverser traverser;
 
-  protected StringBuilder getStringBuilder() {
-    return this.stringBuilder;
-  }
-
-  protected OCLVariableNaming naming;
-
-  protected OCLVariableNaming getNaming() {
-    return this.naming;
-  }
-
-  public OCL2JavaCommonExpressions(StringBuilder stringBuilder, OCLVariableNaming naming) {
+  public CommonExpressionsPrinter(StringBuilder stringBuilder, OCLVariableNaming naming) {
     Preconditions.checkNotNull(stringBuilder);
     Preconditions.checkNotNull(naming);
     this.stringBuilder = stringBuilder;
     this.naming = naming;
+  }
+
+  @Override
+  public CommonExpressionsTraverser getTraverser() {
+    return this.traverser;
+  }
+
+  @Override
+  public void setTraverser(CommonExpressionsTraverser traverser) {
+    Preconditions.checkNotNull(traverser);
+    this.traverser = traverser;
   }
 
   @Override
@@ -55,6 +57,8 @@ public class OCL2JavaCommonExpressions implements CommonExpressionsHandler, Comm
   }
 
   protected void handleInfixExpression(ASTInfixExpression node, String operator) {
+    Preconditions.checkNotNull(node);
+    Preconditions.checkNotNull(operator);
     handleInfixExpression(node, operator, "");
   }
 
