@@ -95,38 +95,12 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   public void endVisit(ASTLessEqualExpression node) {
     Preconditions.checkNotNull(node);
     this.handleInfixExpression(node, "<=", "isLessThan");
-
-    /* TODO
-    if(OCLHelper.isAmount((node.getLeftExpression()))) {
-      StringBuilder sb = getStringBuilder();
-      OCLVariableNaming varNaming = getVarNaming();
-
-      sb.append(varNaming.getName(node));
-      sb.append(" |= ");
-      sb.append(varNaming.getName(node.getLeftExpression()));
-      sb.append(".approximates(");
-      sb.append(varNaming.getName(node.getRightExpression()));
-      sb.append(");\n");
-    }*/
   }
 
   @Override
   public void endVisit(ASTGreaterEqualExpression node) {
     Preconditions.checkNotNull(node);
     this.handleInfixExpression(node, ">=", "isGreaterThan");
-
-    /* TODO
-    if(OCLHelper.isAmount((node.getLeftExpression()))) {
-      StringBuilder sb = getStringBuilder();
-      OCLVariableNaming varNaming = getVarNaming();
-
-      sb.append(varNaming.getName(node));
-      sb.append(" |= ");
-      sb.append(varNaming.getName(node.getLeftExpression()));
-      sb.append(".approximates(");
-      sb.append(varNaming.getName(node.getRightExpression()));
-      sb.append(");\n");
-    }*/
   }
 
   @Override
@@ -149,7 +123,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
       .append(this.getNaming().getName(node))
       .append(" = ")
       .append(this.getNaming().getName(node.getLeft()))
-      .append(false ? /*TODO OCLHelper.isAmount((node.getLeft())) */ ".approximates(" : ".equals(")
+      .append(".equals(")
       .append(this.getNaming().getName(node.getRight()))
       .append(")").append(";").append(System.lineSeparator());
   }
@@ -161,7 +135,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
       .append(this.getNaming().getName(node))
       .append(" = !")
       .append(this.getNaming().getName(node.getLeft()))
-      .append(false ? /*TODO OCLHelper.isAmount((node.getLeft())) */ ".approximates(" : ".equals(")
+      .append(".equals(")
       .append(this.getNaming().getName(node.getRight()))
       .append(")").append(";").append(System.lineSeparator());
   }

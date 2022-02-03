@@ -128,6 +128,4 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
     this.getStringBuilder().append("return ").append(this.getNaming().getName(node)).append(";\n");
     this.getStringBuilder().append("}\n");
   }
-
-
 }
