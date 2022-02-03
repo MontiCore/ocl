@@ -1,12 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.ocl.codegen;
+package de.monticore.ocl.codegen.util;
 
 import java.util.HashMap;
 
 import com.google.common.base.Preconditions;
 import de.monticore.ast.ASTNode;
 
-public class OCLVariableNaming {
+public class VariableNaming {
 
   // Map that keeps track of the number of variables that have already been generated of this type
   protected HashMap<Class<?>, Integer> counter = new HashMap<Class<?>, Integer>();

@@ -1,7 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.ocl.codegen;
+package de.monticore.ocl.codegen.visitors;
 
 import com.google.common.base.Preconditions;
+import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLHandler;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
@@ -13,7 +14,7 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
 
   protected OCLTraverser traverser;
 
-  public OCLPrinter(StringBuilder stringBuilder, OCLVariableNaming naming) {
+  public OCLPrinter(StringBuilder stringBuilder, VariableNaming naming) {
     Preconditions.checkNotNull(stringBuilder);
     Preconditions.checkNotNull(naming);
     this.stringBuilder = stringBuilder;
@@ -132,4 +133,6 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
     this.getStringBuilder().append("return ").append(this.getNaming().getName(node)).append(";\n");
     this.getStringBuilder().append("}\n");
   }
+
+
 }

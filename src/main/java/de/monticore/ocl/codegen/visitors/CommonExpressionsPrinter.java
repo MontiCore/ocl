@@ -1,20 +1,18 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.ocl.codegen;
+package de.monticore.ocl.codegen.visitors;
 
 import com.google.common.base.Preconditions;
-import de.monticore.expressions.commonexpressions._ast.ASTBooleanNotExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTInfixExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTLogicalNotExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTMultExpression;
+import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsHandler;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTraverser;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
+import de.monticore.ocl.codegen.util.VariableNaming;
 
 public class CommonExpressionsPrinter extends AbstractPrinter implements CommonExpressionsHandler, CommonExpressionsVisitor2 {
 
   protected CommonExpressionsTraverser traverser;
 
-  public CommonExpressionsPrinter(StringBuilder stringBuilder, OCLVariableNaming naming) {
+  public CommonExpressionsPrinter(StringBuilder stringBuilder, VariableNaming naming) {
     Preconditions.checkNotNull(stringBuilder);
     Preconditions.checkNotNull(naming);
     this.stringBuilder = stringBuilder;
@@ -73,5 +71,23 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
     this.getStringBuilder().append(" ").append(operator).append(" ");
     this.getStringBuilder().append(this.getNaming().getName(node.getRight()));
     this.getStringBuilder().append(";\n");
+  }
+
+  @Override
+  public void endVisit(ASTGreaterThanExpression node) {
+    handleInfixExpression(node, ">=", "isGreaterThan");
+
+    /*
+    if(OCLHelper.isAmount((node.getLeftExpression()))) {
+      StringBuilder sb = getStringBuilder();
+      OCLVariableNaming varNaming = getVarNaming();
+
+      sb.append(varNaming.getName(node));
+      sb.append(" |= ");
+      sb.append(varNaming.getName(node.getLeftExpression()));
+      sb.append(".approximates(");
+      sb.append(varNaming.getName(node.getRightExpression()));
+      sb.append(");\n");
+    }*/
   }
 }

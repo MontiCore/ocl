@@ -2,6 +2,9 @@
 package de.monticore.ocl.codegen;
 
 import com.google.common.base.Preconditions;
+import de.monticore.ocl.codegen.util.VariableNaming;
+import de.monticore.ocl.codegen.visitors.CommonExpressionsPrinter;
+import de.monticore.ocl.codegen.visitors.OCLPrinter;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
@@ -46,10 +49,10 @@ public class OCL2JavaGenerator {
   }
 
   protected OCL2JavaGenerator(StringBuilder sb) {
-    this(sb, new OCLVariableNaming());
+    this(sb, new VariableNaming());
   }
 
-  protected OCL2JavaGenerator(StringBuilder sb, OCLVariableNaming naming) {
+  protected OCL2JavaGenerator(StringBuilder sb, VariableNaming naming) {
     Preconditions.checkNotNull(sb);
     Preconditions.checkNotNull(naming);
 

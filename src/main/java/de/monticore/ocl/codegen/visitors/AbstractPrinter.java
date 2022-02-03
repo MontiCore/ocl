@@ -1,5 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.ocl.codegen;
+package de.monticore.ocl.codegen.visitors;
+
+import de.monticore.ocl.codegen.util.VariableNaming;
 
 public abstract class AbstractPrinter {
 
@@ -9,9 +11,9 @@ public abstract class AbstractPrinter {
     return this.stringBuilder;
   }
 
-  protected OCLVariableNaming naming;
+  protected VariableNaming naming;
 
-  protected OCLVariableNaming getNaming() {
+  protected VariableNaming getNaming() {
     return this.naming;
   }
 }
