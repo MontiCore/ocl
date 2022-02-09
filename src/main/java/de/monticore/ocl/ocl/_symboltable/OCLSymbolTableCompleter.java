@@ -18,7 +18,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcsimplegenerictypes.MCSimpleGenericTypesMill;
-import de.monticore.utils.Names;
+import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
