@@ -52,6 +52,8 @@ public class OCL2JavaGeneratorTest {
     Assertions.assertEquals(
       StringUtils.deleteWhitespace(FileUtils.readLines(expected, Charset.defaultCharset()).toString()),
       StringUtils.deleteWhitespace(FileUtils.readLines(target, Charset.defaultCharset()).toString()),
-      "The content of the generated file \'" + target + "\' and the content of the expected file \'" + expected + "\' do not match.");
+      "The content of the generated file \'" + target + "\'"
+        + " and the content of the expected file \'" + expected + "\'"
+        + " do not match.");
   }
 }
