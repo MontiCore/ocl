@@ -6,12 +6,16 @@ import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsHandler;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTraverser;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.oclexpressions._ast.ASTEquivalentExpression;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.TypeCheck;
 
 public class CommonExpressionsPrinter extends AbstractPrinter implements CommonExpressionsHandler, CommonExpressionsVisitor2 {
 
   protected CommonExpressionsTraverser traverser;
+  protected TypeCheck typeCheck;
 
   public CommonExpressionsPrinter(StringBuilder stringBuilder, VariableNaming naming) {
     Preconditions.checkNotNull(stringBuilder);
@@ -29,6 +33,11 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   public void setTraverser(CommonExpressionsTraverser traverser) {
     Preconditions.checkNotNull(traverser);
     this.traverser = traverser;
+  }
+
+  public void setTypeCheck(TypeCheck typeCheck) {
+    Preconditions.checkNotNull(typeCheck);
+    this.typeCheck = typeCheck;
   }
 
   @Override
@@ -148,10 +157,13 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
 
   protected void handleInfixExpression(ASTInfixExpression node, String operator, String amountMethod) {
     Preconditions.checkNotNull(node);
+    Preconditions.checkArgument(node instanceof ASTExpression);
     Preconditions.checkNotNull(operator);
     Preconditions.checkNotNull(amountMethod);
     Preconditions.checkArgument(!operator.isEmpty());
-    this.getStringBuilder().append("Dummy "/*TODO*/).append(" ").append(this.getNaming().getName(node));
+    Preconditions.checkNotNull(typeCheck);
+    SymTypeExpression nodeType = typeCheck.typeOf((ASTExpression) node);
+    this.getStringBuilder().append(nodeType.print()).append(" ").append(this.getNaming().getName(node));
     this.getStringBuilder().append(" = ");
     this.getStringBuilder().append(this.getNaming().getName(node.getLeft()));
     this.getStringBuilder().append(" ").append(operator).append(" ");

@@ -8,6 +8,10 @@ import de.monticore.ocl.codegen.visitors.OCLPrinter;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
+import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.ocl.types.check.FullSynthesizeSymTypeFromMCSimpleGenericTypes;
+import de.monticore.ocl.types.check.OCLTypeCheck;
+import de.monticore.types.check.TypeCheck;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,6 +22,7 @@ public class OCL2JavaGenerator {
 
   public static void generate(ASTOCLCompilationUnit ast, String outputFile) throws IOException {
     Preconditions.checkNotNull(ast);
+    Preconditions.checkNotNull(ast.getEnclosingScope());
     Preconditions.checkNotNull(outputFile);
     Preconditions.checkArgument(!outputFile.isEmpty());
     File output = Paths.get(outputFile).toFile();
@@ -58,8 +63,14 @@ public class OCL2JavaGenerator {
 
     this.traverser = OCLMill.traverser();
 
+    TypeCheck typeCheck = new OCLTypeCheck(
+        new FullSynthesizeSymTypeFromMCSimpleGenericTypes(),
+        new DeriveSymTypeOfOCLCombineExpressions()
+    );
+
     // Expressions
     CommonExpressionsPrinter comExprPrinter = new CommonExpressionsPrinter(sb, naming);
+    comExprPrinter.setTypeCheck(typeCheck);
     this.traverser.setCommonExpressionsHandler(comExprPrinter);
     this.traverser.add4CommonExpressions(comExprPrinter);
 
