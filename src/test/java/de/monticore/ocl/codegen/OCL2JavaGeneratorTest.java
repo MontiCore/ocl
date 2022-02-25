@@ -7,7 +7,6 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.util.SymbolTableUtil;
-import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.apache.commons.io.FileUtils;
@@ -34,8 +33,6 @@ public class OCL2JavaGeneratorTest {
   protected void init() {
     LogStub.init();
     Log.enableFailQuick(false);
-    OCLMill.reset();
-    OCLMill.init();
   }
 
   @ParameterizedTest
@@ -68,9 +65,10 @@ public class OCL2JavaGeneratorTest {
     OCLParser parser = new OCLParser();
     ASTOCLCompilationUnit ast = parser.parse(input.toString()).orElseThrow(NullPointerException::new);
     // setup ast's symbols
+    SymbolTableUtil.prepareMill();
+    SymbolTableUtil.addCd4cSymbols();
     MCPath modelPath = new MCPath(Paths.get(RELATIVE_MODEL_PATH, TEST_MODEL_PATH).getParent());
     OCLMill.globalScope().setSymbolPath(modelPath);
-    BasicSymbolsMill.initializePrimitives();
     SymbolTableUtil.runSymTabGenitor(ast);
     SymbolTableUtil.runSymTabCompleter(ast);
     return ast;
