@@ -6,22 +6,37 @@ import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsHandler;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTraverser;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.oclexpressions._ast.ASTEquivalentExpression;
-import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.TypeCheck;
+import de.monticore.types.check.IDerive;
+import de.monticore.types.check.ISynthesize;
+import de.se_rwth.commons.logging.Log;
 
-public class CommonExpressionsPrinter extends AbstractPrinter implements CommonExpressionsHandler, CommonExpressionsVisitor2 {
+public class CommonExpressionsPrinter extends AbstractPrinter implements CommonExpressionsHandler,
+  CommonExpressionsVisitor2 {
 
   protected CommonExpressionsTraverser traverser;
-  protected TypeCheck typeCheck;
+  protected ISynthesize synthesize;
+  protected IDerive derive;
 
-  public CommonExpressionsPrinter(StringBuilder stringBuilder, VariableNaming naming) {
+  protected ISynthesize getSynthesize() {
+    return this.synthesize;
+  }
+
+  protected IDerive getDerive() {
+    return this.derive;
+  }
+
+  public CommonExpressionsPrinter(StringBuilder stringBuilder,
+    VariableNaming naming, IDerive derive, ISynthesize synthesize) {
     Preconditions.checkNotNull(stringBuilder);
     Preconditions.checkNotNull(naming);
+    Preconditions.checkNotNull(derive);
+    Preconditions.checkNotNull(synthesize);
     this.stringBuilder = stringBuilder;
     this.naming = naming;
+    this.derive = derive;
+    this.synthesize = synthesize;
   }
 
   @Override
@@ -33,11 +48,6 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   public void setTraverser(CommonExpressionsTraverser traverser) {
     Preconditions.checkNotNull(traverser);
     this.traverser = traverser;
-  }
-
-  public void setTypeCheck(TypeCheck typeCheck) {
-    Preconditions.checkNotNull(typeCheck);
-    this.typeCheck = typeCheck;
   }
 
   @Override
@@ -61,13 +71,13 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   @Override
   public void endVisit(ASTMultExpression node) {
     Preconditions.checkNotNull(node);
-    this.handleInfixExpression(node, "*", "times");
+    this.handleInfixExpression(node, "*");
   }
 
   @Override
   public void endVisit(ASTDivideExpression node) {
     Preconditions.checkNotNull(node);
-    this.handleInfixExpression(node, "/", "divide");
+    this.handleInfixExpression(node, "/");
   }
 
   @Override
@@ -79,13 +89,13 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   @Override
   public void endVisit(ASTPlusExpression node) {
     Preconditions.checkNotNull(node);
-    this.handleInfixExpression(node, "+", "plus");
+    this.handleInfixExpression(node, "+");
   }
 
   @Override
   public void endVisit(ASTMinusExpression node) {
     Preconditions.checkNotNull(node);
-    this.handleInfixExpression(node, "-", "minus");
+    this.handleInfixExpression(node, "-");
   }
 
   //TODO
@@ -103,25 +113,25 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   @Override
   public void endVisit(ASTLessEqualExpression node) {
     Preconditions.checkNotNull(node);
-    this.handleInfixExpression(node, "<=", "isLessThan");
+    this.handleInfixExpression(node, "<=");
   }
 
   @Override
   public void endVisit(ASTGreaterEqualExpression node) {
     Preconditions.checkNotNull(node);
-    this.handleInfixExpression(node, ">=", "isGreaterThan");
+    this.handleInfixExpression(node, ">=");
   }
 
   @Override
   public void endVisit(ASTLessThanExpression node) {
     Preconditions.checkNotNull(node);
-    this.handleInfixExpression(node, "<", "isLessThan");
+    this.handleInfixExpression(node, "<");
   }
 
   @Override
   public void endVisit(ASTGreaterThanExpression node) {
     Preconditions.checkNotNull(node);
-    this.handleInfixExpression(node, ">=", "isGreaterThan");
+    this.handleInfixExpression(node, ">=");
   }
 
   @Override
@@ -152,25 +162,21 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   protected void handleInfixExpression(ASTInfixExpression node, String operator) {
     Preconditions.checkNotNull(node);
     Preconditions.checkNotNull(operator);
-    handleInfixExpression(node, operator, "");
-  }
-
-  protected void handleInfixExpression(ASTInfixExpression node, String operator, String amountMethod) {
-    Preconditions.checkNotNull(node);
-    Preconditions.checkArgument(node instanceof ASTExpression);
-    Preconditions.checkNotNull(operator);
-    Preconditions.checkNotNull(amountMethod);
     Preconditions.checkArgument(!operator.isEmpty());
-    Preconditions.checkNotNull(typeCheck);
-    SymTypeExpression nodeType = typeCheck.typeOf((ASTExpression) node);
-    this.getStringBuilder().append(nodeType.print()).append(" ").append(this.getNaming().getName(node));
-    this.getStringBuilder().append(" = ");
-    this.getStringBuilder().append(this.getNaming().getName(node.getLeft()));
-    this.getStringBuilder().append(" ").append(operator).append(" ");
-    this.getStringBuilder().append(this.getNaming().getName(node.getRight()));
-    this.getStringBuilder().append(";\n");
-    this.getStringBuilder().append(this.getNaming().getName(node)).append(" &= ");
-    this.getStringBuilder().append(this.getNaming().getName(node));
-    this.getStringBuilder().append(";\n");
+    node.accept(this.getDerive().getTraverser());
+    if (!this.getDerive().getResult().isPresent()) {
+      Log.error("Could not calculate type of expression", node.get_SourcePositionStart());
+    } else {
+      this.getStringBuilder().append(this.getDerive().getResult().get()).append(" ")
+        .append(this.getNaming().getName(node));
+      this.getStringBuilder().append(" = ");
+      this.getStringBuilder().append(this.getNaming().getName(node.getLeft()));
+      this.getStringBuilder().append(" ").append(operator).append(" ");
+      this.getStringBuilder().append(this.getNaming().getName(node.getRight()));
+      this.getStringBuilder().append(";\n");
+      this.getStringBuilder().append(this.getNaming().getName(node)).append(" &= ");
+      this.getStringBuilder().append(this.getNaming().getName(node));
+      this.getStringBuilder().append(";\n");
+    }
   }
 }

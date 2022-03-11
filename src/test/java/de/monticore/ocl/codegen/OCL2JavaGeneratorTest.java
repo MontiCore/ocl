@@ -20,12 +20,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 public class OCL2JavaGeneratorTest {
 
   protected final static String RELATIVE_MODEL_PATH = "src/test/resources";
   protected final static String RELATIVE_TARGET_PATH = "target/generated-test-sources";
-  protected final static String TEST_MODEL_PATH = "codegen/input/invariants";
+  protected final static String TEST_MODEL_PATH = "codegen/input";
+  protected final static String PACKAGE = "invariants";
   protected final static String EXPECTED_RESULT_PATH = "codegen/desired/invariants";
   protected final static String TEST_TARGET_PATH = "codegen/invariants";
 
@@ -33,6 +35,14 @@ public class OCL2JavaGeneratorTest {
   protected void init() {
     LogStub.init();
     Log.enableFailQuick(false);
+    this.setup();
+  }
+
+  protected void setup() {
+    SymbolTableUtil.prepareMill();
+    SymbolTableUtil.addCd4cSymbols();
+    MCPath modelPath = new MCPath(Paths.get(RELATIVE_MODEL_PATH, TEST_MODEL_PATH).getParent());
+    OCLMill.globalScope().setSymbolPath(modelPath);
   }
 
   @ParameterizedTest
@@ -42,7 +52,7 @@ public class OCL2JavaGeneratorTest {
     Preconditions.checkArgument(!s.isEmpty());
 
     // Given
-    File input = Paths.get(RELATIVE_MODEL_PATH, TEST_MODEL_PATH, s + ".ocl").toFile();
+    File input = Paths.get(RELATIVE_MODEL_PATH, TEST_MODEL_PATH, PACKAGE, s + ".ocl").toFile();
     File expected = Paths.get(RELATIVE_MODEL_PATH, EXPECTED_RESULT_PATH, s + ".java").toFile();
     File target = Paths.get(RELATIVE_TARGET_PATH, TEST_TARGET_PATH, s + ".java").toFile();
     ASTOCLCompilationUnit ast = loadASTWithSymbols(input);
@@ -61,16 +71,11 @@ public class OCL2JavaGeneratorTest {
 
 
   protected ASTOCLCompilationUnit loadASTWithSymbols(File input) throws IOException {
-    // load ast
     OCLParser parser = new OCLParser();
-    ASTOCLCompilationUnit ast = parser.parse(input.toString()).orElseThrow(NullPointerException::new);
-    // setup ast's symbols
-    SymbolTableUtil.prepareMill();
-    SymbolTableUtil.addCd4cSymbols();
-    MCPath modelPath = new MCPath(Paths.get(RELATIVE_MODEL_PATH, TEST_MODEL_PATH).getParent());
-    OCLMill.globalScope().setSymbolPath(modelPath);
-    SymbolTableUtil.runSymTabGenitor(ast);
-    SymbolTableUtil.runSymTabCompleter(ast);
-    return ast;
+    Optional<ASTOCLCompilationUnit> ast = parser.parse(input.toString());
+    Preconditions.checkState(ast.isPresent(), Log.getFindings());
+    SymbolTableUtil.runSymTabGenitor(ast.get());
+    SymbolTableUtil.runSymTabCompleter(ast.get());
+    return ast.get();
   }
 }

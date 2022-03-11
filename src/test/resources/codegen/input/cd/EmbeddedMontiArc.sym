@@ -1,0 +1,706 @@
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "EmbeddedMontiArc",
+  "symbols": [
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDPackageSymbol",
+      "name": "cd"
+    },
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
+      "name": "EmbeddedMontiArc"
+    },
+    {
+      "kind": "de.monticore.cdassociation._symboltable.CDAssociationSymbol",
+      "name": "source",
+      "association": 2109839984
+    },
+    {
+      "kind": "de.monticore.cdassociation._symboltable.CDAssociationSymbol",
+      "name": "target",
+      "association": 925973605
+    },
+    {
+      "kind": "de.monticore.cdassociation._symboltable.CDAssociationSymbol",
+      "name": "source",
+      "association": 1179792105
+    },
+    {
+      "kind": "de.monticore.cdassociation._symboltable.CDAssociationSymbol",
+      "name": "target",
+      "association": 2038522556
+    },
+    {
+      "kind": "de.monticore.cdassociation._symboltable.CDAssociationSymbol",
+      "name": "sourceInstance",
+      "association": 502848122
+    },
+    {
+      "kind": "de.monticore.cdassociation._symboltable.CDAssociationSymbol",
+      "name": "targetInstance",
+      "association": 596910004
+    },
+    {
+      "kind": "de.monticore.cdassociation._symboltable.CDAssociationSymbol",
+      "name": "sourceInstance",
+      "association": 1954985045
+    },
+    {
+      "kind": "de.monticore.cdassociation._symboltable.CDAssociationSymbol",
+      "name": "targetInstance",
+      "association": 106999035
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "cd.Component",
+      "isClass": true,
+      "isPublic": true,
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "instances",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1..*]",
+            "association": 159475521,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.ComponentInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "parent",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "association": 504807594,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Component"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "subComponents",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "association": 504807594,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Component"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "componentInstantiation",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "association": 332873513,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.ComponentInstantiation"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "componentInstance",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "association": 90567568,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.ComponentInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "port",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "association": 131872530,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Port"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "connector",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "association": 795321555,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Connector"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "effector",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "association": 98826337,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Effector"
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "getPortsList",
+            "isMethod": true,
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.List"
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name": "name",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.String"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "cd.ComponentInstance",
+      "isClass": true,
+      "isPublic": true,
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "definition",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "association": 159475521,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Component"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "component",
+            "cardinality": "[1]",
+            "association": 90567568,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Component"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "portInstance",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "association": 823914581,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.PortInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "connectorInstance",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "association": 1680503330,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.ConnectorInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "effectorInstance",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[*]",
+            "association": 2100440237,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.EffectorInstance"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "cd.ComponentInstantiation",
+      "isClass": true,
+      "isPublic": true,
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "component",
+            "cardinality": "[1]",
+            "association": 332873513,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Component"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "cd.Port",
+      "isClass": true,
+      "isPublic": true,
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "instances",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1..*]",
+            "association": 1889057031,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.PortInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "component",
+            "cardinality": "[1]",
+            "association": 131872530,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Component"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "source",
+            "cardinality": "[1]",
+            "association": 2109839984,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Connector"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "target",
+            "cardinality": "[1]",
+            "association": 925973605,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Connector"
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "isInPort",
+            "isMethod": true,
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "isOutPort",
+            "isMethod": true,
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "cd.PortInstance",
+      "isClass": true,
+      "isPublic": true,
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "definition",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "association": 1889057031,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Port"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "componentInstance",
+            "cardinality": "[1]",
+            "association": 823914581,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.ComponentInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "sourceInstance",
+            "cardinality": "[1]",
+            "association": 502848122,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.ConnectorInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "targetInstance",
+            "cardinality": "[1]",
+            "association": 596910004,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.ConnectorInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "isInPort",
+            "isMethod": true,
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            }
+          },
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "isOutPort",
+            "isMethod": true,
+            "returnType": {
+              "kind": "de.monticore.types.check.SymTypeConstant",
+              "constName": "boolean"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "cd.Connector",
+      "isClass": true,
+      "isPublic": true,
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "instances",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1..*]",
+            "association": 271095942,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.ConnectorInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "component",
+            "cardinality": "[1]",
+            "association": 795321555,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Component"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "source",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "association": 2109839984,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Port"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "target",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "association": 925973605,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Port"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "cd.Effector",
+      "isClass": true,
+      "isPublic": true,
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "instances",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1..*]",
+            "association": 1885922916,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.EffectorInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "component",
+            "cardinality": "[1]",
+            "association": 98826337,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Component"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "source",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "association": 1179792105,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Port"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "target",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "association": 2038522556,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Port"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "cd.ConnectorInstance",
+      "isClass": true,
+      "isPublic": true,
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "definition",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "association": 271095942,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Connector"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "componentInstance",
+            "cardinality": "[1]",
+            "association": 1680503330,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.ComponentInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "sourceInstance",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "association": 502848122,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.PortInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "targetInstance",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "association": 596910004,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.PortInstance"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name": "cd.EffectorInstance",
+      "isClass": true,
+      "isPublic": true,
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "definition",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "association": 1885922916,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.Effector"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "componentInstance",
+            "cardinality": "[1]",
+            "association": 2100440237,
+            "isLeft": true,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.ComponentInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "sourceInstance",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "association": 1954985045,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.PortInstance"
+            }
+          },
+          {
+            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name": "targetInstance",
+            "isDefinitiveNavigable": true,
+            "cardinality": "[1]",
+            "association": 106999035,
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "cd.PortInstance"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "furtherObjects": {
+    "596910004": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "159475521": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "502848122": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "98826337": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "1680503330": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "1885922916": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "131872530": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "823914581": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "271095942": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "2109839984": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "1954985045": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "925973605": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "795321555": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "90567568": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "1179792105": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "106999035": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "504807594": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "2038522556": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "332873513": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "2100440237": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    },
+    "1889057031": {
+      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation": true
+    }
+  }
+}

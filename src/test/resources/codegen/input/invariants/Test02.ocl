@@ -12,12 +12,9 @@ ocl Test02 {
     a / b != 0 &&
     a % b != 0;
 
-// Units are not allowed in pure OCL
-/*
   inv(Duration a, Duration b):
     a + b != 0 s &&
     a - b != 0 s &&
     a * b != 0 s &&
     a / b != 0 s;
-/**/
 }
