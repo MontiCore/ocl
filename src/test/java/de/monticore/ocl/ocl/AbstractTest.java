@@ -6,8 +6,8 @@ import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,13 +20,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public abstract class AbstractTest {
 
-  @BeforeClass
+  @BeforeAll
   public static void init() {
     LogStub.init();
     Log.enableFailQuick(false);
   }
 
-  @Before
+  @BeforeEach
   public void setUp() {
     Log.getFindings().clear();
   }
