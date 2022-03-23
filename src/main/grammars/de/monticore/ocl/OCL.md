@@ -185,7 +185,7 @@ checks the set comprehensions always have a generator part.
 * [```UnnamedInvariantDoesNotHaveParameters```](../../../../java/de/monticore/ocl/ocl/_cocos/UnnamedInvariantDoesNotHaveParameters.java)  
 checks unnamed invariants do not have parameters.
 
-* [```ValidTypes```](../../../../java/de/monticore/ocl/ocl/_cocos/ValidTypes.java)  
+* [```ValidTypes```](../../../../java/de/monticore/ocl/ocl/_cocos/ExpressionValidCoCo.java)  
 performs all type checks on expressions used in OCL artifacts.
 
 
