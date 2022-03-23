@@ -1,26 +1,25 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.oclexpressions._symboltable;
 
-import de.monticore.ocl.ocl._symboltable.IOCLScope;
 import de.monticore.ocl.oclexpressions.OCLExpressionsMill;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclarationVariable;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
-import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.ocl.types.check.OCLTypeCalculator;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.logging.Log;
 
 public class OCLExpressionsScopesGenitor extends OCLExpressionsScopesGenitorTOP {
 
-  protected DeriveSymTypeOfOCLCombineExpressions typeVisitor;
+  protected OCLTypeCalculator typeCalculator;
 
   public OCLExpressionsScopesGenitor(){
     super();
   }
 
-  public void setTypeVisitor(DeriveSymTypeOfOCLCombineExpressions typesCalculator) {
+  public void setTypeCalculator(OCLTypeCalculator typesCalculator) {
     if (typesCalculator != null) {
-      this.typeVisitor = typesCalculator;
+      this.typeCalculator = typesCalculator;
     }
     else {
       Log.error("0xA3201 The typesVisitor has to be set");

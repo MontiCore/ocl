@@ -2,9 +2,7 @@
 package de.monticore.ocl.types.check;
 
 import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTConditionalExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTInfixExpression;
 import de.monticore.expressions.prettyprint.CommonExpressionsFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
@@ -196,9 +194,7 @@ public class DeriveSymTypeOfCommonExpressions
   }
 
   @Override
-  protected Optional<SymTypeExpression> calculateConditionalExpressionType
-    (ASTConditionalExpression expr,
-      SymTypeExpression conditionResult,
+  protected Optional<SymTypeExpression> calculateConditionalExpressionType( SymTypeExpression conditionResult,
       SymTypeExpression trueResult,
       SymTypeExpression falseResult) {
     Optional<SymTypeExpression> wholeResult = Optional.empty();
@@ -220,8 +216,7 @@ public class DeriveSymTypeOfCommonExpressions
   }
 
   @Override
-  protected Optional<SymTypeExpression> calculateTypeLogical(ASTInfixExpression
-    expr, SymTypeExpression rightResult, SymTypeExpression leftResult) {
+  protected Optional<SymTypeExpression> calculateTypeLogical(SymTypeExpression rightResult, SymTypeExpression leftResult) {
     //Option one: they are both numeric types
     if (isNumericType(leftResult) && isNumericType(rightResult)
       || isBoolean(leftResult) && isBoolean(rightResult)) {

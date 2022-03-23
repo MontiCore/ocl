@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.ocl;
 
+import de.monticore.expressions.cocos.ExpressionValid;
 import de.monticore.io.FileReaderWriter;
 import de.monticore.io.paths.MCPath;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -13,8 +14,7 @@ import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.oclexpressions._cocos.IterateExpressionVariableUsageIsCorrect;
 import de.monticore.ocl.setexpressions._cocos.SetComprehensionHasGenerator;
-import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
-import de.monticore.ocl.util.ParserUtil;
+import de.monticore.ocl.types.check.OCLTypeCalculator;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
@@ -325,10 +325,10 @@ public class OCLTool extends OCLToolTOP {
    */
   public void checkAllCoCos(ASTOCLCompilationUnit ast) {
     checkAllExceptTypeCoCos(ast);
-    DeriveSymTypeOfOCLCombineExpressions typeChecker = new DeriveSymTypeOfOCLCombineExpressions();
+    OCLTypeCalculator typeCalc = new OCLTypeCalculator();
     OCLCoCoChecker checker = new OCLCoCoChecker();
-    checker.addCoCo(new ValidTypes(typeChecker));
-    checker.addCoCo(new PreAndPostConditionsAreBooleanType(typeChecker));
+    checker.addCoCo(new ExpressionValidCoCo(typeCalc));
+    checker.addCoCo(new PreAndPostConditionsAreBooleanType(typeCalc));
     checker.checkAll(ast);
   }
 

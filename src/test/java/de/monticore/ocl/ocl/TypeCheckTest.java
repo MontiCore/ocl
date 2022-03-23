@@ -2,15 +2,11 @@ package de.monticore.ocl.ocl;
 
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
-import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
-import de.monticore.ocl.types.check.FullSynthesizeSymTypeFromMCSimpleGenericTypes;
+import de.monticore.ocl.types.check.OCLTypeCalculator;
 import de.monticore.ocl.util.SymbolTableUtil;
-import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.TypeCheck;
+import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
 
 import java.util.Optional;
 
@@ -18,7 +14,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class TypeCheckTest extends AbstractTest {
 
-  @Disabled
   @Test
   public void testTypCheckForGenericMethodCalls() {
     String filename = "list.ocl";
@@ -40,19 +35,12 @@ public class TypeCheckTest extends AbstractTest {
     SymbolTableUtil.runSymTabGenitor(ast.get());
     SymbolTableUtil.runSymTabCompleter(ast.get());
 
-    TypeCheck typeCheck = new TypeCheck(new FullSynthesizeSymTypeFromMCSimpleGenericTypes(),
-        new DeriveSymTypeOfOCLCombineExpressions());
+    OCLTypeCalculator typeCalculator = new OCLTypeCalculator();
 
-    // NullpointerException, weil TypeCheck eigentlich schon vorher mit Log.error abgebrochen waere
-    try {
-      SymTypeExpression t =
-          typeCheck.typeOf(((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getExpression());
-    } catch(Exception e) {
-      Assertions.fail("This should not happen. The model was valid. All types were loaded. What "
-          + "happened?");
-    }
+    TypeCheckResult t = typeCalculator.deriveType(((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getExpression());
 
     // Additional check that nothing broke
     assertThat(Log.getErrorCount()).isEqualTo(0);
+    assertThat(t.isPresentCurrentResult()).isTrue();
   }
 }
