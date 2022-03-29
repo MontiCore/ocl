@@ -118,21 +118,31 @@ public class SetExpressionsPrettyPrinter
   @Override
   public void handle(ASTSetComprehension node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
-    if (node.isPresentMCType()) {
-      node.getMCType().accept(getTraverser());
-      getPrinter().print(" ");
+    if (node.getOpeningBracket().equals("{")) {
+      if (node.isPresentMCType()) {
+        node.getMCType().accept(getTraverser());
+        getPrinter().print(" ");
+      }
+      getPrinter().print("{");
     }
-    getPrinter().print("{");
+    else {
+      getPrinter().print("[");
+    }
     node.getLeft().accept(getTraverser());
     getPrinter().print(" | ");
     for (ASTSetComprehensionItem setComprehensionItem : node.getSetComprehensionItemList()) {
       setComprehensionItem.accept(getTraverser());
       if (!node.getSetComprehensionItemList().get(
-        node.getSetComprehensionItemList().size() - 1).equals(setComprehensionItem)) {
+          node.getSetComprehensionItemList().size() - 1).equals(setComprehensionItem)) {
         getPrinter().print(", ");
       }
     }
-    getPrinter().print("}");
+    if (node.getOpeningBracket().equals("{")) {
+      getPrinter().print("}");
+    }
+    else {
+      getPrinter().print("]");
+    }
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
 
@@ -167,19 +177,29 @@ public class SetExpressionsPrettyPrinter
   @Override
   public void handle(ASTSetEnumeration node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
-    if (node.isPresentMCType()) {
-      node.getMCType().accept(getTraverser());
-      getPrinter().print(" ");
+    if (node.getOpeningBracket().equals("{")) {
+      if (node.isPresentMCType()) {
+        node.getMCType().accept(getTraverser());
+        getPrinter().print(" ");
+      }
+      getPrinter().print("{");
     }
-    getPrinter().print("{");
+    else {
+      getPrinter().print("[");
+    }
     for (ASTSetCollectionItem setCollectionItem : node.getSetCollectionItemList()) {
       setCollectionItem.accept(getTraverser());
       if (!node.getSetCollectionItemList().get(
-        node.getSetCollectionItemList().size() - 1).equals(setCollectionItem)) {
+          node.getSetCollectionItemList().size() - 1).equals(setCollectionItem)) {
         getPrinter().print(", ");
       }
     }
-    getPrinter().print("}");
+    if (node.getOpeningBracket().equals("{")) {
+      getPrinter().print("}");
+    }
+    else {
+      getPrinter().print("]");
+    }
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
 

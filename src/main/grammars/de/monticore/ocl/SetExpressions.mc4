@@ -105,9 +105,11 @@ component grammar SetExpressions
    *   Note that we assume at least one generator (e.g. x in Y) in this AST.
    */
   scope (non_exporting) SetComprehension implements Expression  <40> =
-    MCType?
-    "{" left:SetComprehensionItem "|"
-                  (SetComprehensionItem || ",")+ "}"
+    ( MCType?
+      openingBracket:"{" left:SetComprehensionItem "|"
+                  (SetComprehensionItem || ",")+ "}" ) |
+    ( openingBracket:"[" left:SetComprehensionItem "|"
+                  (SetComprehensionItem || ",")+ "]" )
     ;
 
   /**
@@ -152,8 +154,9 @@ component grammar SetExpressions
    *        {1 .. 3, x+1 .. 10, 2*y, 21} 
    */
   SetEnumeration implements Expression  <40> =
-    MCType?
-    "{" (SetCollectionItem || ",")* "}"
+    ( MCType?
+      openingBracket:"{" (SetCollectionItem || ",")* "}" ) |
+    ( openingBracket:"[" (SetCollectionItem || ",")* "]" )
     ;
 
   interface SetCollectionItem;
