@@ -8,35 +8,27 @@ import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTrav
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.oclexpressions._ast.ASTEquivalentExpression;
-import de.monticore.types.check.IDerive;
-import de.monticore.types.check.ISynthesize;
+import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
 public class CommonExpressionsPrinter extends AbstractPrinter implements CommonExpressionsHandler,
   CommonExpressionsVisitor2 {
 
   protected CommonExpressionsTraverser traverser;
-  protected ISynthesize synthesize;
-  protected IDerive derive;
+  protected OCLTypeCalculator typeCalculator;
 
-  protected ISynthesize getSynthesize() {
-    return this.synthesize;
+  protected OCLTypeCalculator getTypeCalculator() {
+    return typeCalculator;
   }
 
-  protected IDerive getDerive() {
-    return this.derive;
-  }
-
-  public CommonExpressionsPrinter(StringBuilder stringBuilder,
-    VariableNaming naming, IDerive derive, ISynthesize synthesize) {
+  public CommonExpressionsPrinter(StringBuilder stringBuilder, VariableNaming naming, OCLTypeCalculator typeCalculator) {
     Preconditions.checkNotNull(stringBuilder);
     Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(derive);
-    Preconditions.checkNotNull(synthesize);
+    Preconditions.checkNotNull(typeCalculator);
     this.stringBuilder = stringBuilder;
     this.naming = naming;
-    this.derive = derive;
-    this.synthesize = synthesize;
+    this.typeCalculator = typeCalculator;
   }
 
   @Override
@@ -163,11 +155,11 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
     Preconditions.checkNotNull(node);
     Preconditions.checkNotNull(operator);
     Preconditions.checkArgument(!operator.isEmpty());
-    node.accept(this.getDerive().getTraverser());
-    if (!this.getDerive().getResult().isPresent()) {
+    TypeCheckResult type = this.getTypeCalculator().deriveType(node);
+    if (!type.isPresentCurrentResult()) {
       Log.error("Could not calculate type of expression", node.get_SourcePositionStart());
     } else {
-      this.getStringBuilder().append(this.getDerive().getResult().get()).append(" ")
+      this.getStringBuilder().append(type.getCurrentResult()).append(" ")
         .append(this.getNaming().getName(node));
       this.getStringBuilder().append(" = ");
       this.getStringBuilder().append(this.getNaming().getName(node.getLeft()));

@@ -8,8 +8,7 @@ import de.monticore.ocl.codegen.visitors.OCLPrinter;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
-import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
-import de.monticore.ocl.types.check.FullSynthesizeSymTypeFromMCSimpleGenericTypes;
+import de.monticore.ocl.types.check.OCLTypeCalculator;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -62,8 +61,7 @@ public class OCL2JavaGenerator {
     this.traverser = OCLMill.traverser();
 
     // Expressions
-    CommonExpressionsPrinter comExprPrinter = new CommonExpressionsPrinter(sb, naming,
-      new DeriveSymTypeOfOCLCombineExpressions(), new FullSynthesizeSymTypeFromMCSimpleGenericTypes());
+    CommonExpressionsPrinter comExprPrinter = new CommonExpressionsPrinter(sb, naming, new OCLTypeCalculator());
     this.traverser.setCommonExpressionsHandler(comExprPrinter);
     this.traverser.add4CommonExpressions(comExprPrinter);
 

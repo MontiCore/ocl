@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.types.check;
 
+import de.monticore.expressions.commonexpressions._ast.ASTInfixExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.ocl.ocl.OCLMill;
@@ -44,6 +45,12 @@ public class OCLTypeCalculator implements IDerive, ISynthesize {
   public TypeCheckResult deriveType(ASTLiteral lit) {
     this.getTypeCheckResult().reset();
     lit.accept(this.getTraverser());
+    return this.getTypeCheckResult().copy();
+  }
+
+  public TypeCheckResult deriveType(ASTInfixExpression expr) {
+    this.getTypeCheckResult().reset();
+    expr.accept(this.getTraverser());
     return this.getTypeCheckResult().copy();
   }
 
