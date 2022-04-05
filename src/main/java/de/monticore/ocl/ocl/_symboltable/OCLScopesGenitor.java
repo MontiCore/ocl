@@ -61,28 +61,31 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
 
   @Override
   public  void visit (de.monticore.ocl.ocl._ast.ASTOCLInvariant node)  {
+    if (!getCurrentScope().isPresent()) {
+      Log.debug(String.format("%s: Visiting %s, missing scope on scope stack.",
+        node.get_SourcePositionStart(), node.getClass()), "ScopesGenitor");
+      return;
+    }
+    // link the ast with its enclosing scope
+    node.setEnclosingScope(getCurrentScope().get());
+
     if (node.isPresentName()) {
+      // create the symbol
       OCLInvariantSymbol symbol = OCLMill.oCLInvariantSymbolBuilder().setName(node.getName()).build();
-      if (getCurrentScope().isPresent()) {
-        getCurrentScope().get().add(symbol);
-      } else {
-        Log.warn("0xA50212 Symbol cannot be added to current scope, since no scope exists.");
-      }
+      // link the symbol with its enclosing scope
+      getCurrentScope().get().add(symbol);
+      symbol.setEnclosingScope(getCurrentScope().get());
+      // link the symbol with its ast
+      symbol.setAstNode(node);
+      node.setSymbol(symbol);
+      // create the spanned scope
       IOCLScope scope = createScope(false);
       putOnStack(scope);
+      // link the symbol with the spanned scope
+      scope.setSpanningSymbol(symbol);
       symbol.setSpannedScope(scope);
-      // symbol -> ast
-      symbol.setAstNode(node);
-
-      // ast -> symbol
-      node.setSymbol(symbol);
-      node.setEnclosingScope(symbol.getEnclosingScope());
-
-      // ast -> spannedScope
-      // scope -> ast
+      // link the ast with the spanned scope
       scope.setAstNode(node);
-
-      // ast -> scope
       node.setSpannedScope(scope);
     }
   }
