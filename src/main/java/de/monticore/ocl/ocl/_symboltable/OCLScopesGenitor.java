@@ -3,6 +3,7 @@ package de.monticore.ocl.ocl._symboltable;
 
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
@@ -87,6 +88,17 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
       // link the ast with the spanned scope
       scope.setAstNode(node);
       node.setSpannedScope(scope);
+    }
+  }
+
+  @Override
+  public void endVisit(ASTOCLInvariant node) {
+    if (node.isPresentName()) {
+      removeCurrentScope();
+      initScopeHP2(node.getSpannedScope());
+      if (node.isPresentSymbol()) {
+        initOCLInvariantHP2(node.getSymbol());
+      }
     }
   }
 }
