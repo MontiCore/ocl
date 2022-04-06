@@ -61,7 +61,7 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
   }
 
   @Override
-  public  void visit (de.monticore.ocl.ocl._ast.ASTOCLInvariant node)  {
+  public void visit(final ASTOCLInvariant node)  {
     if (!getCurrentScope().isPresent()) {
       Log.debug(String.format("%s: Visiting %s, missing scope on scope stack.",
         node.get_SourcePositionStart(), node.getClass()), "ScopesGenitor");
@@ -69,6 +69,11 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
     }
     // link the ast with its enclosing scope
     node.setEnclosingScope(getCurrentScope().get());
+    // create the spanned scope
+    IOCLScope scope = createScope(false);
+    // link the ast with the spanned scope
+    scope.setAstNode(node);
+    node.setSpannedScope(scope);
 
     if (node.isPresentName()) {
       // create the symbol
@@ -79,26 +84,10 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
       // link the symbol with its ast
       symbol.setAstNode(node);
       node.setSymbol(symbol);
-      // create the spanned scope
-      IOCLScope scope = createScope(false);
-      putOnStack(scope);
       // link the symbol with the spanned scope
       scope.setSpanningSymbol(symbol);
       symbol.setSpannedScope(scope);
-      // link the ast with the spanned scope
-      scope.setAstNode(node);
-      node.setSpannedScope(scope);
     }
-  }
-
-  @Override
-  public void endVisit(ASTOCLInvariant node) {
-    if (node.isPresentName()) {
-      removeCurrentScope();
-      initScopeHP2(node.getSpannedScope());
-      if (node.isPresentSymbol()) {
-        initOCLInvariantHP2(node.getSymbol());
-      }
-    }
+    putOnStack(scope);
   }
 }
