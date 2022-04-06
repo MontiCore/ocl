@@ -41,6 +41,9 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
         .append(node.getPackage())
         .append(";")
         .append(System.lineSeparator())
+        .append(System.lineSeparator())
+        .append("import de.se_rwth.commons.logging.Log;")
+        .append(System.lineSeparator())
         .append(System.lineSeparator());
     }
 

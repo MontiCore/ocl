@@ -2,11 +2,6 @@
 package invariants;
 
 import de.se_rwth.commons.logging.Log;
-import org.jscience.physics.amount.Amount;
-
-import javax.measure.quantity.*;
-import javax.measure.unit.*;
-import java.util.*;
 
 import static de.monticore.lang.embeddedmontiarc.embeddedmontiarc._symboltable.cncModel.*;
 
