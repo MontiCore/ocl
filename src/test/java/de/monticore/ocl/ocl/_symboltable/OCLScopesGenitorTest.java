@@ -173,7 +173,8 @@ public class OCLScopesGenitorTest extends AbstractTest {
     Preconditions.checkState(ast.isPresentName());
     OCLScopesGenitorDelegator genitor = OCLMill.scopesGenitorDelegator();
     genitor.scopeStack.addLast(OCLMill.artifactScope());
-    genitor.scopeStack.addLast(OCLMill.scope());
+    IOCLScope enclosingScope = OCLMill.scope();
+    genitor.scopeStack.addLast(enclosingScope);
 
     // When
     ast.accept(genitor.traverser);
@@ -186,12 +187,18 @@ public class OCLScopesGenitorTest extends AbstractTest {
         "The spanning symbol of the scope spanned by the ocl invariant is missing.");
       Assertions.assertTrue(ast.getSpannedScope().getSpanningSymbol().isPresentAstNode(),
         "The symbol of the ocl invariant is not linked with its ast.");
+      Assertions.assertNotNull(ast.getSpannedScope().getSpanningSymbol().getEnclosingScope(),
+        "The symbol of the ocl invariant is missing its enclosing scope.");
       Assertions.assertEquals(ast.getSymbol(), ast.getSpannedScope().getSpanningSymbol(),
         "The symbol of the ast and the spanning symbol of the scope spanned by the ocl invariant do not match.");
       Assertions.assertEquals(ast.getSpannedScope(), ast.getSpannedScope().getSpanningSymbol().getSpannedScope(),
         "The scope spanned by the ocl invariant does not match the scope of its spanning symbol.");
       Assertions.assertEquals(ast, ast.getSpannedScope().getSpanningSymbol().getAstNode(),
         "The ast of the ocl invariant and the ast of its symbol do not match.");
+      Assertions.assertEquals(ast.getEnclosingScope(), ast.getSpannedScope().getSpanningSymbol().getEnclosingScope(),
+        "The enclosing scope of the symbol of the ocl invariant does not match the enclosing scope of its ast.");
+      Assertions.assertTrue(enclosingScope.getLocalOCLInvariantSymbols().contains(ast.getSymbol()),
+        "The enclosing scope of the ocl invariant does not contain the spanning symbol as local symbol.");
     });
   }
 
