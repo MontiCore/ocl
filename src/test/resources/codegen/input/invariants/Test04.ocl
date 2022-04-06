@@ -1,8 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 package invariants;
-
-import cd.DefaultTypes.*;
 
 ocl Test04 {
   inv(boolean a, boolean b):

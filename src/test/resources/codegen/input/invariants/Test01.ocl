@@ -1,8 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 package invariants;
-
-import cd.DefaultTypes.*;
 
 ocl Test01 {
   inv(int a, int b):
@@ -13,7 +10,7 @@ ocl Test01 {
     a == b &&
     a != b;
 
-  inv(Duration a, Duration b):
+  inv(Integer a, Integer b):
     a > b &&
     a >= b &&
     a < b &&

@@ -55,6 +55,7 @@ public class OCL2JavaGeneratorTest {
     File input = Paths.get(RELATIVE_MODEL_PATH, TEST_MODEL_PATH, PACKAGE, s + ".ocl").toFile();
     File expected = Paths.get(RELATIVE_MODEL_PATH, EXPECTED_RESULT_PATH, s + ".java").toFile();
     File target = Paths.get(RELATIVE_TARGET_PATH, TEST_TARGET_PATH, s + ".java").toFile();
+    SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/AuctionCD.sym");
     ASTOCLCompilationUnit ast = loadASTWithSymbols(input);
 
     // When

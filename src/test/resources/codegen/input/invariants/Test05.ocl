@@ -1,8 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 package invariants;
-
-import cd.DefaultTypes.*;
 
 ocl Test05 {
   inv(List<String> names):
@@ -20,7 +17,7 @@ ocl Test05 {
     in
       a < b;
 
-  inv(Number n, int a):
+  inv(Integer n, int a):
     (Integer) n < a;
 
   inv(int a, int b, int c):

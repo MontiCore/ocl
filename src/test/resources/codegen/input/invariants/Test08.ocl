@@ -1,9 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-
 package invariants;
-
-import cd.DefaultTypes.*;
-import cd.EmbeddedMontiArc.*;
 
 ocl Test08 {
   inv(Set<String> names):
