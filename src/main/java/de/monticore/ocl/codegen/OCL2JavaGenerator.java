@@ -2,13 +2,16 @@
 package de.monticore.ocl.codegen;
 
 import com.google.common.base.Preconditions;
+import de.monticore.literals.prettyprint.MCCommonLiteralsPrettyPrinter;
 import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.codegen.visitors.CommonExpressionsPrinter;
+import de.monticore.ocl.codegen.visitors.ExpressionsBasisPrinter;
 import de.monticore.ocl.codegen.visitors.OCLPrinter;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.prettyprint.IndentPrinter;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,41 +35,54 @@ public class OCL2JavaGenerator {
 
   public static String generate(ASTOCLCompilationUnit ast) {
     Preconditions.checkNotNull(ast);
-    return generate(ast, new StringBuilder());
+    return generate(ast, new IndentPrinter());
   }
 
-  protected static String generate(ASTOCLCompilationUnit ast, StringBuilder sb) {
+  protected static String generate(ASTOCLCompilationUnit ast, IndentPrinter printer) {
     Preconditions.checkNotNull(ast);
-    Preconditions.checkNotNull(sb);
-    sb.append("/* (c) https://github.com/MontiCore/monticore */");
-    sb.append(System.lineSeparator());
-    ast.accept(new OCL2JavaGenerator(sb).getTraverser());
-    return sb.toString();
+    Preconditions.checkNotNull(printer);
+
+    printer.println("/* (c) https://github.com/MontiCore/monticore */");
+    ast.accept(new OCL2JavaGenerator(printer).getTraverser());
+    return printer.getContent();
   }
 
   protected OCLTraverser traverser;
+
+  protected IndentPrinter printer;
 
   protected OCLTraverser getTraverser() {
     return this.traverser;
   }
 
-  protected OCL2JavaGenerator(StringBuilder sb) {
-    this(sb, new VariableNaming());
+  protected OCL2JavaGenerator(IndentPrinter printer) {
+    this(printer, new VariableNaming());
   }
 
-  protected OCL2JavaGenerator(StringBuilder sb, VariableNaming naming) {
-    Preconditions.checkNotNull(sb);
+  protected OCL2JavaGenerator(IndentPrinter printer, VariableNaming naming) {
+    this(printer, naming, new OCLTypeCalculator());
+  }
+
+  protected OCL2JavaGenerator(IndentPrinter printer, VariableNaming naming, OCLTypeCalculator typeCalculator) {
+    Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
+    Preconditions.checkNotNull(typeCalculator);
 
     this.traverser = OCLMill.traverser();
 
     // Expressions
-    CommonExpressionsPrinter comExprPrinter = new CommonExpressionsPrinter(sb, naming, new OCLTypeCalculator());
+    CommonExpressionsPrinter comExprPrinter = new CommonExpressionsPrinter(printer, naming, typeCalculator);
     this.traverser.setCommonExpressionsHandler(comExprPrinter);
     this.traverser.add4CommonExpressions(comExprPrinter);
+    ExpressionsBasisPrinter exprBasPrinter = new ExpressionsBasisPrinter(printer, naming, typeCalculator);
+    this.traverser.setExpressionsBasisHandler(exprBasPrinter);
+    this.traverser.add4ExpressionsBasis(exprBasPrinter);
+    MCCommonLiteralsPrettyPrinter comLitPrinter = new MCCommonLiteralsPrettyPrinter(printer);
+    this.traverser.setMCCommonLiteralsHandler(comLitPrinter);
+    this.traverser.add4MCCommonLiterals(comLitPrinter);
 
     // OCL
-    OCLPrinter oclPrinter = new OCLPrinter(sb, naming);
+    OCLPrinter oclPrinter = new OCLPrinter(printer, naming);
     this.traverser.setOCLHandler(oclPrinter);
     this.traverser.add4OCL(oclPrinter);
   }

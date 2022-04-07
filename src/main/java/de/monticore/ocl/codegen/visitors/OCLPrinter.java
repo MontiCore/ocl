@@ -7,6 +7,7 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLHandler;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.logging.Log;
 
@@ -14,10 +15,12 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
 
   protected OCLTraverser traverser;
 
-  public OCLPrinter(StringBuilder stringBuilder, VariableNaming naming) {
-    Preconditions.checkNotNull(stringBuilder);
+  protected IndentPrinter printer;
+
+  public OCLPrinter(IndentPrinter printer, VariableNaming naming) {
+    Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
-    this.stringBuilder = stringBuilder;
+    this.printer = printer;
     this.naming = naming;
   }
 
@@ -32,46 +35,42 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
     this.traverser = traverser;
   }
 
+  public IndentPrinter getPrinter() {
+    return this.printer;
+  }
+
   @Override
   public void visit(ASTOCLCompilationUnit node) {
     Preconditions.checkNotNull(node);
     if (node.isPresentPackage() && !node.getPackage().isEmpty()) {
-      this.getStringBuilder()
-        .append("package").append(" ")
-        .append(node.getPackage())
-        .append(";")
-        .append(System.lineSeparator())
-        .append(System.lineSeparator())
-        .append("import de.se_rwth.commons.logging.Log;")
-        .append(System.lineSeparator())
-        .append(System.lineSeparator());
+      this.getPrinter().print("package ");
+      this.getPrinter().print(node.getPackage());
+      this.getPrinter().println(";");
+      this.getPrinter().println();
+      this.getPrinter().println("import de.se_rwth.commons.logging.Log;");
+      this.getPrinter().println();
     }
 
     for (ASTMCImportStatement is : node.getMCImportStatementList()) {
-      this.getStringBuilder().append(this.printImportStatement(is));
-      this.getStringBuilder().append(System.lineSeparator());
-    }
-
-    if (!node.getMCImportStatementList().isEmpty()) {
-      this.getStringBuilder().append(System.lineSeparator());
+      this.getPrinter().println(this.printImportStatement(is));
     }
   }
 
   @Override
   public void visit(ASTOCLArtifact node) {
     Preconditions.checkNotNull(node);
-    this.getStringBuilder()
-      .append("public ")
-      .append("class ")
-      .append(node.getName()).append(" ")
-      .append("{ ")
-      .append(System.lineSeparator());
+    this.getPrinter().print("public ");
+    this.getPrinter().print("class ");
+    this.getPrinter().print(node.getName());
+    this.getPrinter().println(" {");
+    this.getPrinter().indent();
   }
 
   @Override
   public void endVisit(ASTOCLArtifact node) {
     Preconditions.checkNotNull(node);
-    this.getStringBuilder().append("}");
+    this.getPrinter().unindent();
+    this.getPrinter().println("}");
   }
 
   protected String printImportStatement(ASTMCImportStatement ast) {
@@ -91,16 +90,17 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
 
   @Override
   public void handle(ASTOCLInvariant node) {
-    this.getStringBuilder().append("@SuppressWarnings(\"unchecked\")\n");
-    this.getStringBuilder().append("public static Boolean check");
+    this.getPrinter().print("@SuppressWarnings(\"unchecked\")\n");
+    this.getPrinter().print("public static Boolean check");
 
     if (node.isPresentName()) {
-      this.getStringBuilder().append(node.getName());
-    } else {
-      this.getStringBuilder().append(this.getNaming().getName(node));
+      this.getPrinter().print(node.getName());
+    }
+    else {
+      this.getPrinter().print(this.getNaming().getName(node));
     }
 
-    this.getStringBuilder().append("(");
+    this.getPrinter().print("(");
 
     for (ASTOCLContextDefinition contextDef : node.getOCLContextDefinitionList()) {
       contextDef.accept(this.getTraverser());
@@ -109,8 +109,9 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
     for (ASTOCLParamDeclaration paramDec : node.getOCLParamDeclarationList()) {
       paramDec.accept(this.getTraverser());
     }
-    this.getStringBuilder().append(")").append(" { ").append(System.lineSeparator());
-    this.getStringBuilder().append("Map<String, Object> witnessElements = new HashMap<>();\n");
+    this.getPrinter().println(") {");
+    this.getPrinter().indent();
+    this.getPrinter().println("Map<String, Object> witnessElements = new HashMap<>();");
     /*TODO
     if(node.isPresentOCLClassContext()) {
       addContextVarsToWitness(sb, node.getOCLClassContext());
@@ -118,17 +119,30 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
     if(node.isPresentOCLParameters()) {
       addOCLParametersToWitness(sb, node.getOCLParameters());
     }*/
-    this.getStringBuilder().append("Boolean ").append(this.getNaming().getName(node)).append(" = true;\n");
-    this.getStringBuilder().append("try {\n");
-
+    this.getPrinter().print("Boolean ");
+    this.getPrinter().print(this.getNaming().getName(node));
+    this.getPrinter().println(" = true;");
+    this.getPrinter().println("try {");
+    this.getPrinter().indent();
     node.getExpression().accept(this.getTraverser());
-
-    this.getStringBuilder().append("} catch (Exception ").append(this.getNaming().getName(node)).append("Exception) {\n");
-    this.getStringBuilder().append(this.getNaming().getName(node)).append(" = false;\n");
-    this.getStringBuilder().append(this.getNaming().getName(node)).append("Exception.printStackTrace();\n");
-    this.getStringBuilder().append("Log.error(\"Error while executing ").append(this.getNaming().getName(node)).append("() !\");\n");
-    this.getStringBuilder().append("}\n");
-    this.getStringBuilder().append("return ").append(this.getNaming().getName(node)).append(";\n");
-    this.getStringBuilder().append("}\n");
+    this.getPrinter().unindent();
+    this.getPrinter().print("} catch (Exception ");
+    this.getPrinter().print(this.getNaming().getName(node));
+    this.getPrinter().println("Exception) {");
+    this.getPrinter().indent();
+    this.getPrinter().print(this.getNaming().getName(node));
+    this.getPrinter().println(" = false;");
+    this.getPrinter().print(this.getNaming().getName(node));
+    this.getPrinter().println("Exception.printStackTrace();");
+    this.getPrinter().print("Log.error(\"Error while executing ");
+    this.getPrinter().print(this.getNaming().getName(node));
+    this.getPrinter().println("() !\");");
+    this.getPrinter().println("}");
+    this.getPrinter().unindent();
+    this.getPrinter().print("return ");
+    this.getPrinter().print(this.getNaming().getName(node));
+    this.getPrinter().println(";");
+    this.getPrinter().println("}");
+    this.getPrinter().unindent();
   }
 }
