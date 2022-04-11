@@ -6,12 +6,17 @@ import de.monticore.literals.prettyprint.MCCommonLiteralsPrettyPrinter;
 import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.codegen.visitors.CommonExpressionsPrinter;
 import de.monticore.ocl.codegen.visitors.ExpressionsBasisPrinter;
+import de.monticore.ocl.codegen.visitors.OCLExpressionsPrinter;
 import de.monticore.ocl.codegen.visitors.OCLPrinter;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.types.check.OCLTypeCalculator;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.prettyprint.MCBasicsPrettyPrinter;
+import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
+import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
+import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -77,6 +82,23 @@ public class OCL2JavaGenerator {
     ExpressionsBasisPrinter exprBasPrinter = new ExpressionsBasisPrinter(printer, naming, typeCalculator);
     this.traverser.setExpressionsBasisHandler(exprBasPrinter);
     this.traverser.add4ExpressionsBasis(exprBasPrinter);
+    OCLExpressionsPrinter oclExprPrinter = new OCLExpressionsPrinter(printer, naming, typeCalculator);
+    this.traverser.setOCLExpressionsHandler(oclExprPrinter);
+    this.traverser.add4OCLExpressions(oclExprPrinter);
+
+    // Types
+    MCSimpleGenericTypesPrettyPrinter simpleGenericTypes = new MCSimpleGenericTypesPrettyPrinter(printer);
+    traverser.setMCSimpleGenericTypesHandler(simpleGenericTypes);
+    traverser.add4MCSimpleGenericTypes(simpleGenericTypes);
+    MCCollectionTypesPrettyPrinter collectionTypes = new MCCollectionTypesPrettyPrinter(printer);
+    traverser.setMCCollectionTypesHandler(collectionTypes);
+    traverser.add4MCCollectionTypes(collectionTypes);
+    MCBasicTypesPrettyPrinter basicTypes = new MCBasicTypesPrettyPrinter(printer);
+    traverser.setMCBasicTypesHandler(basicTypes);
+    traverser.add4MCBasicTypes(basicTypes);
+    MCBasicsPrettyPrinter basics = new MCBasicsPrettyPrinter(printer);
+    traverser.add4MCBasics(basics);
+
     MCCommonLiteralsPrettyPrinter comLitPrinter = new MCCommonLiteralsPrettyPrinter(printer);
     this.traverser.setMCCommonLiteralsHandler(comLitPrinter);
     this.traverser.add4MCCommonLiterals(comLitPrinter);
