@@ -166,9 +166,9 @@ component grammar SetExpressions
    */
   interface SetCollectionItem;
 
-  // individual list of values
+  // individual value
   SetValueItem implements SetCollectionItem =
-    (Expression || ",")+
+    Expression
     ;
 
   // range of values

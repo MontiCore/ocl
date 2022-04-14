@@ -206,13 +206,7 @@ public class SetExpressionsPrettyPrinter
   @Override
   public void handle(ASTSetValueItem node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
-    for (ASTExpression expression : node.getExpressionList()) {
-      expression.accept(getTraverser());
-      if (!node.getExpressionList().get(
-        node.getExpressionList().size() - 1).equals(expression)) {
-        getPrinter().print(", ");
-      }
-    }
+    node.getExpression().accept(getTraverser());
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
 

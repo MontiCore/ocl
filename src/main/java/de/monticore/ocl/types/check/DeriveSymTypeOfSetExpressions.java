@@ -277,9 +277,7 @@ public class DeriveSymTypeOfSetExpressions
     //check type of elements in set
     for (ASTSetCollectionItem item : node.getSetCollectionItemList()) {
       if (item instanceof ASTSetValueItem) {
-        for (ASTExpression e : ((ASTSetValueItem) item).getExpressionList()) {
-          e.accept(getTraverser());
-        }
+        ((ASTSetValueItem) item).getExpression().accept(getTraverser());
         if (typeCheckResult.isPresentCurrentResult()) {
           if (innerResult == null) {
             innerResult = typeCheckResult.getCurrentResult();
