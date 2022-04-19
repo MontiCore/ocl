@@ -167,7 +167,6 @@ public class DeriveSymTypeOfSetExpressions
   @Override
   public void traverse(ASTSetComprehension node) {
     SymTypeExpression result = null;
-    if (node.isPresentMCType()) {
       node.getMCType().accept(getTraverser());
       if (typeCheckResult.isPresentCurrentResult()) {
         boolean correct = false;
@@ -179,7 +178,7 @@ public class DeriveSymTypeOfSetExpressions
         if (!correct) {
           typeCheckResult.reset();
           Log
-            .error("0xA0298 there must be a type at " + node.getMCType().get_SourcePositionStart());
+            .error("0xA0298 could not calculate type at " + node.get_SourcePositionStart());
         }
         else {
           result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
@@ -192,7 +191,6 @@ public class DeriveSymTypeOfSetExpressions
         typeCheckResult.reset();
         Log.error("0xA0299 could not determine type of " + node.getMCType().getClass().getName());
       }
-    }
 
     SymTypeExpression leftType = null;
     Set<String> varNames = new HashSet<>();
@@ -243,7 +241,6 @@ public class DeriveSymTypeOfSetExpressions
   public void traverse(ASTSetEnumeration node) {
     SymTypeExpression result = null;
     SymTypeExpression innerResult = null;
-    if (node.isPresentMCType()) {
       node.getMCType().accept(getTraverser());
       if (typeCheckResult.isPresentCurrentResult()) {
         boolean correct = false;
@@ -255,7 +252,7 @@ public class DeriveSymTypeOfSetExpressions
         if (!correct) {
           typeCheckResult.reset();
           Log
-            .error("0xA0298 there must be a type at " + node.getMCType().get_SourcePositionStart());
+            .error("0xA0298 there must be a type for collection at" + node.get_SourcePositionStart());
         }
         else {
           result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
@@ -265,9 +262,8 @@ public class DeriveSymTypeOfSetExpressions
       }
       else {
         typeCheckResult.reset();
-        Log.error("0xA0299 could not determine type of " + node.getMCType().getClass().getName());
+        Log.error("0xA0299 could not determine type of " + node.getClass().getName());
       }
-    }
 
     if (result == null) {
       result = SymTypeExpressionFactory

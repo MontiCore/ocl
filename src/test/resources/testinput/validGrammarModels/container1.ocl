@@ -4,7 +4,7 @@ ocl container1 {
     let
       Optional<Set<Integer>> si = {1, 3, 5};
       Set<Set<Integer> > ssi = {{}, {1}, {1, 2}, si};
-      List<Set<Integer> > lsp = List{{1}, {}};
+      List<Set<Integer> > lsp = [{1}, {}];
       Collection<Set<List<List> > > x = {};
       Set<Collection<Set<List<List> > > > x = {}
     in

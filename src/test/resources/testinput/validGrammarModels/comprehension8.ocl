@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl comprehension8 {
   inv:
-    List{z + "?" | x in List{"Spiel", "Feuer", "Flug"}, y in List{"zeug", "platz"}, String z = x + y, z != "Feuerplatz"} == List{"Spielzeug?", "Spielplatz?", "Feuerzeug?", "Flugzeug?", "Flugplatz?"};
+    [z + "?" | x in ["Spiel", "Feuer", "Flug"], y in ["zeug", "platz"], String z = x + y, z != "Feuerplatz"] == ["Spielzeug?", "Spielplatz?", "Feuerzeug?", "Flugzeug?", "Flugplatz?"];
 }
