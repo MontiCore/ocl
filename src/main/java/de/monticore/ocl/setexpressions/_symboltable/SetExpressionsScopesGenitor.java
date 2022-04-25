@@ -1,17 +1,17 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.setexpressions._symboltable;
 
-import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.ocl.types.check.OCLTypeCalculator;
 import de.se_rwth.commons.logging.Log;
 
 public class SetExpressionsScopesGenitor extends SetExpressionsScopesGenitorTOP {
-  protected DeriveSymTypeOfOCLCombineExpressions typeVisitor;
+  protected OCLTypeCalculator typeVisitor;
 
   public SetExpressionsScopesGenitor(){
     super();
   }
 
-  public void setTypeVisitor(DeriveSymTypeOfOCLCombineExpressions typesCalculator) {
+  public void setTypeVisitor(OCLTypeCalculator typesCalculator) {
     if (typesCalculator != null) {
       this.typeVisitor = typesCalculator;
     }

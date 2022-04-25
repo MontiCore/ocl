@@ -12,7 +12,7 @@ import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
 import de.monticore.ocl.setexpressions._symboltable.SetExpressionsSymbolTableCompleter;
-import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
+import de.monticore.ocl.types.check.OCLTypeCalculator;
 import de.monticore.ocl.util.library.CollectionType;
 import de.monticore.ocl.util.library.GlobalQueries;
 import de.monticore.ocl.util.library.ListType;
@@ -73,15 +73,15 @@ public class SymbolTableUtil {
     OCLSymbolTableCompleter stCompleter = new OCLSymbolTableCompleter(
       ast.getMCImportStatementList(), ast.getPackage()
     );
-    stCompleter.setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
+    stCompleter.setTypeCalculator(new OCLTypeCalculator());
     OCLExpressionsSymbolTableCompleter stCompleter2 = new OCLExpressionsSymbolTableCompleter(
       ast.getMCImportStatementList(), ast.getPackage()
     );
-    stCompleter2.setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
+    stCompleter2.setTypeVisitor(new OCLTypeCalculator());
     SetExpressionsSymbolTableCompleter stCompleter3 = new SetExpressionsSymbolTableCompleter(
       ast.getMCImportStatementList(), ast.getPackage()
     );
-    stCompleter3.setTypeVisitor(new DeriveSymTypeOfOCLCombineExpressions());
+    stCompleter3.setTypeVisitor(new OCLTypeCalculator());
 
     OCLTraverser t = OCLMill.traverser();
     t.add4BasicSymbols(stCompleter);

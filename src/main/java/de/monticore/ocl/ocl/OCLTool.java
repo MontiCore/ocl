@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.ocl;
 
+import de.monticore.expressions.cocos.ExpressionValid;
 import de.monticore.io.FileReaderWriter;
 import de.monticore.io.paths.MCPath;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -13,8 +14,7 @@ import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.oclexpressions._cocos.IterateExpressionVariableUsageIsCorrect;
 import de.monticore.ocl.setexpressions._cocos.SetComprehensionHasGenerator;
-import de.monticore.ocl.types.check.DeriveSymTypeOfOCLCombineExpressions;
-import de.monticore.ocl.util.ParserUtil;
+import de.monticore.ocl.types.check.OCLTypeCalculator;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
@@ -27,7 +27,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class OCLCLI extends OCLCLITOP {
+public class OCLTool extends OCLToolTOP {
   /*=================================================================*/
   /* Part 1: Handling the arguments and options
   /*=================================================================*/
@@ -325,10 +325,10 @@ public class OCLCLI extends OCLCLITOP {
    */
   public void checkAllCoCos(ASTOCLCompilationUnit ast) {
     checkAllExceptTypeCoCos(ast);
-    DeriveSymTypeOfOCLCombineExpressions typeChecker = new DeriveSymTypeOfOCLCombineExpressions();
+    OCLTypeCalculator typeCalc = new OCLTypeCalculator();
     OCLCoCoChecker checker = new OCLCoCoChecker();
-    checker.addCoCo(new ValidTypes(typeChecker));
-    checker.addCoCo(new PreAndPostConditionsAreBooleanType(typeChecker));
+    checker.addCoCo(new ExpressionValidCoCo(typeCalc));
+    checker.addCoCo(new PreAndPostConditionsAreBooleanType(typeCalc));
     checker.checkAll(ast);
   }
 
@@ -350,12 +350,12 @@ public class OCLCLI extends OCLCLITOP {
   /*=================================================================*/
 
   /**
-   * Initializes the standard CLI options for the OCL tool.
+   * Initializes the standard options for the OCL tool.
    *
    * @return The CLI options with arguments.
    */
   @Override
-  public org.apache.commons.cli.Options addStandardOptions(org.apache.commons.cli.Options options) {
+  public Options addStandardOptions(Options options) {
 
     // help dialog
     Option help = new Option("h", "Prints this help dialog");
@@ -413,12 +413,12 @@ public class OCLCLI extends OCLCLITOP {
   }
 
   /**
-   * Initializes the additional CLI options for the OCL tool.
+   * Initializes the additional options for the OCL tool.
    *
    * @return The CLI options with arguments.
    */
   @Override
-  public org.apache.commons.cli.Options addAdditionalOptions(org.apache.commons.cli.Options options) {
+  public Options addAdditionalOptions(Options options) {
 
     // accept TypeSymbols
     Option typeSymbols = Option.builder("ts")
@@ -463,7 +463,7 @@ public class OCLCLI extends OCLCLITOP {
         .argName("fqns")
         .hasArgs()
         .desc("Takes the fully qualified name of one or more symbol kind(s) for which no warnings "
-            + "about not being able to deserialize them shall be printed. Allows cleaner CLI outputs. "
+            + "about not being able to deserialize them shall be printed. Allows cleaner outputs. "
             + "Multiple symbol kinds should be separated by spaces. ")
         .build();
     options.addOption(ignoreSymbols);

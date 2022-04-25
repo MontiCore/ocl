@@ -1,7 +1,6 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types.check;
 
-import de.monticore.expressions.commonexpressions._ast.ASTInfixExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.optionaloperators._ast.*;
 import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsHandler;
@@ -24,12 +23,13 @@ public class DeriveSymTypeOfOptionalOperators
 
   @Override
   public void traverse(ASTOptionalExpressionPrefix node){
-    SymTypeExpression optionalResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getLeft(), "0xA0300");
-    SymTypeExpression exprResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getRight(), "0xA0301");
-    Optional<SymTypeExpression> wholeResult = OCLTypeCheck.unwrapOptional(optionalResult);
+    Optional<SymTypeExpression> optionalResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getLeft(), "0xA0300");
+    Optional<SymTypeExpression> exprResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getRight(), "0xA0301");
+    Optional<SymTypeExpression> wholeResult = optionalResult.isPresent()?
+    OCLTypeCheck.unwrapOptional(optionalResult.get()) : Optional.empty();
 
     //check compatibility of type of optional and expression
-    if(wholeResult.isPresent() && !OCLTypeCheck.compatible(wholeResult.get(), exprResult)){
+    if(wholeResult.isPresent() && exprResult.isPresent() && !OCLTypeCheck.compatible(wholeResult.get(), exprResult.get())){
       LogHelper.error(node, "0xA0330", "types of OptionalExpressionPrefix are not compatible!");
     }
     
@@ -38,98 +38,108 @@ public class DeriveSymTypeOfOptionalOperators
 
   @Override
   public void traverse(ASTOptionalLessEqualExpression node){
-    Optional<SymTypeExpression> wholeResult = calculateTypeCompareOptional(node, node.getRight(), node.getLeft());;
+    Optional<SymTypeExpression> wholeResult = calculateTypeCompareOptional(node.getRight(), node.getLeft());
     storeResultOrLogError(wholeResult, node, "0xA0303");
   }
 
   @Override
   public void traverse(ASTOptionalGreaterEqualExpression node){
-    Optional<SymTypeExpression> wholeResult = calculateTypeCompareOptional(node, node.getRight(), node.getLeft());;
+    Optional<SymTypeExpression> wholeResult = calculateTypeCompareOptional(node.getRight(), node.getLeft());
     storeResultOrLogError(wholeResult, node, "0xA0304");
   }
 
   @Override
   public void traverse(ASTOptionalLessThanExpression node){
-    Optional<SymTypeExpression> wholeResult = calculateTypeCompareOptional(node, node.getRight(), node.getLeft());;
+    Optional<SymTypeExpression> wholeResult = calculateTypeCompareOptional(node.getRight(), node.getLeft());
     storeResultOrLogError(wholeResult, node, "0xA0305");
   }
 
   @Override
   public void traverse(ASTOptionalGreaterThanExpression node){
-    Optional<SymTypeExpression> wholeResult = calculateTypeCompareOptional(node, node.getRight(), node.getLeft());;
+    Optional<SymTypeExpression> wholeResult = calculateTypeCompareOptional(node.getRight(), node.getLeft());
     storeResultOrLogError(wholeResult, node, "0xA0306");
   }
 
   @Override
   public void traverse(ASTOptionalEqualsExpression node){
-    Optional<SymTypeExpression> wholeResult = calculateTypeLogicalOptional(node, node.getRight(), node.getLeft());;
+    Optional<SymTypeExpression> wholeResult = calculateTypeLogicalOptional(node.getRight(), node.getLeft());
     storeResultOrLogError(wholeResult, node, "0xA0307");
   }
 
   @Override
   public void traverse(ASTOptionalNotEqualsExpression node){
-    Optional<SymTypeExpression> wholeResult = calculateTypeLogicalOptional(node, node.getRight(), node.getLeft());;
+    Optional<SymTypeExpression> wholeResult = calculateTypeLogicalOptional(node.getRight(), node.getLeft());
     storeResultOrLogError(wholeResult, node, "0xA0308");
   }
 
   @Override
   public void traverse(ASTOptionalSimilarExpression node){
     //no compatiblity check necessary, therefore only check for optional
-    SymTypeExpression leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getLeft(), "0xA0241");
-    if(!OCLTypeCheck.unwrapOptional(leftResult).isPresent()) {
+    Optional<SymTypeExpression> leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getLeft(), "0xA0241");
+    if(!leftResult.isPresent() || !OCLTypeCheck.unwrapOptional(leftResult.get()).isPresent()) {
       LogHelper.error(node, "0xA0331", "Couldn't determine type of Optional");
     }
     acceptThisAndReturnSymTypeExpressionOrLogError(node.getRight(), "0xA0242");
-    Optional<SymTypeExpression> wholeResult = Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));;
+    Optional<SymTypeExpression> wholeResult = Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
     storeResultOrLogError(wholeResult, node, "0xA0307");
   }
 
   @Override
   public void traverse(ASTOptionalNotSimilarExpression node){
     //no compatiblity check necessary, therefore only check for optional
-    SymTypeExpression leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getLeft(), "0xA0241");
-    if(!OCLTypeCheck.unwrapOptional(leftResult).isPresent()) {
+    Optional<SymTypeExpression> leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getLeft(), "0xA0241");
+    if(!leftResult.isPresent() || !OCLTypeCheck.unwrapOptional(leftResult.get()).isPresent()) {
       LogHelper.error(node, "0xA0332", "Couldn't determine type of Optional");
     }
     acceptThisAndReturnSymTypeExpressionOrLogError(node.getRight(), "0xA0242");
-    Optional<SymTypeExpression> wholeResult = Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));;
+    Optional<SymTypeExpression> wholeResult = Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
     storeResultOrLogError(wholeResult, node, "0xA0308");
   }
 
-  private Optional<SymTypeExpression> calculateTypeCompareOptional(ASTInfixExpression expr, ASTExpression right, ASTExpression left) {
-    SymTypeExpression leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(left, "0xA0241");
+  private Optional<SymTypeExpression> calculateTypeCompareOptional(ASTExpression right, ASTExpression left) {
+    Optional<SymTypeExpression> leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(left, "0xA0241");
     //check that leftResult is of type Optional
-    if(OCLTypeCheck.unwrapOptional(leftResult).isPresent()){
-      leftResult = OCLTypeCheck.unwrapOptional(leftResult).get();
+    if(leftResult.isPresent() && OCLTypeCheck.unwrapOptional(leftResult.get()).isPresent()){
+      leftResult = Optional.of(OCLTypeCheck.unwrapOptional(leftResult.get()).get());
     }
     else{
       return Optional.empty();
     }
-    SymTypeExpression rightResult = acceptThisAndReturnSymTypeExpressionOrLogError(right, "0xA0242");
-    return calculateTypeCompareOptional(expr, rightResult, leftResult);
+    Optional<SymTypeExpression> rightResult = acceptThisAndReturnSymTypeExpressionOrLogError(right, "0xA0242");
+    if (rightResult.isPresent()) {
+      return calculateTypeCompareOptional(rightResult.get(), leftResult.get());
+    } else {
+      typeCheckResult.reset();
+      return Optional.empty();
+    }
   }
 
-  protected Optional<SymTypeExpression> calculateTypeCompareOptional(ASTInfixExpression expr, SymTypeExpression rightResult, SymTypeExpression leftResult) {
+  protected Optional<SymTypeExpression> calculateTypeCompareOptional(SymTypeExpression rightResult, SymTypeExpression leftResult) {
     if (isNumericType(rightResult) && isNumericType(leftResult)) {
       return Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
     }
     return Optional.empty();
   }
 
-  private Optional<SymTypeExpression> calculateTypeLogicalOptional(ASTInfixExpression expr, ASTExpression right, ASTExpression left) {
-    SymTypeExpression leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(left, "0xA0244");
+  private Optional<SymTypeExpression> calculateTypeLogicalOptional(ASTExpression right, ASTExpression left) {
+    Optional<SymTypeExpression> leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(left, "0xA0244");
     //check that leftResult is of type Optional
-    if(OCLTypeCheck.unwrapOptional(leftResult).isPresent()){
-      leftResult = OCLTypeCheck.unwrapOptional(leftResult).get();
+    if(leftResult.isPresent() && OCLTypeCheck.unwrapOptional(leftResult.get()).isPresent()){
+      leftResult = Optional.of(OCLTypeCheck.unwrapOptional(leftResult.get()).get());
     }
     else{
       return Optional.empty();
     }
-    SymTypeExpression rightResult = acceptThisAndReturnSymTypeExpressionOrLogError(right, "0xA0245");
-    return calculateTypeLogicalOptional(expr, rightResult, leftResult);
+    Optional<SymTypeExpression> rightResult = acceptThisAndReturnSymTypeExpressionOrLogError(right, "0xA0245");
+    if (leftResult.isPresent() && rightResult.isPresent()) {
+      return calculateTypeLogicalOptional(rightResult.get(), leftResult.get());
+    } else {
+      typeCheckResult.reset();
+      return Optional.empty();
+    }
   }
 
-  protected Optional<SymTypeExpression> calculateTypeLogicalOptional(ASTInfixExpression expr, SymTypeExpression rightResult, SymTypeExpression leftResult) {
+  protected Optional<SymTypeExpression> calculateTypeLogicalOptional(SymTypeExpression rightResult, SymTypeExpression leftResult) {
     //Option one: they are both numeric types
     if (isNumericType(leftResult) && isNumericType(rightResult)
             || isBoolean(leftResult) && isBoolean(rightResult)) {

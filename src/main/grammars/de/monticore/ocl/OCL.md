@@ -24,7 +24,7 @@ This OCL language component contains
 * a symbol table infrastructure including functionality for 
   creating symbol tables and (de-)serializing symbol tables, 
 * pretty-printers, and
-* a command-line interface (CLI). 
+* a command-line tool. 
 
 ## An Example Model
 
@@ -53,17 +53,17 @@ ocl Bookshop {
 }
 ```
 
-## Command Line Interface (CLI) Usage
+## Command Line Interface Usage
 
-The class [```OCLCLI```](../../../../java/de/monticore/ocl/ocl/OCLCLI.java) 
+The class [```OCLTool```](../../../../java/de/monticore/ocl/ocl/OCLTool.java) 
 provides typical functionality used when processing models. 
 To this effect, the class provides methods for parsing, pretty-printing, 
 creating symbol tables, storing symbols, and loading symbols. 
 
-The class provides a `main` method and can thus be used as a CLI. 
-Building this gradle project yields the executable jar `OCLCLI.jar`, which can 
+The class provides a `main` method and can thus be used from the command line. 
+Building this gradle project yields the executable jar `MCOCL.jar`, which can 
 be found in the directory `target/libs`. 
-The usage of the `OCLCLI` tool and detailed instructions for building the tool 
+The usage of the `MCOCL` tool and detailed instructions for building the tool 
 from the source files are described **[here](../../../../../../README.md)**. 
 
 ## Grammars
@@ -95,7 +95,7 @@ The grammar [OCL](./OCL.mc4) extends the grammars
 * [OptionalOperators](./OptionalOperators.mc4) for easy access to optional 
   values,
 * [SetExpressions](./SetExpressions.mc4) to be able to define and use sets in a
-  math-like syntax, and
+  math-like syntax, as well as list as enumeration of values, and
 * [BitExpressions][BitExpressionsRef] for using binary expressions in OCL.
 
 ### OCLExpressions
@@ -134,11 +134,14 @@ The grammar [OptionalOperators](./OptionalOperators.mc4) extends the grammars
   `InfixExpression`.
 
 ### SetExpressions
+
 The grammar [SetExpressions](./SetExpressions.mc4) defines the syntax for 
-defining and combining sets in a math-like syntax.
+defining and combining sets and lists in a math-like syntax.
+This also includes set/list comprehension, ranges of values and enumerations.
 
 The grammar [SetExpressions](./SetExpressions.mc4) defines the syntax for
 * set comprehension (also known as set-builder notation),
+* list comprehensions,
 * checking set membership,
 * set-theoretic union, intersection, and
 * logical AND and OR predicates on all elements of a set.
@@ -185,7 +188,7 @@ checks the set comprehensions always have a generator part.
 * [```UnnamedInvariantDoesNotHaveParameters```](../../../../java/de/monticore/ocl/ocl/_cocos/UnnamedInvariantDoesNotHaveParameters.java)  
 checks unnamed invariants do not have parameters.
 
-* [```ValidTypes```](../../../../java/de/monticore/ocl/ocl/_cocos/ValidTypes.java)  
+* [```ValidTypes```](../../../../java/de/monticore/ocl/ocl/_cocos/ExpressionValidCoCo.java)  
 performs all type checks on expressions used in OCL artifacts.
 
 
