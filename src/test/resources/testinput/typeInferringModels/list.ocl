@@ -1,7 +1,7 @@
 ocl list {
   inv:
     let
-      List<int> la = List{1, 2, 3}
+      List<int> la = [1, 2, 3]
     in
       (la.add(3).get(1) == 5);
 }

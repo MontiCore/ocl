@@ -66,7 +66,6 @@ public class OCLCoCoTest extends AbstractTest {
 
   @ParameterizedTest
   @CsvSource({
-    "src/test/resources/testinput/oclplibrary/collection.ocl",
     "src/test/resources/testinput/oclplibrary/list.ocl",
     "src/test/resources/testinput/oclplibrary/listAndSet.ocl",
     "src/test/resources/testinput/oclplibrary/set.ocl",

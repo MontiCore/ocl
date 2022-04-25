@@ -91,8 +91,8 @@ component grammar SetExpressions
   /**
    * ASTSetComprehension defines a comprehension with given
    *   characteristic.
-   *   @attribute MCType
-   *              Optional type of comprehension, e.g. Set, List or Collection.
+   *   @attribute set
+   *              Optional type Set of comprehension
    *   @attribute left
    *              A comprehension-item (e.g. "x*x" or "x in Y") that describes
    *              or introduces the elements stored in the set.
@@ -105,7 +105,7 @@ component grammar SetExpressions
    *   Note that we assume at least one generator (e.g. x in Y) in this AST.
    */
   scope (non_exporting) SetComprehension implements Expression  <40> =
-    ( MCType?
+    ( set:key("Set")?
       openingBracket:"{" left:SetComprehensionItem "|"
                   (SetComprehensionItem || ",")+ "}" ) |
     ( openingBracket:"[" left:SetComprehensionItem "|"
@@ -145,8 +145,8 @@ component grammar SetExpressions
   /**
    * ASTSetEnumeration is used for an enumeration of
    *   comprehension elements. Note that collection items are optional.
-   *   @attribute MCType
-   *              Optional type of comprehension, e.g. Set or List.
+   *   @attribute set
+   *              Optional type Set of comprehension
    *   @attribute setCollectionItems
    *              Enumerated elements as a list separated by , (comma).
    *              (e.g.: "1..3, x, y..z")
@@ -155,7 +155,7 @@ component grammar SetExpressions
    *        [1..3],  List{a..b}             defines a list
    */
   SetEnumeration implements Expression  <40> =
-    ( MCType?
+    ( set:key("Set")?
       openingBracket:"{" (SetCollectionItem || ",")* "}" ) |
     ( openingBracket:"[" (SetCollectionItem || ",")* "]" )
     ;

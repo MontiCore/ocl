@@ -6,5 +6,5 @@ ocl prepost4 {
     a instanceof Auction;
   post:
     defined(result);
-    result == List{m in p.message | m.isAuctionSpecific() && m.getAuction() == a};  
+    result == [m in p.message | m.isAuctionSpecific() && m.getAuction() == a];
 }
