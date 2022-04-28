@@ -75,84 +75,84 @@ public class GlobalQueries {
   protected void addFunctionSumInt() {
     FunctionSymbol function = createMethod("sum");
     addParam(function, "c", getCollectionOfIntSymType());
-    function.setReturnType(getIntSymType());
+    function.setType(getIntSymType());
     globalScope.add(function);
   }
 
   protected void addFunctionMaxInt() {
     FunctionSymbol function = createMethod("max");
     addParam(function, "c", getCollectionOfIntSymType());
-    function.setReturnType(getIntSymType());
+    function.setType(getIntSymType());
     globalScope.add(function);
   }
 
   protected void addFunctionMinInt() {
     FunctionSymbol function = createMethod("min");
     addParam(function, "c", getCollectionOfIntSymType());
-    function.setReturnType(getIntSymType());
+    function.setType(getIntSymType());
     globalScope.add(function);
   }
 
   protected void addFunctionAverageInt() {
     FunctionSymbol function = createMethod("average");
     addParam(function, "c", getCollectionOfIntSymType());
-    function.setReturnType(getIntSymType());
+    function.setType(getIntSymType());
     globalScope.add(function);
   }
 
   protected void addFunctionSortInt() {
     FunctionSymbol function = createMethod("sort");
     addParam(function, "c", getCollectionOfIntSymType());
-    function.setReturnType(getListOfIntSymType());
+    function.setType(getListOfIntSymType());
     globalScope.add(function);
   }
 
   protected void addFunctionSumLong() {
     FunctionSymbol function = createMethod("sum");
     addParam(function, "c", getCollectionOfLongSymType());
-    function.setReturnType(getLongSymType());
+    function.setType(getLongSymType());
     globalScope.add(function);
   }
 
   protected void addFunctionMaxLong() {
     FunctionSymbol function = createMethod("max");
     addParam(function, "c", getCollectionOfLongSymType());
-    function.setReturnType(getLongSymType());
+    function.setType(getLongSymType());
     globalScope.add(function);
   }
 
   protected void addFunctionMinLong() {
     FunctionSymbol function = createMethod("min");
     addParam(function, "c", getCollectionOfLongSymType());
-    function.setReturnType(getLongSymType());
+    function.setType(getLongSymType());
     globalScope.add(function);
   }
 
   protected void addFunctionAverageLong() {
     FunctionSymbol function = createMethod("average");
     addParam(function, "c", getCollectionOfLongSymType());
-    function.setReturnType(getLongSymType());
+    function.setType(getLongSymType());
     globalScope.add(function);
   }
 
   protected void addFunctionSortLong() {
     FunctionSymbol function = createMethod("sort");
     addParam(function, "c", getCollectionOfLongSymType());
-    function.setReturnType(getListOfLongSymType());
+    function.setType(getListOfLongSymType());
     globalScope.add(function);
   }
 
   protected void addFunctionEven() {
     FunctionSymbol function = createMethod("even");
     addParam(function, "number", getIntSymType());
-    function.setReturnType(getBoolSymType());
+    function.setType(getBoolSymType());
     globalScope.add(function);
   }
 
   protected void addFunctionOdd() {
     FunctionSymbol function = createMethod("odd");
     addParam(function, "number", getIntSymType());
-    function.setReturnType(getBoolSymType());
+    function.setType(getBoolSymType());
     globalScope.add(function);
   }
 }

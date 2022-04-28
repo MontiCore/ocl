@@ -72,68 +72,68 @@ public class CollectionType {
   protected void addFunctionAdd() {
     FunctionSymbol function = createMethod("add");
     addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(getCollectionOfXSymType());
+    function.setType(getCollectionOfXSymType());
     collectionSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionAddAll() {
     FunctionSymbol function = createMethod("addAll");
     addParam(function, "c", getCollectionOfXSymType());
-    function.setReturnType(getCollectionOfXSymType());
+    function.setType(getCollectionOfXSymType());
     collectionSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionContains() {
     FunctionSymbol function = createMethod("contains");
     addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(getBoolSymType());
+    function.setType(getBoolSymType());
     collectionSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionContainsAll() {
     FunctionSymbol function = createMethod("containsAll");
     addParam(function, "c", getCollectionOfXSymType());
-    function.setReturnType(getBoolSymType());
+    function.setType(getBoolSymType());
     collectionSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionIsEmpty() {
     FunctionSymbol function = createMethod("isEmpty");
-    function.setReturnType(getBoolSymType());
+    function.setType(getBoolSymType());
     collectionSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionCount() {
     FunctionSymbol function = createMethod("count");
     addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(getIntSymType());
+    function.setType(getIntSymType());
     collectionSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionRemove() {
     FunctionSymbol function = createMethod("remove");
     addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(getCollectionOfXSymType());
+    function.setType(getCollectionOfXSymType());
     collectionSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionRemoveAll() {
     FunctionSymbol function = createMethod("removeAll");
     addParam(function, "c", getCollectionOfXSymType());
-    function.setReturnType(getCollectionOfXSymType());
+    function.setType(getCollectionOfXSymType());
     collectionSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionRetainAll() {
     FunctionSymbol function = createMethod("retainAll");
     addParam(function, "c", getCollectionOfXSymType());
-    function.setReturnType(getCollectionOfXSymType());
+    function.setType(getCollectionOfXSymType());
     collectionSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionSize() {
     FunctionSymbol function = createMethod("size");
-    function.setReturnType(getIntSymType());
+    function.setType(getIntSymType());
     collectionSymbol.getSpannedScope().add(function);
   }
 
@@ -143,7 +143,7 @@ public class CollectionType {
     FunctionSymbol function = createMethod("asSet");
     SymTypeExpression returnType = SymTypeExpressionFactory
       .createGenerics(getSetType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(returnType);
+    function.setType(returnType);
     collectionSymbol.getSpannedScope().add(function);
   }
 
@@ -151,7 +151,7 @@ public class CollectionType {
     FunctionSymbol function = createMethod("asList");
     SymTypeExpression returnType = SymTypeExpressionFactory
       .createGenerics(getListType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(returnType);
+    function.setType(returnType);
     collectionSymbol.getSpannedScope().add(function);
   }
 }
