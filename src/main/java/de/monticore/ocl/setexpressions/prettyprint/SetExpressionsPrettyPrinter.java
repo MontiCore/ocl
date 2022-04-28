@@ -1,7 +1,6 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.setexpressions.prettyprint;
 
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
@@ -118,16 +117,10 @@ public class SetExpressionsPrettyPrinter
   @Override
   public void handle(ASTSetComprehension node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
-    if (node.getOpeningBracket().equals("{")) {
-      if (node.isPresentMCType()) {
-        node.getMCType().accept(getTraverser());
-        getPrinter().print(" ");
-      }
-      getPrinter().print("{");
+    if (node.isPresentSet()) {
+      getPrinter().print("Set");
     }
-    else {
-      getPrinter().print("[");
-    }
+    getPrinter().print(node.getOpeningBracket());
     node.getLeft().accept(getTraverser());
     getPrinter().print(" | ");
     for (ASTSetComprehensionItem setComprehensionItem : node.getSetComprehensionItemList()) {
@@ -177,16 +170,10 @@ public class SetExpressionsPrettyPrinter
   @Override
   public void handle(ASTSetEnumeration node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
-    if (node.getOpeningBracket().equals("{")) {
-      if (node.isPresentMCType()) {
-        node.getMCType().accept(getTraverser());
-        getPrinter().print(" ");
-      }
-      getPrinter().print("{");
+    if (node.isPresentSet()) {
+      getPrinter().print("Set");
     }
-    else {
-      getPrinter().print("[");
-    }
+    getPrinter().print(node.getOpeningBracket());
     for (ASTSetCollectionItem setCollectionItem : node.getSetCollectionItemList()) {
       setCollectionItem.accept(getTraverser());
       if (!node.getSetCollectionItemList().get(
@@ -206,13 +193,7 @@ public class SetExpressionsPrettyPrinter
   @Override
   public void handle(ASTSetValueItem node) {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
-    for (ASTExpression expression : node.getExpressionList()) {
-      expression.accept(getTraverser());
-      if (!node.getExpressionList().get(
-        node.getExpressionList().size() - 1).equals(expression)) {
-        getPrinter().print(", ");
-      }
-    }
+    node.getExpression().accept(getTraverser());
     CommentPrettyPrinter.printPostComments(node, getPrinter());
   }
 

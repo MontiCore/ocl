@@ -2,8 +2,8 @@
 ocl comprehension10 {
   inv:
     let
-      la = List{a | a in Set{1, 2}};
-      lb = List{a | a in Set{1, 2}}
+      la = [a | a in Set{1, 2}];
+      lb = [a | a in Set{1, 2}]
     in
       la == lb;
 }

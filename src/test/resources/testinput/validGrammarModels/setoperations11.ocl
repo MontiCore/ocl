@@ -5,5 +5,5 @@ ocl setoperations11 {
       List<Time> tlist = a.message.time;
       int len = tlist.size
     in
-      forall i in List{0 .. len - 2}: tlist.get(i).lessThan(tlist.get(i + 1));
+      forall i in [0 .. len - 2]: tlist.get(i).lessThan(tlist.get(i + 1));
 }

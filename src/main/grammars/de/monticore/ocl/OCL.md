@@ -95,7 +95,7 @@ The grammar [OCL](./OCL.mc4) extends the grammars
 * [OptionalOperators](./OptionalOperators.mc4) for easy access to optional 
   values,
 * [SetExpressions](./SetExpressions.mc4) to be able to define and use sets in a
-  math-like syntax, and
+  math-like syntax, as well as list as enumeration of values, and
 * [BitExpressions][BitExpressionsRef] for using binary expressions in OCL.
 
 ### OCLExpressions
@@ -134,11 +134,14 @@ The grammar [OptionalOperators](./OptionalOperators.mc4) extends the grammars
   `InfixExpression`.
 
 ### SetExpressions
+
 The grammar [SetExpressions](./SetExpressions.mc4) defines the syntax for 
-defining and combining sets in a math-like syntax.
+defining and combining sets and lists in a math-like syntax.
+This also includes set/list comprehension, ranges of values and enumerations.
 
 The grammar [SetExpressions](./SetExpressions.mc4) defines the syntax for
 * set comprehension (also known as set-builder notation),
+* list comprehensions,
 * checking set membership,
 * set-theoretic union, intersection, and
 * logical AND and OR predicates on all elements of a set.
