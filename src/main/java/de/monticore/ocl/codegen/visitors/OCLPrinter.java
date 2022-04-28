@@ -3,7 +3,11 @@ package de.monticore.ocl.codegen.visitors;
 
 import com.google.common.base.Preconditions;
 import de.monticore.ocl.codegen.util.VariableNaming;
-import de.monticore.ocl.ocl._ast.*;
+import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
+import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._ast.ASTOCLContextDefinition;
+import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
+import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.ocl._visitor.OCLHandler;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
@@ -89,6 +93,14 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
   }
 
   @Override
+  public void handle(ASTOCLParamDeclaration node) {
+    node.getMCType().accept(this.getTraverser());
+    this.getPrinter().print(" ");
+    this.printer.print(node.getName());
+    //todo expression missing
+  }
+
+  @Override
   public void handle(ASTOCLInvariant node) {
     this.getPrinter().print("@SuppressWarnings(\"unchecked\")\n");
     this.getPrinter().print("public static Boolean check");
@@ -124,7 +136,10 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
     this.getPrinter().println(" = true;");
     this.getPrinter().println("try {");
     this.getPrinter().indent();
+    this.getPrinter().print(this.getNaming().getName(node));
+    this.getPrinter().print(" = ");
     node.getExpression().accept(this.getTraverser());
+    this.getPrinter().println(";");
     this.getPrinter().unindent();
     this.getPrinter().print("} catch (Exception ");
     this.getPrinter().print(this.getNaming().getName(node));

@@ -10,8 +10,6 @@ import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.oclexpressions._ast.ASTEquivalentExpression;
 import de.monticore.ocl.types.check.OCLTypeCalculator;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.check.TypeCheckResult;
-import de.se_rwth.commons.logging.Log;
 
 public class CommonExpressionsPrinter extends AbstractPrinter implements CommonExpressionsHandler,
     CommonExpressionsVisitor2 {
@@ -54,23 +52,15 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   @Override
   public void handle(ASTBooleanNotExpression node) {
     Preconditions.checkNotNull(node);
+    this.getPrinter().print("!");
     node.getExpression().accept(getTraverser());
-    this.getPrinter().print("Boolean ");
-    this.getPrinter().print(this.getNaming().getName(node));
-    this.getPrinter().print(" = !");
-    this.getPrinter().print(this.getNaming().getName(node.getExpression()));
-    this.getPrinter().println(";");
   }
 
   @Override
   public void handle(ASTLogicalNotExpression node) {
     Preconditions.checkNotNull(node);
+    this.getPrinter().print("!");
     node.getExpression().accept(getTraverser());
-    this.getPrinter().print("Boolean ");
-    this.getPrinter().print(this.getNaming().getName(node));
-    this.getPrinter().print(" = !");
-    this.getPrinter().print(this.getNaming().getName(node.getExpression()));
-    this.getPrinter().println(";");
   }
 
   @Override
@@ -107,13 +97,8 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   public void handle(ASTEquivalentExpression node) {
     Preconditions.checkNotNull(node);
     node.getLeft().accept(getTraverser());
-    node.getRight().accept(getTraverser());
-    this.getPrinter().print("Boolean ");
-    this.getPrinter().print(this.getNaming().getName(node));
-    this.getPrinter().print(" = ");
-    this.getPrinter().print(this.getNaming().getName(node.getLeft()));
     this.getPrinter().print(".equals(");
-    this.getPrinter().print(this.getNaming().getName(node.getRight()));
+    node.getRight().accept(getTraverser());
     this.getPrinter().println(");");
   }
 
@@ -142,60 +127,78 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   }
 
   @Override
+  public void handle(ASTBooleanAndOpExpression node) {
+    Preconditions.checkNotNull(node);
+    this.handleInfixExpression(node, "&&");
+  }
+
+  @Override
+  public void handle(ASTBooleanOrOpExpression node) {
+    Preconditions.checkNotNull(node);
+    this.handleInfixExpression(node, "||");
+  }
+
+  @Override
+  public void handle(ASTConditionalExpression node) {
+    Preconditions.checkNotNull(node);
+    this.getPrinter().print("(");
+    node.getCondition().accept(this.getTraverser());
+    this.getPrinter().print("?");
+    node.getTrueExpression().accept(this.getTraverser());
+    this.getPrinter().print(":");
+    node.getFalseExpression().accept(this.getTraverser());
+    this.getPrinter().print(")");
+  }
+
+  @Override
   public void handle(ASTEqualsExpression node) {
     Preconditions.checkNotNull(node);
-    Preconditions.checkNotNull(node);
     node.getLeft().accept(getTraverser());
-    node.getRight().accept(getTraverser());
-    this.getPrinter().print("Boolean ");
-    this.getPrinter().print(this.getNaming().getName(node));
-    this.getPrinter().print(" = ");
-    this.getPrinter().print(this.getNaming().getName(node.getLeft()));
     this.getPrinter().print(".equals(");
-    this.getPrinter().print(this.getNaming().getName(node.getRight()));
-    this.getPrinter().println(");");
+    node.getRight().accept(getTraverser());
+    this.getPrinter().print(")");
   }
 
   @Override
   public void handle(ASTNotEqualsExpression node) {
     Preconditions.checkNotNull(node);
+    this.getPrinter().print("!");
     node.getLeft().accept(getTraverser());
-    node.getRight().accept(getTraverser());
-    this.getPrinter().print("Boolean ");
-    this.getPrinter().print(this.getNaming().getName(node));
-    this.getPrinter().print(" = !");
-    this.getPrinter().print(this.getNaming().getName(node.getLeft()));
     this.getPrinter().print(".equals(");
-    this.getPrinter().print(this.getNaming().getName(node.getRight()));
-    this.getPrinter().println(");");
+    node.getRight().accept(getTraverser());
+    this.getPrinter().print(")");
+  }
+
+  @Override
+  public void handle(ASTCallExpression node) {
+    Preconditions.checkNotNull(node);
+    node.getExpression().accept(this.getTraverser());
+    if (node.getName() != null) {
+      this.getPrinter().print(".");
+      this.getPrinter().print(node.getName());
+    }
+    node.getArguments().accept(this.getTraverser());
+  }
+
+  @Override
+  public void handle(ASTFieldAccessExpression node) {
+    Preconditions.checkNotNull(node);
+    node.getExpression().accept(this.getTraverser());
+    this.getPrinter().print(".");
+    this.getPrinter().print(node.getName());
   }
 
   protected void handleInfixExpression(ASTInfixExpression node, String operator) {
     Preconditions.checkNotNull(node);
     Preconditions.checkNotNull(operator);
     Preconditions.checkArgument(!operator.isEmpty());
+    this.getPrinter().print("(");
     node.getLeft().accept(getTraverser());
-    node.getRight().accept(getTraverser());
-    TypeCheckResult type = this.getTypeCalculator().deriveType(node);
-    if (!type.isPresentCurrentResult()) {
-      Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
-    }
-    else {
-      this.getPrinter().print(type.getCurrentResult().print());
-      this.getPrinter().print(" ");
-    }
-    this.getPrinter().print(this.getNaming().getName(node));
-    this.getPrinter().print(" = ");
-    this.getPrinter().print(this.getNaming().getName(node.getLeft()));
     this.getPrinter().print(" ");
     this.getPrinter().print(operator);
     this.getPrinter().print(" ");
-    this.getPrinter().print(this.getNaming().getName(node.getRight()));
-    this.getPrinter().println(";");
-    this.getPrinter().print(this.getNaming().getName(node));
-    this.getPrinter().print(" &= ");
-    this.getPrinter().print(this.getNaming().getName(node));
-    this.getPrinter().println(";");
+    node.getRight().accept(getTraverser());
+    this.getPrinter().print(")");
   }
 
 }
