@@ -7,7 +7,8 @@ import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsHandler;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
@@ -17,7 +18,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
-import java.util.Optional;
 
 public class OCLExpressionsSymbolTableCompleter
   implements BasicSymbolsVisitor2, OCLExpressionsVisitor2, OCLExpressionsHandler {
@@ -31,21 +31,33 @@ public class OCLExpressionsSymbolTableCompleter
 
   protected OCLExpressionsTraverser traverser;
 
-  protected OCLTypeCalculator typeVisitor;
+  protected OCLDeriver deriver;
 
-  public void setTypeVisitor(OCLTypeCalculator typesCalculator) {
-    if (typesCalculator != null) {
-      this.typeVisitor = typesCalculator;
+  protected OCLSynthesizer synthesizer;
+
+  public void setDeriver(OCLDeriver deriver) {
+    if (deriver != null) {
+      this.deriver = deriver;
     }
     else {
-      Log.error("0xA3201 The typesVisitor has to be set");
+      Log.error("0xA3201 The deriver has to be set");
+    }
+  }
+
+  public void setSynthesizer(OCLSynthesizer synthesizer) {
+    if (synthesizer != null) {
+      this.synthesizer = synthesizer;
+    }
+    else {
+      Log.error("0xA3204 The synthesizer has to be set");
     }
   }
 
   public OCLExpressionsSymbolTableCompleter(List<ASTMCImportStatement> imports, String packageDeclaration) {
     this.imports = imports;
     this.packageDeclaration = packageDeclaration;
-    typeVisitor = new OCLTypeCalculator();
+    deriver = new OCLDeriver();
+    synthesizer = new OCLSynthesizer();
   }
 
   @Override
@@ -72,34 +84,34 @@ public class OCLExpressionsSymbolTableCompleter
       VariableSymbol symbol = node.getSymbol();
       symbol.setIsReadOnly(false);
       TypeCheckResult typeResult = new TypeCheckResult();
-      typeResult.setCurrentResultAbsent();
+      typeResult.setResultAbsent();
       if (ast.isPresentMCType()) {
-        typeResult = typeVisitor.synthesizeType(ast.getMCType());
-        if (!typeResult.isPresentCurrentResult()) {
+        typeResult = synthesizer.synthesizeType(ast.getMCType());
+        if (!typeResult.isPresentResult()) {
           Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), symbol.getName()));
         } else {
-          symbol.setType(typeResult.getCurrentResult());
+          symbol.setType(typeResult.getResult());
         }
       }
       if (ast.isPresentExpression()) {
-        TypeCheckResult tcr_expr = typeVisitor.deriveType(ast.getExpression());
-        if (tcr_expr.isPresentCurrentResult()) {
+        TypeCheckResult tcr_expr = deriver.deriveType(ast.getExpression());
+        if (tcr_expr.isPresentResult()) {
           //if MCType present: check that type of expression and MCType are compatible
-          if (typeResult.isPresentCurrentResult() && !OCLTypeCheck.compatible(typeResult.getCurrentResult(),
-              OCLTypeCheck.unwrapSet(tcr_expr.getCurrentResult()))) {
+          if (typeResult.isPresentResult() && !OCLTypeCheck.compatible(typeResult.getResult(),
+              OCLTypeCheck.unwrapSet(tcr_expr.getResult()))) {
             Log.error(String.format("The MCType (%s) and the expression type (%s) in Symbol (%s) are not compatible",
-                ast.getMCType(), OCLTypeCheck.unwrapSet(tcr_expr.getCurrentResult()), symbol.getName()));
+                ast.getMCType(), OCLTypeCheck.unwrapSet(tcr_expr.getResult()), symbol.getName()));
           }
           //if no MCType present: symbol has type of expression
-          if (!typeResult.isPresentCurrentResult()) {
-            symbol.setType(OCLTypeCheck.unwrapSet(tcr_expr.getCurrentResult()));
+          if (!typeResult.isPresentResult()) {
+            symbol.setType(OCLTypeCheck.unwrapSet(tcr_expr.getResult()));
           }
         } else {
           Log.error(String.format("The type of the object (%s) could not be calculated", symbol.getName()));
         }
       }
       //node has neither MCType nor expression
-      if (!typeResult.isPresentCurrentResult() && !ast.isPresentExpression()) {
+      if (!typeResult.isPresentResult() && !ast.isPresentExpression()) {
         symbol.setType(SymTypeExpressionFactory.createTypeObject("Object", ast.getEnclosingScope()));
       }
     }
@@ -112,18 +124,18 @@ public class OCLExpressionsSymbolTableCompleter
     if(ast.isPresentMCType()) {
       ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
       ast.getMCType().accept(getTraverser());
-      final TypeCheckResult typeResult = typeVisitor.synthesizeType(ast.getMCType());
-      if (!typeResult.isPresentCurrentResult()) {
+      final TypeCheckResult typeResult = synthesizer.synthesizeType(ast.getMCType());
+      if (!typeResult.isPresentResult()) {
         Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
       } else {
-        symbol.setType(typeResult.getCurrentResult());
+        symbol.setType(typeResult.getResult());
       }
     } else {
       if(ast.isPresentExpression()){
         ast.getExpression().accept(getTraverser());
-        TypeCheckResult tcr_expr = typeVisitor.deriveType(ast.getExpression());
-        if(tcr_expr.isPresentCurrentResult()){
-          symbol.setType(tcr_expr.getCurrentResult());
+        TypeCheckResult tcr_expr = deriver.deriveType(ast.getExpression());
+        if(tcr_expr.isPresentResult()){
+          symbol.setType(tcr_expr.getResult());
         } else {
           Log.error(String.format("The type of the object (%s) could not be calculated", ast.getName()));
         }

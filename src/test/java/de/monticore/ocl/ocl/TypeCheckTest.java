@@ -2,7 +2,7 @@ package de.monticore.ocl.ocl;
 
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
@@ -35,12 +35,12 @@ public class TypeCheckTest extends AbstractTest {
     SymbolTableUtil.runSymTabGenitor(ast.get());
     SymbolTableUtil.runSymTabCompleter(ast.get());
 
-    OCLTypeCalculator typeCalculator = new OCLTypeCalculator();
+    OCLDeriver deriver = new OCLDeriver();
 
-    TypeCheckResult t = typeCalculator.deriveType(((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getExpression());
+    TypeCheckResult t = deriver.deriveType(((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getExpression());
 
     // Additional check that nothing broke
     assertThat(Log.getErrorCount()).isEqualTo(0);
-    assertThat(t.isPresentCurrentResult()).isTrue();
+    assertThat(t.isPresentResult()).isTrue();
   }
 }

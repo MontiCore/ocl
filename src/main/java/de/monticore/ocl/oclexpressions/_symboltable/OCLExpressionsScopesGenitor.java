@@ -5,21 +5,21 @@ import de.monticore.ocl.oclexpressions.OCLExpressionsMill;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclarationVariable;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.logging.Log;
 
 public class OCLExpressionsScopesGenitor extends OCLExpressionsScopesGenitorTOP {
 
-  protected OCLTypeCalculator typeCalculator;
+  protected OCLDeriver deriver;
 
   public OCLExpressionsScopesGenitor(){
     super();
   }
 
-  public void setTypeCalculator(OCLTypeCalculator typesCalculator) {
-    if (typesCalculator != null) {
-      this.typeCalculator = typesCalculator;
+  public void setDeriver(OCLDeriver deriver) {
+    if (deriver != null) {
+      this.deriver = deriver;
     }
     else {
       Log.error("0xA3201 The typesVisitor has to be set");
