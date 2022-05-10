@@ -6,7 +6,11 @@ import de.monticore.ocl.types.check.OCLTypeCalculator;
 
 public abstract class AbstractPrinter {
 
-  protected static String NO_TYPE_DERIVED_ERROR = "0xAB846 Could not calculate type of expression";
+  protected static final String NO_TYPE_DERIVED_ERROR =
+      "0xAB846 Could not calculate type of expression";
+
+  protected static final String INNER_TYPE_NOT_DERIVED_ERROR =
+      "0xFC921 could not derive inner type (container expected)";
 
   protected VariableNaming naming;
 

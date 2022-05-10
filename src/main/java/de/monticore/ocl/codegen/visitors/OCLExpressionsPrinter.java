@@ -37,9 +37,6 @@ import static de.monticore.types.check.SymTypeConstant.box;
 public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpressionsHandler,
     OCLExpressionsVisitor2 {
 
-  protected static final String INNER_TYPE_NOT_DERIVED_ERROR =
-      "0xFC921 could not derive inner type (container expected)";
-
   protected OCLExpressionsTraverser traverser;
 
   protected OCLTypeCalculator typeCalculator;
