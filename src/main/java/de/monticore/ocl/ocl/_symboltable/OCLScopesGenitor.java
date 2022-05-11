@@ -90,4 +90,13 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
     }
     putOnStack(scope);
   }
+
+  @Override
+  public void endVisit(ASTOCLInvariant inv){
+    removeCurrentScope();
+    initScopeHP2(inv.getSpannedScope());
+    if(inv.isPresentSymbol()){
+      initOCLInvariantHP2(inv.getSymbol());
+    }
+  }
 }

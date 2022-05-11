@@ -168,10 +168,10 @@ public class DeriveSymTypeOfSetExpressions
   public void traverse(ASTSetComprehension node) {
     SymTypeExpression result = null;
       node.getMCType().accept(getTraverser());
-      if (typeCheckResult.isPresentCurrentResult()) {
+      if (typeCheckResult.isPresentResult()) {
         boolean correct = false;
         for (String s : collections) {
-          if (typeCheckResult.getCurrentResult().getTypeInfo().getName().equals(s)) {
+          if (typeCheckResult.getResult().getTypeInfo().getName().equals(s)) {
             correct = true;
           }
         }
@@ -181,7 +181,7 @@ public class DeriveSymTypeOfSetExpressions
             .error("0xA0298 could not calculate type at " + node.get_SourcePositionStart());
         }
         else {
-          result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
+          result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getResult().
             getTypeInfo());
           typeCheckResult.reset();
 
@@ -201,14 +201,14 @@ public class DeriveSymTypeOfSetExpressions
       node.getLeft().getExpression().accept(traverser);
       varNames = nameVisitor.getVarNames();
       node.getLeft().getExpression().accept(getTraverser());
-      if (!typeCheckResult.isPresentCurrentResult()) {
+      if (!typeCheckResult.isPresentResult()) {
         OCLFullPrettyPrinter printer = new OCLFullPrettyPrinter();
         Log.error("0xA0309 " + node.getLeft().get_SourcePositionStart()
           + " Could not calculate type of expression \"" + printer
           .prettyprint(node.getLeft()) + "\" on the left side of SetComprehension ");
       }
       else {
-        leftType = typeCheckResult.getCurrentResult();
+        leftType = typeCheckResult.getResult();
       }
     }
     else if (node.getLeft().isPresentGeneratorDeclaration()) {
@@ -235,17 +235,17 @@ public class DeriveSymTypeOfSetExpressions
         .createGenerics("java.util.Set", getScope(node.getEnclosingScope()));
     }
     ((SymTypeOfGenerics) result).addArgument(leftType);
-    typeCheckResult.setCurrentResult(result);
+    typeCheckResult.setResult(result);
   }
 
   public void traverse(ASTSetEnumeration node) {
     SymTypeExpression result = null;
     SymTypeExpression innerResult = null;
       node.getMCType().accept(getTraverser());
-      if (typeCheckResult.isPresentCurrentResult()) {
+      if (typeCheckResult.isPresentResult()) {
         boolean correct = false;
         for (String s : collections) {
-          if (typeCheckResult.getCurrentResult().getTypeInfo().getName().equals(s)) {
+          if (typeCheckResult.getResult().getTypeInfo().getName().equals(s)) {
             correct = true;
           }
         }
@@ -255,7 +255,7 @@ public class DeriveSymTypeOfSetExpressions
             .error("0xA0298 there must be a type for collection at" + node.get_SourcePositionStart());
         }
         else {
-          result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getCurrentResult().
+          result = SymTypeExpressionFactory.createGenerics(typeCheckResult.getResult().
             getTypeInfo());
           typeCheckResult.reset();
         }
@@ -274,12 +274,12 @@ public class DeriveSymTypeOfSetExpressions
     for (ASTSetCollectionItem item : node.getSetCollectionItemList()) {
       if (item instanceof ASTSetValueItem) {
         ((ASTSetValueItem) item).getExpression().accept(getTraverser());
-        if (typeCheckResult.isPresentCurrentResult()) {
+        if (typeCheckResult.isPresentResult()) {
           if (innerResult == null) {
-            innerResult = typeCheckResult.getCurrentResult();
+            innerResult = typeCheckResult.getResult();
             typeCheckResult.reset();
           }
-          else if (!compatible(innerResult, typeCheckResult.getCurrentResult())) {
+          else if (!compatible(innerResult, typeCheckResult.getResult())) {
             LogHelper.error(node, "0xA0333", "different types in SetEnumeration");
           }
         }
@@ -290,12 +290,12 @@ public class DeriveSymTypeOfSetExpressions
       }
       else {
         item.accept(getTraverser());
-        if (typeCheckResult.isPresentCurrentResult()) {
+        if (typeCheckResult.isPresentResult()) {
           if (innerResult == null) {
-            innerResult = typeCheckResult.getCurrentResult();
+            innerResult = typeCheckResult.getResult();
             typeCheckResult.reset();
           }
-          else if (!compatible(innerResult, typeCheckResult.getCurrentResult())) {
+          else if (!compatible(innerResult, typeCheckResult.getResult())) {
             LogHelper.error(node, "0xA0335", "different types in SetEnumeration");
           }
         }
@@ -307,7 +307,7 @@ public class DeriveSymTypeOfSetExpressions
     }
 
     ((SymTypeOfGenerics) result).addArgument(innerResult);
-    typeCheckResult.setCurrentResult(result);
+    typeCheckResult.setResult(result);
   }
 
   public void traverse(ASTSetValueRange node) {
@@ -324,7 +324,7 @@ public class DeriveSymTypeOfSetExpressions
       LogHelper
         .error(node, "0xA0337", "bounds in SetValueRange are not integral types, but have to be");
     }
-    typeCheckResult.setCurrentResult(left.get());
+    typeCheckResult.setResult(left.get());
   }
 
   @Override public SetExpressionsTraverser getTraverser() {

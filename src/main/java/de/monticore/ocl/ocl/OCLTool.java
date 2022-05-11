@@ -14,7 +14,7 @@ import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.oclexpressions._cocos.IterateExpressionVariableUsageIsCorrect;
 import de.monticore.ocl.setexpressions._cocos.SetComprehensionHasGenerator;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
@@ -325,10 +325,10 @@ public class OCLTool extends OCLToolTOP {
    */
   public void checkAllCoCos(ASTOCLCompilationUnit ast) {
     checkAllExceptTypeCoCos(ast);
-    OCLTypeCalculator typeCalc = new OCLTypeCalculator();
+    OCLDeriver deriver = new OCLDeriver();
     OCLCoCoChecker checker = new OCLCoCoChecker();
-    checker.addCoCo(new ExpressionValidCoCo(typeCalc));
-    checker.addCoCo(new PreAndPostConditionsAreBooleanType(typeCalc));
+    checker.addCoCo(new ExpressionValidCoCo(deriver));
+    checker.addCoCo(new PreAndPostConditionsAreBooleanType(deriver));
     checker.checkAll(ast);
   }
 

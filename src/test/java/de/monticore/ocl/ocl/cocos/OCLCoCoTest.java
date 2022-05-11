@@ -6,9 +6,8 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._cocos.ExpressionHasNoSideEffect;
 import de.monticore.ocl.ocl._cocos.ExpressionValidCoCo;
 import de.monticore.ocl.ocl._cocos.OCLCoCoChecker;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.util.SymbolTableUtil;
-import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
@@ -59,7 +58,7 @@ public class OCLCoCoTest extends AbstractTest {
 
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new ExpressionHasNoSideEffect());
-    checker.addCoCo(new ExpressionValidCoCo(new OCLTypeCalculator()));
+    checker.addCoCo(new ExpressionValidCoCo(new OCLDeriver()));
     checker.checkAll(ast.get());
     assertThat(Log.getFindings().isEmpty());
   }
@@ -83,7 +82,7 @@ public class OCLCoCoTest extends AbstractTest {
 
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new ExpressionHasNoSideEffect());
-    checker.addCoCo(new ExpressionValidCoCo(new OCLTypeCalculator()));
+    checker.addCoCo(new ExpressionValidCoCo(new OCLDeriver()));
     checker.checkAll(ast.get());
     assertThat(Log.getFindings().isEmpty());
   }
