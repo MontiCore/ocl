@@ -71,44 +71,54 @@ public class SetExpressionsPrinter extends AbstractPrinter
   @Override
   public void handle(ASTUnionExpression node) {
     printExpressionBeginLambda(node);
+
     getPrinter().print("Set<");
     printDerivedInnerType(node);
     getPrinter().print("> ");
     getPrinter().print(getNaming().getName(node));
     getPrinter().println(" = new HashSet<>();");
+
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(".addAll(");
     node.getLeft().accept(getTraverser());
     getPrinter().println(");");
+
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(".addAll(");
     node.getRight().accept(getTraverser());
     getPrinter().println(");");
+
     getPrinter().print("return ");
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(";");
+
     printExpressionEndLambda(node);
   }
 
   @Override
   public void handle(ASTIntersectionExpression node) {
     printExpressionBeginLambda(node);
+
     getPrinter().print("Set<");
     printDerivedInnerType(node);
     getPrinter().print("> ");
     getPrinter().print(getNaming().getName(node));
     getPrinter().println(" = new HashSet<>();");
+
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(".addAll(");
     node.getLeft().accept(getTraverser());
     getPrinter().println(");");
+
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(".retainAll(");
     node.getRight().accept(getTraverser());
     getPrinter().println(");");
+
     getPrinter().print("return ");
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(";");
+
     printExpressionEndLambda(node);
   }
 
@@ -120,17 +130,21 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print("> ");
     getPrinter().print(getNaming().getName(node));
     getPrinter().println(" = new HashSet<>();");
+
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(".addAll(");
     node.getLeft().accept(getTraverser());
     getPrinter().println(");");
+
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(".removeAll(");
     node.getRight().accept(getTraverser());
     getPrinter().println(");");
+
     getPrinter().print("return ");
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(";");
+
     printExpressionEndLambda(node);
   }
 
@@ -138,18 +152,18 @@ public class SetExpressionsPrinter extends AbstractPrinter
   public void handle(ASTSetUnionExpression node) {
     printExpressionBeginLambda(node);
 
-    getPrinter().print("Set<");
-    printDerivedInnerType(node);
-    getPrinter().print("> ");
-    getPrinter().print(getNaming().getName(node));
-    getPrinter().println(" = new HashSet<>();");
-
-    printDerivedType(node);
+    printDerivedType(node.getSet());
     getPrinter().print(" ");
     getPrinter().print(getNaming().getName(node.getSet()));
     getPrinter().print(" = ");
     node.getSet().accept(getTraverser());
     getPrinter().println(";");
+
+    getPrinter().print("Set<");
+    printDerivedInnerType(node);
+    getPrinter().print("> ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().println(" = new HashSet<>();");
 
     getPrinter().print("for(");
     printDerivedType(node);
@@ -169,6 +183,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
     getPrinter().unindent();
     getPrinter().println("}");
+
     getPrinter().print("return ");
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(";");
@@ -180,7 +195,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
   public void handle(ASTSetIntersectionExpression node) {
     printExpressionBeginLambda(node);
 
-    printDerivedType(node);
+    printDerivedType(node.getSet());
     getPrinter().print(" ");
     getPrinter().print(getNaming().getName(node.getSet()));
     getPrinter().print(" = ");
@@ -213,6 +228,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
     getPrinter().unindent();
     getPrinter().println("}");
+
     getPrinter().print("return ");
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(";");
@@ -222,12 +238,85 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetAndExpression node) {
+    printExpressionBeginLambda(node);
 
+    getPrinter().print("Boolean ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().println(" = true;");
+
+    printDerivedType(node.getSet());
+    getPrinter().print(" ");
+    getPrinter().print(getNaming().getName(node.getSet()));
+    getPrinter().print(" = ");
+    node.getSet().accept(getTraverser());
+    getPrinter().println(";");
+
+    getPrinter().print("for (Boolean ");
+    printDerivedType(node.getSet());
+    getPrinter().print(" ");
+    getPrinter().print(getNaming().getName(node.getSet()));
+    getPrinter().print("_item");
+    getPrinter().print(" : ");
+    getPrinter().print(getNaming().getName(node.getSet()));
+    getPrinter().println(") {");
+    getPrinter().indent();
+
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print(" &= ");
+    getPrinter().print(getNaming().getName(node.getSet()));
+    getPrinter().print("_item");
+    getPrinter().print(";");
+
+    getPrinter().unindent();
+    getPrinter().println("}");
+
+    getPrinter().print("return ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print(";");
+
+    printExpressionEndLambda(node);
   }
 
   @Override
   public void handle(ASTSetOrExpression node) {
+    printExpressionBeginLambda(node);
 
+    getPrinter().print("Boolean ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().println(" = false;");
+
+    ASTExpression node1 = node.getSet();
+    printDerivedType(node1);
+    getPrinter().print(" ");
+    getPrinter().print(getNaming().getName(node1));
+    getPrinter().print(" = ");
+    node1.accept(getTraverser());
+    getPrinter().println(";");
+
+    getPrinter().print("for (Boolean ");
+    printDerivedType(node.getSet());
+    getPrinter().print(" ");
+    getPrinter().print(getNaming().getName(node.getSet()));
+    getPrinter().print("_item");
+    getPrinter().print(" : ");
+    getPrinter().print(getNaming().getName(node.getSet()));
+    getPrinter().println(") {");
+    getPrinter().indent();
+
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print(" |= ");
+    getPrinter().print(getNaming().getName(node.getSet()));
+    getPrinter().print("_item");
+    getPrinter().print(";");
+
+    getPrinter().unindent();
+    getPrinter().println("}");
+
+    getPrinter().print("return ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print(";");
+
+    printExpressionEndLambda(node);
   }
 
   @Override
