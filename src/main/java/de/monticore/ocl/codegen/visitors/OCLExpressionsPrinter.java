@@ -280,7 +280,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
    * if node has a primitive type,
    * this prints the Java expression
    * such that it has a non-primitive type.
-   * e.g. {@code 5} -> {@code ((Integer) 5)}
+   * e.g. {@code 5} to {@code ((Integer) 5)}
    *
    * @param node the expression to be printed
    */

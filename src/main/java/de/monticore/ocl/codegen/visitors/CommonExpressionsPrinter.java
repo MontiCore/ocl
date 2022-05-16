@@ -212,7 +212,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
    * if node has a primitive type,
    * this prints the Java expression
    * such that it has a non-primitive type.
-   * e.g. "5" -> "((Integer) 5)"
+   * e.g. "5" to "((Integer) 5)"
    *
    * @param node the expression to be printed
    */

@@ -46,7 +46,7 @@ public abstract class AbstractPrinter {
 
   /**
    * boxes the type
-   * e.g. {@code List<int>} -> {@code java.util.List<Integer>}
+   * e.g. {@code List<int>} to {@code java.util.List<Integer>}
    *
    * @param type type to be printed
    * @return String of type, boxed

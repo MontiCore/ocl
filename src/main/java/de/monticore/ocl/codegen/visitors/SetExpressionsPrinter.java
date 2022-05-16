@@ -607,7 +607,8 @@ public class SetExpressionsPrinter extends AbstractPrinter
   /**
    * given an expression with type {@code Generic<MyType>} returns {@code MyType}
    *
-   * @param node the expression
+   * @param node the expression with one inner type
+   * @return the inner type
    */
   protected SymTypeExpression getInnerType(ASTExpression node) {
     SymTypeExpression innerType = null;
