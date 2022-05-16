@@ -3,7 +3,7 @@ package de.monticore.ocl.ocl._cocos;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._cocos.ExpressionsBasisASTExpressionCoCo;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLDeriver;
 
 import java.util.Optional;
 
@@ -11,10 +11,10 @@ public class ExpressionValidCoCo implements ExpressionsBasisASTExpressionCoCo {
 
   protected ASTExpression top;
 
-  protected OCLTypeCalculator typeCalculator;
+  protected OCLDeriver deriver;
 
-  public ExpressionValidCoCo(OCLTypeCalculator typeCalculator) {
-    this.typeCalculator = typeCalculator;
+  public ExpressionValidCoCo(OCLDeriver deriver) {
+    this.deriver = deriver;
   }
 
   protected Optional<ASTExpression> getTop() {
@@ -25,8 +25,8 @@ public class ExpressionValidCoCo implements ExpressionsBasisASTExpressionCoCo {
     this.top = top;
   }
 
-  protected OCLTypeCalculator getTypeCalculator() {
-    return this.typeCalculator;
+  protected OCLDeriver getDeriver() {
+    return this.deriver;
   }
 
   @Override
@@ -41,7 +41,7 @@ public class ExpressionValidCoCo implements ExpressionsBasisASTExpressionCoCo {
   public void check(ASTExpression expr) {
     Optional<ASTExpression> top = this.getTop();
     if (!top.isPresent()) {
-      this.getTypeCalculator().deriveType(expr);
+      this.getDeriver().deriveType(expr);
       this.setTop(expr);
     }
   }

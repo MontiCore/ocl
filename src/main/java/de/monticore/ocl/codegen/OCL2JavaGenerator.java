@@ -12,7 +12,8 @@ import de.monticore.ocl.codegen.visitors.SetExpressionsPrinter;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.MCBasicsPrettyPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
@@ -66,30 +67,32 @@ public class OCL2JavaGenerator {
   }
 
   protected OCL2JavaGenerator(IndentPrinter printer, VariableNaming naming) {
-    this(printer, naming, new OCLTypeCalculator());
+    this(printer, naming, new OCLDeriver(), new OCLSynthesizer());
   }
 
   protected OCL2JavaGenerator(IndentPrinter printer, VariableNaming naming,
-      OCLTypeCalculator typeCalculator) {
+      OCLDeriver oclDeriver, OCLSynthesizer oclSynthesizer) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(typeCalculator);
+    Preconditions.checkNotNull(oclDeriver);
+    Preconditions.checkNotNull(oclSynthesizer);
 
     this.traverser = OCLMill.traverser();
 
     // Expressions
     CommonExpressionsPrinter comExprPrinter = new CommonExpressionsPrinter(printer, naming,
-        typeCalculator);
+        oclDeriver, oclSynthesizer);
     this.traverser.setCommonExpressionsHandler(comExprPrinter);
     this.traverser.add4CommonExpressions(comExprPrinter);
     ExpressionsBasisPrettyPrinter exprBasPrinter = new ExpressionsBasisPrettyPrinter(printer);
     this.traverser.setExpressionsBasisHandler(exprBasPrinter);
     this.traverser.add4ExpressionsBasis(exprBasPrinter);
     OCLExpressionsPrinter oclExprPrinter = new OCLExpressionsPrinter(printer, naming,
-        typeCalculator);
+        oclDeriver, oclSynthesizer);
     this.traverser.setOCLExpressionsHandler(oclExprPrinter);
     this.traverser.add4OCLExpressions(oclExprPrinter);
-    SetExpressionsPrinter setExprPrinter = new SetExpressionsPrinter(printer, naming, typeCalculator);
+    SetExpressionsPrinter setExprPrinter = new SetExpressionsPrinter(printer, naming, oclDeriver,
+        oclSynthesizer);
     this.traverser.setSetExpressionsHandler(setExprPrinter);
     this.traverser.add4SetExpressions(setExprPrinter);
 

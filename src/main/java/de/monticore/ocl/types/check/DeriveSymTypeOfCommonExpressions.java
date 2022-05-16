@@ -56,9 +56,9 @@ public class DeriveSymTypeOfCommonExpressions
       new IndentPrinter());
     SymTypeExpression innerResult;
     expr.getExpression().accept(getTraverser());
-    if (typeCheckResult.isPresentCurrentResult()) {
+    if (typeCheckResult.isPresentResult()) {
       //store the type of the inner expression in a variable
-      innerResult = typeCheckResult.getCurrentResult();
+      innerResult = typeCheckResult.getResult();
       //look for this type in our scope
       TypeSymbol innerResultType = innerResult.getTypeInfo();
       //search for a method, field or type in the scope of the type of the inner expression
@@ -83,7 +83,7 @@ public class DeriveSymTypeOfCommonExpressions
           VariableSymbol var = fieldSymbols.get(0);
           SymTypeExpression type = var.getType();
           typeCheckResult.setField();
-          typeCheckResult.setCurrentResult(type);
+          typeCheckResult.setResult(type);
         }
       }
       else if (typeSymbolOpt.isPresent()) {
@@ -101,7 +101,7 @@ public class DeriveSymTypeOfCommonExpressions
           SymTypeExpression wholeResult = SymTypeExpressionFactory
             .createTypeExpression(typeSymbol);
           typeCheckResult.setType();
-          typeCheckResult.setCurrentResult(wholeResult);
+          typeCheckResult.setResult(wholeResult);
         }
         else {
           typeCheckResult.reset();
@@ -109,8 +109,8 @@ public class DeriveSymTypeOfCommonExpressions
         }
       }
       else {
-        if (typeCheckResult.isPresentCurrentResult()) {
-          innerResult = typeCheckResult.getCurrentResult();
+        if (typeCheckResult.isPresentResult()) {
+          innerResult = typeCheckResult.getResult();
           //resolve methods with name of the inner expression
           List<FunctionSymbol> fittingMethods = innerResult.getMethodList(expr.getName(), typeCheckResult.isType());
           //if the last result is static then filter for static methods
@@ -129,7 +129,7 @@ public class DeriveSymTypeOfCommonExpressions
             }
             SymTypeExpression result = fittingMethods.get(0).getReturnType();
             typeCheckResult.setMethod();
-            typeCheckResult.setCurrentResult(result);
+            typeCheckResult.setResult(result);
           } else {
             typeCheckResult.reset();
             logError("0xA0239", expr.get_SourcePositionStart());
@@ -141,7 +141,7 @@ public class DeriveSymTypeOfCommonExpressions
           if (fittingMethods.size() == 1) {
             Optional<SymTypeExpression> wholeResult = Optional.of(fittingMethods.get(0).getReturnType());
             typeCheckResult.setMethod();
-            typeCheckResult.setCurrentResult(wholeResult.get());
+            typeCheckResult.setResult(wholeResult.get());
           } else {
             typeCheckResult.reset();
             logError("0xA0240", expr.get_SourcePositionStart());
@@ -159,7 +159,7 @@ public class DeriveSymTypeOfCommonExpressions
         SymTypeExpression type = SymTypeExpressionFactory
           .createTypeExpression(typeSymbol);
         typeCheckResult.setType();
-        typeCheckResult.setCurrentResult(type);
+        typeCheckResult.setResult(type);
       }
       else {
         //the inner type has no result and there is no type found
@@ -244,9 +244,9 @@ public class DeriveSymTypeOfCommonExpressions
           expr.getArguments().getExpression(i).accept(getTraverser());
           //test if every single argument is correct
           if (!method.getParameterList().get(i).getType()
-            .deepEquals(typeCheckResult.getCurrentResult()) &&
+            .deepEquals(typeCheckResult.getResult()) &&
             !compatible(method.getParameterList().get(i).getType(),
-              typeCheckResult.getCurrentResult())) {
+              typeCheckResult.getResult())) {
             success = false;
           }
         }

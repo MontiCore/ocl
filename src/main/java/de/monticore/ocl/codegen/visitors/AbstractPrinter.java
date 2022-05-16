@@ -2,7 +2,8 @@
 package de.monticore.ocl.codegen.visitors;
 
 import de.monticore.ocl.codegen.util.VariableNaming;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.SymTypeConstant;
 import de.monticore.types.check.SymTypeOfGenerics;
@@ -23,10 +24,16 @@ public abstract class AbstractPrinter {
     return this.naming;
   }
 
-  protected OCLTypeCalculator typeCalculator;
+  protected OCLDeriver oclDeriver;
 
-  protected OCLTypeCalculator getTypeCalculator() {
-    return this.typeCalculator;
+  protected OCLDeriver getOCLDeriver() {
+    return this.oclDeriver;
+  }
+
+  protected OCLSynthesizer oclSynthesizer;
+
+  protected OCLSynthesizer getOCLSynthesizer() {
+    return this.oclSynthesizer;
   }
 
   protected IndentPrinter printer;
@@ -45,14 +52,14 @@ public abstract class AbstractPrinter {
    * @return String of type, boxed
    */
   protected static String boxType(TypeCheckResult type) {
-    if (!type.isPresentCurrentResult()) {
+    if (!type.isPresentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR);
     }
-    if (type.getCurrentResult().isGenericType()) {
-      return SymTypeOfGenerics.box((SymTypeOfGenerics) type.getCurrentResult());
+    if (type.getResult().isGenericType()) {
+      return SymTypeOfGenerics.box((SymTypeOfGenerics) type.getResult());
     }
     else {
-      return SymTypeConstant.box(type.getCurrentResult().printFullName());
+      return SymTypeConstant.box(type.getResult().printFullName());
     }
   }
 

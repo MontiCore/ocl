@@ -6,9 +6,8 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._cocos.ExpressionHasNoSideEffect;
 import de.monticore.ocl.ocl._cocos.ExpressionValidCoCo;
 import de.monticore.ocl.ocl._cocos.OCLCoCoChecker;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.util.SymbolTableUtil;
-import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import org.junit.jupiter.api.BeforeAll;
@@ -17,10 +16,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 public class OCLCoCoTest extends AbstractTest {
 
@@ -40,9 +39,7 @@ public class OCLCoCoTest extends AbstractTest {
   public void acceptsValidModels(String filename) {
     // todo ignoring test container1.ocl which fails due to
     // https://git.rwth-aachen.de/monticore/monticore/-/issues/3141
-    if (filename.equals("container1.ocl")){
-      return;
-    }
+    assumeFalse(filename.equals("container1.ocl"));
 
     // given
     final Optional<ASTOCLCompilationUnit> ast = parse(prefixValidModelsPath(filename), false);
@@ -59,17 +56,17 @@ public class OCLCoCoTest extends AbstractTest {
 
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new ExpressionHasNoSideEffect());
-    checker.addCoCo(new ExpressionValidCoCo(new OCLTypeCalculator()));
+    checker.addCoCo(new ExpressionValidCoCo(new OCLDeriver()));
     checker.checkAll(ast.get());
     assertThat(Log.getFindings().isEmpty());
   }
 
   @ParameterizedTest
   @CsvSource({
-    "src/test/resources/testinput/oclplibrary/list.ocl",
-    "src/test/resources/testinput/oclplibrary/listAndSet.ocl",
-    "src/test/resources/testinput/oclplibrary/set.ocl",
-    "src/test/resources/testinput/oclplibrary/staticQueries.ocl"
+      "src/test/resources/testinput/oclplibrary/list.ocl",
+      "src/test/resources/testinput/oclplibrary/listAndSet.ocl",
+      "src/test/resources/testinput/oclplibrary/set.ocl",
+      "src/test/resources/testinput/oclplibrary/staticQueries.ocl"
   })
   public void shouldAcceptOclpLibrary(final String oclFile) {
     // given
@@ -83,7 +80,7 @@ public class OCLCoCoTest extends AbstractTest {
 
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new ExpressionHasNoSideEffect());
-    checker.addCoCo(new ExpressionValidCoCo(new OCLTypeCalculator()));
+    checker.addCoCo(new ExpressionValidCoCo(new OCLDeriver()));
     checker.checkAll(ast.get());
     assertThat(Log.getFindings().isEmpty());
   }

@@ -255,7 +255,7 @@ public class ListType {
   protected void addFunctionFlatten() {
     //TODO: besser implementieren
     FunctionSymbol function = createMethod("flatten");
-    TypeVarSymbol typeVarSymbolY = OCLMill.typeVarSymbolBuilder().setName("X").build();
+    TypeVarSymbol typeVarSymbolY = OCLMill.typeVarSymbolBuilder().setName("Y").build();
     SymTypeExpression returnType = SymTypeExpressionFactory
             .createGenerics(listSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbolY));
     function.setReturnType(returnType);

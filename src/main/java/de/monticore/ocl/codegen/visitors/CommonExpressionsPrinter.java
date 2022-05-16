@@ -9,7 +9,8 @@ import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisi
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.oclexpressions._ast.ASTEquivalentExpression;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
@@ -21,16 +22,16 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
 
   protected CommonExpressionsTraverser traverser;
 
-  protected IndentPrinter printer;
-
   public CommonExpressionsPrinter(IndentPrinter printer, VariableNaming naming,
-      OCLTypeCalculator typeCalculator) {
+      OCLDeriver oclDeriver, OCLSynthesizer oclSynthesizer) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(typeCalculator);
+    Preconditions.checkNotNull(oclDeriver);
+    Preconditions.checkNotNull(oclSynthesizer);
     this.printer = printer;
     this.naming = naming;
-    this.typeCalculator = typeCalculator;
+    this.oclDeriver = oclDeriver;
+    this.oclSynthesizer = oclSynthesizer;
   }
 
   @Override
@@ -216,14 +217,14 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
    * @param node the expression to be printed
    */
   protected void printAsBoxedType(ASTExpression node) {
-    TypeCheckResult type = this.getTypeCalculator().deriveType(node);
-    if (!type.isPresentCurrentResult()) {
+    TypeCheckResult type = this.getOCLDeriver().deriveType(node);
+    if (!type.isPresentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;
     }
-    if (type.getCurrentResult().isTypeConstant()) {
+    if (type.getResult().isTypeConstant()) {
       getPrinter().print("((");
-      this.getPrinter().print(box(type.getCurrentResult().getTypeInfo().getFullName()));
+      this.getPrinter().print(box(type.getResult().getTypeInfo().getFullName()));
       getPrinter().print(") ");
       node.accept(getTraverser());
       getPrinter().print(")");

@@ -1,83 +1,27 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.types.check;
 
-import de.monticore.expressions.commonexpressions._ast.ASTInfixExpression;
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
-import de.monticore.types.check.*;
-import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
-import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.visitor.ITraverser;
+import de.monticore.types.check.AbstractDerive;
+import de.monticore.types.check.DeriveSymTypeOfExpression;
+import de.monticore.types.check.DeriveSymTypeOfLiterals;
+import de.monticore.types.check.DeriveSymTypeOfMCCommonLiterals;
+import de.monticore.types.check.SynthesizeSymTypeFromMCCollectionTypes;
+import de.monticore.types.check.SynthesizeSymTypeFromMCSimpleGenericTypes;
 
-public class OCLTypeCalculator implements IDerive, ISynthesize {
+public class OCLDeriver extends AbstractDerive {
 
-  protected ITraverser traverser;
-  protected TypeCheckResult typeCheckResult;
-
-  public OCLTypeCalculator() {
+  public OCLDeriver() {
     this(OCLMill.traverser());
   }
 
-  public OCLTypeCalculator(OCLTraverser traverser) {
-    this.traverser = traverser;
-    this.init(traverser);
+  public OCLDeriver(OCLTraverser traverser) {
+    super(traverser);
+    init(traverser);
   }
 
-  protected ITraverser getTraverser() {
-    return traverser;
-  }
-
-  protected TypeCheckResult getTypeCheckResult() {
-    return typeCheckResult;
-  }
-
-  @Override
-  public TypeCheckResult deriveType(ASTExpression expr) {
-    this.getTypeCheckResult().reset();
-    expr.accept(this.getTraverser());
-    return this.getTypeCheckResult().copy();
-  }
-
-  @Override
-  public TypeCheckResult deriveType(ASTLiteral lit) {
-    this.getTypeCheckResult().reset();
-    lit.accept(this.getTraverser());
-    return this.getTypeCheckResult().copy();
-  }
-
-  public TypeCheckResult deriveType(ASTInfixExpression expr) {
-    this.getTypeCheckResult().reset();
-    expr.accept(this.getTraverser());
-    return this.getTypeCheckResult().copy();
-  }
-
-  @Override
-  public TypeCheckResult synthesizeType(ASTMCType type) {
-    this.getTypeCheckResult().reset();
-    type.accept(this.getTraverser());
-    return this.getTypeCheckResult().copy();
-  }
-
-  @Override
-  public TypeCheckResult synthesizeType(ASTMCReturnType type) {
-    this.getTypeCheckResult().reset();
-    type.accept(this.getTraverser());
-    return this.getTypeCheckResult().copy();
-  }
-
-  @Override
-  public TypeCheckResult synthesizeType(ASTMCQualifiedName qName) {
-    this.getTypeCheckResult().reset();
-    qName.accept(this.getTraverser());
-    return this.getTypeCheckResult().copy();
-  }
-
-  protected void init(OCLTraverser traverser) {
-    this.typeCheckResult = new TypeCheckResult();
-
+  public void init(OCLTraverser traverser) {
     // initializes visitors used for calculating types
     DeriveSymTypeOfExpression deriveSymTypeOfExpression = new DeriveSymTypeOfExpression();
     deriveSymTypeOfExpression.setTypeCheckResult(typeCheckResult);
@@ -129,4 +73,5 @@ public class OCLTypeCalculator implements IDerive, ISynthesize {
     traverser.add4MCCollectionTypes(synthesizeSymTypeFromMCCollectionTypes);
     traverser.setMCCollectionTypesHandler(synthesizeSymTypeFromMCCollectionTypes);
   }
+
 }

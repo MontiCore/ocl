@@ -22,7 +22,8 @@ import de.monticore.ocl.oclexpressions._ast.ASTTypeIfExpression;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsHandler;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.types.check.SymTypeExpression;
@@ -39,16 +40,16 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
 
   protected OCLExpressionsTraverser traverser;
 
-  protected IndentPrinter printer;
-
   public OCLExpressionsPrinter(IndentPrinter printer, VariableNaming naming,
-      OCLTypeCalculator typeCalculator) {
+      OCLDeriver oclDeriver, OCLSynthesizer oclSynthesizer) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(typeCalculator);
+    Preconditions.checkNotNull(oclDeriver);
+    Preconditions.checkNotNull(oclSynthesizer);
     this.printer = printer;
     this.naming = naming;
-    this.typeCalculator = typeCalculator;
+    this.oclDeriver = oclDeriver;
+    this.oclSynthesizer = oclSynthesizer;
   }
 
   @Override
@@ -62,8 +63,8 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
     this.traverser = traverser;
   }
 
-  protected OCLTypeCalculator getTypeCalculator() {
-    return typeCalculator;
+  protected OCLDeriver getOclDeriver() {
+    return oclDeriver;
   }
 
   public IndentPrinter getPrinter() {
@@ -72,13 +73,13 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
 
   @Override
   public void handle(ASTIfThenElseExpression node) {
-    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
-    TypeCheckResult type = this.getTypeCalculator().deriveType(node);
-    if (!type.isPresentCurrentResult()) {
+    printExpressionBeginLambda(getOclDeriver().deriveType(node));
+    TypeCheckResult type = this.getOclDeriver().deriveType(node);
+    if (!type.isPresentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
     }
     else {
-      this.getPrinter().print(type.getCurrentResult().getTypeInfo().getFullName());
+      this.getPrinter().print(type.getResult().getTypeInfo().getFullName());
       this.getPrinter().print(" ");
     }
     this.getPrinter().print(getNaming().getName(node));
@@ -117,7 +118,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
 
   @Override
   public void handle(ASTForallExpression node) {
-    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
+    printExpressionBeginLambda(getOclDeriver().deriveType(node));
     this.getPrinter().print("Boolean ");
     this.getPrinter().print(getNaming().getName(node));
     this.getPrinter().println(" = true;");
@@ -137,7 +138,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
 
   @Override
   public void handle(ASTExistsExpression node) {
-    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
+    printExpressionBeginLambda(getOclDeriver().deriveType(node));
     this.getPrinter().print("Boolean ");
     this.getPrinter().print(getNaming().getName(node));
     this.getPrinter().println(" = false;");
@@ -157,7 +158,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
 
   @Override
   public void handle(ASTLetinExpression node) {
-    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
+    printExpressionBeginLambda(getOclDeriver().deriveType(node));
     node.getOCLVariableDeclarationList().forEach(dec -> dec.accept(getTraverser()));
     this.getPrinter().print("return ");
     node.getExpression().accept(getTraverser());
@@ -173,7 +174,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
   @Override
   public void handle(ASTTypeCastExpression node) {
     this.getPrinter().print("((");
-    getPrinter().print(boxType(getTypeCalculator().synthesizeType(node.getMCType())));
+    getPrinter().print(boxType(getOCLSynthesizer().synthesizeType(node.getMCType())));
     this.getPrinter().print(") ");
     node.getExpression().accept(getTraverser());
     this.getPrinter().print(")");
@@ -191,17 +192,17 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
   public void handle(ASTInDeclaration node) {
     SymTypeExpression innerType = null;
     if (node.isPresentMCType()) {
-      TypeCheckResult type = this.getTypeCalculator().synthesizeType(node.getMCType());
-      if (type.isPresentCurrentResult()) {
-        innerType = type.getCurrentResult();
+      TypeCheckResult type = this.getOCLSynthesizer().synthesizeType(node.getMCType());
+      if (type.isPresentResult()) {
+        innerType = type.getResult();
       }
     }
     else if (node.isPresentExpression()) {
-      TypeCheckResult type = this.getTypeCalculator().deriveType(node.getExpression());
-      if (type.isPresentCurrentResult()
-          && type.getCurrentResult().isGenericType()
-          && ((SymTypeOfGenerics) type.getCurrentResult()).sizeArguments() == 1) {
-        innerType = ((SymTypeOfGenerics) type.getCurrentResult()).getArgument(0);
+      TypeCheckResult type = this.getOclDeriver().deriveType(node.getExpression());
+      if (type.isPresentResult()
+          && type.getResult().isGenericType()
+          && ((SymTypeOfGenerics) type.getResult()).sizeArguments() == 1) {
+        innerType = ((SymTypeOfGenerics) type.getResult()).getArgument(0);
       }
     }
     if (innerType == null) {
@@ -228,10 +229,10 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
   public void handle(ASTOCLVariableDeclaration node) {
     this.getPrinter().print("final ");
     if (node.isPresentMCType()) {
-      getPrinter().print(boxType(getTypeCalculator().synthesizeType(node.getMCType())));
+      getPrinter().print(boxType(getOCLSynthesizer().synthesizeType(node.getMCType())));
     }
     else if (node.isPresentExpression()) {
-      getPrinter().print(boxType(getTypeCalculator().deriveType(node.getExpression())));
+      getPrinter().print(boxType(getOclDeriver().deriveType(node.getExpression())));
     }
     this.getPrinter().print(" ");
     this.getPrinter().print(node.getName());
@@ -252,15 +253,15 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
     this.getPrinter().print("(");
     node.getExpression().accept(this.getTraverser());
     this.getPrinter().print(" instanceof ");
-    getPrinter().print(boxType(getTypeCalculator().synthesizeType(node.getMCType())));
+    getPrinter().print(boxType(getOCLSynthesizer().synthesizeType(node.getMCType())));
     this.getPrinter().print(")");
   }
 
   @Override
   public void handle(ASTAnyExpression node) {
-    TypeCheckResult type = this.getTypeCalculator().deriveType(node.getExpression());
-    if (type.isPresentCurrentResult() && type.getCurrentResult().isObjectType()) {
-      List<TypeVarSymbol> typeVarSymbols = type.getCurrentResult().getTypeInfo()
+    TypeCheckResult type = this.getOclDeriver().deriveType(node.getExpression());
+    if (type.isPresentResult() && type.getResult().isObjectType()) {
+      List<TypeVarSymbol> typeVarSymbols = type.getResult().getTypeInfo()
           .getTypeParameterList();
       if (typeVarSymbols.size() != 1) {
         Log.error("0xFF058 any-expression requires a container (e.g. List<>)",
@@ -284,14 +285,14 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
    * @param node the expression to be printed
    */
   protected void printAsBoxedType(ASTExpression node) {
-    TypeCheckResult type = this.getTypeCalculator().deriveType(node);
-    if (!type.isPresentCurrentResult()) {
+    TypeCheckResult type = this.getOclDeriver().deriveType(node);
+    if (!type.isPresentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;
     }
-    if (type.getCurrentResult().isTypeConstant()) {
+    if (type.getResult().isTypeConstant()) {
       getPrinter().print("((");
-      this.getPrinter().print(box(type.getCurrentResult().printFullName()));
+      this.getPrinter().print(box(type.getResult().printFullName()));
       getPrinter().print(") ");
       node.accept(getTraverser());
       getPrinter().print(")");
