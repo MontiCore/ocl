@@ -89,7 +89,7 @@ public class OCL2JavaGenerator {
         typeCalculator);
     this.traverser.setOCLExpressionsHandler(oclExprPrinter);
     this.traverser.add4OCLExpressions(oclExprPrinter);
-    SetExpressionsPrinter setExprPrinter = new SetExpressionsPrinter(printer, naming);
+    SetExpressionsPrinter setExprPrinter = new SetExpressionsPrinter(printer, naming, typeCalculator);
     this.traverser.setSetExpressionsHandler(setExprPrinter);
     this.traverser.add4SetExpressions(setExprPrinter);
 

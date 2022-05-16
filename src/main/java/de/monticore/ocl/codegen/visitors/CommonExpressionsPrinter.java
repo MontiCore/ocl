@@ -6,23 +6,22 @@ import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsHandler;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTraverser;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.oclexpressions._ast.ASTEquivalentExpression;
 import de.monticore.ocl.types.check.OCLTypeCalculator;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.check.TypeCheckResult;
+import de.se_rwth.commons.logging.Log;
+
+import static de.monticore.types.check.SymTypeConstant.box;
 
 public class CommonExpressionsPrinter extends AbstractPrinter implements CommonExpressionsHandler,
     CommonExpressionsVisitor2 {
 
   protected CommonExpressionsTraverser traverser;
 
-  protected OCLTypeCalculator typeCalculator;
-
   protected IndentPrinter printer;
-
-  protected OCLTypeCalculator getTypeCalculator() {
-    return typeCalculator;
-  }
 
   public CommonExpressionsPrinter(IndentPrinter printer, VariableNaming naming,
       OCLTypeCalculator typeCalculator) {
@@ -47,6 +46,13 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
 
   public IndentPrinter getPrinter() {
     return this.printer;
+  }
+
+  @Override
+  public void handle(ASTMinusPrefixExpression node) {
+    Preconditions.checkNotNull(node);
+    this.getPrinter().print("-");
+    node.getExpression().accept(getTraverser());
   }
 
   @Override
@@ -96,7 +102,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   //TODO
   public void handle(ASTEquivalentExpression node) {
     Preconditions.checkNotNull(node);
-    node.getLeft().accept(getTraverser());
+    printAsBoxedType(node.getLeft());
     this.getPrinter().print(".equals(");
     node.getRight().accept(getTraverser());
     this.getPrinter().println(");");
@@ -153,7 +159,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   @Override
   public void handle(ASTEqualsExpression node) {
     Preconditions.checkNotNull(node);
-    node.getLeft().accept(getTraverser());
+    printAsBoxedType(node.getLeft());
     this.getPrinter().print(".equals(");
     node.getRight().accept(getTraverser());
     this.getPrinter().print(")");
@@ -163,7 +169,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   public void handle(ASTNotEqualsExpression node) {
     Preconditions.checkNotNull(node);
     this.getPrinter().print("!");
-    node.getLeft().accept(getTraverser());
+    printAsBoxedType(node.getLeft());
     this.getPrinter().print(".equals(");
     node.getRight().accept(getTraverser());
     this.getPrinter().print(")");
@@ -199,6 +205,32 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
     this.getPrinter().print(" ");
     node.getRight().accept(getTraverser());
     this.getPrinter().print(")");
+  }
+
+  /**
+   * if node has a primitive type,
+   * this prints the Java expression
+   * such that it has a non-primitive type.
+   * e.g. "5" -> "((Integer) 5)"
+   *
+   * @param node the expression to be printed
+   */
+  protected void printAsBoxedType(ASTExpression node) {
+    TypeCheckResult type = this.getTypeCalculator().deriveType(node);
+    if (!type.isPresentCurrentResult()) {
+      Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
+      return;
+    }
+    if (type.getCurrentResult().isTypeConstant()) {
+      getPrinter().print("((");
+      this.getPrinter().print(box(type.getCurrentResult().getTypeInfo().getFullName()));
+      getPrinter().print(") ");
+      node.accept(getTraverser());
+      getPrinter().print(")");
+    }
+    else {
+      node.accept(getTraverser());
+    }
   }
 
 }

@@ -8,15 +8,15 @@ import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
+import de.monticore.ocl.types.check.OCLTypeCalculator;
 import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.check.SymTypeConstant;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
-
-import static de.monticore.types.check.SymTypeConstant.box;
 
 public class SetExpressionsPrinter extends AbstractPrinter
     implements SetExpressionsHandler, SetExpressionsVisitor2 {
@@ -29,11 +29,14 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   protected IndentPrinter printer;
 
-  public SetExpressionsPrinter(IndentPrinter printer, VariableNaming naming) {
+  public SetExpressionsPrinter(IndentPrinter printer, VariableNaming naming,
+      OCLTypeCalculator typeCalculator) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
+    Preconditions.checkNotNull(typeCalculator);
     this.printer = printer;
     this.naming = naming;
+    this.typeCalculator = typeCalculator;
   }
 
   @Override
@@ -70,13 +73,13 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTUnionExpression node) {
-    printExpressionBeginLambda(node);
+    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
 
     getPrinter().print("Set<");
     printDerivedInnerType(node);
     getPrinter().print("> ");
     getPrinter().print(getNaming().getName(node));
-    getPrinter().println(" = new HashSet<>();");
+    getPrinter().println(" = new java.util.HashSet<>();");
 
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(".addAll(");
@@ -91,19 +94,18 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print("return ");
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(";");
-
-    printExpressionEndLambda(node);
+    printExpressionEndLambda();
   }
 
   @Override
   public void handle(ASTIntersectionExpression node) {
-    printExpressionBeginLambda(node);
+    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
 
     getPrinter().print("Set<");
     printDerivedInnerType(node);
     getPrinter().print("> ");
     getPrinter().print(getNaming().getName(node));
-    getPrinter().println(" = new HashSet<>();");
+    getPrinter().println(" = new java.util.HashSet<>();");
 
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(".addAll(");
@@ -119,17 +121,18 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(";");
 
-    printExpressionEndLambda(node);
+    printExpressionEndLambda();
   }
 
   @Override
   public void handle(ASTSetMinusExpression node) {
-    printExpressionBeginLambda(node);
+    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
+
     getPrinter().print("Set<");
     printDerivedInnerType(node);
     getPrinter().print("> ");
     getPrinter().print(getNaming().getName(node));
-    getPrinter().println(" = new HashSet<>();");
+    getPrinter().println(" = new java.util.HashSet<>();");
 
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(".addAll(");
@@ -145,14 +148,14 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(";");
 
-    printExpressionEndLambda(node);
+    printExpressionEndLambda();
   }
 
   @Override
   public void handle(ASTSetUnionExpression node) {
-    printExpressionBeginLambda(node);
+    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
 
-    printDerivedType(node.getSet());
+    getPrinter().print(getTypeCalculator().deriveType(node.getSet()));
     getPrinter().print(" ");
     getPrinter().print(getNaming().getName(node.getSet()));
     getPrinter().print(" = ");
@@ -163,10 +166,10 @@ public class SetExpressionsPrinter extends AbstractPrinter
     printDerivedInnerType(node);
     getPrinter().print("> ");
     getPrinter().print(getNaming().getName(node));
-    getPrinter().println(" = new HashSet<>();");
+    getPrinter().println(" = new java.util.HashSet<>();");
 
     getPrinter().print("for(");
-    printDerivedType(node);
+    getPrinter().print(getTypeCalculator().deriveType(node));
     getPrinter().print(" ");
     getPrinter().print(getNaming().getName(node.getSet()));
     getPrinter().print("_item");
@@ -188,12 +191,12 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(";");
 
-    printExpressionEndLambda(node);
+    printExpressionEndLambda();
   }
 
   @Override
   public void handle(ASTSetIntersectionExpression node) {
-    printExpressionBeginLambda(node);
+    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
 
     printDerivedType(node.getSet());
     getPrinter().print(" ");
@@ -202,13 +205,13 @@ public class SetExpressionsPrinter extends AbstractPrinter
     node.getSet().accept(getTraverser());
     getPrinter().println(";");
 
-    getPrinter().print("Set<");
+    getPrinter().print("java.util.Set<");
     printDerivedInnerType(node);
     getPrinter().print("> ");
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(" = ");
     getPrinter().print(getNaming().getName(node.getSet()));
-    getPrinter().println(".stream().findAny().orElse(new HashSet<>());");
+    getPrinter().println(".stream().findAny().orElse(new java.util.HashSet<>());");
 
     getPrinter().print("for(");
     printDerivedType(node);
@@ -233,12 +236,12 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(";");
 
-    printExpressionEndLambda(node);
+    printExpressionEndLambda();
   }
 
   @Override
   public void handle(ASTSetAndExpression node) {
-    printExpressionBeginLambda(node);
+    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
 
     getPrinter().print("Boolean ");
     getPrinter().print(getNaming().getName(node));
@@ -274,12 +277,12 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(";");
 
-    printExpressionEndLambda(node);
+    printExpressionEndLambda();
   }
 
   @Override
   public void handle(ASTSetOrExpression node) {
-    printExpressionBeginLambda(node);
+    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
 
     getPrinter().print("Boolean ");
     getPrinter().print(getNaming().getName(node));
@@ -316,12 +319,12 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(";");
 
-    printExpressionEndLambda(node);
+    printExpressionEndLambda();
   }
 
   @Override
   public void handle(ASTSetComprehension node) {
-    printExpressionBeginLambda(node);
+    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
     printDerivedType(node);
     getPrinter().print(" ");
     getPrinter().print(getNaming().getName(node));
@@ -329,10 +332,10 @@ public class SetExpressionsPrinter extends AbstractPrinter
     if (node.getMCType()
         .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
         .contains("Set")) {
-      getPrinter().println("new HashSet<>();");
+      getPrinter().println("new java.util.HashSet<>();");
     }
     else {
-      getPrinter().println("new LinkedList<>();");
+      getPrinter().println("new java.util.LinkedList<>();");
     }
 
     if (node.getLeft().isPresentGeneratorDeclaration()) {
@@ -346,6 +349,9 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print(".add(");
     if (node.getLeft().isPresentGeneratorDeclaration()) {
       getPrinter().print(node.getLeft().getGeneratorDeclaration().getName());
+    }
+    else if (node.getLeft().isPresentExpression()) {
+      node.getLeft().getExpression().accept(getTraverser());
     }
     else {
       node.getLeft().accept(getTraverser());
@@ -363,7 +369,11 @@ public class SetExpressionsPrinter extends AbstractPrinter
       getPrinter().unindent();
     }
 
-    printExpressionEndLambda(node);
+    getPrinter().print("return ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().println(";");
+
+    printExpressionEndLambda();
   }
 
   @Override
@@ -389,7 +399,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
       ASTSetVariableDeclaration setVarDecl = node.getSetVariableDeclaration();
       if (setVarDecl.isPresentMCType()) {
         if (setVarDecl.isPresentMCType()) {
-          setVarDecl.getMCType().accept(getTraverser());
+          getPrinter().print(boxType(getTypeCalculator().synthesizeType(setVarDecl.getMCType())));
         }
         else {
           printDerivedInnerType(setVarDecl.getExpression());
@@ -411,7 +421,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
   public void handle(ASTGeneratorDeclaration node) {
     getPrinter().print("for (");
     if (node.isPresentMCType()) {
-      node.getMCType().accept(getTraverser());
+      getPrinter().print(boxType(getTypeCalculator().synthesizeType(node.getMCType())));
     }
     else {
       printDerivedInnerType(node.getExpression());
@@ -426,32 +436,140 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetEnumeration node) {
+    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
 
+    printDerivedType(node);
+    getPrinter().print(" ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print(" = ");
+    if (node.getMCType()
+        .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
+        .contains("Set")) {
+      getPrinter().println("new java.util.HashSet<>();");
+    }
+    else {
+      getPrinter().println("new java.util.LinkedList<>();");
+    }
+
+    for (ASTSetCollectionItem item : node.getSetCollectionItemList()) {
+      getPrinter().print(getNaming().getName(node));
+      //for ASTSetValueItem we could use "add", but we avoid reflections
+      getPrinter().print(".addAll(");
+      item.accept(getTraverser());
+      getPrinter().println(");");
+    }
+
+    getPrinter().print("return ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().println(";");
+
+    printExpressionEndLambda();
   }
 
   @Override
   public void handle(ASTSetValueItem node) {
-
+    getPrinter().print("java.util.Collections.singleton(");
+    node.getExpression().accept(getTraverser());
+    getPrinter().print(")");
   }
 
   @Override
   public void handle(ASTSetValueRange node) {
-
-  }
-
-  protected void printExpressionBeginLambda(ASTExpression node) {
-    TypeCheckResult type = this.getTypeCalculator().deriveType(node);
+    // Lambda returning List
+    this.getPrinter().print("((java.util.function.Supplier<");
+    getPrinter().print("java.util.List<");
+    TypeCheckResult type = this.getTypeCalculator().deriveType(node.getLowerBound());
     if (!type.isPresentCurrentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;
     }
-    this.getPrinter().print("((Supplier<");
-    this.getPrinter().print(box(type.getCurrentResult().getTypeInfo().getFullName()));
+    this.getPrinter().print(boxType(type));
+    getPrinter().print(">");
     this.getPrinter().println(">)()->{");
-  }
+    this.getPrinter().indent();
 
-  protected void printExpressionEndLambda(ASTExpression node) {
-    this.getPrinter().print("})).get()");
+    getPrinter().print("java.util.List<");
+    printDerivedType(node.getLowerBound());
+    getPrinter().print("> ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().println(" = new java.util.LinkedList<>();");
+
+    // bounds
+    printDerivedType(node.getLowerBound());
+    getPrinter().print(" ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print("LowerBound = ");
+    node.getLowerBound().accept(getTraverser());
+    getPrinter().println(";");
+
+    printDerivedType(node.getLowerBound());
+    getPrinter().print(" ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print("UpperBound = ");
+    node.getUpperBound().accept(getTraverser());
+    getPrinter().println(";");
+
+    // lower bound > upper bound -> backwards (Step = -1)
+    getPrinter().print("int ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().println("Step = 1;");
+
+    getPrinter().print("if (");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print("LowerBound > ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().println("UpperBound) {");
+    getPrinter().indent();
+
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().println("Step = -1;");
+
+    getPrinter().unindent();
+    getPrinter().println("}");
+
+    //iterate and add to result
+    getPrinter().print("for (");
+    printDerivedType(node.getLowerBound());
+    getPrinter().print(" ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print("_iter = ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print("LowerBound; ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print("_iter * ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print("Step <= ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print("UpperBound * ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print("Step; ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print("_iter = (");
+    // java.Lang.Character -> avoid type errors
+    // this works as only primitives are supported
+    getPrinter().print(SymTypeConstant.unbox(
+        getTypeCalculator().deriveType(node.getLowerBound()).getCurrentResult().printFullName()));
+    getPrinter().print(")(");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print("_iter + ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().println("Step)) {");
+    getPrinter().indent();
+
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().print(".add(");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().println("_iter);");
+
+    getPrinter().unindent();
+    getPrinter().println("}");
+
+    getPrinter().print("return ");
+    getPrinter().print(getNaming().getName(node));
+    getPrinter().println(";");
+
+    this.getPrinter().unindent();
+    this.getPrinter().print("}).get()");
   }
 
   protected void printDerivedType(ASTExpression node) {
@@ -460,27 +578,46 @@ public class SetExpressionsPrinter extends AbstractPrinter
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;
     }
-    getPrinter().print(type.getCurrentResult().getTypeInfo().getFullName());
+    getPrinter().print(boxType(type));
   }
 
   /**
-   * given an expression with type Generic with argument MyType prints MyType
+   * given an expression with type {@code Generic<MyType>} prints {@code MyType}
    *
    * @param node the expression
    */
   protected void printDerivedInnerType(ASTExpression node) {
+    SymTypeExpression innerType = getInnerType(node);
+    if (innerType != null) {
+      if (innerType.isGenericType()) {
+        getPrinter().print(SymTypeOfGenerics.box((SymTypeOfGenerics) innerType));
+      }
+      else {
+        getPrinter().print(SymTypeConstant.box(innerType.printFullName()));
+      }
+    }
+    else {
+      Log.error(INNER_TYPE_NOT_DERIVED_ERROR, node.get_SourcePositionStart());
+    }
+  }
+
+  /**
+   * given an expression with type {@code Generic<MyType>} returns {@code MyType}
+   *
+   * @param node the expression
+   */
+  protected SymTypeExpression getInnerType(ASTExpression node) {
+    SymTypeExpression innerType = null;
     TypeCheckResult type = this.getTypeCalculator().deriveType(node);
     if (type.isPresentCurrentResult()
         && type.getCurrentResult().isGenericType()
         && ((SymTypeOfGenerics) type.getCurrentResult()).sizeArguments() == 1) {
-      SymTypeExpression innerType = ((SymTypeOfGenerics) type.getCurrentResult()).getArgument(0);
-      if (innerType != null) {
-        getPrinter().print(innerType.getTypeInfo().getFullName());
-      }
-      else {
-        Log.error(INNER_TYPE_NOT_DERIVED_ERROR, node.get_SourcePositionStart());
-      }
+      innerType = ((SymTypeOfGenerics) type.getCurrentResult()).getArgument(0);
     }
+    if (innerType == null) {
+      Log.error(INNER_TYPE_NOT_DERIVED_ERROR, node.get_SourcePositionStart());
+    }
+    return innerType;
   }
 
 }

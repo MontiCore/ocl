@@ -39,8 +39,6 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
 
   protected OCLExpressionsTraverser traverser;
 
-  protected OCLTypeCalculator typeCalculator;
-
   protected IndentPrinter printer;
 
   public OCLExpressionsPrinter(IndentPrinter printer, VariableNaming naming,
@@ -74,7 +72,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
 
   @Override
   public void handle(ASTIfThenElseExpression node) {
-    printExpressionBeginLambda(node);
+    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
     TypeCheckResult type = this.getTypeCalculator().deriveType(node);
     if (!type.isPresentCurrentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
@@ -105,7 +103,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
     this.getPrinter().print("return ");
     this.getPrinter().print(this.getNaming().getName(node));
     this.getPrinter().println(";");
-    printExpressionEndLambda(node);
+    printExpressionEndLambda();
   }
 
   @Override
@@ -119,7 +117,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
 
   @Override
   public void handle(ASTForallExpression node) {
-    printExpressionBeginLambda(node);
+    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
     this.getPrinter().print("Boolean ");
     this.getPrinter().print(getNaming().getName(node));
     this.getPrinter().println(" = true;");
@@ -134,12 +132,12 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
     this.getPrinter().print("return ");
     this.getPrinter().print(this.getNaming().getName(node));
     this.getPrinter().println(";");
-    printExpressionEndLambda(node);
+    printExpressionEndLambda();
   }
 
   @Override
   public void handle(ASTExistsExpression node) {
-    printExpressionBeginLambda(node);
+    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
     this.getPrinter().print("Boolean ");
     this.getPrinter().print(getNaming().getName(node));
     this.getPrinter().println(" = false;");
@@ -154,17 +152,17 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
     this.getPrinter().print("return ");
     this.getPrinter().print(this.getNaming().getName(node));
     this.getPrinter().println(";");
-    printExpressionEndLambda(node);
+    printExpressionEndLambda();
   }
 
   @Override
   public void handle(ASTLetinExpression node) {
-    printExpressionBeginLambda(node);
+    printExpressionBeginLambda(getTypeCalculator().deriveType(node));
     node.getOCLVariableDeclarationList().forEach(dec -> dec.accept(getTraverser()));
     this.getPrinter().print("return ");
     node.getExpression().accept(getTraverser());
     this.getPrinter().println(";");
-    printExpressionEndLambda(node);
+    printExpressionEndLambda();
   }
 
   @Override
@@ -175,7 +173,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
   @Override
   public void handle(ASTTypeCastExpression node) {
     this.getPrinter().print("((");
-    node.getMCType().accept(getTraverser());
+    getPrinter().print(boxType(getTypeCalculator().synthesizeType(node.getMCType())));
     this.getPrinter().print(") ");
     node.getExpression().accept(getTraverser());
     this.getPrinter().print(")");
@@ -183,7 +181,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
 
   @Override
   public void handle(ASTEquivalentExpression node) {
-    node.getLeft().accept(getTraverser());
+    printAsBoxedType(node.getLeft());
     this.getPrinter().print(".equals(");
     node.getRight().accept(getTraverser());
     this.getPrinter().print(")");
@@ -230,16 +228,10 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
   public void handle(ASTOCLVariableDeclaration node) {
     this.getPrinter().print("final ");
     if (node.isPresentMCType()) {
-      node.getMCType().accept(getTraverser());
+      getPrinter().print(boxType(getTypeCalculator().synthesizeType(node.getMCType())));
     }
     else if (node.isPresentExpression()) {
-      TypeCheckResult type = this.getTypeCalculator().deriveType(node.getExpression());
-      if (type.isPresentCurrentResult()) {
-        this.getPrinter().print(type.getCurrentResult().getTypeInfo().getFullName());
-      }
-      else {
-        Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
-      }
+      getPrinter().print(boxType(getTypeCalculator().deriveType(node.getExpression())));
     }
     this.getPrinter().print(" ");
     this.getPrinter().print(node.getName());
@@ -260,7 +252,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
     this.getPrinter().print("(");
     node.getExpression().accept(this.getTraverser());
     this.getPrinter().print(" instanceof ");
-    node.getMCType().accept(this.getTraverser());
+    getPrinter().print(boxType(getTypeCalculator().synthesizeType(node.getMCType())));
     this.getPrinter().print(")");
   }
 
@@ -276,26 +268,37 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
       }
       this.getPrinter().print("(");
       node.getExpression().accept(getTraverser());
-      this.getPrinter().print(").get(0)");
+      this.getPrinter().print(").iterator().next()");
     }
     else {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
     }
   }
 
-  protected void printExpressionBeginLambda(ASTExpression node) {
+  /**
+   * if node has a primitive type,
+   * this prints the Java expression
+   * such that it has a non-primitive type.
+   * e.g. {@code 5} -> {@code ((Integer) 5)}
+   *
+   * @param node the expression to be printed
+   */
+  protected void printAsBoxedType(ASTExpression node) {
     TypeCheckResult type = this.getTypeCalculator().deriveType(node);
     if (!type.isPresentCurrentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;
     }
-    this.getPrinter().print("((Supplier<");
-    this.getPrinter().print(box(type.getCurrentResult().getTypeInfo().getFullName()));
-    this.getPrinter().println(">)()->{");
-  }
-
-  protected void printExpressionEndLambda(ASTExpression node) {
-    this.getPrinter().print("})).get()");
+    if (type.getCurrentResult().isTypeConstant()) {
+      getPrinter().print("((");
+      this.getPrinter().print(box(type.getCurrentResult().printFullName()));
+      getPrinter().print(") ");
+      node.accept(getTraverser());
+      getPrinter().print(")");
+    }
+    else {
+      node.accept(getTraverser());
+    }
   }
 
 }

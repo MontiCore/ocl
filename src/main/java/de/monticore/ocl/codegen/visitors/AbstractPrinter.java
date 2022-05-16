@@ -3,6 +3,11 @@ package de.monticore.ocl.codegen.visitors;
 
 import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.check.SymTypeConstant;
+import de.monticore.types.check.SymTypeOfGenerics;
+import de.monticore.types.check.TypeCheckResult;
+import de.se_rwth.commons.logging.Log;
 
 public abstract class AbstractPrinter {
 
@@ -22,6 +27,56 @@ public abstract class AbstractPrinter {
 
   protected OCLTypeCalculator getTypeCalculator() {
     return this.typeCalculator;
+  }
+
+  protected IndentPrinter printer;
+
+  protected IndentPrinter getPrinter() {
+    return this.printer;
+  }
+
+  // common functions
+
+  /**
+   * boxes the type
+   * e.g. {@code List<int>} -> {@code java.util.List<Integer>}
+   *
+   * @param type type to be printed
+   * @return String of type, boxed
+   */
+  protected static String boxType(TypeCheckResult type) {
+    if (!type.isPresentCurrentResult()) {
+      Log.error(NO_TYPE_DERIVED_ERROR);
+    }
+    if (type.getCurrentResult().isGenericType()) {
+      return SymTypeOfGenerics.box((SymTypeOfGenerics) type.getCurrentResult());
+    }
+    else {
+      return SymTypeConstant.box(type.getCurrentResult().printFullName());
+    }
+  }
+
+  /**
+   * prints an expression which returns the result of a Java code block,
+   * which is opened by this
+   * s.a. {@link AbstractPrinter#printExpressionEndLambda()}
+   *
+   * @param type the type of the expression
+   */
+  protected void printExpressionBeginLambda(TypeCheckResult type) {
+    this.getPrinter().print("((java.util.function.Supplier<");
+    this.getPrinter().print(boxType(type));
+    this.getPrinter().println(">)()->{");
+    this.getPrinter().indent();
+  }
+
+  /**
+   * prints the end of the expression which returns the result of a Java code block
+   * s.a. {@link AbstractPrinter#printExpressionBeginLambda}
+   */
+  protected void printExpressionEndLambda() {
+    this.getPrinter().unindent();
+    this.getPrinter().print("}).get()");
   }
 
 }
