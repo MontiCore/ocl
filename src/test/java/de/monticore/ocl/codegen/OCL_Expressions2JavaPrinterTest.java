@@ -2,7 +2,6 @@
 package de.monticore.ocl.codegen;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
 import de.monticore.literals.prettyprint.MCCommonLiteralsPrettyPrinter;
@@ -16,7 +15,8 @@ import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.MCBasicsPrettyPrinter;
@@ -57,7 +57,9 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
  */
 public class OCL_Expressions2JavaPrinterTest extends AbstractTest {
 
-  protected final static String RELATIVE_TARGET_PATH = "target/generated-test-sources";
+  protected final static String RELATIVE_TARGET_PATH = "target"
+      + File.separator
+      + "generated-test-sources";
 
   @BeforeEach
   public void setup() {
@@ -170,22 +172,23 @@ public class OCL_Expressions2JavaPrinterTest extends AbstractTest {
     OCLTraverser traverser = OCLMill.traverser();
     IndentPrinter printer = new IndentPrinter();
     VariableNaming naming = new VariableNaming();
-    OCLTypeCalculator typeCalculator = new OCLTypeCalculator();
+    OCLDeriver deriver = new OCLDeriver();
+    OCLSynthesizer synthesizer = new OCLSynthesizer();
 
     // Expressions setup
     CommonExpressionsPrinter comExprPrinter = new CommonExpressionsPrinter(printer, naming,
-        typeCalculator);
+        deriver, synthesizer);
     traverser.setCommonExpressionsHandler(comExprPrinter);
     traverser.add4CommonExpressions(comExprPrinter);
     ExpressionsBasisPrettyPrinter exprBasPrinter = new ExpressionsBasisPrettyPrinter(printer);
     traverser.setExpressionsBasisHandler(exprBasPrinter);
     traverser.add4ExpressionsBasis(exprBasPrinter);
     OCLExpressionsPrinter oclExprPrinter = new OCLExpressionsPrinter(printer, naming,
-        typeCalculator);
+        deriver, synthesizer);
     traverser.setOCLExpressionsHandler(oclExprPrinter);
     traverser.add4OCLExpressions(oclExprPrinter);
     SetExpressionsPrinter setExprPrinter = new SetExpressionsPrinter(printer, naming,
-        typeCalculator);
+        deriver, synthesizer);
     traverser.setSetExpressionsHandler(setExprPrinter);
     traverser.add4SetExpressions(setExprPrinter);
 
