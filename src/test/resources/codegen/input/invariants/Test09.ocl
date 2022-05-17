@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl Test09 {
+  inv(Set<String> names):
+    "name" isin names;
+}

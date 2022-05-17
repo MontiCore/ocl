@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl Test04 {
+  inv(boolean a, boolean b):
+    if a==b then a else b &&
+    a==b ? a : b &&
+    a instanceof Boolean &&
+    a implies b;
+}
