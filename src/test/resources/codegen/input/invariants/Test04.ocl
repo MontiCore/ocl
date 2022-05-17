@@ -2,7 +2,7 @@
 package invariants;
 
 ocl Test04 {
-  inv(boolean a, boolean b):
+  inv(Boolean a, Boolean b):
     if a==b then a else b &&
     a==b ? a : b &&
     a instanceof Boolean &&

@@ -2,16 +2,6 @@
 package invariants;
 
 ocl Test07 {
-  inv(List<Company> cs):
-    forall c in cs:
-      c.name.length() > 0;
-
-  inv(List<Company> cs):
-    forall c in cs:
-      forall c2 in cs:
-        c != c2 implies c.name != c2.name;
-
-  inv(List<Company> cs):
-    forall c, c2 in cs:
-      c != c2 implies c.name != c2.name;
+  inv(Set<String> names):
+    "name" isin names;
 }

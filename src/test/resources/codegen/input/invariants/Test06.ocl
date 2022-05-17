@@ -2,20 +2,17 @@
 package invariants;
 
 ocl Test06 {
-  inv(Time time):
-    time != null;
+  inv(Set<String> names):
+    let
+      a = {};
+      b = Set{n.length() | n in names, i = 0, n.length() > i}
+    in
+      a.size() < b.size();
 
-  context Company c inv:
-    c.name != "";
-
-  context Company inv:
-    this.name.length() > 0 &&
-    name.length() > 0;
-
-  context Auction a inv:
-    a.getMessages().size() > 0 &&
-    a.getBidders().size() > 0;
-
-  context Company c inv:
-    !c.name.replace("Company", "").contains("Company");
+  inv(Set<String> names):
+    let
+      a = {}.size();
+      b = Set{n.length() | n in names, i = 0, n.length() > i}
+    in
+      a < b.size();
 }

@@ -24,7 +24,7 @@ ocl Test05 {
     (a + b) * c > 0;
 
   inv:
-    ("abc" + "def").length();
+    ("abc" + "def").length() == 6;
 
   inv:
     ("a" + "b").length() > 0;
