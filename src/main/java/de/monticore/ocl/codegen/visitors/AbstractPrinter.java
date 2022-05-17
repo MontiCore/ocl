@@ -18,6 +18,9 @@ public abstract class AbstractPrinter {
   protected static final String INNER_TYPE_NOT_DERIVED_ERROR =
       "0xFC921 could not derive inner type (container expected)";
 
+  protected static final String UNEXPECTED_STATE_AST_NODE =
+      "0xFC922 ASTNode has an unexpected state";
+
   protected VariableNaming naming;
 
   protected VariableNaming getNaming() {
