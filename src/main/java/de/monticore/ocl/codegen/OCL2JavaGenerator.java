@@ -115,7 +115,7 @@ public class OCL2JavaGenerator {
     this.traverser.add4MCCommonLiterals(comLitPrinter);
 
     // OCL
-    OCLPrinter oclPrinter = new OCLPrinter(printer, naming);
+    OCLPrinter oclPrinter = new OCLPrinter(printer, naming, oclDeriver, oclSynthesizer);
     this.traverser.setOCLHandler(oclPrinter);
     this.traverser.add4OCL(oclPrinter);
   }
