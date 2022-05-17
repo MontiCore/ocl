@@ -397,22 +397,23 @@ public class SetExpressionsPrinter extends AbstractPrinter
     else if (node.isPresentGeneratorDeclaration()) {
       node.getGeneratorDeclaration().accept(getTraverser());
     }
-    else if (node.isPresentSetVariableDeclaration()
-        && node.getSetVariableDeclaration().isPresentMCType()) {
+    else if (node.isPresentSetVariableDeclaration()) {
       ASTSetVariableDeclaration setVarDecl = node.getSetVariableDeclaration();
       if (setVarDecl.isPresentMCType()) {
-        if (setVarDecl.isPresentMCType()) {
-          getPrinter().print(boxType(getOCLSynthesizer().synthesizeType(setVarDecl.getMCType())));
-        }
-        else {
-          printDerivedInnerType(setVarDecl.getExpression());
-        }
-        getPrinter().print(" ");
-        getPrinter().print(setVarDecl.getName());
-        getPrinter().print(" = ");
-        setVarDecl.getExpression().accept(getTraverser());
-        getPrinter().println(";");
+        getPrinter().print(boxType(getOCLSynthesizer().synthesizeType(setVarDecl.getMCType())));
       }
+      else if (setVarDecl.isPresentExpression()) {
+        getPrinter().print(boxType(getOCLDeriver().deriveType(setVarDecl.getExpression())));
+      }
+      else {
+        Log.error(UNEXPECTED_STATE_AST_NODE, setVarDecl.get_SourcePositionStart(),
+            setVarDecl.get_SourcePositionEnd());
+      }
+      getPrinter().print(" ");
+      getPrinter().print(setVarDecl.getName());
+      getPrinter().print(" = ");
+      setVarDecl.getExpression().accept(getTraverser());
+      getPrinter().println(";");
     }
     else {
       //failsafe if something is added to the grammar
