@@ -8,7 +8,6 @@ import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTrav
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.codegen.util.VariableNaming;
-import de.monticore.ocl.oclexpressions._ast.ASTEquivalentExpression;
 import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
@@ -100,14 +99,6 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
     this.handleInfixExpression(node, "-");
   }
 
-  //TODO
-  public void handle(ASTEquivalentExpression node) {
-    Preconditions.checkNotNull(node);
-    printAsBoxedType(node.getLeft());
-    this.getPrinter().print(".equals(");
-    node.getRight().accept(getTraverser());
-    this.getPrinter().println(");");
-  }
 
   @Override
   public void handle(ASTLessEqualExpression node) {
@@ -150,9 +141,9 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
     Preconditions.checkNotNull(node);
     this.getPrinter().print("(");
     node.getCondition().accept(this.getTraverser());
-    this.getPrinter().print("?");
+    this.getPrinter().print(" ? ");
     node.getTrueExpression().accept(this.getTraverser());
-    this.getPrinter().print(":");
+    this.getPrinter().print(" : ");
     node.getFalseExpression().accept(this.getTraverser());
     this.getPrinter().print(")");
   }
