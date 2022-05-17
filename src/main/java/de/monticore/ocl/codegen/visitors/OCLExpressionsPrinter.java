@@ -245,7 +245,18 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
 
   @Override
   public void handle(ASTTypeIfExpression node) {
-    //todo
+    this.getPrinter().print("((");
+    this.getPrinter().print(node.getName());
+    this.getPrinter().print(" instanceof ");
+    getPrinter().print(boxType(getOCLSynthesizer().synthesizeType(node.getMCType())));
+    this.getPrinter().print(") ? ");
+    //todo make "Name" known as type MCType, does this work in Java?
+    //not even instanceof-pattern-matching (Java 14) is enough (creates a new variable)
+    //might work using new Java scope?
+    node.getThenExpression().accept(this.getTraverser());
+    this.getPrinter().print(" : ");
+    node.getElseExpression().accept(this.getTraverser());
+    this.getPrinter().print(")");
   }
 
   @Override
