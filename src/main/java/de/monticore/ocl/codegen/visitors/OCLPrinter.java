@@ -2,6 +2,7 @@
 package de.monticore.ocl.codegen.visitors;
 
 import com.google.common.base.Preconditions;
+import de.monticore.ast.ASTNode;
 import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -11,21 +12,31 @@ import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.ocl._visitor.OCLHandler;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
+import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisitor2 {
 
   protected OCLTraverser traverser;
 
-  protected IndentPrinter printer;
-
-  public OCLPrinter(IndentPrinter printer, VariableNaming naming) {
+  public OCLPrinter(IndentPrinter printer, VariableNaming naming,
+      OCLDeriver oclDeriver, OCLSynthesizer oclSynthesizer) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
+    Preconditions.checkNotNull(oclDeriver);
+    Preconditions.checkNotNull(oclSynthesizer);
     this.printer = printer;
     this.naming = naming;
+    this.oclDeriver = oclDeriver;
+    this.oclSynthesizer = oclSynthesizer;
   }
 
   @Override
@@ -68,6 +79,7 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
     this.getPrinter().print(node.getName());
     this.getPrinter().println(" {");
     this.getPrinter().indent();
+    this.getPrinter().println();
   }
 
   @Override
@@ -93,11 +105,27 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
   }
 
   @Override
+  public void handle(ASTOCLContextDefinition node) {
+    if (node.isPresentMCType()) {
+      this.getPrinter().print(boxType(this.getOCLSynthesizer().synthesizeType(node.getMCType())));
+    }
+    else if (node.isPresentOCLParamDeclaration()) {
+      node.getOCLParamDeclaration().accept(this.getTraverser());
+    }
+    else {
+      Log.error(UNEXPECTED_STATE_AST_NODE, node.get_SourcePositionStart());
+    }
+  }
+
+  @Override
   public void handle(ASTOCLParamDeclaration node) {
-    node.getMCType().accept(this.getTraverser());
+    this.getPrinter().print(boxType(this.getOCLSynthesizer().synthesizeType(node.getMCType())));
     this.getPrinter().print(" ");
     this.printer.print(node.getName());
-    //todo expression missing
+    if (node.isPresentExpression()) {
+      this.getPrinter().print(" = ");
+      node.getExpression().accept(this.getTraverser());
+    }
   }
 
   @Override
@@ -114,23 +142,14 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
 
     this.getPrinter().print("(");
 
-    for (ASTOCLContextDefinition contextDef : node.getOCLContextDefinitionList()) {
-      contextDef.accept(this.getTraverser());
-    }
+    List<ASTNode> parameters = new LinkedList<>();
+    parameters.addAll(node.getOCLContextDefinitionList());
+    parameters.addAll(node.getOCLParamDeclarationList());
+    this.printList(parameters, ", ");
 
-    for (ASTOCLParamDeclaration paramDec : node.getOCLParamDeclarationList()) {
-      paramDec.accept(this.getTraverser());
-    }
     this.getPrinter().println(") {");
     this.getPrinter().indent();
-    this.getPrinter().println("Map<String, Object> witnessElements = new HashMap<>();");
-    /*TODO
-    if(node.isPresentOCLClassContext()) {
-      addContextVarsToWitness(sb, node.getOCLClassContext());
-    }
-    if(node.isPresentOCLParameters()) {
-      addOCLParametersToWitness(sb, node.getOCLParameters());
-    }*/
+
     this.getPrinter().print("Boolean ");
     this.getPrinter().print(this.getNaming().getName(node));
     this.getPrinter().println(" = true;");
@@ -151,7 +170,9 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
     this.getPrinter().println("Exception.printStackTrace();");
     this.getPrinter().print("Log.error(\"Error while executing ");
     this.getPrinter().print(this.getNaming().getName(node));
-    this.getPrinter().println("() !\");");
+    this.getPrinter().print("() !\", ");
+    this.getPrinter().print(this.getNaming().getName(node));
+    this.getPrinter().println("Exception);");
     this.getPrinter().println("}");
     this.getPrinter().unindent();
     this.getPrinter().print("return ");
@@ -159,5 +180,24 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
     this.getPrinter().println(";");
     this.getPrinter().println("}");
     this.getPrinter().unindent();
+    this.getPrinter().println();
   }
+
+  /**
+   * Prints a collection
+   *
+   * @param items     to be printed
+   * @param seperator string for seperating items
+   */
+  protected void printList(Collection<? extends ASTNode> items, String seperator) {
+    // print by iterate through all items
+    Iterator<? extends ASTNode> iter = items.iterator();
+    String sep = "";
+    while (iter.hasNext()) {
+      this.getPrinter().print(sep);
+      iter.next().accept(this.getTraverser());
+      sep = seperator;
+    }
+  }
+
 }
