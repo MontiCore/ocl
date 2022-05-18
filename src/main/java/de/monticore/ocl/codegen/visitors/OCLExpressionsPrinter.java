@@ -25,13 +25,10 @@ import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
 import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
-
-import java.util.List;
 
 import static de.monticore.types.check.SymTypeConstant.box;
 
@@ -168,7 +165,22 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
 
   @Override
   public void handle(ASTIterateExpression node) {
-    //todo
+    printExpressionBeginLambda(getOclDeriver().deriveType(node.getInit().getExpression()));
+    node.getInit().accept(getTraverser());
+
+    node.getIteration().accept(getTraverser());
+    getPrinter().print(node.getName());
+    getPrinter().print(" = ");
+    node.getValue().accept(getTraverser());
+    getPrinter().println(";");
+    getPrinter().unindent();
+    getPrinter().println("}");
+
+    getPrinter().print("return ");
+    getPrinter().print(node.getName());
+    getPrinter().println(";");
+
+    printExpressionEndLambda();
   }
 
   @Override
@@ -221,13 +233,14 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
       }
     }
     else {
-      //ToDo
+      Log.error(UNEXPECTED_STATE_AST_NODE, node.get_SourcePositionStart(),
+          node.get_SourcePositionEnd());
     }
   }
 
   @Override
   public void handle(ASTOCLVariableDeclaration node) {
-    this.getPrinter().print("final ");
+    //variable is not final for iterate expressions
     if (node.isPresentMCType()) {
       getPrinter().print(boxType(getOCLSynthesizer().synthesizeType(node.getMCType())));
     }
@@ -250,9 +263,10 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
     this.getPrinter().print(" instanceof ");
     getPrinter().print(boxType(getOCLSynthesizer().synthesizeType(node.getMCType())));
     this.getPrinter().print(") ? ");
-    //todo make "Name" known as type MCType, does this work in Java?
-    //not even instanceof-pattern-matching (Java 14) is enough (creates a new variable)
-    //might work using new Java scope?
+    // todo make "Name" known as type MCType, does this work in Java?
+    // not even instanceof-pattern-matching (Java 14) is enough (creates a new symbol)
+    // might work using new Java scope?
+    // -> tested: it does not work using Lambda...
     node.getThenExpression().accept(this.getTraverser());
     this.getPrinter().print(" : ");
     node.getElseExpression().accept(this.getTraverser());
@@ -270,21 +284,9 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
 
   @Override
   public void handle(ASTAnyExpression node) {
-    TypeCheckResult type = this.getOclDeriver().deriveType(node.getExpression());
-    if (type.isPresentResult() && type.getResult().isObjectType()) {
-      List<TypeVarSymbol> typeVarSymbols = type.getResult().getTypeInfo()
-          .getTypeParameterList();
-      if (typeVarSymbols.size() != 1) {
-        Log.error("0xFF058 any-expression requires a container (e.g. List<>)",
-            node.get_SourcePositionStart());
-      }
-      this.getPrinter().print("(");
-      node.getExpression().accept(getTraverser());
-      this.getPrinter().print(").iterator().next()");
-    }
-    else {
-      Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
-    }
+    this.getPrinter().print("(");
+    node.getExpression().accept(getTraverser());
+    this.getPrinter().print(").iterator().next()");
   }
 
   /**
