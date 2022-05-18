@@ -14,9 +14,9 @@ import static de.monticore.ocl.util.library.TypeUtil.*;
  * Adds symbols for OCL/P collections
  */
 public class CollectionType {
-  TypeSymbol collectionSymbol;
+  protected TypeSymbol collectionSymbol;
 
-  TypeVarSymbol typeVarSymbol;
+  protected TypeVarSymbol typeVarSymbol;
 
   public void addCollectionType() {
     collectionSymbol = OCLMill.typeSymbolBuilder()
