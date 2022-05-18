@@ -14,7 +14,7 @@ import static de.monticore.ocl.util.library.TypeUtil.*;
  */
 public class GlobalQueries {
   
-  IOCLGlobalScope globalScope;
+  protected IOCLGlobalScope globalScope;
 
   public GlobalQueries() {
     globalScope = OCLMill.globalScope();

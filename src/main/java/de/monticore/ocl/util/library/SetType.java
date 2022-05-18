@@ -15,9 +15,9 @@ import static de.monticore.ocl.util.library.TypeUtil.*;
  * Adds symbols for OCL/P sets
  */
 public class SetType {
-  TypeSymbol setSymbol;
+  protected TypeSymbol setSymbol;
 
-  TypeVarSymbol typeVarSymbol;
+  protected TypeVarSymbol typeVarSymbol;
 
   public void addSetType() {
     typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
