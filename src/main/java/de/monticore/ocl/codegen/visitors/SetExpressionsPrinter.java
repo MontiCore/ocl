@@ -482,12 +482,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
     // Lambda returning List
     this.getPrinter().print("((java.util.function.Supplier<");
     getPrinter().print("java.util.List<");
-    TypeCheckResult type = this.getOCLDeriver().deriveType(node.getLowerBound());
-    if (!type.isPresentResult()) {
-      Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
-      return;
-    }
-    this.getPrinter().print(boxType(type));
+    printDerivedType(node.getLowerBound());
     getPrinter().print(">");
     this.getPrinter().println(">)()->{");
     this.getPrinter().indent();
