@@ -89,87 +89,87 @@ public class SetType {
   protected void addFunctionAdd() {
     FunctionSymbol function = createMethod("add");
     addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(getSetOfXSymType());
+    function.setType(getSetOfXSymType());
     setSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionAddAll() {
     FunctionSymbol function = createMethod("addAll");
     addParam(function, "c", getCollectionOfXSymType());
-    function.setReturnType(getSetOfXSymType());
+    function.setType(getSetOfXSymType());
     setSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionContains() {
     FunctionSymbol function = createMethod("contains");
     addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(getBoolSymType());
+    function.setType(getBoolSymType());
     setSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionContainsAll() {
     FunctionSymbol function = createMethod("containsAll");
     addParam(function, "c", getCollectionOfXSymType());
-    function.setReturnType(getBoolSymType());
+    function.setType(getBoolSymType());
     setSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionCount() {
     FunctionSymbol function = createMethod("count");
     addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(getIntSymType());
+    function.setType(getIntSymType());
     setSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionIsEmpty() {
     FunctionSymbol function = createMethod("isEmpty");
-    function.setReturnType(getBoolSymType());
+    function.setType(getBoolSymType());
     setSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionRemove() {
     FunctionSymbol function = createMethod("remove");
     addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
-    function.setReturnType(getSetOfXSymType());
+    function.setType(getSetOfXSymType());
     setSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionRemoveAll() {
     FunctionSymbol function = createMethod("removeAll");
     addParam(function, "c", getCollectionOfXSymType());
-    function.setReturnType(getSetOfXSymType());
+    function.setType(getSetOfXSymType());
     setSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionRetainAll() {
     FunctionSymbol function = createMethod("retainAll");
     addParam(function, "c", getCollectionOfXSymType());
-    function.setReturnType(getSetOfXSymType());
+    function.setType(getSetOfXSymType());
     setSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionSymmetricDifference() {
     FunctionSymbol function = createMethod("symmetricDifference");
     addParam(function, "s", getSetOfXSymType());
-    function.setReturnType(getSetOfXSymType());
+    function.setType(getSetOfXSymType());
     setSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionSize() {
     FunctionSymbol function = createMethod("size");
-    function.setReturnType(getIntSymType());
+    function.setType(getIntSymType());
     setSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionFlatten() {
     FunctionSymbol function = createMethod("flatten");
-    function.setReturnType(SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    function.setType(SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
     setSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionAsList(){
     FunctionSymbol function = createMethod("asList");
-    function.setReturnType(getListOfXSymType());
+    function.setType(getListOfXSymType());
     setSymbol.getSpannedScope().add(function);
   }
 }

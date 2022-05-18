@@ -120,14 +120,14 @@ public class DeriveSymTypeOfCommonExpressions
           //there can only be one method with the correct arguments and return type
           if (!fittingMethods.isEmpty()) {
             if (fittingMethods.size() > 1) {
-              SymTypeExpression returnType = fittingMethods.get(0).getReturnType();
+              SymTypeExpression returnType = fittingMethods.get(0).getType();
               for (FunctionSymbol method : fittingMethods) {
-                if (!returnType.deepEquals(method.getReturnType())) {
+                if (!returnType.deepEquals(method.getType())) {
                   logError("0xA0238", expr.get_SourcePositionStart());
                 }
               }
             }
-            SymTypeExpression result = fittingMethods.get(0).getReturnType();
+            SymTypeExpression result = fittingMethods.get(0).getType();
             typeCheckResult.setMethod();
             typeCheckResult.setResult(result);
           } else {
@@ -139,7 +139,7 @@ public class DeriveSymTypeOfCommonExpressions
           List<FunctionSymbol> fittingMethods = new ArrayList<>(methodcollection);
           //there can only be one method with the correct arguments and return type
           if (fittingMethods.size() == 1) {
-            Optional<SymTypeExpression> wholeResult = Optional.of(fittingMethods.get(0).getReturnType());
+            Optional<SymTypeExpression> wholeResult = Optional.of(fittingMethods.get(0).getType());
             typeCheckResult.setMethod();
             typeCheckResult.setResult(wholeResult.get());
           } else {
