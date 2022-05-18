@@ -3,11 +3,16 @@ package de.monticore.ocl.types.check;
 
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
-import de.monticore.types.check.*;
+import de.monticore.types.check.AbstractDerive;
+import de.monticore.types.check.DeriveSymTypeOfExpression;
+import de.monticore.types.check.DeriveSymTypeOfLiterals;
+import de.monticore.types.check.DeriveSymTypeOfMCCommonLiterals;
+import de.monticore.types.check.SynthesizeSymTypeFromMCCollectionTypes;
+import de.monticore.types.check.SynthesizeSymTypeFromMCSimpleGenericTypes;
 
 public class OCLDeriver extends AbstractDerive {
 
-  public OCLDeriver(){
+  public OCLDeriver() {
     this(OCLMill.traverser());
   }
 
@@ -68,6 +73,5 @@ public class OCLDeriver extends AbstractDerive {
     traverser.add4MCCollectionTypes(synthesizeSymTypeFromMCCollectionTypes);
     traverser.setMCCollectionTypesHandler(synthesizeSymTypeFromMCCollectionTypes);
   }
-
 
 }
