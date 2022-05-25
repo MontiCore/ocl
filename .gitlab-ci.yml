@@ -16,7 +16,7 @@ stages:
   - mirror
 
 Validate Gradle:
-  image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.5.1-jdk8
+  image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk11
   stage: build
   allow_failure: true
   script:
@@ -27,7 +27,7 @@ Validate Gradle:
     expire_in: 1 week
 
 Unit Test Gradle:
-  image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.5.1-jdk8
+  image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk11
   stage: test
   allow_failure: true
   needs: ["Validate Gradle"]
@@ -108,7 +108,7 @@ Code Quality:
       codequality: codeclimate.json
 
 Deploy Nexus:
-  image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.5.1-jdk8
+  image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk11
   stage: post-test
   only:
     - develop 
