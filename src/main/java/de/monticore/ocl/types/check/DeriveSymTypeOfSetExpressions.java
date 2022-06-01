@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static de.monticore.ocl.types.check.OCLTypeCheck.compatible;
-import static de.monticore.types.check.SymTypeConstant.unbox;
+import static de.monticore.types.check.SymTypePrimitive.unbox;
 
 public class DeriveSymTypeOfSetExpressions
   extends AbstractDeriveFromExpression
@@ -88,7 +88,7 @@ public class DeriveSymTypeOfSetExpressions
     if (correct) {
       SymTypeOfGenerics genericResult = (SymTypeOfGenerics) setResult;
       if (compatible(genericResult.getArgument(0), elemResult)) {
-        wholeResult = Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
+        wholeResult = Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
       }
     }
     return wholeResult;
@@ -145,7 +145,7 @@ public class DeriveSymTypeOfSetExpressions
         else if (compatible(rightGeneric.getArgument(0), leftGeneric.getArgument(0))) {
           TypeSymbol loader = new TypeSymbolSurrogate(right);
           loader.setEnclosingScope(getScope(expr.getEnclosingScope()));
-          wholeResult = Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
+          wholeResult = Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
         }
       }
     }

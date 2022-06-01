@@ -132,7 +132,7 @@ public class SetExpressionsSymbolTableCompleter
       if(!typeResult.isPresentResult()){
         Log.error(String.format("The type of the object (%s) could not be calculated", ast.getName()));
       }
-      else if(typeResult.getResult().isTypeConstant()){
+      else if(typeResult.getResult().isPrimitive()){
         Log.error(String.format("Expression of object (%s) has to be a collection", ast.getName()));
       }
       else {

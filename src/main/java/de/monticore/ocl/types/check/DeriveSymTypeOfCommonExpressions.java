@@ -221,13 +221,13 @@ public class DeriveSymTypeOfCommonExpressions
     //Option one: they are both numeric types
     if (isNumericType(leftResult) && isNumericType(rightResult)
       || isBoolean(leftResult) && isBoolean(rightResult)) {
-      return Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
+      return Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
     }
     //Option two: none of them is a primitive type and they are either the same type or in a super/sub type relation
-    if (!leftResult.isTypeConstant() && !rightResult.isTypeConstant() &&
+    if (!leftResult.isPrimitive() && !rightResult.isPrimitive() &&
       (compatible(leftResult, rightResult) || compatible(rightResult, leftResult))
     ) {
-      return Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
+      return Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
     }
     //should never happen, no valid result, error will be handled in traverse
     return Optional.empty();

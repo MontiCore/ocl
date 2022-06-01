@@ -27,7 +27,7 @@ public class OCLTypeCheck extends TypeCheck {
    * @return true iff right is compatible to left
    */
   public static boolean compatible(SymTypeExpression left, SymTypeExpression right) {
-    if (!left.isTypeConstant() && right.isNullType()) {
+    if (!left.isPrimitive() && right.isNullType()) {
       return true;
     }
     //check whether TypeCheck class deems types compatible

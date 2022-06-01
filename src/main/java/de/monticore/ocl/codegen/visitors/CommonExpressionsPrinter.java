@@ -14,7 +14,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
-import static de.monticore.types.check.SymTypeConstant.box;
+import static de.monticore.types.check.SymTypePrimitive.box;
 
 public class CommonExpressionsPrinter extends AbstractPrinter implements CommonExpressionsHandler,
     CommonExpressionsVisitor2 {
@@ -213,7 +213,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;
     }
-    if (type.getResult().isTypeConstant()) {
+    if (type.getResult().isPrimitive()) {
       getPrinter().print("((");
       this.getPrinter().print(box(type.getResult().getTypeInfo().getFullName()));
       getPrinter().print(") ");

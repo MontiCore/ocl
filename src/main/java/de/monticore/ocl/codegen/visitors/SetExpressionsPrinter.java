@@ -12,7 +12,7 @@ import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.check.SymTypeConstant;
+import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.check.TypeCheckResult;
@@ -546,7 +546,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print("_iter = (");
     // java.Lang.Character -> avoid type errors
     // this works as only primitives are supported
-    getPrinter().print(SymTypeConstant.unbox(
+    getPrinter().print(SymTypePrimitive.unbox(
         getOCLDeriver().deriveType(node.getLowerBound()).getResult().printFullName()));
     getPrinter().print(")(");
     getPrinter().print(getNaming().getName(node));
@@ -592,7 +592,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
         getPrinter().print(SymTypeOfGenerics.box((SymTypeOfGenerics) innerType));
       }
       else {
-        getPrinter().print(SymTypeConstant.box(innerType.printFullName()));
+        getPrinter().print(SymTypePrimitive.box(innerType.printFullName()));
       }
     }
     else {
