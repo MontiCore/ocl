@@ -5,7 +5,7 @@ import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.check.SymTypeConstant;
+import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
@@ -62,7 +62,7 @@ public abstract class AbstractPrinter {
       return SymTypeOfGenerics.box((SymTypeOfGenerics) type.getResult());
     }
     else {
-      return SymTypeConstant.box(type.getResult().printFullName());
+      return SymTypePrimitive.box(type.getResult().printFullName());
     }
   }
 

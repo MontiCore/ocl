@@ -526,7 +526,7 @@ public class DeriveSymTypeOfOCLExpressions
   }
 
   public static SymTypeExpression createBoolean() {
-    return SymTypeExpressionFactory.createTypeConstant("boolean");
+    return SymTypeExpressionFactory.createPrimitive("boolean");
   }
 
   protected SymTypeExpression getCorrectResultArrayExpression(IExpressionsBasisScope scope,
@@ -536,16 +536,16 @@ public class DeriveSymTypeOfOCLExpressions
       //case 1: A[][] bar -> bar[3] returns the type A[] -> decrease the dimension of the array by 1
       wholeResult = SymTypeExpressionFactory
         .createTypeArray(arrayTypeResult.getTypeInfo(),
-          arrayResult.getDim() - 1, SymTypeExpressionFactory.createTypeConstant("int"));
+          arrayResult.getDim() - 1, SymTypeExpressionFactory.createPrimitive("int"));
     }
     else {
       //case 2: A[] bar -> bar[3] returns the type A
       //determine whether the result has to be a constant, generic or object
       if (arrayResult.getTypeInfo().getTypeParameterList().isEmpty()) {
         //if the return type is a primitive
-        if (SymTypeConstant.boxMap.containsKey(arrayResult.getTypeInfo().getName())) {
+        if (SymTypePrimitive.boxMap.containsKey(arrayResult.getTypeInfo().getName())) {
           wholeResult = SymTypeExpressionFactory
-            .createTypeConstant(arrayResult.getTypeInfo().getName());
+            .createPrimitive(arrayResult.getTypeInfo().getName());
         }
         else {
           //if the return type is an object

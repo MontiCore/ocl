@@ -80,7 +80,7 @@ public class DeriveSymTypeOfOptionalOperators
       LogHelper.error(node, "0xA0331", "Couldn't determine type of Optional");
     }
     acceptThisAndReturnSymTypeExpressionOrLogError(node.getRight(), "0xA0242");
-    Optional<SymTypeExpression> wholeResult = Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
+    Optional<SymTypeExpression> wholeResult = Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
     storeResultOrLogError(wholeResult, node, "0xA0307");
   }
 
@@ -92,7 +92,7 @@ public class DeriveSymTypeOfOptionalOperators
       LogHelper.error(node, "0xA0332", "Couldn't determine type of Optional");
     }
     acceptThisAndReturnSymTypeExpressionOrLogError(node.getRight(), "0xA0242");
-    Optional<SymTypeExpression> wholeResult = Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
+    Optional<SymTypeExpression> wholeResult = Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
     storeResultOrLogError(wholeResult, node, "0xA0308");
   }
 
@@ -116,7 +116,7 @@ public class DeriveSymTypeOfOptionalOperators
 
   protected Optional<SymTypeExpression> calculateTypeCompareOptional(SymTypeExpression rightResult, SymTypeExpression leftResult) {
     if (isNumericType(rightResult) && isNumericType(leftResult)) {
-      return Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
+      return Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
     }
     return Optional.empty();
   }
@@ -143,13 +143,13 @@ public class DeriveSymTypeOfOptionalOperators
     //Option one: they are both numeric types
     if (isNumericType(leftResult) && isNumericType(rightResult)
             || isBoolean(leftResult) && isBoolean(rightResult)) {
-      return Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
+      return Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
     }
     //Option two: none of them is a primitive type and they are either the same type or in a super/sub type relation
-    if (!leftResult.isTypeConstant() && !rightResult.isTypeConstant() &&
+    if (!leftResult.isPrimitive() && !rightResult.isPrimitive() &&
             (compatible(leftResult, rightResult) || compatible(rightResult, leftResult))
     ) {
-      return Optional.of(SymTypeExpressionFactory.createTypeConstant("boolean"));
+      return Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
     }
     //should never happen, no valid result, error will be handled in traverse
     return Optional.empty();

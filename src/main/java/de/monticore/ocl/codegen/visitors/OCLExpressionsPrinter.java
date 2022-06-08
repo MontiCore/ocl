@@ -30,7 +30,7 @@ import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
-import static de.monticore.types.check.SymTypeConstant.box;
+import static de.monticore.types.check.SymTypePrimitive.box;
 
 public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpressionsHandler,
     OCLExpressionsVisitor2 {
@@ -303,7 +303,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;
     }
-    if (type.getResult().isTypeConstant()) {
+    if (type.getResult().isPrimitive()) {
       getPrinter().print("((");
       this.getPrinter().print(box(type.getResult().printFullName()));
       getPrinter().print(") ");
