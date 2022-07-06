@@ -3,7 +3,7 @@ package de.monticore.ocl.ocl._cocos;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._cocos.ExpressionsBasisASTExpressionCoCo;
-import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.types.check.IDerive;
 
 import java.util.Optional;
 
@@ -11,9 +11,9 @@ public class ExpressionValidCoCo implements ExpressionsBasisASTExpressionCoCo {
 
   protected ASTExpression top;
 
-  protected OCLDeriver deriver;
+  protected IDerive deriver;
 
-  public ExpressionValidCoCo(OCLDeriver deriver) {
+  public ExpressionValidCoCo(IDerive deriver) {
     this.deriver = deriver;
   }
 
@@ -25,7 +25,7 @@ public class ExpressionValidCoCo implements ExpressionsBasisASTExpressionCoCo {
     this.top = top;
   }
 
-  protected OCLDeriver getDeriver() {
+  protected IDerive getDeriver() {
     return this.deriver;
   }
 
