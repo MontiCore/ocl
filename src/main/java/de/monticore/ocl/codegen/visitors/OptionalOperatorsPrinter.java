@@ -83,11 +83,11 @@ public class OptionalOperatorsPrinter extends AbstractPrinter implements OCLExpr
   }
   
   public void handle(ASTOptionalEqualsExpression node) {
-    node.getLeft().accept(getTraverser());
+    node.getLeft().accept(this.getTraverser());
     this.getPrinter().print(".isPresent() ?");
-    node.getLeft().accept(getTraverser());
+    node.getLeft().accept(this.getTraverser());
     this.getPrinter().print(".get() == ");
-    node.getRight().accept(getTraverser());
+    node.getRight().accept(this.getTraverser());
     this.getPrinter().print(".get() : false;");
   }
   
