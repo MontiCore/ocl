@@ -8,6 +8,7 @@ import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.codegen.visitors.CommonExpressionsPrinter;
 import de.monticore.ocl.codegen.visitors.OCLExpressionsPrinter;
 import de.monticore.ocl.codegen.visitors.OCLPrinter;
+import de.monticore.ocl.codegen.visitors.OptionalOperatorsPrinter;
 import de.monticore.ocl.codegen.visitors.SetExpressionsPrinter;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -95,6 +96,10 @@ public class OCL2JavaGenerator {
         oclSynthesizer);
     this.traverser.setSetExpressionsHandler(setExprPrinter);
     this.traverser.add4SetExpressions(setExprPrinter);
+    OptionalOperatorsPrinter optExprPrinter = new OptionalOperatorsPrinter(printer, naming,
+        oclDeriver, oclSynthesizer);
+    this.traverser.setOptionalOperatorsHandler(optExprPrinter);
+    this.traverser.add4OptionalOperators(optExprPrinter);
 
     // Types
     MCSimpleGenericTypesPrettyPrinter simpleGenericTypes = new MCSimpleGenericTypesPrettyPrinter(
