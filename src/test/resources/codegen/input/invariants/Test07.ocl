@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl Test07 {
+  inv(Optional<Integer> a, int b):
+    a ?: 5 == b &&
+    a ?> b &&
+    a ?>= b &&
+    a ?< b &&
+    a ?<= b &&
+    a ?== b &&
+    a ?!= b;
+}
