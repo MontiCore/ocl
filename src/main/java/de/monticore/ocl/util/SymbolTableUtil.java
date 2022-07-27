@@ -23,7 +23,6 @@ import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbolDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbolDeSer;
-import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 
 import java.nio.file.Paths;
@@ -35,17 +34,12 @@ import java.nio.file.Paths;
  */
 public class SymbolTableUtil {
   static public void prepareMill() {
-    OOSymbolsMill.reset();
-    OOSymbolsMill.init();
-
     OCLMill.reset();
     OCLMill.init();
     OCLMill.globalScope().clear();
     BasicSymbolsMill.initializePrimitives();
 
-    OOSymbolsMill.globalScope().setSymbolPath(new MCPath(Paths.get("")));
     Class2MCResolver resolver = new Class2MCResolver();
-    OOSymbolsMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
     OCLMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
 
     addOclpLibrary();
