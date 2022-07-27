@@ -58,7 +58,7 @@ public class OCL2JavaGeneratorTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = { "Test01", "Test02", "Test03", "Test04", "Test05", "Test06"})
+  @ValueSource(strings = { "Test01", "Test02", "Test03", "Test04", "Test05", "Test06", "Test07"})
   public void shouldGenerate(String s) throws IOException {
     Preconditions.checkNotNull(s);
     Preconditions.checkArgument(!s.isEmpty());

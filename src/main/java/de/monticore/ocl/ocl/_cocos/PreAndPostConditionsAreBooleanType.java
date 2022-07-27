@@ -5,18 +5,19 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
 import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.types.check.OCLTypeCheck;
+import de.monticore.types.check.IDerive;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
 public class PreAndPostConditionsAreBooleanType implements OCLASTOCLOperationConstraintCoCo {
 
-  protected OCLDeriver deriver;
+  protected IDerive deriver;
 
   protected PreAndPostConditionsAreBooleanType() {
     this(new OCLDeriver());
   }
 
-  public PreAndPostConditionsAreBooleanType(OCLDeriver deriver) {
+  public PreAndPostConditionsAreBooleanType(IDerive deriver) {
     this.deriver = deriver;
   }
 
