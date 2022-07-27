@@ -44,7 +44,6 @@ public class SymbolTableUtil {
 
     OOSymbolsMill.globalScope().setSymbolPath(new MCPath(Paths.get("")));
     Class2MCResolver resolver = new Class2MCResolver();
-    OOSymbolsMill.globalScope().addAdaptedOOTypeSymbolResolver(resolver);
     OOSymbolsMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
     OCLMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
 

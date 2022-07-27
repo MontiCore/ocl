@@ -195,18 +195,18 @@ public class DeriveSymTypeOfCommonExpressions
   }
 
   @Override
-  protected Optional<SymTypeExpression> calculateConditionalExpressionType( SymTypeExpression conditionResult,
+  protected SymTypeExpression calculateConditionalExpressionType( SymTypeExpression conditionResult,
       SymTypeExpression trueResult,
       SymTypeExpression falseResult) {
-    Optional<SymTypeExpression> wholeResult = Optional.empty();
+    SymTypeExpression wholeResult = SymTypeExpressionFactory.createObscureType();
     //condition has to be boolean
     if (isBoolean(conditionResult)) {
       //check if "then" and "else" are either from the same type or are in sub-supertype relation
       if (compatible(trueResult, falseResult)) {
-        wholeResult = Optional.of(trueResult);
+        wholeResult = trueResult;
       }
       else if (compatible(falseResult, trueResult)) {
-        wholeResult = Optional.of(falseResult);
+        wholeResult = falseResult;
       }
       else {
         // first argument can be null since it should not be relevant to the type calculation
@@ -217,20 +217,20 @@ public class DeriveSymTypeOfCommonExpressions
   }
 
   @Override
-  protected Optional<SymTypeExpression> calculateTypeLogical(ASTInfixExpression expr, SymTypeExpression rightResult, SymTypeExpression leftResult) {
+  protected SymTypeExpression calculateTypeLogical(ASTInfixExpression expr, SymTypeExpression rightResult, SymTypeExpression leftResult) {
     //Option one: they are both numeric types
     if (isNumericType(leftResult) && isNumericType(rightResult)
       || isBoolean(leftResult) && isBoolean(rightResult)) {
-      return Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
+      return SymTypeExpressionFactory.createPrimitive("boolean");
     }
     //Option two: none of them is a primitive type and they are either the same type or in a super/sub type relation
     if (!leftResult.isPrimitive() && !rightResult.isPrimitive() &&
       (compatible(leftResult, rightResult) || compatible(rightResult, leftResult))
     ) {
-      return Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
+      return SymTypeExpressionFactory.createPrimitive("boolean");
     }
     //should never happen, no valid result, error will be handled in traverse
-    return Optional.empty();
+    return SymTypeExpressionFactory.createObscureType();
   }
 
   protected List<FunctionSymbol> getFittingMethods
