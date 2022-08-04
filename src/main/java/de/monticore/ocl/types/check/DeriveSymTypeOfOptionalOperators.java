@@ -23,136 +23,142 @@ public class DeriveSymTypeOfOptionalOperators
 
   @Override
   public void traverse(ASTOptionalExpressionPrefix node){
-    Optional<SymTypeExpression> optionalResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getLeft(), "0xA0300");
-    Optional<SymTypeExpression> exprResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getRight(), "0xA0301");
-    Optional<SymTypeExpression> wholeResult = optionalResult.isPresent()?
-    OCLTypeCheck.unwrapOptional(optionalResult.get()) : Optional.empty();
+    SymTypeExpression optionalResult = acceptThisAndReturnSymTypeExpression(node.getLeft());
+    SymTypeExpression exprResult = acceptThisAndReturnSymTypeExpression(node.getRight());
+    if(!optionalResult.isObscureType() && !exprResult.isObscureType()) {
+      SymTypeExpression wholeResult = OCLTypeCheck.unwrapOptional(optionalResult);
 
-    //check compatibility of type of optional and expression
-    if(wholeResult.isPresent() && exprResult.isPresent() && !OCLTypeCheck.compatible(wholeResult.get(), exprResult.get())){
-      LogHelper.error(node, "0xA0330", "types of OptionalExpressionPrefix are not compatible!");
+      //check compatibility of type of optional and expression
+      if (!wholeResult.isObscureType() && !OCLTypeCheck.compatible(wholeResult, exprResult)) {
+        LogHelper.error(node, "0xA0330", "types of OptionalExpressionPrefix are not compatible!");
+      }
+
+      storeResultOrLogError(wholeResult, node, "0xA0302");
+    }else{
+      getTypeCheckResult().reset();
+      getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
     }
-    
-    storeResultOrLogError(wholeResult, node, "0xA0302");
   }
 
   @Override
   public void traverse(ASTOptionalLessEqualExpression node){
-    Optional<SymTypeExpression> wholeResult = calculateTypeCompareOptional(node.getRight(), node.getLeft());
+    SymTypeExpression wholeResult = calculateTypeCompareOptional(node.getRight(), node.getLeft());
     storeResultOrLogError(wholeResult, node, "0xA0303");
   }
 
   @Override
   public void traverse(ASTOptionalGreaterEqualExpression node){
-    Optional<SymTypeExpression> wholeResult = calculateTypeCompareOptional(node.getRight(), node.getLeft());
+    SymTypeExpression wholeResult = calculateTypeCompareOptional(node.getRight(), node.getLeft());
     storeResultOrLogError(wholeResult, node, "0xA0304");
   }
 
   @Override
   public void traverse(ASTOptionalLessThanExpression node){
-    Optional<SymTypeExpression> wholeResult = calculateTypeCompareOptional(node.getRight(), node.getLeft());
+    SymTypeExpression wholeResult = calculateTypeCompareOptional(node.getRight(), node.getLeft());
     storeResultOrLogError(wholeResult, node, "0xA0305");
   }
 
   @Override
   public void traverse(ASTOptionalGreaterThanExpression node){
-    Optional<SymTypeExpression> wholeResult = calculateTypeCompareOptional(node.getRight(), node.getLeft());
+    SymTypeExpression wholeResult = calculateTypeCompareOptional(node.getRight(), node.getLeft());
     storeResultOrLogError(wholeResult, node, "0xA0306");
   }
 
   @Override
   public void traverse(ASTOptionalEqualsExpression node){
-    Optional<SymTypeExpression> wholeResult = calculateTypeLogicalOptional(node.getRight(), node.getLeft());
+    SymTypeExpression wholeResult = calculateTypeLogicalOptional(node.getRight(), node.getLeft());
     storeResultOrLogError(wholeResult, node, "0xA0307");
   }
 
   @Override
   public void traverse(ASTOptionalNotEqualsExpression node){
-    Optional<SymTypeExpression> wholeResult = calculateTypeLogicalOptional(node.getRight(), node.getLeft());
+    SymTypeExpression wholeResult = calculateTypeLogicalOptional(node.getRight(), node.getLeft());
     storeResultOrLogError(wholeResult, node, "0xA0308");
   }
 
   @Override
   public void traverse(ASTOptionalSimilarExpression node){
     //no compatiblity check necessary, therefore only check for optional
-    Optional<SymTypeExpression> leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getLeft(), "0xA0241");
-    if(!leftResult.isPresent() || !OCLTypeCheck.unwrapOptional(leftResult.get()).isPresent()) {
-      LogHelper.error(node, "0xA0331", "Couldn't determine type of Optional");
+    SymTypeExpression leftResult = acceptThisAndReturnSymTypeExpression(node.getLeft());
+    SymTypeExpression rightResult = acceptThisAndReturnSymTypeExpression(node.getRight());
+    if(!leftResult.isObscureType() && !rightResult.isObscureType()){
+      if(OCLTypeCheck.unwrapOptional(leftResult).isObscureType()) {
+        LogHelper.error(node, "0xA0331", "Couldn't determine type of Optional");
+      }
+
+      SymTypeExpression wholeResult = SymTypeExpressionFactory.createPrimitive("boolean");
+      storeResultOrLogError(wholeResult, node, "0xA0307");
+    }else {
+      getTypeCheckResult().reset();
+      getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
     }
-    acceptThisAndReturnSymTypeExpressionOrLogError(node.getRight(), "0xA0242");
-    Optional<SymTypeExpression> wholeResult = Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
-    storeResultOrLogError(wholeResult, node, "0xA0307");
   }
 
   @Override
   public void traverse(ASTOptionalNotSimilarExpression node){
     //no compatiblity check necessary, therefore only check for optional
-    Optional<SymTypeExpression> leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(node.getLeft(), "0xA0241");
-    if(!leftResult.isPresent() || !OCLTypeCheck.unwrapOptional(leftResult.get()).isPresent()) {
-      LogHelper.error(node, "0xA0332", "Couldn't determine type of Optional");
+    SymTypeExpression leftResult = acceptThisAndReturnSymTypeExpression(node.getLeft());
+    SymTypeExpression rightResult = acceptThisAndReturnSymTypeExpression(node.getRight());
+    if(!leftResult.isObscureType() && !rightResult.isObscureType()){
+      if(OCLTypeCheck.unwrapOptional(leftResult).isObscureType()) {
+        LogHelper.error(node, "0xA0332", "Couldn't determine type of Optional");
+      }
+
+      SymTypeExpression wholeResult = SymTypeExpressionFactory.createPrimitive("boolean");
+      storeResultOrLogError(wholeResult, node, "0xA0308");
+    }else {
+      getTypeCheckResult().reset();
+      getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
     }
-    acceptThisAndReturnSymTypeExpressionOrLogError(node.getRight(), "0xA0242");
-    Optional<SymTypeExpression> wholeResult = Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
-    storeResultOrLogError(wholeResult, node, "0xA0308");
   }
 
-  private Optional<SymTypeExpression> calculateTypeCompareOptional(ASTExpression right, ASTExpression left) {
-    Optional<SymTypeExpression> leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(left, "0xA0241");
+  private SymTypeExpression calculateTypeCompareOptional(ASTExpression right, ASTExpression left) {
+    SymTypeExpression leftResult = acceptThisAndReturnSymTypeExpression(left);
+    SymTypeExpression rightResult = acceptThisAndReturnSymTypeExpression(right);
     //check that leftResult is of type Optional
-    if(leftResult.isPresent() && OCLTypeCheck.unwrapOptional(leftResult.get()).isPresent()){
-      leftResult = Optional.of(OCLTypeCheck.unwrapOptional(leftResult.get()).get());
+    if(!OCLTypeCheck.unwrapOptional(leftResult).isObscureType()){
+      leftResult = OCLTypeCheck.unwrapOptional(leftResult);
     }
     else{
-      return Optional.empty();
+      return SymTypeExpressionFactory.createObscureType();
     }
-    Optional<SymTypeExpression> rightResult = acceptThisAndReturnSymTypeExpressionOrLogError(right, "0xA0242");
-    if (rightResult.isPresent()) {
-      return calculateTypeCompareOptional(rightResult.get(), leftResult.get());
-    } else {
-      typeCheckResult.reset();
-      return Optional.empty();
-    }
+    return calculateTypeCompareOptional(rightResult, leftResult);
   }
 
-  protected Optional<SymTypeExpression> calculateTypeCompareOptional(SymTypeExpression rightResult, SymTypeExpression leftResult) {
+  protected SymTypeExpression calculateTypeCompareOptional(SymTypeExpression rightResult, SymTypeExpression leftResult) {
     if (isNumericType(rightResult) && isNumericType(leftResult)) {
-      return Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
+      return SymTypeExpressionFactory.createPrimitive("boolean");
     }
-    return Optional.empty();
+    return SymTypeExpressionFactory.createObscureType();
   }
 
-  private Optional<SymTypeExpression> calculateTypeLogicalOptional(ASTExpression right, ASTExpression left) {
-    Optional<SymTypeExpression> leftResult = acceptThisAndReturnSymTypeExpressionOrLogError(left, "0xA0244");
+  private SymTypeExpression calculateTypeLogicalOptional(ASTExpression right, ASTExpression left) {
+    SymTypeExpression leftResult = acceptThisAndReturnSymTypeExpression(left);
+    SymTypeExpression rightResult = acceptThisAndReturnSymTypeExpression(right);
     //check that leftResult is of type Optional
-    if(leftResult.isPresent() && OCLTypeCheck.unwrapOptional(leftResult.get()).isPresent()){
-      leftResult = Optional.of(OCLTypeCheck.unwrapOptional(leftResult.get()).get());
+    if(!OCLTypeCheck.unwrapOptional(leftResult).isObscureType()){
+      leftResult = OCLTypeCheck.unwrapOptional(leftResult);
     }
     else{
-      return Optional.empty();
+      return SymTypeExpressionFactory.createObscureType();
     }
-    Optional<SymTypeExpression> rightResult = acceptThisAndReturnSymTypeExpressionOrLogError(right, "0xA0245");
-    if (leftResult.isPresent() && rightResult.isPresent()) {
-      return calculateTypeLogicalOptional(rightResult.get(), leftResult.get());
-    } else {
-      typeCheckResult.reset();
-      return Optional.empty();
-    }
+    return calculateTypeLogicalOptional(rightResult, leftResult);
   }
 
-  protected Optional<SymTypeExpression> calculateTypeLogicalOptional(SymTypeExpression rightResult, SymTypeExpression leftResult) {
+  protected SymTypeExpression calculateTypeLogicalOptional(SymTypeExpression rightResult, SymTypeExpression leftResult) {
     //Option one: they are both numeric types
     if (isNumericType(leftResult) && isNumericType(rightResult)
             || isBoolean(leftResult) && isBoolean(rightResult)) {
-      return Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
+      return SymTypeExpressionFactory.createPrimitive("boolean");
     }
     //Option two: none of them is a primitive type and they are either the same type or in a super/sub type relation
     if (!leftResult.isPrimitive() && !rightResult.isPrimitive() &&
             (compatible(leftResult, rightResult) || compatible(rightResult, leftResult))
     ) {
-      return Optional.of(SymTypeExpressionFactory.createPrimitive("boolean"));
+      return SymTypeExpressionFactory.createPrimitive("boolean");
     }
     //should never happen, no valid result, error will be handled in traverse
-    return Optional.empty();
+    return SymTypeExpressionFactory.createObscureType();
   }
 
   @Override public OptionalOperatorsTraverser getTraverser() {
