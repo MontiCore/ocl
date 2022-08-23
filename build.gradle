@@ -51,6 +51,12 @@ sourceSets {
       include("**/*.mc4", "**/*.cd")
     }
   }
+    ocl2smt {
+        java {}
+    }
+    ocl2smttest {
+        java {}
+    }
 }
 
 repositories {
@@ -75,7 +81,12 @@ repositories {
 
 //sourceCompatibility = '1.8'
 
-configurations { grammar }
+configurations {
+    ocl2smtImplementation.extendsFrom(implementation)
+    ocl2smttestImplementation.extendsFrom(testImplementation)
+    ocl2smttestImplementation.extendsFrom(ocl2smtImplementation)
+    grammar
+}
 
 test {
   useJUnitPlatform()
@@ -107,6 +118,15 @@ dependencies {
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
   testImplementation "de.monticore:monticore-runtime:$mc_version"
+
+    ocl2smtImplementation(sourceSets.main.output.classesDirs)
+    ocl2smtImplementation 'tools.aqua:z3-turnkey:4.8.17'
+    ocl2smtImplementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
+    ocl2smtImplementation "de.monticore.lang:cd4analysis:$mc_version:cd2smt"
+
+    ocl2smttestImplementation(sourceSets.ocl2smt.output.classesDirs)
+    ocl2smttestImplementation(sourceSets.test.output.classesDirs)
+
 }
 
 configurations {
@@ -119,6 +139,20 @@ dependencies {
 /* ============================================================ */
 /* ========================== Tasks =========================== */
 /* ============================================================ */
+
+tasks.withType(Test){
+    useJUnitPlatform()
+}
+
+task ocl2smttest(type: Test) {
+    description = "Runs OCL2SMT Tests"
+    group = "Verification"
+    testClassesDirs = sourceSets.ocl2smttest.output.classesDirs
+    classpath += sourceSets.ocl2smttest.runtimeClasspath
+    shouldRunAfter test
+}
+
+check.dependsOn ocl2smttest
 
 tasks.withType(JavaCompile) {
   options.fork = true

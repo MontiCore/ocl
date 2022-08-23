@@ -1,0 +1,62 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl Test01 {
+  context Auction inv:
+    true ;
+
+  context Auction inv:
+    false ;
+
+ context Auction inv:
+   !true ;
+
+ context Auction inv:
+   ~false ;
+
+ context Auction inv:
+   false && false ;
+
+ context Auction inv:
+   false && true ;
+
+ context Auction inv:
+   true || false;
+
+ context Auction inv:
+   true || true;
+
+ context Auction inv:
+   10 + 12 == 22;
+
+ context Auction inv:
+   10 / 5 == 2;
+
+ context Auction inv:
+   10 * 5 == 50;
+
+ context Auction inv:
+   10 % 2 == 0;
+
+ context Auction inv:
+   10 < 3 ;
+
+ context Auction inv:
+   10 > 4 ;
+
+ context Auction inv:
+   10 <= 4 ;
+
+ context Auction inv:
+   10 >= 4;
+
+ context Auction inv:
+   10 == 4;
+
+ context Auction inv:
+   10 != 4;
+
+ context Auction inv:
+  10 - 12 == -2;
+
+}
