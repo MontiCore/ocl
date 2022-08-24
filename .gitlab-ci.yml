@@ -34,7 +34,7 @@ Unit Test Gradle:
   dependencies:
     - Validate Gradle #download artifacts from build
   script:
-    - gradle test
+    - gradle build test
 
 ## Run Unit Tests after build
 #.unit_test_template: &unit_test_definition
