@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+
+classdiagram MinAuction {
+
+  public class Company {
+    java.lang.String name;
+  }
+
+  public class Auction {
+    int numberOfBids;
+    int auctionIdent;
+  }
+}
