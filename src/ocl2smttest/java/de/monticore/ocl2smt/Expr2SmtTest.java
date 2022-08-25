@@ -2,6 +2,7 @@ package de.monticore.ocl2smt;
 
 
 import com.microsoft.z3.*;
+import de.monticore.cd2smt.context.CDContext;
 import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class Expr2SmtTest extends AbstractTest {
     protected static final String RELATIVE_MODEL_PATH = "src/ocl2smttest/resources/de.monticore.ocl2smt";
     protected List<BoolExpr> res;
-    protected Context context1 = new Context();
+    protected CDContext cdContext = new CDContext(new Context());
 
     Optional<ASTOCLCompilationUnit> oclopt;
 
@@ -36,7 +37,7 @@ public class Expr2SmtTest extends AbstractTest {
         SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/AuctionCD.sym");
         SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/DefaultTypes.sym");
         oclopt = this.parse(Paths.get(RELATIVE_MODEL_PATH, "Test01.ocl").toString(), false);
-        OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(context1);
+        OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
         Assertions.assertTrue(oclopt.isPresent());
         res = ocl2SMTGenerator.ocl2smt(oclopt.get().getOCLArtifact());
     }
@@ -80,8 +81,8 @@ public class Expr2SmtTest extends AbstractTest {
 
     @Test
     public void testLogicExpressionConverter() {
-        Assertions.assertEquals(res.get(0), context1.mkBool(true));
-        Assertions.assertEquals(res.get(1), context1.mkFalse());
+        Assertions.assertEquals(res.get(0), cdContext.getContext().mkBool(true));
+        Assertions.assertEquals(res.get(1), cdContext.getContext().mkFalse());
         Assertions.assertEquals(res.get(2).getSExpr(), "(not true)");
         Assertions.assertEquals(res.get(3).getSExpr(), "(not false)");
         Assertions.assertEquals(res.get(4).getSExpr(), "(and false false)");

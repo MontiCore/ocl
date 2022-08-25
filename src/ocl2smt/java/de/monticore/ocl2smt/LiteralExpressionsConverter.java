@@ -14,7 +14,7 @@ public class LiteralExpressionsConverter {
         this.context = context;
     }
 
-    public Expr convert(ASTLiteralExpression node) {
+    public Expr<? extends Sort> convert(ASTLiteralExpression node) {
         ASTLiteral literal = node.getLiteral();
         if (literal instanceof ASTBooleanLiteral) {
             return convertBool((ASTBooleanLiteral) literal);

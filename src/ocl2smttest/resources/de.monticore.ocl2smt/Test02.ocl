@@ -1,0 +1,35 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl Test02 {
+
+  inv b_sat:
+    forall Boolean b:
+         b == !(!(b));
+
+  inv b_unsat:
+      forall Boolean b:
+           b == true;
+
+  inv bc_sat:
+      forall Boolean b, c:
+           b == !(!(b))&&
+           c == c;
+
+  inv auction_sat:
+    forall Auction a:
+         a.auctionIdent == 13;
+
+
+  inv a_exists:
+      exists Auction a:
+           true;
+
+  inv a_unsat:
+      forall Auction a:
+           10 == 13;
+
+context Auction inv:
+    exists Auction a:
+         a.auctionIdent == 13;
+}
