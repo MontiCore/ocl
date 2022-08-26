@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt;
 
+import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
@@ -65,6 +66,7 @@ public class OCL_Loader {
 
   protected static ICD4AnalysisArtifactScope createCDSymTab(ASTCDCompilationUnit ast) {
     ICD4AnalysisArtifactScope as = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
+    BuiltInTypes.addBuiltInTypes(CD4AnalysisMill.globalScope());
     CD4AnalysisSymbolTableCompleter c = new CD4AnalysisSymbolTableCompleter(
         ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
     ast.accept(c.getTraverser());
