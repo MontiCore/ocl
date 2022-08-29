@@ -20,7 +20,7 @@ Validate Gradle:
   stage: build
   allow_failure: true
   script:
-    - gradle clean assemble
+    - gradle assemble --refresh-dependencies
   artifacts:
     paths:
       - ./target/
@@ -34,7 +34,7 @@ Unit Test Gradle:
   dependencies:
     - Validate Gradle #download artifacts from build
   script:
-    - gradle build test
+    - gradle build test --refresh-dependencies
 
 ## Run Unit Tests after build
 #.unit_test_template: &unit_test_definition
