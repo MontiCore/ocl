@@ -2,10 +2,13 @@ package de.monticore.ocl2smt;
 
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.context.CDContext;
+import de.monticore.cd2smt.context.SMTClass;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.Optional;
 
 
 public class TypeConverter {
@@ -44,21 +47,24 @@ public class TypeConverter {
     }
 
     protected Sort convertQualf(ASTMCQualifiedType type) {
-      if (type.getMCQualifiedName().getQName().equals("Boolean")) {
-        return cdContext.getContext().mkBoolSort();
-      } else if (type.getMCQualifiedName().getQName().equals("Double")) {
-        return cdContext.getContext().mkRealSort();
-      } else if (type.getMCQualifiedName().getQName().equals("Int")) {
-        return cdContext.getContext().mkIntSort();
-      }
-     else if (type.getMCQualifiedName().getQName().equals("java.lang.String")) {
+        if (type.getMCQualifiedName().getQName().equals("Boolean")) {
+            return cdContext.getContext().mkBoolSort();
+        } else if (type.getMCQualifiedName().getQName().equals("Double")) {
+            return cdContext.getContext().mkRealSort();
+        } else if (type.getMCQualifiedName().getQName().equals("Int")) {
+            return cdContext.getContext().mkIntSort();
+        } else if (type.getMCQualifiedName().getQName().equals("java.lang.String")) {
             return cdContext.getContext().mkStringSort();
         } else {
-       Log.error("Got unknown type " + type.getMCQualifiedName());
-            //TODO: to implement
-            return null;
+            Optional<SMTClass> smtClass = cdContext.getSMTClass(type.getMCQualifiedName().getQName());
+            if (smtClass.isPresent()) {
+                return smtClass.get().getSort();
+            } else {
+                Log.error("Got unknown type " + type.getMCQualifiedName());
+                return null;
+            }
+
         }
 
     }
-
 }
