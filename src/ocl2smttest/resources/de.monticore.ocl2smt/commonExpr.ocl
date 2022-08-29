@@ -12,7 +12,7 @@ ocl Test01 {
    !true ;
 
  context Auction inv:
-   ~false ;
+   !false ;
 
  context Auction inv:
    false && false ;

@@ -1,64 +1,28 @@
 package de.monticore.ocl2smt;
 
 
-import com.microsoft.z3.*;
+import com.microsoft.z3.BoolExpr;
+import com.microsoft.z3.Context;
 import de.monticore.cd2smt.context.CDContext;
-import de.monticore.ocl.ocl.AbstractTest;
-import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-
-import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
-import de.monticore.ocl.types.check.OCLDeriver;
-import de.monticore.ocl.util.SymbolTableUtil;
-import de.monticore.types.check.TypeCheckResult;
-import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Paths;
-import java.util.*;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import java.io.IOException;
+import java.util.List;
 
 
-public class Expr2SmtTest extends AbstractTest {
-    protected static final String RELATIVE_MODEL_PATH = "src/ocl2smttest/resources/de.monticore.ocl2smt";
+public class CommonExpressionTest extends ExpressionAbstractTest {
     protected List<BoolExpr> res;
     protected CDContext cdContext = new CDContext(new Context());
 
-    Optional<ASTOCLCompilationUnit> oclopt;
-
     @BeforeEach
-    public void setup() {
-        Log.init();
-        Log.enableFailQuick(false);
-        SymbolTableUtil.prepareMill();
-        SymbolTableUtil.addCd4cSymbols();
-        SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/AuctionCD.sym");
-        SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/DefaultTypes.sym");
-        oclopt = this.parse(Paths.get(RELATIVE_MODEL_PATH, "Test01.ocl").toString(), false);
+    public void setup() throws IOException {
+       parse("MinAuction.cd", "CommonExpr.ocl");
         OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
-        Assertions.assertTrue(oclopt.isPresent());
-        res = ocl2SMTGenerator.ocl2smt(oclopt.get().getOCLArtifact());
+        res = ocl2SMTGenerator.ocl2smt(oclAST.getOCLArtifact());
     }
 
-    @Test
-    public void testTypCheck() {
-
-
-        // when / then
-        SymbolTableUtil.runSymTabGenitor(oclopt.get());
-        SymbolTableUtil.runSymTabCompleter(oclopt.get());
-
-        OCLDeriver deriver = new OCLDeriver();
-
-        TypeCheckResult t = deriver.deriveType(((ASTOCLInvariant) oclopt.get().
-                getOCLArtifact().getOCLConstraint(0)).getExpression());
-
-        // Additional check that nothing broke
-        assertThat(Log.getErrorCount()).isEqualTo(0);
-        assertThat(t.isPresentResult()).isTrue();
-    }
 
     @Test
     public void testComparisonConverter() {
