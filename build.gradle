@@ -123,6 +123,7 @@ dependencies {
     ocl2smtImplementation 'tools.aqua:z3-turnkey:4.8.17'
     ocl2smtImplementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
     ocl2smtImplementation "de.monticore.lang:cd4analysis:$mc_version:cd2smt"
+    ocl2smtImplementation "de.monticore.lang:od:$mc_version"
 
     ocl2smttestImplementation(sourceSets.ocl2smt.output.classesDirs)
     ocl2smttestImplementation(sourceSets.test.output.classesDirs)
