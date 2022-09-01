@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+ocl NC1 {
+
+  context Auction a inv SimpleAssoc:
+    forall Person p in a.person :
+          p.age == 10 ;
+
+
+}
