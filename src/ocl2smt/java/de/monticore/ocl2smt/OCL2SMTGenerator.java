@@ -8,10 +8,9 @@ import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
-import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
-import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
-import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
+import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.oclexpressions._ast.*;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 
@@ -23,6 +22,7 @@ public class OCL2SMTGenerator {
   protected final TypeConverter typeConverter;
 
   protected final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
+  protected final Map<String, Expr<? extends Sort>> ctxVarNames = new HashMap<>();
 
   public OCL2SMTGenerator(CDContext cdContext) {
     this.cdcontext = cdContext;
@@ -49,6 +49,7 @@ public class OCL2SMTGenerator {
   }
 
   protected Pair<Optional<String>,BoolExpr> convertInv(ASTOCLInvariant invariant) {
+    invariant.getOCLContextDefinitionList().forEach(c -> convertCtxDef(c));
     if (invariant.isPresentName()){
       return new Pair(Optional.of(invariant.getName()),convertExpr(invariant.getExpression()));
     }
@@ -244,9 +245,7 @@ public class OCL2SMTGenerator {
   Expr<? extends Sort>[] openScope(List<ASTInDeclaration> inDeclarations) {
     List<Expr<? extends Sort>> result = new ArrayList<>();
     for (ASTInDeclaration decl : inDeclarations) {
-      for (ASTInDeclarationVariable var : decl.getInDeclarationVariableList()) {
-        result.addAll(convertInDecVar(var, decl.getMCType()));
-      }
+      result.addAll(convertInDecl(decl));
     }
     return (Expr<? extends Sort>[]) result.toArray(new Expr[0]);
   }
@@ -316,6 +315,27 @@ public class OCL2SMTGenerator {
         varNames.remove(var.getName());
       }
     }
+  }
+
+  protected void convertCtxDef(ASTOCLContextDefinition node){
+      if (node.isPresentOCLParamDeclaration()){
+         convertParDec( node.getOCLParamDeclaration());
+      }
+  }
+
+  protected Expr<? extends  Sort> convertParDec(ASTOCLParamDeclaration node){
+    ASTMCType type = node.getMCType();
+    Expr<? extends Sort> expr = cdcontext.getContext().mkConst(node.getName(), typeConverter.convertType(type));
+    ctxVarNames.put(node.getName(), expr);
+    return  expr;
+  }
+
+  protected List <Expr<? extends Sort>> convertInDecl( ASTInDeclaration node){
+    List<Expr<? extends Sort>> result = new ArrayList<>();
+      for (ASTInDeclarationVariable var : node.getInDeclarationVariableList()) {
+        result.addAll(convertInDecVar(var,node.getMCType()));
+      }
+      return result;
   }
 
 }
