@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+
+classdiagram MinAuction {
+  class Auction {
+    int auctionIdent;
+  }
+
+  class  Person{
+   int age ;
+  }
+
+  association [1..*] Auction(auction)      --     (person)Person[1..*];
+}
