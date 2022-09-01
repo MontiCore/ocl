@@ -25,7 +25,7 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest  {
     public void setup() throws IOException {
         parse("MinAuction.cd","QuantifiedExpr.ocl");
 
-        cdContext = cd2SMTGenerator.cd2smt(cdAST.getCDDefinition());
+        cdContext = cd2SMTGenerator.cd2smt(cdAST);
         ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
         solver = cdContext.getContext().mkSolver();
     }
