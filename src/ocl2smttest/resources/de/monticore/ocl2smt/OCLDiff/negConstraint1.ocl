@@ -1,0 +1,18 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+ocl NC1 {
+//UNSAT
+  inv MaxIdent_9:
+        forall Auction a:
+           a.auctionIdent <= 9 ;
+
+
+  //UNSAT
+ inv Exists_one_Auction:
+      exists Auction a :
+         a.name == "FaceBook1" ||
+          a.name == "Twitter" ||
+           a.name == "BMW4" ||
+            a.name == "Mercedes";
+
+}

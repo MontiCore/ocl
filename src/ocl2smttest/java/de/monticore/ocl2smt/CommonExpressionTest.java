@@ -9,18 +9,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class CommonExpressionTest extends ExpressionAbstractTest {
-    protected List<BoolExpr> res;
+    protected List<BoolExpr> res = new ArrayList<>();
     protected CDContext cdContext = new CDContext(new Context());
 
     @BeforeEach
     public void setup() throws IOException {
        parse("MinAuction.cd", "CommonExpr.ocl");
         OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
-        res = ocl2SMTGenerator.ocl2smt(oclAST.getOCLArtifact());
+        ocl2SMTGenerator.ocl2smt(oclAST.getOCLArtifact()).forEach(b-> res.add(b.snd));
     }
 
 

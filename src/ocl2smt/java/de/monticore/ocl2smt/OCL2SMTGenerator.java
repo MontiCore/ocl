@@ -1,6 +1,7 @@
 package de.monticore.ocl2smt;
 
 import com.microsoft.z3.*;
+import com.sun.tools.javac.util.Pair;
 import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd2smt.context.SMTClass;
 import de.monticore.expressions.commonexpressions._ast.*;
@@ -29,15 +30,15 @@ public class OCL2SMTGenerator {
     this.typeConverter = new TypeConverter(cdContext);
   }
 
-  public List<BoolExpr> ocl2smt(ASTOCLArtifact astoclArtifact) {
-    List<BoolExpr> constraints = new ArrayList<>();
+  public List<Pair<Optional<String>,BoolExpr>> ocl2smt(ASTOCLArtifact astoclArtifact) {
+    List<Pair<Optional<String>,BoolExpr>> constraints = new ArrayList<>();
     for (ASTOCLConstraint constraint : astoclArtifact.getOCLConstraintList()) {
       constraints.add(convertConstr(constraint));
     }
     return constraints;
   }
 
-  protected BoolExpr convertConstr(ASTOCLConstraint constraint) {
+  protected Pair<Optional<String>,BoolExpr> convertConstr(ASTOCLConstraint constraint) {
     if (constraint instanceof ASTOCLInvariant) {
       return convertInv((ASTOCLInvariant) constraint);
     } else {
@@ -47,8 +48,11 @@ public class OCL2SMTGenerator {
     }
   }
 
-  protected BoolExpr convertInv(ASTOCLInvariant invariant) {
-    return (BoolExpr) convertExpr(invariant.getExpression());
+  protected Pair<Optional<String>,BoolExpr> convertInv(ASTOCLInvariant invariant) {
+    if (invariant.isPresentName()){
+      return new Pair(Optional.of(invariant.getName()),convertExpr(invariant.getExpression()));
+    }
+    return new Pair(Optional.empty(), convertExpr(invariant.getExpression()));
   }
 
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {

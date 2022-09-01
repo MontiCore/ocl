@@ -1,0 +1,6 @@
+classdiagram MinAuction {
+  public class Auction {
+    int auctionIdent;
+    String name ;
+  }
+}
