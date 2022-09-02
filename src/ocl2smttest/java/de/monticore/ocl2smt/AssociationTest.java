@@ -3,11 +3,9 @@ package de.monticore.ocl2smt;
 import com.microsoft.z3.Status;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-
 
 public class AssociationTest extends ExpressionAbstractTest {
     @BeforeEach
@@ -27,14 +25,16 @@ public class AssociationTest extends ExpressionAbstractTest {
     }
 
     @Test
-    @Disabled
     public void simple_assoc() {
         addConstraint("SimpleAssoc");
         Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
 
-       // OCLDiffGenerator oclDiffGenerator = new OCLDiffGenerator();
-      //  ASTODArtifact od = oclDiffGenerator.buildOd(cdContext,"SimpeAssoc",new ArrayList<>(),cdAST.getCDDefinition());
+        /*
+        OCLDiffGenerator oclDiffGenerator = new OCLDiffGenerator();
+        ASTODArtifact od = oclDiffGenerator.buildOd(cdContext,"SimpleAssoc",new ArrayList<>(),
+           cdAST.getCDDefinition());
 
-      //  printOD(od);
+        printOD(od);
+         */
     }
 }
