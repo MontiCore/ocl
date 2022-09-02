@@ -217,6 +217,8 @@ task ocl2smtJar(type: Jar) {
 }
 
 // all in one tool-jar
+jar.dependsOn ocl2smtJar
+
 shadowJar {
   manifest {
     attributes "Main-Class": "de.monticore.ocl.ocl.${archiveBaseName.get().toUpperCase()}Tool"
@@ -226,7 +228,7 @@ shadowJar {
   minimize()
 }
 
-jar.dependsOn shadowJar, ocl2smtJar
+jar.dependsOn(shadowJar)
 
 artifacts {
     archives ocl2smtJar
