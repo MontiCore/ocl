@@ -12,6 +12,8 @@ buildscript {
 
 plugins {
   id 'java'
+  id 'java-gradle-plugin' // OCL2SMT has a gradle plugin
+
   id 'monticore' version "$mc_version"
   id 'com.github.johnrengelman.shadow' version '6.0.0'
   //id 'de.set.ecj' version '1.4.1' // Eclipse compiler as it's faster than javac
@@ -124,6 +126,7 @@ dependencies {
     ocl2smtImplementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
     ocl2smtImplementation "de.monticore.lang:cd4analysis:$mc_version:cd2smt"
     ocl2smtImplementation "de.monticore.lang:od:$mc_version"
+    ocl2smtImplementation gradleApi()
 
     ocl2smttestImplementation(sourceSets.ocl2smt.output.classesDirs)
     ocl2smttestImplementation(sourceSets.test.output.classesDirs)
@@ -220,6 +223,14 @@ shadowJar {
 
 jar.dependsOn shadowJar
 
+gradlePlugin {
+  plugins {
+    umlpplugin  {
+      id = "de.monticore.OCLSemDiff"
+      implementationClass = "de.monticore.ocl2smt.gradle.OCLSMTPlugin"
+    }
+  }
+}
 
 publishing {
   publications {
