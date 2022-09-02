@@ -210,6 +210,11 @@ sourcesJar.dependsOn project.collect { it.tasks.withType(MCTask)}
 // generated java doc contains errors, disable for now
 javadoc.failOnError(false)
 
+// build ocl2smt jar in addition
+task ocl2smtJar(type: Jar) {
+    from sourceSets.ocl2smt.output + sourceSets.ocl2smt.allSource
+    archiveClassifier = "ocl2smt"
+}
 
 // all in one tool-jar
 shadowJar {
@@ -221,7 +226,11 @@ shadowJar {
   minimize()
 }
 
-jar.dependsOn shadowJar
+jar.dependsOn shadowJar, ocl2smtJar
+
+artifacts {
+    archives ocl2smtJar
+}
 
 gradlePlugin {
   plugins {
@@ -234,7 +243,10 @@ gradlePlugin {
 
 publishing {
   publications {
-    mavenJava(MavenPublication) { from components.java }
+    mavenJava(MavenPublication) {
+        from components.java
+        artifact ocl2smtJar
+    }
   }
   repositories.maven {
     name = "$SE_Nexus_ID"
