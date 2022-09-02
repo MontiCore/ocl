@@ -15,35 +15,50 @@ import de.se_rwth.commons.logging.Log;
 import java.util.*;
 
 public class OCLDiffGenerator {
+    protected static CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
+    protected static CDContext cdContext;
+    protected static OCL2SMTGenerator ocl2SMTGenerator;
+
+    protected static List<BoolExpr> getPositiveSolverConstraints(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in){
+      //convert the cd to an SMT context
+      cdContext = cd2SMTGenerator.cd2smt(cd);
+
+      //transform positive ocl files    in a list of SMT BoolExpr
+      ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
+      List<BoolExpr> solverConstraints = new ArrayList<>();
+      in.forEach(p ->ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).forEach(c -> solverConstraints.add(c.snd)));
+
+      return solverConstraints;
+    }
+
+
+    public static ASTODArtifact oclWitness(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in){
+      List<BoolExpr> solverConstraints = getPositiveSolverConstraints(cd, in);
+
+      //check if they exist a model for the list of positive Constraint
+      Optional<Model> modelOptional = getModel(cdContext.getContext(),solverConstraints );
+
+      if (!modelOptional.isPresent()){
+        Log.error("there are no Model for the List Of Positive Constraints");
+      }
+
+      return buildOd(cdContext, "Witness", solverConstraints, cd.getCDDefinition());
+    }
 
     public static Set<ASTODArtifact> oclDiff(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in , Set<ASTOCLCompilationUnit> notIn){
         Set<ASTODArtifact> res = new HashSet<>();
-        //convert the cd to an SMT context
-        CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
-        CDContext cdContext = cd2SMTGenerator.cd2smt(cd);
-
-        //transform positive ocl files    in a list of SMT BoolExpr
-        OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
-        List<BoolExpr> solverConstraints = new ArrayList<>();
-        in.forEach(p ->ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).forEach(c -> solverConstraints.add(c.snd)));
+        List<BoolExpr> solverConstraints = getPositiveSolverConstraints(cd, in);
 
         //negative ocl constraints
         List<Pair<Optional<String> ,BoolExpr>> negConstList = new ArrayList<>();
         notIn.forEach(p -> negConstList.addAll(ocl2SMTGenerator.ocl2smt(p.getOCLArtifact())));
 
 
-        //check if they exist a model for the list of positive Constraint
-        Optional<Model> modelOptional = getModel(cdContext.getContext(),solverConstraints );
-        if (!modelOptional.isPresent()){
-            Log.error("there are no Model for the List Of Positive Constraints");
-            return res ;
-        }
-
         //add one by one all Constraints to the Solver and check if  it can always produce a Model
         for (Pair<Optional<String>, BoolExpr> negConstraint:  negConstList) {
             BoolExpr actualConstraint = cdContext.getContext().mkNot(negConstraint.snd);
             solverConstraints.add(actualConstraint);
-            modelOptional = getModel(cdContext.getContext(), solverConstraints);
+            Optional<Model> modelOptional = getModel(cdContext.getContext(), solverConstraints);
             if (modelOptional.isPresent()) {
                 if (negConstraint.fst.isPresent()) {
                     res.add(buildOd(cdContext, negConstraint.fst.get(), solverConstraints, cd.getCDDefinition()));
