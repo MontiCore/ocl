@@ -7,7 +7,9 @@ import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
 import de.monticore.cd4analysis._parser.CD4AnalysisParser;
 import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
+import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCosDelegator;
+import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeScope;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -33,8 +35,15 @@ public class OCL_Loader {
     assert cdFile.getName().endsWith(".cd");
     ASTCDCompilationUnit cdAST = parseCDModel(cdFile.getAbsolutePath());
     cdAST.setEnclosingScope(createCDSymTab(cdAST));
-
     checkCDCoCos(cdAST);
+
+    final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
+        new CDAssociationCreateFieldsFromAllRoles();
+    final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+    traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
+    traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
+    cdAssociationCreateFieldsFromAllRoles.transform(cdAST);
+
     return cdAST;
   }
 
