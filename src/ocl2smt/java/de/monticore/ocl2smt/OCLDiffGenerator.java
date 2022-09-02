@@ -16,7 +16,7 @@ import java.util.*;
 
 public class OCLDiffGenerator {
 
-    public Set<ASTODArtifact> oclDiff(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in , Set<ASTOCLCompilationUnit> notIn){
+    public static Set<ASTODArtifact> oclDiff(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in , Set<ASTOCLCompilationUnit> notIn){
         Set<ASTODArtifact> res = new HashSet<>();
         //convert the cd to an SMT context
         CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
@@ -57,7 +57,7 @@ public class OCLDiffGenerator {
         return  res  ;
     }
 
-    protected ASTODArtifact buildOd(CDContext cdContext, String ODName, List<BoolExpr> solverConstraints, ASTCDDefinition cd) {
+    protected static ASTODArtifact buildOd(CDContext cdContext, String ODName, List<BoolExpr> solverConstraints, ASTCDDefinition cd) {
         cdContext.getClassConstrs().addAll(solverConstraints);
         SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
         return smt2ODGenerator.buildOd(new ODContext(cdContext, cd), ODName);
