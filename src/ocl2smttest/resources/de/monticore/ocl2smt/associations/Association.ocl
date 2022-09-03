@@ -4,7 +4,19 @@ ocl NC1 {
 
   context Auction a inv SimpleAssoc:
     forall Person p in a.person :
-          p.age == 10 ;
+          p.age == a.auctionIdent ;
 
 
+
+  inv Exists_Exact_4_Auction:
+           exists Auction a1,a2,a3,a4 :
+               a1 != a2 &&
+               a2 != a3 &&
+               a3 != a4 &&
+               a4 != a1 &&
+               ( forall Auction a :
+                     a == a1 ||
+                     a == a2||
+                     a == a3||
+                     a == a4  );
 }
