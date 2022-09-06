@@ -12,7 +12,6 @@ buildscript {
 
 plugins {
   id 'java'
-  id 'java-gradle-plugin' // OCL2SMT has a gradle plugin
 
   id 'monticore' version "$mc_version"
   id 'com.github.johnrengelman.shadow' version '6.0.0'
@@ -53,12 +52,6 @@ sourceSets {
       include("**/*.mc4", "**/*.cd")
     }
   }
-    ocl2smt {
-        java {}
-    }
-    ocl2smttest {
-        java {}
-    }
 }
 
 repositories {
@@ -84,9 +77,6 @@ repositories {
 //sourceCompatibility = '1.8'
 
 configurations {
-    ocl2smtImplementation.extendsFrom(implementation)
-    ocl2smttestImplementation.extendsFrom(testImplementation)
-    ocl2smttestImplementation.extendsFrom(ocl2smtImplementation)
     grammar
 }
 
@@ -120,17 +110,6 @@ dependencies {
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
   testImplementation "de.monticore:monticore-runtime:$mc_version"
-
-    ocl2smtImplementation(sourceSets.main.output.classesDirs)
-    ocl2smtImplementation 'tools.aqua:z3-turnkey:4.8.17'
-    ocl2smtImplementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
-    ocl2smtImplementation "de.monticore.lang:cd4analysis:$mc_version:cd2smt"
-    ocl2smtImplementation "de.monticore.lang:od:$mc_version"
-    ocl2smtImplementation gradleApi()
-
-    ocl2smttestImplementation(sourceSets.ocl2smt.output.classesDirs)
-    ocl2smttestImplementation(sourceSets.test.output.classesDirs)
-
 }
 
 configurations {
@@ -147,16 +126,6 @@ dependencies {
 tasks.withType(Test){
     useJUnitPlatform()
 }
-
-task ocl2smttest(type: Test) {
-    description = "Runs OCL2SMT Tests"
-    group = "Verification"
-    testClassesDirs = sourceSets.ocl2smttest.output.classesDirs
-    classpath += sourceSets.ocl2smttest.runtimeClasspath
-    shouldRunAfter test
-}
-
-check.dependsOn ocl2smttest
 
 tasks.withType(JavaCompile) {
   options.fork = true
@@ -210,15 +179,6 @@ sourcesJar.dependsOn project.collect { it.tasks.withType(MCTask)}
 // generated java doc contains errors, disable for now
 javadoc.failOnError(false)
 
-// build ocl2smt jar in addition
-task ocl2smtJar(type: Jar) {
-    from sourceSets.ocl2smt.output + sourceSets.ocl2smt.allSource
-    archiveClassifier = "ocl2smt"
-}
-
-// all in one tool-jar
-jar.dependsOn ocl2smtJar
-
 shadowJar {
   manifest {
     attributes "Main-Class": "de.monticore.ocl.ocl.${archiveBaseName.get().toUpperCase()}Tool"
@@ -230,24 +190,10 @@ shadowJar {
 
 jar.dependsOn(shadowJar)
 
-artifacts {
-    archives ocl2smtJar
-}
-
-gradlePlugin {
-  plugins {
-    umlpplugin  {
-      id = "de.monticore.OCLSemDiff"
-      implementationClass = "de.monticore.ocl2smt.gradle.OCLSMTPlugin"
-    }
-  }
-}
-
 publishing {
   publications {
     mavenJava(MavenPublication) {
         from components.java
-        artifact ocl2smtJar
     }
   }
   repositories.maven {

@@ -13,3 +13,5 @@ pluginManagement {
 }
 
 rootProject.name = 'ocl'
+
+include':ocl2smt'

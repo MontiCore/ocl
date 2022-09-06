@@ -12,3 +12,4 @@ nppBackup
 gradlew.bat
 gradlew
 /gradle
+ocl2smt/build/
