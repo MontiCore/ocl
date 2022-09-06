@@ -5,6 +5,8 @@ plugins {
   id 'maven-publish'
 }
 
+group = 'de.monticore.lang.ocl'
+
 repositories {
   if(("true").equals(getProperty('useLocalRepo'))) {
     mavenLocal()
@@ -44,7 +46,7 @@ tasks.withType(Test){
 gradlePlugin {
   plugins {
     ocl2smtplugin  {
-      id = "de.monticore.OCLSemDiff"
+      id = "de.monticore.lang.ocl.semdiff"
       implementationClass = "de.monticore.ocl2smt.gradle.OCLSMTPlugin"
     }
   }

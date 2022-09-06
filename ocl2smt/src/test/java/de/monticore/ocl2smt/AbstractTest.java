@@ -31,7 +31,7 @@ public abstract class AbstractTest {
     Log.getFindings().clear();
   }
 
-  protected static final String RELATIVE_MODEL_PATH = "ocl2smt/src/test/resources";
+  protected static final String RELATIVE_MODEL_PATH = "src/test/resources";
 
   protected IOCLGlobalScope globalScope;
 

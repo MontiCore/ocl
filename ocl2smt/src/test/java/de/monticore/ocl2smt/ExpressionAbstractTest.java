@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 public abstract class ExpressionAbstractTest extends AbstractTest {
-    protected static final String RELATIVE_MODEL_PATH = "src/ocl2smttest/resources/de/monticore/ocl2smt";
+    protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
     protected CDContext cdContext;
 
     protected ASTOCLCompilationUnit oclAST;
