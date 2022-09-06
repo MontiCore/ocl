@@ -3,7 +3,7 @@ package de.monticore.ocl2smt;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl.ocl.AbstractTest;
+import de.monticore.ocl2smt.AbstractTest;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 public class OCLDiffTest extends AbstractTest {
-    protected static final String RELATIVE_MODEL_PATH = "src/ocl2smttest/resources/de/monticore/ocl2smt/OCLDiff";
+    protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt/OCLDiff";
     protected  static  final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
     public void setUp(){
         Log.init();

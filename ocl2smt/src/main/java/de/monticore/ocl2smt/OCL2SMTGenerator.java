@@ -1,7 +1,6 @@
 package de.monticore.ocl2smt;
 
 import com.microsoft.z3.*;
-import com.sun.tools.javac.util.Pair;
 import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd2smt.context.SMTClass;
 import de.monticore.expressions.commonexpressions._ast.*;
@@ -14,6 +13,8 @@ import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
@@ -50,9 +51,9 @@ public class OCL2SMTGenerator {
 
   protected Pair<Optional<String>,BoolExpr> convertInv(ASTOCLInvariant invariant) {
     if (invariant.isPresentName()){
-      return new Pair(Optional.of(invariant.getName()),convertExpr(invariant.getExpression()));
+      return new ImmutablePair<>(Optional.of(invariant.getName()),convertBoolExpr(invariant.getExpression()));
     }
-    return new Pair(Optional.empty(), convertExpr(invariant.getExpression()));
+    return new ImmutablePair<>(Optional.empty(), convertBoolExpr(invariant.getExpression()));
   }
 
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {

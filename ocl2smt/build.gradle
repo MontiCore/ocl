@@ -1,0 +1,63 @@
+plugins {
+  id 'java-library'
+  id 'java-gradle-plugin'
+  id 'jacoco'
+  id 'maven-publish'
+}
+
+group = 'de.monticore.lang.ocl'
+
+repositories {
+  if(("true").equals(getProperty('useLocalRepo'))) {
+    mavenLocal()
+  }
+
+  maven {
+    url sePublicRepo
+  }
+
+  mavenCentral()
+}
+
+dependencies {
+  api(project(':'))
+
+  implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
+  implementation "de.monticore:monticore-grammar:$mc_version"
+  implementation group: 'de.monticore', name: 'monticore-runtime', version: mc_version
+  implementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
+  implementation "de.monticore.lang:cd4analysis:$mc_version:cd2smt"
+  implementation "de.monticore.lang:od:$mc_version"
+
+  implementation "org.apache.commons:commons-lang3:3.9"
+  implementation 'tools.aqua:z3-turnkey:4.8.17'
+
+  testImplementation "org.assertj:assertj-core:$assertj_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
+}
+
+tasks.withType(Test){
+  useJUnitPlatform()
+  finalizedBy jacocoTestReport
+}
+
+gradlePlugin {
+  plugins {
+    ocl2smtplugin  {
+      id = "de.monticore.lang.ocl.semdiff"
+      implementationClass = "de.monticore.ocl2smt.gradle.OCLSMTPlugin"
+    }
+  }
+}
+
+publishing {
+  repositories.maven {
+    name = "$SE_Nexus_ID"
+    credentials.username mavenUser
+    credentials.password mavenPassword
+    url = version.endsWith('SNAPSHOT') ? "$snapshotsRepoUrl" : "$releasesRepoUrl"
+  }
+}
+
