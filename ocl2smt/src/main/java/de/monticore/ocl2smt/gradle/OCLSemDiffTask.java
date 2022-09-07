@@ -1,6 +1,8 @@
 package de.monticore.ocl2smt.gradle;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.OCLDiffGenerator;
 import de.monticore.ocl2smt.OCL_Loader;
@@ -8,10 +10,11 @@ import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.DefaultTask;
+import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
-import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.*;
+// import org.gradle.work.NormalizeLineEndings;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,15 +27,20 @@ public abstract class OCLSemDiffTask extends DefaultTask {
 
   @InputFile
   @PathSensitive(PathSensitivity.NONE)
-  public abstract RegularFileProperty getCD();
+  // @NormalizeLineEndings
+  public abstract RegularFileProperty getCd();
 
   @InputFiles
+  @Optional
   @PathSensitive(PathSensitivity.RELATIVE)
-  public abstract FileCollection getPositiveOCL();
+  // @NormalizeLineEndings
+  public abstract ConfigurableFileCollection getPositiveOCL();
 
   @InputFiles
+  @Optional
   @PathSensitive(PathSensitivity.RELATIVE)
-  public abstract FileCollection getNegativeOCL();
+  // @NormalizeLineEndings
+  public abstract ConfigurableFileCollection getNegativeOCL();
 
   @OutputDirectory
   public abstract DirectoryProperty getOutputDir();
@@ -47,21 +55,33 @@ public abstract class OCLSemDiffTask extends DefaultTask {
 
   @TaskAction
   public void run() throws IOException {
+    OCLMill.init();
+    CD4CodeMill.init();
+
+    FileUtils.deleteDirectory(getOutputDir().get().getAsFile());  // TODO: Is this required?
+
+
     // Load Input
-    ASTCDCompilationUnit cd = OCL_Loader.loadAndCheckCD(getCD().get().getAsFile());
+    ASTCDCompilationUnit cd = OCL_Loader.loadAndCheckCD(getCd().get().getAsFile());
 
     Set<ASTOCLCompilationUnit> positiveOCL = loadOCL(cd, getPositiveOCL().getFiles());
     Set<ASTOCLCompilationUnit> negativeOCL = loadOCL(cd, getNegativeOCL().getFiles());
 
+
+    Set<ASTODArtifact> witnesses;
     // Compute Diff
-    Set<ASTODArtifact> witnesses = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL);
+    if (negativeOCL.isEmpty()) {
+      witnesses = new HashSet<>();
+      witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL));
+    } else {
+      witnesses = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL);
+    }
+
 
     // Write Results
     for (ASTODArtifact wit : witnesses) {
       String fileName = wit.getObjectDiagram().getName() + ".od";
-      FileUtils.writeStringToFile(
-          getOutputDir().file(fileName).get().getAsFile(),
-          new OD4ReportFullPrettyPrinter().prettyprint(wit), Charset.defaultCharset());
+      FileUtils.writeStringToFile(getOutputDir().file(fileName).get().getAsFile(), new OD4ReportFullPrettyPrinter().prettyprint(wit), Charset.defaultCharset());
     }
   }
 }
