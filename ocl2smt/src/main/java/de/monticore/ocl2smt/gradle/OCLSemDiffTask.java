@@ -14,7 +14,7 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.*;
-import org.gradle.work.NormalizeLineEndings;
+// import org.gradle.work.NormalizeLineEndings;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,19 +27,19 @@ public abstract class OCLSemDiffTask extends DefaultTask {
 
   @InputFile
   @PathSensitive(PathSensitivity.NONE)
-  @NormalizeLineEndings
+  // @NormalizeLineEndings
   public abstract RegularFileProperty getCd();
 
   @InputFiles
   @Optional
   @PathSensitive(PathSensitivity.RELATIVE)
-  @NormalizeLineEndings
+  // @NormalizeLineEndings
   public abstract ConfigurableFileCollection getPositiveOCL();
 
   @InputFiles
   @Optional
   @PathSensitive(PathSensitivity.RELATIVE)
-  @NormalizeLineEndings
+  // @NormalizeLineEndings
   public abstract ConfigurableFileCollection getNegativeOCL();
 
   @OutputDirectory
