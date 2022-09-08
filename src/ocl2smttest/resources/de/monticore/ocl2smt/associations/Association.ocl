@@ -3,20 +3,48 @@ package invariants;
 ocl NC1 {
 
   context Auction a inv SimpleAssoc:
-    forall Person p in a.person :
-          p.age == a.auctionIdent ;
+    forall Person p1 in a.person , Person p2 in a.person:
+       (p1 != p2   implies      p1.age != p2.age);
 
 
 
-  inv Exists_Exact_4_Auction:
-           exists Auction a1,a2,a3,a4 :
-               a1 != a2 &&
-               a2 != a3 &&
-               a3 != a4 &&
-               a4 != a1 &&
+
+
+
+
+
+
+
+
+
+
+
+ context Auction a inv Auction_2_person:
+   exists   Person p1 , Person p2 :
+                 p1!= p2   ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*  inv Exists_Exact_1_Auction:
+           exists Auction a1 :
                ( forall Auction a :
-                     a == a1 ||
-                     a == a2||
-                     a == a3||
-                     a == a4  );
+                     a == a1
+                      );*/
 }
+
