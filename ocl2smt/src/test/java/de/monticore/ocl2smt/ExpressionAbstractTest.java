@@ -2,7 +2,7 @@ package de.monticore.ocl2smt;
 
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Solver;
-import com.sun.tools.javac.util.Pair;
+
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd4code.CD4CodeMill;
@@ -16,6 +16,7 @@ import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 
 import java.io.IOException;
@@ -42,8 +43,8 @@ public abstract class ExpressionAbstractTest extends AbstractTest {
                 .stream().map(p -> (ASTOCLInvariant) p)
                 .filter(p -> search.equals(p.getName())).findAny().get();
         Pair<Optional<String>,BoolExpr> constraint = ocl2SMTGenerator.convertConstr(constr);
-        solver.add(constraint.snd);
-        return constraint.snd;
+        solver.add(constraint.getRight());
+        return constraint.getRight();
     }
 
     protected void parse(String cdFileName, String oclFileName) throws IOException {
