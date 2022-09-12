@@ -1,7 +1,7 @@
 package de.monticore.ocl2smt;
 
 import com.microsoft.z3.*;
-import com.sun.tools.javac.util.Pair;
+
 import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd2smt.context.SMTAssociation;
 import de.monticore.cd2smt.context.SMTClass;
@@ -14,6 +14,8 @@ import de.monticore.ocl.oclexpressions._ast.*;
 
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
@@ -67,9 +69,9 @@ public class OCL2SMTGenerator {
     }
 
     if (invariant.isPresentName()){
-      return new Pair(Optional.of(invariant.getName()),inv);
+      return new ImmutablePair<>(Optional.of(invariant.getName()),inv);
     }
-    return new Pair(Optional.empty(), inv);
+    return new ImmutablePair<>(Optional.empty(), inv);
   }
 
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
@@ -273,37 +275,42 @@ public class OCL2SMTGenerator {
     return    variable;
   }
 
-  protected BoolExpr convertForAll(ASTForallExpression node) {
-    //declare Variable from scope
-    Map<Expr<? extends Sort>, Optional<ASTExpression>> var = openScope(node.getInDeclarationList());
-
+  protected BoolExpr  convertInDeclConst(Map<Expr<? extends Sort>, Optional<ASTExpression>> var){
     //get all the InPart in InDeclarations
     Map<Expr<? extends Sort>, ASTExpression > inParts = new HashMap<>();
     var.forEach((key, value) -> value.ifPresent(s -> inParts.put(key, s)));
 
-    BoolExpr result ;
-    //there are no In part (a.person) in  InDeclarations
-    if (inParts.size() == 0){
-       result = cdcontext.getContext().mkForall(var.keySet().toArray(new Expr[0]),  convertBoolExpr(node.getExpression()),
-              0, null, null, null, null);
+    List<BoolExpr> constraintList = new ArrayList<>();
 
-    }else {
 
-      BoolExpr constraints  = cdcontext.getContext().mkTrue();
-       for (Map.Entry<Expr<? extends Sort>, ASTExpression > expr: inParts.entrySet()){
-         if (!(expr.getValue() instanceof  ASTFieldAccessExpression)){
-           Log.error("cannot convert ASTIn Declaration, in part is not a ASTFieldAccessExpression");
-         }
-         assert expr.getValue() instanceof ASTFieldAccessExpression;
-         Pair<Expr<? extends Sort>, BoolExpr> navigation = convertFieldAcc(expr.getValue(),expr.getKey());
-         constraints = cdcontext.getContext().mkAnd(constraints,navigation.snd);
-       }
-       result = cdcontext.getContext().mkForall(var.keySet().toArray(new Expr[0]), cdcontext.getContext().mkImplies(constraints , convertBoolExpr(node.getExpression())),
-              0, null, null, null, null);
+    for (Map.Entry<Expr<? extends Sort>, ASTExpression > expr: inParts.entrySet()){
+      if (!(expr.getValue() instanceof  ASTFieldAccessExpression)){
+        Log.error("cannot convert ASTInDeclaration, in part is not a ASTFieldAccessExpression");
+      }
+      assert expr.getValue() instanceof ASTFieldAccessExpression;
+      Association association = convertFieldAccAssoc( (ASTFieldAccessExpression) expr.getValue());
+      constraintList.add((BoolExpr)association.evaluate(expr.getKey()));
     }
+    BoolExpr result = cdcontext.getContext().mkTrue() ;
+
+    for (BoolExpr constr: constraintList){
+      result = cdcontext.getContext().mkAnd(result,constr);
+    }
+    return result;
+  }
+
+  protected BoolExpr convertForAll(ASTForallExpression node) {
+    //declare Variable from scope
+    Map<Expr<? extends Sort>, Optional<ASTExpression>> var = openScope(node.getInDeclarationList());
+
+    BoolExpr constraint = convertInDeclConst(var);
+
+    BoolExpr  result = cdcontext.getContext().mkForall(var.keySet().toArray(new Expr[0]), cdcontext.getContext().mkImplies(constraint , convertBoolExpr(node.getExpression())),
+              0, null, null, null, null);
 
     // Delete Variables from "scope"
     closeScope(node.getInDeclarationList());
+
     return result;
   }
 
@@ -311,33 +318,14 @@ public class OCL2SMTGenerator {
     //declare Variable from scope
     Map<Expr<? extends Sort>, Optional<ASTExpression>> var = openScope(node.getInDeclarationList());
 
-    //get all the InPart in InDeclarations
-    Map<Expr<? extends Sort>, ASTExpression > inParts = new HashMap<>();
-    var.forEach((key, value) -> value.ifPresent(s -> inParts.put(key, s)));
+    BoolExpr constraint = convertInDeclConst(var);
 
-    BoolExpr result ;
-    //there are no In part (a.person) in  InDeclarations
-    if (inParts.size() == 0){
-      result = cdcontext.getContext().mkExists(var.keySet().toArray(new Expr[0]),  convertBoolExpr(node.getExpression()),
-              0, null, null, null, null);
-
-    }else {
-
-      BoolExpr constraints  = cdcontext.getContext().mkTrue();
-      for (Map.Entry<Expr<? extends Sort>, ASTExpression > expr: inParts.entrySet()){
-        if (!(expr.getValue() instanceof  ASTFieldAccessExpression)){
-          Log.error("cannot convert ASTInDeclaration, in part is not a ASTFieldAccessExpression");
-        }
-        assert expr.getValue() instanceof ASTFieldAccessExpression;
-        Pair<Expr<? extends Sort>, BoolExpr> navigation = convertFieldAcc( expr.getValue(),expr.getKey());
-        constraints = cdcontext.getContext().mkAnd(constraints,navigation.snd);
-      }
-      result = cdcontext.getContext().mkExists(var.keySet().toArray(new Expr[0]), cdcontext.getContext().mkImplies(constraints , convertBoolExpr(node.getExpression())),
-              0, null, null, null, null);
-    }
+    BoolExpr  result = cdcontext.getContext().mkExists(var.keySet().toArray(new Expr[0]), cdcontext.getContext().mkImplies(constraint , convertBoolExpr(node.getExpression())),
+            0, null, null, null, null);
 
     // Delete Variables from "scope"
     closeScope(node.getInDeclarationList());
+
     return result;
   }
 
@@ -359,49 +347,30 @@ public class OCL2SMTGenerator {
   protected Expr<? extends Sort> convertBracket(ASTBracketExpression node) {
     return convertExpr(node.getExpression());
   }
-  protected Expr<? extends Sort> convertFieldAcc(ASTFieldAccessExpression node) {
+  protected Expr<? extends Sort>  convertFieldAcc(ASTFieldAccessExpression node) {
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
     Optional<SMTClass> smtClassOptional = cdcontext.getSMTClass(obj);
     assert smtClassOptional.isPresent();
     return cdcontext.getContext().mkApp(cdcontext.getAttributeFunc(smtClassOptional.get(), node.getName()), obj);
   }
 
-  protected Pair<Expr<? extends Sort>, BoolExpr>  convertFieldAcc(ASTExpression node, Expr<? extends  Sort> obj) {
-
-    if ( !(node instanceof ASTFieldAccessExpression)){
-      return new Pair<>(convertExpr(node),cdcontext.getContext().mkTrue());
-    }
-      ASTFieldAccessExpression fieldAccessExpr = (ASTFieldAccessExpression)node;
-      Pair<Expr<? extends Sort>, BoolExpr> res = convertFieldAcc(fieldAccessExpr.getExpression(),obj);
-
-      //test if it is an Attribute navigation
-      Optional<SMTClass> smtClassOptional = cdcontext.getSMTClass(res.fst);
-      assert smtClassOptional.isPresent();
-      if (cdcontext.containsAttribute(smtClassOptional.get(),fieldAccessExpr.getName())){
-        FuncDecl<? extends  Sort> func = cdcontext.getAttributeFunc(smtClassOptional.get(), fieldAccessExpr.getName());
-        return new Pair<>(cdcontext.getContext().mkApp(func,res.fst), res.snd);
-      }
-      //case Association navigation
-      else {
-        SMTAssociation smtAssociation = cdcontext.getAssocFunc(smtClassOptional.get(),fieldAccessExpr.getName());
-        BoolExpr constraint = cdcontext.getContext().mkTrue() ;
-
-
-        if (smtAssociation.getAssocFunc().getDomain()[0].equals(res.fst.getSort())){
-              constraint = cdcontext.getContext().mkAnd(constraint,
-                      cdcontext.getContext().mkApp(smtAssociation.getAssocFunc(), res.fst, obj));
-        }
-        else {
-              constraint = cdcontext.getContext().mkAnd(constraint,
-                      cdcontext.getContext().mkApp(smtAssociation.getAssocFunc(), res.fst, obj));
-          }
-
-     return new Pair<>(obj,cdcontext.getContext().mkAnd(res.snd, constraint));
-      }
-
-
+  protected  Association  convertFieldAccAssoc(ASTFieldAccessExpression node) {
+    //get the object and convert it into smt expression
+    Expr<? extends  Sort> obj = convertExpr(node.getExpression());
+    Optional<SMTClass> smtClassOptional = cdcontext.getSMTClass(obj);
+    assert smtClassOptional.isPresent();
+    SMTAssociation smtAssociation = cdcontext.getAssocFunc(smtClassOptional.get(),node.getName());
+    Association myAssociation;
+    if (smtAssociation.getAssocFunc().getDomain()[0].equals(obj.getSort())){
+       myAssociation = obj2 -> cdcontext.getContext().mkApp(smtAssociation.getAssocFunc(),obj,obj2);
 
     }
+    else {
+      myAssociation = obj2 -> cdcontext.getContext().mkApp(smtAssociation.getAssocFunc(),obj2,obj);
+    }
+        return  myAssociation;
+    }
+
 
 
 
@@ -455,7 +424,9 @@ public class OCL2SMTGenerator {
     Log.error("the function getType was not implemented yet");
     return  null ;
   }
-
-
+@FunctionalInterface
+ public  interface Association {
+    Expr<? extends Sort> evaluate ( Expr<? extends Sort> right );
+ }
 
 }

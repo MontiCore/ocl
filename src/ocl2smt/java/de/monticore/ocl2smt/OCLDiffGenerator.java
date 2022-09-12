@@ -1,7 +1,7 @@
 package de.monticore.ocl2smt;
 
 import com.microsoft.z3.*;
-import com.sun.tools.javac.util.Pair;
+
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd2smt.context.ODContext;
@@ -11,6 +11,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
@@ -25,7 +26,7 @@ public class OCLDiffGenerator {
         //transform positive ocl files    in a list of SMT BoolExpr
         OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
         List<BoolExpr> solverConstraints = new ArrayList<>();
-        in.forEach(p ->ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).forEach(c -> solverConstraints.add(c.snd)));
+        in.forEach(p ->ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).forEach(c -> solverConstraints.add(c.getRight())));
 
         //negative ocl constraints
         List<Pair<Optional<String> ,BoolExpr>> negConstList = new ArrayList<>();
@@ -41,12 +42,12 @@ public class OCLDiffGenerator {
 
         //add one by one all Constraints to the Solver and check if  it can always produce a Model
         for (Pair<Optional<String>, BoolExpr> negConstraint:  negConstList) {
-            BoolExpr actualConstraint = cdContext.getContext().mkNot(negConstraint.snd);
+            BoolExpr actualConstraint = cdContext.getContext().mkNot(negConstraint.getRight());
             solverConstraints.add(actualConstraint);
             modelOptional = getModel(cdContext.getContext(), solverConstraints);
             if (modelOptional.isPresent()) {
-                if (negConstraint.fst.isPresent()) {
-                    res.add(buildOd(cdContext, negConstraint.fst.get(), solverConstraints, cd.getCDDefinition()));
+                if (negConstraint.getLeft().isPresent()) {
+                    res.add(buildOd(cdContext, negConstraint.getLeft().get(), solverConstraints, cd.getCDDefinition()));
                 } else {
                     res.add(buildOd(cdContext, "NoName", solverConstraints, cd.getCDDefinition()));
                 }

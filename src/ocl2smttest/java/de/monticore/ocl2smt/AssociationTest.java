@@ -8,6 +8,7 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -28,22 +29,26 @@ public class AssociationTest extends ExpressionAbstractTest {
         solver = cdContext.getContext().mkSolver();
     }
 
-    @Test
-    public void simple_assoc() {
-     BoolExpr constraint =  addConstraint("SimpleAssoc");
-     Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-
-     List<BoolExpr> constraintList = new ArrayList<>();
-     constraintList.add(constraint);
-    // constraintList.add(addConstraint("Exists_Exact_1_Auction"));
-        constraintList.add(addConstraint("Auction_2_person"));
-
+    void testInv(String invName){
+        List<BoolExpr> constraintList = new ArrayList<>();
+        constraintList.add(addConstraint(invName));
+        Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
 
         OCLDiffGenerator oclDiffGenerator = new OCLDiffGenerator();
-        ASTODArtifact od = oclDiffGenerator.buildOd(cdContext,"SimpleAssoc1",constraintList,
-           cdAST.getCDDefinition());
-
+        ASTODArtifact od = oclDiffGenerator.buildOd(cdContext, invName, constraintList, cdAST.getCDDefinition());
         printOD(od);
-
     }
+    @Test
+    public void of_legal_age() {
+        testInv("Of_legal_age");
+    }
+    @Disabled
+    @Test
+    public void different_ids() {
+        testInv("Diff_ids");
+    }
+
+    @Disabled
+    @Test
+    public void same_person_in_wo_auction(){ testInv("One_in_2_auctions");}
 }
