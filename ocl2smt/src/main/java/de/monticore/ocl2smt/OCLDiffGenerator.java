@@ -83,12 +83,11 @@ public class OCLDiffGenerator {
 
     public  static   Optional<Model> getModel (Context ctx, List<Pair<String,BoolExpr>> constraints){
         Solver s = ctx.mkSolver();
-        int i = 0;
+        int i = 0;  // Names must be unique, hence we have a counter
         for (Pair<String,BoolExpr> expr : constraints){
             s.assertAndTrack(expr.getRight(), ctx.mkBoolConst("inv____" + expr.getLeft() + "____" + i));
             i++;
         }
-//            s.add(expr.getRight());
         if (s.check() == Status.SATISFIABLE)
             return Optional.of(s.getModel());
         else {
