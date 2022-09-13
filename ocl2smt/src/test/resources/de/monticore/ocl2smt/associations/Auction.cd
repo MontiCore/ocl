@@ -11,5 +11,5 @@ classdiagram MinAuction {
    int id;
   }
 
-  association [1..*] Auction(auction)      --     (person)Person[1..*];
+  association [1] Auction(auction)      --     (person)Person[1..*];
 }

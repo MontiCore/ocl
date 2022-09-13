@@ -7,7 +7,7 @@ import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl.ocl.AbstractTest;
+
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
@@ -26,7 +26,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 public abstract class ExpressionAbstractTest extends AbstractTest {
-    protected static final String RELATIVE_MODEL_PATH = "src/ocl2smttest/resources/de/monticore/ocl2smt";
+    protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
     protected  static  final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
     protected CDContext cdContext;
 

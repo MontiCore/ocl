@@ -31,6 +31,8 @@ public class AssociationTest extends ExpressionAbstractTest {
 
     void testInv(String invName){
         List<BoolExpr> constraintList = new ArrayList<>();
+        constraintList.add(addConstraint("Unique_pers_id"));
+        constraintList.add(addConstraint("Unique_Auction_id"));
         constraintList.add(addConstraint(invName));
         Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
 
@@ -42,13 +44,13 @@ public class AssociationTest extends ExpressionAbstractTest {
     public void of_legal_age() {
         testInv("Of_legal_age");
     }
-    @Disabled
+
     @Test
     public void different_ids() {
         testInv("Diff_ids");
     }
 
-    @Disabled
+
     @Test
     public void same_person_in_wo_auction(){ testInv("One_in_2_auctions");}
 }

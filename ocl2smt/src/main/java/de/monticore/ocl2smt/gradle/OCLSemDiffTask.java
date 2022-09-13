@@ -70,18 +70,18 @@ public abstract class OCLSemDiffTask extends DefaultTask {
 
     Set<ASTODArtifact> witnesses;
     // Compute Diff
-    if (negativeOCL.isEmpty()) {
+   /* if (negativeOCL.isEmpty()) {
       witnesses = new HashSet<>();
       witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL));
     } else {
       witnesses = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL);
-    }
+    }*/
 
 
     // Write Results
-    for (ASTODArtifact wit : witnesses) {
+   /* for (ASTODArtifact wit : witnesses) {
       String fileName = wit.getObjectDiagram().getName() + ".od";
       FileUtils.writeStringToFile(getOutputDir().file(fileName).get().getAsFile(), new OD4ReportFullPrettyPrinter().prettyprint(wit), Charset.defaultCharset());
-    }
+    }*/
   }
 }
