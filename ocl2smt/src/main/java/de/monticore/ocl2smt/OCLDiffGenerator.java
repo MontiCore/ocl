@@ -59,8 +59,8 @@ public class OCLDiffGenerator {
 
         //add one by one all Constraints to the Solver and check if  it can always produce a Model
         for (Pair<Optional<String>, BoolExpr> negConstraint:  negConstList) {
-            BoolExpr actualConstraint = cdContext.getContext().mkNot(negConstraint.getRight());
-            solverConstraints.add(new ImmutablePair<>(negConstraint.getLeft().orElse("NoName"), actualConstraint));
+            Pair<String,BoolExpr> actualConstraint = new ImmutablePair<>(negConstraint.getLeft().orElse("NoName"), cdContext.getContext().mkNot(negConstraint.getRight()));
+            solverConstraints.add(actualConstraint);
             Optional<Model> modelOptional = getModel(cdContext.getContext(), solverConstraints);
             if (modelOptional.isPresent()) {
                 if (negConstraint.getLeft().isPresent()) {
