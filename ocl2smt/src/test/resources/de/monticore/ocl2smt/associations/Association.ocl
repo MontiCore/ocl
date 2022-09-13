@@ -1,19 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package invariants;
 ocl NC1 {
-  inv Unique_pers_id:
-    forall Person p1,p2 :
-      (p1 != p2 implies p1.id != p2.id)  &&
-      (p1== p2 implies p1.id == p2.id) &&
-      (p1.id == p2.id implies p1.age == p2.age);
-
-  inv Unique_Auction_id:
-      forall Auction a1,a2 :
-        (a1 != a2 implies a1.auctionIdent != a2.auctionIdent)  &&
-        (a1== a2 implies a1.auctionIdent == a2.auctionIdent);
-
-
-
 
   context Auction a inv Of_legal_age:
     forall Person p1 in a.person:
@@ -23,10 +10,16 @@ ocl NC1 {
       forall Person p1 in a.person, Person p2 in a.person:
         p1 != p2 implies  p1.id != p2.id ;
 
-  inv One_in_2_auctions:
-    forall Auction a1, a2 :
-        exists Person p1 in a1.person, Person p2 in a2.person:
-          a1 == a2 &&  p1.id == p2.id ;
+  inv AtLeast_2_Person:
+    forall Auction a :
+        exists Person p1 in a.person, Person p2 in a.person:
+         p1 != p2 ;
+
+  inv Same_Person_in_2_Auction:
+      forall Auction a1, a2 :
+        a1 != a2 implies
+        (exists Person p1 in a2.person, Person p2 in a2.person:
+            p1 == p2);
 
 
 }

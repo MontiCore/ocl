@@ -114,7 +114,7 @@ public class OCL2SMTGenerator {
 
   protected BoolExpr convertBoolExpr(ASTExpression node) {
     Optional<BoolExpr> result = convertBoolExprOpt(node);
-    if (!result.isPresent()) {
+    if (result.isEmpty()) {
       Log.error("the conversion of expressions with the type " + node.getClass().getName() + "is   not totally  implemented");
       assert false;
     }
@@ -150,7 +150,7 @@ public class OCL2SMTGenerator {
 
   protected ArithExpr<? extends ArithSort> convertExprArith(ASTExpression node) {
     Optional<ArithExpr<? extends ArithSort>> result = convertExprArithOpt(node);
-    if (!result.isPresent()) {
+    if (result.isEmpty()) {
       Log.error("the conversion of expressions with the type " + node.getClass().getName() + "is   not totally  implemented");
       assert false;
     }
@@ -306,7 +306,7 @@ public class OCL2SMTGenerator {
     BoolExpr constraint = convertInDeclConst(var);
 
     BoolExpr  result = cdcontext.getContext().mkForall(var.keySet().toArray(new Expr[0]), cdcontext.getContext().mkImplies(constraint , convertBoolExpr(node.getExpression())),
-              0, null, null, null, null);
+              1, null, null, null, null);
 
     // Delete Variables from "scope"
     closeScope(node.getInDeclarationList());
@@ -320,7 +320,7 @@ public class OCL2SMTGenerator {
 
     BoolExpr constraint = convertInDeclConst(var);
 
-    BoolExpr  result = cdcontext.getContext().mkExists(var.keySet().toArray(new Expr[0]), cdcontext.getContext().mkImplies(constraint , convertBoolExpr(node.getExpression())),
+    BoolExpr  result = cdcontext.getContext().mkExists(var.keySet().toArray(new Expr[0]), cdcontext.getContext().mkAnd(constraint , convertBoolExpr(node.getExpression())),
             0, null, null, null, null);
 
     // Delete Variables from "scope"

@@ -5,10 +5,11 @@ import com.microsoft.z3.Status;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
+
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -29,28 +30,27 @@ public class AssociationTest extends ExpressionAbstractTest {
         solver = cdContext.getContext().mkSolver();
     }
 
-    void testInv(String invName){
+   ASTODArtifact testInv(String invName){
         List<BoolExpr> constraintList = new ArrayList<>();
-        constraintList.add(addConstraint("Unique_pers_id"));
-        constraintList.add(addConstraint("Unique_Auction_id"));
         constraintList.add(addConstraint(invName));
         Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
 
         OCLDiffGenerator oclDiffGenerator = new OCLDiffGenerator();
         ASTODArtifact od = oclDiffGenerator.buildOd(cdContext, invName, constraintList, cdAST.getCDDefinition());
         printOD(od);
+        return od;
     }
     @Test
     public void of_legal_age() {
-        testInv("Of_legal_age");
-    }
+     ASTODArtifact od =   testInv("Of_legal_age");
 
+    }
     @Test
     public void different_ids() {
         testInv("Diff_ids");
     }
-
-
     @Test
-    public void same_person_in_wo_auction(){ testInv("One_in_2_auctions");}
+    public void atLeast2Person(){ testInv("AtLeast_2_Person");}
+    @Test
+    public void Same_Person_in_2_Auction(){ testInv("Same_Person_in_2_Auction");}
 }
