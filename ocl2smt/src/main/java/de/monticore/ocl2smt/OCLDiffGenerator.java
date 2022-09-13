@@ -59,7 +59,7 @@ public class OCLDiffGenerator {
 
         //add one by one all Constraints to the Solver and check if  it can always produce a Model
         for (Pair<Optional<String>, BoolExpr> negConstraint:  negConstList) {
-            Pair<String,BoolExpr> actualConstraint = new ImmutablePair<>(negConstraint.getLeft().orElse("NoName"), cdContext.getContext().mkNot(negConstraint.getRight()));
+            Pair<String,BoolExpr> actualConstraint = new ImmutablePair<>("negated_" + negConstraint.getLeft().orElse("NoName"), cdContext.getContext().mkNot(negConstraint.getRight()));
             solverConstraints.add(actualConstraint);
             Optional<Model> modelOptional = getModel(cdContext.getContext(), solverConstraints);
             if (modelOptional.isPresent()) {
@@ -94,7 +94,7 @@ public class OCLDiffGenerator {
             Log.warn("Found no instance. The following invariants lead to a contradiction: \n\t" +
                 Arrays.stream(s.getUnsatCore())
                     .map(AST::getSExpr)
-                    // .map(name -> name.split("____")[1])
+                    .map(name -> name.split("____")[1])
                     .collect(Collectors.toSet()));
             return Optional.empty();
         }
