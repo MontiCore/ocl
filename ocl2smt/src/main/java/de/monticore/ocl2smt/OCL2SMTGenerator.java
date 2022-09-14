@@ -53,12 +53,13 @@ public class OCL2SMTGenerator {
 
   protected Pair<Optional<String>,BoolExpr> convertInv(ASTOCLInvariant invariant) {
     List<Expr<? extends  Sort>> expr  = new ArrayList<>();
-    //convert parameter declaredin context
-    for (ASTOCLContextDefinition node : invariant.getOCLContextDefinitionList()){
-      if (node.isPresentOCLParamDeclaration()){
-        expr.add(convertParDec(node.getOCLParamDeclaration()));
-      }
-    }
+    //convert parameter declaration  in context
+     invariant.getOCLContextDefinitionList().forEach( node -> {
+       if (node.isPresentOCLParamDeclaration()){
+         expr.add(convertParDec(node.getOCLParamDeclaration()));
+       }
+     });
+    //check if parameter was declared
     BoolExpr inv;
     if (expr.size() >0){
     inv = cdcontext.getContext().mkForall(expr.toArray(new Expr[0]),(BoolExpr)convertExpr(invariant.getExpression()),
@@ -67,7 +68,7 @@ public class OCL2SMTGenerator {
     else {
        inv = (BoolExpr)convertExpr(invariant.getExpression());
     }
-
+    //check if the name is present
     if (invariant.isPresentName()){
       return new ImmutablePair<>(Optional.of(invariant.getName()),inv);
     }
@@ -263,25 +264,25 @@ public class OCL2SMTGenerator {
 
   /*------------------------------------quantified expressions----------------------------------------------------------*/
  Map<  Expr<? extends  Sort>,Optional<ASTExpression> > openScope(List<ASTInDeclaration> inDeclarations) {
-    Map<Expr<? extends Sort>, Optional<ASTExpression>> variable = new HashMap<>();
+    Map<Expr<? extends Sort>, Optional<ASTExpression>> variableList = new HashMap<>();
     for (ASTInDeclaration decl : inDeclarations) {
       List<Expr<? extends  Sort>> temp = convertInDecl(decl);
       if (decl.isPresentExpression()){
-        temp.forEach(t-> variable.put(t, Optional.of( decl.getExpression())));
+        temp.forEach(t-> variableList.put(t, Optional.of( decl.getExpression())));
       }else {
-        temp.forEach(t-> variable.put(t, Optional.empty()));
+        temp.forEach(t-> variableList.put(t, Optional.empty()));
       }
     }
-    return    variable;
+    return    variableList;
   }
 
-  protected BoolExpr  convertInDeclConst(Map<Expr<? extends Sort>, Optional<ASTExpression>> var){
+  protected BoolExpr  convertInDeclConstraints(Map<Expr<? extends Sort>, Optional<ASTExpression>> var){
     //get all the InPart in InDeclarations
     Map<Expr<? extends Sort>, ASTExpression > inParts = new HashMap<>();
     var.forEach((key, value) -> value.ifPresent(s -> inParts.put(key, s)));
 
-    List<BoolExpr> constraintList = new ArrayList<>();
 
+    List<BoolExpr> constraintList = new ArrayList<>();
 
     for (Map.Entry<Expr<? extends Sort>, ASTExpression > expr: inParts.entrySet()){
       if (!(expr.getValue() instanceof  ASTFieldAccessExpression)){
@@ -303,7 +304,7 @@ public class OCL2SMTGenerator {
     //declare Variable from scope
     Map<Expr<? extends Sort>, Optional<ASTExpression>> var = openScope(node.getInDeclarationList());
 
-    BoolExpr constraint = convertInDeclConst(var);
+    BoolExpr constraint = convertInDeclConstraints(var);
 
     BoolExpr  result = cdcontext.getContext().mkForall(var.keySet().toArray(new Expr[0]), cdcontext.getContext().mkImplies(constraint , convertBoolExpr(node.getExpression())),
               1, null, null, null, null);
@@ -318,7 +319,7 @@ public class OCL2SMTGenerator {
     //declare Variable from scope
     Map<Expr<? extends Sort>, Optional<ASTExpression>> var = openScope(node.getInDeclarationList());
 
-    BoolExpr constraint = convertInDeclConst(var);
+    BoolExpr constraint = convertInDeclConstraints(var);
 
     BoolExpr  result = cdcontext.getContext().mkExists(var.keySet().toArray(new Expr[0]), cdcontext.getContext().mkAnd(constraint , convertBoolExpr(node.getExpression())),
             0, null, null, null, null);
@@ -363,17 +364,12 @@ public class OCL2SMTGenerator {
     Association myAssociation;
     if (smtAssociation.getAssocFunc().getDomain()[0].equals(obj.getSort())){
        myAssociation = obj2 -> cdcontext.getContext().mkApp(smtAssociation.getAssocFunc(),obj,obj2);
-
     }
     else {
       myAssociation = obj2 -> cdcontext.getContext().mkApp(smtAssociation.getAssocFunc(),obj2,obj);
     }
         return  myAssociation;
     }
-
-
-
-
 
   protected List<Expr<? extends Sort>> convertInDecVar(ASTInDeclarationVariable node, ASTMCType type) {
     List<Expr<? extends Sort>> result = new ArrayList<>();
