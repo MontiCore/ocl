@@ -66,7 +66,7 @@ public class OCL2SMTGenerator {
               0, null, null, null, null);
     }
     else {
-       inv = (BoolExpr)convertExpr(invariant.getExpression());
+       inv = convertBoolExpr(invariant.getExpression());
     }
     //check if the name is present
     if (invariant.isPresentName()){

@@ -37,17 +37,20 @@ public class OCL_Loader {
     cdAST.setEnclosingScope(createCDSymTab(cdAST));
     checkCDCoCos(cdAST);
 
+    return cdAST;
+  }
+  protected  static void transformAllRoles(ASTCDCompilationUnit cdAST){
     final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
-        new CDAssociationCreateFieldsFromAllRoles();
+            new CDAssociationCreateFieldsFromAllRoles();
     final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
     traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
     traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
     cdAssociationCreateFieldsFromAllRoles.transform(cdAST);
-
-    return cdAST;
   }
+  public static ASTOCLCompilationUnit loadAndCheckOCL(File oclFile, File cdFile) throws IOException {
+    ASTCDCompilationUnit cdAST = loadAndCheckCD(cdFile);
+    transformAllRoles(cdAST);
 
-  public static ASTOCLCompilationUnit loadAndCheckOCL(File oclFile, ASTCDCompilationUnit cdAST) throws IOException {
     assert oclFile.getName().endsWith(".ocl");
     ASTOCLCompilationUnit oclAST = parseOCLModel(oclFile.getAbsolutePath());
 

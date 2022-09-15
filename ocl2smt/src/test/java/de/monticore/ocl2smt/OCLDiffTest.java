@@ -30,9 +30,9 @@ public class OCLDiffTest extends AbstractTest {
         OCLMill.init();
         CD4CodeMill.init();
     }
-    protected ASTOCLCompilationUnit parseOCl(ASTCDCompilationUnit astcdCompilationUnit, String oclFileName) throws IOException {
+    protected ASTOCLCompilationUnit parseOCl(String cdFileName, String oclFileName) throws IOException {
         setUp();
-        return OCL_Loader.loadAndCheckOCL(Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(), astcdCompilationUnit);
+        return OCL_Loader.loadAndCheckOCL(Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(),Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile() );
     }
     protected ASTCDCompilationUnit parseCD(String cdFileName) throws IOException{
         setUp();
@@ -53,11 +53,11 @@ public class OCLDiffTest extends AbstractTest {
         ASTCDCompilationUnit ast = parseCD("Auction.cd");
 
         Set<ASTOCLCompilationUnit> pocl = new HashSet<>();
-        pocl.add(parseOCl(ast, "PosConstraint1.ocl"));
-        pocl.add(parseOCl(ast, "PosConstraint2.ocl"));
+        pocl.add(parseOCl("Auction.cd", "PosConstraint1.ocl"));
+        pocl.add(parseOCl("Auction.cd", "PosConstraint2.ocl"));
         Set<ASTOCLCompilationUnit> nocl = new HashSet<>();
-        nocl.add(parseOCl(ast, "negConstraint1.ocl"));
-        nocl.add(parseOCl(ast, "negConstraint2.ocl"));
+        nocl.add(parseOCl("Auction.cd", "negConstraint1.ocl"));
+        nocl.add(parseOCl("Auction.cd", "negConstraint2.ocl"));
 
         OCLDiffGenerator oclDiffGenerator = new OCLDiffGenerator();
         Set<ASTODArtifact> ods = oclDiffGenerator.oclDiff(ast, pocl, nocl);

@@ -56,7 +56,7 @@ public abstract class ExpressionAbstractTest extends AbstractTest {
 
         oclAST = OCL_Loader.loadAndCheckOCL(
                 Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(),
-                cdAST);
+                Paths.get(RELATIVE_MODEL_PATH,cdFileName ).toFile()  );
     }
 
     public void printOD(ASTODArtifact od) {
