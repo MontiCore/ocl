@@ -3,8 +3,7 @@ package de.monticore.ocl2smt;
 
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
-import com.microsoft.z3.Global;
-import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
