@@ -34,7 +34,7 @@ public class OCLDiffTest extends AbstractTest {
         Log.init();
         OCLMill.init();
         CD4CodeMill.init();
-        ctxParam.put("proof", "true");
+        ctxParam.put("model", "true");
     }
     protected ASTOCLCompilationUnit parseOCl(String cdFileName, String oclFileName) throws IOException {
         setUp();
@@ -96,9 +96,7 @@ public class OCLDiffTest extends AbstractTest {
         printOD(od);
 
         od.getObjectDiagram().getODElementList().forEach(p->{
-            if (p instanceof ASTODNamedObject){
-                assert (((ASTODNamedObject)p).getODAttributeList().size() <= 3);
-            }
+            assert !(p instanceof ASTODNamedObject) || (((ASTODNamedObject) p).getODAttributeList().size() <= 3);
         });
     }
 }
