@@ -180,7 +180,7 @@ public class OCL2SMTGenerator {
 
   protected Expr<? extends Sort> convertExpr(ASTExpression node) {
     Expr<? extends Sort> res;
-    Log.warn("I have got a " + node.getClass().getName());
+    Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
     res = convertGenExprOpt(node).orElse(null);
     if (res == null) {
       res = convertBoolExprOpt(node).orElse(null);
