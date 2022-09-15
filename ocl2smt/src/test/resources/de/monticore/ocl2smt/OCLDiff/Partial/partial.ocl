@@ -9,7 +9,7 @@ context Text t inv:
 context Text t inv:
   t.aFlagForSometimesImportant implies t.sometimesImportant == "Hallo";
 
-/*
+
 inv:
   exists Text t:
      !t.aFlagForSometimesImportant;
@@ -17,5 +17,5 @@ inv:
 inv:
   exists Text t:
     t.aFlagForSometimesImportant;
-*/
+
 }

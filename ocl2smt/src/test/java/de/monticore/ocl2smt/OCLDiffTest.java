@@ -91,9 +91,8 @@ public class OCLDiffTest extends AbstractTest {
         oclSet.add(parseOCl("Partial/Partial.cd","Partial/partial.ocl"));
 
         List<Pair<String, BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclSet, new Context(ctxParam));
-        ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, "Partial", constraintList, cdAST.getCDDefinition());
+        ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, "Partial", constraintList, cdAST.getCDDefinition(),true);
         printOD(od);
         CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
-
     }
 }
