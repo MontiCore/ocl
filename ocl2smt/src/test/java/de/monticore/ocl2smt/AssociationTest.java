@@ -23,14 +23,14 @@ public class AssociationTest extends ExpressionAbstractTest {
    ASTODArtifact testInv(String invName){
        Set<ASTOCLCompilationUnit> oclFiles = new HashSet<>();
        oclFiles.add(oclAST);
-        List<Pair<String,BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclFiles);
+        List<Pair<String,BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclFiles,buildContext());
         ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, invName, constraintList, cdAST.getCDDefinition());
         printOD(od);
         return od;
     }
     @Test
     public void of_legal_age() {
-     ASTODArtifact od =   testInv("Of_legal_age");
+      testInv("Of_legal_age");
     }
     @Test
     public void different_ids() {

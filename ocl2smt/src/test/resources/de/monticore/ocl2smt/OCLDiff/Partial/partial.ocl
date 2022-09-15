@@ -1,0 +1,21 @@
+ocl PartialTest {
+
+context Text t inv:
+  t.importantAttrib == true;
+
+context Text t inv:
+  false implies t.notImportant2 > 100;
+
+context Text t inv:
+  t.aFlagForSometimesImportant implies t.sometimesImportant == "Hallo";
+
+
+inv:
+  exists Text t:
+     !t.aFlagForSometimesImportant;
+
+inv:
+  exists Text t:
+    t.aFlagForSometimesImportant;
+
+}

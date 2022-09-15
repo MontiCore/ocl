@@ -1,5 +1,6 @@
 package de.monticore.ocl2smt;
 
+
 import com.microsoft.z3.Status;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +13,7 @@ public class ControlExpressionTest extends ExpressionAbstractTest {
     @BeforeEach
     public void setup() throws IOException {
         parse("MinAuction.cd", "ControlExpr.ocl");
-        cdContext = cd2SMTGenerator.cd2smt(cdAST);
+        cdContext = cd2SMTGenerator.cd2smt(cdAST,cdContext.getContext());
         ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
         solver = cdContext.getContext().mkSolver();
     }

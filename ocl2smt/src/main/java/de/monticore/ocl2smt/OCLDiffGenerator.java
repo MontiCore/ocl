@@ -12,7 +12,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.lang3.tuple.Pair;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,9 +22,9 @@ public class OCLDiffGenerator {
     protected static CDContext cdContext;
     protected static OCL2SMTGenerator ocl2SMTGenerator;
 
-    protected static List<Pair<String,BoolExpr>> getPositiveSolverConstraints(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in){
+    protected static List<Pair<String,BoolExpr>> getPositiveSolverConstraints(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in, Context context){
       //convert the cd to an SMT context
-      cdContext = cd2SMTGenerator.cd2smt(cd);
+      cdContext = cd2SMTGenerator.cd2smt(cd, context);
 
       //transform positive ocl files    in a list of SMT BoolExpr
       ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
@@ -36,22 +36,26 @@ public class OCLDiffGenerator {
     }
 
 
-    public static ASTODArtifact oclWitness(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in){
-      List<Pair<String,BoolExpr>> solverConstraints = getPositiveSolverConstraints(cd, in);
+    public static ASTODArtifact oclWitness(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in, Context context, boolean partial ){
+      List<Pair<String,BoolExpr>> solverConstraints = getPositiveSolverConstraints(cd, in,context);
 
       //check if they exist a model for the list of positive Constraint
       Optional<Model> modelOptional = getModel(cdContext.getContext(), solverConstraints);
 
-      if (!modelOptional.isPresent()){
+      if (modelOptional.isEmpty()){
         Log.error("there are no Model for the List Of Positive Constraints");
       }
 
-      return buildOd(cdContext, "Witness", solverConstraints, cd.getCDDefinition());
+      return buildOd(cdContext, "Witness", solverConstraints, cd.getCDDefinition(), partial);
+    }
+    public static ASTODArtifact oclWitness(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in, Context context){
+        return oclWitness(cd,in,context,false);
     }
 
-    public static Set<ASTODArtifact> oclDiff(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in , Set<ASTOCLCompilationUnit> notIn){
+
+    public static Set<ASTODArtifact> oclDiff(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in , Set<ASTOCLCompilationUnit> notIn, Context context, boolean partial){
         Set<ASTODArtifact> res = new HashSet<>();
-        List<Pair<String,BoolExpr>> solverConstraints = getPositiveSolverConstraints(cd, in);
+        List<Pair<String,BoolExpr>> solverConstraints = getPositiveSolverConstraints(cd, in,context);
 
         //negative ocl constraints
         List<Pair<Optional<String> ,BoolExpr>> negConstList = new ArrayList<>();
@@ -60,7 +64,7 @@ public class OCLDiffGenerator {
 
         //check if they exist a model for the list of positive Constraint
         Optional<Model> modelOptional = getModel(cdContext.getContext(),solverConstraints );
-        if (!modelOptional.isPresent()){
+        if (modelOptional.isEmpty()){
             Log.error("there are no Model for the List Of Positive Constraints");
             return res ;
         }
@@ -72,9 +76,9 @@ public class OCLDiffGenerator {
             modelOptional = getModel(cdContext.getContext(), solverConstraints);
             if (modelOptional.isPresent()) {
                 if (negConstraint.getLeft().isPresent()) {
-                    res.add(buildOd(cdContext, negConstraint.getLeft().get(), solverConstraints, cd.getCDDefinition()));
+                    res.add(buildOd(cdContext, negConstraint.getLeft().get(), solverConstraints, cd.getCDDefinition(), partial));
                 } else {
-                    res.add(buildOd(cdContext, "NoName", solverConstraints, cd.getCDDefinition()));
+                    res.add(buildOd(cdContext, "NoName", solverConstraints, cd.getCDDefinition(), partial));
                 }
 
             }
@@ -82,13 +86,17 @@ public class OCLDiffGenerator {
         }
         return  res  ;
     }
-
-    protected static ASTODArtifact buildOd(CDContext cdContext, String ODName, List<Pair<String,BoolExpr>> solverConstraints, ASTCDDefinition cd) {
+    public static Set<ASTODArtifact> oclDiff(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in , Set<ASTOCLCompilationUnit> notIn, Context context){
+        return oclDiff(cd,in, notIn, context, false);
+    }
+    protected static ASTODArtifact buildOd(CDContext cdContext, String ODName, List<Pair<String,BoolExpr>> solverConstraints, ASTCDDefinition cd, boolean partial) {
         cdContext.getClassConstrs().addAll(solverConstraints.stream().map(Pair::getRight).collect(Collectors.toList()));
         SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
-        return smt2ODGenerator.buildOd(new ODContext(cdContext, cd), ODName);
+        return smt2ODGenerator.buildOd(new ODContext(cdContext, cd,partial), ODName);
     }
-
+    protected static ASTODArtifact buildOd(CDContext cdContext, String ODName, List<Pair<String,BoolExpr>> solverConstraints, ASTCDDefinition cd) {
+        return buildOd(cdContext,ODName,solverConstraints,cd,false);
+    }
     public  static   Optional<Model> getModel (Context ctx, List<Pair<String,BoolExpr>> constraints){
         Solver s = ctx.mkSolver();
         int i = 0;  // Names must be unique, hence we have a counter

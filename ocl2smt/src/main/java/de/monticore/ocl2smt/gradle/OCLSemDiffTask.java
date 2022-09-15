@@ -1,5 +1,6 @@
 package de.monticore.ocl2smt.gradle;
 
+import com.microsoft.z3.Context;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
@@ -22,7 +23,9 @@ import java.io.File;
 import java.io.IOException;
 
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @CacheableTask
@@ -70,14 +73,18 @@ public abstract class OCLSemDiffTask extends DefaultTask {
     Set<ASTOCLCompilationUnit> positiveOCL = loadOCL(getCd().get().getAsFile(), getPositiveOCL().getFiles());
     Set<ASTOCLCompilationUnit> negativeOCL = loadOCL(getCd().get().getAsFile(), getNegativeOCL().getFiles());
 
+    //setup context
+    Map<String, String> ctxParam = new HashMap<>();
+    ctxParam.put("model", "true");
+    Context context = new Context(ctxParam);
 
     Set<ASTODArtifact> witnesses;
     // Compute Diff
     if (negativeOCL.isEmpty()) {
       witnesses = new HashSet<>();
-      witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL));
+      witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL,context));
     } else {
-      witnesses = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL);
+      witnesses = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL,context);
     }
 
 

@@ -1,6 +1,7 @@
 package de.monticore.ocl2smt;
 
 import com.microsoft.z3.BoolExpr;
+import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
@@ -23,12 +24,14 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public abstract class ExpressionAbstractTest extends AbstractTest {
     protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
     protected  static  final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
-    protected CDContext cdContext;
+    protected CDContext cdContext = new CDContext(buildContext()) ;
 
     protected ASTOCLCompilationUnit oclAST;
     protected ASTCDCompilationUnit cdAST;
@@ -68,4 +71,10 @@ public abstract class ExpressionAbstractTest extends AbstractTest {
             Assertions.fail("It Was Not Possible to Print the Object Diagram");
         }
     }
+
+   public Context buildContext(){
+       Map<String, String> cfg = new HashMap<>();
+       cfg.put("model", "true");
+       return  new Context(cfg);
+   }
 }
