@@ -4,8 +4,10 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+
 import de.monticore.ocl2smt.OCLDiffGenerator;
 import de.monticore.ocl2smt.OCL_Loader;
+
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import org.apache.commons.io.FileUtils;
@@ -18,6 +20,7 @@ import org.gradle.api.tasks.*;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
@@ -45,10 +48,10 @@ public abstract class OCLSemDiffTask extends DefaultTask {
   @OutputDirectory
   public abstract DirectoryProperty getOutputDir();
 
-  protected Set<ASTOCLCompilationUnit> loadOCL(ASTCDCompilationUnit cd, Set<File> oclFiles) throws IOException {
+  protected Set<ASTOCLCompilationUnit> loadOCL(File cdFile, Set<File> oclFiles) throws IOException {
     Set<ASTOCLCompilationUnit> result = new HashSet<>();
     for (File f : oclFiles) {
-      result.add(OCL_Loader.loadAndCheckOCL(f, cd));
+      result.add(OCL_Loader.loadAndCheckOCL(f, cdFile));
     }
     return result;
   }
@@ -64,8 +67,8 @@ public abstract class OCLSemDiffTask extends DefaultTask {
     // Load Input
     ASTCDCompilationUnit cd = OCL_Loader.loadAndCheckCD(getCd().get().getAsFile());
 
-    Set<ASTOCLCompilationUnit> positiveOCL = loadOCL(cd, getPositiveOCL().getFiles());
-    Set<ASTOCLCompilationUnit> negativeOCL = loadOCL(cd, getNegativeOCL().getFiles());
+    Set<ASTOCLCompilationUnit> positiveOCL = loadOCL(getCd().get().getAsFile(), getPositiveOCL().getFiles());
+    Set<ASTOCLCompilationUnit> negativeOCL = loadOCL(getCd().get().getAsFile(), getNegativeOCL().getFiles());
 
 
     Set<ASTODArtifact> witnesses;

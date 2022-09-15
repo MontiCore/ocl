@@ -5,18 +5,14 @@ import com.microsoft.z3.*;
 import de.monticore.cd2smt.context.ODContext;
 import de.monticore.cd2smt.context.SMTObject;
 
-import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.ocl.ocl.OCLMill;
-import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
-import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 
-import de.se_rwth.commons.logging.Log;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Paths;
+
 import java.util.ArrayList;
 
 public class QuantifiedExpressionTest extends ExpressionAbstractTest  {
