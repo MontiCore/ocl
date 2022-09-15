@@ -30,7 +30,7 @@ public class AssociationTest extends ExpressionAbstractTest {
     }
     @Test
     public void of_legal_age() {
-     ASTODArtifact od =   testInv("Of_legal_age");
+      testInv("Of_legal_age");
     }
     @Test
     public void different_ids() {

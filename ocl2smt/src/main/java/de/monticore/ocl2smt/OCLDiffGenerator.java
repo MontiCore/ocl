@@ -12,7 +12,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.lang3.tuple.Pair;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -42,7 +42,7 @@ public class OCLDiffGenerator {
       //check if they exist a model for the list of positive Constraint
       Optional<Model> modelOptional = getModel(cdContext.getContext(), solverConstraints);
 
-      if (!modelOptional.isPresent()){
+      if (modelOptional.isEmpty()){
         Log.error("there are no Model for the List Of Positive Constraints");
       }
 
@@ -64,7 +64,7 @@ public class OCLDiffGenerator {
 
         //check if they exist a model for the list of positive Constraint
         Optional<Model> modelOptional = getModel(cdContext.getContext(),solverConstraints );
-        if (!modelOptional.isPresent()){
+        if (modelOptional.isEmpty()){
             Log.error("there are no Model for the List Of Positive Constraints");
             return res ;
         }

@@ -12,6 +12,7 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -85,7 +86,7 @@ public class OCLDiffTest extends AbstractTest {
     }
 
     @Test
-    public void odPartial() throws IOException {
+    public void testOdPartial() throws IOException {
         ASTCDCompilationUnit cdAST = parseCD("Partial/Partial.cd");
         Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();
         oclSet.add(parseOCl("Partial/Partial.cd","Partial/partial.ocl"));
@@ -93,6 +94,11 @@ public class OCLDiffTest extends AbstractTest {
         List<Pair<String, BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclSet, new Context(ctxParam));
         ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, "Partial", constraintList, cdAST.getCDDefinition(),true);
         printOD(od);
-        CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
+
+        od.getObjectDiagram().getODElementList().forEach(p->{
+            if (p instanceof ASTODNamedObject){
+                assert (((ASTODNamedObject)p).getODAttributeList().size() <= 3);
+            }
+        });
     }
 }
