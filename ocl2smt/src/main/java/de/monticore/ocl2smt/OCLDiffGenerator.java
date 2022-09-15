@@ -12,6 +12,7 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -57,11 +58,18 @@ public class OCLDiffGenerator {
         notIn.forEach(p -> negConstList.addAll(ocl2SMTGenerator.ocl2smt(p.getOCLArtifact())));
 
 
+        //check if they exist a model for the list of positive Constraint
+        Optional<Model> modelOptional = getModel(cdContext.getContext(),solverConstraints );
+        if (!modelOptional.isPresent()){
+            Log.error("there are no Model for the List Of Positive Constraints");
+            return res ;
+        }
+
         //add one by one all Constraints to the Solver and check if  it can always produce a Model
         for (Pair<Optional<String>, BoolExpr> negConstraint:  negConstList) {
             Pair<String,BoolExpr> actualConstraint = new ImmutablePair<>("negated_" + negConstraint.getLeft().orElse("NoName"), cdContext.getContext().mkNot(negConstraint.getRight()));
             solverConstraints.add(actualConstraint);
-            Optional<Model> modelOptional = getModel(cdContext.getContext(), solverConstraints);
+            modelOptional = getModel(cdContext.getContext(), solverConstraints);
             if (modelOptional.isPresent()) {
                 if (negConstraint.getLeft().isPresent()) {
                     res.add(buildOd(cdContext, negConstraint.getLeft().get(), solverConstraints, cd.getCDDefinition()));
