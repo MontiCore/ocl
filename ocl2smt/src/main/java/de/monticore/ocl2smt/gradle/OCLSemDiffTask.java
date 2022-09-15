@@ -5,8 +5,10 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 
+import de.monticore.ocl2smt.OCLDiffGenerator;
 import de.monticore.ocl2smt.OCL_Loader;
 
+import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.DefaultTask;
@@ -19,6 +21,7 @@ import org.gradle.api.tasks.*;
 import java.io.File;
 import java.io.IOException;
 
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -70,18 +73,18 @@ public abstract class OCLSemDiffTask extends DefaultTask {
 
     Set<ASTODArtifact> witnesses;
     // Compute Diff
-   /* if (negativeOCL.isEmpty()) {
+    if (negativeOCL.isEmpty()) {
       witnesses = new HashSet<>();
       witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL));
     } else {
       witnesses = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL);
-    }*/
+    }
 
 
     // Write Results
-   /* for (ASTODArtifact wit : witnesses) {
+    for (ASTODArtifact wit : witnesses) {
       String fileName = wit.getObjectDiagram().getName() + ".od";
       FileUtils.writeStringToFile(getOutputDir().file(fileName).get().getAsFile(), new OD4ReportFullPrettyPrinter().prettyprint(wit), Charset.defaultCharset());
-    }*/
+    }
   }
 }
