@@ -1,15 +1,17 @@
 package de.monticore.ocl2smt;
 
 
+import com.microsoft.z3.BoolExpr;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl2smt.AbstractTest;
+
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -59,8 +61,8 @@ public class OCLDiffTest extends AbstractTest {
         nocl.add(parseOCl(ast, "negConstraint1.ocl"));
         nocl.add(parseOCl(ast, "negConstraint2.ocl"));
 
-        OCLDiffGenerator oclDiffGenerator = new OCLDiffGenerator();
-        Set<ASTODArtifact> ods = oclDiffGenerator.oclDiff(ast, pocl, nocl);
+
+        Set<ASTODArtifact> ods = OCLDiffGenerator.oclDiff(ast, pocl, nocl);
 
         for (ASTODArtifact od : ods) {
             printOD(od);
@@ -76,6 +78,18 @@ public class OCLDiffTest extends AbstractTest {
         org.junit.jupiter.api.Assertions.assertFalse(odNames.contains("MaxIdent_9"));
         org.junit.jupiter.api.Assertions.assertFalse(odNames.contains("Exists_one_Auction"));
 
+
+    }
+
+    @Test
+    public void odPartial() throws IOException {
+        ASTCDCompilationUnit cdAST = parseCD("Partial/Partial.cd");
+        Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();
+        oclSet.add(parseOCl(cdAST,"Partial/partial.ocl"));
+
+        List<Pair<String, BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclSet);
+        ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, "Partial", constraintList, cdAST.getCDDefinition());
+        printOD(od);
 
     }
 }

@@ -1,6 +1,6 @@
 classdiagram Partial {
 
-  class Test {
+  class Text {
     boolean importantAttrib;  // Must be present in ALL ODs
 
     int notImportant; // Nobody Cares, Never present!
