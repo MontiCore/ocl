@@ -3,7 +3,7 @@ package de.monticore.ocl2smt;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl2smt.AbstractTest;
+
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
