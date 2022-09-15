@@ -2,6 +2,9 @@ package de.monticore.ocl2smt;
 
 
 import com.microsoft.z3.BoolExpr;
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Global;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
@@ -19,18 +22,18 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class OCLDiffTest extends AbstractTest {
     protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt/OCLDiff";
     protected  static  final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
+   protected static Map<String, String> ctxParam = new HashMap<>();
+
     public void setUp(){
         Log.init();
         OCLMill.init();
         CD4CodeMill.init();
+        ctxParam.put("proof", "true");
     }
     protected ASTOCLCompilationUnit parseOCl(String cdFileName, String oclFileName) throws IOException {
         setUp();
@@ -62,7 +65,7 @@ public class OCLDiffTest extends AbstractTest {
         nocl.add(parseOCl("Auction.cd", "negConstraint2.ocl"));
 
 
-        Set<ASTODArtifact> ods = OCLDiffGenerator.oclDiff(ast, pocl, nocl);
+        Set<ASTODArtifact> ods = OCLDiffGenerator.oclDiff(ast, pocl, nocl,new Context(ctxParam));
 
         for (ASTODArtifact od : ods) {
             printOD(od);
@@ -85,11 +88,12 @@ public class OCLDiffTest extends AbstractTest {
     public void odPartial() throws IOException {
         ASTCDCompilationUnit cdAST = parseCD("Partial/Partial.cd");
         Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();
-        oclSet.add(parseOCl(cdAST,"Partial/partial.ocl"));
+        oclSet.add(parseOCl("Partial/Partial.cd","Partial/partial.ocl"));
 
-        List<Pair<String, BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclSet);
+        List<Pair<String, BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclSet, new Context(ctxParam));
         ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, "Partial", constraintList, cdAST.getCDDefinition());
         printOD(od);
+        CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
     }
 }

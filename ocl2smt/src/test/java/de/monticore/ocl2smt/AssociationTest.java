@@ -23,7 +23,7 @@ public class AssociationTest extends ExpressionAbstractTest {
    ASTODArtifact testInv(String invName){
        Set<ASTOCLCompilationUnit> oclFiles = new HashSet<>();
        oclFiles.add(oclAST);
-        List<Pair<String,BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclFiles);
+        List<Pair<String,BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclFiles,buildContext());
         ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, invName, constraintList, cdAST.getCDDefinition());
         printOD(od);
         return od;

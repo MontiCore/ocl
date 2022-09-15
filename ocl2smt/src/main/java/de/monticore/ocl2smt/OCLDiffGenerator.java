@@ -22,9 +22,9 @@ public class OCLDiffGenerator {
     protected static CDContext cdContext;
     protected static OCL2SMTGenerator ocl2SMTGenerator;
 
-    protected static List<Pair<String,BoolExpr>> getPositiveSolverConstraints(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in){
+    protected static List<Pair<String,BoolExpr>> getPositiveSolverConstraints(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in, Context context){
       //convert the cd to an SMT context
-      cdContext = cd2SMTGenerator.cd2smt(cd);
+      cdContext = cd2SMTGenerator.cd2smt(cd, context);
 
       //transform positive ocl files    in a list of SMT BoolExpr
       ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
@@ -36,8 +36,8 @@ public class OCLDiffGenerator {
     }
 
 
-    public static ASTODArtifact oclWitness(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in){
-      List<Pair<String,BoolExpr>> solverConstraints = getPositiveSolverConstraints(cd, in);
+    public static ASTODArtifact oclWitness(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in, Context context){
+      List<Pair<String,BoolExpr>> solverConstraints = getPositiveSolverConstraints(cd, in,context);
 
       //check if they exist a model for the list of positive Constraint
       Optional<Model> modelOptional = getModel(cdContext.getContext(), solverConstraints);
@@ -49,9 +49,9 @@ public class OCLDiffGenerator {
       return buildOd(cdContext, "Witness", solverConstraints, cd.getCDDefinition());
     }
 
-    public static Set<ASTODArtifact> oclDiff(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in , Set<ASTOCLCompilationUnit> notIn){
+    public static Set<ASTODArtifact> oclDiff(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in , Set<ASTOCLCompilationUnit> notIn, Context context){
         Set<ASTODArtifact> res = new HashSet<>();
-        List<Pair<String,BoolExpr>> solverConstraints = getPositiveSolverConstraints(cd, in);
+        List<Pair<String,BoolExpr>> solverConstraints = getPositiveSolverConstraints(cd, in,context);
 
         //negative ocl constraints
         List<Pair<Optional<String> ,BoolExpr>> negConstList = new ArrayList<>();
