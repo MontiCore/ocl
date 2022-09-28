@@ -1,8 +1,9 @@
 package de.monticore.ocl2smt;
 
 import com.microsoft.z3.Sort;
+import de.monticore.cd2smt.context.CDArtifacts.SMTClass;
 import de.monticore.cd2smt.context.CDContext;
-import de.monticore.cd2smt.context.SMTClass;
+
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;

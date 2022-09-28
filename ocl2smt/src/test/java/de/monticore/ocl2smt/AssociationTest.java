@@ -20,13 +20,13 @@ public class AssociationTest extends ExpressionAbstractTest {
         parse( "/associations/Auction.cd","/associations/Association.ocl");
     }
 
-   ASTODArtifact testInv(String invName){
+   void testInv(String invName){
        Set<ASTOCLCompilationUnit> oclFiles = new HashSet<>();
        oclFiles.add(oclAST);
         List<Pair<String,BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclFiles,buildContext());
         ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, invName, constraintList, cdAST.getCDDefinition());
         printOD(od);
-        return od;
+
     }
     @Test
     public void of_legal_age() {

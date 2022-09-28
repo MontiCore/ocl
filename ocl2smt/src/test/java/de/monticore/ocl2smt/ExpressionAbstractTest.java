@@ -17,6 +17,7 @@ import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 
@@ -41,13 +42,13 @@ public abstract class ExpressionAbstractTest extends AbstractTest {
     protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
     // Used to make the tests shorter & readable
-    protected BoolExpr addConstraint(String search) {
+    protected Pair<String,BoolExpr> addConstraint(String search) {
         ASTOCLConstraint constr = oclAST.getOCLArtifact().getOCLConstraintList()
                 .stream().map(p -> (ASTOCLInvariant) p)
                 .filter(p -> search.equals(p.getName())).findAny().get();
         Pair<Optional<String>,BoolExpr> constraint = ocl2SMTGenerator.convertConstr(constr);
         solver.add(constraint.getRight());
-        return constraint.getRight();
+        return new ImmutablePair<>(search, constraint.getRight());
     }
 
     protected void parse(String cdFileName, String oclFileName) throws IOException {

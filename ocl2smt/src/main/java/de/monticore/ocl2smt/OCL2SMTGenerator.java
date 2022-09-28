@@ -2,9 +2,10 @@ package de.monticore.ocl2smt;
 
 import com.microsoft.z3.*;
 
+import de.monticore.cd2smt.context.CDArtifacts.SMTAssociation;
+import de.monticore.cd2smt.context.CDArtifacts.SMTClass;
 import de.monticore.cd2smt.context.CDContext;
-import de.monticore.cd2smt.context.SMTAssociation;
-import de.monticore.cd2smt.context.SMTClass;
+
 import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
