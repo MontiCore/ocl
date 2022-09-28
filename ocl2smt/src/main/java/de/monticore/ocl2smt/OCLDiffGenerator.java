@@ -5,7 +5,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.context.CDContext;
-import de.monticore.cd2smt.context.ODContext;
+
 import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -90,9 +90,9 @@ public class OCLDiffGenerator {
         return oclDiff(cd,in, notIn, context, false);
     }
     protected static ASTODArtifact buildOd(CDContext cdContext, String ODName, List<Pair<String,BoolExpr>> solverConstraints, ASTCDDefinition cd, boolean partial) {
-        cdContext.getClassConstrs().addAll(solverConstraints.stream().map(Pair::getRight).collect(Collectors.toList()));
+        solverConstraints.forEach(m-> cdContext.getOclConstraints().add(new ImmutablePair<>(m.getLeft(),m.getRight())));
         SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
-        return smt2ODGenerator.buildOd(new ODContext(cdContext, cd,partial), ODName);
+        return smt2ODGenerator.buildOd(cdContext, cd,ODName,partial).get();
     }
     protected static ASTODArtifact buildOd(CDContext cdContext, String ODName, List<Pair<String,BoolExpr>> solverConstraints, ASTCDDefinition cd) {
         return buildOd(cdContext,ODName,solverConstraints,cd,false);
