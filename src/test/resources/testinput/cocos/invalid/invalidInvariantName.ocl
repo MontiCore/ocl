@@ -1,8 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-import example.CDs.AuctionCD.*;
-import example.CDs.DefaultTypes.*;
-
-ocl invalidInvariantName {
-  context AllData _ad, Auction a inv nameInv :
-    _ad.auction[a.auctionIdent] == a;
-}

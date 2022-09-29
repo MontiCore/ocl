@@ -1,0 +1,5 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+ocl invalidUnnamedInvariantHasParameters{
+    inv (int i = 5): true;
+}

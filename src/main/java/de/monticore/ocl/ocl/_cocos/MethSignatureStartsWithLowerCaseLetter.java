@@ -10,7 +10,7 @@ public class MethSignatureStartsWithLowerCaseLetter
 
   @Override
   public void check(ASTOCLMethodSignature astMethSig) {
-    String methodName = astMethSig.getMethodName().getParts(1);
+    String methodName = astMethSig.getMethodName().getParts(0);
     if (!Character.isLowerCase(methodName.charAt(0))) {
       Log.error(String.format("0xOCL05 Method '%s' must start in lower-case.", astMethSig.getMethodName()));
     }
