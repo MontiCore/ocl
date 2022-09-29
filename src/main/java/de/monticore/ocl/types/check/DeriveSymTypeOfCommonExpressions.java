@@ -56,7 +56,7 @@ public class DeriveSymTypeOfCommonExpressions
       new IndentPrinter());
     SymTypeExpression innerResult;
     expr.getExpression().accept(getTraverser());
-    if (typeCheckResult.isPresentResult()) {
+    if (!typeCheckResult.getResult().isObscureType()) {
       //store the type of the inner expression in a variable
       innerResult = typeCheckResult.getResult();
       //look for this type in our scope
@@ -109,7 +109,7 @@ public class DeriveSymTypeOfCommonExpressions
         }
       }
       else {
-        if (typeCheckResult.isPresentResult()) {
+        if (!typeCheckResult.getResult().isObscureType()) {
           innerResult = typeCheckResult.getResult();
           //resolve methods with name of the inner expression
           List<FunctionSymbol> fittingMethods = innerResult.getMethodList(expr.getName(), typeCheckResult.isType());
