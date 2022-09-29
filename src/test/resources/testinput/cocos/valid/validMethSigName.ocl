@@ -4,6 +4,6 @@ import example.CDs.AuctionCD.*;
 
 ocl validMethSigName {
   context boolean Person.personalMsg()
-  pre: true;
+  pre: true
   post: result == [m in Person.message | !m.isAuctionSpecific()];
 }

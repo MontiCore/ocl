@@ -18,7 +18,7 @@ public class OCLSymbolTableTest extends AbstractTest {
   @MethodSource("getModelsWithValidSymTab")
   public void shouldCreateSymTabForValidModels(String filename) throws IOException {
     // given
-    final Optional<ASTOCLCompilationUnit> ast = parse(prefixValidModelsPath(filename), false);
+    final Optional<ASTOCLCompilationUnit> ast = parse(prefixValidModelsPath("/testinput/validGrammarModels/"+filename), false);
     assertThat(ast).isPresent();
 
     SymbolTableUtil.prepareMill();

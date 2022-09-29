@@ -35,8 +35,8 @@ public abstract class AbstractTest {
 
   protected IOCLGlobalScope globalScope;
 
-  public static String[] getParsableModels() {
-    File f = new File(RELATIVE_MODEL_PATH + "/testinput/validGrammarModels");
+  public static String[] getModels(String folderpath) {
+    File f = new File(RELATIVE_MODEL_PATH + folderpath);
     String[] filenames = f.list();
     assertThat(filenames).isNotNull();
     filenames = Arrays.stream(filenames)
@@ -45,6 +45,18 @@ public abstract class AbstractTest {
       .toArray(filenames);
 
     return filenames;
+  }
+  
+  public static String[] getParsableModels() {
+    return getModels("/testinput/validGrammarModels");
+  }
+  
+  public static String[] getValidCoCoModels() {
+    return getModels("/testinput/cocos/valid");
+  }
+  
+  public static String[] getInvalidCoCoModels() {
+    return getModels("/testinput/cocos/invalid");
   }
 
   public static String[] getModelsWithValidSymTab() {
@@ -57,7 +69,7 @@ public abstract class AbstractTest {
   }
 
   public static String prefixValidModelsPath(String fileName) {
-    return RELATIVE_MODEL_PATH + "/testinput/validGrammarModels/" + fileName;
+    return RELATIVE_MODEL_PATH + fileName;
   }
 
   public Optional<ASTOCLCompilationUnit> parse(String relativeFilePath,

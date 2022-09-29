@@ -51,7 +51,7 @@ public class OCLScopesGenitorTest extends AbstractTest {
   @MethodSource("getModelsWithValidSymTab")
   public void shouldSetEnclosingScopeOfOCLConstraint(String filename) throws IOException {
     // Given
-    String file = prefixValidModelsPath(filename);
+    String file = prefixValidModelsPath("/testinput/validGrammarModels/"+filename);
     Optional<ASTOCLCompilationUnit> ast = OCLMill.parser().parse(file);
     OCLScopesGenitorDelegator genitor = OCLMill.scopesGenitorDelegator();
 

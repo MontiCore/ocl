@@ -15,6 +15,7 @@ import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.oclexpressions._cocos.IterateExpressionVariableUsageIsCorrect;
 import de.monticore.ocl.setexpressions._cocos.SetComprehensionHasGenerator;
 import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
@@ -301,6 +302,7 @@ public class OCLTool extends OCLToolTOP {
     checker.addCoCo(new ContextHasOnlyOneType());
     checker.addCoCo(new SetComprehensionHasGenerator());
     checker.addCoCo(new UnnamedInvariantDoesNotHaveParameters());
+    checker.addCoCo(new VariableDeclarationOfCorrectType(new OCLDeriver(), new OCLSynthesizer()));
     checker.checkAll(ast);
   }
 
