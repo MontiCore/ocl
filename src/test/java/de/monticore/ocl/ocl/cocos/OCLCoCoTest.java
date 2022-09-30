@@ -41,12 +41,6 @@ public class OCLCoCoTest extends AbstractTest {
     // https://git.rwth-aachen.de/monticore/monticore/-/issues/3141
     assumeFalse(filename.equals("container1.ocl"));
     
-    // todo ignoring files containing method calls as those do not currently work
-    // https://git.rwth-aachen.de/monticore/monticore/-/issues/3228
-    assumeFalse(filename.equals("validMethSigName.ocl"));
-    assumeFalse(filename.equals("validMethodDeclarationName.ocl"));
-    assumeFalse(filename.equals("validTypes.ocl"));
-    
     // given
     final Optional<ASTOCLCompilationUnit> ast = parse(prefixValidModelsPath("/testinput/cocos/valid/"+filename), false);
     assertThat(ast).isPresent();
