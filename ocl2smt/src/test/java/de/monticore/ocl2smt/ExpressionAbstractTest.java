@@ -25,9 +25,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public abstract class ExpressionAbstractTest extends AbstractTest {
     protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
@@ -71,6 +69,16 @@ public abstract class ExpressionAbstractTest extends AbstractTest {
             e.printStackTrace();
             Assertions.fail("It Was Not Possible to Print the Object Diagram");
         }
+    }
+
+
+    void testInv(String invName){
+        Set<ASTOCLCompilationUnit> oclFiles = new HashSet<>();
+        oclFiles.add(oclAST);
+        List<Pair<String,BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclFiles,buildContext());
+        ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, invName, constraintList, cdAST.getCDDefinition());
+        printOD(od);
+
     }
 
    public Context buildContext(){

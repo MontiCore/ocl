@@ -1,0 +1,22 @@
+classdiagram Family{
+class Family {
+  String  name ;
+}
+
+ class Person{
+   String name ;
+   String firstName;
+ }
+
+ //composition [1] hasMother   Family (family) -- (father)Person [1];
+// composition [1] hasFather   Family (family) -- (mother) Person[1];
+ //composition [1] hasChildren Family (family) --  (child) Father [1..*];
+
+ //association [1] Person (father) --  (child) Person [1..*];
+ //association [1] Person (mother) -- (child)Person [1..*];
+
+ association [1] Person (parent) -- (child)Person [1..*];
+
+// composition marriage [1]  Person (man) -- (woman) Person[1];
+
+}
