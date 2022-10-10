@@ -1,9 +1,7 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types.check;
 
-import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTInfixExpression;
 import de.monticore.expressions.prettyprint.CommonExpressionsFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
@@ -214,48 +212,5 @@ public class DeriveSymTypeOfCommonExpressions
       }
     }
     return wholeResult;
-  }
-
-  @Override
-  protected SymTypeExpression calculateTypeLogical(ASTInfixExpression expr, SymTypeExpression rightResult, SymTypeExpression leftResult) {
-    //Option one: they are both numeric types
-    if (isNumericType(leftResult) && isNumericType(rightResult)
-      || isBoolean(leftResult) && isBoolean(rightResult)) {
-      return SymTypeExpressionFactory.createPrimitive("boolean");
-    }
-    //Option two: none of them is a primitive type and they are either the same type or in a super/sub type relation
-    if (!leftResult.isPrimitive() && !rightResult.isPrimitive() &&
-      (compatible(leftResult, rightResult) || compatible(rightResult, leftResult))
-    ) {
-      return SymTypeExpressionFactory.createPrimitive("boolean");
-    }
-    //should never happen, no valid result, error will be handled in traverse
-    return SymTypeExpressionFactory.createObscureType();
-  }
-
-  protected List<FunctionSymbol> getFittingMethods
-    (List<FunctionSymbol> methodlist, ASTCallExpression expr) {
-    List<FunctionSymbol> fittingMethods = new ArrayList<>();
-    for (FunctionSymbol method : methodlist) {
-      //for every method found check if the arguments are correct
-      if (expr.getArguments().getExpressionList().size() == method.getParameterList().size()) {
-        boolean success = true;
-        for (int i = 0; i < method.getParameterList().size(); i++) {
-          expr.getArguments().getExpression(i).accept(getTraverser());
-          //test if every single argument is correct
-          if (!method.getParameterList().get(i).getType()
-            .deepEquals(typeCheckResult.getResult()) &&
-            !compatible(method.getParameterList().get(i).getType(),
-              typeCheckResult.getResult())) {
-            success = false;
-          }
-        }
-        if (success) {
-          //method has the correct arguments and return type
-          fittingMethods.add(method);
-        }
-      }
-    }
-    return fittingMethods;
   }
 }
