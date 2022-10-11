@@ -3,6 +3,7 @@ package invariants;
 
 ocl Test01 {
  context Person p inv Parent_child:
- p in p.child <=> p in p.parent ;
+   forAll Auction a :
+     a isin p.auction ;
  }
 
