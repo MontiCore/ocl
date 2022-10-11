@@ -26,7 +26,6 @@ import java.util.*;
 public class OCL2SMTGenerator {
   protected final CDContext cdcontext;
   protected final LiteralExpressionsConverter literalExpressionsConverter;
-  protected final SetExpressionConverter setExpressionsConverter;
   protected final TypeConverter typeConverter;
 
   protected final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
@@ -35,7 +34,6 @@ public class OCL2SMTGenerator {
   public OCL2SMTGenerator(CDContext cdContext) {
     this.cdcontext = cdContext;
     this.literalExpressionsConverter = new LiteralExpressionsConverter(cdContext.getContext());
-    this.setExpressionsConverter = new SetExpressionConverter(cdContext.getContext());
     this.typeConverter = new TypeConverter(cdContext);
   }
 
