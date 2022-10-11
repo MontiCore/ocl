@@ -2,8 +2,14 @@
 package invariants;
 
 ocl Test01 {
- context Person p inv Parent_child:
-   forAll Auction a :
-     a isin p.auction ;
+
+ context Auction a inv All_Person_in_All_Auctions:
+   forall Person p :
+      p isin a.person ;
+
+ context Auction a inv One_Person_in_Any_Auctions:
+    exists Person p :
+       p notin a.person ;
+
  }
 

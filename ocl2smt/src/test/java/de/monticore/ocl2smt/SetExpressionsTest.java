@@ -4,13 +4,13 @@ import com.microsoft.z3.BoolExpr;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SetExpressionsTest  extends ExpressionAbstractTest{
     @BeforeEach
@@ -21,12 +21,19 @@ public class SetExpressionsTest  extends ExpressionAbstractTest{
         Set<ASTOCLCompilationUnit> oclFiles = new HashSet<>();
         oclFiles.add(oclAST);
         List<Pair<String, BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclFiles,buildContext());
-        ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, invName, constraintList, cdAST.getCDDefinition());
+        List<Pair<String, BoolExpr>> actualConstraint = constraintList.stream().filter(p-> p.getLeft().equals(invName)).collect(Collectors.toList());
+        Assertions.assertTrue(actualConstraint.size() > 0);
+        ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, invName, actualConstraint, cdAST.getCDDefinition());
         printOD(od);
     }
     @Test
-    public void of_legal_age() {
-        testInv("Parent_child");
+    public void test_isin_set() {
+        testInv("All_Person_in_All_Auctions");
+    }
+
+    @Test
+    public void test_notin_set() {
+        testInv("One_Person_in_Any_Auctions");
     }
 
 }

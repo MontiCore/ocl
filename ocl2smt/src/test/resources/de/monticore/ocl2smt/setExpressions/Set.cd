@@ -1,4 +1,4 @@
-classdiagram Family{
+classdiagram CDTest{
  class Auction {
    String  name ;
    int auctionIdent;
@@ -8,6 +8,6 @@ classdiagram Family{
    String name ;
  }
 
-  association [1] Auction      --     Person[1..*];
+  association [*] Auction(auction)      --     (person)Person[1..*];
 
 }

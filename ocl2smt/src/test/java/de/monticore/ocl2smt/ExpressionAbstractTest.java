@@ -35,7 +35,7 @@ public abstract class ExpressionAbstractTest extends AbstractTest {
     protected ASTOCLCompilationUnit oclAST;
     protected ASTCDCompilationUnit cdAST;
     protected Solver solver;
-    protected OCL2SMTGenerator ocl2SMTGenerator ;
+    protected OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cdContext) ;
 
     protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 

@@ -13,6 +13,9 @@ import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.oclexpressions._ast.*;
 
+
+import de.monticore.ocl.setexpressions._ast.ASTSetInExpression;
+import de.monticore.ocl.setexpressions._ast.ASTSetNotInExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -23,6 +26,7 @@ import java.util.*;
 public class OCL2SMTGenerator {
   protected final CDContext cdcontext;
   protected final LiteralExpressionsConverter literalExpressionsConverter;
+  protected final SetExpressionConverter setExpressionsConverter;
   protected final TypeConverter typeConverter;
 
   protected final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
@@ -31,6 +35,7 @@ public class OCL2SMTGenerator {
   public OCL2SMTGenerator(CDContext cdContext) {
     this.cdcontext = cdContext;
     this.literalExpressionsConverter = new LiteralExpressionsConverter(cdContext.getContext());
+    this.setExpressionsConverter = new SetExpressionConverter(cdContext.getContext());
     this.typeConverter = new TypeConverter(cdContext);
   }
 
@@ -102,7 +107,11 @@ public class OCL2SMTGenerator {
       result = convertForAll((ASTForallExpression) node);
     } else if (node instanceof ASTExistsExpression) {
       result = convertExist((ASTExistsExpression) node);
-    } else {
+    } else if (node instanceof ASTSetInExpression) {
+      result = convertSetIn((ASTSetInExpression)node);
+    } else if (node instanceof ASTSetNotInExpression) {
+      result = convertSetNotIn((ASTSetNotInExpression)node);
+    }else {
       Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
       if (buf.isPresent() && buf.get() instanceof BoolExpr) {
         result = (BoolExpr) buf.get();
@@ -410,6 +419,49 @@ public class OCL2SMTGenerator {
          }
       }
       return result;
+  }
+//---------------------------------------Set-Expressions----------------------------------------------------------------
+  protected BoolExpr convertSetIn(ASTSetInExpression node){
+    SMTSet set = convertSet(node.getSet());
+    return cdcontext.getContext().mkAnd(set.getFilter(), (BoolExpr)cdcontext.getContext().mkApp(set.getSetFunction(), convertExpr(node.getElem())));
+  }
+  protected BoolExpr convertSetNotIn(ASTSetNotInExpression node){
+    SMTSet set = convertSet(node.getSet());
+    return cdcontext.getContext().mkAnd(set.getFilter(), cdcontext.getContext().mkNot((BoolExpr)cdcontext.getContext()
+            .mkApp(set.getSetFunction(), convertExpr(node.getElem()))));
+  }
+  protected SMTSet convertSet(ASTExpression set){
+    if (set instanceof ASTFieldAccessExpression) {
+      Expr<? extends Sort> obj = convertExpr(((ASTFieldAccessExpression) set).getExpression());
+      Optional<SMTClass> smtClassOptional = cdcontext.getSMTClass(obj);
+      assert smtClassOptional.isPresent();
+
+      FuncDecl<? extends  Sort> assocFunc = cdcontext.getAssocFunc(smtClassOptional.get(),((ASTFieldAccessExpression) set).getName()).getAssocFunc();
+      SMTSet mySet;
+      String setName = "mySet";
+      FuncDecl<? extends  Sort> setFunc;
+      BoolExpr filter ;
+      if (assocFunc.getDomain()[0].equals(obj.getSort())){
+         setFunc = cdcontext.getContext().mkFuncDecl(setName,
+                assocFunc.getDomain()[1], cdcontext.getContext().mkBoolSort());
+
+        Expr<? extends  Sort> otherObj = cdcontext.getContext().mkConst("x1",assocFunc.getDomain()[1]);
+         filter = cdcontext.getContext().mkForall(new Expr[]{otherObj}, cdcontext.getContext()
+                .mkEq(cdcontext.getContext().mkApp(assocFunc,obj,otherObj),cdcontext.getContext()
+                        .mkApp(setFunc,otherObj)),0,null,null,null,null);
+      }
+      else {
+        setFunc = cdcontext.getContext().mkFuncDecl(setName,
+                assocFunc.getDomain()[0], cdcontext.getContext().mkBoolSort());
+
+        Expr<? extends  Sort> otherObj = cdcontext.getContext().mkConst("x1",assocFunc.getDomain()[0]);
+         filter = cdcontext.getContext().mkForall(new Expr[]{otherObj}, cdcontext.getContext()
+                .mkEq(cdcontext.getContext().mkApp(assocFunc,otherObj,obj),cdcontext.getContext()
+                        .mkApp(setFunc,otherObj)),0,null,null,null,null);
+      }
+      return  new SMTSet(setName,setFunc,filter);
+    }
+    return null;
   }
 
   protected ASTMCType getType(ASTFieldAccessExpression node){
