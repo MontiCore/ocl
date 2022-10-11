@@ -191,26 +191,4 @@ public class DeriveSymTypeOfCommonExpressions
     }
     return true;
   }
-
-  @Override
-  protected SymTypeExpression calculateConditionalExpressionType( SymTypeExpression conditionResult,
-      SymTypeExpression trueResult,
-      SymTypeExpression falseResult) {
-    SymTypeExpression wholeResult = SymTypeExpressionFactory.createObscureType();
-    //condition has to be boolean
-    if (isBoolean(conditionResult)) {
-      //check if "then" and "else" are either from the same type or are in sub-supertype relation
-      if (compatible(trueResult, falseResult)) {
-        wholeResult = trueResult;
-      }
-      else if (compatible(falseResult, trueResult)) {
-        wholeResult = falseResult;
-      }
-      else {
-        // first argument can be null since it should not be relevant to the type calculation
-        wholeResult = getBinaryNumericPromotion(trueResult, falseResult);
-      }
-    }
-    return wholeResult;
-  }
 }
