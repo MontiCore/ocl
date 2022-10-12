@@ -9,32 +9,31 @@ ocl Test02 {
 
   inv MaxIdent_7:
         forall Auction a:
-           a.auctionIdent < 5 ;
+           a.auctionIdent < 8 ;
 
-  inv Names:
+  inv Auction_Names:
        forall Auction a :
            a.name == "FaceBook1" ||
            a.name == "Twitter"||
            a.name == "BMW4" ||
            a.name == "Mercedes";
 
-  inv Exists_Exact_4_Auction:
-         exists Auction a1,a2,a3,a4 :
+  inv Exists_Exact_3_Auction:
+         exists Auction a1,a2,a3 :
              a1 != a2 &&
              a2 != a3 &&
-             a3 != a4 &&
-             a4 != a1 &&
+             a3 != a1 &&
+
              ( forall Auction a :
                    a == a1 ||
                    a == a2||
-                   a == a3||
-                   a == a4  );
+                   a == a3 );
 
   inv Auction_Ident_Unique:
          forall Auction a1 , a2 :
-               if a1.name != a2.name
-               then a1.auctionIdent != a2.auctionIdent
-               else a1.auctionIdent == a2.auctionIdent;
+           (a1.auctionIdent != a2.auctionIdent implies a1 == a2) &&
+           (a1 == a2 implies a1.auctionIdent == a2.auctionIdent ) ;
+
 
 
 }

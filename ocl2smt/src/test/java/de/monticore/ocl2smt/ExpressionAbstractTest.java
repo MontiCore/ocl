@@ -4,6 +4,7 @@ import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 
+import de.monticore.cd2smt.Helper.Identifiable;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd4code.CD4CodeMill;
@@ -17,8 +18,6 @@ import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 
 import java.io.IOException;
@@ -27,7 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
+
 
 public abstract class ExpressionAbstractTest extends AbstractTest {
     protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
@@ -42,13 +41,13 @@ public abstract class ExpressionAbstractTest extends AbstractTest {
     protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
     // Used to make the tests shorter & readable
-    protected Pair<String,BoolExpr> addConstraint(String search) {
+    protected Identifiable<BoolExpr> addConstraint(String search) {
         ASTOCLConstraint constr = oclAST.getOCLArtifact().getOCLConstraintList()
                 .stream().map(p -> (ASTOCLInvariant) p)
                 .filter(p -> search.equals(p.getName())).findAny().get();
-        Pair<Optional<String>,BoolExpr> constraint = ocl2SMTGenerator.convertConstr(constr);
-        solver.add(constraint.getRight());
-        return new ImmutablePair<>(search, constraint.getRight());
+        Identifiable<BoolExpr> constraint = ocl2SMTGenerator.convertConstr(constr);
+        solver.add(constraint.getValue());
+        return constraint;
     }
 
     protected void parse(String cdFileName, String oclFileName) throws IOException {

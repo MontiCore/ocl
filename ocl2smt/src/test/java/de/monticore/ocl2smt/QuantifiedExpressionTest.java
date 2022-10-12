@@ -3,9 +3,11 @@ package de.monticore.ocl2smt;
 import com.microsoft.z3.*;
 
 
+import de.monticore.cd2smt.Helper.Identifiable;
 import de.monticore.cd2smt.context.ODArtifacts.SMTObject;
 import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
-import org.apache.commons.lang3.tuple.Pair;
+
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class QuantifiedExpressionTest extends ExpressionAbstractTest  {
@@ -26,9 +29,9 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest  {
         solver = cdContext.getContext().mkSolver();
     }
 
-    private void checkAttrValue(String value) {
+    private void checkAttrValue(String value, List<Identifiable<BoolExpr>> oclConstraints) {
         SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
-        smt2ODGenerator.buildOd(cdContext,cdAST.getCDDefinition());
+        smt2ODGenerator.buildOd(cdContext,"MyOD",oclConstraints);
 
         Assertions.assertTrue(smt2ODGenerator.getObjectMap().entrySet().size() >= 2);
         for (SMTObject obj : new ArrayList<>(smt2ODGenerator.getObjectMap().values())) {
@@ -124,18 +127,20 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest  {
 
     @Test
     public void Two_auction_sat() {
-       Pair< String,BoolExpr> constraint = addConstraint("Auction_two_sat");
+       Identifiable<BoolExpr> constraint = addConstraint("Auction_two_sat");
         Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-        cdContext.getOclConstraints().add(constraint);
-        checkAttrValue("10");
+        List<Identifiable<BoolExpr>> oclConstraints = new ArrayList<>();
+        oclConstraints.add(constraint);
+        checkAttrValue("10",oclConstraints);
     }
 
     @Test
     public void Two_auction_and_bool_sat() {
-        Pair< String,BoolExpr> constraint = addConstraint("Two_auction_and_bool_sat");
+        Identifiable<BoolExpr> constraint = addConstraint("Two_auction_and_bool_sat");
         Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-        cdContext.getOclConstraints().add(constraint);
-        checkAttrValue("14");
+        List<Identifiable<BoolExpr>> oclConstraints = new ArrayList<>();
+        oclConstraints.add(constraint);
+        checkAttrValue("14", oclConstraints);
     }
 
     @Test
