@@ -2,16 +2,19 @@ package de.monticore.ocl2smt;
 
 import com.microsoft.z3.BoolExpr;
 
+import de.monticore.cd2smt.Helper.Identifiable;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
-import org.apache.commons.lang3.tuple.Pair;
+
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import java.util.HashSet;
+
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class AssociationTest extends ExpressionAbstractTest {
@@ -23,9 +26,10 @@ public class AssociationTest extends ExpressionAbstractTest {
    void testInv(String invName){
        Set<ASTOCLCompilationUnit> oclFiles = new HashSet<>();
        oclFiles.add(oclAST);
-        List<Pair<String,BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclFiles,buildContext());
-        ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, invName, constraintList, cdAST.getCDDefinition());
-        printOD(od);
+       List<Identifiable<BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclFiles,buildContext());
+       Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, invName, constraintList, cdAST.getCDDefinition());
+       assert od.isPresent();
+       printOD(od.get());
 
     }
     @Test

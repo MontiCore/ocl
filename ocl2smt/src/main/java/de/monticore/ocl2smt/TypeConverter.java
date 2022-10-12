@@ -1,6 +1,7 @@
 package de.monticore.ocl2smt;
 
 import com.microsoft.z3.Sort;
+import de.monticore.cd2smt.context.CDArtifacts.SMTCDType;
 import de.monticore.cd2smt.context.CDArtifacts.SMTClass;
 import de.monticore.cd2smt.context.CDContext;
 
@@ -57,9 +58,9 @@ public class TypeConverter {
         } else if (type.getMCQualifiedName().getQName().equals("java.lang.String")) {
             return cdContext.getContext().mkStringSort();
         } else {
-            Optional<SMTClass> smtClass = cdContext.getSMTClass(type.getMCQualifiedName().getQName());
-            if (smtClass.isPresent()) {
-                return smtClass.get().getSort();
+            Optional<SMTCDType> smtcdType = cdContext.getSMTCDType(type.getMCQualifiedName().getQName());
+            if (smtcdType.isPresent()) {
+                return smtcdType.get().getSort();
             } else {
                 Log.error("Got unknown type " + type.getMCQualifiedName());
                 return null;
