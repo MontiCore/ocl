@@ -46,7 +46,8 @@ public class OCLDiffGenerator {
       //check if they exist a model for the list of positive Constraint
       Solver solver = cdContext.makeSolver(cdContext.getContext(), solverConstraints);
       if (solver.check() != Status.SATISFIABLE){
-        Log.error("there are no Model for the List Of Positive Constraints");
+        Log.warn ("there are no Model for the List Of Positive Constraints");
+        return buildUnSatOD(solver,"Witness_UNSAT_CORE");
       }
 
       return buildOd(cdContext, "Witness", solverConstraints, partial).get();

@@ -23,9 +23,4 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
         testInv("One_Person_in_Any_Auctions");
     }
 
-    @Test
-    public void test_transitive_closure() {
-        testInv("One_Person_in_Any_Auctions");
-    }
-
 }

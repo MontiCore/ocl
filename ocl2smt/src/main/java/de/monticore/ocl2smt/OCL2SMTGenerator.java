@@ -371,7 +371,7 @@ public class OCL2SMTGenerator {
     assert smtClassOptional.isPresent();
 
     FuncDecl<? extends  Sort> assocFunc = cdcontext.getAssocFunc(smtClassOptional.get(), node.getName()).getAssocFunc();
-    String setName = "mySet";
+    String setName = obj.toString() + "_" +node.getName() + "_set";
     FuncDecl<? extends  Sort> setFunc;
     BoolExpr filter ;
     if (assocFunc.getDomain()[0].equals(obj.getSort())){

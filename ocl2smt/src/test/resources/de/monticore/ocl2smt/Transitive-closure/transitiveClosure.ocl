@@ -3,10 +3,19 @@ package invariants;
 
 ocl Test01 {
 
+   inv Transitive_Closure:
+      exists Auction a1,a2,a3,a4:
+        a1 != a2 &&
+        a1 != a3 &&
+        a2 != a3 &&
 
+        a1 notin a1.auction &&
+        a2 notin a2.auction &&
+        a3 notin a3.auction&&
 
-
-
+        a2 isin a1.auction &&
+        a3 isin a2.auction &&
+        a3 isin a1.auction**;
 
  }
 

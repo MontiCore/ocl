@@ -20,18 +20,5 @@ ocl NC1 {
         a1 != a2 implies
         (exists Person p1 in a2.person, Person p2 in a2.person:
             p1 == p2);
-
-   inv Transitive_Closure:
-      exists Auction a1,a2,a3,a4:
-        a1 != a2 &&
-        a1 != a3 &&
-        a1 != a4 &&
-        a2 != a3 &&
-        a2 != a4 &&
-        a3 != a4 &&
-        a2 isin a1.auction &&
-        a3 isin a2.auction;
-
-
 }
 
