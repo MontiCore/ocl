@@ -9,6 +9,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.OCLDiffGenerator;
 import de.monticore.ocl2smt.OCL_Loader;
 
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import org.apache.commons.io.FileUtils;
@@ -51,6 +52,10 @@ public abstract class OCLSemDiffTask extends DefaultTask {
   @OutputDirectory
   public abstract DirectoryProperty getOutputDir();
 
+  @OutputFile
+  @Optional
+  public abstract RegularFileProperty getTraceOD();
+
   protected Set<ASTOCLCompilationUnit> loadOCL(File cdFile, Set<File> oclFiles) throws IOException {
     Set<ASTOCLCompilationUnit> result = new HashSet<>();
     for (File f : oclFiles) {
@@ -85,6 +90,15 @@ public abstract class OCLSemDiffTask extends DefaultTask {
       witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL,context));
     } else {
       witnesses = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL,context);
+      if(getTraceOD().isPresent()){
+        ASTODArtifact trace = OD4ReportMill.oDArtifactBuilder()
+            .setObjectDiagram(
+                OD4ReportMill.objectDiagramBuilder().setName("EMPTY_TRACE")
+                    .build()
+            )
+            .build();  // TODO: Get actual trace
+        FileUtils.writeStringToFile(getTraceOD().getAsFile().get(), new OD4ReportFullPrettyPrinter().prettyprint(trace), Charset.defaultCharset());
+      }
     }
 
 
