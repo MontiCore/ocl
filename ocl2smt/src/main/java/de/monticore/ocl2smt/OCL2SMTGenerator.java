@@ -17,10 +17,11 @@ import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.ASTSetInExpression;
 import de.monticore.ocl.setexpressions._ast.ASTSetNotInExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
+
+import java.nio.file.Path;
 import java.util.*;
 
 public class OCL2SMTGenerator {
@@ -37,15 +38,15 @@ public class OCL2SMTGenerator {
     this.typeConverter = new TypeConverter(cdContext);
   }
 
-  public List<Pair<Optional<String>,BoolExpr>> ocl2smt(ASTOCLArtifact astoclArtifact) {
-    List<Pair<Optional<String>,BoolExpr>> constraints = new ArrayList<>();
+  public List<Identifiable<BoolExpr>> ocl2smt(ASTOCLArtifact astoclArtifact) {
+    List<Identifiable<BoolExpr>> constraints = new ArrayList<>();
     for (ASTOCLConstraint constraint : astoclArtifact.getOCLConstraintList()) {
       constraints.add(convertConstr(constraint));
     }
     return constraints;
   }
 
-  protected Pair<Optional<String>,BoolExpr> convertConstr(ASTOCLConstraint constraint) {
+  protected Identifiable<BoolExpr> convertConstr(ASTOCLConstraint constraint) {
     if (constraint instanceof ASTOCLInvariant) {
       return convertInv((ASTOCLInvariant) constraint);
     } else {
@@ -55,7 +56,7 @@ public class OCL2SMTGenerator {
     }
   }
 
-  protected Pair<Optional<String>,BoolExpr> convertInv(ASTOCLInvariant invariant) {
+  protected Identifiable<BoolExpr> convertInv(ASTOCLInvariant invariant) {
     List<Expr<? extends  Sort>> expr  = new ArrayList<>();
     //convert parameter declaration  in context
      invariant.getOCLContextDefinitionList().forEach( node -> {
@@ -72,11 +73,7 @@ public class OCL2SMTGenerator {
     else {
        inv = convertBoolExpr(invariant.getExpression());
     }
-    //check if the name is present
-    if (invariant.isPresentName()){
-      return new ImmutablePair<>(Optional.of(invariant.getName()),inv);
-    }
-    return new ImmutablePair<>(Optional.empty(), inv);
+    return Identifiable.buildBoolExprIdentifiable(inv,srcPos,Optional.of( "inv_"+srcPos.getLine()));
   }
 
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
@@ -358,13 +355,14 @@ public class OCL2SMTGenerator {
   }
   protected Expr<? extends Sort>  convertFieldAcc(ASTFieldAccessExpression node) {
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
-    Optional<SMTClass> smtClassOptional = cdcontext.getSMTClass(obj);
+    Optional<SMTCDType> smtClassOptional =  cdcontext.getSMTCDType(obj);
     assert smtClassOptional.isPresent();
     return cdcontext.getContext().mkApp(cdcontext.getAttributeFunc(smtClassOptional.get(), node.getName()), obj);
   }
 
-  protected  SMTSet  convertFieldAccAssoc(ASTFieldAccessExpression node) {
-    Expr<? extends Sort> obj = convertExpr( node.getExpression());
+  protected  Association  convertFieldAccAssoc(ASTFieldAccessExpression node) {
+    //get the object and convert it into smt expression
+    Expr<? extends  Sort> obj = convertExpr(node.getExpression());
     Optional<SMTClass> smtClassOptional = cdcontext.getSMTClass(obj);
     assert smtClassOptional.isPresent();
 
@@ -452,7 +450,7 @@ public class OCL2SMTGenerator {
 
   protected ASTMCType getType(ASTFieldAccessExpression node){
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
-    Optional<SMTClass> smtClassOptional = cdcontext.getSMTClass(obj);
+    Optional<SMTCDType> smtClassOptional = cdcontext.getSMTCDType(obj);
   //TODO: implement the function
     assert smtClassOptional.isPresent();
     assert  false  ;

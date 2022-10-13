@@ -4,6 +4,7 @@ package de.monticore.ocl2smt;
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 
+import de.monticore.cd2smt.Helper.Identifiable;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
@@ -14,7 +15,7 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.Pair;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -54,32 +55,31 @@ public class OCLDiffTest extends AbstractTest {
         }
     }
     @Test
-    public void simpleTest() throws IOException {
-        ASTCDCompilationUnit ast = parseCD("Association.cd");
+    public void test_ocl_diff() throws IOException {
+        ASTCDCompilationUnit ast = parseCD("Auction.cd");
 
         Set<ASTOCLCompilationUnit> pocl = new HashSet<>();
-        pocl.add(parseOCl("Association.cd", "PosConstraint1.ocl"));
-        pocl.add(parseOCl("Association.cd", "PosConstraint2.ocl"));
+        pocl.add(parseOCl("Auction.cd", "PosConstraint1.ocl"));
+        pocl.add(parseOCl("Auction.cd", "PosConstraint2.ocl"));
         Set<ASTOCLCompilationUnit> nocl = new HashSet<>();
-        nocl.add(parseOCl("Association.cd", "negConstraint1.ocl"));
-        nocl.add(parseOCl("Association.cd", "negConstraint2.ocl"));
-
+        nocl.add(parseOCl("Auction.cd", "negConstraint2.ocl"));
+        nocl.add(parseOCl("Auction.cd", "negConstraint1.ocl"));
 
         Set<ASTODArtifact> ods = OCLDiffGenerator.oclDiff(ast, pocl, nocl,new Context(ctxParam));
-
-        for (ASTODArtifact od : ods) {
-            printOD(od);
-        }
+        ods.forEach(this::printOD);
         List<String> odNames = new ArrayList<>();
         ods.forEach(od -> odNames.add(od.getObjectDiagram().getName()));
 
-        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("MinIdent_5"));
-        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("Exists_ONLY_Facebook_AND_BMW4"));
-        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("BMW_ident_is_3"));
-        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("Exists_Exactly_2_Auction"));
+        org.junit.jupiter.api.Assertions.assertEquals(8, odNames.size());
+        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("inv_6"));
+        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("inv_12"));
+        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("inv_20"));
+        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("inv_26"));
 
-        org.junit.jupiter.api.Assertions.assertFalse(odNames.contains("MaxIdent_9"));
-        org.junit.jupiter.api.Assertions.assertFalse(odNames.contains("Exists_one_Auction"));
+        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("UNSAT_CORE_5"));
+        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("UNSAT_CORE_11"));
+        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("UNSAT_CORE_15"));
+        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("UNSAT_CORE_20"));
 
 
     }
@@ -90,11 +90,12 @@ public class OCLDiffTest extends AbstractTest {
         Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();
         oclSet.add(parseOCl("Partial/Partial.cd","Partial/partial.ocl"));
 
-        List<Pair<String, BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclSet, new Context(ctxParam));
-        ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, "Partial", constraintList, cdAST.getCDDefinition(),true);
-        printOD(od);
+        List<Identifiable< BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclSet, new Context(ctxParam));
+        Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, "Partial", constraintList, cdAST.getCDDefinition(),true);
+        assert od.isPresent();
+        printOD(od.get());
 
-        od.getObjectDiagram().getODElementList().forEach(p->{
+        od.get().getObjectDiagram().getODElementList().forEach(p->{
             assert !(p instanceof ASTODNamedObject) || (((ASTODNamedObject) p).getODAttributeList().size() <= 3);
         });
     }
