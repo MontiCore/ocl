@@ -10,7 +10,6 @@ import de.monticore.cd2smt.context.CDContext;
 
 import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -50,7 +49,7 @@ public class OCLDiffGenerator {
         Log.error("there are no Model for the List Of Positive Constraints");
       }
 
-      return buildOd(cdContext, "Witness", solverConstraints, cd.getCDDefinition(), partial).get();
+      return buildOd(cdContext, "Witness", solverConstraints, partial).get();
     }
     public static ASTODArtifact oclWitness(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in, Context context){
         return oclWitness(cd,in,context,false);
@@ -73,12 +72,12 @@ public class OCLDiffGenerator {
         //add one by one all Constraints to the Solver and check if  it can always produce a Model
         for (Identifiable<BoolExpr> negConstraint:  negConstList) {
             solverConstraints.add(negConstraint);
-            Optional<ASTODArtifact> optOd = buildOd(cdContext, negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0], solverConstraints, cd.getCDDefinition(), partial);
+            Optional<ASTODArtifact> optOd = buildOd(cdContext, negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0], solverConstraints, partial);
             if (optOd.isPresent()){
                 res.add(optOd.get());
             }else {
                 Solver solver = cdContext.makeSolver( cdContext.getContext(),solverConstraints);
-                res.add(buildUnSatOD(solver,cdContext, "UNSAT_CORE_"+negConstraint.getInvariantName().orElse("NoInvName").split("_")[1]));
+                res.add(buildUnSatOD(solver, "UNSAT_CORE_"+negConstraint.getInvariantName().orElse("NoInvName").split("_")[1]));
             }
 
             solverConstraints.remove(negConstraint);
@@ -88,12 +87,12 @@ public class OCLDiffGenerator {
     public static Set<ASTODArtifact> oclDiff(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in , Set<ASTOCLCompilationUnit> notIn, Context context){
         return oclDiff(cd,in, notIn, context, false);
     }
-    protected static Optional<ASTODArtifact> buildOd(CDContext cdContext, String ODName, List<Identifiable<BoolExpr>> oclConstraints, ASTCDDefinition cd, boolean partial) {
+    protected static Optional<ASTODArtifact> buildOd(CDContext cdContext, String ODName, List<Identifiable<BoolExpr>> oclConstraints, boolean partial) {
         SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
         return smt2ODGenerator.buildOd(cdContext,ODName,oclConstraints,partial);
     }
-    protected static Optional<ASTODArtifact> buildOd(CDContext cdContext, String ODName, List<Identifiable<BoolExpr>> solverConstraints, ASTCDDefinition cd) {
-        return buildOd(cdContext,ODName,solverConstraints,cd,false);
+    protected static Optional<ASTODArtifact> buildOd(CDContext cdContext, String ODName, List<Identifiable<BoolExpr>> solverConstraints) {
+        return buildOd(cdContext,ODName,solverConstraints,false);
     }
     protected static List<ASTODAttribute> buildInvODAttributeList(Identifiable<BoolExpr> identifiable){
         List<ASTODAttribute> attributeList = new ArrayList<>();
@@ -108,7 +107,7 @@ public class OCLDiffGenerator {
         return attributeList;
     }
 
-    protected static ASTODArtifact buildUnSatOD (Solver solver,CDContext cdContext ,String name){
+    protected static ASTODArtifact buildUnSatOD (Solver solver ,String name){
         List<ASTODElement> elementList = new ArrayList<>();
         List<Identifiable<BoolExpr>> posConstraints = new ArrayList<>();
         List<Identifiable<BoolExpr>> negConstraints = new ArrayList<>();

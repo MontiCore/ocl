@@ -4,6 +4,7 @@ import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 
+import de.monticore.cd2smt.Helper.Identifiable;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd4code.CD4CodeMill;
@@ -17,8 +18,6 @@ import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 
 import java.io.IOException;
@@ -26,12 +25,12 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public abstract class ExpressionAbstractTest extends AbstractTest {
+
+public abstract class ExpressionAbstractTest  {
     protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
     protected  static  final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
-    protected CDContext cdContext ;
+    protected CDContext cdContext  = new CDContext(buildContext());
 
     protected ASTOCLCompilationUnit oclAST;
     protected ASTCDCompilationUnit cdAST;
@@ -41,29 +40,29 @@ public abstract class ExpressionAbstractTest extends AbstractTest {
     protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
     // Used to make the tests shorter & readable
-    protected Pair<String,BoolExpr> addConstraint(String search) {
-        Pair<String,BoolExpr> constraint = getConstraint(search);
-        solver.add(constraint.getRight());
+    protected Identifiable<BoolExpr> addConstraint(String search) {
+        Identifiable<BoolExpr> constraint = getConstraint(search);
+        solver.add(constraint.getValue());
         return constraint;
     }
-    protected Pair<String,BoolExpr> getConstraint(String search) {
+    protected Identifiable<BoolExpr> getConstraint(String search) {
         ASTOCLConstraint constr = oclAST.getOCLArtifact().getOCLConstraintList()
                 .stream().map(p -> (ASTOCLInvariant) p)
                 .filter(p -> search.equals(p.getName())).findAny().get();
-        Pair<Optional<String>,BoolExpr> constraint = ocl2SMTGenerator.convertConstr(constr);
-        return new ImmutablePair<>(search, constraint.getRight());
+        return ocl2SMTGenerator.convertConstr(constr);
     }
 
     protected void parse(String cdFileName, String oclFileName) throws IOException {
         Log.init();
         OCLMill.init();
         CD4CodeMill.init();
+        Path cdPath = Path.of(RELATIVE_MODEL_PATH, cdFileName);
         cdAST = OCL_Loader.loadAndCheckCD(
-                Paths.get(RELATIVE_MODEL_PATH,cdFileName ).toFile());
+                cdPath.toFile());
 
         oclAST = OCL_Loader.loadAndCheckOCL(
                 Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(),
-                Paths.get(RELATIVE_MODEL_PATH,cdFileName ).toFile()  );
+                cdPath.toFile()  );
     }
 
     public void printOD(ASTODArtifact od) {
@@ -78,10 +77,11 @@ public abstract class ExpressionAbstractTest extends AbstractTest {
 
 
     void testInv(String invName){
-        List<Pair<String, BoolExpr>> actualConstraint = new ArrayList<>();
+        List<Identifiable<BoolExpr>> actualConstraint = new ArrayList<>();
         actualConstraint.add(getConstraint(invName));
-        ASTODArtifact od = OCLDiffGenerator.buildOd(cdContext, invName, actualConstraint, cdAST.getCDDefinition());
-        printOD(od);
+       Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(cdContext, invName, actualConstraint);
+       org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
+        printOD(od.get());
     }
 
 

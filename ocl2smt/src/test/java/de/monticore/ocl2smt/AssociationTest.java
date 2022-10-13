@@ -1,7 +1,8 @@
 package de.monticore.ocl2smt;
 
 
-import com.microsoft.z3.Context;
+
+import org.gradle.internal.impldep.org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class AssociationTest extends ExpressionAbstractTest {
     public void atLeast2Person(){ testInv("AtLeast_2_Person");}
     @Test
     public void Same_Person_in_2_Auction(){ testInv("Same_Person_in_2_Auction");}
+    @Ignore
     @Test
     public void transitive_closure(){ testInv("Transitive_Closure");}
 }

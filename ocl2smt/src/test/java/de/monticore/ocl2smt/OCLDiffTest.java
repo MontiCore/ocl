@@ -25,7 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class OCLDiffTest extends AbstractTest {
+public class OCLDiffTest {
     protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt/OCLDiff";
     protected  static  final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
    protected static Map<String, String> ctxParam = new HashMap<>();
@@ -91,7 +91,7 @@ public class OCLDiffTest extends AbstractTest {
         oclSet.add(parseOCl("Partial/Partial.cd","Partial/partial.ocl"));
 
         List<Identifiable< BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclSet, new Context(ctxParam));
-        Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, "Partial", constraintList, cdAST.getCDDefinition(),true);
+        Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, "Partial", constraintList,true);
         assert od.isPresent();
         printOD(od.get());
 

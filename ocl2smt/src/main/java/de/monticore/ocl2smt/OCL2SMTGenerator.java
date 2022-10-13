@@ -3,7 +3,8 @@ package de.monticore.ocl2smt;
 import com.microsoft.z3.*;
 
 
-import de.monticore.cd2smt.context.CDArtifacts.SMTClass;
+import de.monticore.cd2smt.Helper.Identifiable;
+import de.monticore.cd2smt.context.CDArtifacts.SMTCDType;
 import de.monticore.cd2smt.context.CDContext;
 
 import de.monticore.expressions.commonexpressions._ast.*;
@@ -21,7 +22,7 @@ import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 
 
-import java.nio.file.Path;
+
 import java.util.*;
 
 public class OCL2SMTGenerator {
@@ -58,6 +59,9 @@ public class OCL2SMTGenerator {
 
   protected Identifiable<BoolExpr> convertInv(ASTOCLInvariant invariant) {
     List<Expr<? extends  Sort>> expr  = new ArrayList<>();
+    SourcePosition srcPos = invariant.get_SourcePositionStart();
+    assert srcPos.getFileName().isPresent();
+
     //convert parameter declaration  in context
      invariant.getOCLContextDefinitionList().forEach( node -> {
        if (node.isPresentOCLParamDeclaration()){
@@ -360,10 +364,10 @@ public class OCL2SMTGenerator {
     return cdcontext.getContext().mkApp(cdcontext.getAttributeFunc(smtClassOptional.get(), node.getName()), obj);
   }
 
-  protected  Association  convertFieldAccAssoc(ASTFieldAccessExpression node) {
+  protected  SMTSet  convertFieldAccAssoc(ASTFieldAccessExpression node) {
     //get the object and convert it into smt expression
     Expr<? extends  Sort> obj = convertExpr(node.getExpression());
-    Optional<SMTClass> smtClassOptional = cdcontext.getSMTClass(obj);
+    Optional<SMTCDType> smtClassOptional = cdcontext.getSMTCDType(obj);
     assert smtClassOptional.isPresent();
 
     FuncDecl<? extends  Sort> assocFunc = cdcontext.getAssocFunc(smtClassOptional.get(), node.getName()).getAssocFunc();
@@ -457,9 +461,6 @@ public class OCL2SMTGenerator {
     Log.error("the function getType was not implemented yet");
     return  null ;
   }
-@FunctionalInterface
- public  interface Association {
-    Expr<? extends Sort> evaluate ( Expr<? extends Sort> right );
- }
+
 
 }

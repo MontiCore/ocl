@@ -9,6 +9,8 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     @BeforeEach
     public void setup() throws IOException {
         parse("setExpressions/Set.cd", "setExpressions/Set.ocl");
+        cdContext = cd2SMTGenerator.cd2smt(cdAST,(buildContext()));
+        ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
     }
 
     @Test
