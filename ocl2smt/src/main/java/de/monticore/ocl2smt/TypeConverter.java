@@ -61,7 +61,7 @@ public class TypeConverter {
             if (smtClass.isPresent()) {
                 return smtClass.get().getSort();
             } else {
-                Log.error("Got unknown type " + type.getMCQualifiedName());
+                Log.error("Type or Class " + type.getMCQualifiedName() + "not found in CDContext");
                 return null;
             }
 

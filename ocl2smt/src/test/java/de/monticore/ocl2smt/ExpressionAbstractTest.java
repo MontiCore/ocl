@@ -26,26 +26,31 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class ExpressionAbstractTest extends AbstractTest {
     protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
     protected  static  final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
-    protected CDContext cdContext = new CDContext(buildContext()) ;
+    protected CDContext cdContext ;
 
     protected ASTOCLCompilationUnit oclAST;
     protected ASTCDCompilationUnit cdAST;
     protected Solver solver;
-    protected OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cdContext) ;
+    protected OCL2SMTGenerator ocl2SMTGenerator ;
 
     protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
     // Used to make the tests shorter & readable
     protected Pair<String,BoolExpr> addConstraint(String search) {
+        Pair<String,BoolExpr> constraint = getConstraint(search);
+        solver.add(constraint.getRight());
+        return constraint;
+    }
+    protected Pair<String,BoolExpr> getConstraint(String search) {
         ASTOCLConstraint constr = oclAST.getOCLArtifact().getOCLConstraintList()
                 .stream().map(p -> (ASTOCLInvariant) p)
                 .filter(p -> search.equals(p.getName())).findAny().get();
         Pair<Optional<String>,BoolExpr> constraint = ocl2SMTGenerator.convertConstr(constr);
-        solver.add(constraint.getRight());
         return new ImmutablePair<>(search, constraint.getRight());
     }
 
@@ -73,13 +78,12 @@ public abstract class ExpressionAbstractTest extends AbstractTest {
 
 
     void testInv(String invName){
-        Set<ASTOCLCompilationUnit> oclFiles = new HashSet<>();
-        oclFiles.add(oclAST);
-        List<Pair<String,BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclFiles,buildContext());
-        ASTODArtifact od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, invName, constraintList, cdAST.getCDDefinition());
+        List<Pair<String, BoolExpr>> actualConstraint = new ArrayList<>();
+        actualConstraint.add(getConstraint(invName));
+        ASTODArtifact od = OCLDiffGenerator.buildOd(cdContext, invName, actualConstraint, cdAST.getCDDefinition());
         printOD(od);
-
     }
+
 
    public Context buildContext(){
        Map<String, String> cfg = new HashMap<>();

@@ -55,14 +55,14 @@ public class OCLDiffTest extends AbstractTest {
     }
     @Test
     public void simpleTest() throws IOException {
-        ASTCDCompilationUnit ast = parseCD("Auction.cd");
+        ASTCDCompilationUnit ast = parseCD("Association.cd");
 
         Set<ASTOCLCompilationUnit> pocl = new HashSet<>();
-        pocl.add(parseOCl("Auction.cd", "PosConstraint1.ocl"));
-        pocl.add(parseOCl("Auction.cd", "PosConstraint2.ocl"));
+        pocl.add(parseOCl("Association.cd", "PosConstraint1.ocl"));
+        pocl.add(parseOCl("Association.cd", "PosConstraint2.ocl"));
         Set<ASTOCLCompilationUnit> nocl = new HashSet<>();
-        nocl.add(parseOCl("Auction.cd", "negConstraint1.ocl"));
-        nocl.add(parseOCl("Auction.cd", "negConstraint2.ocl"));
+        nocl.add(parseOCl("Association.cd", "negConstraint1.ocl"));
+        nocl.add(parseOCl("Association.cd", "negConstraint2.ocl"));
 
 
         Set<ASTODArtifact> ods = OCLDiffGenerator.oclDiff(ast, pocl, nocl,new Context(ctxParam));

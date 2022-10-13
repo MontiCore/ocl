@@ -11,5 +11,7 @@ ocl Test01 {
     exists Person p :
        p notin a.person ;
 
+
+
  }
 
