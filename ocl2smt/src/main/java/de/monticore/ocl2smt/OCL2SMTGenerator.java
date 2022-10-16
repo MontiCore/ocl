@@ -17,6 +17,7 @@ import de.monticore.ocl.oclexpressions._ast.*;
 
 import de.monticore.ocl.setexpressions._ast.ASTSetInExpression;
 import de.monticore.ocl.setexpressions._ast.ASTSetNotInExpression;
+import de.monticore.ocl.setexpressions._ast.ASTUnionExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
@@ -299,7 +300,7 @@ public class OCL2SMTGenerator {
       }
       assert expr.getValue() instanceof ASTFieldAccessExpression;
       SMTSet objSet = convertFieldAccAssoc( (ASTFieldAccessExpression) expr.getValue());
-      constraintList.add(cdcontext.getContext().mkAnd ((BoolExpr)objSet.getSetFunction().apply(expr.getKey()),objSet.getFilter()));
+      constraintList.add(cdcontext.getContext().mkAnd ((BoolExpr)objSet.getSetFunction().apply(expr.getKey()),objSet.getDefinition()));
     }
     BoolExpr result = cdcontext.getContext().mkTrue() ;
 
@@ -372,7 +373,7 @@ public class OCL2SMTGenerator {
 
     FuncDecl<? extends  Sort> assocFunc = cdcontext.getAssocFunc(smtClassOptional.get(), node.getName()).getAssocFunc();
     String setName = obj.toString() + "_" +node.getName() + "_set";
-    FuncDecl<? extends  Sort> setFunc;
+    FuncDecl<BoolSort> setFunc;
     BoolExpr filter ;
     if (assocFunc.getDomain()[0].equals(obj.getSort())){
       setFunc = cdcontext.getContext().mkFuncDecl(setName,
@@ -394,6 +395,31 @@ public class OCL2SMTGenerator {
     }
     return  new SMTSet(setName,setFunc,filter);
     }
+  protected  SMTSet  convertTransClo(ASTOCLTransitiveQualification node) {
+    //get the object and convert it into smt expression
+    Expr<? extends  Sort> obj = convertExpr(((ASTFieldAccessExpression)node.getExpression()).getExpression());
+    Optional<SMTCDType> smtClassOptional = cdcontext.getSMTCDType(obj);
+    assert smtClassOptional.isPresent();
+
+    FuncDecl<? extends  Sort> assocFunc = cdcontext.getAssocFunc(smtClassOptional.get(), ((ASTFieldAccessExpression)node.getExpression()).getName()).getAssocFunc();
+    String setName = obj.toString() + "_" +((ASTFieldAccessExpression)node.getExpression()).getName() + "transitiveClo_set";
+
+    FuncDecl<? extends  Sort> relation = cdcontext.getContext().mkFuncDecl(cdcontext.getContext().mkSymbol("trans"),
+            assocFunc.getDomain(),cdcontext.getContext().mkBoolSort());
+
+      Expr<? extends  Sort> otherObj = cdcontext.getContext().mkConst("x1",assocFunc.getDomain()[1]);
+
+
+    BoolExpr   filter = cdcontext.getContext().mkForall(new Expr[]{otherObj}, cdcontext.getContext()
+              .mkEq(cdcontext.getContext().mkApp(assocFunc,obj,otherObj),cdcontext.getContext()
+                      .mkApp(relation,obj,otherObj)),0,null,null,null,null);
+
+   FuncDecl<BoolSort> setFunc = cdcontext.getContext().mkFuncDecl(setName,obj.getSort(),cdcontext.getContext().mkBoolSort());
+
+   filter = cdcontext.getContext().mkAnd(filter, cdcontext.getContext().mkEq(cdcontext.getContext().mkApp(relation, obj,otherObj),
+           cdcontext.getContext().mkApp(setFunc,otherObj) ));
+    return  new SMTSet(setName,setFunc,filter);
+  }
 
   protected List<Expr<? extends Sort>> convertInDecVar(ASTInDeclarationVariable node, ASTMCType type) {
     List<Expr<? extends Sort>> result = new ArrayList<>();
@@ -437,19 +463,28 @@ public class OCL2SMTGenerator {
 //---------------------------------------Set-Expressions----------------------------------------------------------------
   protected BoolExpr convertSetIn(ASTSetInExpression node){
     SMTSet set = convertSet(node.getSet());
-    return cdcontext.getContext().mkAnd(set.getFilter(), (BoolExpr)cdcontext.getContext().mkApp(set.getSetFunction(), convertExpr(node.getElem())));
+    return cdcontext.getContext().mkAnd(set.getDefinition(), (BoolExpr)cdcontext.getContext().mkApp(set.getSetFunction(), convertExpr(node.getElem())));
   }
   protected BoolExpr convertSetNotIn(ASTSetNotInExpression node){
     SMTSet set = convertSet(node.getSet());
-    return cdcontext.getContext().mkAnd(set.getFilter(), cdcontext.getContext().mkNot((BoolExpr)cdcontext.getContext()
+    return cdcontext.getContext().mkAnd(set.getDefinition(), cdcontext.getContext().mkNot((BoolExpr)cdcontext.getContext()
             .mkApp(set.getSetFunction(), convertExpr(node.getElem()))));
   }
-  protected SMTSet convertSet(ASTExpression set){
-    if (set instanceof ASTFieldAccessExpression) {
-      return convertFieldAccAssoc((ASTFieldAccessExpression) set);
+
+
+  protected SMTSet convertSet(ASTExpression node){
+    SMTSet set = null;
+    if (node instanceof ASTFieldAccessExpression) {
+      set = convertFieldAccAssoc((ASTFieldAccessExpression) node);
+    } else if (node instanceof  ASTOCLTransitiveQualification) {
+      set = convertTransClo((ASTOCLTransitiveQualification)node );
+    } else if (node instanceof ASTUnionExpression) {
+      set = SMTSet.mkSetUnion(convertSet(((ASTUnionExpression)node).getLeft()),convertSet(((ASTUnionExpression)node).getRight()), cdcontext.getContext() );
+    }else {
+      Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
     }
-    Log.error("conversion of Set of the type " + set.getClass().getName() + "not implemented");
-    return null;
+
+    return set;
   }
 
   protected ASTMCType getType(ASTFieldAccessExpression node){

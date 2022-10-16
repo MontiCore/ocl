@@ -3,6 +3,17 @@ package invariants;
 
 ocl Test01 {
 
+inv  Only_one_auction:
+  exists Auction a :
+    forall Auction a1:
+     a1 == a ;
+
+ inv Only_two_Person:
+   exists Person p1 , p2 :
+     (p1 != p2 )&&
+     (forall  Person p3:
+     p3 == p1 || p3 == p2);
+
  context Auction a inv All_Person_in_All_Auctions:
    forall Person p :
       p isin a.person ;
@@ -11,7 +22,29 @@ ocl Test01 {
     exists Person p :
        p notin a.person ;
 
+  inv Set_Union_Sat:
+     exists Person p1 , p2 :
+        exists Auction a :
+          a isin p1.auction union p2.auction;
 
+  inv Set_Union_one_side_sat:
+       exists Person p1 , p2 :
+          exists Auction a :
+             a isin p1.auction &&
+             a notin p2.auction &&
+             a isin p2.auction  union p1.auction;
+
+  inv Set_Union_one_side_Unsat:
+       exists Person p1 , p2 :
+         exists Auction a :
+           a isin p1.auction &&
+           a  notin p2.auction &&
+           a notin p1.auction union p2.auction;
+
+  inv Set_Intersection_Sat:
+       exists Person p1 , p2 :
+          exists Auction a :
+            a notin p1.auction intersect p2.auction;
 
  }
 
