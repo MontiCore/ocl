@@ -15,6 +15,7 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.oclexpressions._ast.*;
 
 
+import de.monticore.ocl.setexpressions._ast.ASTIntersectionExpression;
 import de.monticore.ocl.setexpressions._ast.ASTSetInExpression;
 import de.monticore.ocl.setexpressions._ast.ASTSetNotInExpression;
 import de.monticore.ocl.setexpressions._ast.ASTUnionExpression;
@@ -480,7 +481,9 @@ public class OCL2SMTGenerator {
       set = convertTransClo((ASTOCLTransitiveQualification)node );
     } else if (node instanceof ASTUnionExpression) {
       set = SMTSet.mkSetUnion(convertSet(((ASTUnionExpression)node).getLeft()),convertSet(((ASTUnionExpression)node).getRight()), cdcontext.getContext() );
-    }else {
+    }else if (node instanceof ASTIntersectionExpression) {
+      set = SMTSet.mkSetIntersect(convertSet(((ASTIntersectionExpression)node).getLeft()),convertSet(((ASTIntersectionExpression)node).getRight()), cdcontext.getContext() );
+    } else {
       Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
     }
 

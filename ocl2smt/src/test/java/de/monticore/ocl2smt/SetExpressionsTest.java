@@ -65,4 +65,13 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
         testInv("Set_Intersection_Sat");
     }
 
+    @Test
+    public void test_Set_Intersection_Unsat() {
+        List<Identifiable<BoolExpr>> constraints = new ArrayList<>(cdContext.getAssociationConstraints());
+        constraints.addAll(cdContext.getInheritanceConstraints());
+        constraints.add(getConstraint("Set_Intersection_Unsat"));
+        Solver solver1 =  cdContext.makeSolver(cdContext.getContext(),constraints);
+        Assertions.assertSame(solver1.check(), Status.UNSATISFIABLE);
+    }
+
 }
