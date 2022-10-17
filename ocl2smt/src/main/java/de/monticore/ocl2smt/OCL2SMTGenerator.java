@@ -76,7 +76,7 @@ public class OCL2SMTGenerator {
     else {
        inv = convertBoolExpr(invariant.getExpression());
     }
-    return Identifiable.buildBoolExprIdentifiable(inv,srcPos,Optional.empty());
+    return Identifiable.buildBoolExprIdentifiable(inv,srcPos,Optional.ofNullable(invariant.getName()));
   }
 
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
