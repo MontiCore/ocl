@@ -72,11 +72,12 @@ public class TraceUnsatCore {
         attributeList.add(ODHelper.buildAttribute("line", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(6).build()
                 , "" + identifiable.getSourcePosition().getLine()));
         attributeList.add(ODHelper.buildAttribute("file", OD4ReportMill.mCQualifiedTypeBuilder().
-                setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("Path")).build(), "" + identifiable.getFile()));
+                setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("Path")).build(), '"' + identifiable.getFile().toString() + '"'));
 
-        attributeList.add(ODHelper.buildAttribute("name", OD4ReportMill.mCQualifiedTypeBuilder().
-                setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("String")).build(), "" + identifiable.getInvariantName().orElse(" ")));
-
+        if(identifiable.getInvariantName().isPresent()) {
+          attributeList.add(ODHelper.buildAttribute("name", OD4ReportMill.mCQualifiedTypeBuilder().
+              setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("String")).build(), '"' + identifiable.getInvariantName().get() + '"'));
+        }
         return attributeList;
     }
 
