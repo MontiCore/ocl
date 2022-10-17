@@ -15,10 +15,7 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.oclexpressions._ast.*;
 
 
-import de.monticore.ocl.setexpressions._ast.ASTIntersectionExpression;
-import de.monticore.ocl.setexpressions._ast.ASTSetInExpression;
-import de.monticore.ocl.setexpressions._ast.ASTSetNotInExpression;
-import de.monticore.ocl.setexpressions._ast.ASTUnionExpression;
+import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
@@ -477,13 +474,18 @@ public class OCL2SMTGenerator {
     SMTSet set = null;
     if (node instanceof ASTFieldAccessExpression) {
       set = convertFieldAccAssoc((ASTFieldAccessExpression) node);
+    }else if (node instanceof  ASTBracketExpression) {
+      set = convertSet(((ASTBracketExpression) node).getExpression() );
     } else if (node instanceof  ASTOCLTransitiveQualification) {
       set = convertTransClo((ASTOCLTransitiveQualification)node );
     } else if (node instanceof ASTUnionExpression) {
       set = SMTSet.mkSetUnion(convertSet(((ASTUnionExpression)node).getLeft()),convertSet(((ASTUnionExpression)node).getRight()), cdcontext.getContext() );
     }else if (node instanceof ASTIntersectionExpression) {
       set = SMTSet.mkSetIntersect(convertSet(((ASTIntersectionExpression)node).getLeft()),convertSet(((ASTIntersectionExpression)node).getRight()), cdcontext.getContext() );
-    } else {
+    }else if (node instanceof ASTSetMinusExpression) {
+    set = SMTSet.mkSetMinus(convertSet(((ASTSetMinusExpression)node).getLeft()),convertSet(((ASTSetMinusExpression)node).getRight()), cdcontext.getContext() );
+  }
+    else {
       Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
     }
 

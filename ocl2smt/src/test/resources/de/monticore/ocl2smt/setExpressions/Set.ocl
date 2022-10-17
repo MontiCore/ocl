@@ -42,18 +42,41 @@ inv  Only_one_auction:
            a notin p1.auction union p2.auction;
 
   inv Set_Intersection_Sat:
-         exists Person p1 , p2 :
-          exists Auction a :
-              (a isin p1.auction intersect p2.auction) &&
-              (p1 != p2);
+      exists Person p1 , p2 :
+        exists Auction a :
+            (a isin p1.auction intersect p2.auction) &&
+            (p1 != p2);
 
   inv Set_Intersection_Unsat:
-           exists Person p1 , p2 :
-            exists Auction a :
-                a isin p1.auction &&
-                a notin p2.auction &&
-                a isin p1.auction intersect p2.auction &&
-                p1 != p2;
+       exists Person p1 , p2 :
+         exists Auction a :
+             a isin p1.auction &&
+             a notin p2.auction &&
+             a isin p1.auction intersect p2.auction &&
+             p1 != p2;
+
+  inv Set_Minus_sat:
+       exists Person p1 , p2 :
+         exists Auction a :
+             a isin (p1.auction \ p2.auction) &&
+             p1 != p2;
+
+  inv Set_Minus_Unsat:
+       exists Person p1 , p2 :
+          exists Auction a :
+              a isin (p1.auction \ p2.auction) &&
+              a isin (p2.auction \ p1.auction) &&
+              p1 != p2;
+
+  inv Set_Minus_Unsat:
+       exists Person p1 , p2 :
+          exists Auction a :
+              a isin (p1.auction \ p2.auction) &&
+              a isin (p2.auction \ p1.auction) &&
+              p1 != p2;
+
+ context Auction a inv Set_isAbsent:
+    a.person.isAbsent;
 
  }
 

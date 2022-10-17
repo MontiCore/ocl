@@ -34,6 +34,11 @@ public class SMTSet {
                                 (BoolExpr) ctx.mkApp(leftSet.getSetFunction(), obj), (BoolExpr) ctx.mkApp(rightSet.getSetFunction(), obj)))
                         , 0, null, null, null, null);
                 break;
+            case MINUS:
+                operation = ctx.mkForall(new Expr[]{obj}, ctx.mkEq(ctx.mkApp(setFunc, obj), ctx.mkAnd((BoolExpr) ctx.mkApp(
+                        leftSet.getSetFunction(), obj), ctx.mkNot ((BoolExpr) ctx.mkApp(rightSet.getSetFunction(), obj)))),
+                        0, null, null, null, null);
+                break;
             default:
                 operation = ctx.mkTrue();
         }
@@ -49,6 +54,10 @@ public class SMTSet {
 
     public static SMTSet mkSetIntersect(SMTSet lefSet, SMTSet rightSet, Context ctx) {
         return mkSetOperation(lefSet, rightSet, ctx, OPERATION.INTERSECTION);
+    }
+
+    public static SMTSet mkSetMinus(SMTSet leftSet, SMTSet rightSet,Context ctx){
+        return mkSetOperation(leftSet, rightSet,ctx,OPERATION.MINUS);
     }
 
     public BoolExpr getDefinition() {
@@ -68,6 +77,6 @@ public class SMTSet {
     }
 
 
-    enum OPERATION {UNION, INTERSECTION}
+    enum OPERATION {UNION, INTERSECTION, MINUS}
 
 }
