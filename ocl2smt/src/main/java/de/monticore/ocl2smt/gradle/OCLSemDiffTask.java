@@ -13,6 +13,7 @@ import de.monticore.od4report.OD4ReportMill;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
@@ -82,21 +83,18 @@ public abstract class OCLSemDiffTask extends DefaultTask {
     Map<String, String> ctxParam = new HashMap<>();
     ctxParam.put("model", "true");
     Context context = new Context(ctxParam);
-
+    Pair<ASTODArtifact, Set<ASTODArtifact>> diff;
     Set<ASTODArtifact> witnesses;
+    ASTODArtifact trace ;
     // Compute Diff
     if (negativeOCL.isEmpty()) {
       witnesses = new HashSet<>();
       witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL,context));
     } else {
-      witnesses = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL,context);
+      diff = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL,context);
+      witnesses = diff.getRight();
       if(getTraceOD().isPresent()){
-        ASTODArtifact trace = OD4ReportMill.oDArtifactBuilder()
-            .setObjectDiagram(
-                OD4ReportMill.objectDiagramBuilder().setName("EMPTY_TRACE")
-                    .build()
-            )
-            .build();  // TODO: Get actual trace
+         trace = diff.getLeft() ;
         FileUtils.writeStringToFile(getTraceOD().getAsFile().get(), new OD4ReportFullPrettyPrinter().prettyprint(trace), Charset.defaultCharset());
       }
     }
