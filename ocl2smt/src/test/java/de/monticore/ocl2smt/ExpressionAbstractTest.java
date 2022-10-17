@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -45,8 +46,9 @@ public abstract class ExpressionAbstractTest extends AbstractTest {
         ASTOCLConstraint constr = oclAST.getOCLArtifact().getOCLConstraintList()
                 .stream().map(p -> (ASTOCLInvariant) p)
                 .filter(p -> search.equals(p.getName())).findAny().get();
+          ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
         Identifiable<BoolExpr> constraint = ocl2SMTGenerator.convertConstr(constr);
-        solver.add(constraint.getValue());
+        solver = CDContext.makeSolver(cdContext.getContext(), List.of(constraint));
         return constraint;
     }
 

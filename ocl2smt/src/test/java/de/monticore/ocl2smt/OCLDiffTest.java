@@ -1,21 +1,17 @@
 package de.monticore.ocl2smt;
 
 
-import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
-
-import de.monticore.cd2smt.Helper.Identifiable;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
-import de.monticore.odbasis._ast.ASTODArtifact;
-import de.monticore.odbasis._ast.ASTODNamedObject;
+import de.monticore.odbasis._ast.*;
+import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
-
+import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -24,23 +20,26 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class OCLDiffTest extends AbstractTest {
     protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt/OCLDiff";
-    protected  static  final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
-   protected static Map<String, String> ctxParam = new HashMap<>();
+    protected static final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
+    protected static Map<String, String> ctxParam = new HashMap<>();
 
-    public void setUp(){
+    public void setUp() {
         Log.init();
         OCLMill.init();
         CD4CodeMill.init();
         ctxParam.put("model", "true");
     }
+
     protected ASTOCLCompilationUnit parseOCl(String cdFileName, String oclFileName) throws IOException {
         setUp();
-        return OCL_Loader.loadAndCheckOCL(Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(),Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile() );
+        return OCL_Loader.loadAndCheckOCL(Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(), Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
     }
-    protected ASTCDCompilationUnit parseCD(String cdFileName) throws IOException{
+
+    protected ASTCDCompilationUnit parseCD(String cdFileName) throws IOException {
         setUp();
         return OCL_Loader.loadAndCheckCD(Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
     }
@@ -54,6 +53,31 @@ public class OCLDiffTest extends AbstractTest {
             Assertions.fail("It Was Not Possible to Print the Object Diagram");
         }
     }
+
+    private List<String> getUnsatInvLines(List<String> objNames, ASTODArtifact od) {
+        List<String> res = new ArrayList<>();
+        for (ASTODElement element : od.getObjectDiagram().getODElementList()) {
+            if (element instanceof ASTODNamedObject && objNames.contains(((ASTODNamedObject) element).getName())) {
+                for (ASTODAttribute attribute : ((ASTODNamedObject) element).getODAttributeList().stream().
+                        filter(a -> a.getName().equals("line")).collect(Collectors.toList())) {
+                    res.add(((ASTODName) attribute.getODValue()).getName());
+                }
+            }
+        }
+        return res;
+    }
+
+    private List<String> getUnsatInvNameList(ASTODArtifact unsatOD) {
+        List<ASTODLink> traceLinks = unsatOD.getObjectDiagram().getODElementList().stream().filter(e -> e instanceof ASTODLink)
+                .collect(Collectors.toList()).stream().map(e -> (ASTODLink) e).collect(Collectors.toList());
+        List<String> unsatInvNameList = new ArrayList<>();
+        traceLinks.forEach(l -> {
+            unsatInvNameList.addAll(l.getLeftReferenceNames());
+            unsatInvNameList.addAll(l.getRightReferenceNames());
+        });
+        return unsatInvNameList;
+    }
+
     @Test
     public void test_ocl_diff() throws IOException {
         ASTCDCompilationUnit ast = parseCD("Auction.cd");
@@ -64,23 +88,23 @@ public class OCLDiffTest extends AbstractTest {
         Set<ASTOCLCompilationUnit> nocl = new HashSet<>();
         nocl.add(parseOCl("Auction.cd", "negConstraint2.ocl"));
         nocl.add(parseOCl("Auction.cd", "negConstraint1.ocl"));
+        //make ocldiff
+        Pair<ASTODArtifact, Set<ASTODArtifact>> diff = OCLDiffGenerator.oclDiff(ast, pocl, nocl, new Context(ctxParam));
+        List<ASTODArtifact> satOds = new ArrayList<>(diff.getRight());
+        ASTODArtifact unsatOD = diff.getLeft();
+        //print ods
+        satOds.forEach(this::printOD);
+        printOD(unsatOD);
 
-        Set<ASTODArtifact> ods = OCLDiffGenerator.oclDiff(ast, pocl, nocl,new Context(ctxParam));
-        ods.forEach(this::printOD);
-        List<String> odNames = new ArrayList<>();
-        ods.forEach(od -> odNames.add(od.getObjectDiagram().getName()));
+        //get trace links
+        List<String> unsatInvNameList = getUnsatInvNameList(unsatOD);
+        org.junit.jupiter.api.Assertions.assertEquals(4, satOds.size());
 
-        org.junit.jupiter.api.Assertions.assertEquals(8, odNames.size());
-        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("inv_6"));
-        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("inv_12"));
-        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("inv_20"));
-        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("inv_26"));
-
-        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("UNSAT_CORE_5"));
-        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("UNSAT_CORE_11"));
-        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("UNSAT_CORE_15"));
-        org.junit.jupiter.api.Assertions.assertTrue(odNames.contains("UNSAT_CORE_20"));
-
+        List<String> unsatInvLines = getUnsatInvLines(unsatInvNameList, unsatOD);
+        org.junit.jupiter.api.Assertions.assertTrue(unsatInvLines.contains("5"));
+        org.junit.jupiter.api.Assertions.assertTrue(unsatInvLines.contains("11"));
+        org.junit.jupiter.api.Assertions.assertTrue(unsatInvLines.contains("15"));
+        org.junit.jupiter.api.Assertions.assertTrue(unsatInvLines.contains("20"));
 
     }
 
@@ -88,14 +112,12 @@ public class OCLDiffTest extends AbstractTest {
     public void testOdPartial() throws IOException {
         ASTCDCompilationUnit cdAST = parseCD("Partial/Partial.cd");
         Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();
-        oclSet.add(parseOCl("Partial/Partial.cd","Partial/partial.ocl"));
+        oclSet.add(parseOCl("Partial/Partial.cd", "Partial/partial.ocl"));
 
-        List<Identifiable< BoolExpr>> constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST,oclSet, new Context(ctxParam));
-        Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(OCLDiffGenerator.cdContext, "Partial", constraintList, cdAST.getCDDefinition(),true);
-        assert od.isPresent();
-        printOD(od.get());
+        ASTODArtifact od = OCLDiffGenerator.oclWitness(cdAST, oclSet, new Context(ctxParam), true);
+        printOD(od);
 
-        od.get().getObjectDiagram().getODElementList().forEach(p->{
+        od.getObjectDiagram().getODElementList().forEach(p -> {
             assert !(p instanceof ASTODNamedObject) || (((ASTODNamedObject) p).getODAttributeList().size() <= 3);
         });
     }
