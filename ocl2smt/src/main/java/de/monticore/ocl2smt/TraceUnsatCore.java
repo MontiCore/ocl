@@ -50,14 +50,14 @@ public class TraceUnsatCore {
             }
         });
         if (posConstraints.size() == 0) {
-            ASTODLink link = ODHelper.buildLink("inv_"+ negConstraints.get(0).getId(), "inv_"+ negConstraints.get(0).getId(), "trace");
+            ASTODLink link = ODHelper.buildLink(getInvObjName(negConstraints.get(0)), getInvObjName(negConstraints.get(0)), "trace");
             link.setODLinkDirection(OD4ReportMill.oDLeftToRightDirBuilder().build());
             elementList.add(link);
         } else {
             //add links
             for (Identifiable<BoolExpr> left : posConstraints) {
                 for (Identifiable<BoolExpr> right : negConstraints) {
-                    ASTODLink link = ODHelper.buildLink("inv_" + left.getId(), "inv_" + right.getId(), "trace");
+                    ASTODLink link = ODHelper.buildLink(getInvObjName(left), getInvObjName(right), "trace");
                     link.setODLinkDirection(OD4ReportMill.oDLeftToRightDirBuilder().build());
                     elementList.add(link);
                 }
@@ -82,8 +82,11 @@ public class TraceUnsatCore {
 
 
     protected static ASTODNamedObject buildInvObject(Identifiable<BoolExpr> identifiable) {
-        String name = "inv_" + identifiable.getId();
-        return ODHelper.buildObject(name, "OCLInv", buildInvODAttributeList(identifiable));
+        return ODHelper.buildObject(getInvObjName(identifiable), "OCLInv", buildInvODAttributeList(identifiable));
+    }
+
+    protected static String getInvObjName(Identifiable<BoolExpr> identifiable){
+      return "obj_" + identifiable.getInvariantName().orElse("") + "_" + identifiable.getId();
     }
 
 }
