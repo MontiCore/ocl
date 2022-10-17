@@ -85,8 +85,8 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     }
     @Ignore
     @Test
-    public void test_Set_isAbsent() {
-        testUnsatInv("Set_isAbsent");
+    public void test_Set_Construction() {
+        testUnsatInv("Set_construction");
     }
 
 

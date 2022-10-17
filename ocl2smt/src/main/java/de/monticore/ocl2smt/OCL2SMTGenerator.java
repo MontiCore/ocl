@@ -293,11 +293,7 @@ public class OCL2SMTGenerator {
     List<BoolExpr> constraintList = new ArrayList<>();
 
     for (Map.Entry<Expr<? extends Sort>, ASTExpression > expr: inParts.entrySet()){
-      if (!(expr.getValue() instanceof  ASTFieldAccessExpression)){
-        Log.error("cannot convert ASTInDeclaration, in part is not a ASTFieldAccessExpression");
-      }
-      assert expr.getValue() instanceof ASTFieldAccessExpression;
-      SMTSet objSet = convertFieldAccAssoc( (ASTFieldAccessExpression) expr.getValue());
+      SMTSet objSet = convertSet(expr.getValue());
       constraintList.add(cdcontext.getContext().mkAnd ((BoolExpr)objSet.getSetFunction().apply(expr.getKey()),objSet.getDefinition()));
     }
     BoolExpr result = cdcontext.getContext().mkTrue() ;
@@ -453,6 +449,8 @@ public class OCL2SMTGenerator {
          if (node.isPresentMCType()){
            result.addAll(convertInDecVar(var,node.getMCType()));
          }else {
+           //TODO:complete implementation
+           Log.error("conversion of InDeclaration without explicit type declaration not yet implemented");
            result.addAll(convertInDecVar(var,getType((ASTFieldAccessExpression) node.getExpression())));
          }
       }
@@ -483,15 +481,20 @@ public class OCL2SMTGenerator {
     }else if (node instanceof ASTIntersectionExpression) {
       set = SMTSet.mkSetIntersect(convertSet(((ASTIntersectionExpression)node).getLeft()),convertSet(((ASTIntersectionExpression)node).getRight()), cdcontext.getContext() );
     }else if (node instanceof ASTSetMinusExpression) {
-    set = SMTSet.mkSetMinus(convertSet(((ASTSetMinusExpression)node).getLeft()),convertSet(((ASTSetMinusExpression)node).getRight()), cdcontext.getContext() );
-  }
+      set = SMTSet.mkSetMinus(convertSet(((ASTSetMinusExpression)node).getLeft()),convertSet(((ASTSetMinusExpression)node).getRight()), cdcontext.getContext() );
+    } else if (node instanceof  ASTSetComprehension) {
+      set = convertSetComp((ASTSetComprehension)node );
+    }
     else {
       Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
     }
 
     return set;
   }
-
+ protected SMTSet convertSetComp(ASTSetComprehension node){
+    //TODO implement it
+    return  null;
+  }
   protected ASTMCType getType(ASTFieldAccessExpression node){
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
     Optional<SMTCDType> smtClassOptional = cdcontext.getSMTCDType(obj);

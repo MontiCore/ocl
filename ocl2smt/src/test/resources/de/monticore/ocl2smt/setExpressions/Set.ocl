@@ -75,8 +75,10 @@ inv  Only_one_auction:
               a isin (p2.auction \ p1.auction) &&
               p1 != p2;
 
- context Auction a inv Set_isAbsent:
-    a.person.isAbsent;
+ context Auction a inv Set_construction:
+    exists Person p:
+     p isin {Person p in a.person | true} ;
+
 
  }
 
