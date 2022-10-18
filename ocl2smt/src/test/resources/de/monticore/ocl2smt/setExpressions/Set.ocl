@@ -76,8 +76,12 @@ inv  Only_one_auction:
               p1 != p2;
 
  context Auction a inv Set_construction:
-    exists Person p:
-     p isin {Person p in a.person | true} ;
+    (forall Person p1 :
+      p1 isin a.person) &&
+    (exists Person p2:
+      p2 isin {Person p in a.person | p.age > 10}) ;/* &&
+   (exists Person p3:
+      p3 notin {Person p in a.person | p.age > 10});*/
 
 
  }

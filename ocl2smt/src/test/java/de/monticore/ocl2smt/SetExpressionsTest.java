@@ -83,11 +83,11 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     public void test_Set_Minus_Unsat() {
         testUnsatInv("Set_Minus_Unsat");
     }
- /*   @Ignore
+    @Ignore
     @Test
     public void test_Set_Construction() {
-        testUnsatInv("Set_construction");
-    }*/
+        testInv("Set_construction");
+    }
 
 
 }

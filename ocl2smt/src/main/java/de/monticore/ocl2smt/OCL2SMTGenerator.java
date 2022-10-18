@@ -438,11 +438,13 @@ public class OCL2SMTGenerator {
 
   protected Expr<? extends  Sort> convertParDec(ASTOCLParamDeclaration node){
     ASTMCType type = node.getMCType();
-    Expr<? extends Sort> expr = cdcontext.getContext().mkConst(node.getName(), typeConverter.convertType(type));
-    varNames.put(node.getName(), expr);
+    return convertVarDecl(type,node.getName());
+  }
+  protected Expr<? extends  Sort> convertVarDecl(ASTMCType type, String name){
+    Expr<? extends Sort> expr = cdcontext.getContext().mkConst(name, typeConverter.convertType(type));
+    varNames.put(name, expr);
     return  expr;
   }
-
   protected List <Expr<? extends Sort>> convertInDecl( ASTInDeclaration node){
     List<Expr<? extends Sort>> result = new ArrayList<>();
       for (ASTInDeclarationVariable var : node.getInDeclarationVariableList()) {
@@ -492,8 +494,24 @@ public class OCL2SMTGenerator {
     return set;
   }
  protected SMTSet convertSetComp(ASTSetComprehension node){
-    //TODO implement it
-    return  null;
+    //TODO complete the implementation handle when right setComprehension Items are not filters
+    SMTSet set =  convertSetCompItem(node.getLeft());
+    BoolExpr filter = cdcontext.getContext().mkTrue();
+    for (ASTSetComprehensionItem item: node.getSetComprehensionItemList()){
+      filter = cdcontext.getContext().mkAnd(filter, convertBoolExpr(item.getExpression()));
+    } //TODO: change the way o handle filters
+    set.setDefinition(cdcontext.getContext().mkAnd(filter,set.definition));
+    return set;
+  }
+
+  protected SMTSet convertSetCompItem(ASTSetComprehensionItem node){
+    //TODO: complete the implementation to take care of Expression and SetVariable declaration
+    return convertGenDecl(node.getGeneratorDeclaration());
+  }
+  protected SMTSet convertGenDecl(ASTGeneratorDeclaration node){
+    Expr<? extends  Sort> param = convertVarDecl(node.getMCType(),node.getName()); //TODO: remove this variable later
+    return  convertSet(node.getExpression());
+
   }
   protected ASTMCType getType(ASTFieldAccessExpression node){
     Expr<? extends Sort> obj = convertExpr(node.getExpression());

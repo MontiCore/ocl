@@ -6,6 +6,7 @@ classdiagram CDTest{
 
  class Person{
    String name ;
+   int age ;
  }
 
   association [*] Auction(auction)      --     (person)Person[1..*];

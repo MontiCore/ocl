@@ -7,7 +7,7 @@ public class SMTSet {
     protected String name;
     protected FuncDecl<BoolSort> setFunction;
     protected BoolExpr definition;
-
+    //TODO: add variable filter as List of Bool Constraints
     public SMTSet(String name, FuncDecl<BoolSort> setFunction, BoolExpr filter) {
         this.definition = filter;
         this.setFunction = setFunction;
@@ -75,7 +75,10 @@ public class SMTSet {
     public Sort getSort() {
         return this.setFunction.getDomain()[0];
     }
-
+     //TODO: replace it with add filter
+    public void setDefinition(BoolExpr definition) {
+        this.definition = definition;
+    }
 
     enum OPERATION {UNION, INTERSECTION, MINUS}
 
