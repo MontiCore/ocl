@@ -38,6 +38,7 @@ public abstract class ExpressionAbstractTest  {
     protected ASTCDCompilationUnit cdAST;
     protected Solver solver;
     protected OCL2SMTGenerator ocl2SMTGenerator ;
+
     protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
     // Used to make the tests shorter & readable

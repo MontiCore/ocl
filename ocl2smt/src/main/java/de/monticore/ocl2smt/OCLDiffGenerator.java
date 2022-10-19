@@ -1,10 +1,11 @@
 package de.monticore.ocl2smt;
 
-import com.microsoft.z3.BoolExpr;
+
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
-import de.monticore.cd2smt.Helper.Identifiable;
+
+import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
@@ -24,7 +25,7 @@ public class OCLDiffGenerator {
     protected static CDContext cdContext;
     protected static OCL2SMTGenerator ocl2SMTGenerator;
 
-    protected static List<Identifiable<BoolExpr>> getPositiveSolverConstraints(ASTCDCompilationUnit cd , Set<ASTOCLCompilationUnit>  in, Context context){
+    protected static List<IdentifiableBoolExpr> getPositiveSolverConstraints(ASTCDCompilationUnit cd , Set<ASTOCLCompilationUnit>  in, Context context){
       //convert the cd to an SMT context
       cdContext = cd2SMTGenerator.cd2smt(cd, context);
 
@@ -37,7 +38,7 @@ public class OCLDiffGenerator {
 
 
     public static ASTODArtifact oclWitness(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in, Context context, boolean partial ){
-      List<Identifiable<BoolExpr>> solverConstraints = getPositiveSolverConstraints(cd, in,context);
+      List<IdentifiableBoolExpr> solverConstraints = getPositiveSolverConstraints(cd, in,context);
 
       //check if they exist a model for the list of positive Constraint
       Solver solver = CDContext.makeSolver(cdContext.getContext(), solverConstraints);
@@ -55,19 +56,17 @@ public class OCLDiffGenerator {
     public static Pair<ASTODArtifact,Set<ASTODArtifact>> oclDiff(ASTCDCompilationUnit cd , Set<ASTOCLCompilationUnit>  in , Set<ASTOCLCompilationUnit> notIn, Context context, boolean partial){
         Set<ASTODArtifact> satOdList = new HashSet<>();
         List<ASTODLink> traceUnsat = new ArrayList<>();
-        List<Identifiable<BoolExpr>> solverConstraints = getPositiveSolverConstraints(cd, in,context);
+        List<IdentifiableBoolExpr> solverConstraints = getPositiveSolverConstraints(cd, in,context);
 
         //negative ocl constraints
-        List<Identifiable<BoolExpr>> negConstList = new ArrayList<>();
-        notIn.forEach(p -> ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).forEach(idf-> negConstList.add(Identifiable
-                .buildBoolExprIdentifiable(cdContext.getContext().mkNot(idf.getValue()),idf.getSourcePosition(),Optional
-                        .of( idf.getInvariantName().orElse("NoInvName")+"_____NegInv" )))));
+        List<IdentifiableBoolExpr> negConstList = new ArrayList<>();
+        notIn.forEach(p -> ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).forEach(idf-> negConstList.add(idf.negate(cdContext.getContext()))));
 
         //check if they exist a model for the list of positive Constraint
         oclWitness(cd,in,context,false);
 
         //add one by one all Constraints to the Solver and check if  it can always produce a Model
-        for (Identifiable<BoolExpr> negConstraint:  negConstList) {
+        for (IdentifiableBoolExpr negConstraint:  negConstList) {
             solverConstraints.add(negConstraint);
             Solver solver = CDContext.makeSolver( cdContext.getContext(),solverConstraints);
 

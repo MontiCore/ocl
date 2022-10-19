@@ -171,10 +171,6 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   public void handle(ASTCallExpression node) {
     Preconditions.checkNotNull(node);
     node.getExpression().accept(this.getTraverser());
-    if (node.getName() != null) {
-      this.getPrinter().print(".");
-      this.getPrinter().print(node.getName());
-    }
     node.getArguments().accept(this.getTraverser());
   }
 
