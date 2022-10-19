@@ -3,7 +3,7 @@ package de.monticore.ocl2smt;
 import com.microsoft.z3.*;
 
 
-import de.monticore.cd2smt.Helper.Identifiable;
+import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.context.ODArtifacts.SMTObject;
 import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
 
@@ -126,14 +126,14 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest  {
 
     @Test
     public void Two_auction_sat() {
-       Identifiable<BoolExpr> constraint = addConstraint("Auction_two_sat");
+       IdentifiableBoolExpr constraint = addConstraint("Auction_two_sat");
         Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
         checkAttrValue("10");
     }
 
     @Test
     public void Two_auction_and_bool_sat() {
-        Identifiable<BoolExpr> constraint = addConstraint("Two_auction_and_bool_sat");
+        IdentifiableBoolExpr constraint = addConstraint("Two_auction_and_bool_sat");
         Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
         checkAttrValue("14");
     }

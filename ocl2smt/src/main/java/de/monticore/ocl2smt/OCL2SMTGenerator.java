@@ -3,11 +3,10 @@ package de.monticore.ocl2smt;
 import com.microsoft.z3.*;
 
 
-import de.monticore.cd2smt.Helper.CDHelper;
-import de.monticore.cd2smt.Helper.Identifiable;
+import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.context.CDArtifacts.SMTAssociation;
 import de.monticore.cd2smt.context.CDArtifacts.SMTCDType;
-import de.monticore.cd2smt.context.CDArtifacts.SMTClass;
+
 import de.monticore.cd2smt.context.CDContext;
 
 import de.monticore.expressions.commonexpressions._ast.*;
@@ -22,7 +21,6 @@ import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 
 
-import java.nio.file.Path;
 import java.util.*;
 
 public class OCL2SMTGenerator {
@@ -39,15 +37,15 @@ public class OCL2SMTGenerator {
     this.typeConverter = new TypeConverter(cdContext);
   }
 
-  public List<Identifiable<BoolExpr>> ocl2smt(ASTOCLArtifact astoclArtifact) {
-    List<Identifiable<BoolExpr>> constraints = new ArrayList<>();
+  public List<IdentifiableBoolExpr> ocl2smt(ASTOCLArtifact astoclArtifact) {
+    List<IdentifiableBoolExpr> constraints = new ArrayList<>();
     for (ASTOCLConstraint constraint : astoclArtifact.getOCLConstraintList()) {
       constraints.add(convertConstr(constraint));
     }
     return constraints;
   }
 
-  protected Identifiable<BoolExpr> convertConstr(ASTOCLConstraint constraint) {
+  protected IdentifiableBoolExpr convertConstr(ASTOCLConstraint constraint) {
     if (constraint instanceof ASTOCLInvariant) {
       return convertInv((ASTOCLInvariant) constraint);
     } else {
@@ -57,7 +55,7 @@ public class OCL2SMTGenerator {
     }
   }
 
-  protected Identifiable<BoolExpr> convertInv(ASTOCLInvariant invariant) {
+  protected IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
     List<Expr<? extends  Sort>> expr  = new ArrayList<>();
     SourcePosition srcPos = invariant.get_SourcePositionStart();
     assert srcPos.getFileName().isPresent();
@@ -77,7 +75,7 @@ public class OCL2SMTGenerator {
        inv = convertBoolExpr(invariant.getExpression());
     }
     Optional<String> name = invariant.isPresentName() ? Optional.ofNullable(invariant.getName()): Optional.empty();
-    return Identifiable.buildBoolExprIdentifiable(inv,srcPos,name);
+    return IdentifiableBoolExpr.buildBoolExprIdentifiable(inv,srcPos,name);
   }
 
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {

@@ -4,7 +4,7 @@ import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 
-import de.monticore.cd2smt.Helper.Identifiable;
+import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd4code.CD4CodeMill;
@@ -42,12 +42,12 @@ public abstract class ExpressionAbstractTest extends AbstractTest {
     protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
     // Used to make the tests shorter & readable
-    protected Identifiable<BoolExpr> addConstraint(String search) {
+    protected IdentifiableBoolExpr addConstraint(String search) {
         ASTOCLConstraint constr = oclAST.getOCLArtifact().getOCLConstraintList()
                 .stream().map(p -> (ASTOCLInvariant) p)
                 .filter(p -> search.equals(p.getName())).findAny().get();
           ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
-        Identifiable<BoolExpr> constraint = ocl2SMTGenerator.convertConstr(constr);
+        IdentifiableBoolExpr constraint = ocl2SMTGenerator.convertConstr(constr);
         solver = CDContext.makeSolver(cdContext.getContext(), List.of(constraint));
         return constraint;
     }
