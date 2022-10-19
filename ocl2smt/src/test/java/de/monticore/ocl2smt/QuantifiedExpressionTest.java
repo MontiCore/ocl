@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 
 public class QuantifiedExpressionTest extends ExpressionAbstractTest  {
@@ -26,12 +26,11 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest  {
 
         cdContext = cd2SMTGenerator.cd2smt(cdAST, cdContext.getContext());
         ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
-        solver = cdContext.getContext().mkSolver();
     }
 
-    private void checkAttrValue(String value, List<Identifiable<BoolExpr>> oclConstraints) {
+    private void checkAttrValue(String value) {
         SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
-        smt2ODGenerator.buildOd(cdContext,"MyOD",oclConstraints);
+        smt2ODGenerator.buildOdFromSolver(solver,cdContext,"QuantifierOD",false);
 
         Assertions.assertTrue(smt2ODGenerator.getObjectMap().entrySet().size() >= 2);
         for (SMTObject obj : new ArrayList<>(smt2ODGenerator.getObjectMap().values())) {
@@ -129,18 +128,14 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest  {
     public void Two_auction_sat() {
        Identifiable<BoolExpr> constraint = addConstraint("Auction_two_sat");
         Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-        List<Identifiable<BoolExpr>> oclConstraints = new ArrayList<>();
-        oclConstraints.add(constraint);
-        checkAttrValue("10",oclConstraints);
+        checkAttrValue("10");
     }
 
     @Test
     public void Two_auction_and_bool_sat() {
         Identifiable<BoolExpr> constraint = addConstraint("Two_auction_and_bool_sat");
         Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-        List<Identifiable<BoolExpr>> oclConstraints = new ArrayList<>();
-        oclConstraints.add(constraint);
-        checkAttrValue("14", oclConstraints);
+        checkAttrValue("14");
     }
 
     @Test
