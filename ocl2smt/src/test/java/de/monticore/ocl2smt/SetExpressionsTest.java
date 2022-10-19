@@ -29,8 +29,8 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
         List<Identifiable<BoolExpr>> actualConstraint = new ArrayList<>();
         actualConstraint.add(getConstraint(invName));
        // actualConstraint.add(getConstraint("Only_one_auction"));
-       // actualConstraint.add(getConstraint("Only_two_Person"));
-        Solver solver = cdContext.makeSolver(cdContext.getContext(),actualConstraint);
+        actualConstraint.add(getConstraint("Only_two_Person"));
+        Solver solver = CDContext.makeSolver(cdContext.getContext(),actualConstraint);
         Assertions.assertSame(Status.SATISFIABLE, solver.check());
         Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(solver,cdContext, invName,false);
         org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
@@ -40,7 +40,7 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
         List<Identifiable<BoolExpr>> constraints = new ArrayList<>(cdContext.getAssociationConstraints());
         constraints.addAll(cdContext.getInheritanceConstraints());
         constraints.add(getConstraint(inVName));
-        Solver solver1 = cdContext.makeSolver(cdContext.getContext(), constraints);
+        Solver solver1 = CDContext.makeSolver(cdContext.getContext(), constraints);
         Assertions.assertSame(solver1.check(), Status.UNSATISFIABLE);
     }
 
@@ -49,7 +49,7 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
         actualConstraint.add(getConstraint(invName));
      //   actualConstraint.add(getConstraint("Only_one_auction"));
         actualConstraint.add(getConstraint("Only_two_Person"));
-        Solver solver = cdContext.makeSolver(cdContext.getContext(),actualConstraint);
+        Solver solver = CDContext.makeSolver(cdContext.getContext(),actualConstraint);
         System.out.println(solver);
     }
 
@@ -109,6 +109,11 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     public void test_printSMT(){
         printSMTScript("NoName");
         testInv("NoName");
+    }
+    @Test
+    public void test_printSMT2(){
+        printSMTScript("Test2");
+        testInv("Test2");
     }
 
 

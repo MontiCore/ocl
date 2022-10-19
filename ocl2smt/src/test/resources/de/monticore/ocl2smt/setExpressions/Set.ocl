@@ -93,5 +93,12 @@ inv  Only_one_auction:
       p2 isin a2.person &&
       p2 notin a1.person)) ;
 
+  inv Test2:
+       (forall Auction a:
+         forall Person p :
+           p isin a.person)&&
+       (exists Auction a1 , a2 :
+        a1 != a2) ;
+
  }
 
