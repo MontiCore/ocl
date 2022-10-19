@@ -17,6 +17,6 @@ ocl NC1 {
           (a.auctionIdent >= 0) &&
            (a.auctionIdent < 19);
  //UNSAT
- inv True:
+ inv :
     1==1;
 }

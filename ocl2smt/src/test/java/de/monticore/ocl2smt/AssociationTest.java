@@ -1,10 +1,9 @@
 package de.monticore.ocl2smt;
 
-import com.microsoft.z3.BoolExpr;
 
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
-import de.monticore.cd2smt.Helper.Identifiable;
+import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -21,7 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class AssociationTest extends ExpressionAbstractTest {
-    List<Identifiable<BoolExpr>> constraintList;
+    List<IdentifiableBoolExpr> constraintList;
     @BeforeEach
     public void setup() throws IOException {
         parse( "/associations/Auction.cd","/associations/Association.ocl");
@@ -32,7 +31,7 @@ public class AssociationTest extends ExpressionAbstractTest {
     }
 
    void testInv(String invName){
-        List<Identifiable<BoolExpr>> solverConstraints = new ArrayList<>();
+        List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
               solverConstraints.add(addConstraint(invName));
        Solver solver = CDContext.makeSolver(cdContext.getContext(),solverConstraints);
        Assertions.assertSame(solver.check(), Status.SATISFIABLE);
