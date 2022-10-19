@@ -44,6 +44,15 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
         Assertions.assertSame(solver1.check(), Status.UNSATISFIABLE);
     }
 
+    public void printSMTScript(String invName){
+        List<Identifiable<BoolExpr>> actualConstraint = new ArrayList<>();
+        actualConstraint.add(getConstraint(invName));
+        actualConstraint.add(getConstraint("Only_one_auction"));
+        actualConstraint.add(getConstraint("Only_two_Person"));
+        Solver solver = CDContext.makeSolver(cdContext.getContext(),actualConstraint);
+        System.out.println(solver);
+    }
+
     @Test
     public void test_isin_set() {
         testInv("All_Person_in_All_Auctions");
@@ -90,6 +99,11 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     @Test
     public void test_Set_Construction() {
         testInv("Set_construction");
+    }
+
+    @Test
+    public void test_printSMTScript(){
+        printSMTScript("All_Person_in_All_Auctions");
     }
 
 
