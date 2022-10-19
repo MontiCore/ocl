@@ -83,6 +83,15 @@ inv  Only_one_auction:
    (exists Person p3:
       p3 notin {Person p in a.person | p.age > 10});*/
 
+  inv NoName:
+     exists Auction a1 , a2:
+     (a1 != a2) &&
+     (exists Person p1 , p2 :
+     ( p1 != p2 &&
+      p1 isin a1.person&&
+      p1 notin a2.person &&
+      p2 isin a2.person &&
+      p2 notin a1.person)) ;
 
  }
 

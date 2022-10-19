@@ -28,10 +28,10 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     void testInv(String invName) {
         List<Identifiable<BoolExpr>> actualConstraint = new ArrayList<>();
         actualConstraint.add(getConstraint(invName));
-        actualConstraint.add(getConstraint("Only_one_auction"));
-        actualConstraint.add(getConstraint("Only_two_Person"));
-        Solver solver = CDContext.makeSolver(cdContext.getContext(),actualConstraint);
-        Assertions.assertSame(solver.check(), Status.SATISFIABLE);
+       // actualConstraint.add(getConstraint("Only_one_auction"));
+       // actualConstraint.add(getConstraint("Only_two_Person"));
+        Solver solver = cdContext.makeSolver(cdContext.getContext(),actualConstraint);
+        Assertions.assertSame(Status.SATISFIABLE, solver.check());
         Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(solver,cdContext, invName,false);
         org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
         printOD(od.get());
@@ -40,16 +40,16 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
         List<Identifiable<BoolExpr>> constraints = new ArrayList<>(cdContext.getAssociationConstraints());
         constraints.addAll(cdContext.getInheritanceConstraints());
         constraints.add(getConstraint(inVName));
-        Solver solver1 = CDContext.makeSolver(cdContext.getContext(), constraints);
+        Solver solver1 = cdContext.makeSolver(cdContext.getContext(), constraints);
         Assertions.assertSame(solver1.check(), Status.UNSATISFIABLE);
     }
 
     public void printSMTScript(String invName){
         List<Identifiable<BoolExpr>> actualConstraint = new ArrayList<>();
         actualConstraint.add(getConstraint(invName));
-        actualConstraint.add(getConstraint("Only_one_auction"));
+     //   actualConstraint.add(getConstraint("Only_one_auction"));
         actualConstraint.add(getConstraint("Only_two_Person"));
-        Solver solver = CDContext.makeSolver(cdContext.getContext(),actualConstraint);
+        Solver solver = cdContext.makeSolver(cdContext.getContext(),actualConstraint);
         System.out.println(solver);
     }
 
@@ -104,6 +104,11 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     @Test
     public void test_printSMTScript(){
         printSMTScript("All_Person_in_All_Auctions");
+    }
+    @Test
+    public void test_printSMT(){
+        printSMTScript("NoName");
+        testInv("NoName");
     }
 
 
