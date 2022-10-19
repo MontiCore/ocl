@@ -4,9 +4,11 @@ import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 
+import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.Identifiable;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.context.CDContext;
+import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
@@ -24,9 +26,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public abstract class ExpressionAbstractTest  {
@@ -38,12 +38,12 @@ public abstract class ExpressionAbstractTest  {
     protected ASTCDCompilationUnit cdAST;
     protected Solver solver;
     protected OCL2SMTGenerator ocl2SMTGenerator ;
-
     protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
     // Used to make the tests shorter & readable
     protected Identifiable<BoolExpr> addConstraint(String search) {
         Identifiable<BoolExpr> constraint = getConstraint(search);
+        solver = cdContext.getContext().mkSolver();
         solver.add(constraint.getValue());
         return constraint;
     }
@@ -79,11 +79,16 @@ public abstract class ExpressionAbstractTest  {
 
 
     void testInv(String invName){
-        List<Identifiable<BoolExpr>> actualConstraint = new ArrayList<>();
-        actualConstraint.add(getConstraint(invName));
-       Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(cdContext, invName, actualConstraint);
-       org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
+        List<Identifiable<BoolExpr>> solverConstraints = new ArrayList<>();
+        solverConstraints.add(addConstraint(invName));
+        Solver solver = CDContext.makeSolver(cdContext.getContext(),solverConstraints);
+        org.junit.jupiter.api.Assertions.assertSame(solver.check(), Status.SATISFIABLE);
+
+        SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
+        Optional<ASTODArtifact> od = smt2ODGenerator.buildOdFromSolver(solver,cdContext,invName,false);
+        org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
         printOD(od.get());
+
     }
 
 

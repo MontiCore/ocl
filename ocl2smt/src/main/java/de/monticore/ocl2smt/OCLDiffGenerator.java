@@ -45,7 +45,7 @@ public class OCLDiffGenerator {
         Log.error("there are no Model for the List Of Positive Constraints");
       }
 
-      return buildOd(cdContext, "Witness", solverConstraints, cd.getCDDefinition(), partial).get();
+      return buildOd(solver, cdContext, "Witness", partial).get();
     }
     public static ASTODArtifact oclWitness(ASTCDCompilationUnit cd ,Set<ASTOCLCompilationUnit>  in, Context context){
         return oclWitness(cd,in,context,false);
@@ -87,63 +87,8 @@ public class OCLDiffGenerator {
         SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
         return smt2ODGenerator.buildOdFromSolver(solver, cdContext,ODName,partial);
     }
-    protected static Optional<ASTODArtifact> buildOd(CDContext cdContext, String ODName, List<Identifiable<BoolExpr>> solverConstraints, ASTCDDefinition cd) {
-        return buildOd(cdContext,ODName,solverConstraints,cd,false);
-    }
-    protected static List<ASTODAttribute> buildInvODAttributeList(Identifiable<BoolExpr> identifiable){
-        List<ASTODAttribute> attributeList = new ArrayList<>();
-        attributeList.add(ODHelper.buildAttribute("line", OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(6).build()
-                , ""+identifiable.getSourcePosition().getLine()));
-        attributeList.add(ODHelper.buildAttribute("file", OD4ReportMill.mCQualifiedTypeBuilder().
-                setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("Path")).build(), ""+identifiable.getFile()));
-
-        attributeList.add(ODHelper.buildAttribute("name", OD4ReportMill.mCQualifiedTypeBuilder().
-                setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName("String")).build(), ""+identifiable.getInvariantName().orElse("")));
-
-        return attributeList;
-    }
-
-    protected static ASTODArtifact buildUnSatOD (Solver solver,CDContext cdContext ,String name){
-        List<ASTODElement> elementList = new ArrayList<>();
-        List<Identifiable<BoolExpr>> posConstraints = new ArrayList<>();
-        List<Identifiable<BoolExpr>> negConstraints = new ArrayList<>();
-
-        solver.check();
-        //get the constraints from the id
-        Arrays.stream( solver.getUnsatCore()).forEach( b ->{
-            int i =  Integer.parseInt(b.getSExpr().replace("|",""));
-            Identifiable<BoolExpr> constraint =  Identifiable.getBoolExprIdentifiable(i);
-
-            //add the constraints to the corresponding constraints list
-            if (constraint.getInvariantName().get().contains("_____NegInv")){
-                constraint.setInvariantName(Optional.of( constraint.getInvariantName().get().split("_____NegInv")[0]));
-                negConstraints.add(constraint);
-            }
-            else {
-                posConstraints.add(constraint);
-            }});
-
-        //add objects for each invariant
-        posConstraints.forEach( i-> elementList.add(buildInvObject(i)));
-        negConstraints.forEach( i-> elementList.add(buildInvObject(i)));
 
 
-        //add links
-        for (Identifiable<BoolExpr> left : posConstraints){
-            for (Identifiable<BoolExpr> right: negConstraints){
-                ASTODLink link = ODHelper.buildLink(left.getInvariantName().get(),right.getInvariantName().get(),"trace");
-                link.setODLinkDirection(OD4ReportMill.oDLeftToRightDirBuilder().build());
-                elementList.add(link);
-            }
-        }
-
-        return ODHelper.buildOD(name,elementList);
-    }
-
-    protected static ASTODNamedObject buildInvObject(Identifiable<BoolExpr> identifiable){
-        String name = identifiable.getInvariantName().isPresent()? identifiable.getInvariantName().get():""+identifiable.getSourcePosition().getLine() ;
-        return ODHelper.buildObject(name,"OCLInv",buildInvODAttributeList(identifiable));
-    }
 
 
 }

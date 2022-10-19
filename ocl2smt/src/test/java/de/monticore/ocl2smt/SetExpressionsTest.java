@@ -4,6 +4,7 @@ import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.Identifiable;
+import de.monticore.cd2smt.context.CDContext;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import org.gradle.internal.impldep.org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
@@ -29,7 +30,9 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
         actualConstraint.add(getConstraint(invName));
         actualConstraint.add(getConstraint("Only_one_auction"));
         actualConstraint.add(getConstraint("Only_two_Person"));
-        Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(cdContext, invName, actualConstraint);
+        Solver solver = CDContext.makeSolver(cdContext.getContext(),actualConstraint);
+        Assertions.assertSame(solver.check(), Status.SATISFIABLE);
+        Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(solver,cdContext, invName,false);
         org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
         printOD(od.get());
     }
@@ -37,7 +40,7 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
         List<Identifiable<BoolExpr>> constraints = new ArrayList<>(cdContext.getAssociationConstraints());
         constraints.addAll(cdContext.getInheritanceConstraints());
         constraints.add(getConstraint(inVName));
-        Solver solver1 = cdContext.makeSolver(cdContext.getContext(), constraints);
+        Solver solver1 = CDContext.makeSolver(cdContext.getContext(), constraints);
         Assertions.assertSame(solver1.check(), Status.UNSATISFIABLE);
     }
 
