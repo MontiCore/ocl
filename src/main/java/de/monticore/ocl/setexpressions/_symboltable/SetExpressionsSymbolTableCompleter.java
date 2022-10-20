@@ -6,11 +6,11 @@ import de.monticore.ocl.setexpressions._ast.ASTSetVariableDeclaration;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
-import de.monticore.ocl.types.check.OCLDeriver;
-import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
+import de.monticore.types.check.IDerive;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.TypeCheckResult;
@@ -22,9 +22,9 @@ import java.util.List;
 public class SetExpressionsSymbolTableCompleter
   implements SetExpressionsVisitor2, BasicSymbolsVisitor2, SetExpressionsHandler {
 
-  OCLDeriver deriver;
+  IDerive deriver;
 
-  OCLSynthesizer synthesizer;
+  ISynthesize synthesizer;
 
   protected final List<ASTMCImportStatement> imports;
 
@@ -32,7 +32,7 @@ public class SetExpressionsSymbolTableCompleter
 
   protected SetExpressionsTraverser traverser;
 
-  public void setDeriver(OCLDeriver deriver) {
+  public void setDeriver(IDerive deriver) {
     if (deriver != null) {
       this.deriver = deriver;
     }
@@ -41,7 +41,7 @@ public class SetExpressionsSymbolTableCompleter
     }
   }
 
-  public void setSynthesizer(OCLSynthesizer synthesizer) {
+  public void setSynthesizer(ISynthesize synthesizer) {
     if (synthesizer != null) {
       this.synthesizer = synthesizer;
     }
