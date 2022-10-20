@@ -27,8 +27,6 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     void testInv(String invName) {
         List<IdentifiableBoolExpr> actualConstraint = new ArrayList<>();
         actualConstraint.add(getConstraint(invName));
-       // actualConstraint.add(getConstraint("Only_one_auction"));
-        actualConstraint.add(getConstraint("Only_two_Person"));
         Solver solver = CDContext.makeSolver(cdContext.getContext(),actualConstraint);
         Assertions.assertSame(Status.SATISFIABLE, solver.check());
         Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(solver,cdContext, invName,false);
