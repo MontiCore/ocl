@@ -1,11 +1,10 @@
 package de.monticore.ocl2smt;
 
-import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 
 import com.microsoft.z3.Status;
-import de.monticore.cd2smt.Helper.Identifiable;
+import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
@@ -42,13 +41,13 @@ public abstract class ExpressionAbstractTest  {
     protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
     // Used to make the tests shorter & readable
-    protected Identifiable<BoolExpr> addConstraint(String search) {
-        Identifiable<BoolExpr> constraint = getConstraint(search);
+    protected IdentifiableBoolExpr addConstraint(String search) {
+        IdentifiableBoolExpr constraint = getConstraint(search);
         solver = cdContext.getContext().mkSolver();
         solver.add(constraint.getValue());
         return constraint;
     }
-    protected Identifiable<BoolExpr> getConstraint(String search) {
+    protected IdentifiableBoolExpr getConstraint(String search) {
         ASTOCLConstraint constr = oclAST.getOCLArtifact().getOCLConstraintList()
                 .stream().map(p -> (ASTOCLInvariant) p)
                 .filter(p -> search.equals(p.getName())).findAny().get();
@@ -80,7 +79,7 @@ public abstract class ExpressionAbstractTest  {
 
 
     void testInv(String invName){
-        List<Identifiable<BoolExpr>> solverConstraints = new ArrayList<>();
+        List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
         solverConstraints.add(addConstraint(invName));
         Solver solver = CDContext.makeSolver(cdContext.getContext(),solverConstraints);
         org.junit.jupiter.api.Assertions.assertSame(solver.check(), Status.SATISFIABLE);

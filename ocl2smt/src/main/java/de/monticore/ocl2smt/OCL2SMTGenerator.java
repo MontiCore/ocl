@@ -3,7 +3,7 @@ package de.monticore.ocl2smt;
 import com.microsoft.z3.*;
 
 
-import de.monticore.cd2smt.Helper.Identifiable;
+import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.context.CDArtifacts.SMTCDType;
 import de.monticore.cd2smt.context.CDContext;
 

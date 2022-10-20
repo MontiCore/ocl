@@ -1,9 +1,8 @@
 package de.monticore.ocl2smt;
 
-import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
-import de.monticore.cd2smt.Helper.Identifiable;
+import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.context.CDContext;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import org.gradle.internal.impldep.org.junit.Ignore;
@@ -26,7 +25,7 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
 
     @Override
     void testInv(String invName) {
-        List<Identifiable<BoolExpr>> actualConstraint = new ArrayList<>();
+        List<IdentifiableBoolExpr> actualConstraint = new ArrayList<>();
         actualConstraint.add(getConstraint(invName));
        // actualConstraint.add(getConstraint("Only_one_auction"));
         actualConstraint.add(getConstraint("Only_two_Person"));
@@ -37,7 +36,7 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
         printOD(od.get());
     }
     void testUnsatInv(String inVName){
-        List<Identifiable<BoolExpr>> constraints = new ArrayList<>(cdContext.getAssociationConstraints());
+        List<IdentifiableBoolExpr> constraints = new ArrayList<>(cdContext.getAssociationConstraints());
         constraints.addAll(cdContext.getInheritanceConstraints());
         constraints.add(getConstraint(inVName));
         Solver solver1 = CDContext.makeSolver(cdContext.getContext(), constraints);
@@ -45,7 +44,7 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     }
 
     public void printSMTScript(String invName){
-        List<Identifiable<BoolExpr>> actualConstraint = new ArrayList<>();
+        List<IdentifiableBoolExpr> actualConstraint = new ArrayList<>();
         actualConstraint.add(getConstraint(invName));
      //   actualConstraint.add(getConstraint("Only_one_auction"));
         actualConstraint.add(getConstraint("Only_two_Person"));
