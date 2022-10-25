@@ -8,9 +8,9 @@ import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTrav
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.codegen.util.VariableNaming;
-import de.monticore.ocl.types.check.OCLDeriver;
-import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.check.IDerive;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
@@ -22,15 +22,15 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   protected CommonExpressionsTraverser traverser;
 
   public CommonExpressionsPrinter(IndentPrinter printer, VariableNaming naming,
-      OCLDeriver oclDeriver, OCLSynthesizer oclSynthesizer) {
+      IDerive deriver, ISynthesize syntheziser) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(oclDeriver);
-    Preconditions.checkNotNull(oclSynthesizer);
+    Preconditions.checkNotNull(deriver);
+    Preconditions.checkNotNull(syntheziser);
     this.printer = printer;
     this.naming = naming;
-    this.oclDeriver = oclDeriver;
-    this.oclSynthesizer = oclSynthesizer;
+    this.deriver = deriver;
+    this.syntheziser = syntheziser;
   }
 
   @Override
@@ -204,7 +204,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
    * @param node the expression to be printed
    */
   protected void printAsBoxedType(ASTExpression node) {
-    TypeCheckResult type = this.getOCLDeriver().deriveType(node);
+    TypeCheckResult type = this.getDeriver().deriveType(node);
     if (!type.isPresentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;

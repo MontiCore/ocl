@@ -7,9 +7,9 @@ import de.monticore.ocl.optionaloperators._ast.*;
 import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsHandler;
 import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsTraverser;
 import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsVisitor2;
-import de.monticore.ocl.types.check.OCLDeriver;
-import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.check.IDerive;
+import de.monticore.types.check.ISynthesize;
 import de.se_rwth.commons.logging.Log;
 import org.assertj.core.util.Preconditions;
 
@@ -19,19 +19,19 @@ public class OptionalOperatorsPrinter extends AbstractPrinter
   protected OptionalOperatorsTraverser traverser;
 
   public OptionalOperatorsPrinter(IndentPrinter printer, VariableNaming naming,
-      OCLDeriver oclDeriver, OCLSynthesizer oclSynthesizer) {
+      IDerive deriver, ISynthesize syntheziser) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(oclDeriver);
-    Preconditions.checkNotNull(oclSynthesizer);
+    Preconditions.checkNotNull(deriver);
+    Preconditions.checkNotNull(syntheziser);
     this.printer = printer;
     this.naming = naming;
-    this.oclDeriver = oclDeriver;
-    this.oclSynthesizer = oclSynthesizer;
+    this.deriver = deriver;
+    this.syntheziser = syntheziser;
   }
 
-  protected OCLDeriver getOclDeriver() {
-    return this.oclDeriver;
+  protected IDerive getDeriver() {
+    return this.deriver;
   }
 
   protected IndentPrinter getPrinter() {
@@ -54,7 +54,7 @@ public class OptionalOperatorsPrinter extends AbstractPrinter
     // typecheck returns Integer for (a?:5)
     // in Java, (a.isPresent()?a.get():5) has type int
     this.getPrinter().print("((");
-    this.getPrinter().print(boxType(getOCLDeriver().deriveType(node)));
+    this.getPrinter().print(boxType(getDeriver().deriveType(node)));
     this.getPrinter().print(")(");
     node.getLeft().accept(getTraverser());
     this.getPrinter().print(".isPresent() ? ");

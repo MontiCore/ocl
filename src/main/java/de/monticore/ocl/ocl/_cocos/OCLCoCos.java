@@ -6,6 +6,8 @@ import de.monticore.ocl.oclexpressions._cocos.IterateExpressionVariableUsageIsCo
 import de.monticore.ocl.setexpressions._cocos.SetComprehensionHasGenerator;
 import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.types.check.OCLSynthesizer;
+import de.monticore.types.check.IDerive;
+import de.monticore.types.check.ISynthesize;
 
 public class OCLCoCos {
 
@@ -13,15 +15,15 @@ public class OCLCoCos {
     return createChecker(new OCLDeriver(), new OCLSynthesizer());
   }
 
-  public static OCLCoCoChecker createChecker(OCLSynthesizer synthesizer) {
+  public static OCLCoCoChecker createChecker(ISynthesize synthesizer) {
     return createChecker(new OCLDeriver(), synthesizer);
   }
   
-  public static OCLCoCoChecker createChecker(OCLDeriver deriver) {
+  public static OCLCoCoChecker createChecker(IDerive deriver) {
     return createChecker(deriver, new OCLSynthesizer());
   }
   
-  public static OCLCoCoChecker createChecker(OCLDeriver deriver, OCLSynthesizer synthesizer) {
+  public static OCLCoCoChecker createChecker(IDerive deriver, ISynthesize synthesizer) {
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new MethSignatureStartsWithLowerCaseLetter());
     checker.addCoCo(new ConstructorNameStartsWithCapitalLetter());
