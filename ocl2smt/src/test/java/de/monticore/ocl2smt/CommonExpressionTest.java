@@ -3,7 +3,6 @@ package de.monticore.ocl2smt;
 
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
-import de.monticore.cd2smt.context.CDContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,12 +14,13 @@ import java.util.List;
 
 public class CommonExpressionTest extends ExpressionAbstractTest {
     protected List<BoolExpr> res = new ArrayList<>();
-    protected CDContext cdContext = new CDContext(new Context());
+
 
     @BeforeEach
     public void setup() throws IOException {
        parse("MinAuction.cd", "CommonExpr.ocl");
-        OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
+       cd2SMTGenerator.cd2smt(cdAST,ctx);
+        OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd2SMTGenerator);
         ocl2SMTGenerator.ocl2smt(oclAST.getOCLArtifact()).forEach(b-> res.add(b.getValue()));
     }
 
@@ -46,8 +46,8 @@ public class CommonExpressionTest extends ExpressionAbstractTest {
 
     @Test
     public void testLogicExpressionConverter() {
-        Assertions.assertEquals(res.get(0), cdContext.getContext().mkBool(true));
-        Assertions.assertEquals(res.get(1), cdContext.getContext().mkFalse());
+        Assertions.assertEquals(res.get(0), cd2SMTGenerator.getContext().mkBool(true));
+        Assertions.assertEquals(res.get(1), cd2SMTGenerator.getContext().mkFalse());
         Assertions.assertEquals(res.get(2).getSExpr(), "(not true)");
         Assertions.assertEquals(res.get(3).getSExpr(), "(not false)");
         Assertions.assertEquals(res.get(4).getSExpr(), "(and false false)");

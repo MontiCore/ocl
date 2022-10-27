@@ -13,9 +13,9 @@ public class ControlExpressionTest extends ExpressionAbstractTest {
     @BeforeEach
     public void setup() throws IOException {
         parse("MinAuction.cd", "ControlExpr.ocl");
-        cdContext = cd2SMTGenerator.cd2smt(cdAST,cdContext.getContext());
-        ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
-        solver = cdContext.getContext().mkSolver();
+         cd2SMTGenerator.cd2smt(cdAST,buildContext());
+        ocl2SMTGenerator = new OCL2SMTGenerator(cd2SMTGenerator);
+        solver = cd2SMTGenerator.getContext().mkSolver();
     }
 
     @Test
