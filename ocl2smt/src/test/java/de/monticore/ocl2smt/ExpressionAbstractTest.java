@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public abstract class ExpressionAbstractTest extends AbstractTest {
+public abstract class ExpressionAbstractTest {
     protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
     protected static final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
     protected Context ctx = buildContext();
@@ -44,7 +44,7 @@ public abstract class ExpressionAbstractTest extends AbstractTest {
                 .filter(p -> search.equals(p.getName())).findAny().get();
         ocl2SMTGenerator = new OCL2SMTGenerator(cd2SMTGenerator);
         IdentifiableBoolExpr constraint = ocl2SMTGenerator.convertConstr(constr);
-        solver = CD2SMTGenerator.makeSolver(ctx, List.of(constraint));
+        solver = cd2SMTGenerator.makeSolver(List.of(constraint));
         return constraint;
     }
 

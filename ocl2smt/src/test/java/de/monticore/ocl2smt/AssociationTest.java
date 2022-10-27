@@ -4,8 +4,6 @@ package de.monticore.ocl2smt;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
-import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import org.junit.jupiter.api.Assertions;
@@ -24,17 +22,16 @@ public class AssociationTest extends ExpressionAbstractTest {
         Set<ASTOCLCompilationUnit> oclFiles = new HashSet<>();
         oclFiles.add(oclAST);
         constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST, oclFiles, buildContext());
-        cd2SMTGenerator.cd2smt(cdAST,ctx);
+        cd2SMTGenerator.cd2smt(cdAST, ctx);
     }
 
     void testInv(String invName) {
         List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
         solverConstraints.add(addConstraint(invName));
-        Solver solver = CD2SMTGenerator.makeSolver(cd2SMTGenerator.getContext(), solverConstraints);
+        Solver solver = cd2SMTGenerator.makeSolver(solverConstraints);
         Assertions.assertSame(solver.check(), Status.SATISFIABLE);
 
-        SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
-        Optional<ASTODArtifact> od = smt2ODGenerator.buildOdFromSolver(solver, cd2SMTGenerator, cdAST.getCDDefinition(), invName, false);
+        Optional<ASTODArtifact> od = cd2SMTGenerator.smt2od(solver.getModel(), false, invName);
         Assertions.assertTrue(od.isPresent());
         printOD(od.get());
     }
