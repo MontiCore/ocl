@@ -25,13 +25,11 @@ import java.util.stream.Collectors;
 public class OCLDiffTest {
     protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt/OCLDiff";
     protected static final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
-    protected static Map<String, String> ctxParam = new HashMap<>();
 
     public void setUp() {
         Log.init();
         OCLMill.init();
         CD4CodeMill.init();
-        ctxParam.put("model", "true");
     }
 
     protected ASTOCLCompilationUnit parseOCl(String cdFileName, String oclFileName) throws IOException {
@@ -89,7 +87,7 @@ public class OCLDiffTest {
         nocl.add(parseOCl("Auction.cd", "negConstraint2.ocl"));
         nocl.add(parseOCl("Auction.cd", "negConstraint1.ocl"));
         //make ocldiff
-        Pair<ASTODArtifact, Set<ASTODArtifact>> diff = OCLDiffGenerator.oclDiff(ast, pocl, nocl, new Context(ctxParam));
+        Pair<ASTODArtifact, Set<ASTODArtifact>> diff = OCLDiffGenerator.oclDiff(ast, pocl, nocl);
         List<ASTODArtifact> satOds = new ArrayList<>(diff.getRight());
         ASTODArtifact unsatOD = diff.getLeft();
         //print ods
@@ -114,7 +112,7 @@ public class OCLDiffTest {
         Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();
         oclSet.add(parseOCl("Partial/Partial.cd", "Partial/partial.ocl"));
 
-        ASTODArtifact od = OCLDiffGenerator.oclWitness(cdAST, oclSet, new Context(ctxParam), true);
+        ASTODArtifact od = OCLDiffGenerator.oclWitness(cdAST, oclSet, true);
         printOD(od);
 
         od.getObjectDiagram().getODElementList().forEach(p -> {

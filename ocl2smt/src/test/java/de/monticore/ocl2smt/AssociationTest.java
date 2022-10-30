@@ -21,17 +21,16 @@ public class AssociationTest extends ExpressionAbstractTest {
         parse("/associations/Auction.cd", "/associations/Association.ocl");
         Set<ASTOCLCompilationUnit> oclFiles = new HashSet<>();
         oclFiles.add(oclAST);
-        constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST, oclFiles, buildContext());
-        cd2SMTGenerator.cd2smt(cdAST, ctx);
+        constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST, oclFiles);
     }
 
     void testInv(String invName) {
         List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
         solverConstraints.add(addConstraint(invName));
-        Solver solver = cd2SMTGenerator.makeSolver(solverConstraints);
+        Solver solver =ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
         Assertions.assertSame(solver.check(), Status.SATISFIABLE);
 
-        Optional<ASTODArtifact> od = cd2SMTGenerator.smt2od(solver.getModel(), false, invName);
+        Optional<ASTODArtifact> od =ocl2SMTGenerator.cd2smtGenerator.smt2od(solver.getModel(), false, invName);
         Assertions.assertTrue(od.isPresent());
         printOD(od.get());
     }
