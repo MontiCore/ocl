@@ -13,6 +13,7 @@ import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -77,6 +78,7 @@ public class OCLDiffTest {
     }
 
     @Test
+    @Disabled("Test is Flaky")
     public void test_ocl_diff() throws IOException {
         ASTCDCompilationUnit ast = parseCD("Auction.cd");
 
@@ -107,6 +109,7 @@ public class OCLDiffTest {
     }
 
     @Test
+    @Disabled("Test is Flaky")
     public void testOdPartial() throws IOException {
         ASTCDCompilationUnit cdAST = parseCD("Partial/Partial.cd");
         Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();
