@@ -22,9 +22,9 @@ ocl NC1 {
             p1 == p2);
 
 
- context Auction a  inv NestedFieldAccessExpr:
-   forall Company  c:
-     p.company isin a.person.company ;
+ inv  NestedFieldAccessExpr:
+   forall Company  c, Auction a:
+     c isin a.person.company ;
 
 }
 

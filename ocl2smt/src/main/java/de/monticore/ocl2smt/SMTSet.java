@@ -56,6 +56,10 @@ public class SMTSet {
         return ctx.mkNot(setFunction.apply(expr));
     }
 
+    public static SMTSet collectAll(Function<Expr<? extends  Sort>,SMTSet> mySet, Context ctx) {
+        return new SMTSet(obj->ctx.mkForall(new Expr[]{obj},ctx.mkTrue(),0,null,null,null,null));
+    }
+
     enum OPERATION {UNION, INTERSECTION, MINUS}
 
 }

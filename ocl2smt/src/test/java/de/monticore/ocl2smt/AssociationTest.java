@@ -54,6 +54,11 @@ public class AssociationTest extends ExpressionAbstractTest {
         testInv("Same_Person_in_2_Auction");
     }
 
+    @Test
+    public void TestNestedFieldAccessExpr() {
+        testInv("NestedFieldAccessExpr");
+    }
+
    /* @Test
     public void transitive_closure() throws IOException {
         parse("/Transitive-closure/transitiveClosure.cd", "/Transitive-closure/transitiveClosure.ocl");
