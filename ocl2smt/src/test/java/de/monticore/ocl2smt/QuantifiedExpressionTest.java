@@ -1,7 +1,6 @@
 package de.monticore.ocl2smt;
 
 import com.microsoft.z3.Status;
-import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -111,7 +110,7 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest {
 
     @Test
     public void Two_auction_and_bool_sat() {
-        IdentifiableBoolExpr constraint = addConstraint("Two_auction_and_bool_sat");
+        addConstraint("Two_auction_and_bool_sat");
         Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
     }
 

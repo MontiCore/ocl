@@ -1,15 +1,11 @@
 package de.monticore.ocl2smt;
 
-import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
-
+import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
-import de.monticore.cd2smt.context.CDContext;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
@@ -40,10 +36,10 @@ public abstract class ExpressionAbstractTest {
     // Used to make the tests shorter & readable
     protected IdentifiableBoolExpr addConstraint(String search) {
         IdentifiableBoolExpr constraint = getConstraint(search);
-        solver = cdContext.getContext().mkSolver();
-        solver.add(constraint.getValue());
+        solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(List.of(constraint));
         return constraint;
     }
+
     protected IdentifiableBoolExpr getConstraint(String search) {
         ASTOCLConstraint constr = oclAST.getOCLArtifact().getOCLConstraintList()
                 .stream().map(p -> (ASTOCLInvariant) p)
@@ -61,7 +57,7 @@ public abstract class ExpressionAbstractTest {
 
         oclAST = OCL_Loader.loadAndCheckOCL(
                 Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(),
-                cdPath.toFile()  );
+                cdPath.toFile());
     }
 
     public void printOD(ASTODArtifact od) {
@@ -75,23 +71,22 @@ public abstract class ExpressionAbstractTest {
     }
 
 
-    void testInv(String invName){
+    void testInv(String invName) {
         List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
         solverConstraints.add(addConstraint(invName));
-        Solver solver = CDContext.makeSolver(cdContext.getContext(),solverConstraints);
+        Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
         org.junit.jupiter.api.Assertions.assertSame(solver.check(), Status.SATISFIABLE);
 
-        SMT2ODGenerator smt2ODGenerator = new SMT2ODGenerator();
-        Optional<ASTODArtifact> od = smt2ODGenerator.buildOdFromSolver(solver,cdContext,invName,false);
+        Optional<ASTODArtifact> od = ocl2SMTGenerator.cd2smtGenerator.smt2od(solver.getModel(), false, invName);
         org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
         printOD(od.get());
 
     }
 
 
-   public Context buildContext(){
-       Map<String, String> cfg = new HashMap<>();
-       cfg.put("model", "true");
-       return  new Context(cfg);
-   }
+    public Context buildContext() {
+        Map<String, String> cfg = new HashMap<>();
+        cfg.put("model", "true");
+        return new Context(cfg);
+    }
 }

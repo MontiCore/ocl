@@ -78,7 +78,6 @@ public class OCLDiffTest {
     }
 
     @Test
-    @Disabled("Test is Flaky")
     public void test_ocl_diff() throws IOException {
         ASTCDCompilationUnit ast = parseCD("Auction.cd");
 
@@ -109,7 +108,6 @@ public class OCLDiffTest {
     }
 
     @Test
-    @Disabled("Test is Flaky")
     public void testOdPartial() throws IOException {
         ASTCDCompilationUnit cdAST = parseCD("Partial/Partial.cd");
         Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();

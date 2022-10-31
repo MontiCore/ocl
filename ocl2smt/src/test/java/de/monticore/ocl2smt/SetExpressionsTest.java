@@ -3,7 +3,6 @@ package de.monticore.ocl2smt;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.cd2smt.context.CDContext;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import org.gradle.internal.impldep.org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
@@ -19,25 +18,24 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     @BeforeEach
     public void setup() throws IOException {
         parse("setExpressions/Set.cd", "setExpressions/Set.ocl");
-        cdContext = cd2SMTGenerator.cd2smt(cdAST, (buildContext()));
-        ocl2SMTGenerator = new OCL2SMTGenerator(cdContext);
+        ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
     }
 
     @Override
     void testInv(String invName) {
         List<IdentifiableBoolExpr> actualConstraint = new ArrayList<>();
         actualConstraint.add(getConstraint(invName));
-        Solver solver = CDContext.makeSolver(cdContext.getContext(),actualConstraint);
+        Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(actualConstraint);
         Assertions.assertSame(Status.SATISFIABLE, solver.check());
-        Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(solver,cdContext, invName,false);
+        Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(solver.getModel(), invName,false);
         org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
         printOD(od.get());
     }
     void testUnsatInv(String inVName){
-        List<IdentifiableBoolExpr> constraints = new ArrayList<>(cdContext.getAssociationConstraints());
-        constraints.addAll(cdContext.getInheritanceConstraints());
+        List<IdentifiableBoolExpr> constraints = new ArrayList<>(ocl2SMTGenerator.cd2smtGenerator.getAssociationsConstraints());
+        constraints.addAll(ocl2SMTGenerator.cd2smtGenerator.getInheritanceConstraints());
         constraints.add(getConstraint(inVName));
-        Solver solver1 = CDContext.makeSolver(cdContext.getContext(), constraints);
+        Solver solver1 = ocl2SMTGenerator.cd2smtGenerator.makeSolver(constraints);
         Assertions.assertSame(solver1.check(), Status.UNSATISFIABLE);
     }
 
@@ -46,7 +44,7 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
         actualConstraint.add(getConstraint(invName));
      //   actualConstraint.add(getConstraint("Only_one_auction"));
         actualConstraint.add(getConstraint("Only_two_Person"));
-        Solver solver = CDContext.makeSolver(cdContext.getContext(),actualConstraint);
+        Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(actualConstraint);
         System.out.println(solver);
     }
 
