@@ -1,13 +1,12 @@
 package de.monticore.ocl2smt;
 
+import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 
-import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.context.CDContext;
-import de.monticore.cd2smt.smt2odgenerator.SMT2ODGenerator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 
@@ -28,17 +27,15 @@ import java.nio.file.Paths;
 import java.util.*;
 
 
-public abstract class ExpressionAbstractTest  {
+public abstract class ExpressionAbstractTest {
     protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
-    protected  static  final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
-    protected CDContext cdContext  = new CDContext(buildContext());
+    protected static final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
 
     protected ASTOCLCompilationUnit oclAST;
     protected ASTCDCompilationUnit cdAST;
     protected Solver solver;
-    protected OCL2SMTGenerator ocl2SMTGenerator ;
+    protected OCL2SMTGenerator ocl2SMTGenerator;
 
-    protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
     // Used to make the tests shorter & readable
     protected IdentifiableBoolExpr addConstraint(String search) {
