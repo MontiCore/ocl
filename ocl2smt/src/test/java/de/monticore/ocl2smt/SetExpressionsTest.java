@@ -4,9 +4,9 @@ import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.odbasis._ast.ASTODArtifact;
-import org.gradle.internal.impldep.org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -27,22 +27,22 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
         actualConstraint.add(getConstraint(invName));
         Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(actualConstraint);
         Assertions.assertSame(Status.SATISFIABLE, solver.check());
-        Optional<ASTODArtifact> od = OCLDiffGenerator.buildOd(solver.getModel(), invName,false);
+        Optional<ASTODArtifact> od = ocl2SMTGenerator.cd2smtGenerator.smt2od(solver.getModel(), false, invName);
         org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
         printOD(od.get());
     }
-    void testUnsatInv(String inVName){
-        List<IdentifiableBoolExpr> constraints = new ArrayList<>(ocl2SMTGenerator.cd2smtGenerator.getAssociationsConstraints());
-        constraints.addAll(ocl2SMTGenerator.cd2smtGenerator.getInheritanceConstraints());
+
+    void testUnsatInv(String inVName) {
+        List<IdentifiableBoolExpr> constraints = new ArrayList<>();
         constraints.add(getConstraint(inVName));
         Solver solver1 = ocl2SMTGenerator.cd2smtGenerator.makeSolver(constraints);
         Assertions.assertSame(solver1.check(), Status.UNSATISFIABLE);
     }
 
-    public void printSMTScript(String invName){
+    public void printSMTScript(String invName) {
         List<IdentifiableBoolExpr> actualConstraint = new ArrayList<>();
         actualConstraint.add(getConstraint(invName));
-     //   actualConstraint.add(getConstraint("Only_one_auction"));
+        //   actualConstraint.add(getConstraint("Only_one_auction"));
         actualConstraint.add(getConstraint("Only_two_Person"));
         Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(actualConstraint);
         System.out.println(solver);
@@ -54,8 +54,22 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     }
 
     @Test
+    public void test_IsIn_notIn() {
+        testInv("IsIn_notIn");
+    }
+
+    @Test
     public void test_notin_set() {
         testInv("One_Person_in_Any_Auctions");
+    }
+
+    @Test
+    public void isin_notIn_unsat() {
+        testUnsatInv("Counter_Example");
+    }
+    @Test
+    public void test_Notin_isInT() {
+        testInv("Notin_isIn");
     }
 
     @Test
@@ -70,8 +84,9 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
 
     @Test
     public void test_Set_Union_one_side_Unsat() {
-       testUnsatInv("Set_Union_one_side_Unsat");
+        testUnsatInv("Set_Union_one_side_Unsat");
     }
+
     @Test
     public void test_SetIntersect_sat() {
         testInv("Set_Intersection_Sat");
@@ -81,6 +96,7 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     public void test_Set_Intersection_Unsat() {
         testUnsatInv("Set_Intersection_Unsat");
     }
+
     @Test
     public void test_Set_Minus_sat() {
         testInv("Set_Minus_sat");
@@ -90,25 +106,11 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     public void test_Set_Minus_Unsat() {
         testUnsatInv("Set_Minus_Unsat");
     }
-    @Ignore
+
+    @Disabled
     @Test
     public void test_Set_Construction() {
         testInv("Set_construction");
-    }
-
-    @Test
-    public void test_printSMTScript(){
-        printSMTScript("All_Person_in_All_Auctions");
-    }
-    @Test
-    public void test_printSMT(){
-        printSMTScript("NoName");
-        testInv("NoName");
-    }
-    @Test
-    public void test_printSMT2(){
-        printSMTScript("Test2");
-        testInv("Test2");
     }
 
 

@@ -83,7 +83,7 @@ inv  Only_one_auction:
    (exists Person p3:
       p3 notin {Person p in a.person | p.age > 10});*/
 
-  inv NoName:
+  inv Notin_isIn:
      exists Auction a1 , a2:
      (a1 != a2) &&
      (exists Person p1 , p2 :
@@ -93,12 +93,20 @@ inv  Only_one_auction:
       p2 isin a2.person &&
       p2 notin a1.person)) ;
 
-  inv Test2:
+  inv IsIn_notIn:
        (forall Auction a:
          forall Person p :
            p isin a.person)&&
        (exists Auction a1 , a2 :
         a1 != a2) ;
+
+
+    inv Counter_Example:
+      // (Wrong Ivariant) There is no person, who is in two auctions. NOTICE THAT a1 and a2 could be the same Object!!!!
+      (forall Auction a1, a2: (forall Person p: p isin a1.person implies p notin a2.person))
+
+      // Every Auction has at least one person
+       && (forall Auction a6: exists Person p1: p1 isin a6.person);
 
  }
 

@@ -54,7 +54,7 @@ public class AssociationTest extends ExpressionAbstractTest {
         testInv("Same_Person_in_2_Auction");
     }
 
-    @Test
+   /* @Test
     public void transitive_closure() throws IOException {
         parse("/Transitive-closure/transitiveClosure.cd", "/Transitive-closure/transitiveClosure.ocl");
         ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
@@ -63,5 +63,5 @@ public class AssociationTest extends ExpressionAbstractTest {
         ocls.add(oclAST);
         ASTODArtifact od = OCLDiffGenerator.oclWitness(cdAST, ocls, false);
         printOD(od);
-    }
+    }*/
 }

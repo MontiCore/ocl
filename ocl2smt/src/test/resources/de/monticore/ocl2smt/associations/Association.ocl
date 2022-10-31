@@ -20,5 +20,11 @@ ocl NC1 {
         a1 != a2 implies
         (exists Person p1 in a2.person, Person p2 in a2.person:
             p1 == p2);
+
+
+ context Auction a  inv NestedFieldAccessExpr:
+   forall Company  c:
+     p.company isin a.person.company ;
+
 }
 

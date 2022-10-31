@@ -24,6 +24,7 @@ import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class OCL2SMTGenerator {
     public final CD2SMTGenerator cd2smtGenerator;
@@ -301,8 +302,8 @@ public class OCL2SMTGenerator {
                 Log.error("cannot convert ASTInDeclaration, in part is not a ASTFieldAccessExpression");
             }
             assert expr.getValue() instanceof ASTFieldAccessExpression;
-            Association association = convertFieldAccAssoc((ASTFieldAccessExpression) expr.getValue());
-            constraintList.add(association.evaluate(expr.getKey()));
+            SMTSet mySet = convertFieldAccAssoc((ASTFieldAccessExpression) expr.getValue());
+            constraintList.add(mySet.isIn(expr.getKey()));
         }
         BoolExpr result = ctx.mkTrue();
 
@@ -369,15 +370,16 @@ public class OCL2SMTGenerator {
         return cd2smtGenerator.getAttribute(myType, myAttribute, obj);
     }
 
-    protected Association convertFieldAccAssoc(ASTFieldAccessExpression node) {
+    protected SMTSet convertFieldAccAssoc(ASTFieldAccessExpression node) {
         //get the object and convert it into smt expression
         Expr<? extends Sort> obj = convertExpr(node.getExpression());
         ASTCDType myType = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(obj.getSort()), cd2smtGenerator.getClassDiagram().getCDDefinition());
         ASTCDAssociation association = CDHelper.getAssociation(myType, node.getName(), cd2smtGenerator.getClassDiagram().getCDDefinition());
         Sort leftSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(association.getLeftQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition()));
 
-        return leftSort.equals(obj.getSort()) ? obj2 -> cd2smtGenerator.evaluateLink(association, obj, obj2)
-                : obj2 -> cd2smtGenerator.evaluateLink(association, obj2, obj);
+        Function<Expr<? extends  Sort>, BoolExpr> setFunc = leftSort.equals(obj.getSort()) ? obj2 -> cd2smtGenerator.evaluateLink(association, obj, obj2)
+                                                                                           : obj2 -> cd2smtGenerator.evaluateLink(association, obj2, obj);
+        return  new SMTSet(setFunc);
     }
 
     protected List<Expr<? extends Sort>> convertInDecVar(ASTInDeclarationVariable node, ASTMCType type) {
@@ -428,24 +430,22 @@ public class OCL2SMTGenerator {
 
     //---------------------------------------Set-Expressions----------------------------------------------------------------
     protected BoolExpr convertSetIn(ASTSetInExpression node) {
-        SMTSet set = convertSet(node.getSet());
-        return ctx.mkAnd(set.getDefinition(), (BoolExpr) ctx.mkApp(set.getSetFunction(), convertExpr(node.getElem())));
+        return convertSet(node.getSet()).isIn(convertExpr(node.getElem()));
     }
 
     protected BoolExpr convertSetNotIn(ASTSetNotInExpression node) {
-        SMTSet set = convertSet(node.getSet());
-        return ctx.mkAnd(set.getDefinition(), ctx.mkNot((BoolExpr) ctx.mkApp(set.getSetFunction(), convertExpr(node.getElem()))));
+        return ctx.mkNot(convertSet(node.getSet()).isIn(convertExpr(node.getElem())));
     }
 
 
     protected SMTSet convertSet(ASTExpression node) {
         SMTSet set = null;
         if (node instanceof ASTFieldAccessExpression) {
-           // set = convertFieldAccAssoc((ASTFieldAccessExpression) node);
+            set = convertFieldAccAssoc((ASTFieldAccessExpression) node);
         } else if (node instanceof ASTBracketExpression) {
             set = convertSet(((ASTBracketExpression) node).getExpression());
         } else if (node instanceof ASTOCLTransitiveQualification) {
-           // set = convertTransClo((ASTOCLTransitiveQualification) node);
+          //  set = convertTransClo((ASTOCLTransitiveQualification) node);
         } else if (node instanceof ASTUnionExpression) {
             set = SMTSet.mkSetUnion(convertSet(((ASTUnionExpression) node).getLeft()), convertSet(((ASTUnionExpression) node).getRight()), ctx);
         } else if (node instanceof ASTIntersectionExpression) {
@@ -453,7 +453,7 @@ public class OCL2SMTGenerator {
         } else if (node instanceof ASTSetMinusExpression) {
             set = SMTSet.mkSetMinus(convertSet(((ASTSetMinusExpression) node).getLeft()), convertSet(((ASTSetMinusExpression) node).getRight()), ctx);
         } else if (node instanceof ASTSetComprehension) {
-            set = convertSetComp((ASTSetComprehension) node);
+           // set = convertSetComp((ASTSetComprehension) node);
         } else {
             Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
         }
@@ -461,7 +461,7 @@ public class OCL2SMTGenerator {
         return set;
     }
 
-    protected SMTSet convertSetComp(ASTSetComprehension node) {
+ /*   protected SMTSet convertSetComp(ASTSetComprehension node) {
         //TODO complete the implementation handle when right setComprehension Items are not filters
         SMTSet set = convertSetCompItem(node.getLeft());
         BoolExpr filter = ctx.mkTrue();
@@ -470,7 +470,7 @@ public class OCL2SMTGenerator {
         } //TODO: change the way o handle filters
         set.setDefinition(ctx.mkAnd(filter, set.definition));
         return set;
-    }
+    }*/
 
     public Context buildContext() {
         Map<String, String> cfg = new HashMap<>();
@@ -490,10 +490,7 @@ public class OCL2SMTGenerator {
     }
 
 
-    @FunctionalInterface
-    public interface Association {
-        BoolExpr evaluate(Expr<? extends Sort> right);
-    }
+
 
 
 }
