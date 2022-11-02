@@ -370,36 +370,53 @@ public class OCL2SMTGenerator {
         return cd2smtGenerator.getAttribute(myType, myAttribute, obj);
     }
 
+    //auction.person.parent.kind
     protected SMTSet convertFieldAccAssoc(ASTFieldAccessExpression node) {
-        //get the object and convert it into smt expression
+        if (!(node.getExpression() instanceof ASTFieldAccessExpression)) {
 
-        ASTFieldAccessExpression node2 = (ASTFieldAccessExpression)node.getExpression();
+            Expr<? extends Sort> auction = convertExpr(node.getExpression());
+            ASTCDType Auction = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(auction.getSort()), cd2smtGenerator.getClassDiagram().getCDDefinition());//ClassAuction
+            ASTCDAssociation auction_person = CDHelper.getAssociation(Auction, node.getName(), cd2smtGenerator.getClassDiagram().getCDDefinition()); //auction_person
 
-        Expr<? extends Sort> auction = convertExpr(node2.getExpression()); //a
-
-        ASTCDType myType2 = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(auction.getSort()), cd2smtGenerator.getClassDiagram().getCDDefinition());
-        ASTCDAssociation association = CDHelper.getAssociation(myType2, node2.getName(), cd2smtGenerator.getClassDiagram().getCDDefinition()); //auction_person
-        Sort leftSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(association.getLeftQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition())); //auction
-        Sort rightSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(association.getRightQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition())); //Person
-
-        Expr<? extends  Sort> person = ctx.mkConst("person", rightSort);
-
-        ASTCDType myType = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(person.getSort()), cd2smtGenerator.getClassDiagram().getCDDefinition());
-        ASTCDAssociation association2 = CDHelper.getAssociation(myType, node.getName(), cd2smtGenerator.getClassDiagram().getCDDefinition());
-        Sort leftSort2 = cd2smtGenerator.getSort(CDHelper.getASTCDType(association2.getLeftQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition()));//person
-        Sort rightSort2 = cd2smtGenerator.getSort(CDHelper.getASTCDType(association.getRightQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition())); //parent
-
-        Function<Expr<? extends  Sort>, BoolExpr> person_set = leftSort2.equals(person.getSort()) ? obj2 -> cd2smtGenerator.evaluateLink(association2, person, obj2)
-                : obj2 -> cd2smtGenerator.evaluateLink(association, obj2, person);
-
-        Function<Expr<? extends  Sort>, BoolExpr> setFunc = leftSort.equals(auction.getSort()) ?
-                parent ->ctx.mkForall(new Expr[]{person} ,ctx.mkImplies(cd2smtGenerator.evaluateLink(association, auction, person),person_set.apply(parent))
-                        ,0,null,null,null,null)
-                : obj2 -> cd2smtGenerator.evaluateLink(association, obj2, auction);
+            Sort leftSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(auction_person.getLeftQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition())); //Auction_obj
+            Sort rightSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(auction_person.getRightQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition())); //Person_obj
 
 
-        return  new SMTSet(setFunc);
+            Function<Expr<? extends Sort>, BoolExpr> auction_per_set = leftSort.equals(auction.getSort()) ? per -> cd2smtGenerator.evaluateLink(auction_person, auction, per) :
+                    per -> cd2smtGenerator.evaluateLink(auction_person, per, auction);
+            return leftSort.equals(auction.getSort()) ? new SMTSet(auction_per_set, rightSort) : new SMTSet(auction_per_set, leftSort);
+
+        }
+        SMTSet pSet = convertFieldAccAssoc((ASTFieldAccessExpression) node.getExpression());
+
+        ASTCDType Person = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(pSet.sort), cd2smtGenerator.getClassDiagram().getCDDefinition()); //Class Person
+        ASTCDAssociation person_parent = CDHelper.getAssociation(Person, node.getName(), cd2smtGenerator.getClassDiagram().getCDDefinition()); //person_parent
+
+        Sort leftSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(person_parent.getLeftQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition()));//person_obj
+        Sort rightSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(person_parent.getRightQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition()));//parent_obj
+
+
+        Function<Expr<? extends Sort>, SMTSet> function = leftSort.equals(pSet.sort) ? obj1 -> new SMTSet(obj2 -> cd2smtGenerator.evaluateLink(person_parent, obj1, obj2), rightSort) :
+                obj1 -> new SMTSet(obj2 -> cd2smtGenerator.evaluateLink(person_parent, obj1, obj2), leftSort);
+
+        return pSet.collectAll(function, ctx);
+
     }
+
+   /* protected SMTSet convertFieldAccAssoc(ASTFieldAccessExpression node) {
+        SMTSet set = convertFieldAccAssocMiddle((ASTFieldAccessExpression) node.getExpression());
+
+        ASTCDType Parent = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(set.sort), cd2smtGenerator.getClassDiagram().getCDDefinition());
+        ASTCDAssociation parent_kind = CDHelper.getAssociation(Parent, node.getName(), cd2smtGenerator.getClassDiagram().getCDDefinition());
+        Sort leftSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(parent_kind.getLeftQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition()));//parent
+        Sort right = cd2smtGenerator.getSort(CDHelper.getASTCDType(parent_kind.getRightQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition()));//parent
+
+        Function<Expr<? extends Sort>, SMTSet> function = leftSort.equals(set.sort) ? obj1 -> new SMTSet(obj2 -> cd2smtGenerator.evaluateLink(parent_kind, obj1, obj2),right) :
+                obj1 -> new SMTSet(obj2 -> cd2smtGenerator.evaluateLink(parent_kind, obj1, obj2),leftSort);
+
+
+        return set.collectAll(function, ctx);
+    }*/
 
     protected List<Expr<? extends Sort>> convertInDecVar(ASTInDeclarationVariable node, ASTMCType type) {
         List<Expr<? extends Sort>> result = new ArrayList<>();
@@ -429,7 +446,7 @@ public class OCL2SMTGenerator {
     }
 
     protected Expr<? extends Sort> convertVarDecl(ASTMCType type, String name) {
-        Expr<? extends Sort> expr = ctx.mkConst(name, typeConverter.convertType(type,cd2smtGenerator.getClassDiagram().getCDDefinition()));
+        Expr<? extends Sort> expr = ctx.mkConst(name, typeConverter.convertType(type, cd2smtGenerator.getClassDiagram().getCDDefinition()));
         varNames.put(name, expr);
         return expr;
     }
@@ -465,7 +482,7 @@ public class OCL2SMTGenerator {
         } else if (node instanceof ASTBracketExpression) {
             set = convertSet(((ASTBracketExpression) node).getExpression());
         } else if (node instanceof ASTOCLTransitiveQualification) {
-          //  set = convertTransClo((ASTOCLTransitiveQualification) node);
+            //  set = convertTransClo((ASTOCLTransitiveQualification) node);
         } else if (node instanceof ASTUnionExpression) {
             set = SMTSet.mkSetUnion(convertSet(((ASTUnionExpression) node).getLeft()), convertSet(((ASTUnionExpression) node).getRight()), ctx);
         } else if (node instanceof ASTIntersectionExpression) {
@@ -473,7 +490,7 @@ public class OCL2SMTGenerator {
         } else if (node instanceof ASTSetMinusExpression) {
             set = SMTSet.mkSetMinus(convertSet(((ASTSetMinusExpression) node).getLeft()), convertSet(((ASTSetMinusExpression) node).getRight()), ctx);
         } else if (node instanceof ASTSetComprehension) {
-           // set = convertSetComp((ASTSetComprehension) node);
+            // set = convertSetComp((ASTSetComprehension) node);
         } else {
             Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
         }
@@ -508,9 +525,6 @@ public class OCL2SMTGenerator {
         return convertSet(node.getExpression());
 
     }
-
-
-
 
 
 }

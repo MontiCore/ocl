@@ -6,8 +6,8 @@ classdiagram MinAuction {
     int auctionIdent;
   }
 
-    class Company {
-      int auctionIdent;
+    class Parent {
+      int age;
     }
 
   class  Person{
@@ -15,7 +15,12 @@ classdiagram MinAuction {
    int id;
   }
 
+  class  Kind{
+   int age ;
+   int id;
+  }
   association [1] Auction     --     Person[1..*];
-  association     Person      --     Company ;
+  association    [1] Person      --     Parent[1] ;
+   association    [1]Parent      --     Kind[1..*] ;
 
 }

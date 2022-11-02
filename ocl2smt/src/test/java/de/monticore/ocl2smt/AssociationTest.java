@@ -23,15 +23,26 @@ public class AssociationTest extends ExpressionAbstractTest {
         ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
     }
 
+    @Override
     void testInv(String invName) {
         List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
         solverConstraints.add(addConstraint(invName));
         Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
-        Assertions.assertSame(solver.check(), Status.SATISFIABLE);
-
+        Assertions.assertSame(Status.SATISFIABLE,solver.check());
         Optional<ASTODArtifact> od = ocl2SMTGenerator.cd2smtGenerator.smt2od(solver.getModel(), false, invName);
         Assertions.assertTrue(od.isPresent());
         printOD(od.get());
+    }
+
+    void testUnsatInv(String invName) {
+        List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
+        solverConstraints.add(addConstraint(invName));
+        Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
+
+        Assertions.assertSame(Status.UNSATISFIABLE,solver.check());
+        ASTODArtifact od1 =   TraceUnsatCore.buildUnsatOD(new ArrayList<>(),List.of(solverConstraints.get(0).negate(ocl2SMTGenerator.cd2smtGenerator.getContext())),TraceUnsatCore.traceUnsatCore(solver));
+        printOD(od1);
+
     }
 
     @Test
@@ -56,7 +67,7 @@ public class AssociationTest extends ExpressionAbstractTest {
 
     @Test
     public void TestNestedFieldAccessExpr() {
-        testInv("NestedFieldAccessExpr");
+        testUnsatInv("NestedFieldAccessExpr");
     }
 
    /* @Test
