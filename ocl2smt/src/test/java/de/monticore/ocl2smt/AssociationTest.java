@@ -67,7 +67,7 @@ public class AssociationTest extends ExpressionAbstractTest {
 
     @Test
     public void TestNestedFieldAccessExpr() {
-        testUnsatInv("NestedFieldAccessExpr");
+        testInv("NestedFieldAccessExpr");
     }
 
    /* @Test
