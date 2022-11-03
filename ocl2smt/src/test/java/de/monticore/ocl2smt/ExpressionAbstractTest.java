@@ -1,18 +1,15 @@
 package de.monticore.ocl2smt;
 
-import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
-import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
 
@@ -20,17 +17,19 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 public abstract class ExpressionAbstractTest {
     protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
     protected static final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
 
-    protected ASTOCLCompilationUnit oclAST;
-    protected ASTCDCompilationUnit cdAST;
+    protected static ASTOCLCompilationUnit oclAST;
+    protected static ASTCDCompilationUnit cdAST;
     protected Solver solver;
-    protected OCL2SMTGenerator ocl2SMTGenerator;
+    protected static OCL2SMTGenerator ocl2SMTGenerator;
 
 
     // Used to make the tests shorter & readable
@@ -47,17 +46,13 @@ public abstract class ExpressionAbstractTest {
         return ocl2SMTGenerator.convertConstr(constr);
     }
 
-    protected void parse(String cdFileName, String oclFileName) throws IOException {
-        Log.init();
-        OCLMill.init();
-        CD4CodeMill.init();
-        Path cdPath = Path.of(RELATIVE_MODEL_PATH, cdFileName);
-        cdAST = OCL_Loader.loadAndCheckCD(
-                cdPath.toFile());
-
+    protected static void parse(String cdFileName, String oclFileName) throws IOException {
         oclAST = OCL_Loader.loadAndCheckOCL(
                 Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(),
-                cdPath.toFile());
+                Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
+
+        cdAST = OCL_Loader.loadAndCheckCD(
+                Path.of(RELATIVE_MODEL_PATH, cdFileName).toFile());
     }
 
     public void printOD(ASTODArtifact od) {
@@ -67,6 +62,16 @@ public abstract class ExpressionAbstractTest {
         } catch (Exception e) {
             e.printStackTrace();
             Assertions.fail("It Was Not Possible to Print the Object Diagram");
+        }
+    }
+
+    public static void printCD(ASTCDCompilationUnit cd, String name) {
+        Path outputFile = Paths.get(RELATIVE_TARGET_PATH, name + ".od");
+        try {
+            FileUtils.writeStringToFile(outputFile.toFile(), new CD4AnalysisFullPrettyPrinter().prettyprint(cd), Charset.defaultCharset());
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assertions.fail("It Was Not Possible to Print the Class Diagram");
         }
     }
 
@@ -84,9 +89,4 @@ public abstract class ExpressionAbstractTest {
     }
 
 
-    public Context buildContext() {
-        Map<String, String> cfg = new HashMap<>();
-        cfg.put("model", "true");
-        return new Context(cfg);
-    }
 }

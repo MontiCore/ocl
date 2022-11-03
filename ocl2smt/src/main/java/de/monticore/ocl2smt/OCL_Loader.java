@@ -9,9 +9,12 @@ import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
 import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.cocos.CD4AnalysisCoCosDelegator;
+import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeScope;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
+import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -23,9 +26,13 @@ import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCompleter;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 
@@ -39,6 +46,17 @@ public class OCL_Loader {
 
     return cdAST;
   }
+  public static void setAssociationsRoles(ASTCDCompilationUnit ast) {
+    // transformations that need an already created symbol table
+    createCDSymTab(ast);
+    final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo =
+            new CDAssociationRoleNameTrafo();
+    final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
+    traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
+    traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
+    cdAssociationRoleNameTrafo.transform(ast);
+
+  }
   protected  static void transformAllRoles(ASTCDCompilationUnit cdAST){
     final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
             new CDAssociationCreateFieldsFromAllRoles();
@@ -49,6 +67,7 @@ public class OCL_Loader {
   }
   public static ASTOCLCompilationUnit loadAndCheckOCL(File oclFile, File cdFile) throws IOException {
     ASTCDCompilationUnit cdAST = loadAndCheckCD(cdFile);
+    setAssociationsRoles(cdAST);
     transformAllRoles(cdAST);
 
     assert oclFile.getName().endsWith(".ocl");
@@ -56,9 +75,9 @@ public class OCL_Loader {
 
     oclAST.setEnclosingScope(createOCLSymTab(oclAST));
 
-  //  loadCDModel(oclAST, cdAST);
-
-   // checkOCLCoCos(oclAST);
+    createCDSymTab(cdAST);
+    loadCDModel(oclAST, cdAST);
+    checkOCLCoCos(oclAST);
     return oclAST;
   }
 
