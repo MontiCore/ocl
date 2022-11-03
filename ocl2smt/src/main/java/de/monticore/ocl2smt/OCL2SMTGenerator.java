@@ -442,6 +442,7 @@ public class OCL2SMTGenerator {
             if (node.isPresentMCType()) {
                 result.addAll(convertInDecVar(var, node.getMCType()));
             } else {
+                //i nedd the type of the variable "var"
                 Log.error("ASTInDeclExpression Without  Type not yet Supported");
                 //TODO:complete implementation
             }

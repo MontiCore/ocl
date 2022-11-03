@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+ocl NC1 {
+  // i would like to have the type of the variable p
+  context Auction a inv TypeCheck:
+    forall p in a.person:
+        p.age >= 18  ;
+
+}
+
