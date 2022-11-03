@@ -14,8 +14,7 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest {
     @BeforeEach
     public void setup() throws IOException {
         parse("MinAuction.cd", "QuantifiedExpr.ocl");
-        cd2SMTGenerator.cd2smt(cdAST, buildContext());
-        ocl2SMTGenerator = new OCL2SMTGenerator(cd2SMTGenerator);
+        ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
     }
 
 

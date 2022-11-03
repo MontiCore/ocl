@@ -18,8 +18,7 @@ public class CommonExpressionTest extends ExpressionAbstractTest {
     @BeforeEach
     public void setup() throws IOException {
         parse("MinAuction.cd", "CommonExpr.ocl");
-        cd2SMTGenerator.cd2smt(cdAST, ctx);
-        OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd2SMTGenerator);
+        ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
         ocl2SMTGenerator.ocl2smt(oclAST.getOCLArtifact()).forEach(b -> res.add(b.getValue()));
     }
 
@@ -45,8 +44,8 @@ public class CommonExpressionTest extends ExpressionAbstractTest {
 
     @Test
     public void testLogicExpressionConverter() {
-        Assertions.assertEquals(res.get(0), cd2SMTGenerator.getContext().mkBool(true));
-        Assertions.assertEquals(res.get(1), cd2SMTGenerator.getContext().mkFalse());
+        Assertions.assertEquals(res.get(0),ocl2SMTGenerator.cd2smtGenerator.getContext().mkBool(true));
+        Assertions.assertEquals(res.get(1),ocl2SMTGenerator.cd2smtGenerator.getContext().mkFalse());
         Assertions.assertEquals(res.get(2).getSExpr(), "(not true)");
         Assertions.assertEquals(res.get(3).getSExpr(), "(not false)");
         Assertions.assertEquals(res.get(4).getSExpr(), "(and false false)");

@@ -3,7 +3,6 @@ package de.monticore.ocl2smt;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
@@ -28,23 +27,21 @@ import java.util.Map;
 public abstract class ExpressionAbstractTest {
     protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
     protected static final String RELATIVE_TARGET_PATH = "target/generated/sources/annotationProcessor/java/ocl2smttest";
-    protected Context ctx = buildContext();
 
     protected ASTOCLCompilationUnit oclAST;
     protected ASTCDCompilationUnit cdAST;
     protected Solver solver;
     protected OCL2SMTGenerator ocl2SMTGenerator;
 
-    protected CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
     // Used to make the tests shorter & readable
     protected IdentifiableBoolExpr addConstraint(String search) {
         ASTOCLConstraint constr = oclAST.getOCLArtifact().getOCLConstraintList()
                 .stream().map(p -> (ASTOCLInvariant) p)
                 .filter(p -> search.equals(p.getName())).findAny().get();
-        ocl2SMTGenerator = new OCL2SMTGenerator(cd2SMTGenerator);
+        ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
         IdentifiableBoolExpr constraint = ocl2SMTGenerator.convertConstr(constr);
-        solver = cd2SMTGenerator.makeSolver(List.of(constraint));
+        solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(List.of(constraint));
         return constraint;
     }
 
