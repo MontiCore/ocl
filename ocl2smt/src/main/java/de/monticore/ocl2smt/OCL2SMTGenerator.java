@@ -37,11 +37,15 @@ public class OCL2SMTGenerator {
   protected final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
 
 
-  public OCL2SMTGenerator(CD2SMTGenerator cd2SMTGenerator) {
-    this.ctx = cd2SMTGenerator.getContext();
+  public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit) {
+    this.ctx = buildContext();
+
+    cd2smtGenerator = new CD2SMTGenerator();
+    cd2smtGenerator.cd2smt(astcdCompilationUnit,ctx);
+
     this.literalExpressionsConverter = new LiteralExpressionsConverter(ctx);
-    this.typeConverter = new TypeConverter(cd2SMTGenerator);
-    this.cd2smtGenerator = cd2SMTGenerator ;
+    this.typeConverter = new TypeConverter(cd2smtGenerator);
+
   }
 
   public List<IdentifiableBoolExpr> ocl2smt(ASTOCLArtifact astoclArtifact) {
@@ -300,7 +304,7 @@ public class OCL2SMTGenerator {
       }
       assert expr.getValue() instanceof ASTFieldAccessExpression;
       Association association = convertFieldAccAssoc( (ASTFieldAccessExpression) expr.getValue());
-      constraintList.add((BoolExpr)association.evaluate(expr.getKey()));
+      constraintList.add(association.evaluate(expr.getKey()));
     }
     BoolExpr result = ctx.mkTrue() ;
 
@@ -421,5 +425,11 @@ public class OCL2SMTGenerator {
  public  interface Association {
     BoolExpr evaluate ( Expr<? extends Sort> right );
  }
+
+  protected  Context buildContext() {
+    Map<String, String> cfg = new HashMap<>();
+    cfg.put("model", "true");
+    return new Context(cfg);
+  }
 
 }

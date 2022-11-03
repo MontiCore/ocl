@@ -1,6 +1,5 @@
 package de.monticore.ocl2smt.gradle;
 
-import com.microsoft.z3.Context;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
@@ -9,7 +8,6 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.OCLDiffGenerator;
 import de.monticore.ocl2smt.OCL_Loader;
 
-import de.monticore.od4report.OD4ReportMill;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import org.apache.commons.io.FileUtils;
@@ -25,9 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 @CacheableTask
@@ -79,19 +75,15 @@ public abstract class OCLSemDiffTask extends DefaultTask {
     Set<ASTOCLCompilationUnit> positiveOCL = loadOCL(getCd().get().getAsFile(), getPositiveOCL().getFiles());
     Set<ASTOCLCompilationUnit> negativeOCL = loadOCL(getCd().get().getAsFile(), getNegativeOCL().getFiles());
 
-    //setup context
-    Map<String, String> ctxParam = new HashMap<>();
-    ctxParam.put("model", "true");
-    Context context = new Context(ctxParam);
     Pair<ASTODArtifact, Set<ASTODArtifact>> diff;
     Set<ASTODArtifact> witnesses;
     ASTODArtifact trace ;
     // Compute Diff
     if (negativeOCL.isEmpty()) {
       witnesses = new HashSet<>();
-      witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL,context));
+      witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL));
     } else {
-      diff = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL,context);
+      diff = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL);
       witnesses = diff.getRight();
       if(getTraceOD().isPresent()){
          trace = diff.getLeft() ;
