@@ -3,9 +3,12 @@ package de.monticore.ocl2smt;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -15,8 +18,11 @@ import java.util.List;
 import java.util.Optional;
 
 public class SetExpressionsTest extends ExpressionAbstractTest {
-    @BeforeEach
-    public void setup() throws IOException {
+    @BeforeAll
+    public static void setup() throws IOException {
+        Log.init();
+        OCLMill.init();
+        CD4CodeMill.init();
         parse("setExpressions/Set.cd", "setExpressions/Set.ocl");
         ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
     }
@@ -42,8 +48,6 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     public void printSMTScript(String invName) {
         List<IdentifiableBoolExpr> actualConstraint = new ArrayList<>();
         actualConstraint.add(getConstraint(invName));
-        //   actualConstraint.add(getConstraint("Only_one_auction"));
-        actualConstraint.add(getConstraint("Only_two_Person"));
         Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(actualConstraint);
         System.out.println(solver);
     }
@@ -67,6 +71,7 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
     public void isin_notIn_unsat() {
         testUnsatInv("Counter_Example");
     }
+
     @Test
     public void test_Notin_isInT() {
         testInv("Notin_isIn");

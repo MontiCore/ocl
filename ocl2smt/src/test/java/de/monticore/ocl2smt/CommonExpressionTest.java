@@ -2,7 +2,11 @@ package de.monticore.ocl2smt;
 
 
 import com.microsoft.z3.BoolExpr;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.ocl.ocl.OCLMill;
+import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,11 +16,14 @@ import java.util.List;
 
 
 public class CommonExpressionTest extends ExpressionAbstractTest {
-    protected List<BoolExpr> res = new ArrayList<>();
+    protected static List<BoolExpr> res = new ArrayList<>();
 
 
-    @BeforeEach
-    public void setup() throws IOException {
+    @BeforeAll
+    public static void setup() throws IOException {
+        Log.init();
+        OCLMill.init();
+        CD4CodeMill.init();
         parse("MinAuction.cd", "CommonExpr.ocl");
         ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
         ocl2SMTGenerator.ocl2smt(oclAST.getOCLArtifact()).forEach(b -> res.add(b.getValue()));

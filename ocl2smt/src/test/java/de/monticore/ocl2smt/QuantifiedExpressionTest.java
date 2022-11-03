@@ -1,8 +1,11 @@
 package de.monticore.ocl2smt;
 
 import com.microsoft.z3.Status;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.ocl.ocl.OCLMill;
+import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -10,8 +13,11 @@ import java.io.IOException;
 
 public class QuantifiedExpressionTest extends ExpressionAbstractTest {
 
-    @BeforeEach
-    public void setup() throws IOException {
+    @BeforeAll
+    public static void setup() throws IOException {
+        Log.init();
+        OCLMill.init();
+        CD4CodeMill.init();
         parse("MinAuction.cd", "QuantifiedExpr.ocl");
         ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
     }

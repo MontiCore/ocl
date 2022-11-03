@@ -28,7 +28,7 @@ public abstract class ExpressionAbstractTest {
 
     protected static ASTOCLCompilationUnit oclAST;
     protected static ASTCDCompilationUnit cdAST;
-    protected Solver solver;
+    protected static Solver solver;
     protected static OCL2SMTGenerator ocl2SMTGenerator;
 
 
