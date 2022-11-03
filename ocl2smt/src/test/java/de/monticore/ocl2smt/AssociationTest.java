@@ -24,8 +24,6 @@ public class AssociationTest extends ExpressionAbstractTest {
         OCLMill.init();
         CD4CodeMill.init();
         parse("/associations/Association.cd", "/associations/Association.ocl");
-        Set<ASTOCLCompilationUnit> oclFiles = new HashSet<>();
-        oclFiles.add(oclAST);
         ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
     }
 
