@@ -2,9 +2,9 @@
 package de.monticore.ocl.codegen.visitors;
 
 import de.monticore.ocl.codegen.util.VariableNaming;
-import de.monticore.ocl.types.check.OCLDeriver;
-import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.check.IDerive;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.check.TypeCheckResult;
@@ -27,16 +27,16 @@ public abstract class AbstractPrinter {
     return this.naming;
   }
 
-  protected OCLDeriver oclDeriver;
+  protected IDerive deriver;
 
-  protected OCLDeriver getOCLDeriver() {
-    return this.oclDeriver;
+  protected IDerive getDeriver() {
+    return this.deriver;
   }
 
-  protected OCLSynthesizer oclSynthesizer;
+  protected ISynthesize syntheziser;
 
-  protected OCLSynthesizer getOCLSynthesizer() {
-    return this.oclSynthesizer;
+  protected ISynthesize getSynthesizer() {
+    return this.syntheziser;
   }
 
   protected IndentPrinter printer;

@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.ocl;
 
-import de.monticore.expressions.cocos.ExpressionValid;
 import de.monticore.io.FileReaderWriter;
 import de.monticore.io.paths.MCPath;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -18,6 +17,7 @@ import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.check.IDerive;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.cli.*;
@@ -327,7 +327,7 @@ public class OCLTool extends OCLToolTOP {
    */
   public void checkAllCoCos(ASTOCLCompilationUnit ast) {
     checkAllExceptTypeCoCos(ast);
-    OCLDeriver deriver = new OCLDeriver();
+    IDerive deriver = new OCLDeriver();
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new ExpressionValidCoCo(deriver));
     checker.addCoCo(new PreAndPostConditionsAreBooleanType(deriver));

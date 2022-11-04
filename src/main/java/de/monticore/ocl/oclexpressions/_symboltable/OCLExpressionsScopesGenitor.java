@@ -5,19 +5,19 @@ import de.monticore.ocl.oclexpressions.OCLExpressionsMill;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclarationVariable;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
-import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.types.check.IDerive;
 import de.se_rwth.commons.logging.Log;
 
 public class OCLExpressionsScopesGenitor extends OCLExpressionsScopesGenitorTOP {
 
-  protected OCLDeriver deriver;
+  protected IDerive deriver;
 
   public OCLExpressionsScopesGenitor(){
     super();
   }
 
-  public void setDeriver(OCLDeriver deriver) {
+  public void setDeriver(IDerive deriver) {
     if (deriver != null) {
       this.deriver = deriver;
     }

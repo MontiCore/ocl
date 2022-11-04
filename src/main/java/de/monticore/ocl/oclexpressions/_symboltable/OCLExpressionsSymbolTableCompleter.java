@@ -12,6 +12,8 @@ import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
+import de.monticore.types.check.IDerive;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
@@ -31,11 +33,11 @@ public class OCLExpressionsSymbolTableCompleter
 
   protected OCLExpressionsTraverser traverser;
 
-  protected OCLDeriver deriver;
+  protected IDerive deriver;
 
-  protected OCLSynthesizer synthesizer;
+  protected ISynthesize synthesizer;
 
-  public void setDeriver(OCLDeriver deriver) {
+  public void setDeriver(IDerive deriver) {
     if (deriver != null) {
       this.deriver = deriver;
     }
@@ -44,7 +46,7 @@ public class OCLExpressionsSymbolTableCompleter
     }
   }
 
-  public void setSynthesizer(OCLSynthesizer synthesizer) {
+  public void setSynthesizer(ISynthesize synthesizer) {
     if (synthesizer != null) {
       this.synthesizer = synthesizer;
     }

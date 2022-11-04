@@ -8,10 +8,10 @@ import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
-import de.monticore.ocl.types.check.OCLDeriver;
-import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.check.IDerive;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
@@ -31,15 +31,15 @@ public class SetExpressionsPrinter extends AbstractPrinter
   protected IndentPrinter printer;
 
   public SetExpressionsPrinter(IndentPrinter printer, VariableNaming naming,
-      OCLDeriver oclDeriver, OCLSynthesizer oclSynthesizer) {
+      IDerive deriver, ISynthesize syntheziser) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(oclDeriver);
-    Preconditions.checkNotNull(oclSynthesizer);
+    Preconditions.checkNotNull(deriver);
+    Preconditions.checkNotNull(syntheziser);
     this.printer = printer;
     this.naming = naming;
-    this.oclDeriver = oclDeriver;
-    this.oclSynthesizer = oclSynthesizer;
+    this.deriver = deriver;
+    this.syntheziser = syntheziser;
   }
 
   @Override
@@ -76,7 +76,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTUnionExpression node) {
-    printExpressionBeginLambda(getOCLDeriver().deriveType(node));
+    printExpressionBeginLambda(getDeriver().deriveType(node));
 
     getPrinter().print("Set<");
     printDerivedInnerType(node);
@@ -102,7 +102,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTIntersectionExpression node) {
-    printExpressionBeginLambda(getOCLDeriver().deriveType(node));
+    printExpressionBeginLambda(getDeriver().deriveType(node));
 
     getPrinter().print("Set<");
     printDerivedInnerType(node);
@@ -129,7 +129,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetMinusExpression node) {
-    printExpressionBeginLambda(getOCLDeriver().deriveType(node));
+    printExpressionBeginLambda(getDeriver().deriveType(node));
 
     getPrinter().print("Set<");
     printDerivedInnerType(node);
@@ -156,9 +156,9 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetUnionExpression node) {
-    printExpressionBeginLambda(getOCLDeriver().deriveType(node));
+    printExpressionBeginLambda(getDeriver().deriveType(node));
 
-    getPrinter().print(getOCLDeriver().deriveType(node.getSet()));
+    getPrinter().print(getDeriver().deriveType(node.getSet()));
     getPrinter().print(" ");
     getPrinter().print(getNaming().getName(node.getSet()));
     getPrinter().print(" = ");
@@ -172,7 +172,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().println(" = new java.util.HashSet<>();");
 
     getPrinter().print("for(");
-    getPrinter().print(getOCLDeriver().deriveType(node));
+    getPrinter().print(getDeriver().deriveType(node));
     getPrinter().print(" ");
     getPrinter().print(getNaming().getName(node.getSet()));
     getPrinter().print("_item");
@@ -199,7 +199,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetIntersectionExpression node) {
-    printExpressionBeginLambda(getOCLDeriver().deriveType(node));
+    printExpressionBeginLambda(getDeriver().deriveType(node));
 
     printDerivedType(node.getSet());
     getPrinter().print(" ");
@@ -244,7 +244,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetAndExpression node) {
-    printExpressionBeginLambda(getOCLDeriver().deriveType(node));
+    printExpressionBeginLambda(getDeriver().deriveType(node));
 
     getPrinter().print("Boolean ");
     getPrinter().print(getNaming().getName(node));
@@ -285,7 +285,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetOrExpression node) {
-    printExpressionBeginLambda(getOCLDeriver().deriveType(node));
+    printExpressionBeginLambda(getDeriver().deriveType(node));
 
     getPrinter().print("Boolean ");
     getPrinter().print(getNaming().getName(node));
@@ -327,7 +327,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetComprehension node) {
-    printExpressionBeginLambda(getOCLDeriver().deriveType(node));
+    printExpressionBeginLambda(getDeriver().deriveType(node));
     printDerivedType(node);
     getPrinter().print(" ");
     getPrinter().print(getNaming().getName(node));
@@ -382,7 +382,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
   @Override
   public void handle(ASTSetComprehensionItem node) {
     if (node.isPresentExpression()) {
-      TypeCheckResult type = getOCLDeriver().deriveType(node.getExpression());
+      TypeCheckResult type = getDeriver().deriveType(node.getExpression());
       if (type.isPresentResult()
           && OCLTypeCheck.isBoolean(type.getResult())) {
         getPrinter().print("if (");
@@ -400,10 +400,10 @@ public class SetExpressionsPrinter extends AbstractPrinter
     else if (node.isPresentSetVariableDeclaration()) {
       ASTSetVariableDeclaration setVarDecl = node.getSetVariableDeclaration();
       if (setVarDecl.isPresentMCType()) {
-        getPrinter().print(boxType(getOCLSynthesizer().synthesizeType(setVarDecl.getMCType())));
+        getPrinter().print(boxType(getSynthesizer().synthesizeType(setVarDecl.getMCType())));
       }
       else if (setVarDecl.isPresentExpression()) {
-        getPrinter().print(boxType(getOCLDeriver().deriveType(setVarDecl.getExpression())));
+        getPrinter().print(boxType(getDeriver().deriveType(setVarDecl.getExpression())));
       }
       else {
         Log.error(UNEXPECTED_STATE_AST_NODE, setVarDecl.get_SourcePositionStart(),
@@ -425,7 +425,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
   public void handle(ASTGeneratorDeclaration node) {
     getPrinter().print("for (");
     if (node.isPresentMCType()) {
-      getPrinter().print(boxType(getOCLSynthesizer().synthesizeType(node.getMCType())));
+      getPrinter().print(boxType(getSynthesizer().synthesizeType(node.getMCType())));
     }
     else {
       printDerivedInnerType(node.getExpression());
@@ -440,7 +440,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetEnumeration node) {
-    printExpressionBeginLambda(getOCLDeriver().deriveType(node));
+    printExpressionBeginLambda(getDeriver().deriveType(node));
 
     printDerivedType(node);
     getPrinter().print(" ");
@@ -547,7 +547,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
     // java.Lang.Character -> avoid type errors
     // this works as only primitives are supported
     getPrinter().print(SymTypePrimitive.unbox(
-        getOCLDeriver().deriveType(node.getLowerBound()).getResult().printFullName()));
+        getDeriver().deriveType(node.getLowerBound()).getResult().printFullName()));
     getPrinter().print(")(");
     getPrinter().print(getNaming().getName(node));
     getPrinter().print("_iter + ");
@@ -572,7 +572,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
   }
 
   protected void printDerivedType(ASTExpression node) {
-    TypeCheckResult type = getOCLDeriver().deriveType(node);
+    TypeCheckResult type = getDeriver().deriveType(node);
     if (!type.isPresentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;
@@ -608,7 +608,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
    */
   protected SymTypeExpression getInnerType(ASTExpression node) {
     SymTypeExpression innerType = null;
-    TypeCheckResult type = this.getOCLDeriver().deriveType(node);
+    TypeCheckResult type = this.getDeriver().deriveType(node);
     if (type.isPresentResult()
         && type.getResult().isGenericType()
         && ((SymTypeOfGenerics) type.getResult()).sizeArguments() == 1) {

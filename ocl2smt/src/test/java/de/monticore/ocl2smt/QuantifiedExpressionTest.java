@@ -125,7 +125,6 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest {
         addConstraint("Ex_two_auction_and_bool_sat");
         Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
     }
-
     @Test
     public void Exists_two_auction_and_bool_sat_sat() {
         addConstraint("Two_auction_and_bool_unsat");

@@ -100,10 +100,10 @@ public class OCLDiffTest {
         org.junit.jupiter.api.Assertions.assertEquals(4, satOds.size());
 
         List<String> unsatInvLines = getUnsatInvLines(unsatInvNameList, unsatOD);
-        org.junit.jupiter.api.Assertions.assertTrue(unsatInvLines.contains("5"));
-        org.junit.jupiter.api.Assertions.assertTrue(unsatInvLines.contains("11"));
-        org.junit.jupiter.api.Assertions.assertTrue(unsatInvLines.contains("15"));
-        org.junit.jupiter.api.Assertions.assertTrue(unsatInvLines.contains("20"));
+        assertTrue(unsatInvLines.contains("5"));
+        assertTrue(unsatInvLines.contains("11"));
+        assertTrue(unsatInvLines.contains("15"));
+        assertTrue(unsatInvLines.contains("20"));
 
     }
 

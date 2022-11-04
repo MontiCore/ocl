@@ -17,6 +17,8 @@ import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.prettyprint.MCBasicsPrettyPrinter;
+import de.monticore.types.check.IDerive;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
@@ -72,32 +74,32 @@ public class OCL2JavaGenerator {
   }
 
   protected OCL2JavaGenerator(IndentPrinter printer, VariableNaming naming,
-      OCLDeriver oclDeriver, OCLSynthesizer oclSynthesizer) {
+      IDerive deriver, ISynthesize syntheziser) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(oclDeriver);
-    Preconditions.checkNotNull(oclSynthesizer);
+    Preconditions.checkNotNull(deriver);
+    Preconditions.checkNotNull(syntheziser);
 
     this.traverser = OCLMill.traverser();
 
     // Expressions
     CommonExpressionsPrinter comExprPrinter = new CommonExpressionsPrinter(printer, naming,
-        oclDeriver, oclSynthesizer);
+        deriver, syntheziser);
     this.traverser.setCommonExpressionsHandler(comExprPrinter);
     this.traverser.add4CommonExpressions(comExprPrinter);
     ExpressionsBasisPrettyPrinter exprBasPrinter = new ExpressionsBasisPrettyPrinter(printer);
     this.traverser.setExpressionsBasisHandler(exprBasPrinter);
     this.traverser.add4ExpressionsBasis(exprBasPrinter);
     OCLExpressionsPrinter oclExprPrinter = new OCLExpressionsPrinter(printer, naming,
-        oclDeriver, oclSynthesizer);
+        deriver, syntheziser);
     this.traverser.setOCLExpressionsHandler(oclExprPrinter);
     this.traverser.add4OCLExpressions(oclExprPrinter);
-    SetExpressionsPrinter setExprPrinter = new SetExpressionsPrinter(printer, naming, oclDeriver,
-        oclSynthesizer);
+    SetExpressionsPrinter setExprPrinter = new SetExpressionsPrinter(printer, naming, deriver,
+        syntheziser);
     this.traverser.setSetExpressionsHandler(setExprPrinter);
     this.traverser.add4SetExpressions(setExprPrinter);
     OptionalOperatorsPrinter optExprPrinter = new OptionalOperatorsPrinter(printer, naming,
-        oclDeriver, oclSynthesizer);
+        deriver, syntheziser);
     this.traverser.setOptionalOperatorsHandler(optExprPrinter);
     this.traverser.add4OptionalOperators(optExprPrinter);
 
@@ -120,7 +122,7 @@ public class OCL2JavaGenerator {
     this.traverser.add4MCCommonLiterals(comLitPrinter);
 
     // OCL
-    OCLPrinter oclPrinter = new OCLPrinter(printer, naming, oclDeriver, oclSynthesizer);
+    OCLPrinter oclPrinter = new OCLPrinter(printer, naming, deriver, syntheziser);
     this.traverser.setOCLHandler(oclPrinter);
     this.traverser.add4OCL(oclPrinter);
   }

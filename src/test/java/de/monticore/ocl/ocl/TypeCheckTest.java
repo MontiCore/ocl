@@ -4,6 +4,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.util.SymbolTableUtil;
+import de.monticore.types.check.IDerive;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ public class TypeCheckTest extends AbstractTest {
     SymbolTableUtil.runSymTabGenitor(ast.get());
     SymbolTableUtil.runSymTabCompleter(ast.get());
 
-    OCLDeriver deriver = new OCLDeriver();
+    IDerive deriver = new OCLDeriver();
 
     TypeCheckResult t = deriver.deriveType(((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getExpression());
 
