@@ -27,6 +27,7 @@ import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import org.apache.commons.io.FileUtils;
+import org.apache.tools.ant.types.Assertions;
 
 import java.io.File;
 import java.io.IOException;
@@ -69,7 +70,7 @@ public class OCL_Loader {
     ASTCDCompilationUnit cdAST = loadAndCheckCD(cdFile);
     setAssociationsRoles(cdAST);
     transformAllRoles(cdAST);
-
+     printCD(cdAST,"Valdes.cd");
     assert oclFile.getName().endsWith(".ocl");
     ASTOCLCompilationUnit oclAST = parseOCLModel(oclFile.getAbsolutePath());
 
@@ -130,5 +131,13 @@ public class OCL_Loader {
     OCLMill.globalScope().addSubScope(new OCLSymbols2Json().deserialize(serialized));
     SymbolTableUtil.runSymTabGenitor(oclAST);
     SymbolTableUtil.runSymTabCompleter(oclAST);
+  }
+  public static void printCD(ASTCDCompilationUnit cd, String name) {
+    Path outputFile = Paths.get("target/generated/sources/annotationProcessor/java/ocl2smttest", name + ".cd");
+    try {
+      FileUtils.writeStringToFile(outputFile.toFile(), new CD4AnalysisFullPrettyPrinter().prettyprint(cd), Charset.defaultCharset());
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }

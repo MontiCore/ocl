@@ -22,9 +22,10 @@ ocl NC1 {
             p1 == p2);
 
 
- /*inv  NestedFieldAccessExpr:
-   forall Kind k, Auction a:
-     k isin a.person.parent.kind ;*/
+ /*inv  DoubleNavigation:
+   forall Parent p, Auction a:
+      p isin a.person.parent ;*/
+
 //UNSAT
 /* inv  NestedFieldAccessExpr:
     forall Auction a , Parent p:
