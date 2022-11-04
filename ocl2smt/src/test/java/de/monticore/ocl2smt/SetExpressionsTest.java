@@ -45,13 +45,6 @@ public class SetExpressionsTest extends ExpressionAbstractTest {
         Assertions.assertSame(solver1.check(), Status.UNSATISFIABLE);
     }
 
-    public void printSMTScript(String invName) {
-        List<IdentifiableBoolExpr> actualConstraint = new ArrayList<>();
-        actualConstraint.add(getConstraint(invName));
-        Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(actualConstraint);
-        System.out.println(solver);
-    }
-
     @Test
     public void test_isin_set() {
         testInv("All_Person_in_All_Auctions");

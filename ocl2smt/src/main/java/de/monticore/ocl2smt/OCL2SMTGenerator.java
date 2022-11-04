@@ -5,6 +5,12 @@ import com.microsoft.z3.*;
 
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
+import de.monticore.cd2smt.Helper.SMTNameHelper;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
@@ -15,12 +21,14 @@ import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.oclexpressions._ast.*;
 
+import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 
 
 import java.util.*;
+import java.util.function.Function;
 
 public class OCL2SMTGenerator {
   protected final Context ctx;
@@ -110,7 +118,12 @@ public class OCL2SMTGenerator {
       result = convertForAll((ASTForallExpression) node);
     } else if (node instanceof ASTExistsExpression) {
       result = convertExist((ASTExistsExpression) node);
-    } else {
+    } else if (node instanceof ASTSetInExpression) {
+        result = convertSetIn((ASTSetInExpression) node);
+    } else if (node instanceof ASTSetNotInExpression) {
+        result = convertSetNotIn((ASTSetNotInExpression) node);
+    }
+    else {
       Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
       if (buf.isPresent() && buf.get() instanceof BoolExpr) {
         result = (BoolExpr) buf.get();
@@ -425,6 +438,11 @@ public class OCL2SMTGenerator {
     varNames.put(node.getName(), expr);
     return  expr;
   }
+    protected Expr<? extends Sort> convertVarDecl(ASTMCType type, String name) {
+        Expr<? extends Sort> expr = ctx.mkConst(name, typeConverter.convertType(type, cd2smtGenerator.getClassDiagram().getCDDefinition()));
+        varNames.put(name, expr);
+        return expr;
+    }
 
     protected List<Expr<? extends Sort>> convertInDecl(ASTInDeclaration node) {
         List<Expr<? extends Sort>> result = new ArrayList<>();
@@ -474,7 +492,7 @@ public class OCL2SMTGenerator {
         return set;
     }
 
- /*   protected SMTSet convertSetComp(ASTSetComprehension node) {
+   /* protected SMTSet convertSetComp(ASTSetComprehension node) {
         //TODO complete the implementation handle when right setComprehension Items are not filters
         SMTSet set = convertSetCompItem(node.getLeft());
         BoolExpr filter = ctx.mkTrue();

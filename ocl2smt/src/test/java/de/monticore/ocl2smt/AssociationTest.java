@@ -6,7 +6,6 @@ import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.ocl.ocl.OCLMill;
-import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
@@ -14,7 +13,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class AssociationTest extends ExpressionAbstractTest {
 
@@ -32,21 +33,10 @@ public class AssociationTest extends ExpressionAbstractTest {
         List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
         solverConstraints.add(addConstraint(invName));
         Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
-        Assertions.assertSame(Status.SATISFIABLE,solver.check());
+        Assertions.assertSame(Status.SATISFIABLE, solver.check());
         Optional<ASTODArtifact> od = ocl2SMTGenerator.cd2smtGenerator.smt2od(solver.getModel(), false, invName);
         Assertions.assertTrue(od.isPresent());
         printOD(od.get());
-    }
-
-    void testUnsatInv(String invName) {
-        List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
-        solverConstraints.add(addConstraint(invName));
-        Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
-
-        Assertions.assertSame(Status.UNSATISFIABLE,solver.check());
-        ASTODArtifact od1 =   TraceUnsatCore.buildUnsatOD(new ArrayList<>(),List.of(solverConstraints.get(0).negate(ocl2SMTGenerator.cd2smtGenerator.getContext())),TraceUnsatCore.traceUnsatCore(solver));
-        printOD(od1);
-
     }
 
     @Test

@@ -7,7 +7,6 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -51,8 +50,8 @@ public class CommonExpressionTest extends ExpressionAbstractTest {
 
     @Test
     public void testLogicExpressionConverter() {
-        Assertions.assertEquals(res.get(0),ocl2SMTGenerator.cd2smtGenerator.getContext().mkBool(true));
-        Assertions.assertEquals(res.get(1),ocl2SMTGenerator.cd2smtGenerator.getContext().mkFalse());
+        Assertions.assertEquals(res.get(0), ocl2SMTGenerator.cd2smtGenerator.getContext().mkBool(true));
+        Assertions.assertEquals(res.get(1), ocl2SMTGenerator.cd2smtGenerator.getContext().mkFalse());
         Assertions.assertEquals(res.get(2).getSExpr(), "(not true)");
         Assertions.assertEquals(res.get(3).getSExpr(), "(not false)");
         Assertions.assertEquals(res.get(4).getSExpr(), "(and false false)");

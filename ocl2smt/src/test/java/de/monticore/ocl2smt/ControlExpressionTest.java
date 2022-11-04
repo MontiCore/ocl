@@ -7,7 +7,6 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -21,7 +20,7 @@ public class ControlExpressionTest extends ExpressionAbstractTest {
         CD4CodeMill.init();
         parse("MinAuction.cd", "ControlExpr.ocl");
         ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
-        solver =ocl2SMTGenerator.cd2smtGenerator.getContext().mkSolver();
+        solver = ocl2SMTGenerator.cd2smtGenerator.getContext().mkSolver();
     }
 
     @Test
