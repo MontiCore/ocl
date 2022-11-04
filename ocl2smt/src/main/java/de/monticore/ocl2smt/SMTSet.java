@@ -12,7 +12,6 @@ public class SMTSet {
     Function<Expr<? extends Sort>, BoolExpr> setFunction;
     Sort sort;
 
-
     public SMTSet(Function<Expr<? extends Sort>, BoolExpr> setFunction, Sort sort) {
         this.setFunction = setFunction;
         this.sort = sort;
@@ -62,8 +61,8 @@ public class SMTSet {
 
     public SMTSet collectAll(Function<Expr<? extends Sort>, SMTSet> function, Context ctx) {
         Expr<? extends Sort> expr = ctx.mkConst("xollector", sort);
-        return new SMTSet(kii -> ctx.mkForall(new Expr[]{expr}, ctx.mkImplies(this.isIn(expr),
-                function.apply(expr).isIn(kii)), 0, null, null, null, null), function.apply(expr).sort);
+        return new SMTSet(kii -> ctx.mkForall(new Expr[]{expr}, ctx.mkImplies(this.isIn(expr), function.apply(expr).isIn(kii)),
+                0, null, null, null, null), function.apply(expr).sort);
     }
 
     enum OPERATION {UNION, INTERSECTION, MINUS}
