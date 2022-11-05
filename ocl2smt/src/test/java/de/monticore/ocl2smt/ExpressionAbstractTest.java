@@ -74,16 +74,16 @@ public abstract class ExpressionAbstractTest {
         }
     }
 
+
+
     void testInv(String invName) {
         List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
-        solverConstraints.add(addConstraint(invName));
+        solverConstraints.add(getConstraint(invName));
         Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
-        org.junit.jupiter.api.Assertions.assertSame(solver.check(), Status.SATISFIABLE);
-
+        org.junit.jupiter.api.Assertions.assertSame(Status.SATISFIABLE, solver.check());
         Optional<ASTODArtifact> od = ocl2SMTGenerator.cd2smtGenerator.smt2od(solver.getModel(), false, invName);
         org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
         printOD(od.get());
-
     }
     public void printSMTScript(String invName) {
         List<IdentifiableBoolExpr> actualConstraint = new ArrayList<>();
@@ -94,13 +94,12 @@ public abstract class ExpressionAbstractTest {
 
     void testUnsatInv(String invName) {
         List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
-        solverConstraints.add(addConstraint(invName));
+        solverConstraints.add(getConstraint(invName));
         Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
 
         org.junit.jupiter.api.Assertions.assertSame(Status.UNSATISFIABLE, solver.check());
         ASTODArtifact od1 = TraceUnsatCore.buildUnsatOD(new ArrayList<>(), List.of(solverConstraints.get(0).negate(ocl2SMTGenerator.cd2smtGenerator.getContext())), TraceUnsatCore.traceUnsatCore(solver));
         printOD(od1);
-
     }
 
 
