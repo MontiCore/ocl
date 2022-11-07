@@ -23,7 +23,7 @@ public class AssociationTest extends ExpressionAbstractTest {
 
     @Test
     public void of_legal_age() {
-        testInv("Of_legal_age");
+        testInv( "Of_legal_age");
     }
 
     @Test
