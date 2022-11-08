@@ -9,12 +9,16 @@ import de.se_rwth.commons.logging.Log;
 import java.util.function.Function;
 
 public class SMTSet {
-    Function<Expr<? extends Sort>, BoolExpr> setFunction;
-    Sort sort;
+  private final Function<Expr<? extends Sort>, BoolExpr> setFunction;
+  private final Sort sort;
 
     public SMTSet(Function<Expr<? extends Sort>, BoolExpr> setFunction, Sort sort) {
         this.setFunction = setFunction;
         this.sort = sort;
+    }
+
+    public Sort getSort() {
+        return sort;
     }
 
     private static SMTSet mkSetOperation(SMTSet leftSet, SMTSet rightSet, Context ctx, OPERATION op) {

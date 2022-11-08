@@ -68,17 +68,16 @@ public class OCL_Loader {
   }
   public static ASTOCLCompilationUnit loadAndCheckOCL(File oclFile, File cdFile) throws IOException {
     ASTCDCompilationUnit cdAST = loadAndCheckCD(cdFile);
-    setAssociationsRoles(cdAST);
+   // setAssociationsRoles(cdAST);
     transformAllRoles(cdAST);
-     printCD(cdAST,"Valdes.cd");
     assert oclFile.getName().endsWith(".ocl");
     ASTOCLCompilationUnit oclAST = parseOCLModel(oclFile.getAbsolutePath());
 
     oclAST.setEnclosingScope(createOCLSymTab(oclAST));
 
-    createCDSymTab(cdAST);
-    loadCDModel(oclAST, cdAST);
-    checkOCLCoCos(oclAST);
+  //  createCDSymTab(cdAST);
+  //  loadCDModel(oclAST, cdAST);
+   // checkOCLCoCos(oclAST);
     return oclAST;
   }
 
@@ -132,12 +131,5 @@ public class OCL_Loader {
     SymbolTableUtil.runSymTabGenitor(oclAST);
     SymbolTableUtil.runSymTabCompleter(oclAST);
   }
-  public static void printCD(ASTCDCompilationUnit cd, String name) {
-    Path outputFile = Paths.get("target/generated/sources/annotationProcessor/java/ocl2smttest", name + ".cd");
-    try {
-      FileUtils.writeStringToFile(outputFile.toFile(), new CD4AnalysisFullPrettyPrinter().prettyprint(cd), Charset.defaultCharset());
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
+
 }

@@ -25,25 +25,19 @@ ocl NC1 {
  /*inv  DoubleNavigation:
    forall Parent p, Auction a:
       p isin a.person.parent ;*/
-
+/*
 //UNSAT
-/* inv  NestedFieldAccessExpr:
+ inv  NestedFieldAccess_inDec:
     forall Auction a , Parent p:
        ((p  isin a.person.parent) == (p.age == 18)) &&
-          exists Parent p1 :
-            p1 notin a.person.parent;*/
+          (exists Parent p1 :
+            p1 notin a.person.parent);
 
- /*  context Auction a inv NestedFieldAccessExpr:
+   context Auction a inv NestedFieldAccessExpr:
       forall Parent p1 in a.person.parent:
          p1.age >= 50 ;*/
 
- inv  NestedFieldAccessExpr:
-     (exists Auction a :
-        forall Person p in a.person:
-           p.age == 10 )&&
-     (exists Auction a1 :
-             forall Person p1 in a1.person:
-                p1.age == 15 );
+
 
 
 }

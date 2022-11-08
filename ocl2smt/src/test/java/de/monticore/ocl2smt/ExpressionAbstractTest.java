@@ -1,5 +1,6 @@
 package de.monticore.ocl2smt;
 
+import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
@@ -17,9 +18,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 public abstract class ExpressionAbstractTest {
@@ -32,12 +31,15 @@ public abstract class ExpressionAbstractTest {
     protected static OCL2SMTGenerator ocl2SMTGenerator;
 
     protected static void parse(String cdFileName, String oclFileName) throws IOException {
+
+        cdAST = OCL_Loader.loadAndCheckCD(
+                Path.of(RELATIVE_MODEL_PATH, cdFileName).toFile());
+
         oclAST = OCL_Loader.loadAndCheckOCL(
                 Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(),
                 Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
 
-        cdAST = OCL_Loader.loadAndCheckCD(
-                Path.of(RELATIVE_MODEL_PATH, cdFileName).toFile());
+
     }
 
     public static void printCD(ASTCDCompilationUnit cd, String name) {
@@ -102,6 +104,10 @@ public abstract class ExpressionAbstractTest {
         printOD(od1);
     }
 
-
+    public Context buildContext() {
+        Map<String, String> cfg = new HashMap<>();
+        cfg.put("model", "true");
+        return new Context(cfg);
+    }
 
 }

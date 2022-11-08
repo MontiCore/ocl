@@ -5,6 +5,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.ocl.ocl.OCLMill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -40,20 +41,15 @@ public class AssociationTest extends ExpressionAbstractTest {
     public void Same_Person_in_2_Auction() {
         testInv("Same_Person_in_2_Auction");
     }
-
+    @Disabled
     @Test
     public void TestNestedFieldAccessExpr() {
         testInv("NestedFieldAccessExpr");
     }
+    @Disabled
+    @Test
+    public void TestNestedFieldAccess_inDec() {
+        testUnsatInv("NestedFieldAccess_inDec");
+    }
 
-   /* @Test
-    public void transitive_closure() throws IOException {
-        parse("/Transitive-closure/transitiveClosure.cd", "/Transitive-closure/transitiveClosure.ocl");
-        ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
-        ocl2SMTGenerator.cd2smtGenerator.cd2smt(cdAST, (buildContext()));
-        Set<ASTOCLCompilationUnit> ocls = new HashSet<>();
-        ocls.add(oclAST);
-        ASTODArtifact od = OCLDiffGenerator.oclWitness(cdAST, ocls, false);
-        printOD(od);
-    }*/
 }
