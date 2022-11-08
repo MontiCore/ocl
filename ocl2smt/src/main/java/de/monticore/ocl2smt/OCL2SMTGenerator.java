@@ -385,28 +385,37 @@ public class OCL2SMTGenerator {
         if (!(node.getExpression() instanceof ASTFieldAccessExpression)) {
 
             Expr<? extends Sort> auction = convertExpr(node.getExpression());
-            ASTCDType Auction = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(auction.getSort()), cd2smtGenerator.getClassDiagram().getCDDefinition());//ASTCDClass Auction
-            ASTCDAssociation auction_person = CDHelper.getAssociation(Auction, node.getName(), cd2smtGenerator.getClassDiagram().getCDDefinition()); //ASTCDAssociation auction_person
+            ASTCDType Auction = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(auction.getSort()),
+                    cd2smtGenerator.getClassDiagram().getCDDefinition());//ASTCDClass Auction
+            ASTCDAssociation auction_person = CDHelper.getAssociation(Auction, node.getName(),
+                    cd2smtGenerator.getClassDiagram().getCDDefinition()); //ASTCDAssociation auction_person
 
-            Sort leftSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(auction_person.getLeftQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition())); //Sort  Auction_obj
-            Sort rightSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(auction_person.getRightQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition()));//Sort Person_obj
+            Sort leftSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(auction_person.getLeftQualifiedName().getQName(),
+                    cd2smtGenerator.getClassDiagram().getCDDefinition())); //Sort  Auction_obj
+            Sort rightSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(auction_person.getRightQualifiedName().getQName(),
+                    cd2smtGenerator.getClassDiagram().getCDDefinition()));//Sort Person_obj
 
 
-            Function<Expr<? extends Sort>, BoolExpr> auction_per_set = leftSort.equals(auction.getSort()) ? per -> cd2smtGenerator.evaluateLink(auction_person, auction, per) :
-                    per -> cd2smtGenerator.evaluateLink(auction_person, per, auction);
+            Function<Expr<? extends Sort>, BoolExpr> auction_per_set = leftSort.equals(auction.getSort()) ?
+                    per -> cd2smtGenerator.evaluateLink(auction_person, auction, per) : per -> cd2smtGenerator.evaluateLink(auction_person, per, auction);
+
             return leftSort.equals(auction.getSort()) ? new SMTSet(auction_per_set, rightSort) : new SMTSet(auction_per_set, leftSort);
-
         }
         SMTSet pSet = convertSet(node.getExpression());
 
-        ASTCDType Person = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(pSet.getSort()), cd2smtGenerator.getClassDiagram().getCDDefinition()); //ASTCDClass Person
-        ASTCDAssociation person_parent = CDHelper.getAssociation(Person, node.getName(), cd2smtGenerator.getClassDiagram().getCDDefinition()); //ASTCDAssociation person_parent
+        ASTCDType Person = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(pSet.getSort()),
+                cd2smtGenerator.getClassDiagram().getCDDefinition()); //ASTCDClass Person
+        ASTCDAssociation person_parent = CDHelper.getAssociation(Person, node.getName(),
+                cd2smtGenerator.getClassDiagram().getCDDefinition()); //ASTCDAssociation person_parent
 
-        Sort leftSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(person_parent.getLeftQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition()));//Sort person_obj
-        Sort rightSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(person_parent.getRightQualifiedName().getQName(), cd2smtGenerator.getClassDiagram().getCDDefinition()));//Sort parent_obj
+        Sort leftSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(person_parent.getLeftQualifiedName().getQName(),
+                cd2smtGenerator.getClassDiagram().getCDDefinition()));//Sort person_obj
+        Sort rightSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(person_parent.getRightQualifiedName().getQName(),
+                cd2smtGenerator.getClassDiagram().getCDDefinition()));//Sort parent_obj
 
 
-        Function<Expr<? extends Sort>, SMTSet> function = leftSort.equals(pSet.getSort()) ? obj1 -> new SMTSet(obj2 -> cd2smtGenerator.evaluateLink(person_parent, obj1, obj2), rightSort) :
+        Function<Expr<? extends Sort>, SMTSet> function = leftSort.equals(pSet.getSort()) ?
+                obj1 -> new SMTSet(obj2 -> cd2smtGenerator.evaluateLink(person_parent, obj1, obj2), rightSort) :
                 obj1 -> new SMTSet(obj2 -> cd2smtGenerator.evaluateLink(person_parent, obj1, obj2), leftSort);
 
         return pSet.collectAll(function, ctx);
@@ -493,28 +502,33 @@ public class OCL2SMTGenerator {
 
         return set;
     }
-
-    private SMTSet convertTransClo(ASTOCLTransitiveQualification node) {
+    // a.auction**
+    protected SMTSet convertTransClo(ASTOCLTransitiveQualification node) {
         assert node.getExpression() instanceof ASTFieldAccessExpression ;
         if (!node.isTransitive()){
             return convertSet(node);
         }
         ASTFieldAccessExpression fieldAcc = (ASTFieldAccessExpression) node.getExpression();
         Expr<? extends  Sort> auction = convertExpr(fieldAcc.getExpression());
-        ASTCDType objClass = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(auction.getSort()),cd2smtGenerator.getClassDiagram().getCDDefinition());
-        ASTCDAssociation association = CDHelper.getAssociation(objClass,fieldAcc.getName(),cd2smtGenerator.getClassDiagram().getCDDefinition());
 
-        FuncDecl<BoolSort> rel = ctx.mkFuncDecl("reflexive_relation",new Sort[]{auction.getSort(),auction.getSort()},ctx.mkBoolSort()) ;
-        Expr<? extends  Sort> obj1 = ctx.mkConst("obj1", auction.getSort());
-        Expr<? extends  Sort> obj2 = ctx.mkConst("obj2", auction.getSort());
-        BoolExpr rel_is_assocFunc = ctx.mkForall(new Expr[]{obj1,obj2},ctx.mkEq(rel.apply(obj1,obj2), cd2smtGenerator
-                .evaluateLink(association,obj1,obj2)),0,null,null,null,null);
-        genInvConstraints.add(rel_is_assocFunc);
+        FuncDecl<BoolSort> rel = buildReflexiveNewAssocFunc(auction.getSort(),fieldAcc.getName());
         FuncDecl<BoolSort> trans_rel =  TransitiveClosure.mkTransitiveClosure(ctx,rel);
-
 
         Function<Expr<? extends  Sort>,BoolExpr> setFunc = obj->(BoolExpr)trans_rel.apply(auction,obj);
         return  new SMTSet(setFunc,auction.getSort());
+    }
+
+    private FuncDecl<BoolSort> buildReflexiveNewAssocFunc (Sort thisSort, String otherRole){
+        ASTCDType objClass = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(thisSort),cd2smtGenerator.getClassDiagram().getCDDefinition());
+        ASTCDAssociation association = CDHelper.getAssociation(objClass,otherRole,cd2smtGenerator.getClassDiagram().getCDDefinition());
+
+        FuncDecl<BoolSort> rel = ctx.mkFuncDecl("reflexive_relation",new Sort[]{thisSort,thisSort},ctx.mkBoolSort()) ;
+        Expr<? extends  Sort> obj1 = ctx.mkConst("obj1", thisSort);
+        Expr<? extends  Sort> obj2 = ctx.mkConst("obj2", thisSort);
+        BoolExpr rel_is_assocFunc = ctx.mkForall(new Expr[]{obj1,obj2},ctx.mkEq(rel.apply(obj1,obj2), cd2smtGenerator
+                .evaluateLink(association,obj1,obj2)),0,null,null,null,null);
+        genInvConstraints.add(rel_is_assocFunc);
+        return rel ;
     }
 
     protected SMTSet convertSetComp(ASTSetComprehension node) {
