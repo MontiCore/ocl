@@ -5,7 +5,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.ocl.ocl.OCLMill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -13,8 +13,8 @@ import java.io.IOException;
 
 public class QuantifiedExpressionTest extends ExpressionAbstractTest {
 
-    @BeforeAll
-    public static void setup() throws IOException {
+    @BeforeEach
+    public void setup() throws IOException {
         Log.init();
         OCLMill.init();
         CD4CodeMill.init();
@@ -125,6 +125,7 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest {
         addConstraint("Ex_two_auction_and_bool_sat");
         Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
     }
+
     @Test
     public void Exists_two_auction_and_bool_sat_sat() {
         addConstraint("Two_auction_and_bool_unsat");

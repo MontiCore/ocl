@@ -8,7 +8,7 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class SetExpressionsTest extends ExpressionAbstractTest {
-    @BeforeAll
-    public static void setup() throws IOException {
+    @BeforeEach
+    public void setup() throws IOException {
         Log.init();
         OCLMill.init();
         CD4CodeMill.init();

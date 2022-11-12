@@ -21,11 +21,8 @@ ocl NC1 {
         (exists Person p1 in a2.person, Person p2 in a2.person:
             p1 == p2);
 
-
- /*inv  DoubleNavigation:
-   forall Parent p, Auction a:
-      p isin a.person.parent ;*/
 /*
+
 //UNSAT
  inv  NestedFieldAccess_inDec:
     forall Auction a , Parent p:

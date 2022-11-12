@@ -30,18 +30,6 @@ public abstract class ExpressionAbstractTest {
     protected static Solver solver;
     protected static OCL2SMTGenerator ocl2SMTGenerator;
 
-    protected static void parse(String cdFileName, String oclFileName) throws IOException {
-
-        cdAST = OCL_Loader.loadAndCheckCD(
-                Path.of(RELATIVE_MODEL_PATH, cdFileName).toFile());
-
-        oclAST = OCL_Loader.loadAndCheckOCL(
-                Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(),
-                Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
-
-
-    }
-
     public static void printCD(ASTCDCompilationUnit cd, String name) {
         Path outputFile = Paths.get(RELATIVE_TARGET_PATH, name + ".od");
         try {
@@ -50,6 +38,15 @@ public abstract class ExpressionAbstractTest {
             e.printStackTrace();
             Assertions.fail("It Was Not Possible to Print the Class Diagram");
         }
+    }
+
+    protected void parse(String cdFileName, String oclFileName) throws IOException {
+        oclAST = OCL_Loader.loadAndCheckOCL(
+                Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(),
+                Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
+        cdAST = OCL_Loader.loadAndCheckCD(
+                Path.of(RELATIVE_MODEL_PATH, cdFileName).toFile());
+
     }
 
     // Used to make the tests shorter & readable
@@ -77,7 +74,6 @@ public abstract class ExpressionAbstractTest {
     }
 
 
-
     void testInv(String invName) {
         List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
         solverConstraints.add(getConstraint(invName));
@@ -87,6 +83,7 @@ public abstract class ExpressionAbstractTest {
         org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
         printOD(od.get());
     }
+
     public void printSMTScript(String invName) {
         List<IdentifiableBoolExpr> actualConstraint = new ArrayList<>();
         actualConstraint.add(getConstraint(invName));
