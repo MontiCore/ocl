@@ -61,8 +61,9 @@ public class DeriveSymTypeOfCommonExpressions
       //look for this type in our scope
       TypeSymbol innerResultType = innerResult.getTypeInfo();
       List<VariableSymbol> fieldSymbols;
+
       if (innerResult.isGenericType() && innerResultType.getName().equals("Set")){
-        SymTypeOfGenerics symTypeOfGenerics = (SymTypeOfGenerics) innerResult;
+        SymTypeOfGenerics symTypeOfGenerics = (SymTypeOfGenerics)innerResult;
         List<SymTypeExpression> params = symTypeOfGenerics.getArgumentList() ;
         assert !params.isEmpty();
       fieldSymbols = params.get(0)
@@ -72,6 +73,7 @@ public class DeriveSymTypeOfCommonExpressions
        fieldSymbols = innerResult
                 .getFieldList(expr.getName(), typeCheckResult.isType());
       }
+
       Optional<TypeSymbol> typeSymbolOpt = innerResultType.getSpannedScope()
         .resolveType(expr.getName());
       if (!fieldSymbols.isEmpty()) {
