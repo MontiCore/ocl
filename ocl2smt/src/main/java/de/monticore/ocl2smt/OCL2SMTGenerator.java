@@ -6,7 +6,6 @@ import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.Helper.SMTNameHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.expressions.commonexpressions._ast.*;
@@ -34,7 +33,7 @@ public class OCL2SMTGenerator {
     protected final TypeConverter typeConverter;
 
     protected final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
-    protected final Set<BoolExpr> genInvConstraints = new HashSet<>() ;
+    protected final Set<BoolExpr> genInvConstraints = new HashSet<>();
 
 
     public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit) {
@@ -85,11 +84,11 @@ public class OCL2SMTGenerator {
             inv = convertBoolExpr(invariant.getExpression());
         }
         //check  add general invConstraints
-          for (BoolExpr constr : genInvConstraints){
-              inv = ctx.mkAnd(inv,constr);
-          }
-          //clear constraints empty
-           genInvConstraints.clear();
+        for (BoolExpr constr : genInvConstraints) {
+            inv = ctx.mkAnd(inv, constr);
+        }
+        //clear constraints empty
+        genInvConstraints.clear();
         Optional<String> name = invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
         return IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name);
     }
@@ -447,11 +446,6 @@ public class OCL2SMTGenerator {
         return expr;
     }
 
-    protected Expr<? extends Sort> convertVarDecl(ASTMCType type, String name) {
-        Expr<? extends Sort> expr = ctx.mkConst(name, typeConverter.convertType(type, cd2smtGenerator.getClassDiagram().getCDDefinition()));
-        varNames.put(name, expr);
-        return expr;
-    }
 
     protected List<Expr<? extends Sort>> convertInDecl(ASTInDeclaration node) {
         List<Expr<? extends Sort>> result = new ArrayList<>();
@@ -459,7 +453,6 @@ public class OCL2SMTGenerator {
             if (node.isPresentMCType()) {
                 result.addAll(convertInDecVar(var, node.getMCType()));
             } else {
-                //i nedd the type of the variable "var"
                 Log.error("ASTInDeclExpression Without  Type not yet Supported");
                 //TODO:complete implementation
             }
@@ -485,7 +478,7 @@ public class OCL2SMTGenerator {
         } else if (node instanceof ASTBracketExpression) {
             set = convertSet(((ASTBracketExpression) node).getExpression());
         } else if (node instanceof ASTOCLTransitiveQualification) {
-              set = convertTransClo((ASTOCLTransitiveQualification) node);
+            set = convertTransClo((ASTOCLTransitiveQualification) node);
         } else if (node instanceof ASTUnionExpression) {
             set = SMTSet.mkSetUnion(convertSet(((ASTUnionExpression) node).getLeft()), convertSet(((ASTUnionExpression) node).getRight()), ctx);
         } else if (node instanceof ASTIntersectionExpression) {
@@ -493,7 +486,7 @@ public class OCL2SMTGenerator {
         } else if (node instanceof ASTSetMinusExpression) {
             set = SMTSet.mkSetMinus(convertSet(((ASTSetMinusExpression) node).getLeft()), convertSet(((ASTSetMinusExpression) node).getRight()), ctx);
         } else if (node instanceof ASTSetComprehension) {
-            Log.error("conversion of " + node.getClass().getName() +" not yet inpemented");
+            Log.error("conversion of " + node.getClass().getName() + " not yet inpemented");
             // set = convertSetComp((ASTSetComprehension) node);
         } else {
             Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
@@ -501,56 +494,34 @@ public class OCL2SMTGenerator {
 
         return set;
     }
+
     // a.auction**
     protected SMTSet convertTransClo(ASTOCLTransitiveQualification node) {
-        assert node.getExpression() instanceof ASTFieldAccessExpression ;
-        if (!node.isTransitive()){
+        assert node.getExpression() instanceof ASTFieldAccessExpression;
+        if (!node.isTransitive()) {
             return convertSet(node);
         }
         ASTFieldAccessExpression fieldAcc = (ASTFieldAccessExpression) node.getExpression();
-        Expr<? extends  Sort> auction = convertExpr(fieldAcc.getExpression());
+        Expr<? extends Sort> auction = convertExpr(fieldAcc.getExpression());
 
-        FuncDecl<BoolSort> rel = buildReflexiveNewAssocFunc(auction.getSort(),fieldAcc.getName());
-        FuncDecl<BoolSort> trans_rel =  TransitiveClosure.mkTransitiveClosure(ctx,rel);
+        FuncDecl<BoolSort> rel = buildReflexiveNewAssocFunc(auction.getSort(), fieldAcc.getName());
+        FuncDecl<BoolSort> trans_rel = TransitiveClosure.mkTransitiveClosure(ctx, rel);
 
-        Function<Expr<? extends  Sort>,BoolExpr> setFunc = obj->(BoolExpr)trans_rel.apply(auction,obj);
-        return  new SMTSet(setFunc,auction.getSort());
+        Function<Expr<? extends Sort>, BoolExpr> setFunc = obj -> (BoolExpr) trans_rel.apply(auction, obj);
+        return new SMTSet(setFunc, auction.getSort());
     }
 
-    private FuncDecl<BoolSort> buildReflexiveNewAssocFunc (Sort thisSort, String otherRole){
-        ASTCDType objClass = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(thisSort),cd2smtGenerator.getClassDiagram().getCDDefinition());
-        ASTCDAssociation association = CDHelper.getAssociation(objClass,otherRole,cd2smtGenerator.getClassDiagram().getCDDefinition());
+    private FuncDecl<BoolSort> buildReflexiveNewAssocFunc(Sort thisSort, String otherRole) {
+        ASTCDType objClass = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(thisSort), cd2smtGenerator.getClassDiagram().getCDDefinition());
+        ASTCDAssociation association = CDHelper.getAssociation(objClass, otherRole, cd2smtGenerator.getClassDiagram().getCDDefinition());
 
-        FuncDecl<BoolSort> rel = ctx.mkFuncDecl("reflexive_relation",new Sort[]{thisSort,thisSort},ctx.mkBoolSort()) ;
-        Expr<? extends  Sort> obj1 = ctx.mkConst("obj1", thisSort);
-        Expr<? extends  Sort> obj2 = ctx.mkConst("obj2", thisSort);
-        BoolExpr rel_is_assocFunc = ctx.mkForall(new Expr[]{obj1,obj2},ctx.mkEq(rel.apply(obj1,obj2), cd2smtGenerator
-                .evaluateLink(association,obj1,obj2)),0,null,null,null,null);
+        FuncDecl<BoolSort> rel = ctx.mkFuncDecl("reflexive_relation", new Sort[]{thisSort, thisSort}, ctx.mkBoolSort());
+        Expr<? extends Sort> obj1 = ctx.mkConst("obj1", thisSort);
+        Expr<? extends Sort> obj2 = ctx.mkConst("obj2", thisSort);
+        BoolExpr rel_is_assocFunc = ctx.mkForall(new Expr[]{obj1, obj2}, ctx.mkEq(rel.apply(obj1, obj2), cd2smtGenerator
+                .evaluateLink(association, obj1, obj2)), 0, null, null, null, null);
         genInvConstraints.add(rel_is_assocFunc);
-        return rel ;
-    }
-
-    protected SMTSet convertSetComp(ASTSetComprehension node) {
-        //TODO complete the implementation handle when right setComprehension Items are not filters
-        SMTSet set = convertSetCompItem(node.getLeft());
-        BoolExpr filter = ctx.mkTrue();
-        for (ASTSetComprehensionItem item : node.getSetComprehensionItemList()) {
-            filter = ctx.mkAnd(filter, convertBoolExpr(item.getExpression()));
-        } //TODO: change the way o handle filters
-
-        return null;
-    }
-
-
-    protected SMTSet convertSetCompItem(ASTSetComprehensionItem node) {
-        //TODO: complete the implementation to take care of Expression and SetVariable declaration
-        return convertGenDecl(node.getGeneratorDeclaration());
-    }
-
-    protected SMTSet convertGenDecl(ASTGeneratorDeclaration node) {
-        Expr<? extends Sort> param = convertVarDecl(node.getMCType(), node.getName()); //TODO: remove this variable later
-        return convertSet(node.getExpression());
-
+        return rel;
     }
 
     public Context buildContext() {

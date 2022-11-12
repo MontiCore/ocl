@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 
-public class Typecheck extends ExpressionAbstractTest {
+public class TypeCheck extends ExpressionAbstractTest {
     @BeforeEach
     public void setup() throws IOException {
         Log.init();
