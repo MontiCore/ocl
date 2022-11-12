@@ -5,7 +5,6 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.ocl.ocl.OCLMill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -42,16 +41,16 @@ public class AssociationTest extends ExpressionAbstractTest {
         testInv("Same_Person_in_2_Auction");
     }
 
-    @Disabled
+
     @Test
     public void TestNestedFieldAccessExpr() {
         testInv("NestedFieldAccessExpr");
     }
 
-    @Disabled
+
     @Test
-    public void TestNestedFieldAccess_inDec() {
-        testUnsatInv("NestedFieldAccess_inDec");
+    public void TestNestedFieldAccess_inDec_UNSAT() {
+        testInv("NestedFieldAccess2_UNSAT");
     }
 
 }

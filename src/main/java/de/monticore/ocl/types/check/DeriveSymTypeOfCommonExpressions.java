@@ -13,6 +13,7 @@ import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfGenerics;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
@@ -59,9 +60,18 @@ public class DeriveSymTypeOfCommonExpressions
       innerResult = typeCheckResult.getResult();
       //look for this type in our scope
       TypeSymbol innerResultType = innerResult.getTypeInfo();
-      //search for a method, field or type in the scope of the type of the inner expression
-      List<VariableSymbol> fieldSymbols = innerResult
-        .getFieldList(expr.getName(), typeCheckResult.isType());
+      List<VariableSymbol> fieldSymbols;
+      if (innerResult.isGenericType() && innerResultType.getName().equals("Set")){
+        SymTypeOfGenerics symTypeOfGenerics = (SymTypeOfGenerics) innerResult;
+        List<SymTypeExpression> params = symTypeOfGenerics.getArgumentList() ;
+        assert !params.isEmpty();
+      fieldSymbols = params.get(0)
+                .getFieldList(expr.getName(), typeCheckResult.isType());
+      }else {
+        //search for a method, field or type in the scope of the type of the inner expression
+       fieldSymbols = innerResult
+                .getFieldList(expr.getName(), typeCheckResult.isType());
+      }
       Optional<TypeSymbol> typeSymbolOpt = innerResultType.getSpannedScope()
         .resolveType(expr.getName());
       if (!fieldSymbols.isEmpty()) {

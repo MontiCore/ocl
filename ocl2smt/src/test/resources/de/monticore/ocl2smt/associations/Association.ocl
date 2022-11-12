@@ -21,18 +21,18 @@ ocl NC1 {
         (exists Person p1 in a2.person, Person p2 in a2.person:
             p1 == p2);
 
-/*
+
 
 //UNSAT
- inv  NestedFieldAccess_inDec:
-    forall Auction a , Parent p:
-       ((p  isin a.person.parent) == (p.age == 18)) &&
-          (exists Parent p1 :
-            p1 notin a.person.parent);
+ inv  NestedFieldAccess2_UNSAT:
+    forall Auction a , Parent p in a.person.parent :
+       (p.age == 59 )&&
+          (exists Parent p1 in a.person.parent  :
+            p1.age == 60 );
 
    context Auction a inv NestedFieldAccessExpr:
       forall Parent p1 in a.person.parent:
-         p1.age >= 50 ;*/
+         p1.age >= 50 ;
 
 
 
