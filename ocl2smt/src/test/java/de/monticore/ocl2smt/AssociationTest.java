@@ -47,10 +47,9 @@ public class AssociationTest extends ExpressionAbstractTest {
         testInv("NestedFieldAccessExpr");
     }
 
-
     @Test
     public void TestNestedFieldAccess_inDec_UNSAT() {
-        testInv("NestedFieldAccess2_UNSAT");
+        testUnsatInv("NestedFieldAccess2_UNSAT");
     }
 
 }
