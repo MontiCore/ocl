@@ -376,8 +376,7 @@ public class OCL2SMTGenerator {
     protected Expr<? extends Sort> convertFieldAcc(ASTFieldAccessExpression node) {
         Expr<? extends Sort> obj = convertExpr(node.getExpression());
         ASTCDType myType = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(obj.getSort()), cd2smtGenerator.getClassDiagram().getCDDefinition());
-        ASTCDAttribute myAttribute = CDHelper.getAttribute(myType, node.getName());
-        return cd2smtGenerator.getAttribute(myType, myAttribute, obj);
+        return cd2smtGenerator.getAttribute(myType, node.getName(), obj);
     }
 
     //e.g  auction.person.parent
@@ -387,19 +386,19 @@ public class OCL2SMTGenerator {
             Expr<? extends Sort> auction = convertExpr(node.getExpression());
             ASTCDType Auction = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(auction.getSort()),
                     cd2smtGenerator.getClassDiagram().getCDDefinition());//ASTCDClass Auction
+
             ASTCDAssociation auction_person = CDHelper.getAssociation(Auction, node.getName(),
                     cd2smtGenerator.getClassDiagram().getCDDefinition()); //ASTCDAssociation auction_person
 
-            Sort leftSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(auction_person.getLeftQualifiedName().getQName(),
-                    cd2smtGenerator.getClassDiagram().getCDDefinition())); //Sort  Auction_obj
-            Sort rightSort = cd2smtGenerator.getSort(CDHelper.getASTCDType(auction_person.getRightQualifiedName().getQName(),
+            Sort sort1 = cd2smtGenerator.getSort(Auction); //Sort  Auction_obj
+            Sort sort2 = cd2smtGenerator.getSort(CDHelper.getASTCDType(auction_person.getRightQualifiedName().getQName(),
                     cd2smtGenerator.getClassDiagram().getCDDefinition()));//Sort Person_obj
 
 
-            Function<Expr<? extends Sort>, BoolExpr> auction_per_set = leftSort.equals(auction.getSort()) ?
+            Function<Expr<? extends Sort>, BoolExpr> auction_per_set = sort1.equals(auction.getSort()) ?
                     per -> cd2smtGenerator.evaluateLink(auction_person, auction, per) : per -> cd2smtGenerator.evaluateLink(auction_person, per, auction);
 
-            return leftSort.equals(auction.getSort()) ? new SMTSet(auction_per_set, rightSort) : new SMTSet(auction_per_set, leftSort);
+            return sort1.equals(auction.getSort()) ? new SMTSet(auction_per_set, sort2) : new SMTSet(auction_per_set, sort1);
         }
         SMTSet pSet = convertSet(node.getExpression());
 
