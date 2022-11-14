@@ -53,7 +53,7 @@ public class CompleterUtil {
   }
 
   public static void visit(FunctionSymbol function, List<ASTMCImportStatement> imports, String packageDeclaration){
-    String typeName = function.getReturnType().getTypeInfo().getName();
+    String typeName = function.getType().getTypeInfo().getName();
     Set<TypeSymbol> typeSymbols = new HashSet<>();
     for (String fqNameCandidate : calcFQNameCandidates(imports, packageDeclaration, typeName)) {
       OCLScope scope = (OCLScope) function.getEnclosingScope();
@@ -71,7 +71,7 @@ public class CompleterUtil {
     }
     else {
       TypeSymbol typeSymbol = Iterables.getFirst(typeSymbols, null);
-      function.setReturnType(SymTypeExpressionFactory.createTypeExpression(typeSymbol));
+      function.setType(SymTypeExpressionFactory.createTypeExpression(typeSymbol));
     }
   }
 

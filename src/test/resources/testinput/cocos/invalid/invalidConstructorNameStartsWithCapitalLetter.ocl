@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+import example.CDs.AuctionCD.*;
+
+ocl invalidConstructorNameStartsWithCapitalLetter {
+  context new auction(Policy p)
+    pre: true;
+    post: true;
+}

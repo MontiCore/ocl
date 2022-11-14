@@ -12,16 +12,17 @@ import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
 import de.monticore.ocl.setexpressions._symboltable.SetExpressionsSymbolTableCompleter;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.ocl.util.library.CollectionType;
 import de.monticore.ocl.util.library.GlobalQueries;
 import de.monticore.ocl.util.library.ListType;
+import de.monticore.ocl.util.library.OptionalType;
 import de.monticore.ocl.util.library.SetType;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbolDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbolDeSer;
-import de.monticore.symbols.oosymbols.OOSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 
 import java.nio.file.Paths;
@@ -33,18 +34,12 @@ import java.nio.file.Paths;
  */
 public class SymbolTableUtil {
   static public void prepareMill() {
-    OOSymbolsMill.reset();
-    OOSymbolsMill.init();
-
     OCLMill.reset();
     OCLMill.init();
     OCLMill.globalScope().clear();
     BasicSymbolsMill.initializePrimitives();
 
-    OOSymbolsMill.globalScope().setSymbolPath(new MCPath(Paths.get("")));
     Class2MCResolver resolver = new Class2MCResolver();
-    OOSymbolsMill.globalScope().addAdaptedOOTypeSymbolResolver(resolver);
-    OOSymbolsMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
     OCLMill.globalScope().addAdaptedTypeSymbolResolver(resolver);
 
     addOclpLibrary();
@@ -54,10 +49,12 @@ public class SymbolTableUtil {
     CollectionType c = new CollectionType();
     ListType l = new ListType();
     SetType s = new SetType();
+    OptionalType o = new OptionalType();
     GlobalQueries g = new GlobalQueries();
     c.addCollectionType();
     l.addListType();
     s.addSetType();
+    o.addOptionalType();
     c.addMethodsAndFields();
     l.addMethodsAndFields();
     s.addMethodsAndFields();
@@ -71,17 +68,19 @@ public class SymbolTableUtil {
 
   static public void runSymTabCompleter(ASTOCLCompilationUnit ast) {
     OCLSymbolTableCompleter stCompleter = new OCLSymbolTableCompleter(
-      ast.getMCImportStatementList(), ast.getPackage()
+        ast.getMCImportStatementList(), ast.getPackage()
     );
-    stCompleter.setTypeCalculator(new OCLTypeCalculator());
+    stCompleter.setSynthesizer(new OCLSynthesizer());
     OCLExpressionsSymbolTableCompleter stCompleter2 = new OCLExpressionsSymbolTableCompleter(
-      ast.getMCImportStatementList(), ast.getPackage()
+        ast.getMCImportStatementList(), ast.getPackage()
     );
-    stCompleter2.setTypeVisitor(new OCLTypeCalculator());
+    stCompleter2.setDeriver(new OCLDeriver());
+    stCompleter2.setSynthesizer(new OCLSynthesizer());
     SetExpressionsSymbolTableCompleter stCompleter3 = new SetExpressionsSymbolTableCompleter(
-      ast.getMCImportStatementList(), ast.getPackage()
+        ast.getMCImportStatementList(), ast.getPackage()
     );
-    stCompleter3.setTypeVisitor(new OCLTypeCalculator());
+    stCompleter3.setDeriver(new OCLDeriver());
+    stCompleter3.setSynthesizer(new OCLSynthesizer());
 
     OCLTraverser t = OCLMill.traverser();
     t.add4BasicSymbols(stCompleter);

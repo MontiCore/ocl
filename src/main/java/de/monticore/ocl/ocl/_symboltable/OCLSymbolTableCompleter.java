@@ -8,7 +8,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.ocl._visitor.OCLHandler;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
+import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -31,7 +31,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
   protected final List<ASTMCImportStatement> imports;
   protected final String packageDeclaration;
   protected OCLTraverser traverser;
-  OCLTypeCalculator typeCalculator;
+  OCLSynthesizer synthesizer;
 
   public OCLSymbolTableCompleter(List<ASTMCImportStatement> imports, String packageDeclaration) {
     this.imports = imports;
@@ -48,9 +48,9 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
     this.traverser = traverser;
   }
 
-  public void setTypeCalculator(OCLTypeCalculator typesCalculator) {
+  public void setSynthesizer(OCLSynthesizer typesCalculator) {
     if (typesCalculator != null) {
-      this.typeCalculator = typesCalculator;
+      this.synthesizer = typesCalculator;
     } else {
       Log.error("0xA3201 The typesVisitor has to be set");
     }
@@ -67,11 +67,11 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
   public void initialize_OCLParamDeclaration(VariableSymbol symbol, ASTOCLParamDeclaration ast) {
     ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
     ast.getMCType().accept(getTraverser());
-    final TypeCheckResult typeResult = typeCalculator.synthesizeType(ast.getMCType());
-    if (!typeResult.isPresentCurrentResult()) {
+    final TypeCheckResult typeResult = synthesizer.synthesizeType(ast.getMCType());
+    if (!typeResult.isPresentResult()) {
       Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
     } else {
-      symbol.setType(typeResult.getCurrentResult());
+      symbol.setType(typeResult.getResult());
       symbol.setIsReadOnly(true);
     }
   }
@@ -90,18 +90,18 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
         if (cd.isPresentMCType()) {
           ASTMCType type = cd.getMCType();
           type.setEnclosingScope(cd.getEnclosingScope());
-          final TypeCheckResult typeResult = typeCalculator.synthesizeType(type);
-          if (!typeResult.isPresentCurrentResult()) {
+          final TypeCheckResult typeResult = synthesizer.synthesizeType(type);
+          if (!typeResult.isPresentResult()) {
             Log.error(String.format("The type (%s) could not be calculated", type));
           } else {
             //create VariableSymbols for "this" and "super"
             VariableSymbol t = new VariableSymbol("this");
-            t.setType(typeResult.getCurrentResult());
+            t.setType(typeResult.getResult());
             t.setIsReadOnly(true);
             cd.getEnclosingScope().add(t);
-            if (!typeResult.getCurrentResult().getTypeInfo().isEmptySuperTypes()) {
+            if (!typeResult.getResult().getTypeInfo().isEmptySuperTypes()) {
               VariableSymbol s = new VariableSymbol("super");
-              s.setType(typeResult.getCurrentResult().getTypeInfo().getSuperClass());
+              s.setType(typeResult.getResult().getTypeInfo().getSuperClass());
               s.setIsReadOnly(true);
               cd.getEnclosingScope().add(s);
             }
@@ -109,7 +109,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
             //create VariableSymbol for Name of Type
             VariableSymbol typeName = new VariableSymbol(cd.getMCType().
               printType(MCSimpleGenericTypesMill.mcSimpleGenericTypesPrettyPrinter()).toLowerCase());
-            typeName.setType(typeResult.getCurrentResult());
+            typeName.setType(typeResult.getResult());
             typeName.setIsReadOnly(true);
             cd.getEnclosingScope().add(typeName);
           }
@@ -137,20 +137,20 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
           returnType.getMCVoidType().setEnclosingScope(node.getEnclosingScope());
           returnType.getMCVoidType().accept(getTraverser());
           typeResult = new TypeCheckResult();
-          typeResult.setCurrentResultAbsent();
+          typeResult.setResultAbsent();
         } else {
           returnType.getMCType().setEnclosingScope(node.getEnclosingScope());
           returnType.getMCType().accept(getTraverser());
-          typeResult = typeCalculator.synthesizeType(returnType.getMCType());
+          typeResult = synthesizer.synthesizeType(returnType.getMCType());
         }
       } else {
         // method has no explicit return type
         typeResult = new TypeCheckResult();
-        typeResult.setCurrentResultAbsent();
+        typeResult.setResultAbsent();
       }
-      if (typeResult.isPresentCurrentResult()) {
+      if (typeResult.isPresentResult()) {
         VariableSymbol result = new VariableSymbol("result");
-        result.setType(typeResult.getCurrentResult());
+        result.setType(typeResult.getResult());
         result.setIsReadOnly(true);
         node.getEnclosingScope().add(result);
       }

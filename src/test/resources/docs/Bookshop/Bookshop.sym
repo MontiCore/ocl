@@ -191,8 +191,8 @@
             "isStatic": false,
             "isFinal": false,
             "type": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "double"
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "double"
             },
             "isReadOnly": false
           },
@@ -205,8 +205,8 @@
             "isStatic": false,
             "isFinal": false,
             "type": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "double"
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "double"
             },
             "isReadOnly": false
           },
@@ -273,7 +273,7 @@
             "isStatic": false,
             "isFinal": false,
             "isElliptic": false,
-            "returnType": "void",
+            "type": "void",
             "spannedScope": {
               "isShadowingScope": false,
               "symbols": [
@@ -305,7 +305,7 @@
             "isStatic": false,
             "isFinal": false,
             "isElliptic": false,
-            "returnType": {
+            "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
               "objName": "Invoice"
             },
@@ -335,8 +335,8 @@
                   "isStatic": false,
                   "isFinal": false,
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeConstant",
-                    "constName": "int"
+                    "kind": "de.monticore.types.check.SymTypePrimitive",
+                    "primitiveName": "int"
                   },
                   "isReadOnly": false
                 },
@@ -445,7 +445,7 @@
             "isStatic": false,
             "isFinal": false,
             "isElliptic": false,
-            "returnType": "void",
+            "type": "void",
             "spannedScope": {
               "isShadowingScope": false,
               "symbols": [
@@ -458,8 +458,8 @@
                   "isStatic": false,
                   "isFinal": false,
                   "type": {
-                    "kind": "de.monticore.types.check.SymTypeConstant",
-                    "constName": "double"
+                    "kind": "de.monticore.types.check.SymTypePrimitive",
+                    "primitiveName": "double"
                   },
                   "isReadOnly": false
                 },
@@ -517,8 +517,8 @@
             "isStatic": false,
             "isFinal": false,
             "type": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "int"
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "int"
             },
             "isReadOnly": false
           },
@@ -531,8 +531,8 @@
             "isStatic": false,
             "isFinal": false,
             "type": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "boolean"
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "boolean"
             },
             "isReadOnly": false
           },
@@ -636,8 +636,8 @@
             "isStatic": false,
             "isFinal": false,
             "type": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "int"
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "int"
             },
             "isReadOnly": false
           },
@@ -650,8 +650,8 @@
             "isStatic": false,
             "isFinal": false,
             "type": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "double"
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "double"
             },
             "isReadOnly": false
           },
@@ -664,8 +664,8 @@
             "isStatic": false,
             "isFinal": false,
             "type": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "double"
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "double"
             },
             "isReadOnly": false
           },

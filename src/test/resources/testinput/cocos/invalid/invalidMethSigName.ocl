@@ -1,9 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-import example.CDs.DefaultTypes.*;
-import example.CDs.AuctionCD.*;
-
-ocl invalidMethSigName {
-  context boolean Person.PersonalMsg()
-  pre Test: true;
-  post Test: result == List{m in Person.message | !m.isAuctionSpecific()};
-}

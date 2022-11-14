@@ -152,7 +152,7 @@ component grammar SetExpressions
    *              (e.g.: "1..3, x, y..z")
    *   Examples:
    *        {1 .. 3, x+1 .. 10, 2*y, 21}    defines a set
-   *        [1..3],  List{a..b}             defines a list
+   *        [1..3],  [a..b]             defines a list
    */
   SetEnumeration implements Expression  <40> =
     ( set:key("Set")?

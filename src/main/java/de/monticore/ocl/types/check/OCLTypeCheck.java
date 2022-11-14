@@ -27,7 +27,7 @@ public class OCLTypeCheck extends TypeCheck {
    * @return true iff right is compatible to left
    */
   public static boolean compatible(SymTypeExpression left, SymTypeExpression right) {
-    if (!left.isTypeConstant() && right.isNullType()) {
+    if (!left.isPrimitive() && right.isNullType()) {
       return true;
     }
     //check whether TypeCheck class deems types compatible
@@ -75,20 +75,20 @@ public class OCLTypeCheck extends TypeCheck {
     return compatible(leftUnwrapped, right);
   }
 
-  public static Optional<SymTypeExpression> unwrapOptional(SymTypeExpression optional) {
+  public static SymTypeExpression unwrapOptional(SymTypeExpression optional) {
     //check that argument is of Type Optional
     if (!optional.isGenericType() || !optional.getTypeInfo().getName().equals("Optional")) {
       Log.error("function optionalCompatible requires an Optional SymType " +
         "but was given " + optional.print());
-      return Optional.empty();
+      return SymTypeExpressionFactory.createObscureType();
     }
 
     //return type of optional
     if (!((SymTypeOfGenerics) optional).getArgumentList().isEmpty()) {
-      return Optional.of(((SymTypeOfGenerics) optional).getArgument(0));
+      return ((SymTypeOfGenerics) optional).getArgument(0);
     }
     else {
-      return Optional.empty();
+      return SymTypeExpressionFactory.createObscureType();
     }
   }
 

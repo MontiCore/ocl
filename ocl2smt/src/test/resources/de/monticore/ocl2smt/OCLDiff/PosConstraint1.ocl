@@ -1,0 +1,39 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl Test02 {
+
+  inv Min_Ident_1:
+      forall Auction a:
+         a.auctionIdent > 0 ;
+
+  inv MaxIdent_7:
+        forall Auction a:
+           a.auctionIdent < 8 ;
+
+  inv Auction_Names:
+       forall Auction a :
+           a.name == "FaceBook1" ||
+           a.name == "Twitter"||
+           a.name == "BMW4" ||
+           a.name == "Mercedes";
+
+  inv Exists_Exact_3_Auction:
+         exists Auction a1,a2,a3 :
+             a1 != a2 &&
+             a2 != a3 &&
+             a3 != a1 &&
+
+             ( forall Auction a :
+                   a == a1 ||
+                   a == a2||
+                   a == a3 );
+
+  inv Auction_Ident_Unique:
+         forall Auction a1 , a2 :
+           (a1.auctionIdent != a2.auctionIdent implies a1 == a2) &&
+           (a1 == a2 implies a1.auctionIdent == a2.auctionIdent ) ;
+
+
+
+}

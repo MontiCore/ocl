@@ -1,0 +1,49 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl Test05 {
+  inv(List<String> names):
+    forall name in names:
+      name.length() > 0;
+
+  inv(List<String> names):
+    exists name in names:
+      name.length() > 0;
+
+  inv(List<String> names):
+    (any names).length() > 0;
+
+  inv(Set<String> names):
+    "name" isin names;
+
+  inv(Set<Integer> numbers):
+    iterate{
+      number in numbers;
+      Integer acc=0:
+      acc = acc + number
+    } > 5;
+
+
+  inv:
+    let
+      a = 2;
+      b = 3
+    in
+      a < b;
+
+  inv(Integer n, int a):
+    (Integer) n < a;
+
+  inv(int a, int b, int c):
+    (a + b) * c > 0;
+
+  inv:
+    ("abc" + "def").length() == 6;
+
+  inv:
+    ("a" + "b").length() > 0;
+
+  inv:
+    true &&
+    false;
+}

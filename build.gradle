@@ -12,6 +12,7 @@ buildscript {
 
 plugins {
   id 'java'
+
   id 'monticore' version "$mc_version"
   id 'com.github.johnrengelman.shadow' version '6.0.0'
   //id 'de.set.ecj' version '1.4.1' // Eclipse compiler as it's faster than javac
@@ -75,7 +76,9 @@ repositories {
 
 //sourceCompatibility = '1.8'
 
-configurations { grammar }
+configurations {
+    grammar
+}
 
 test {
   useJUnitPlatform()
@@ -119,6 +122,10 @@ dependencies {
 /* ============================================================ */
 /* ========================== Tasks =========================== */
 /* ============================================================ */
+
+tasks.withType(Test){
+    useJUnitPlatform()
+}
 
 tasks.withType(JavaCompile) {
   options.fork = true
@@ -172,8 +179,6 @@ sourcesJar.dependsOn project.collect { it.tasks.withType(MCTask)}
 // generated java doc contains errors, disable for now
 javadoc.failOnError(false)
 
-
-// all in one tool-jar
 shadowJar {
   manifest {
     attributes "Main-Class": "de.monticore.ocl.ocl.${archiveBaseName.get().toUpperCase()}Tool"
@@ -183,12 +188,13 @@ shadowJar {
   minimize()
 }
 
-jar.dependsOn shadowJar
-
+jar.dependsOn(shadowJar)
 
 publishing {
   publications {
-    mavenJava(MavenPublication) { from components.java }
+    mavenJava(MavenPublication) {
+        from components.java
+    }
   }
   repositories.maven {
     name = "$SE_Nexus_ID"

@@ -38,7 +38,7 @@
           {
             "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
             "name": "now",
-            "returnType": {
+            "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
               "objName": "Time"
             },
@@ -54,9 +54,9 @@
           {
             "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
             "name": "lessThan",
-            "returnType": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "boolean"
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "boolean"
             },
             "isConstructor": false,
             "isMethod": true,
@@ -350,8 +350,8 @@
             "isStatic": false,
             "isFinal": false,
             "type": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "int"
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "int"
             },
             "isReadOnly": false
           },
@@ -364,8 +364,8 @@
             "isStatic": false,
             "isFinal": false,
             "type": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "int"
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "int"
             },
             "isReadOnly": false
           },
@@ -779,8 +779,8 @@
             "isStatic": false,
             "isFinal": false,
             "type": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "boolean"
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "boolean"
             },
             "isReadOnly": false
           },
@@ -930,9 +930,9 @@
           {
             "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
             "name": "height",
-            "returnType": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "double"
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "double"
             },
             "isConstructor": false,
             "isMethod": true,
@@ -946,9 +946,9 @@
           {
             "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
             "name": "width",
-            "returnType": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "double"
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "double"
             },
             "isConstructor": false,
             "isMethod": true,
@@ -962,9 +962,9 @@
           {
             "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
             "name": "length",
-            "returnType": {
-              "kind": "de.monticore.types.check.SymTypeConstant",
-              "constName": "double"
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "double"
             },
             "isConstructor": false,
             "isMethod": true,

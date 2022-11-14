@@ -6,10 +6,11 @@ import de.monticore.ocl.setexpressions._ast.ASTSetVariableDeclaration;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
-import de.monticore.ocl.types.check.OCLTypeCalculator;
 import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
+import de.monticore.types.check.IDerive;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.TypeCheckResult;
@@ -21,7 +22,9 @@ import java.util.List;
 public class SetExpressionsSymbolTableCompleter
   implements SetExpressionsVisitor2, BasicSymbolsVisitor2, SetExpressionsHandler {
 
-  OCLTypeCalculator typeVisitor;
+  IDerive deriver;
+
+  ISynthesize synthesizer;
 
   protected final List<ASTMCImportStatement> imports;
 
@@ -29,12 +32,21 @@ public class SetExpressionsSymbolTableCompleter
 
   protected SetExpressionsTraverser traverser;
 
-  public void setTypeVisitor(OCLTypeCalculator typesCalculator) {
-    if (typesCalculator != null) {
-      this.typeVisitor = typesCalculator;
+  public void setDeriver(IDerive deriver) {
+    if (deriver != null) {
+      this.deriver = deriver;
     }
     else {
-      Log.error("0xA3201 The typesVisitor has to be set");
+      Log.error("0xA3201 The deriver has to be set");
+    }
+  }
+
+  public void setSynthesizer(ISynthesize synthesizer) {
+    if (synthesizer != null) {
+      this.synthesizer = synthesizer;
+    }
+    else {
+      Log.error("0xA3204 The synthesizer has to be set");
     }
   }
 
@@ -76,18 +88,18 @@ public class SetExpressionsSymbolTableCompleter
     if(ast.isPresentMCType()) {
       ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
       ast.getMCType().accept(getTraverser());
-      final TypeCheckResult typeResult = typeVisitor.synthesizeType(ast.getMCType());
-      if (!typeResult.isPresentCurrentResult()) {
+      final TypeCheckResult typeResult = synthesizer.synthesizeType(ast.getMCType());
+      if (!typeResult.isPresentResult()) {
         Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
       } else {
-        symbol.setType(typeResult.getCurrentResult());
+        symbol.setType(typeResult.getResult());
       }
     } else {
       if(ast.isPresentExpression()){
         ast.getExpression().accept(getTraverser());
-        final TypeCheckResult tcr_expr = typeVisitor.deriveType(ast.getExpression());
-        if(tcr_expr.isPresentCurrentResult()){
-          symbol.setType(tcr_expr.getCurrentResult());
+        final TypeCheckResult tcr_expr = deriver.deriveType(ast.getExpression());
+        if(tcr_expr.isPresentResult()){
+          symbol.setType(tcr_expr.getResult());
         } else {
           Log.error(String.format("The type of the object (%s) could not be calculated", ast.getName()));
         }
@@ -108,23 +120,23 @@ public class SetExpressionsSymbolTableCompleter
     if(ast.isPresentMCType()) {
       ast.getMCType().setEnclosingScope(symbol.getEnclosingScope());
       ast.getMCType().accept(getTraverser());
-      final TypeCheckResult typeResult = typeVisitor.synthesizeType(ast.getMCType());
-      if (!typeResult.isPresentCurrentResult()) {
+      final TypeCheckResult typeResult = synthesizer.synthesizeType(ast.getMCType());
+      if (!typeResult.isPresentResult()) {
         Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
       }
       else {
-        symbol.setType(typeResult.getCurrentResult());
+        symbol.setType(typeResult.getResult());
       }
     } else {
-      final TypeCheckResult typeResult = typeVisitor.deriveType(ast.getExpression());
-      if(!typeResult.isPresentCurrentResult()){
+      final TypeCheckResult typeResult = deriver.deriveType(ast.getExpression());
+      if(!typeResult.isPresentResult()){
         Log.error(String.format("The type of the object (%s) could not be calculated", ast.getName()));
       }
-      else if(typeResult.getCurrentResult().isTypeConstant()){
+      else if(typeResult.getResult().isPrimitive()){
         Log.error(String.format("Expression of object (%s) has to be a collection", ast.getName()));
       }
       else {
-        SymTypeExpression result = OCLTypeCheck.unwrapSet(typeResult.getCurrentResult());
+        SymTypeExpression result = OCLTypeCheck.unwrapSet(typeResult.getResult());
         symbol.setType(result);
       }
     }

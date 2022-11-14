@@ -1,0 +1,6 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+ocl invalidContextVariableNamesAreUnique {
+  context Auction a, Auction a
+  inv: true;
+}
