@@ -39,60 +39,60 @@ public class OCL2SMTGenerator {
 
 
   public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit) {
-        this.ctx = buildContext();
+    this.ctx = buildContext();
 
-        cd2smtGenerator = new CD2SMTGenerator();
-        cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
+    cd2smtGenerator = new CD2SMTGenerator();
+    cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
 
-        this.literalExpressionsConverter = new LiteralExpressionsConverter(ctx);
-        this.typeConverter = new TypeConverter(cd2smtGenerator);
+    this.literalExpressionsConverter = new LiteralExpressionsConverter(ctx);
+    this.typeConverter = new TypeConverter(cd2smtGenerator);
 
     }
 
-    public List<IdentifiableBoolExpr> ocl2smt(ASTOCLArtifact astoclArtifact) {
-        List<IdentifiableBoolExpr> constraints = new ArrayList<>();
-        for (ASTOCLConstraint constraint : astoclArtifact.getOCLConstraintList()) {
-            constraints.add(convertConstr(constraint));
+  public List<IdentifiableBoolExpr> ocl2smt(ASTOCLArtifact astoclArtifact) {
+    List<IdentifiableBoolExpr> constraints = new ArrayList<>();
+    for (ASTOCLConstraint constraint : astoclArtifact.getOCLConstraintList()) {
+        constraints.add(convertConstr(constraint));
+    }
+    return constraints;
+  }
+
+  protected IdentifiableBoolExpr convertConstr(ASTOCLConstraint constraint) {
+    if (constraint instanceof ASTOCLInvariant) {
+        return convertInv((ASTOCLInvariant) constraint);
+    } else {
+        assert false;
+        Log.error("the conversion of  ASTOCLConstraint of type   ASTOCLMethodSignature " + "and ASTOCLConstructorSignature in SMT is not implemented");
+        return null;
+    }
+  }
+
+  protected IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
+    List<Expr<? extends Sort>> expr = new ArrayList<>();
+    SourcePosition srcPos = invariant.get_SourcePositionStart();
+    assert srcPos.getFileName().isPresent();
+    //convert parameter declaration  in context
+    invariant.getOCLContextDefinitionList().forEach(node -> {
+        if (node.isPresentOCLParamDeclaration()) {
+            expr.add(convertParDec(node.getOCLParamDeclaration()));
         }
-        return constraints;
-    }
-
-    protected IdentifiableBoolExpr convertConstr(ASTOCLConstraint constraint) {
-        if (constraint instanceof ASTOCLInvariant) {
-            return convertInv((ASTOCLInvariant) constraint);
-        } else {
-            assert false;
-            Log.error("the conversion of  ASTOCLConstraint of type   ASTOCLMethodSignature " + "and ASTOCLConstructorSignature in SMT is not implemented");
-            return null;
-        }
-    }
-
-    protected IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
-        List<Expr<? extends Sort>> expr = new ArrayList<>();
-        SourcePosition srcPos = invariant.get_SourcePositionStart();
-        assert srcPos.getFileName().isPresent();
-        //convert parameter declaration  in context
-        invariant.getOCLContextDefinitionList().forEach(node -> {
-            if (node.isPresentOCLParamDeclaration()) {
-                expr.add(convertParDec(node.getOCLParamDeclaration()));
-            }
-        });
-        //check if parameter was declared
-        BoolExpr inv;
-        if (expr.size() > 0) {
-            inv = ctx.mkForall(expr.toArray(new Expr[0]), (BoolExpr) convertExpr(invariant.getExpression()),
+    });
+    //check if parameter was declared
+    BoolExpr inv;
+    if (expr.size() > 0) {
+        inv = ctx.mkForall(expr.toArray(new Expr[0]), (BoolExpr) convertExpr(invariant.getExpression()),
                     0, null, null, null, null);
-        } else {
-            inv = convertBoolExpr(invariant.getExpression());
-        }
-        //check  add general invConstraints
-        for (BoolExpr constr : genInvConstraints) {
-            inv = ctx.mkAnd(inv, constr);
-        }
-        //clear constraints empty
-        genInvConstraints.clear();
-        Optional<String> name = invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
-        return IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name);
+    } else {
+        inv = convertBoolExpr(invariant.getExpression());
+    }
+    //check  add general invConstraints
+    for (BoolExpr constr : genInvConstraints) {
+        inv = ctx.mkAnd(inv, constr);
+    }
+    //clear constraints empty
+    genInvConstraints.clear();
+    Optional<String> name = invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
+    return IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name);
     }
 
     protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
