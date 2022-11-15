@@ -28,17 +28,17 @@ import java.util.function.Function;
 public class OCL2SMTGenerator {
 
 
-    protected final Context ctx;
-    protected final CD2SMTGenerator cd2smtGenerator;
+  protected final Context ctx;
+  protected final CD2SMTGenerator cd2smtGenerator;
 
-    protected final LiteralExpressionsConverter literalExpressionsConverter;
-    protected final TypeConverter typeConverter;
+  protected final LiteralExpressionsConverter literalExpressionsConverter;
+  protected final TypeConverter typeConverter;
 
-    protected final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
-    protected final Set<BoolExpr> genInvConstraints = new HashSet<>();
+  protected final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
+  protected final Set<BoolExpr> genInvConstraints = new HashSet<>();
 
 
-    public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit) {
+  public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit) {
         this.ctx = buildContext();
 
         cd2smtGenerator = new CD2SMTGenerator();
