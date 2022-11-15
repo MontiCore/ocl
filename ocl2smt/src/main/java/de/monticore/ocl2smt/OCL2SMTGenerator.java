@@ -95,46 +95,46 @@ public class OCL2SMTGenerator {
     return IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name);
     }
 
-    protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
-        BoolExpr result;
-        if (node instanceof ASTBooleanAndOpExpression) {
-            result = convertAndBool((ASTBooleanAndOpExpression) node);
-        } else if (node instanceof ASTBooleanOrOpExpression) {
-            result = convertORBool((ASTBooleanOrOpExpression) node);
-        } else if (node instanceof ASTBooleanNotExpression) {
-            result = convertNotBool((ASTBooleanNotExpression) node);
-        } else if (node instanceof ASTLogicalNotExpression) {
-            result = convertNotBool((ASTLogicalNotExpression) node);
-        } else if (node instanceof ASTLessEqualExpression) {
-            result = convertLEq((ASTLessEqualExpression) node);
-        } else if (node instanceof ASTLessThanExpression) {
-            result = convertLThan((ASTLessThanExpression) node);
-        } else if (node instanceof ASTEqualsExpression) {
-            result = convertEq((ASTEqualsExpression) node);
-        } else if (node instanceof ASTNotEqualsExpression) {
-            result = convertNEq((ASTNotEqualsExpression) node);
-        } else if (node instanceof ASTGreaterEqualExpression) {
-            result = convertGEq((ASTGreaterEqualExpression) node);
-        } else if (node instanceof ASTGreaterThanExpression) {
-            result = convertGT((ASTGreaterThanExpression) node);
-        } else if (node instanceof ASTForallExpression) {
-            result = convertForAll((ASTForallExpression) node);
-        } else if (node instanceof ASTExistsExpression) {
-            result = convertExist((ASTExistsExpression) node);
-        } else if (node instanceof ASTSetInExpression) {
-            result = convertSetIn((ASTSetInExpression) node);
-        } else if (node instanceof ASTSetNotInExpression) {
-            result = convertSetNotIn((ASTSetNotInExpression) node);
-        } else {
-            Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
-            if (buf.isPresent() && buf.get() instanceof BoolExpr) {
-                result = (BoolExpr) buf.get();
-            } else {
-                return Optional.empty();
-            }
-        }
+   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
+       BoolExpr result;
+       if (node instanceof ASTBooleanAndOpExpression) {
+           result = convertAndBool((ASTBooleanAndOpExpression) node);
+       } else if (node instanceof ASTBooleanOrOpExpression) {
+           result = convertORBool((ASTBooleanOrOpExpression) node);
+       } else if (node instanceof ASTBooleanNotExpression) {
+           result = convertNotBool((ASTBooleanNotExpression) node);
+       } else if (node instanceof ASTLogicalNotExpression) {
+           result = convertNotBool((ASTLogicalNotExpression) node);
+       } else if (node instanceof ASTLessEqualExpression) {
+           result = convertLEq((ASTLessEqualExpression) node);
+       } else if (node instanceof ASTLessThanExpression) {
+           result = convertLThan((ASTLessThanExpression) node);
+       } else if (node instanceof ASTEqualsExpression) {
+           result = convertEq((ASTEqualsExpression) node);
+       } else if (node instanceof ASTNotEqualsExpression) {
+           result = convertNEq((ASTNotEqualsExpression) node);
+       } else if (node instanceof ASTGreaterEqualExpression) {
+           result = convertGEq((ASTGreaterEqualExpression) node);
+       } else if (node instanceof ASTGreaterThanExpression) {
+           result = convertGT((ASTGreaterThanExpression) node);
+       } else if (node instanceof ASTForallExpression) {
+           result = convertForAll((ASTForallExpression) node);
+       } else if (node instanceof ASTExistsExpression) {
+           result = convertExist((ASTExistsExpression) node);
+       } else if (node instanceof ASTSetInExpression) {
+           result = convertSetIn((ASTSetInExpression) node);
+       } else if (node instanceof ASTSetNotInExpression) {
+           result = convertSetNotIn((ASTSetNotInExpression) node);
+       } else {
+           Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
+           if (buf.isPresent() && buf.get() instanceof BoolExpr) {
+               result = (BoolExpr) buf.get();
+           } else {
+               return Optional.empty();
+           }
+       }
 
-        return Optional.of(result);
+       return Optional.of(result);
     }
 
     protected BoolExpr convertBoolExpr(ASTExpression node) {
