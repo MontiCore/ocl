@@ -65,7 +65,7 @@ public class SMTSet {
 
     public SMTSet collectAll(Function<Expr<? extends Sort>, SMTSet> function, Context ctx) {
         Expr<? extends Sort> expr = ctx.mkConst("xollector", sort);
-        return new SMTSet(kii -> ctx.mkExists(new Expr[]{expr}, ctx.mkImplies(this.isIn(expr), function.apply(expr).isIn(kii)),
+        return new SMTSet(kii -> ctx.mkExists(new Expr[]{expr}, ctx.mkAnd(this.isIn(expr), function.apply(expr).isIn(kii)),
                 0, null, null, null, null), function.apply(expr).sort);
     }
 

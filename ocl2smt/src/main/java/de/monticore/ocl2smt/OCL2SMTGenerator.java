@@ -26,6 +26,8 @@ import java.util.*;
 import java.util.function.Function;
 
 public class OCL2SMTGenerator {
+
+
     protected final Context ctx;
     protected final CD2SMTGenerator cd2smtGenerator;
 
