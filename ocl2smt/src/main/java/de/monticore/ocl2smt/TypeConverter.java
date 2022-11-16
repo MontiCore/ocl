@@ -68,7 +68,7 @@ public class TypeConverter {
             if (sort != null) {
                 return sort;
             } else {
-                Log.error("Got unknown type " + type.getMCQualifiedName());
+                Log.error("Type or Class " + type.getMCQualifiedName() + "not found in CDContext");
                 return null;
             }
 

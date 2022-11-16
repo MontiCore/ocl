@@ -1,0 +1,8 @@
+classdiagram MinAuction {
+  class Auction {
+    int auctionIdent;
+  }
+
+  association [*] Auction(auction)      --     (auction)Auction[*];
+
+ }

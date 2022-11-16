@@ -1,0 +1,14 @@
+classdiagram CDTest{
+ class Auction {
+   String  name ;
+   int auctionIdent;
+ }
+
+ class Person{
+   String name ;
+   int age ;
+ }
+
+  association [*] Auction(auction)      --     (person)Person[1..*];
+
+}

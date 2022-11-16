@@ -22,5 +22,20 @@ ocl NC1 {
             p1 == p2);
 
 
+
+//UNSAT
+ inv  NestedFieldAccess2_UNSAT:
+    forall Auction a , Parent p in a.person.parent :
+       (p.age == 59 )&&
+          (exists Parent p1 in a.person.parent  :
+            p1.age == 60 );
+
+   context Auction a inv NestedFieldAccessExpr:
+      forall Parent p1 in a.person.parent:
+         p1.age >= 50 ;
+
+
+
+
 }
 

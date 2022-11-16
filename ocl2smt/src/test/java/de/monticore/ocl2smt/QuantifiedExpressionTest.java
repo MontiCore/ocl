@@ -1,7 +1,9 @@
 package de.monticore.ocl2smt;
 
 import com.microsoft.z3.Status;
-import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.ocl.ocl.OCLMill;
+import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,9 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest {
 
     @BeforeEach
     public void setup() throws IOException {
+        Log.init();
+        OCLMill.init();
+        CD4CodeMill.init();
         parse("MinAuction.cd", "QuantifiedExpr.ocl");
         ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
     }
@@ -111,7 +116,7 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest {
 
     @Test
     public void Two_auction_and_bool_sat() {
-        IdentifiableBoolExpr constraint = addConstraint("Two_auction_and_bool_sat");
+        addConstraint("Two_auction_and_bool_sat");
         Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
     }
 

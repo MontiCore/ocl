@@ -1,39 +1,25 @@
 package de.monticore.ocl2smt;
 
 
-import com.microsoft.z3.Solver;
-import com.microsoft.z3.Status;
-import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.odbasis._ast.ASTODArtifact;
-import org.junit.jupiter.api.Assertions;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.ocl.ocl.OCLMill;
+import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.*;
 
 public class AssociationTest extends ExpressionAbstractTest {
-    List<IdentifiableBoolExpr> constraintList;
 
     @BeforeEach
     public void setup() throws IOException {
-        parse("/associations/Auction.cd", "/associations/Association.ocl");
-        Set<ASTOCLCompilationUnit> oclFiles = new HashSet<>();
-        oclFiles.add(oclAST);
-        constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST, oclFiles);
+        Log.init();
+        OCLMill.init();
+        CD4CodeMill.init();
+        parse("/associations/Association.cd", "/associations/Association.ocl");
+        ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
     }
 
-    void testInv(String invName) {
-        List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
-        solverConstraints.add(addConstraint(invName));
-        Solver solver =ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
-        Assertions.assertSame(solver.check(), Status.SATISFIABLE);
-
-        Optional<ASTODArtifact> od =ocl2SMTGenerator.cd2smtGenerator.smt2od(solver.getModel(), false, invName);
-        Assertions.assertTrue(od.isPresent());
-        printOD(od.get());
-    }
 
     @Test
     public void of_legal_age() {
@@ -54,4 +40,16 @@ public class AssociationTest extends ExpressionAbstractTest {
     public void Same_Person_in_2_Auction() {
         testInv("Same_Person_in_2_Auction");
     }
+
+
+    @Test
+    public void TestNestedFieldAccessExpr() {
+        testInv("NestedFieldAccessExpr");
+    }
+
+    @Test
+    public void TestNestedFieldAccess_inDec_UNSAT() {
+        testUnsatInv("NestedFieldAccess2_UNSAT");
+    }
+
 }
