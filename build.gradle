@@ -19,6 +19,7 @@ plugins {
   id 'jacoco'
   id 'com.adarshr.test-logger' version '2.1.1'
   id 'maven-publish'
+  id "com.github.sherter.google-java-format" version "0.9"    // Task "verifyGoogleJavaFormat" and "googleJavaFormat"
 }
 
 /* ============================================================ */
@@ -79,6 +80,24 @@ repositories {
 configurations {
     grammar
 }
+
+
+googleJavaFormat {
+  exclude '**/target/**'
+}
+
+verifyGoogleJavaFormat{
+  ignoreFailures true
+  exclude "**"
+}  // do not check format in "build"
+
+task checkfmt(type: com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat) {}
+
+task fmt {
+  dependsOn tasks.named("googleJavaFormat")
+}
+
+
 
 test {
   useJUnitPlatform()

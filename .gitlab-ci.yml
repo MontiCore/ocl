@@ -9,6 +9,8 @@ cache:
     - .m2/repository/
   key: "$CI_COMMIT_SHA" # Cache across branch and stage
 
+image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk11
+
 stages:
   - build
   - test
@@ -16,7 +18,6 @@ stages:
   - mirror
 
 Validate Gradle:
-  image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk11
   stage: build
   script:
     - gradle assemble --refresh-dependencies
@@ -26,13 +27,19 @@ Validate Gradle:
     expire_in: 1 week
 
 Unit Test Gradle:
-  image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk11
   stage: test
   needs: ["Validate Gradle"]
   dependencies:
     - Validate Gradle #download artifacts from build
   script:
     - gradle build test --refresh-dependencies
+
+check_format:
+  stage: test
+  allow_failure: true
+  script:
+    - echo "You can format the java files using <gradle fmt>"
+    - gradle checkfmt $GRADLE_OPT $ARGS2
 
 ## Run Unit Tests after build
 #.unit_test_template: &unit_test_definition
