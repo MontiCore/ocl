@@ -19,24 +19,22 @@ import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.cli.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.apache.commons.cli.*;
+import org.apache.commons.io.FilenameUtils;
 
 public class OCLTool extends OCLToolTOP {
   /*=================================================================*/
   /* Part 1: Handling the arguments and options
   /*=================================================================*/
 
-
   /**
-   * Processes user input from command line and delegates to the corresponding
-   * tools.
+   * Processes user input from command line and delegates to the corresponding tools.
    *
    * @param args The input parameters for configuring the OCL tool.
    */
@@ -79,9 +77,13 @@ public class OCLTool extends OCLToolTOP {
         int ppArgs = cmd.getOptionValues("pp") == null ? 0 : cmd.getOptionValues("pp").length;
         int iArgs = cmd.getOptionValues("i") == null ? 0 : cmd.getOptionValues("i").length;
         if (ppArgs != 0 && ppArgs != iArgs) {
-          Log.error("0xOCL31 Number of arguments of -pp (which is " + ppArgs
-              + ") must match number of arguments of -i (which is " + iArgs + "). "
-              + "Or provide no arguments to print to stdout.");
+          Log.error(
+              "0xOCL31 Number of arguments of -pp (which is "
+                  + ppArgs
+                  + ") must match number of arguments of -i (which is "
+                  + iArgs
+                  + "). "
+                  + "Or provide no arguments to print to stdout.");
         }
 
         String[] paths = cmd.getOptionValues("pp");
@@ -99,10 +101,11 @@ public class OCLTool extends OCLToolTOP {
       // we need the global scope for symbols and cocos
       MCPath symbolPath = new MCPath(Paths.get(""));
       if (cmd.hasOption("p")) {
-        symbolPath = new MCPath(Arrays.stream(cmd.getOptionValues("p"))
-            .map(x -> Paths.get(x))
-            .collect(Collectors.toList())
-        );
+        symbolPath =
+            new MCPath(
+                Arrays.stream(cmd.getOptionValues("p"))
+                    .map(x -> Paths.get(x))
+                    .collect(Collectors.toList()));
       }
 
       //
@@ -186,8 +189,11 @@ public class OCLTool extends OCLToolTOP {
             checkIntraModelCoCos(sd);
           }
         } else {
-          Log.error(String.format("Received unexpected arguments '%s' for option 'coco'. "
-              + "Possible arguments are 'type', 'inter', and 'intra'.", cocoOptionValues.toString()));
+          Log.error(
+              String.format(
+                  "Received unexpected arguments '%s' for option 'coco'. "
+                      + "Possible arguments are 'type', 'inter', and 'intra'.",
+                  cocoOptionValues.toString()));
         }
       }
 
@@ -207,11 +213,13 @@ public class OCLTool extends OCLToolTOP {
             FileReaderWriter.storeInFile(filePath, serialized);
           }
         } else if (cmd.getOptionValues("s").length != inputOCLs.size()) {
-          Log.error(String.format("Received '%s' output files for the storesymbols option. "
-                  + "Expected that '%s' many output files are specified. "
-                  + "If output files for the storesymbols option are specified, then the number "
-                  + " of specified output files must be equal to the number of specified input files.",
-              cmd.getOptionValues("s").length, inputOCLs.size()));
+          Log.error(
+              String.format(
+                  "Received '%s' output files for the storesymbols option. "
+                      + "Expected that '%s' many output files are specified. "
+                      + "If output files for the storesymbols option are specified, then the number "
+                      + " of specified output files must be equal to the number of specified input files.",
+                  cmd.getOptionValues("s").length, inputOCLs.size()));
         } else {
           for (int i = 0; i < inputOCLs.size(); i++) {
             ASTOCLCompilationUnit ocl_i = inputOCLs.get(i);
@@ -256,11 +264,11 @@ public class OCLTool extends OCLToolTOP {
   }
 
   /**
-   * Stores the symbols for ast in the symbol file filename.
-   * For example, if filename = "target/symbolfiles/file.oclsym", then the symbol file corresponding to
-   * ast is stored in the file "target/symbolfiles/file.oclsym".
+   * Stores the symbols for ast in the symbol file filename. For example, if filename =
+   * "target/symbolfiles/file.oclsym", then the symbol file corresponding to ast is stored in the
+   * file "target/symbolfiles/file.oclsym".
    *
-   * @param ast      The ast of the SD.
+   * @param ast The ast of the SD.
    * @param filename The name of the produced symbol file.
    */
   public void storeSymbols(ASTOCLCompilationUnit ast, String filename) {
@@ -269,13 +277,12 @@ public class OCLTool extends OCLToolTOP {
     FileReaderWriter.storeInFile(Paths.get(filename), serialized);
   }
 
-
   /**
    * Prints the contents of the OCL-AST to stdout or a specified file.
    *
    * @param oCLCompilationUnit The OCL-AST to be pretty printed
-   * @param file               The target file name for printing the OCL artifact. If empty,
-   *                           the content is printed to stdout instead
+   * @param file The target file name for printing the OCL artifact. If empty, the content is
+   *     printed to stdout instead
    */
   @Override
   public void prettyPrint(ASTOCLCompilationUnit oCLCompilationUnit, String file) {
@@ -307,9 +314,8 @@ public class OCLTool extends OCLToolTOP {
   }
 
   /**
-   * Checks whether ast satisfies the CoCos not targeting type correctness.
-   * This method checks all CoCos except the CoCos, which check that used types
-   * (for objects and variables) are defined.
+   * Checks whether ast satisfies the CoCos not targeting type correctness. This method checks all
+   * CoCos except the CoCos, which check that used types (for objects and variables) are defined.
    *
    * @param ast AST to check cocos for
    */
@@ -365,19 +371,24 @@ public class OCLTool extends OCLToolTOP {
     options.addOption(help);
 
     // parse input file
-    Option parse = Option.builder("i")
-        .longOpt("input")
-        .argName("files")
-        .hasArgs()
-        .desc("Processes the list of OCL input artifacts. " +
-            "Argument list is space separated. CoCos are not checked automatically (see -c).")
-        .build();
+    Option parse =
+        Option.builder("i")
+            .longOpt("input")
+            .argName("files")
+            .hasArgs()
+            .desc(
+                "Processes the list of OCL input artifacts. "
+                    + "Argument list is space separated. CoCos are not checked automatically (see -c).")
+            .build();
     options.addOption(parse);
 
     // model paths
-    Option path = new Option("p", "Sets the artifact path for imported symbols. "
-        + "Directory will be searched recursively for files with the ending "
-        + "\".*sym\" (for example \".cdsym\" or \".sym\"). Defaults to the current folder.");
+    Option path =
+        new Option(
+            "p",
+            "Sets the artifact path for imported symbols. "
+                + "Directory will be searched recursively for files with the ending "
+                + "\".*sym\" (for example \".cdsym\" or \".sym\"). Defaults to the current folder.");
     path.setLongOpt("path");
     path.setArgName("directory");
     path.setOptionalArg(true);
@@ -385,10 +396,12 @@ public class OCLTool extends OCLToolTOP {
     options.addOption(path);
 
     // pretty print OCL
-    Option prettyprint = new Option("pp",
-        "Prints the OCL model to stdout or the specified file(s) (optional). "
-            + "Multiple files should be separated by spaces and will be used in the same order "
-            + "in which the input files (-i option) are provided.");
+    Option prettyprint =
+        new Option(
+            "pp",
+            "Prints the OCL model to stdout or the specified file(s) (optional). "
+                + "Multiple files should be separated by spaces and will be used in the same order "
+                + "in which the input files (-i option) are provided.");
     prettyprint.setLongOpt("prettyprint");
     prettyprint.setArgName("files");
     prettyprint.setOptionalArg(true);
@@ -396,20 +409,22 @@ public class OCLTool extends OCLToolTOP {
     options.addOption(prettyprint);
 
     // create and store symboltable
-    Option symboltable = Option.builder("s")
-        .longOpt("symboltable")
-        .optionalArg(true)
-        .argName("files")
-        .hasArgs()
-        .desc("Stores the symbol tables of the input OCL artifacts in the specified files. "
-            + "For each input OCL artifact (-i option) please provide one output symbol file "
-            + "(using same order in which the input artifacts are provided) to store its symbols in. "
-            + "For example, -i x.ocl y.ocl -s a.oclsym b.oclsym will store the symbols of x.ocl to "
-            + "a.oclsym and the symbols of y.ocl to b.oclsym. "
-            + "Arguments are separated by spaces. "
-            + "If no arguments are given, output is stored to "
-            + "'target/symbols/{packageName}/{artifactName}.oclsym'.")
-        .build();
+    Option symboltable =
+        Option.builder("s")
+            .longOpt("symboltable")
+            .optionalArg(true)
+            .argName("files")
+            .hasArgs()
+            .desc(
+                "Stores the symbol tables of the input OCL artifacts in the specified files. "
+                    + "For each input OCL artifact (-i option) please provide one output symbol file "
+                    + "(using same order in which the input artifacts are provided) to store its symbols in. "
+                    + "For example, -i x.ocl y.ocl -s a.oclsym b.oclsym will store the symbols of x.ocl to "
+                    + "a.oclsym and the symbols of y.ocl to b.oclsym. "
+                    + "Arguments are separated by spaces. "
+                    + "If no arguments are given, output is stored to "
+                    + "'target/symbols/{packageName}/{artifactName}.oclsym'.")
+            .build();
     options.addOption(symboltable);
     return options;
   }
@@ -423,82 +438,93 @@ public class OCLTool extends OCLToolTOP {
   public Options addAdditionalOptions(Options options) {
 
     // accept TypeSymbols
-    Option typeSymbols = Option.builder("ts")
-        .longOpt("typeSymbol")
-        .optionalArg(true)
-        .argName("fqns")
-        .hasArgs()
-        .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
-            + "treated as TypeSymbol when deserializing symbol files. Multiple symbol kinds "
-            + "should be separated by spaces.")
-        .build();
+    Option typeSymbols =
+        Option.builder("ts")
+            .longOpt("typeSymbol")
+            .optionalArg(true)
+            .argName("fqns")
+            .hasArgs()
+            .desc(
+                "Takes the fully qualified name of one or more symbol kind(s) that should be "
+                    + "treated as TypeSymbol when deserializing symbol files. Multiple symbol kinds "
+                    + "should be separated by spaces.")
+            .build();
     options.addOption(typeSymbols);
 
     // accept VariableSymbols
-    Option varSymbols = Option.builder("vs")
-        .longOpt("variableSymbol")
-        .optionalArg(true)
-        .argName("fqns")
-        .hasArgs()
-        .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
-            + "treated as VariableSymbol when deserializing symbol files. Multiple symbol kinds "
-            + "should be separated by spaces.")
-        .build();
+    Option varSymbols =
+        Option.builder("vs")
+            .longOpt("variableSymbol")
+            .optionalArg(true)
+            .argName("fqns")
+            .hasArgs()
+            .desc(
+                "Takes the fully qualified name of one or more symbol kind(s) that should be "
+                    + "treated as VariableSymbol when deserializing symbol files. Multiple symbol kinds "
+                    + "should be separated by spaces.")
+            .build();
     options.addOption(varSymbols);
 
     // accept FunctionSymbols
-    Option funcSymbols = Option.builder("fs")
-        .longOpt("functionSymbol")
-        .optionalArg(true)
-        .argName("fqns")
-        .hasArgs()
-        .desc("Takes the fully qualified name of one or more symbol kind(s) that should be "
-            + "treated as FunctionSymbol when deserializing symbol files. Multiple symbol kinds "
-            + "should be separated by spaces.")
-        .build();
+    Option funcSymbols =
+        Option.builder("fs")
+            .longOpt("functionSymbol")
+            .optionalArg(true)
+            .argName("fqns")
+            .hasArgs()
+            .desc(
+                "Takes the fully qualified name of one or more symbol kind(s) that should be "
+                    + "treated as FunctionSymbol when deserializing symbol files. Multiple symbol kinds "
+                    + "should be separated by spaces.")
+            .build();
     options.addOption(funcSymbols);
 
     // accept FunctionSymbols
-    Option ignoreSymbols = Option.builder("is")
-        .longOpt("ignoreSymKind")
-        .optionalArg(true)
-        .argName("fqns")
-        .hasArgs()
-        .desc("Takes the fully qualified name of one or more symbol kind(s) for which no warnings "
-            + "about not being able to deserialize them shall be printed. Allows cleaner outputs. "
-            + "Multiple symbol kinds should be separated by spaces. ")
-        .build();
+    Option ignoreSymbols =
+        Option.builder("is")
+            .longOpt("ignoreSymKind")
+            .optionalArg(true)
+            .argName("fqns")
+            .hasArgs()
+            .desc(
+                "Takes the fully qualified name of one or more symbol kind(s) for which no warnings "
+                    + "about not being able to deserialize them shall be printed. Allows cleaner outputs. "
+                    + "Multiple symbol kinds should be separated by spaces. ")
+            .build();
     options.addOption(ignoreSymbols);
 
     // developer level logging
-    Option cd4c = new Option("cd4c",
-        "Load symbol kinds from CD4C. Shortcut for loading CDTypeSymbol as TypeSymbol, "
-            + "CDMethodSignatureSymbol as FunctionSymbol, and FieldSymbol as VariableSymbol. "
-            + "Furthermore, warnings about not deserializing CDAssociationSymbol and CDRoleSymbol "
-            + "will be ignored.");
+    Option cd4c =
+        new Option(
+            "cd4c",
+            "Load symbol kinds from CD4C. Shortcut for loading CDTypeSymbol as TypeSymbol, "
+                + "CDMethodSignatureSymbol as FunctionSymbol, and FieldSymbol as VariableSymbol. "
+                + "Furthermore, warnings about not deserializing CDAssociationSymbol and CDRoleSymbol "
+                + "will be ignored.");
     cd4c.setLongOpt("cd4code");
     options.addOption(cd4c);
 
     // check CoCos
-    Option cocos = Option.builder("c").
-        longOpt("coco").
-        optionalArg(true).
-        numberOfArgs(1).
-        desc("Checks the CoCos for the input. Optional arguments are:\n"
-            + "-c intra to check only the intra-model CoCos,\n"
-            + "-c inter checks also inter-model CoCos,\n"
-            + "-c type (default) checks all CoCos.")
-        .build();
+    Option cocos =
+        Option.builder("c")
+            .longOpt("coco")
+            .optionalArg(true)
+            .numberOfArgs(1)
+            .desc(
+                "Checks the CoCos for the input. Optional arguments are:\n"
+                    + "-c intra to check only the intra-model CoCos,\n"
+                    + "-c inter checks also inter-model CoCos,\n"
+                    + "-c type (default) checks all CoCos.")
+            .build();
     options.addOption(cocos);
 
     // developer level logging
-    Option dev = new Option("d",
-        "Specifies whether developer level logging should be used (default is false)");
+    Option dev =
+        new Option(
+            "d", "Specifies whether developer level logging should be used (default is false)");
     dev.setLongOpt("dev");
     options.addOption(dev);
 
     return options;
   }
 }
-
-

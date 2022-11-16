@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.codegen.visitors;
 
+import static de.monticore.types.check.SymTypePrimitive.box;
+
 import com.google.common.base.Preconditions;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.codegen.util.VariableNaming;
@@ -30,15 +32,13 @@ import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
-import static de.monticore.types.check.SymTypePrimitive.box;
-
-public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpressionsHandler,
-    OCLExpressionsVisitor2 {
+public class OCLExpressionsPrinter extends AbstractPrinter
+    implements OCLExpressionsHandler, OCLExpressionsVisitor2 {
 
   protected OCLExpressionsTraverser traverser;
 
-  public OCLExpressionsPrinter(IndentPrinter printer, VariableNaming naming,
-      IDerive deriver, ISynthesize syntheziser) {
+  public OCLExpressionsPrinter(
+      IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
     Preconditions.checkNotNull(deriver);
@@ -70,8 +70,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
     TypeCheckResult type = this.getDeriver().deriveType(node);
     if (!type.isPresentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
-    }
-    else {
+    } else {
       this.getPrinter().print(type.getResult().getTypeInfo().getFullName());
       this.getPrinter().print(" ");
     }
@@ -204,8 +203,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
       if (type.isPresentResult()) {
         innerType = type.getResult();
       }
-    }
-    else if (node.isPresentExpression()) {
+    } else if (node.isPresentExpression()) {
       TypeCheckResult type = this.getDeriver().deriveType(node.getExpression());
       if (type.isPresentResult()
           && type.getResult().isGenericType()
@@ -227,20 +225,18 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
         this.getPrinter().println(") {");
         this.getPrinter().indent();
       }
-    }
-    else {
-      Log.error(UNEXPECTED_STATE_AST_NODE, node.get_SourcePositionStart(),
-          node.get_SourcePositionEnd());
+    } else {
+      Log.error(
+          UNEXPECTED_STATE_AST_NODE, node.get_SourcePositionStart(), node.get_SourcePositionEnd());
     }
   }
 
   @Override
   public void handle(ASTOCLVariableDeclaration node) {
-    //variable is not final for iterate expressions
+    // variable is not final for iterate expressions
     if (node.isPresentMCType()) {
       getPrinter().print(boxType(getSynthesizer().synthesizeType(node.getMCType())));
-    }
-    else if (node.isPresentExpression()) {
+    } else if (node.isPresentExpression()) {
       getPrinter().print(boxType(getDeriver().deriveType(node.getExpression())));
     }
     this.getPrinter().print(" ");
@@ -286,10 +282,8 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
   }
 
   /**
-   * if node has a primitive type,
-   * this prints the Java expression
-   * such that it has a non-primitive type.
-   * e.g. {@code 5} to {@code ((Integer) 5)}
+   * if node has a primitive type, this prints the Java expression such that it has a non-primitive
+   * type. e.g. {@code 5} to {@code ((Integer) 5)}
    *
    * @param node the expression to be printed
    */
@@ -305,10 +299,8 @@ public class OCLExpressionsPrinter extends AbstractPrinter implements OCLExpress
       getPrinter().print(") ");
       node.accept(getTraverser());
       getPrinter().print(")");
-    }
-    else {
+    } else {
       node.accept(getTraverser());
     }
   }
-
 }

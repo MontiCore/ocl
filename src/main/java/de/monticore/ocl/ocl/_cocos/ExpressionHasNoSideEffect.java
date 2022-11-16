@@ -9,9 +9,11 @@ import de.se_rwth.commons.logging.Log;
 public class ExpressionHasNoSideEffect implements ExpressionsBasisASTExpressionCoCo {
   @Override
   public void check(ASTExpression astExpression) {
-    if (!SideEffectFreeExpressions.sideEffectFree(astExpression)){
+    if (!SideEffectFreeExpressions.sideEffectFree(astExpression)) {
       Log.error(
-              String.format("0xOCL21 Expressions can't have side effects, Expression %s is not allowed.", astExpression));
+          String.format(
+              "0xOCL21 Expressions can't have side effects, Expression %s is not allowed.",
+              astExpression));
     }
   }
 }

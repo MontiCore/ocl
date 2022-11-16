@@ -1,6 +1,8 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.util.library;
 
+import static de.monticore.ocl.util.library.TypeUtil.*;
+
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -8,22 +10,19 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 
-import static de.monticore.ocl.util.library.TypeUtil.*;
-
-/**
- * Adds symbols for OCL/P collections
- */
+/** Adds symbols for OCL/P collections */
 public class CollectionType {
   protected TypeSymbol collectionSymbol;
 
   protected TypeVarSymbol typeVarSymbol;
 
   public void addCollectionType() {
-    collectionSymbol = OCLMill.typeSymbolBuilder()
-      .setName("Collection")
-      .setEnclosingScope(OCLMill.globalScope())
-      .setSpannedScope(OCLMill.scope())
-      .build();
+    collectionSymbol =
+        OCLMill.typeSymbolBuilder()
+            .setName("Collection")
+            .setEnclosingScope(OCLMill.globalScope())
+            .setSpannedScope(OCLMill.scope())
+            .build();
     collectionSymbol.getSpannedScope().setName("Collection");
     typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
     collectionSymbol.addTypeVarSymbol(typeVarSymbol);
@@ -43,7 +42,7 @@ public class CollectionType {
     addFunctionRemoveAll();
     addFunctionRetainAll();
     addFunctionSize();
-    //TODO: flatten
+    // TODO: flatten
     addFunctionAsSet();
     addFunctionAsList();
   }
@@ -54,15 +53,15 @@ public class CollectionType {
 
   protected FunctionSymbol createMethod(String name) {
     return OCLMill.functionSymbolBuilder()
-      .setName(name)
-      .setEnclosingScope(collectionSymbol.getSpannedScope())
-      .setSpannedScope(OCLMill.scope())
-      .build();
+        .setName(name)
+        .setEnclosingScope(collectionSymbol.getSpannedScope())
+        .setSpannedScope(OCLMill.scope())
+        .build();
   }
 
   protected SymTypeExpression getCollectionOfXSymType() {
-    return SymTypeExpressionFactory
-      .createGenerics(collectionSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    return SymTypeExpressionFactory.createGenerics(
+        collectionSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
   }
 
   /* ============================================================ */
@@ -137,20 +136,22 @@ public class CollectionType {
     collectionSymbol.getSpannedScope().add(function);
   }
 
-  //TODO: flatten
+  // TODO: flatten
 
   protected void addFunctionAsSet() {
     FunctionSymbol function = createMethod("asSet");
-    SymTypeExpression returnType = SymTypeExpressionFactory
-      .createGenerics(getSetType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    SymTypeExpression returnType =
+        SymTypeExpressionFactory.createGenerics(
+            getSetType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
     function.setType(returnType);
     collectionSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionAsList() {
     FunctionSymbol function = createMethod("asList");
-    SymTypeExpression returnType = SymTypeExpressionFactory
-      .createGenerics(getListType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    SymTypeExpression returnType =
+        SymTypeExpressionFactory.createGenerics(
+            getListType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
     function.setType(returnType);
     collectionSymbol.getSpannedScope().add(function);
   }

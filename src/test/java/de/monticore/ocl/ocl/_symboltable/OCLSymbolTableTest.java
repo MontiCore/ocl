@@ -1,16 +1,15 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl._symboltable;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.util.SymbolTableUtil;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
 import java.io.IOException;
 import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class OCLSymbolTableTest extends AbstractTest {
 
@@ -18,7 +17,8 @@ public class OCLSymbolTableTest extends AbstractTest {
   @MethodSource("getModelsWithValidSymTab")
   public void shouldCreateSymTabForValidModels(String filename) throws IOException {
     // given
-    final Optional<ASTOCLCompilationUnit> ast = parse(prefixValidModelsPath("/testinput/validGrammarModels/"+filename), false);
+    final Optional<ASTOCLCompilationUnit> ast =
+        parse(prefixValidModelsPath("/testinput/validGrammarModels/" + filename), false);
     assertThat(ast).isPresent();
 
     SymbolTableUtil.prepareMill();

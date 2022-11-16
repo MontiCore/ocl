@@ -12,13 +12,11 @@ import de.monticore.ocl.util.LogHelper;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
 import de.monticore.types.check.*;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.List;
 import java.util.Map;
 
-public class DeriveSymTypeOfOCLExpressions
-  extends AbstractDeriveFromExpression
-  implements OCLExpressionsHandler {
+public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
+    implements OCLExpressionsHandler {
 
   protected OCLExpressionsTraverser traverser;
 
@@ -27,43 +25,46 @@ public class DeriveSymTypeOfOCLExpressions
     SymTypeExpression exprResult = null;
     SymTypeExpression typeResult = null;
 
-    //check type of Expression
+    // check type of Expression
     if (node.getExpression() != null) {
       node.getExpression().accept(getTraverser());
     }
     if (typeCheckResult.isPresentResult()) {
       exprResult = typeCheckResult.getResult();
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3080",
-        "The type of the expression of the OCLTypeCastExpression could not be calculated");
+    } else {
+      LogHelper.error(
+          node,
+          "0xA3080",
+          "The type of the expression of the OCLTypeCastExpression could not be calculated");
       return;
     }
 
-    //check type of type to cast expression to
+    // check type of type to cast expression to
     if (node.getMCType() != null) {
       node.getMCType().accept(getTraverser());
     }
     if (typeCheckResult.isPresentResult()) {
       typeResult = typeCheckResult.getResult();
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3081",
-        "The type of the MCType of the OCLTypeCastExpression could not be calculated");
+    } else {
+      LogHelper.error(
+          node,
+          "0xA3081",
+          "The type of the MCType of the OCLTypeCastExpression could not be calculated");
       return;
     }
 
-    //check whether typecast is possible
+    // check whether typecast is possible
     if (!OCLTypeCheck.compatible(typeResult, exprResult)) {
       typeCheckResult.reset();
-      LogHelper.error(node, "0xA3082",
-        "The type of the expression of the OCLTypeCastExpression can't be cast to given type");
+      LogHelper.error(
+          node,
+          "0xA3082",
+          "The type of the expression of the OCLTypeCastExpression can't be cast to given type");
       return;
-    }
-    else {
-      //set result to typecasted expression
+    } else {
+      // set result to typecasted expression
       typeCheckResult.setResult(typeResult.deepClone());
     }
   }
@@ -73,16 +74,17 @@ public class DeriveSymTypeOfOCLExpressions
     SymTypeExpression thenResult = null;
     SymTypeExpression elseResult = null;
 
-    //resolve MCType to SymTypeExpression
+    // resolve MCType to SymTypeExpression
     if (node.getMCType() != null) {
       node.getMCType().accept(getTraverser());
     }
     if (typeCheckResult.isPresentResult()) {
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3012",
-        "The type of the MCType of the OCLInstanceOfExpression of the OCLTypeIfExpr could not be calculated");
+    } else {
+      LogHelper.error(
+          node,
+          "0xA3012",
+          "The type of the MCType of the OCLInstanceOfExpression of the OCLTypeIfExpr could not be calculated");
       return;
     }
 
@@ -92,10 +94,11 @@ public class DeriveSymTypeOfOCLExpressions
     if (typeCheckResult.isPresentResult()) {
       thenResult = typeCheckResult.getResult();
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3013",
-        "The type of the then expression of the OCLTypeIfExpression could not be calculated");
+    } else {
+      LogHelper.error(
+          node,
+          "0xA3013",
+          "The type of the then expression of the OCLTypeIfExpression could not be calculated");
       return;
     }
 
@@ -105,23 +108,24 @@ public class DeriveSymTypeOfOCLExpressions
     if (typeCheckResult.isPresentResult()) {
       elseResult = typeCheckResult.getResult();
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3014",
-        "The type of the else expression of the OCLTypeIfExpr could not be calculated");
+    } else {
+      LogHelper.error(
+          node,
+          "0xA3014",
+          "The type of the else expression of the OCLTypeIfExpr could not be calculated");
       return;
     }
 
     if (OCLTypeCheck.compatible(thenResult, elseResult)) {
       typeCheckResult.setResult(thenResult);
-    }
-    else if (OCLTypeCheck.isSubtypeOf(thenResult, elseResult)) {
+    } else if (OCLTypeCheck.isSubtypeOf(thenResult, elseResult)) {
       typeCheckResult.setResult(elseResult);
-    }
-    else {
+    } else {
       typeCheckResult.reset();
-      LogHelper.error(node, "0xA3015",
-        "The type of the else expression of the OCLTypeIfExpr doesn't match the then expression");
+      LogHelper.error(
+          node,
+          "0xA3015",
+          "The type of the else expression of the OCLTypeIfExpr doesn't match the then expression");
       return;
     }
   }
@@ -138,18 +142,19 @@ public class DeriveSymTypeOfOCLExpressions
     if (typeCheckResult.isPresentResult()) {
       conditionResult = typeCheckResult.getResult();
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3040",
-        "The type of the left expression of the OCLIfThenElseExpr could not be calculated");
+    } else {
+      LogHelper.error(
+          node,
+          "0xA3040",
+          "The type of the left expression of the OCLIfThenElseExpr could not be calculated");
       return;
     }
 
     // the condition has to be boolean
     if (!OCLTypeCheck.isBoolean(conditionResult)) {
       typeCheckResult.reset();
-      LogHelper.error(node, "0xA3041",
-        "The type of the condition of the OCLIfThenElseExpr has to be boolean");
+      LogHelper.error(
+          node, "0xA3041", "The type of the condition of the OCLIfThenElseExpr has to be boolean");
       return;
     }
 
@@ -159,10 +164,11 @@ public class DeriveSymTypeOfOCLExpressions
     if (typeCheckResult.isPresentResult()) {
       thenResult = typeCheckResult.getResult();
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3042",
-        "The type of the then expression of the OCLIfThenElseExpr could not be calculated");
+    } else {
+      LogHelper.error(
+          node,
+          "0xA3042",
+          "The type of the then expression of the OCLIfThenElseExpr could not be calculated");
     }
 
     if (node.getElseExpression() != null) {
@@ -171,25 +177,26 @@ public class DeriveSymTypeOfOCLExpressions
     if (typeCheckResult.isPresentResult()) {
       elseResult = typeCheckResult.getResult();
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3043",
-        "The type of the else expression of the OCLIfThenElseExpr could not be calculated");
+    } else {
+      LogHelper.error(
+          node,
+          "0xA3043",
+          "The type of the else expression of the OCLIfThenElseExpr could not be calculated");
       return;
     }
 
     if (OCLTypeCheck.compatible(thenResult, elseResult)) {
       // Type of else is subtype of/or same type as then -> return then-type
       typeCheckResult.setResult(thenResult);
-    }
-    else if (OCLTypeCheck.isSubtypeOf(thenResult, elseResult)) {
+    } else if (OCLTypeCheck.isSubtypeOf(thenResult, elseResult)) {
       // Type of then is subtype of else -> return else-type
       typeCheckResult.setResult(elseResult);
-    }
-    else {
+    } else {
       typeCheckResult.reset();
-      LogHelper.error(node, "0xA3044",
-        "The type of the else expression of the OCLIfThenElseExpr doesn't match the then expression");
+      LogHelper.error(
+          node,
+          "0xA3044",
+          "The type of the else expression of the OCLIfThenElseExpr doesn't match the then expression");
       return;
     }
   }
@@ -216,18 +223,18 @@ public class DeriveSymTypeOfOCLExpressions
     if (typeCheckResult.isPresentResult()) {
       exprResult = typeCheckResult.getResult();
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3211",
-        "The type of the expression in the ForallExpression could not be calculated");
+    } else {
+      LogHelper.error(
+          node,
+          "0xA3211",
+          "The type of the expression in the ForallExpression could not be calculated");
     }
     if (!OCLTypeCheck.isBoolean(exprResult)) {
       typeCheckResult.reset();
-      LogHelper.error(node, "0xA3212",
-        "The type of the expression in the ForallExpression has to be boolean");
+      LogHelper.error(
+          node, "0xA3212", "The type of the expression in the ForallExpression has to be boolean");
       return;
-    }
-    else {
+    } else {
       typeCheckResult.setResult(createBoolean());
     }
   }
@@ -242,18 +249,18 @@ public class DeriveSymTypeOfOCLExpressions
     if (typeCheckResult.isPresentResult()) {
       exprResult = typeCheckResult.getResult();
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3211",
-        "The type of the expression in the ExistsExpression could not be calculated");
+    } else {
+      LogHelper.error(
+          node,
+          "0xA3211",
+          "The type of the expression in the ExistsExpression could not be calculated");
     }
     if (!OCLTypeCheck.isBoolean(exprResult)) {
       typeCheckResult.reset();
-      LogHelper.error(node, "0xA3212",
-        "The type of the expression in the ExistsExpression has to be boolean");
+      LogHelper.error(
+          node, "0xA3212", "The type of the expression in the ExistsExpression has to be boolean");
       return;
-    }
-    else {
+    } else {
       typeCheckResult.setResult(createBoolean());
     }
   }
@@ -268,17 +275,15 @@ public class DeriveSymTypeOfOCLExpressions
     if (typeCheckResult.isPresentResult()) {
       exprResult = typeCheckResult.getResult();
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3050",
-        "The type of the expression of the OCLAnyExpr could not be calculated");
+    } else {
+      LogHelper.error(
+          node, "0xA3050", "The type of the expression of the OCLAnyExpr could not be calculated");
       return;
     }
 
     if (exprResult instanceof SymTypeOfGenerics) {
       typeCheckResult.setResult(OCLTypeCheck.unwrapSet(exprResult));
-    }
-    else {
+    } else {
       typeCheckResult.setResult(exprResult);
     }
   }
@@ -287,13 +292,15 @@ public class DeriveSymTypeOfOCLExpressions
   public void traverse(ASTLetinExpression node) {
     SymTypeExpression exprResult = null;
 
-    if (node.getOCLVariableDeclarationList() != null && !node.getOCLVariableDeclarationList()
-      .isEmpty()) {
+    if (node.getOCLVariableDeclarationList() != null
+        && !node.getOCLVariableDeclarationList().isEmpty()) {
       for (ASTOCLVariableDeclaration dec : node.getOCLVariableDeclarationList()) {
         dec.accept(getTraverser());
         if (!typeCheckResult.isPresentResult()) {
-          LogHelper.error(node, "0xA3060",
-            "The type of the OCLVariableDeclaration of the LetinExpr could not be calculated");
+          LogHelper.error(
+              node,
+              "0xA3060",
+              "The type of the OCLVariableDeclaration of the LetinExpr could not be calculated");
           return;
         }
       }
@@ -305,10 +312,9 @@ public class DeriveSymTypeOfOCLExpressions
     if (typeCheckResult.isPresentResult()) {
       exprResult = typeCheckResult.getResult();
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3061",
-        "The type of the expression of the LetinExpr could not be calculated");
+    } else {
+      LogHelper.error(
+          node, "0xA3061", "The type of the expression of the LetinExpr could not be calculated");
       return;
     }
 
@@ -324,11 +330,12 @@ public class DeriveSymTypeOfOCLExpressions
       node.getInit().accept(getTraverser());
     }
     if (!typeCheckResult.isPresentResult()) {
-      LogHelper.error(node, "0xA3071",
-        "The type of the init of the OCLIterateExpression could not be calculated");
+      LogHelper.error(
+          node,
+          "0xA3071",
+          "The type of the init of the OCLIterateExpression could not be calculated");
       return;
-    }
-    else {
+    } else {
       initResult = typeCheckResult.getResult();
       typeCheckResult.reset();
     }
@@ -337,23 +344,26 @@ public class DeriveSymTypeOfOCLExpressions
       node.getValue().accept(getTraverser());
     }
     if (!typeCheckResult.isPresentResult()) {
-      LogHelper.error(node, "0xA3073",
-        "The type of the value of the OCLIterateExpression could not be calculated");
+      LogHelper.error(
+          node,
+          "0xA3073",
+          "The type of the value of the OCLIterateExpression could not be calculated");
       return;
-    }
-    else {
+    } else {
       valueResult = typeCheckResult.getResult();
       typeCheckResult.reset();
     }
 
     if (!OCLTypeCheck.compatible(initResult, valueResult)) {
       typeCheckResult.reset();
-      Log
-        .error("0xA3074 The type of the value of the OCLIterateExpression (" + valueResult.print() +
-          ") has to match the type of the init declaration (" + initResult.print() + ")");
+      Log.error(
+          "0xA3074 The type of the value of the OCLIterateExpression ("
+              + valueResult.print()
+              + ") has to match the type of the init declaration ("
+              + initResult.print()
+              + ")");
       return;
-    }
-    else {
+    } else {
       typeCheckResult.setResult(initResult);
     }
   }
@@ -365,10 +375,11 @@ public class DeriveSymTypeOfOCLExpressions
     }
     if (typeCheckResult.isPresentResult()) {
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3000",
-        "The type of the left expression of the OCLInstanceOfExpression could not be calculated");
+    } else {
+      LogHelper.error(
+          node,
+          "0xA3000",
+          "The type of the left expression of the OCLInstanceOfExpression could not be calculated");
       return;
     }
 
@@ -377,10 +388,11 @@ public class DeriveSymTypeOfOCLExpressions
     }
     if (typeCheckResult.isPresentResult()) {
       typeCheckResult.reset();
-    }
-    else {
-      LogHelper.error(node, "0xA3001",
-        "The type of the MCType of the OCLInstanceOfExpression could not be calculated");
+    } else {
+      LogHelper.error(
+          node,
+          "0xA3001",
+          "The type of the MCType of the OCLInstanceOfExpression could not be calculated");
       return;
     }
 
@@ -395,8 +407,10 @@ public class DeriveSymTypeOfOCLExpressions
       node.getExpression().accept(getTraverser());
     }
     if (!typeCheckResult.isPresentResult()) {
-      LogHelper.error(node, "0xA3001",
-        "The type of the expression of the OCLArrayQualification could not be calculated");
+      LogHelper.error(
+          node,
+          "0xA3001",
+          "The type of the expression of the OCLArrayQualification could not be calculated");
       return;
     }
     exprResult = typeCheckResult.getResult();
@@ -406,14 +420,18 @@ public class DeriveSymTypeOfOCLExpressions
         e.accept(getTraverser());
       }
       if (!typeCheckResult.isPresentResult()) {
-        LogHelper.error(node, "0xA3001",
-          "The type of a expression in the arguments of the OCLArrayQualification could not be calculated");
+        LogHelper.error(
+            node,
+            "0xA3001",
+            "The type of a expression in the arguments of the OCLArrayQualification could not be calculated");
         typeCheckResult.reset();
         return;
       }
       if (!isIntegralType(typeCheckResult.getResult())) {
-        LogHelper.error(node, "0xA3001",
-          "The type of one of the arguments of the OCLArrayQualification is not integral");
+        LogHelper.error(
+            node,
+            "0xA3001",
+            "The type of one of the arguments of the OCLArrayQualification is not integral");
         typeCheckResult.reset();
         return;
       }
@@ -421,29 +439,33 @@ public class DeriveSymTypeOfOCLExpressions
     }
     if (exprResult instanceof SymTypeArray) {
       LogHelper.setCurrentNode(node);
-      exprResult = getCorrectResultArrayExpression(node.getEnclosingScope(), exprResult,
-        (SymTypeArray) exprResult);
+      exprResult =
+          getCorrectResultArrayExpression(
+              node.getEnclosingScope(), exprResult, (SymTypeArray) exprResult);
       typeCheckResult.setResult(exprResult);
       return;
     }
     if (exprResult instanceof SymTypeOfGenerics) {
       SymTypeOfGenerics collection = (SymTypeOfGenerics) exprResult;
       if (collection.getArgumentList().size() > 1
-        && !collection.getTypeConstructorFullName().equals("java.util.Map")) {
-        LogHelper.error(node, "0xA3002",
-          "Array qualifications can only be used with one type argument or a map");
+          && !collection.getTypeConstructorFullName().equals("java.util.Map")) {
+        LogHelper.error(
+            node,
+            "0xA3002",
+            "Array qualifications can only be used with one type argument or a map");
       }
       if (collection.getTypeConstructorFullName().equals("java.util.Map")) {
         typeCheckResult.setResult(collection.getArgument(1));
-      }
-      else {
+      } else {
         typeCheckResult.setResult(collection.getArgument(0));
       }
       return;
     }
 
-    LogHelper.error(node, "0xA3001",
-      "The type of the expression of the OCLArrayQualification has to be SymTypeArray");
+    LogHelper.error(
+        node,
+        "0xA3001",
+        "The type of the expression of the OCLArrayQualification has to be SymTypeArray");
   }
 
   @Override
@@ -453,8 +475,10 @@ public class DeriveSymTypeOfOCLExpressions
       node.getExpression().accept(getTraverser());
     }
     if (!typeCheckResult.isPresentResult()) {
-      LogHelper.error(node, "0xA3001",
-        "The type of the expression of the OCLAtPreQualification could not be calculated");
+      LogHelper.error(
+          node,
+          "0xA3001",
+          "The type of the expression of the OCLAtPreQualification could not be calculated");
       return;
     }
     exprResult = typeCheckResult.getResult();
@@ -469,8 +493,10 @@ public class DeriveSymTypeOfOCLExpressions
       node.getExpression().accept(getTraverser());
     }
     if (!typeCheckResult.isPresentResult()) {
-      LogHelper.error(node, "0xA3001",
-        "The type of the expression of the OCLTransitiveQualification could not be calculated");
+      LogHelper.error(
+          node,
+          "0xA3001",
+          "The type of the expression of the OCLTransitiveQualification could not be calculated");
       return;
     }
     exprResult = typeCheckResult.getResult();
@@ -488,10 +514,9 @@ public class DeriveSymTypeOfOCLExpressions
     if (typeCheckResult.isPresentResult()) {
       leftResult = typeCheckResult.getResult();
       typeCheckResult.reset();
-    }
-    else {
+    } else {
       Log.error(
-        "0xA3200 The type of the left expression of the " + astType + " could not be calculated");
+          "0xA3200 The type of the left expression of the " + astType + " could not be calculated");
       return;
     }
 
@@ -507,17 +532,18 @@ public class DeriveSymTypeOfOCLExpressions
     if (typeCheckResult.isPresentResult()) {
       rightResult = typeCheckResult.getResult();
       typeCheckResult.reset();
-    }
-    else {
+    } else {
       Log.error(
-        "0xA3202 The type of the right expression of the " + astType + " could not be calculated");
+          "0xA3202 The type of the right expression of the "
+              + astType
+              + " could not be calculated");
       return;
     }
 
     if (!OCLTypeCheck.isBoolean(rightResult)) {
       typeCheckResult.reset();
-      Log
-        .error("0xA3203 The type of the right expression of the " + astType + " has to be boolean");
+      Log.error(
+          "0xA3203 The type of the right expression of the " + astType + " has to be boolean");
       return;
     }
 
@@ -529,52 +555,54 @@ public class DeriveSymTypeOfOCLExpressions
     return SymTypeExpressionFactory.createPrimitive("boolean");
   }
 
-  protected SymTypeExpression getCorrectResultArrayExpression(IExpressionsBasisScope scope,
-    SymTypeExpression arrayTypeResult, SymTypeArray arrayResult) {
+  protected SymTypeExpression getCorrectResultArrayExpression(
+      IExpressionsBasisScope scope, SymTypeExpression arrayTypeResult, SymTypeArray arrayResult) {
     SymTypeExpression wholeResult;
     if (arrayResult.getDim() > 1) {
-      //case 1: A[][] bar -> bar[3] returns the type A[] -> decrease the dimension of the array by 1
-      wholeResult = SymTypeExpressionFactory
-        .createTypeArray(arrayTypeResult.getTypeInfo(),
-          arrayResult.getDim() - 1, SymTypeExpressionFactory.createPrimitive("int"));
-    }
-    else {
-      //case 2: A[] bar -> bar[3] returns the type A
-      //determine whether the result has to be a constant, generic or object
+      // case 1: A[][] bar -> bar[3] returns the type A[] -> decrease the dimension of the array by
+      // 1
+      wholeResult =
+          SymTypeExpressionFactory.createTypeArray(
+              arrayTypeResult.getTypeInfo(),
+              arrayResult.getDim() - 1,
+              SymTypeExpressionFactory.createPrimitive("int"));
+    } else {
+      // case 2: A[] bar -> bar[3] returns the type A
+      // determine whether the result has to be a constant, generic or object
       if (arrayResult.getTypeInfo().getTypeParameterList().isEmpty()) {
-        //if the return type is a primitive
+        // if the return type is a primitive
         if (SymTypePrimitive.boxMap.containsKey(arrayResult.getTypeInfo().getName())) {
-          wholeResult = SymTypeExpressionFactory
-            .createPrimitive(arrayResult.getTypeInfo().getName());
+          wholeResult =
+              SymTypeExpressionFactory.createPrimitive(arrayResult.getTypeInfo().getName());
+        } else {
+          // if the return type is an object
+          wholeResult = SymTypeExpressionFactory.createTypeObject(arrayResult.getTypeInfo());
         }
-        else {
-          //if the return type is an object
-          wholeResult = SymTypeExpressionFactory
-            .createTypeObject(arrayResult.getTypeInfo());
-        }
-      }
-      else {
-        //the return type must be a generic
+      } else {
+        // the return type must be a generic
         List<SymTypeExpression> typeArgs = Lists.newArrayList();
         for (TypeVarSymbol s : arrayResult.getTypeInfo().getTypeParameterList()) {
           typeArgs.add(SymTypeExpressionFactory.createTypeVariable(s));
         }
-        wholeResult = SymTypeExpressionFactory
-          .createGenerics(arrayResult.getTypeInfo(), typeArgs);
-        wholeResult = replaceTypeVariables(wholeResult, typeArgs,
-          ((SymTypeOfGenerics) arrayResult.getArgument()).getArgumentList());
+        wholeResult = SymTypeExpressionFactory.createGenerics(arrayResult.getTypeInfo(), typeArgs);
+        wholeResult =
+            replaceTypeVariables(
+                wholeResult,
+                typeArgs,
+                ((SymTypeOfGenerics) arrayResult.getArgument()).getArgumentList());
       }
     }
     return wholeResult;
   }
 
-  protected SymTypeExpression replaceTypeVariables(SymTypeExpression wholeResult,
-    List<SymTypeExpression> typeArgs, List<SymTypeExpression> argumentList) {
+  protected SymTypeExpression replaceTypeVariables(
+      SymTypeExpression wholeResult,
+      List<SymTypeExpression> typeArgs,
+      List<SymTypeExpression> argumentList) {
     Map<SymTypeExpression, SymTypeExpression> map = Maps.newHashMap();
     if (typeArgs.size() != argumentList.size()) {
       LogHelper.error("0xA0297", "different amount of type variables and type arguments");
-    }
-    else {
+    } else {
       for (int i = 0; i < typeArgs.size(); i++) {
         map.put(typeArgs.get(i), argumentList.get(i));
       }
@@ -584,8 +612,7 @@ public class DeriveSymTypeOfOCLExpressions
       for (int i = 0; i < oldArgs.size(); i++) {
         if (map.containsKey(oldArgs.get(i))) {
           newArgs.add(map.get(oldArgs.get(i)));
-        }
-        else {
+        } else {
           newArgs.add(oldArgs.get(i));
         }
       }
@@ -594,11 +621,13 @@ public class DeriveSymTypeOfOCLExpressions
     return wholeResult;
   }
 
-  @Override public OCLExpressionsTraverser getTraverser() {
+  @Override
+  public OCLExpressionsTraverser getTraverser() {
     return traverser;
   }
 
-  @Override public void setTraverser(OCLExpressionsTraverser traverser) {
+  @Override
+  public void setTraverser(OCLExpressionsTraverser traverser) {
     this.traverser = traverser;
   }
 }
