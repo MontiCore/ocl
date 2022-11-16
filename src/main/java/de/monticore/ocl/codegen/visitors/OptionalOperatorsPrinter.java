@@ -18,8 +18,8 @@ public class OptionalOperatorsPrinter extends AbstractPrinter
 
   protected OptionalOperatorsTraverser traverser;
 
-  public OptionalOperatorsPrinter(IndentPrinter printer, VariableNaming naming,
-      IDerive deriver, ISynthesize syntheziser) {
+  public OptionalOperatorsPrinter(
+      IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
     Preconditions.checkNotNull(deriver);

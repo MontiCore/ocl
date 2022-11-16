@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.codegen.visitors;
 
+import static de.monticore.types.check.SymTypePrimitive.box;
+
 import com.google.common.base.Preconditions;
 import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsHandler;
@@ -14,15 +16,13 @@ import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
-import static de.monticore.types.check.SymTypePrimitive.box;
-
-public class CommonExpressionsPrinter extends AbstractPrinter implements CommonExpressionsHandler,
-    CommonExpressionsVisitor2 {
+public class CommonExpressionsPrinter extends AbstractPrinter
+    implements CommonExpressionsHandler, CommonExpressionsVisitor2 {
 
   protected CommonExpressionsTraverser traverser;
 
-  public CommonExpressionsPrinter(IndentPrinter printer, VariableNaming naming,
-      IDerive deriver, ISynthesize syntheziser) {
+  public CommonExpressionsPrinter(
+      IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
     Preconditions.checkNotNull(deriver);
@@ -98,7 +98,6 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
     Preconditions.checkNotNull(node);
     this.handleInfixExpression(node, "-");
   }
-
 
   @Override
   public void handle(ASTLessEqualExpression node) {
@@ -196,10 +195,8 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
   }
 
   /**
-   * if node has a primitive type,
-   * this prints the Java expression
-   * such that it has a non-primitive type.
-   * e.g. "5" to "((Integer) 5)"
+   * if node has a primitive type, this prints the Java expression such that it has a non-primitive
+   * type. e.g. "5" to "((Integer) 5)"
    *
    * @param node the expression to be printed
    */
@@ -215,10 +212,8 @@ public class CommonExpressionsPrinter extends AbstractPrinter implements CommonE
       getPrinter().print(") ");
       node.accept(getTraverser());
       getPrinter().print(")");
-    }
-    else {
+    } else {
       node.accept(getTraverser());
     }
   }
-
 }

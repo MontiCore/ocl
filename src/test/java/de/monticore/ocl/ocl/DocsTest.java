@@ -1,21 +1,18 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._symboltable.OCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.util.SymbolTableUtil;
+import java.util.Optional;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-/**
- * Checks that the example used in the tutorial is correct
- */
+/** Checks that the example used in the tutorial is correct */
 public class DocsTest extends AbstractTest {
 
   @ParameterizedTest

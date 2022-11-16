@@ -2,6 +2,9 @@
 
 package de.monticore.ocl.types.check;
 
+import static de.monticore.ocl.types.check.OCLTypeCheck.compatible;
+import static de.monticore.types.check.SymTypePrimitive.unbox;
+
 import com.google.common.collect.Lists;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.ocl._visitor.NameExpressionsFromExpressionVisitor;
@@ -19,32 +22,27 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static de.monticore.ocl.types.check.OCLTypeCheck.compatible;
-import static de.monticore.types.check.SymTypePrimitive.unbox;
-
-public class DeriveSymTypeOfSetExpressions
-  extends AbstractDeriveFromExpression
-  implements SetExpressionsVisitor2, SetExpressionsHandler {
+public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
+    implements SetExpressionsVisitor2, SetExpressionsHandler {
 
   protected SetExpressionsTraverser traverser;
 
-  protected final List<String> collections = Lists
-    .newArrayList("List", "Set", "Collection", "java.util.List", "java.util.Set",
-      "java.util.Collection");
+  protected final List<String> collections =
+      Lists.newArrayList(
+          "List", "Set", "Collection", "java.util.List", "java.util.Set", "java.util.Collection");
 
   @Override
   public void traverse(ASTSetInExpression node) {
     SymTypeExpression elemResult = acceptThisAndReturnSymTypeExpression(node.getElem());
     SymTypeExpression setResult = acceptThisAndReturnSymTypeExpression(node.getSet());
-    if(!elemResult.isObscureType() && !setResult.isObscureType()) {
+    if (!elemResult.isObscureType() && !setResult.isObscureType()) {
       SymTypeExpression wholeResult = calculateSetInExpression(elemResult, setResult);
       storeResultOrLogError(wholeResult, node, "0xA0291");
-    }else {
+    } else {
       getTypeCheckResult().reset();
       getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
     }
@@ -54,17 +52,17 @@ public class DeriveSymTypeOfSetExpressions
   public void traverse(ASTSetNotInExpression node) {
     SymTypeExpression elemResult = acceptThisAndReturnSymTypeExpression(node.getElem());
     SymTypeExpression setResult = acceptThisAndReturnSymTypeExpression(node.getSet());
-    if(!elemResult.isObscureType() && !setResult.isObscureType()) {
+    if (!elemResult.isObscureType() && !setResult.isObscureType()) {
       SymTypeExpression wholeResult = calculateSetInExpression(elemResult, setResult);
       storeResultOrLogError(wholeResult, node, "0xA0291");
-    }else {
+    } else {
       getTypeCheckResult().reset();
       getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
     }
   }
 
-  protected SymTypeExpression calculateSetInExpression(SymTypeExpression elemResult,
-    SymTypeExpression setResult) {
+  protected SymTypeExpression calculateSetInExpression(
+      SymTypeExpression elemResult, SymTypeExpression setResult) {
     SymTypeExpression wholeResult = SymTypeExpressionFactory.createObscureType();
 
     boolean correct = false;
@@ -84,13 +82,15 @@ public class DeriveSymTypeOfSetExpressions
 
   @Override
   public void traverse(ASTUnionExpression node) {
-    //union of two sets -> both sets need to have the same type or their types need to be sub/super types
+    // union of two sets -> both sets need to have the same type or their types need to be sub/super
+    // types
     SymTypeExpression leftResult = acceptThisAndReturnSymTypeExpression(node.getLeft());
     SymTypeExpression rightResult = acceptThisAndReturnSymTypeExpression(node.getRight());
-    if(!leftResult.isObscureType() && !rightResult.isObscureType()){
-      SymTypeExpression wholeResult = calculateUnionAndIntersectionInfix(node, leftResult, rightResult);
+    if (!leftResult.isObscureType() && !rightResult.isObscureType()) {
+      SymTypeExpression wholeResult =
+          calculateUnionAndIntersectionInfix(node, leftResult, rightResult);
       storeResultOrLogError(wholeResult, node, "0xA0292");
-    }else{
+    } else {
       getTypeCheckResult().reset();
       getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
     }
@@ -98,13 +98,15 @@ public class DeriveSymTypeOfSetExpressions
 
   @Override
   public void traverse(ASTIntersectionExpression node) {
-    //intersection of two sets -> both sets need to have the same type or their types need to be sub/super types
+    // intersection of two sets -> both sets need to have the same type or their types need to be
+    // sub/super types
     SymTypeExpression leftResult = acceptThisAndReturnSymTypeExpression(node.getLeft());
     SymTypeExpression rightResult = acceptThisAndReturnSymTypeExpression(node.getRight());
-    if(!leftResult.isObscureType() && !rightResult.isObscureType()){
-      SymTypeExpression wholeResult = calculateUnionAndIntersectionInfix(node, leftResult, rightResult);
+    if (!leftResult.isObscureType() && !rightResult.isObscureType()) {
+      SymTypeExpression wholeResult =
+          calculateUnionAndIntersectionInfix(node, leftResult, rightResult);
       storeResultOrLogError(wholeResult, node, "0xA0293");
-    }else{
+    } else {
       getTypeCheckResult().reset();
       getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
     }
@@ -112,20 +114,22 @@ public class DeriveSymTypeOfSetExpressions
 
   @Override
   public void traverse(ASTSetMinusExpression node) {
-    //set minus of two sets -> both sets need to have the same type or their types need to be sub/super types
+    // set minus of two sets -> both sets need to have the same type or their types need to be
+    // sub/super types
     SymTypeExpression leftResult = acceptThisAndReturnSymTypeExpression(node.getLeft());
     SymTypeExpression rightResult = acceptThisAndReturnSymTypeExpression(node.getRight());
-    if(!leftResult.isObscureType() && !rightResult.isObscureType()){
-      SymTypeExpression wholeResult = calculateUnionAndIntersectionInfix(node, leftResult, rightResult);
+    if (!leftResult.isObscureType() && !rightResult.isObscureType()) {
+      SymTypeExpression wholeResult =
+          calculateUnionAndIntersectionInfix(node, leftResult, rightResult);
       storeResultOrLogError(wholeResult, node, "0xA0293");
-    }else{
+    } else {
       getTypeCheckResult().reset();
       getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
     }
   }
 
-  public SymTypeExpression calculateUnionAndIntersectionInfix(ASTExpression expr,
-    SymTypeExpression leftResult, SymTypeExpression rightResult) {
+  public SymTypeExpression calculateUnionAndIntersectionInfix(
+      ASTExpression expr, SymTypeExpression leftResult, SymTypeExpression rightResult) {
     SymTypeExpression wholeResult = SymTypeExpressionFactory.createObscureType();
     if (rightResult.isGenericType() && leftResult.isGenericType()) {
       SymTypeOfGenerics leftGeneric = (SymTypeOfGenerics) leftResult;
@@ -134,10 +138,10 @@ public class DeriveSymTypeOfSetExpressions
       String right = rightGeneric.getTypeInfo().getName();
       if (collections.contains(left) && unbox(left).equals(unbox(right))) {
         if (compatible(leftGeneric.getArgument(0), rightGeneric.getArgument(0))) {
-          wholeResult = SymTypeExpressionFactory
-            .createGenerics(leftGeneric.getTypeInfo(), leftGeneric.getArgument(0).deepClone());
-        }
-        else if (compatible(rightGeneric.getArgument(0), leftGeneric.getArgument(0))) {
+          wholeResult =
+              SymTypeExpressionFactory.createGenerics(
+                  leftGeneric.getTypeInfo(), leftGeneric.getArgument(0).deepClone());
+        } else if (compatible(rightGeneric.getArgument(0), leftGeneric.getArgument(0))) {
           TypeSymbol loader = new TypeSymbolSurrogate(right);
           loader.setEnclosingScope(getScope(expr.getEnclosingScope()));
           wholeResult = SymTypeExpressionFactory.createPrimitive("boolean");
@@ -150,7 +154,7 @@ public class DeriveSymTypeOfSetExpressions
   @Override
   public void endVisit(ASTSetAndExpression node) {
     SymTypeExpression setResult = acceptThisAndReturnSymTypeExpression(node.getSet());
-    if(!setResult.isObscureType()) {
+    if (!setResult.isObscureType()) {
       storeResultOrLogError(setResult, node, "0xA0297");
     }
   }
@@ -158,7 +162,7 @@ public class DeriveSymTypeOfSetExpressions
   @Override
   public void endVisit(ASTSetOrExpression node) {
     SymTypeExpression setResult = acceptThisAndReturnSymTypeExpression(node.getSet());
-    if(!setResult.isObscureType()) {
+    if (!setResult.isObscureType()) {
       storeResultOrLogError(setResult, node, "0xA0297");
     }
   }
@@ -167,33 +171,31 @@ public class DeriveSymTypeOfSetExpressions
   public void traverse(ASTSetComprehension node) {
     boolean obscure = false;
     SymTypeExpression result = null;
-      node.getMCType().accept(getTraverser());
-      if (getTypeCheckResult().isPresentResult()) {
-        if (getTypeCheckResult().getResult().isObscureType()) {
-          obscure = true;
-        } else {
-          boolean correct = false;
-          for (String s : collections) {
-            if (getTypeCheckResult().getResult().getTypeInfo().getName().equals(s)) {
-              correct = true;
-            }
-          }
-          if (!correct) {
-            getTypeCheckResult().reset();
-            Log
-              .error("0xA0298 could not calculate type at " + node.get_SourcePositionStart());
-          } else {
-            result = SymTypeExpressionFactory.createGenerics(getTypeCheckResult().getResult().
-              getTypeInfo());
-            getTypeCheckResult().reset();
-  
+    node.getMCType().accept(getTraverser());
+    if (getTypeCheckResult().isPresentResult()) {
+      if (getTypeCheckResult().getResult().isObscureType()) {
+        obscure = true;
+      } else {
+        boolean correct = false;
+        for (String s : collections) {
+          if (getTypeCheckResult().getResult().getTypeInfo().getName().equals(s)) {
+            correct = true;
           }
         }
+        if (!correct) {
+          getTypeCheckResult().reset();
+          Log.error("0xA0298 could not calculate type at " + node.get_SourcePositionStart());
+        } else {
+          result =
+              SymTypeExpressionFactory.createGenerics(
+                  getTypeCheckResult().getResult().getTypeInfo());
+          getTypeCheckResult().reset();
+        }
       }
-      else {
-        getTypeCheckResult().reset();
-        Log.error("0xA0299 could not determine type of " + node.getMCType().getClass().getName());
-      }
+    } else {
+      getTypeCheckResult().reset();
+      Log.error("0xA0299 could not determine type of " + node.getMCType().getClass().getName());
+    }
 
     SymTypeExpression leftType = null;
     Set<String> varNames = new HashSet<>();
@@ -206,28 +208,28 @@ public class DeriveSymTypeOfSetExpressions
       node.getLeft().getExpression().accept(getTraverser());
       if (!getTypeCheckResult().isPresentResult()) {
         OCLFullPrettyPrinter printer = new OCLFullPrettyPrinter();
-        Log.error("0xA0309 " + node.getLeft().get_SourcePositionStart()
-          + " Could not calculate type of expression \"" + printer
-          .prettyprint(node.getLeft()) + "\" on the left side of SetComprehension ");
-      }
-      else {
-        if(getTypeCheckResult().getResult().isObscureType()){
+        Log.error(
+            "0xA0309 "
+                + node.getLeft().get_SourcePositionStart()
+                + " Could not calculate type of expression \""
+                + printer.prettyprint(node.getLeft())
+                + "\" on the left side of SetComprehension ");
+      } else {
+        if (getTypeCheckResult().getResult().isObscureType()) {
           obscure = true;
         } else {
           leftType = getTypeCheckResult().getResult();
         }
       }
-    }
-    else if (node.getLeft().isPresentGeneratorDeclaration()) {
+    } else if (node.getLeft().isPresentGeneratorDeclaration()) {
       leftType = node.getLeft().getGeneratorDeclaration().getSymbol().getType();
-    }
-    else {
+    } else {
       leftType = node.getLeft().getSetVariableDeclaration().getSymbol().getType();
     }
-    
-    if(!obscure && !leftType.isObscureType()) {
 
-      //check that all varNames are initialized on the right side
+    if (!obscure && !leftType.isObscureType()) {
+
+      // check that all varNames are initialized on the right side
       while (!varNames.isEmpty()) {
         for (ASTSetComprehensionItem item : node.getSetComprehensionItemList()) {
           if (item.isPresentGeneratorDeclaration()) {
@@ -239,12 +241,13 @@ public class DeriveSymTypeOfSetExpressions
       }
 
       if (result == null) {
-        result = SymTypeExpressionFactory
-          .createGenerics("java.util.Set", getScope(node.getEnclosingScope()));
+        result =
+            SymTypeExpressionFactory.createGenerics(
+                "java.util.Set", getScope(node.getEnclosingScope()));
       }
       ((SymTypeOfGenerics) result).addArgument(leftType);
       getTypeCheckResult().setResult(result);
-    }else{
+    } else {
       getTypeCheckResult().reset();
       getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
     }
@@ -254,35 +257,35 @@ public class DeriveSymTypeOfSetExpressions
     boolean obscure = false;
     SymTypeExpression result = null;
     SymTypeExpression innerResult = null;
-      node.getMCType().accept(getTraverser());
-      if (getTypeCheckResult().isPresentResult()) {
-        boolean correct = false;
-        for (String s : collections) {
-          if (getTypeCheckResult().getResult().getTypeInfo().getName().equals(s)) {
-            correct = true;
-          }
-        }
-        if (!correct) {
-          getTypeCheckResult().reset();
-          Log
-            .error("0xA0298 there must be a type for collection at" + node.get_SourcePositionStart());
-        } else {
-          result = SymTypeExpressionFactory.createGenerics(getTypeCheckResult().getResult().
-            getTypeInfo());
-          getTypeCheckResult().reset();
+    node.getMCType().accept(getTraverser());
+    if (getTypeCheckResult().isPresentResult()) {
+      boolean correct = false;
+      for (String s : collections) {
+        if (getTypeCheckResult().getResult().getTypeInfo().getName().equals(s)) {
+          correct = true;
         }
       }
-      else {
+      if (!correct) {
         getTypeCheckResult().reset();
-        Log.error("0xA0299 could not determine type of " + node.getClass().getName());
+        Log.error(
+            "0xA0298 there must be a type for collection at" + node.get_SourcePositionStart());
+      } else {
+        result =
+            SymTypeExpressionFactory.createGenerics(getTypeCheckResult().getResult().getTypeInfo());
+        getTypeCheckResult().reset();
       }
-
-    if (result == null) {
-      result = SymTypeExpressionFactory
-        .createGenerics("java.util.Set", getScope(node.getEnclosingScope()));
+    } else {
+      getTypeCheckResult().reset();
+      Log.error("0xA0299 could not determine type of " + node.getClass().getName());
     }
 
-    //check type of elements in set
+    if (result == null) {
+      result =
+          SymTypeExpressionFactory.createGenerics(
+              "java.util.Set", getScope(node.getEnclosingScope()));
+    }
+
+    // check type of elements in set
     for (ASTSetCollectionItem item : node.getSetCollectionItemList()) {
       if (item instanceof ASTSetValueItem) {
         ((ASTSetValueItem) item).getExpression().accept(getTraverser());
@@ -297,13 +300,11 @@ public class DeriveSymTypeOfSetExpressions
               LogHelper.error(node, "0xA0333", "different types in SetEnumeration");
             }
           }
+        } else {
+          LogHelper.error(
+              node, "0xA0334", "Could not determine type of an expression in SetEnumeration");
         }
-        else {
-          LogHelper
-            .error(node, "0xA0334", "Could not determine type of an expression in SetEnumeration");
-        }
-      }
-      else {
+      } else {
         item.accept(getTraverser());
         if (getTypeCheckResult().isPresentResult()) {
           if (getTypeCheckResult().getResult().isObscureType()) {
@@ -316,18 +317,17 @@ public class DeriveSymTypeOfSetExpressions
               LogHelper.error(node, "0xA0335", "different types in SetEnumeration");
             }
           }
-        }
-        else {
-          LogHelper.error(node, "0xA0336",
-            "Could not determine type of a SetValueRange in SetEnumeration");
+        } else {
+          LogHelper.error(
+              node, "0xA0336", "Could not determine type of a SetValueRange in SetEnumeration");
         }
       }
     }
-    
-    if(!obscure){
+
+    if (!obscure) {
       ((SymTypeOfGenerics) result).addArgument(innerResult);
       getTypeCheckResult().setResult(result);
-    }else{
+    } else {
       getTypeCheckResult().reset();
       getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
     }
@@ -336,19 +336,20 @@ public class DeriveSymTypeOfSetExpressions
   public void traverse(ASTSetValueRange node) {
     SymTypeExpression left = acceptThisAndReturnSymTypeExpression(node.getLowerBound());
     SymTypeExpression right = acceptThisAndReturnSymTypeExpression(node.getUpperBound());
-    if(!left.isObscureType() && !right.isObscureType()){
+    if (!left.isObscureType() && !right.isObscureType()) {
       if (!isIntegralType(left) || !isIntegralType(right)) {
-        LogHelper
-          .error(node, "0xA0337", "bounds in SetValueRange are not integral types, but have to be");
+        LogHelper.error(
+            node, "0xA0337", "bounds in SetValueRange are not integral types, but have to be");
       }
       getTypeCheckResult().setResult(left);
-    }else{
+    } else {
       getTypeCheckResult().reset();
       getTypeCheckResult().setResult(SymTypeExpressionFactory.createObscureType());
     }
   }
 
-  @Override public SetExpressionsTraverser getTraverser() {
+  @Override
+  public SetExpressionsTraverser getTraverser() {
     return traverser;
   }
 

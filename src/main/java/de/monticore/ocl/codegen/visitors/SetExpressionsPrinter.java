@@ -12,9 +12,9 @@ import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
-import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
+import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
@@ -22,7 +22,8 @@ import de.se_rwth.commons.logging.Log;
 public class SetExpressionsPrinter extends AbstractPrinter
     implements SetExpressionsHandler, SetExpressionsVisitor2 {
 
-  protected static final String EXPRESSION_NOT_BOOLEAN_ERROR = "0xC4721 Expected boolean expression";
+  protected static final String EXPRESSION_NOT_BOOLEAN_ERROR =
+      "0xC4721 Expected boolean expression";
 
   protected static final String MISSING_IMPLEMENTATION_ERROR = "0xC4722 Implementation missing";
 
@@ -30,8 +31,8 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   protected IndentPrinter printer;
 
-  public SetExpressionsPrinter(IndentPrinter printer, VariableNaming naming,
-      IDerive deriver, ISynthesize syntheziser) {
+  public SetExpressionsPrinter(
+      IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
     Preconditions.checkNotNull(deriver);
@@ -336,8 +337,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
         .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
         .contains("Set")) {
       getPrinter().println("new java.util.HashSet<>();");
-    }
-    else {
+    } else {
       getPrinter().println("new java.util.LinkedList<>();");
     }
 
@@ -352,11 +352,9 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print(".add(");
     if (node.getLeft().isPresentGeneratorDeclaration()) {
       getPrinter().print(node.getLeft().getGeneratorDeclaration().getName());
-    }
-    else if (node.getLeft().isPresentExpression()) {
+    } else if (node.getLeft().isPresentExpression()) {
       node.getLeft().getExpression().accept(getTraverser());
-    }
-    else {
+    } else {
       node.getLeft().accept(getTraverser());
     }
     getPrinter().println(");");
@@ -383,30 +381,26 @@ public class SetExpressionsPrinter extends AbstractPrinter
   public void handle(ASTSetComprehensionItem node) {
     if (node.isPresentExpression()) {
       TypeCheckResult type = getDeriver().deriveType(node.getExpression());
-      if (type.isPresentResult()
-          && OCLTypeCheck.isBoolean(type.getResult())) {
+      if (type.isPresentResult() && OCLTypeCheck.isBoolean(type.getResult())) {
         getPrinter().print("if (");
         node.getExpression().accept(getTraverser());
         getPrinter().println(") {");
         getPrinter().indent();
-      }
-      else {
+      } else {
         Log.error(EXPRESSION_NOT_BOOLEAN_ERROR, node.get_SourcePositionStart());
       }
-    }
-    else if (node.isPresentGeneratorDeclaration()) {
+    } else if (node.isPresentGeneratorDeclaration()) {
       node.getGeneratorDeclaration().accept(getTraverser());
-    }
-    else if (node.isPresentSetVariableDeclaration()) {
+    } else if (node.isPresentSetVariableDeclaration()) {
       ASTSetVariableDeclaration setVarDecl = node.getSetVariableDeclaration();
       if (setVarDecl.isPresentMCType()) {
         getPrinter().print(boxType(getSynthesizer().synthesizeType(setVarDecl.getMCType())));
-      }
-      else if (setVarDecl.isPresentExpression()) {
+      } else if (setVarDecl.isPresentExpression()) {
         getPrinter().print(boxType(getDeriver().deriveType(setVarDecl.getExpression())));
-      }
-      else {
-        Log.error(UNEXPECTED_STATE_AST_NODE, setVarDecl.get_SourcePositionStart(),
+      } else {
+        Log.error(
+            UNEXPECTED_STATE_AST_NODE,
+            setVarDecl.get_SourcePositionStart(),
             setVarDecl.get_SourcePositionEnd());
       }
       getPrinter().print(" ");
@@ -414,9 +408,8 @@ public class SetExpressionsPrinter extends AbstractPrinter
       getPrinter().print(" = ");
       setVarDecl.getExpression().accept(getTraverser());
       getPrinter().println(";");
-    }
-    else {
-      //failsafe if something is added to the grammar
+    } else {
+      // failsafe if something is added to the grammar
       Log.error(MISSING_IMPLEMENTATION_ERROR);
     }
   }
@@ -426,8 +419,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print("for (");
     if (node.isPresentMCType()) {
       getPrinter().print(boxType(getSynthesizer().synthesizeType(node.getMCType())));
-    }
-    else {
+    } else {
       printDerivedInnerType(node.getExpression());
     }
     getPrinter().print(" ");
@@ -450,14 +442,13 @@ public class SetExpressionsPrinter extends AbstractPrinter
         .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
         .contains("Set")) {
       getPrinter().println("new java.util.HashSet<>();");
-    }
-    else {
+    } else {
       getPrinter().println("new java.util.LinkedList<>();");
     }
 
     for (ASTSetCollectionItem item : node.getSetCollectionItemList()) {
       getPrinter().print(getNaming().getName(node));
-      //for ASTSetValueItem we could use "add", but we avoid reflections
+      // for ASTSetValueItem we could use "add", but we avoid reflections
       getPrinter().print(".addAll(");
       item.accept(getTraverser());
       getPrinter().println(");");
@@ -526,7 +517,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().unindent();
     getPrinter().println("}");
 
-    //iterate and add to result
+    // iterate and add to result
     getPrinter().print("for (");
     printDerivedType(node.getLowerBound());
     getPrinter().print(" ");
@@ -546,8 +537,10 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print("_iter = (");
     // java.Lang.Character -> avoid type errors
     // this works as only primitives are supported
-    getPrinter().print(SymTypePrimitive.unbox(
-        getDeriver().deriveType(node.getLowerBound()).getResult().printFullName()));
+    getPrinter()
+        .print(
+            SymTypePrimitive.unbox(
+                getDeriver().deriveType(node.getLowerBound()).getResult().printFullName()));
     getPrinter().print(")(");
     getPrinter().print(getNaming().getName(node));
     getPrinter().print("_iter + ");
@@ -590,12 +583,10 @@ public class SetExpressionsPrinter extends AbstractPrinter
     if (innerType != null) {
       if (innerType.isGenericType()) {
         getPrinter().print(SymTypeOfGenerics.box((SymTypeOfGenerics) innerType));
-      }
-      else {
+      } else {
         getPrinter().print(SymTypePrimitive.box(innerType.printFullName()));
       }
-    }
-    else {
+    } else {
       Log.error(INNER_TYPE_NOT_DERIVED_ERROR, node.get_SourcePositionStart());
     }
   }
@@ -619,5 +610,4 @@ public class SetExpressionsPrinter extends AbstractPrinter
     }
     return innerType;
   }
-
 }

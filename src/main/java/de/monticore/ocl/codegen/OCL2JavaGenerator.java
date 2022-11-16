@@ -22,7 +22,6 @@ import de.monticore.types.check.ISynthesize;
 import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
 import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,8 +72,8 @@ public class OCL2JavaGenerator {
     this(printer, naming, new OCLDeriver(), new OCLSynthesizer());
   }
 
-  protected OCL2JavaGenerator(IndentPrinter printer, VariableNaming naming,
-      IDerive deriver, ISynthesize syntheziser) {
+  protected OCL2JavaGenerator(
+      IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
     Preconditions.checkNotNull(deriver);
@@ -83,29 +82,29 @@ public class OCL2JavaGenerator {
     this.traverser = OCLMill.traverser();
 
     // Expressions
-    CommonExpressionsPrinter comExprPrinter = new CommonExpressionsPrinter(printer, naming,
-        deriver, syntheziser);
+    CommonExpressionsPrinter comExprPrinter =
+        new CommonExpressionsPrinter(printer, naming, deriver, syntheziser);
     this.traverser.setCommonExpressionsHandler(comExprPrinter);
     this.traverser.add4CommonExpressions(comExprPrinter);
     ExpressionsBasisPrettyPrinter exprBasPrinter = new ExpressionsBasisPrettyPrinter(printer);
     this.traverser.setExpressionsBasisHandler(exprBasPrinter);
     this.traverser.add4ExpressionsBasis(exprBasPrinter);
-    OCLExpressionsPrinter oclExprPrinter = new OCLExpressionsPrinter(printer, naming,
-        deriver, syntheziser);
+    OCLExpressionsPrinter oclExprPrinter =
+        new OCLExpressionsPrinter(printer, naming, deriver, syntheziser);
     this.traverser.setOCLExpressionsHandler(oclExprPrinter);
     this.traverser.add4OCLExpressions(oclExprPrinter);
-    SetExpressionsPrinter setExprPrinter = new SetExpressionsPrinter(printer, naming, deriver,
-        syntheziser);
+    SetExpressionsPrinter setExprPrinter =
+        new SetExpressionsPrinter(printer, naming, deriver, syntheziser);
     this.traverser.setSetExpressionsHandler(setExprPrinter);
     this.traverser.add4SetExpressions(setExprPrinter);
-    OptionalOperatorsPrinter optExprPrinter = new OptionalOperatorsPrinter(printer, naming,
-        deriver, syntheziser);
+    OptionalOperatorsPrinter optExprPrinter =
+        new OptionalOperatorsPrinter(printer, naming, deriver, syntheziser);
     this.traverser.setOptionalOperatorsHandler(optExprPrinter);
     this.traverser.add4OptionalOperators(optExprPrinter);
 
     // Types
-    MCSimpleGenericTypesPrettyPrinter simpleGenericTypes = new MCSimpleGenericTypesPrettyPrinter(
-        printer);
+    MCSimpleGenericTypesPrettyPrinter simpleGenericTypes =
+        new MCSimpleGenericTypesPrettyPrinter(printer);
     traverser.setMCSimpleGenericTypesHandler(simpleGenericTypes);
     traverser.add4MCSimpleGenericTypes(simpleGenericTypes);
     MCCollectionTypesPrettyPrinter collectionTypes = new MCCollectionTypesPrettyPrinter(printer);

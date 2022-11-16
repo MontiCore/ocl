@@ -7,8 +7,7 @@ import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class SetExpressionsPrettyPrinter
-  implements SetExpressionsHandler {
+public class SetExpressionsPrettyPrinter implements SetExpressionsHandler {
 
   protected SetExpressionsTraverser traverser;
 
@@ -125,15 +124,15 @@ public class SetExpressionsPrettyPrinter
     getPrinter().print(" | ");
     for (ASTSetComprehensionItem setComprehensionItem : node.getSetComprehensionItemList()) {
       setComprehensionItem.accept(getTraverser());
-      if (!node.getSetComprehensionItemList().get(
-          node.getSetComprehensionItemList().size() - 1).equals(setComprehensionItem)) {
+      if (!node.getSetComprehensionItemList()
+          .get(node.getSetComprehensionItemList().size() - 1)
+          .equals(setComprehensionItem)) {
         getPrinter().print(", ");
       }
     }
     if (node.getOpeningBracket().equals("{")) {
       getPrinter().print("}");
-    }
-    else {
+    } else {
       getPrinter().print("]");
     }
     CommentPrettyPrinter.printPostComments(node, getPrinter());
@@ -144,11 +143,9 @@ public class SetExpressionsPrettyPrinter
     CommentPrettyPrinter.printPreComments(node, getPrinter());
     if (node.isPresentExpression()) {
       node.getExpression().accept(getTraverser());
-    }
-    else if (node.isPresentSetVariableDeclaration()) {
+    } else if (node.isPresentSetVariableDeclaration()) {
       node.getSetVariableDeclaration().accept(getTraverser());
-    }
-    else if (node.isPresentGeneratorDeclaration()) {
+    } else if (node.isPresentGeneratorDeclaration()) {
       node.getGeneratorDeclaration().accept(getTraverser());
     }
     CommentPrettyPrinter.printPostComments(node, getPrinter());
@@ -176,15 +173,15 @@ public class SetExpressionsPrettyPrinter
     getPrinter().print(node.getOpeningBracket());
     for (ASTSetCollectionItem setCollectionItem : node.getSetCollectionItemList()) {
       setCollectionItem.accept(getTraverser());
-      if (!node.getSetCollectionItemList().get(
-          node.getSetCollectionItemList().size() - 1).equals(setCollectionItem)) {
+      if (!node.getSetCollectionItemList()
+          .get(node.getSetCollectionItemList().size() - 1)
+          .equals(setCollectionItem)) {
         getPrinter().print(", ");
       }
     }
     if (node.getOpeningBracket().equals("{")) {
       getPrinter().print("}");
-    }
-    else {
+    } else {
       getPrinter().print("]");
     }
     CommentPrettyPrinter.printPostComments(node, getPrinter());

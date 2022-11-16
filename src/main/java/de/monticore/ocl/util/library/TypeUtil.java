@@ -33,15 +33,16 @@ public class TypeUtil {
     return SymTypeExpressionFactory.createPrimitive("Set").getTypeInfo();
   }
 
-  protected static void addParam(FunctionSymbol function, String paramName,
-    SymTypeExpression paramType) {
-    VariableSymbol oParam = BasicSymbolsMill.variableSymbolBuilder()
-      .setName(paramName)
-      .setEnclosingScope(function.getSpannedScope())
-      .setType(paramType)
-      .build();
+  protected static void addParam(
+      FunctionSymbol function, String paramName, SymTypeExpression paramType) {
+    VariableSymbol oParam =
+        BasicSymbolsMill.variableSymbolBuilder()
+            .setName(paramName)
+            .setEnclosingScope(function.getSpannedScope())
+            .setType(paramType)
+            .build();
 
-    //add parameter to method
+    // add parameter to method
     function.getSpannedScope().add(oParam);
   }
 }

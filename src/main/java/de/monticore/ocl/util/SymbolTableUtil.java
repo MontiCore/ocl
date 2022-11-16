@@ -2,7 +2,6 @@
 package de.monticore.ocl.util;
 
 import de.monticore.class2mc.Class2MCResolver;
-import de.monticore.io.paths.MCPath;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._symboltable.OCLDeSer;
@@ -25,15 +24,13 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbolDeSer;
 import de.se_rwth.commons.logging.Log;
 
-import java.nio.file.Paths;
-
 /**
  * Contains helpers that execute MontiCore API that are almost always called together
  *
  * @since 24.03.21
  */
 public class SymbolTableUtil {
-  static public void prepareMill() {
+  public static void prepareMill() {
     OCLMill.reset();
     OCLMill.init();
     OCLMill.globalScope().clear();
@@ -61,24 +58,21 @@ public class SymbolTableUtil {
     g.addMethodsAndFields();
   }
 
-  static public void runSymTabGenitor(ASTOCLCompilationUnit ast) {
+  public static void runSymTabGenitor(ASTOCLCompilationUnit ast) {
     OCLScopesGenitorDelegator genitor = OCLMill.scopesGenitorDelegator();
     genitor.createFromAST(ast);
   }
 
-  static public void runSymTabCompleter(ASTOCLCompilationUnit ast) {
-    OCLSymbolTableCompleter stCompleter = new OCLSymbolTableCompleter(
-        ast.getMCImportStatementList(), ast.getPackage()
-    );
+  public static void runSymTabCompleter(ASTOCLCompilationUnit ast) {
+    OCLSymbolTableCompleter stCompleter =
+        new OCLSymbolTableCompleter(ast.getMCImportStatementList(), ast.getPackage());
     stCompleter.setSynthesizer(new OCLSynthesizer());
-    OCLExpressionsSymbolTableCompleter stCompleter2 = new OCLExpressionsSymbolTableCompleter(
-        ast.getMCImportStatementList(), ast.getPackage()
-    );
+    OCLExpressionsSymbolTableCompleter stCompleter2 =
+        new OCLExpressionsSymbolTableCompleter(ast.getMCImportStatementList(), ast.getPackage());
     stCompleter2.setDeriver(new OCLDeriver());
     stCompleter2.setSynthesizer(new OCLSynthesizer());
-    SetExpressionsSymbolTableCompleter stCompleter3 = new SetExpressionsSymbolTableCompleter(
-        ast.getMCImportStatementList(), ast.getPackage()
-    );
+    SetExpressionsSymbolTableCompleter stCompleter3 =
+        new SetExpressionsSymbolTableCompleter(ast.getMCImportStatementList(), ast.getPackage());
     stCompleter3.setDeriver(new OCLDeriver());
     stCompleter3.setSynthesizer(new OCLSynthesizer());
 

@@ -7,8 +7,7 @@ import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsTraverser;
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 
-public class OptionalOperatorsPrettyPrinter
-  implements OptionalOperatorsHandler {
+public class OptionalOperatorsPrettyPrinter implements OptionalOperatorsHandler {
 
   protected OptionalOperatorsTraverser traverser;
 
