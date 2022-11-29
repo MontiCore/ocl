@@ -15,22 +15,24 @@ public class LiteralExpressionsConverter {
 
   public Expr<? extends Sort> convert(ASTLiteralExpression node) {
     ASTLiteral literal = node.getLiteral();
+    Expr<? extends Sort> res = null;
     if (literal instanceof ASTBooleanLiteral) {
-      return convertBool((ASTBooleanLiteral) literal);
+      res = convertBool((ASTBooleanLiteral) literal);
     } else if (literal instanceof ASTStringLiteral) {
-      return convertString((ASTStringLiteral) literal);
+      res = convertString((ASTStringLiteral) literal);
     } else if (literal instanceof ASTNatLiteral) {
       return convertNat((ASTNatLiteral) literal);
     } else if (literal instanceof ASTBasicDoubleLiteral) {
-      return convertDouble((ASTBasicDoubleLiteral) literal);
+      res = convertDouble((ASTBasicDoubleLiteral) literal);
+    } else if (literal instanceof ASTCharLiteral) {
+      res = convertChar((ASTCharLiteral) literal);
     } else {
-      assert false;
       Log.error(
           "the conversion of expression with the type "
               + node.getClass().getName()
               + "in SMT is not totally implemented");
-      return null;
     }
+    return res;
   }
 
   protected BoolExpr convertBool(ASTBooleanLiteral node) {
@@ -42,6 +44,10 @@ public class LiteralExpressionsConverter {
   }
 
   protected IntNum convertNat(ASTNatLiteral node) {
+    return context.mkInt(node.getValue());
+  }
+
+  protected IntNum convertChar(ASTCharLiteral node) { // TODO:: return a Char here
     return context.mkInt(node.getValue());
   }
 

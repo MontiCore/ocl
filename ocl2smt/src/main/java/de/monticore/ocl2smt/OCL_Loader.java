@@ -70,8 +70,8 @@ public class OCL_Loader {
     oclAST.setEnclosingScope(createOCLSymTab(oclAST));
 
     createCDSymTab(cdAST);
-    // loadCDModel(oclAST, cdAST);
-    // checkOCLCoCos(oclAST);
+    loadCDModel(oclAST, cdAST);
+    checkOCLCoCos(oclAST);
     return oclAST;
   }
 
