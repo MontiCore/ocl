@@ -107,25 +107,25 @@ public class OCLDiffGenerator {
     CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
     final Context ctx = ocl2SMTGenerator.cd2smtGenerator.getContext();
 
-    // lit of positive OCl Constraints
+    // list of positive OCl Constraints
     List<IdentifiableBoolExpr> posConstraints = buildSmtBoolExpr(in);
     cd2SMTGenerator.cd2smt(ast1, ctx);
     posConstraints.addAll(cd2SMTGenerator.getAssociationsConstraints());
 
-    // lists of negative ICL Constraints
+    // list of negative OCL Constraints
     List<IdentifiableBoolExpr> negConstraints = buildSmtBoolExpr(notIn);
     cd2SMTGenerator.cd2smt(ast1, ctx);
     negConstraints.addAll(cd2SMTGenerator.getAssociationsConstraints());
 
-     CDHelper.removeAssocCard(ast1);
-     CDHelper.removeAssocCard(ast2);
+    CDHelper.removeAssocCard(ast1);
+    CDHelper.removeAssocCard(ast2);
     List<ASTODArtifact> res =
-        CDDiff.computeAlloySemDiff(ast1, ast2, 20, 1, CDSemantics.SIMPLE_CLOSED_WORLD);
+        CDDiff.computeAlloySemDiff(
+            ast2, ast1, CDDiff.getDefaultDiffsize(ast1, ast2), 1, CDSemantics.SIMPLE_CLOSED_WORLD);
     if (!res.isEmpty()) {
       Log.info("", "CDDiff");
       return new ImmutablePair<>(null, new HashSet<>(res));
     }
-
     return oclDiffHelper(posConstraints, negConstraints, partial);
   }
 

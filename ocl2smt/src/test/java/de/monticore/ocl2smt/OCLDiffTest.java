@@ -155,7 +155,7 @@ public class OCLDiffTest {
     Pair<ASTODArtifact, Set<ASTODArtifact>> ods =
         OCLDiffGenerator.CDOCLDiff(ast1, ast2, in, notin, true);
     printOD(ods.getLeft());
-    for (ASTODArtifact od : ods.getRight()){
+    for (ASTODArtifact od : ods.getRight()) {
       printOD(od);
     }
   }
