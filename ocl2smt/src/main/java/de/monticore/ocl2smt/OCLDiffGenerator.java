@@ -72,6 +72,7 @@ public class OCLDiffGenerator {
       }
       posConstraintList.remove(negConstraint);
     }
+    posConstraintList.addAll(ocl2SMTGenerator.cd2smtGenerator.getAssociationsConstraints());
     return new ImmutablePair<>(
         TraceUnsatCore.buildUnsatOD(posConstraintList, negConstList, traceUnsat), satOdList);
   }
@@ -109,8 +110,6 @@ public class OCLDiffGenerator {
 
     // list of positive OCl Constraints
     List<IdentifiableBoolExpr> posConstraints = buildSmtBoolExpr(in);
-    cd2SMTGenerator.cd2smt(ast1, ctx);
-    posConstraints.addAll(cd2SMTGenerator.getAssociationsConstraints());
 
     // list of negative OCL Constraints
     List<IdentifiableBoolExpr> negConstraints = buildSmtBoolExpr(notIn);
