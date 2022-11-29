@@ -152,8 +152,11 @@ public class OCLDiffTest {
     in.add(parseOCl("2CDDiff/CD1.cd", "2CDDiff/OCL1.ocl"));
     in.add(parseOCl("2CDDiff/CD2.cd", "2CDDiff/OCL2.ocl"));
 
-    Pair<ASTODArtifact, Set<ASTODArtifact>> od =
+    Pair<ASTODArtifact, Set<ASTODArtifact>> ods =
         OCLDiffGenerator.CDOCLDiff(ast1, ast2, in, notin, true);
-    printOD(od.getLeft());
+    printOD(ods.getLeft());
+    for (ASTODArtifact od : ods.getRight()){
+      printOD(od);
+    }
   }
 }

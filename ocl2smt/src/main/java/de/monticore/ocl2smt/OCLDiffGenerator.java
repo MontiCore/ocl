@@ -8,7 +8,6 @@ import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis.prettyprint.CDBasisPrettyPrinter;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -84,7 +83,7 @@ public class OCLDiffGenerator {
       boolean partial) {
     // check if the Model is Satisfiable
     oclWitness(astcd, in, false);
-    //positive ocl constraint
+    // positive ocl constraint
     List<IdentifiableBoolExpr> solverConstraints = buildSmtBoolExpr(in);
 
     // negative ocl constraints
@@ -102,23 +101,32 @@ public class OCLDiffGenerator {
       Set<ASTOCLCompilationUnit> in,
       Set<ASTOCLCompilationUnit> notIn,
       boolean partial) {
-   // oclWitness(ast1,in);
-    CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
 
-    final Context ctx = buildContext() ;
+    setOCL2SMTGenerator(ast1);
+
+    CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
+    final Context ctx = ocl2SMTGenerator.cd2smtGenerator.getContext();
+
+    // lit of positive OCl Constraints
     List<IdentifiableBoolExpr> posConstraints = buildSmtBoolExpr(in);
     cd2SMTGenerator.cd2smt(ast1, ctx);
     posConstraints.addAll(cd2SMTGenerator.getAssociationsConstraints());
 
+    // lists of negative ICL Constraints
     List<IdentifiableBoolExpr> negConstraints = buildSmtBoolExpr(notIn);
-    cd2SMTGenerator.cd2smt(ast1, cd2SMTGenerator.getContext());
+    cd2SMTGenerator.cd2smt(ast1, ctx);
     negConstraints.addAll(cd2SMTGenerator.getAssociationsConstraints());
 
-    CDHelper.removeAssocCard(ast1);
-    CDHelper.removeAssocCard(ast2);
-    //CDDiff.computeAlloySemDiff(ast1, ast2, 20, 1, CDSemantics.SIMPLE_CLOSED_WORLD);
-    CDBasisPrettyPrinter cdBasisPrettyPrinter = new CDBasisPrettyPrinter();
-    return oclDiffHelper(posConstraints,negConstraints,partial);
+    //CDHelper.removeAssocCard(ast1);
+   // CDHelper.removeAssocCard(ast2);
+    List<ASTODArtifact> res =
+        CDDiff.computeAlloySemDiff(ast1, ast2, 20, 1, CDSemantics.SIMPLE_CLOSED_WORLD);
+    if (!res.isEmpty()) {
+      Log.info("the Both Class Diagram have A semantic Difference", "CDDiff");
+      return new ImmutablePair<>(null, new HashSet<>(res));
+    }
+
+    return oclDiffHelper(posConstraints, negConstraints, partial);
   }
 
   public static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiff(
@@ -128,12 +136,6 @@ public class OCLDiffGenerator {
 
   protected static Optional<ASTODArtifact> buildOd(Model model, String ODName, boolean partial) {
     return ocl2SMTGenerator.cd2smtGenerator.smt2od(model, partial, ODName);
-  }
-
-  public static Context buildContext() {
-    Map<String, String> cfg = new HashMap<>();
-    cfg.put("model", "true");
-    return new Context(cfg);
   }
 
   private static void setOCL2SMTGenerator(ASTCDCompilationUnit ast) {

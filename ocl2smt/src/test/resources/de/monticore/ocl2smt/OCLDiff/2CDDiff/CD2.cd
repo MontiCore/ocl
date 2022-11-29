@@ -9,7 +9,7 @@ classdiagram MinAuction {
    String name ;
   }
 
- association [*] Auction(auction)      --     (auction)Auction[*];
+ association [1] Auction(auction)      --     (auction)Person[0..1];
 
 
 }
