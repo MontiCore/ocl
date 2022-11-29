@@ -1,0 +1,15 @@
+classdiagram MinAuction {
+
+  public class Auction {
+    int auctionIdent;
+    String name ;
+  }
+
+  public class Person{
+   String name ;
+  }
+
+ association [*] Auction(auction)      --     (auction)Auction[*];
+
+
+}

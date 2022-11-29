@@ -142,4 +142,18 @@ public class OCLDiffTest {
                   || (((ASTODNamedObject) p).getODAttributeList().size() <= 3);
             });
   }
+
+  @Test
+  public void testOCLDiff2CD() throws IOException {
+    ASTCDCompilationUnit ast1 = parseCD("2CDDiff/CD1.cd");
+    ASTCDCompilationUnit ast2 = parseCD("2CDDiff/CD2.cd");
+    Set<ASTOCLCompilationUnit> in = new HashSet<>();
+    Set<ASTOCLCompilationUnit> notin = new HashSet<>();
+    in.add(parseOCl("2CDDiff/CD1.cd", "2CDDiff/OCL1.ocl"));
+    in.add(parseOCl("2CDDiff/CD2.cd", "2CDDiff/OCL2.ocl"));
+
+    Pair<ASTODArtifact, Set<ASTODArtifact>> od =
+        OCLDiffGenerator.CDOCLDiff(ast1, ast2, in, notin, true);
+    printOD(od.getLeft());
+  }
 }

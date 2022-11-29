@@ -27,6 +27,7 @@ dependencies {
   implementation group: 'de.monticore', name: 'monticore-runtime', version: mc_version
   implementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
   implementation "de.monticore.lang:cd4analysis:$mc_version:cd2smt"
+  implementation "de.monticore.lang:cd4analysis:$mc_version:cddiff"
   implementation "de.monticore.lang:od:$mc_version"
 
   implementation 'org.apache.commons:commons-lang3:3.12.0'
