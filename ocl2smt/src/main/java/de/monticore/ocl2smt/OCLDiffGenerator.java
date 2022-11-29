@@ -117,12 +117,12 @@ public class OCLDiffGenerator {
     cd2SMTGenerator.cd2smt(ast1, ctx);
     negConstraints.addAll(cd2SMTGenerator.getAssociationsConstraints());
 
-    //CDHelper.removeAssocCard(ast1);
-   // CDHelper.removeAssocCard(ast2);
+     CDHelper.removeAssocCard(ast1);
+     CDHelper.removeAssocCard(ast2);
     List<ASTODArtifact> res =
         CDDiff.computeAlloySemDiff(ast1, ast2, 20, 1, CDSemantics.SIMPLE_CLOSED_WORLD);
     if (!res.isEmpty()) {
-      Log.info("the Both Class Diagram have A semantic Difference", "CDDiff");
+      Log.info("", "CDDiff");
       return new ImmutablePair<>(null, new HashSet<>(res));
     }
 
