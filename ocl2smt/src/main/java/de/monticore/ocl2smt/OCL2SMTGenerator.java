@@ -7,22 +7,30 @@ import de.monticore.cd2smt.Helper.SMTNameHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
+import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
+import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class OCL2SMTGenerator {
 
@@ -33,6 +41,7 @@ public class OCL2SMTGenerator {
   protected final TypeConverter typeConverter;
 
   protected final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
+
   protected final Set<BoolExpr> genInvConstraints = new HashSet<>();
 
   public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit) {
@@ -43,6 +52,10 @@ public class OCL2SMTGenerator {
 
     this.literalExpressionsConverter = new LiteralExpressionsConverter(ctx);
     this.typeConverter = new TypeConverter(cd2smtGenerator);
+  }
+
+  private ASTCDDefinition getCD() {
+    return cd2smtGenerator.getClassDiagram().getCDDefinition();
   }
 
   public List<IdentifiableBoolExpr> ocl2smt(ASTOCLArtifact astoclArtifact) {
@@ -230,8 +243,8 @@ public class OCL2SMTGenerator {
     return res;
   }
 
-  // --------------------------------------Arithmetic
-  // -----------------------------------------------
+  // ----------------------Arithmetic
+  // ----------------------------------------
   protected ArithExpr<? extends ArithSort> convertMinPref(ASTMinusPrefixExpression node) {
     return ctx.mkMul(ctx.mkInt(-1), convertExprArith(node.getExpression()));
   }
@@ -296,6 +309,9 @@ public class OCL2SMTGenerator {
   }
 
   protected BoolExpr convertEq(ASTEqualsExpression node) {
+    if (typeConverter.isSet(node.getRight()) && typeConverter.isSet(node.getLeft())) {
+      return SMTSet.mkSetEq(convertSet(node.getLeft()), convertSet(node.getRight()), ctx);
+    }
     return ctx.mkEq(convertExpr(node.getLeft()), convertExpr(node.getRight()));
   }
 
@@ -327,11 +343,7 @@ public class OCL2SMTGenerator {
     List<BoolExpr> constraintList = new ArrayList<>();
 
     for (Map.Entry<Expr<? extends Sort>, ASTExpression> expr : inParts.entrySet()) {
-      if (!(expr.getValue() instanceof ASTFieldAccessExpression)) {
-        Log.error("cannot convert ASTInDeclaration, in part is not a ASTFieldAccessExpression");
-      }
-      assert expr.getValue() instanceof ASTFieldAccessExpression;
-      SMTSet mySet = convertFieldAccAssoc((ASTFieldAccessExpression) expr.getValue());
+      SMTSet mySet = convertSet(expr.getValue());
       constraintList.add(mySet.isIn(expr.getKey()));
     }
     BoolExpr result = ctx.mkTrue();
@@ -400,8 +412,12 @@ public class OCL2SMTGenerator {
 
   // -----------------------------------general----------------------------------------------------------------------*/
   protected Expr<? extends Sort> convertName(ASTNameExpression node) {
-    assert varNames.containsKey(node.getName());
-    return varNames.get(node.getName());
+    if (varNames.containsKey(node.getName())) {
+      return varNames.get(node.getName());
+    }
+    assert node.getDefiningSymbol().isPresent();
+    return declVariable(
+        typeConverter.symbol2Sort((VariableSymbol) node.getDefiningSymbol().get()), node.getName());
   }
 
   protected Expr<? extends Sort> convertBracket(ASTBracketExpression node) {
@@ -410,10 +426,7 @@ public class OCL2SMTGenerator {
 
   protected Expr<? extends Sort> convertFieldAcc(ASTFieldAccessExpression node) {
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
-    ASTCDType myType =
-        CDHelper.getASTCDType(
-            SMTNameHelper.sort2CDTypeName(obj.getSort()),
-            cd2smtGenerator.getClassDiagram().getCDDefinition());
+    ASTCDType myType = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(obj.getSort()), getCD());
     return cd2smtGenerator.getAttribute(myType, node.getName(), obj);
   }
 
@@ -423,22 +436,18 @@ public class OCL2SMTGenerator {
       Expr<? extends Sort> auction = convertExpr(node.getExpression());
       ASTCDType Auction =
           CDHelper.getASTCDType(
-              SMTNameHelper.sort2CDTypeName(auction.getSort()),
-              cd2smtGenerator.getClassDiagram().getCDDefinition()); // ASTCDClass Auction
+              SMTNameHelper.sort2CDTypeName(auction.getSort()), getCD()); // ASTCDClass Auction
       ASTCDAssociation auction_person =
           CDHelper.getAssociation(
-              Auction,
-              node.getName(),
-              cd2smtGenerator
-                  .getClassDiagram()
-                  .getCDDefinition()); // ASTCDAssociation auction_person
+              Auction, node.getName(), getCD()); // ASTCDAssociation auction_person
 
-      Sort sort1 = cd2smtGenerator.getSort(Auction); // Sort  Auction_obj
+      Sort sort1 =
+          cd2smtGenerator.getSort(
+              CDHelper.getASTCDType(auction_person.getLeftQualifiedName().getQName(), getCD()));
       Sort sort2 =
           cd2smtGenerator.getSort(
               CDHelper.getASTCDType(
-                  auction_person.getRightQualifiedName().getQName(),
-                  cd2smtGenerator.getClassDiagram().getCDDefinition())); // Sort Person_obj
+                  auction_person.getRightQualifiedName().getQName(), getCD())); // Sort Person_obj
 
       Function<Expr<? extends Sort>, BoolExpr> auction_per_set =
           sort1.equals(auction.getSort())
@@ -453,24 +462,18 @@ public class OCL2SMTGenerator {
 
     ASTCDType Person =
         CDHelper.getASTCDType(
-            SMTNameHelper.sort2CDTypeName(pSet.getSort()),
-            cd2smtGenerator.getClassDiagram().getCDDefinition()); // ASTCDClass Person
+            SMTNameHelper.sort2CDTypeName(pSet.getSort()), getCD()); // ASTCDClass Person
     ASTCDAssociation person_parent =
-        CDHelper.getAssociation(
-            Person,
-            node.getName(),
-            cd2smtGenerator.getClassDiagram().getCDDefinition()); // ASTCDAssociation person_parent
+        CDHelper.getAssociation(Person, node.getName(), getCD()); // ASTCDAssociation person_parent
 
     Sort leftSort =
         cd2smtGenerator.getSort(
             CDHelper.getASTCDType(
-                person_parent.getLeftQualifiedName().getQName(),
-                cd2smtGenerator.getClassDiagram().getCDDefinition())); // Sort person_obj
+                person_parent.getLeftQualifiedName().getQName(), getCD())); // Sort person_obj
     Sort rightSort =
         cd2smtGenerator.getSort(
             CDHelper.getASTCDType(
-                person_parent.getRightQualifiedName().getQName(),
-                cd2smtGenerator.getClassDiagram().getCDDefinition())); // Sort parent_obj
+                person_parent.getRightQualifiedName().getQName(), getCD())); // Sort parent_obj
 
     Function<Expr<? extends Sort>, SMTSet> function =
         leftSort.equals(pSet.getSort())
@@ -484,20 +487,6 @@ public class OCL2SMTGenerator {
     return pSet.collectAll(function, ctx);
   }
 
-  protected List<Expr<? extends Sort>> convertInDecVar(
-      ASTInDeclarationVariable node, ASTMCType type) {
-    List<Expr<? extends Sort>> result = new ArrayList<>();
-
-    Expr<? extends Sort> expr =
-        ctx.mkConst(
-            node.getName(),
-            typeConverter.convertType(type, cd2smtGenerator.getClassDiagram().getCDDefinition()));
-    varNames.put(node.getName(), expr);
-    result.add(expr);
-
-    return result;
-  }
-
   protected void closeScope(List<ASTInDeclaration> inDeclarations) {
     for (ASTInDeclaration decl : inDeclarations) {
       for (ASTInDeclarationVariable var : decl.getInDeclarationVariableList()) {
@@ -509,22 +498,16 @@ public class OCL2SMTGenerator {
 
   protected Expr<? extends Sort> convertParDec(ASTOCLParamDeclaration node) {
     ASTMCType type = node.getMCType();
-    Expr<? extends Sort> expr =
-        ctx.mkConst(
-            node.getName(),
-            typeConverter.convertType(type, cd2smtGenerator.getClassDiagram().getCDDefinition()));
-    varNames.put(node.getName(), expr);
-    return expr;
+    return declVariable(typeConverter.mctype2Sort(type), node.getName());
   }
 
   protected List<Expr<? extends Sort>> convertInDecl(ASTInDeclaration node) {
     List<Expr<? extends Sort>> result = new ArrayList<>();
     for (ASTInDeclarationVariable var : node.getInDeclarationVariableList()) {
       if (node.isPresentMCType()) {
-        result.addAll(convertInDecVar(var, node.getMCType()));
+        result.add(declVariable(typeConverter.mctype2Sort(node.getMCType()), var.getName()));
       } else {
-        Log.error("ASTInDeclExpression Without  Type not yet Supported");
-        // TODO:complete implementation
+        result.add(declVariable(typeConverter.symbol2Sort(var.getSymbol()), var.getName()));
       }
     }
     return result;
@@ -567,13 +550,222 @@ public class OCL2SMTGenerator {
               convertSet(((ASTSetMinusExpression) node).getRight()),
               ctx);
     } else if (node instanceof ASTSetComprehension) {
-      Log.error("conversion of " + node.getClass().getName() + " not yet inpemented");
-      // set = convertSetComp((ASTSetComprehension) node);
+      set = convertSetComp((ASTSetComprehension) node);
+    } else if (node instanceof ASTSetEnumeration) {
+      set = convertSetEnum((ASTSetEnumeration) node);
     } else {
       Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
     }
 
     return set;
+  }
+
+  private Set<String> openSetCompScope(ASTSetComprehension node) {
+    // collect all variable in the ASTSetComprehension
+    OCLTraverser traverser = OCLMill.traverser();
+    NameExpressionVisitor collectVarName = new NameExpressionVisitor();
+    traverser.add4ExpressionsBasis(collectVarName);
+    node.accept(traverser);
+
+    // just return Variable which was declared in the  ASTSetComprehension scope
+    return collectVarName.getVariableNameSet().stream()
+        .filter(name -> !varNames.containsKey(name))
+        .collect(Collectors.toSet());
+  }
+
+  protected SMTSet convertSetComp(ASTSetComprehension node) {
+    Set<String> setCompVarNames = openSetCompScope(node);
+    Function<BoolExpr, SMTSet> setComp = convertSetCompLeftSide(node.getLeft(), setCompVarNames);
+    BoolExpr filter = ctx.mkTrue();
+
+    for (ASTSetComprehensionItem item : node.getSetComprehensionItemList()) {
+      if (item.isPresentGeneratorDeclaration()) {
+        filter = ctx.mkAnd(filter, convertGenDeclRight(item.getGeneratorDeclaration()));
+      }
+      if (item.isPresentExpression()) {
+        filter = ctx.mkAnd(filter, convertBoolExpr(item.getExpression()));
+      }
+      if (item.isPresentSetVariableDeclaration()) {
+        filter = ctx.mkAnd(filter, convertSetVarDeclRight(item.getSetVariableDeclaration()));
+      }
+    }
+    closeSetCompScope(setCompVarNames);
+    return setComp.apply(filter);
+  }
+
+  private void closeSetCompScope(Set<String> setCompVarNames) {
+    for (String name : setCompVarNames) {
+      varNames.remove(name);
+    }
+    setCompVarNames.clear();
+  }
+
+  protected SMTSet convertSetEnum(ASTSetEnumeration node) {
+    Sort sort = null;
+    List<Expr<? extends Sort>> setItemValues = new ArrayList<>();
+    List<Function<ArithExpr<? extends Sort>, BoolExpr>> rangeFilters = new ArrayList<>();
+
+    for (ASTSetCollectionItem item : node.getSetCollectionItemList()) {
+
+      if (item instanceof ASTSetValueItem) {
+        setItemValues.add(convertExpr(((ASTSetValueItem) item).getExpression()));
+        sort = setItemValues.get(0).getSort();
+      } else if (item instanceof ASTSetValueRange) {
+        Pair<Function<ArithExpr<? extends Sort>, BoolExpr>, Sort> range =
+            convertSetValRang((ASTSetValueRange) item);
+        rangeFilters.add(range.getLeft());
+        sort = range.getRight();
+      }
+    }
+    SMTSet set = new SMTSet(obj -> ctx.mkFalse(), sort);
+    SMTSet set1 = set;
+    if (!setItemValues.isEmpty()) {
+      set =
+          new SMTSet(obj -> ctx.mkOr(set1.isIn(obj), addValuesToSetEnum(setItemValues, obj)), sort);
+    }
+
+    for (Function<ArithExpr<? extends Sort>, BoolExpr> range : rangeFilters) {
+      // TODO:: fix the Warning
+      SMTSet set2 = set;
+      set =
+          new SMTSet(
+              obj -> ctx.mkOr(set2.isIn(obj), range.apply((ArithExpr<? extends Sort>) obj)), sort);
+    }
+    return set;
+  }
+
+  private Pair<Function<ArithExpr<? extends Sort>, BoolExpr>, Sort> convertSetValRang(
+      ASTSetValueRange node) {
+    ArithExpr<? extends Sort> expr1 = convertExprArith(node.getUpperBound());
+    ArithExpr<? extends Sort> expr2 = convertExprArith(node.getLowerBound());
+    ArithExpr<? extends Sort> low =
+        (ArithExpr<? extends Sort>) ctx.mkITE(ctx.mkLt(expr1, expr2), expr1, expr2);
+    ArithExpr<? extends Sort> up =
+        (ArithExpr<? extends Sort>) ctx.mkITE(ctx.mkLt(expr1, expr2), expr2, expr1);
+    return new ImmutablePair<>(
+        obj -> ctx.mkAnd(ctx.mkLe(low, obj), ctx.mkLe(obj, up)), low.getSort());
+  }
+
+  BoolExpr addValuesToSetEnum(List<Expr<? extends Sort>> elements, Expr<? extends Sort> value) {
+    BoolExpr res = ctx.mkFalse();
+    for (Expr<? extends Sort> setElem : elements) {
+      res = ctx.mkOr(res, ctx.mkEq(value, setElem));
+    }
+    return res;
+  }
+
+  protected Function<BoolExpr, SMTSet> convertSetCompLeftSide(
+      ASTSetComprehensionItem node, Set<String> setCompvarnames) {
+    Function<BoolExpr, SMTSet> res = null;
+    if (node.isPresentGeneratorDeclaration()) {
+      res = convertGenDeclLeft(node.getGeneratorDeclaration());
+    } else if (node.isPresentSetVariableDeclaration()) {
+      res = convertSetVarDeclLeft(node.getSetVariableDeclaration());
+    } else if (node.isPresentExpression()) {
+      res = convertSetCompExprLeft(node.getExpression(), setCompvarnames);
+    } else {
+      Log.error(
+          "AT position "
+              + "<"
+              + node.get_SourcePositionStart().getLine()
+              + ","
+              + node.get_SourcePositionStart().getColumn()
+              + ">"
+              + "The Left side  of a ASTSetComprehension Cannot be from the type "
+              + node.getExpression().getClass());
+    }
+    return res;
+  }
+
+  protected Function<BoolExpr, SMTSet> convertSetCompExprLeft(
+      ASTExpression node, Set<String> setCompVarNames) {
+    Expr<? extends Sort> expr1 = convertExpr(node);
+    // define a const  for the quantifier
+    Expr<? extends Sort> expr2 = ctx.mkConst("var", expr1.getSort());
+    Set<Expr<? extends Sort>> vars = new HashSet<>();
+    setCompVarNames.forEach(
+        x -> {
+          if (varNames.containsKey(x)) {
+            vars.add(varNames.get(x));
+          }
+          vars.add(expr2);
+        });
+    return bool ->
+        new SMTSet(
+            obj ->
+                ctx.mkExists(
+                    vars.toArray(new Expr[0]),
+                    ctx.mkAnd(ctx.mkEq(obj, expr2), ctx.mkEq(expr2, expr1), bool),
+                    0,
+                    null,
+                    null,
+                    null,
+                    null),
+            expr2.getSort());
+  }
+
+  protected Function<BoolExpr, SMTSet> convertSetVarDeclLeft(ASTSetVariableDeclaration node) {
+    Expr<? extends Sort> expr =
+        declVariable(typeConverter.mctype2Sort(node.getMCType()), node.getName());
+    return bool ->
+        new SMTSet(
+            obj ->
+                ctx.mkExists(
+                    new Expr[] {expr},
+                    ctx.mkAnd(ctx.mkEq(obj, expr), bool),
+                    0,
+                    null,
+                    null,
+                    null,
+                    null),
+            expr.getSort());
+  }
+
+  protected BoolExpr convertSetVarDeclRight(ASTSetVariableDeclaration node) {
+    Expr<? extends Sort> expr;
+    if (node.isPresentMCType()) {
+      expr = declVariable(typeConverter.mctype2Sort(node.getMCType()), node.getName());
+    } else {
+      expr = declVariable(typeConverter.symbol2Sort(node.getSymbol()), node.getName());
+    }
+
+    if (node.isPresentExpression()) {
+      return ctx.mkEq(expr, convertExpr(node.getExpression()));
+    }
+    return ctx.mkTrue();
+  }
+
+  protected BoolExpr convertGenDeclRight(ASTGeneratorDeclaration node) {
+    Expr<? extends Sort> expr = declareSetGenVar(node);
+    SMTSet set = convertSet(node.getExpression());
+    return set.isIn(expr);
+  }
+
+  protected Expr<? extends Sort> declareSetGenVar(ASTGeneratorDeclaration node) {
+    Expr<? extends Sort> res;
+    if (node.isPresentMCType()) {
+      res = declVariable(typeConverter.mctype2Sort(node.getMCType()), node.getName());
+    } else {
+      res = declVariable(typeConverter.symbol2Sort(node.getSymbol()), node.getName());
+    }
+    return res;
+  }
+
+  protected Function<BoolExpr, SMTSet> convertGenDeclLeft(ASTGeneratorDeclaration node) {
+    Expr<? extends Sort> expr = declareSetGenVar(node);
+    SMTSet set = convertSet(node.getExpression());
+    return bool ->
+        new SMTSet(
+            obj ->
+                ctx.mkExists(
+                    new Expr[] {expr},
+                    ctx.mkAnd(ctx.mkEq(obj, expr), set.isIn(expr), bool),
+                    0,
+                    null,
+                    null,
+                    null,
+                    null),
+            expr.getSort());
   }
 
   // a.auction**
@@ -594,13 +786,8 @@ public class OCL2SMTGenerator {
   }
 
   private FuncDecl<BoolSort> buildReflexiveNewAssocFunc(Sort thisSort, String otherRole) {
-    ASTCDType objClass =
-        CDHelper.getASTCDType(
-            SMTNameHelper.sort2CDTypeName(thisSort),
-            cd2smtGenerator.getClassDiagram().getCDDefinition());
-    ASTCDAssociation association =
-        CDHelper.getAssociation(
-            objClass, otherRole, cd2smtGenerator.getClassDiagram().getCDDefinition());
+    ASTCDType objClass = CDHelper.getASTCDType(SMTNameHelper.sort2CDTypeName(thisSort), getCD());
+    ASTCDAssociation association = CDHelper.getAssociation(objClass, otherRole, getCD());
 
     FuncDecl<BoolSort> rel =
         ctx.mkFuncDecl("reflexive_relation", new Sort[] {thisSort, thisSort}, ctx.mkBoolSort());
@@ -623,5 +810,11 @@ public class OCL2SMTGenerator {
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
     return new Context(cfg);
+  }
+
+  protected Expr<? extends Sort> declVariable(Sort type, String name) {
+    Expr<? extends Sort> expr = ctx.mkConst(name, type);
+    varNames.put(name, expr);
+    return expr;
   }
 }

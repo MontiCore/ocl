@@ -80,7 +80,7 @@ public abstract class ExpressionAbstractTest {
     }
   }
 
-  void testInv(String invName) {
+  public void testInv(String invName) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
     solverConstraints.add(getConstraint(invName));
     Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
@@ -98,7 +98,7 @@ public abstract class ExpressionAbstractTest {
     System.out.println(solver);
   }
 
-  void testUnsatInv(String invName) {
+  public void testUnsatInv(String invName) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
     solverConstraints.add(getConstraint(invName));
     Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);

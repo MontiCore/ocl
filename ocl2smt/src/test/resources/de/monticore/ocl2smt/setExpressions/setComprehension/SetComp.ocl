@@ -1,0 +1,79 @@
+
+package invariants;
+
+ocl Test01 {
+    context Auction a  inv Test1 :
+             exists Person p1 :
+                p1 isin  { p in a.person| p.age == 20 && p.name == "Naruto"};
+
+
+    context Auction a  inv Test2 :
+             exists Person p1 ,p2:
+               p1 isin  { p in a.person| p.age == 20 && p.name == "Naruto"}&&
+               p1 == p2 &&
+               p2.age != 20 ;
+
+
+    context Auction a inv Test3 :
+            exists Person p1 :
+               p1 isin  { p | p in a.person , p.age == 20 , p.name == "Naruto"};
+
+     context Auction a inv Test4 :
+            exists Person p1 :
+               p1 isin  { p | p in a.person , p.age == 20 , p.name == "Naruto"}&&
+               p1 notin a.person ;
+
+
+    inv Test5 :
+       exists Auction a1 , a2 :
+            a1 != a2 &&
+           exists Person p1 :
+              p1 isin  {Person p | p isin a1.person intersect a2.person , p.age == 20 , p.name == "Naruto"} &&
+              (p1 notin a1.person || p1.age != 20) ;
+
+   inv Test7:
+          exists Auction a1:
+            a1.auctionIdent isin Set{ y | x in Set{4..8, 19},  y = x*x, y < 20 } ;
+
+   context Auction a inv Test8:
+      a.auctionIdent isin { x*x | x in Set{5,3..19} };
+
+
+    context Auction a inv Test9 :
+        a.person == { Person p | p.name == "Naruto"} &&
+        exists p1 in a.person:
+          p1.name != "Naruto"  ;
+
+
+
+   context Auction a inv Test10 :
+     exists Person p1 , p2  :
+       p1 isin { p | p in a.person} &&
+       p2 isin { p | p in a.person}&&
+       p1 != p2 ;
+
+   context Auction a inv Test11:
+         a.auctionIdent isin { x*x | x in Set{5,3} }
+         && a.auctionIdent notin Set{25,9};
+
+
+    inv Test12:
+       exists Auction a1 , a2:
+            a1.auctionIdent isin { x*y | y = 2, x in Set{5,3} }&&
+            a2.auctionIdent isin { x*y | y= 2, x in Set{5,3} } &&
+            a1.auctionIdent  != a2.auctionIdent ;
+
+
+inv Test13:
+    {-3..3} == {-3, -2, -1,0, 1..1, 2, 3}&&
+    {1..1} == {1} &&
+    {9..5} == {9, 8, 7, 6, 5} &&
+    {'a'..'c'} == {'a', 'b', 'c'} &&
+    {3, 5..7, 2} == {3, 5, 6, 7, 2} &&
+    {3..5, 7..9} == {3, 4, 5, 7, 8, 9} &&
+    {3 .. (2 + 5)} == {3, 4, 5, 6, 7};
+
+
+
+ }
+

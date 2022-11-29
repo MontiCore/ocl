@@ -1,6 +1,6 @@
 classdiagram CDTest{
  class Auction {
-   String  name ;
+   java.lang.String  name ;
    int auctionIdent;
  }
 
@@ -9,6 +9,6 @@ classdiagram CDTest{
    int age ;
  }
 
-  association [*] Auction(auction)      --     (person)Person[1..*];
+  association [*] Auction(auction)      --     (person)Person[*];
 
 }
