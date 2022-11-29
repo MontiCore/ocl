@@ -75,13 +75,7 @@ inv  Only_one_auction:
               a isin (p2.auction \ p1.auction) &&
               p1 != p2;
 
- context Auction a inv Set_construction:
-    (forall Person p1 :
-      p1 isin a.person) &&
-    (exists Person p2:
-      p2 isin {Person p in a.person | p.age > 10}) ;/* &&
-   (exists Person p3:
-      p3 notin {Person p in a.person | p.age > 10});*/
+
 
   inv Notin_isIn:
      exists Auction a1 , a2:
@@ -102,11 +96,10 @@ inv  Only_one_auction:
 
 
     inv Counter_Example:
-      // (Wrong Ivariant) There is no person, who is in two auctions. NOTICE THAT a1 and a2 could be the same Object!!!!
       (forall Auction a1, a2: (forall Person p: p isin a1.person implies p notin a2.person))
-
-      // Every Auction has at least one person
        && (forall Auction a6: exists Person p1: p1 isin a6.person);
+
+
 
  }
 

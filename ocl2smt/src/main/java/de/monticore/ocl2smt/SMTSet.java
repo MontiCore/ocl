@@ -55,11 +55,20 @@ public class SMTSet {
   }
 
   public BoolExpr isIn(Expr<? extends Sort> expr) {
+    if (!expr.getSort().equals(sort)) {
+      Log.error(
+          "the obj "
+              + expr
+              + " with the sort "
+              + expr.getSort()
+              + " cannot be in the set  with sort "
+              + sort);
+    }
     return setFunction.apply(expr);
   }
 
   public BoolExpr notIn(Expr<? extends Sort> expr, Context ctx) {
-    return ctx.mkNot(setFunction.apply(expr));
+    return ctx.mkNot(isIn(expr));
   }
 
   public SMTSet collectAll(Function<Expr<? extends Sort>, SMTSet> function, Context ctx) {
@@ -75,6 +84,12 @@ public class SMTSet {
                 null,
                 null),
         function.apply(expr).sort);
+  }
+
+  public static BoolExpr mkSetEq(SMTSet set, SMTSet set2, Context ctx) {
+    Expr<? extends Sort> expr = ctx.mkConst("const", set.getSort());
+    return ctx.mkForall(
+        new Expr[] {expr}, ctx.mkEq(set.isIn(expr), set2.isIn(expr)), 0, null, null, null, null);
   }
 
   enum OPERATION {
