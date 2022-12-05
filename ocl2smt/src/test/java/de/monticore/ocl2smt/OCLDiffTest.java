@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class OCLDiffTest {
@@ -30,6 +31,7 @@ public class OCLDiffTest {
   protected static final String RELATIVE_TARGET_PATH =
       "target/generated/sources/annotationProcessor/java/ocl2smttest";
 
+  @BeforeEach
   public void setUp() {
     Log.init();
     OCLMill.init();
@@ -38,14 +40,12 @@ public class OCLDiffTest {
 
   protected ASTOCLCompilationUnit parseOCl(String cdFileName, String oclFileName)
       throws IOException {
-    setUp();
     return OCL_Loader.loadAndCheckOCL(
         Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(),
         Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
   }
 
   protected ASTCDCompilationUnit parseCD(String cdFileName) throws IOException {
-    setUp();
     return OCL_Loader.loadAndCheckCD(Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
   }
 
@@ -141,5 +141,12 @@ public class OCLDiffTest {
               assert !(p instanceof ASTODNamedObject)
                   || (((ASTODNamedObject) p).getODAttributeList().size() <= 3);
             });
+  }
+
+  @Test
+  public void testPostPreConditions() throws IOException {
+    parseCD("/post-pre-conditions/post-pre.cd");
+    Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();
+    oclSet.add(parseOCl("/post-pre-conditions/post-pre.cd", "/post-pre-conditions/post-pre.ocl"));
   }
 }
