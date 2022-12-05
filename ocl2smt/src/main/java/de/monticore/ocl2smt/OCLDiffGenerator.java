@@ -21,9 +21,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class OCLDiffGenerator {
 
-  protected static OCL2SMTGenerator ocl2SMTGenerator;
-
-  protected static List<IdentifiableBoolExpr> buildSmtBoolExpr(Set<ASTOCLCompilationUnit> in) {
+  protected static List<IdentifiableBoolExpr> buildSmtBoolExpr(
+      OCL2SMTGenerator ocl2SMTGenerator, Set<ASTOCLCompilationUnit> in) {
     return in.stream()
         .flatMap(p -> ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).stream())
         .collect(Collectors.toList());
@@ -31,8 +30,9 @@ public class OCLDiffGenerator {
 
   public static ASTODArtifact oclWitness(
       ASTCDCompilationUnit astcd, Set<ASTOCLCompilationUnit> in, boolean partial) {
-    setOCL2SMTGenerator(astcd);
-    List<IdentifiableBoolExpr> solverConstraints = buildSmtBoolExpr(in);
+    OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(astcd);
+
+    List<IdentifiableBoolExpr> solverConstraints = buildSmtBoolExpr(ocl2SMTGenerator, in);
 
     // check if they exist a model for the list of positive Constraint
     Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
@@ -40,7 +40,7 @@ public class OCLDiffGenerator {
       Log.error("there are no Model for the List Of Positive Constraints");
     }
 
-    return buildOd(solver.getModel(), "Witness", partial).get();
+    return buildOd(ocl2SMTGenerator.cd2smtGenerator, solver.getModel(), "Witness", partial).get();
   }
 
   public static ASTODArtifact oclWitness(ASTCDCompilationUnit cd, Set<ASTOCLCompilationUnit> in) {
@@ -48,6 +48,7 @@ public class OCLDiffGenerator {
   }
 
   private static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiffHelper(
+      OCL2SMTGenerator ocl2SMTGenerator,
       List<IdentifiableBoolExpr> posConstraintList,
       List<IdentifiableBoolExpr> negConstList,
       boolean partial) {
@@ -63,6 +64,7 @@ public class OCLDiffGenerator {
       if (solver.check() == Status.SATISFIABLE) {
         satOdList.add(
             buildOd(
+                    ocl2SMTGenerator.cd2smtGenerator,
                     solver.getModel(),
                     negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0],
                     partial)
@@ -82,50 +84,54 @@ public class OCLDiffGenerator {
       Set<ASTOCLCompilationUnit> in,
       Set<ASTOCLCompilationUnit> notIn,
       boolean partial) {
+    OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(astcd);
     // check if the Model is Satisfiable
     oclWitness(astcd, in, false);
     // positive ocl constraint
-    List<IdentifiableBoolExpr> solverConstraints = buildSmtBoolExpr(in);
+    List<IdentifiableBoolExpr> posConstList = buildSmtBoolExpr(ocl2SMTGenerator, in);
 
     // negative ocl constraints
     List<IdentifiableBoolExpr> negConstList = new ArrayList<>();
-    buildSmtBoolExpr(notIn)
+    buildSmtBoolExpr(ocl2SMTGenerator, notIn)
         .forEach(
             idf -> negConstList.add(idf.negate(ocl2SMTGenerator.cd2smtGenerator.getContext())));
 
-    return oclDiffHelper(solverConstraints, negConstList, partial);
+    return oclDiffHelper(ocl2SMTGenerator, posConstList, negConstList, partial);
   }
 
   public static Pair<ASTODArtifact, Set<ASTODArtifact>> CDOCLDiff(
-      ASTCDCompilationUnit ast1,
-      ASTCDCompilationUnit ast2,
-      Set<ASTOCLCompilationUnit> in,
-      Set<ASTOCLCompilationUnit> notIn,
+      ASTCDCompilationUnit posCd,
+      ASTCDCompilationUnit negCd,
+      Set<ASTOCLCompilationUnit> posOcl,
+      Set<ASTOCLCompilationUnit> negOcl,
       boolean partial) {
 
-    setOCL2SMTGenerator(ast1);
-
-    CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
-    final Context ctx = ocl2SMTGenerator.cd2smtGenerator.getContext();
+    OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(posCd);
+    Context ctx = ocl2SMTGenerator.cd2smtGenerator.getContext();
 
     // list of positive OCl Constraints
-    List<IdentifiableBoolExpr> posConstraints = buildSmtBoolExpr(in);
+    List<IdentifiableBoolExpr> posConstraints = buildSmtBoolExpr(ocl2SMTGenerator, posOcl);
 
     // list of negative OCL Constraints
-    List<IdentifiableBoolExpr> negConstraints = buildSmtBoolExpr(notIn);
-    cd2SMTGenerator.cd2smt(ast1, ctx);
+    CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
+    List<IdentifiableBoolExpr> negConstraints = buildSmtBoolExpr(ocl2SMTGenerator, negOcl);
+    cd2SMTGenerator.cd2smt(negCd, ctx);
     negConstraints.addAll(cd2SMTGenerator.getAssociationsConstraints());
 
-    CDHelper.removeAssocCard(ast1);
-    CDHelper.removeAssocCard(ast2);
+    CDHelper.removeAssocCard(posCd);
+    CDHelper.removeAssocCard(negCd);
+
     List<ASTODArtifact> res =
         CDDiff.computeAlloySemDiff(
-            ast2, ast1, CDDiff.getDefaultDiffsize(ast1, ast2), 1, CDSemantics.SIMPLE_CLOSED_WORLD);
+            posCd,
+            negCd,
+            CDDiff.getDefaultDiffsize(negCd, posCd),
+            1,
+            CDSemantics.SIMPLE_CLOSED_WORLD);
     if (!res.isEmpty()) {
-      Log.info("", "CDDiff");
       return new ImmutablePair<>(null, new HashSet<>(res));
     }
-    return oclDiffHelper(posConstraints, negConstraints, partial);
+    return oclDiffHelper(ocl2SMTGenerator, posConstraints, negConstraints, partial);
   }
 
   public static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiff(
@@ -133,11 +139,8 @@ public class OCLDiffGenerator {
     return oclDiff(cd, in, notIn, false);
   }
 
-  protected static Optional<ASTODArtifact> buildOd(Model model, String ODName, boolean partial) {
-    return ocl2SMTGenerator.cd2smtGenerator.smt2od(model, partial, ODName);
-  }
-
-  private static void setOCL2SMTGenerator(ASTCDCompilationUnit ast) {
-    ocl2SMTGenerator = new OCL2SMTGenerator(ast);
+  protected static Optional<ASTODArtifact> buildOd(
+      CD2SMTGenerator cd2SMTGenerator, Model model, String ODName, boolean partial) {
+    return cd2SMTGenerator.smt2od(model, partial, ODName);
   }
 }

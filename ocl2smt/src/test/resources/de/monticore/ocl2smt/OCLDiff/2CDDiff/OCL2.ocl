@@ -1,7 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package invariants;
 
-ocl NC2 {
+ocl NegOCL {
+
+
 
 
 }
