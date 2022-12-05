@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+package docs;
+
+classdiagram Auction {
+
+ class  Person{
+   String changeCompany(String name);
+ }
+
+ class  Company{
+  int employees ;
+  String name ;
+
+ }
+  association [1] Person(person)     --     (company)Company [1];
+
+}

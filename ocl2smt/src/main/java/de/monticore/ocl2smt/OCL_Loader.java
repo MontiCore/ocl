@@ -3,15 +3,16 @@ package de.monticore.ocl2smt;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cd4analysis._cocos.CD4AnalysisCoCoChecker;
-import de.monticore.cd4analysis._parser.CD4AnalysisParser;
-import de.monticore.cd4analysis._symboltable.CD4AnalysisSymbolTableCompleter;
-import de.monticore.cd4analysis._symboltable.ICD4AnalysisArtifactScope;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
-import de.monticore.cd4analysis.cocos.CD4AnalysisCoCosDelegator;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
+import de.monticore.cd4code._parser.CD4CodeParser;
+import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
+import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.ICD4CodeScope;
+import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -25,6 +26,7 @@ import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCompleter;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
+import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -35,6 +37,7 @@ public class OCL_Loader {
     assert cdFile.getName().endsWith(".cd");
     ASTCDCompilationUnit cdAST = parseCDModel(cdFile.getAbsolutePath());
     cdAST.setEnclosingScope(createCDSymTab(cdAST));
+    setAssociationsRoles(cdAST);
     checkCDCoCos(cdAST);
 
     return cdAST;
@@ -62,7 +65,6 @@ public class OCL_Loader {
   public static ASTOCLCompilationUnit loadAndCheckOCL(File oclFile, File cdFile)
       throws IOException {
     ASTCDCompilationUnit cdAST = loadAndCheckCD(cdFile);
-    setAssociationsRoles(cdAST);
     transformAllRoles(cdAST);
     assert oclFile.getName().endsWith(".ocl");
     ASTOCLCompilationUnit oclAST = parseOCLModel(oclFile.getAbsolutePath());
@@ -76,7 +78,7 @@ public class OCL_Loader {
   }
 
   protected static ASTCDCompilationUnit parseCDModel(String cdFilePath) throws IOException {
-    CD4AnalysisParser cdParser = new CD4AnalysisParser();
+    CD4CodeParser cdParser = new CD4CodeParser();
     final Optional<ASTCDCompilationUnit> optCdAST = cdParser.parse(cdFilePath);
     assert (optCdAST.isPresent());
     return optCdAST.get();
@@ -89,11 +91,11 @@ public class OCL_Loader {
     return optOclAST.get();
   }
 
-  protected static ICD4AnalysisArtifactScope createCDSymTab(ASTCDCompilationUnit ast) {
-    ICD4AnalysisArtifactScope as = CD4AnalysisMill.scopesGenitorDelegator().createFromAST(ast);
-    BuiltInTypes.addBuiltInTypes(CD4AnalysisMill.globalScope());
-    CD4AnalysisSymbolTableCompleter c =
-        new CD4AnalysisSymbolTableCompleter(
+  protected static ICD4CodeArtifactScope createCDSymTab(ASTCDCompilationUnit ast) {
+    ICD4CodeArtifactScope as = CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+    CD4CodeSymbolTableCompleter c =
+        new CD4CodeSymbolTableCompleter(
             ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
     ast.accept(c.getTraverser());
     return as;
@@ -111,7 +113,7 @@ public class OCL_Loader {
   }
 
   protected static void checkCDCoCos(ASTCDCompilationUnit cdAST) {
-    CD4AnalysisCoCoChecker cdChecker = new CD4AnalysisCoCosDelegator().getCheckerForAllCoCos();
+    CD4CodeCoCoChecker cdChecker = new CD4CodeCoCosDelegator().getCheckerForAllCoCos();
     cdChecker.checkAll(cdAST);
   }
 
@@ -123,6 +125,7 @@ public class OCL_Loader {
   protected static void loadCDModel(ASTOCLCompilationUnit oclAST, ASTCDCompilationUnit cdAST) {
     String serialized =
         new CD4CodeSymbols2Json().serialize((ICD4CodeScope) cdAST.getEnclosingScope());
+    Log.trace(serialized, OCL_Loader.class.getName());
     SymbolTableUtil.prepareMill();
     SymbolTableUtil.addCd4cSymbols();
     OCLMill.globalScope().addSubScope(new OCLSymbols2Json().deserialize(serialized));
