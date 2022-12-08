@@ -25,6 +25,7 @@ import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCompleter;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.util.SymbolTableUtil;
+import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
@@ -92,8 +93,9 @@ public class OCL_Loader {
   }
 
   protected static ICD4CodeArtifactScope createCDSymTab(ASTCDCompilationUnit ast) {
-    ICD4CodeArtifactScope as = CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+    ICD4CodeArtifactScope as = CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
+    as.addImports(new ImportStatement("java.lang", true));
     CD4CodeSymbolTableCompleter c =
         new CD4CodeSymbolTableCompleter(
             ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
@@ -103,6 +105,7 @@ public class OCL_Loader {
 
   protected static IOCLArtifactScope createOCLSymTab(ASTOCLCompilationUnit ast) {
     IOCLArtifactScope as = OCLMill.scopesGenitorDelegator().createFromAST(ast);
+    as.addImports(new ImportStatement("java.lang", true));
     OCLSymbolTableCompleter c =
         new OCLSymbolTableCompleter(
             ast.getMCImportStatementList(),

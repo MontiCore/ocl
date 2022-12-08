@@ -4,6 +4,7 @@ package de.monticore.ocl.util;
 import de.monticore.class2mc.Class2MCResolver;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLDeSer;
 import de.monticore.ocl.ocl._symboltable.OCLScopesGenitorDelegator;
 import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCompleter;
@@ -22,6 +23,7 @@ import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbolDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbolDeSer;
+import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.logging.Log;
 
 /**
@@ -60,7 +62,11 @@ public class SymbolTableUtil {
 
   public static void runSymTabGenitor(ASTOCLCompilationUnit ast) {
     OCLScopesGenitorDelegator genitor = OCLMill.scopesGenitorDelegator();
-    genitor.createFromAST(ast);
+    addDefaultImports(genitor.createFromAST(ast));
+  }
+
+  public static void addDefaultImports(IOCLArtifactScope scope) {
+    scope.addImports(new ImportStatement("java.lang", true));
   }
 
   public static void runSymTabCompleter(ASTOCLCompilationUnit ast) {
