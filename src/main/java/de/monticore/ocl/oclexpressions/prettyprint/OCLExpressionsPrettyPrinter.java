@@ -7,13 +7,11 @@ import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.prettyprint.CommentPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._ast.ASTVariable;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class OCLExpressionsPrettyPrinter
-  implements OCLExpressionsHandler {
+public class OCLExpressionsPrettyPrinter implements OCLExpressionsHandler {
 
   protected OCLExpressionsTraverser traverser;
 

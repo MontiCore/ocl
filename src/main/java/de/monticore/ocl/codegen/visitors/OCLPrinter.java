@@ -12,12 +12,11 @@ import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.ocl._visitor.OCLHandler;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
-import de.monticore.ocl.types.check.OCLDeriver;
-import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
+import de.monticore.types.check.IDerive;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -27,16 +26,16 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
 
   protected OCLTraverser traverser;
 
-  public OCLPrinter(IndentPrinter printer, VariableNaming naming,
-      OCLDeriver oclDeriver, OCLSynthesizer oclSynthesizer) {
+  public OCLPrinter(
+      IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(oclDeriver);
-    Preconditions.checkNotNull(oclSynthesizer);
+    Preconditions.checkNotNull(deriver);
+    Preconditions.checkNotNull(syntheziser);
     this.printer = printer;
     this.naming = naming;
-    this.oclDeriver = oclDeriver;
-    this.oclSynthesizer = oclSynthesizer;
+    this.deriver = deriver;
+    this.syntheziser = syntheziser;
   }
 
   @Override
@@ -107,19 +106,17 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
   @Override
   public void handle(ASTOCLContextDefinition node) {
     if (node.isPresentMCType()) {
-      this.getPrinter().print(boxType(this.getOCLSynthesizer().synthesizeType(node.getMCType())));
-    }
-    else if (node.isPresentOCLParamDeclaration()) {
+      this.getPrinter().print(boxType(this.getSynthesizer().synthesizeType(node.getMCType())));
+    } else if (node.isPresentOCLParamDeclaration()) {
       node.getOCLParamDeclaration().accept(this.getTraverser());
-    }
-    else {
+    } else {
       Log.error(UNEXPECTED_STATE_AST_NODE, node.get_SourcePositionStart());
     }
   }
 
   @Override
   public void handle(ASTOCLParamDeclaration node) {
-    this.getPrinter().print(boxType(this.getOCLSynthesizer().synthesizeType(node.getMCType())));
+    this.getPrinter().print(boxType(this.getSynthesizer().synthesizeType(node.getMCType())));
     this.getPrinter().print(" ");
     this.printer.print(node.getName());
     if (node.isPresentExpression()) {
@@ -135,8 +132,7 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
 
     if (node.isPresentName()) {
       this.getPrinter().print(node.getName());
-    }
-    else {
+    } else {
       this.getPrinter().print(this.getNaming().getName(node));
     }
 
@@ -186,7 +182,7 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
   /**
    * Prints a collection
    *
-   * @param items     to be printed
+   * @param items to be printed
    * @param seperator string for seperating items
    */
   protected void printList(Collection<? extends ASTNode> items, String seperator) {
@@ -199,5 +195,4 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
       sep = seperator;
     }
   }
-
 }

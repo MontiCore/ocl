@@ -1,0 +1,10 @@
+
+classdiagram MinAuction {
+  class Auction;
+
+  class  Person{
+    int age ;
+  }
+
+  association [1] Auction(auction)     --     (person)Person[1..*];
+}

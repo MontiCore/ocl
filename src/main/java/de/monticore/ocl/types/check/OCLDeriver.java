@@ -3,12 +3,7 @@ package de.monticore.ocl.types.check;
 
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
-import de.monticore.types.check.AbstractDerive;
-import de.monticore.types.check.DeriveSymTypeOfExpression;
-import de.monticore.types.check.DeriveSymTypeOfLiterals;
-import de.monticore.types.check.DeriveSymTypeOfMCCommonLiterals;
-import de.monticore.types.check.SynthesizeSymTypeFromMCCollectionTypes;
-import de.monticore.types.check.SynthesizeSymTypeFromMCSimpleGenericTypes;
+import de.monticore.types.check.*;
 
 public class OCLDeriver extends AbstractDerive {
 
@@ -28,17 +23,20 @@ public class OCLDeriver extends AbstractDerive {
     traverser.add4ExpressionsBasis(deriveSymTypeOfExpression);
     traverser.setExpressionsBasisHandler(deriveSymTypeOfExpression);
 
-    DeriveSymTypeOfCommonExpressions deriveSymTypeOfCommonExpressions = new DeriveSymTypeOfCommonExpressions();
+    DeriveSymTypeOfCommonExpressions deriveSymTypeOfCommonExpressions =
+        new DeriveSymTypeOfCommonExpressions();
     deriveSymTypeOfCommonExpressions.setTypeCheckResult(typeCheckResult);
     traverser.add4CommonExpressions(deriveSymTypeOfCommonExpressions);
     traverser.setCommonExpressionsHandler(deriveSymTypeOfCommonExpressions);
 
-    DeriveSymTypeOfSetExpressions deriveSymTypeOfSetExpressions = new DeriveSymTypeOfSetExpressions();
+    DeriveSymTypeOfSetExpressions deriveSymTypeOfSetExpressions =
+        new DeriveSymTypeOfSetExpressions();
     deriveSymTypeOfSetExpressions.setTypeCheckResult(typeCheckResult);
     traverser.add4SetExpressions(deriveSymTypeOfSetExpressions);
     traverser.setSetExpressionsHandler(deriveSymTypeOfSetExpressions);
 
-    DeriveSymTypeOfOCLExpressions deriveSymTypeOfOCLExpressions = new DeriveSymTypeOfOCLExpressions();
+    DeriveSymTypeOfOCLExpressions deriveSymTypeOfOCLExpressions =
+        new DeriveSymTypeOfOCLExpressions();
     deriveSymTypeOfOCLExpressions.setTypeCheckResult(typeCheckResult);
     traverser.setOCLExpressionsHandler(deriveSymTypeOfOCLExpressions);
 
@@ -46,7 +44,8 @@ public class OCLDeriver extends AbstractDerive {
     deriveSymTypeOfLiterals.setTypeCheckResult(typeCheckResult);
     traverser.add4MCLiteralsBasis(deriveSymTypeOfLiterals);
 
-    DeriveSymTypeOfMCCommonLiterals deriveSymTypeOfMCCommonLiterals = new DeriveSymTypeOfMCCommonLiterals();
+    DeriveSymTypeOfMCCommonLiterals deriveSymTypeOfMCCommonLiterals =
+        new DeriveSymTypeOfMCCommonLiterals();
     deriveSymTypeOfMCCommonLiterals.setTypeCheckResult(typeCheckResult);
     traverser.add4MCCommonLiterals(deriveSymTypeOfMCCommonLiterals);
 
@@ -54,24 +53,27 @@ public class OCLDeriver extends AbstractDerive {
     deriveSymTypeOfOCL.setTypeCheckResult(typeCheckResult);
     traverser.setOCLHandler(deriveSymTypeOfOCL);
 
-    DeriveSymTypeOfOptionalOperators deriveSymTypeOfOptionalOperators = new DeriveSymTypeOfOptionalOperators();
+    DeriveSymTypeOfOptionalOperators deriveSymTypeOfOptionalOperators =
+        new DeriveSymTypeOfOptionalOperators();
     deriveSymTypeOfOptionalOperators.setTypeCheckResult(typeCheckResult);
     traverser.setOptionalOperatorsHandler(deriveSymTypeOfOptionalOperators);
 
-    SynthesizeSymTypeFromMCSimpleGenericTypes synthesizeSymTypeFromMCSimpleGenericTypes = new SynthesizeSymTypeFromMCSimpleGenericTypes();
+    SynthesizeSymTypeFromMCSimpleGenericTypes synthesizeSymTypeFromMCSimpleGenericTypes =
+        new SynthesizeSymTypeFromMCSimpleGenericTypes();
     synthesizeSymTypeFromMCSimpleGenericTypes.setTypeCheckResult(typeCheckResult);
     traverser.add4MCSimpleGenericTypes(synthesizeSymTypeFromMCSimpleGenericTypes);
     traverser.setMCSimpleGenericTypesHandler(synthesizeSymTypeFromMCSimpleGenericTypes);
 
-    SynthesizeSymTypeFromMCBasicTypes4OCL synthesizeSymTypeFromMCBasicTypes = new SynthesizeSymTypeFromMCBasicTypes4OCL();
+    SynthesizeSymTypeFromMCBasicTypes synthesizeSymTypeFromMCBasicTypes =
+        new SynthesizeSymTypeFromMCBasicTypes();
     synthesizeSymTypeFromMCBasicTypes.setTypeCheckResult(typeCheckResult);
     traverser.add4MCBasicTypes(synthesizeSymTypeFromMCBasicTypes);
     traverser.setMCBasicTypesHandler(synthesizeSymTypeFromMCBasicTypes);
 
-    SynthesizeSymTypeFromMCCollectionTypes synthesizeSymTypeFromMCCollectionTypes = new SynthesizeSymTypeFromMCCollectionTypes();
+    SynthesizeSymTypeFromMCCollectionTypes synthesizeSymTypeFromMCCollectionTypes =
+        new SynthesizeSymTypeFromMCCollectionTypes();
     synthesizeSymTypeFromMCCollectionTypes.setTypeCheckResult(typeCheckResult);
     traverser.add4MCCollectionTypes(synthesizeSymTypeFromMCCollectionTypes);
     traverser.setMCCollectionTypesHandler(synthesizeSymTypeFromMCCollectionTypes);
   }
-
 }

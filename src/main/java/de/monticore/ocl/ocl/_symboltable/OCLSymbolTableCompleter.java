@@ -20,14 +20,14 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcsimplegenerictypes.MCSimpleGenericTypesMill;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.List;
 import java.util.Optional;
 
 public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor2, OCLHandler {
   protected static final String USED_BUT_UNDEFINED = "0xB0028: Type '%s' is used but not defined.";
 
-  protected static final String DEFINED_MUTLIPLE_TIMES = "0xB0031: Type '%s' is defined more than once.";
+  protected static final String DEFINED_MUTLIPLE_TIMES =
+      "0xB0031: Type '%s' is defined more than once.";
   protected final List<ASTMCImportStatement> imports;
   protected final String packageDeclaration;
   protected OCLTraverser traverser;
@@ -69,7 +69,10 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
     ast.getMCType().accept(getTraverser());
     final TypeCheckResult typeResult = synthesizer.synthesizeType(ast.getMCType());
     if (!typeResult.isPresentResult()) {
-      Log.error(String.format("The type (%s) of the object (%s) could not be calculated", ast.getMCType(), ast.getName()));
+      Log.error(
+          String.format(
+              "The type (%s) of the object (%s) could not be calculated",
+              ast.getMCType(), ast.getName()));
     } else {
       symbol.setType(typeResult.getResult());
       symbol.setIsReadOnly(true);
@@ -84,7 +87,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
 
   @Override
   public void visit(ASTOCLInvariant node) {
-    //check whether symbols for "this" and "super" should be introduced
+    // check whether symbols for "this" and "super" should be introduced
     if (!node.isEmptyOCLContextDefinitions()) {
       for (ASTOCLContextDefinition cd : node.getOCLContextDefinitionList()) {
         if (cd.isPresentMCType()) {
@@ -94,7 +97,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
           if (!typeResult.isPresentResult()) {
             Log.error(String.format("The type (%s) could not be calculated", type));
           } else {
-            //create VariableSymbols for "this" and "super"
+            // create VariableSymbols for "this" and "super"
             VariableSymbol t = new VariableSymbol("this");
             t.setType(typeResult.getResult());
             t.setIsReadOnly(true);
@@ -106,9 +109,12 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
               cd.getEnclosingScope().add(s);
             }
 
-            //create VariableSymbol for Name of Type
-            VariableSymbol typeName = new VariableSymbol(cd.getMCType().
-              printType(MCSimpleGenericTypesMill.mcSimpleGenericTypesPrettyPrinter()).toLowerCase());
+            // create VariableSymbol for Name of Type
+            VariableSymbol typeName =
+                new VariableSymbol(
+                    cd.getMCType()
+                        .printType(MCSimpleGenericTypesMill.mcSimpleGenericTypesPrettyPrinter())
+                        .toLowerCase());
             typeName.setType(typeResult.getResult());
             typeName.setIsReadOnly(true);
             cd.getEnclosingScope().add(typeName);
@@ -129,7 +135,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
     }
 
     if (node.isPresentMCReturnType()) {
-      //create VariableSymbol for result of method
+      // create VariableSymbol for result of method
       final TypeCheckResult typeResult;
       if (node.isPresentMCReturnType()) {
         ASTMCReturnType returnType = node.getMCReturnType();
@@ -159,16 +165,16 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
 
   @Override
   public void endVisit(VariableSymbol var) {
-    //CompleterUtil.visit(var, imports, packageDeclaration);
+    // CompleterUtil.visit(var, imports, packageDeclaration);
   }
 
   @Override
   public void endVisit(TypeSymbol type) {
-    //CompleterUtil.visit(type, imports, packageDeclaration);
+    // CompleterUtil.visit(type, imports, packageDeclaration);
   }
 
   @Override
   public void endVisit(FunctionSymbol function) {
-    //CompleterUtil.visit(function, imports, packageDeclaration);
+    // CompleterUtil.visit(function, imports, packageDeclaration);
   }
 }

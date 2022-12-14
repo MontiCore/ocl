@@ -12,7 +12,6 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.Joiners;
 import de.se_rwth.commons.Names;
-
 import java.util.Iterator;
 import java.util.List;
 
@@ -120,8 +119,7 @@ public class OCLPrettyPrinter implements OCLHandler {
 
     if (node.isContext()) {
       getPrinter().print("context ");
-    }
-    else if (node.isImport()) {
+    } else if (node.isImport()) {
       getPrinter().print("import ");
     }
 
@@ -162,11 +160,9 @@ public class OCLPrettyPrinter implements OCLHandler {
 
     if (node.isPresentMCType()) {
       node.getMCType().accept(getTraverser());
-    }
-    else if (node.isPresentGeneratorDeclaration()) {
+    } else if (node.isPresentGeneratorDeclaration()) {
       node.getGeneratorDeclaration().accept(getTraverser());
-    }
-    else if (node.isPresentOCLParamDeclaration()) {
+    } else if (node.isPresentOCLParamDeclaration()) {
       node.getOCLParamDeclaration().accept(getTraverser());
     }
 
@@ -208,7 +204,8 @@ public class OCLPrettyPrinter implements OCLHandler {
     CommentPrettyPrinter.printPreComments(node, getPrinter());
   }
 
-  @Override public void handle(ASTOCLParamDeclaration node) {
+  @Override
+  public void handle(ASTOCLParamDeclaration node) {
     node.getMCType().accept(getTraverser());
     getPrinter().print(" " + node.getName());
     if (node.isPresentExpression()) {
@@ -240,11 +237,13 @@ public class OCLPrettyPrinter implements OCLHandler {
     this.printer = printer;
   }
 
-  @Override public OCLTraverser getTraverser() {
+  @Override
+  public OCLTraverser getTraverser() {
     return traverser;
   }
 
-  @Override public void setTraverser(OCLTraverser traverser) {
+  @Override
+  public void setTraverser(OCLTraverser traverser) {
     this.traverser = traverser;
   }
 }

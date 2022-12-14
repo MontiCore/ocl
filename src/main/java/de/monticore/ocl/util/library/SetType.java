@@ -1,6 +1,8 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.util.library;
 
+import static de.monticore.ocl.util.library.TypeUtil.*;
+
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -9,11 +11,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
 
-import static de.monticore.ocl.util.library.TypeUtil.*;
-
-/**
- * Adds symbols for OCL/P sets
- */
+/** Adds symbols for OCL/P sets */
 public class SetType {
   protected TypeSymbol setSymbol;
 
@@ -22,16 +20,17 @@ public class SetType {
   public void addSetType() {
     typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
 
-    SymTypeOfGenerics superType = SymTypeExpressionFactory
-      .createGenerics(getCollectionType(),
-        SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    SymTypeOfGenerics superType =
+        SymTypeExpressionFactory.createGenerics(
+            getCollectionType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
 
-    setSymbol = OCLMill.typeSymbolBuilder()
-      .setName("Set")
-      .setEnclosingScope(OCLMill.globalScope())
-      .setSpannedScope(OCLMill.scope())
-      .addSuperTypes(superType)
-      .build();
+    setSymbol =
+        OCLMill.typeSymbolBuilder()
+            .setName("Set")
+            .setEnclosingScope(OCLMill.globalScope())
+            .setSpannedScope(OCLMill.scope())
+            .addSuperTypes(superType)
+            .build();
     setSymbol.getSpannedScope().setName("Set");
     setSymbol.addTypeVarSymbol(typeVarSymbol);
 
@@ -61,25 +60,25 @@ public class SetType {
 
   protected FunctionSymbol createMethod(String name) {
     return OCLMill.functionSymbolBuilder()
-      .setName(name)
-      .setEnclosingScope(setSymbol.getSpannedScope())
-      .setSpannedScope(OCLMill.scope())
-      .build();
+        .setName(name)
+        .setEnclosingScope(setSymbol.getSpannedScope())
+        .setSpannedScope(OCLMill.scope())
+        .build();
   }
 
   protected SymTypeExpression getSetOfXSymType() {
-    return SymTypeExpressionFactory
-      .createGenerics(setSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    return SymTypeExpressionFactory.createGenerics(
+        setSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
   }
 
   protected SymTypeExpression getCollectionOfXSymType() {
-    return SymTypeExpressionFactory
-      .createGenerics(getCollectionType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    return SymTypeExpressionFactory.createGenerics(
+        getCollectionType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
   }
 
   protected SymTypeExpression getListOfXSymType() {
-    return SymTypeExpressionFactory
-      .createGenerics(getListType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    return SymTypeExpressionFactory.createGenerics(
+        getListType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
   }
 
   /* ============================================================ */
@@ -167,7 +166,7 @@ public class SetType {
     setSymbol.getSpannedScope().add(function);
   }
 
-  protected void addFunctionAsList(){
+  protected void addFunctionAsList() {
     FunctionSymbol function = createMethod("asList");
     function.setType(getListOfXSymType());
     setSymbol.getSpannedScope().add(function);

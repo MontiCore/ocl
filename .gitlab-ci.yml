@@ -9,6 +9,8 @@ cache:
     - .m2/repository/
   key: "$CI_COMMIT_SHA" # Cache across branch and stage
 
+image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk11
+
 stages:
   - build
   - test
@@ -16,11 +18,9 @@ stages:
   - mirror
 
 Validate Gradle:
-  image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk11
   stage: build
-  allow_failure: true
   script:
-    - gradle clean assemble
+    - gradle assemble --refresh-dependencies
   artifacts:
     paths:
       - ./target/
@@ -44,14 +44,19 @@ check-links:
     - 'java -jar MDLinkChecker.jar -t "$secibuildtoken" -r . -p'
 
 Unit Test Gradle:
-  image: registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk11
   stage: test
-  allow_failure: true
   needs: ["Validate Gradle"]
   dependencies:
     - Validate Gradle #download artifacts from build
   script:
-    - gradle test
+    - gradle build test --refresh-dependencies
+
+check_format:
+  stage: test
+  allow_failure: true
+  script:
+    - echo "You can format the java files using <gradle fmt>"
+    - gradle checkfmt $GRADLE_OPT $ARGS2
 
 ## Run Unit Tests after build
 #.unit_test_template: &unit_test_definition
@@ -176,7 +181,7 @@ githubmirror:
     - mkdir -p ~/.ssh
     - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   script:
-    - 'curl --location --header "PRIVATE-TOKEN: $secibuildtoken" "https://git.rwth-aachen.de/api/v4/projects/monticore%2Fauxiliary-development-tools%2Fgithub-mirror-tools/repository/files/mirror.sh/raw" --output mirror.sh'
+    - "curl --location --header \"PRIVATE-TOKEN: $secibuildinfstrtoken\" \"https://git.rwth-aachen.de/api/v4/projects/se%2Finfrastructure%2Fgithub-mirror-tools/repository/files/mirror.sh/raw\" --output mirror.sh"
     - sh mirror.sh
     - rm mirror.sh
     - 'curl --location --header "PRIVATE-TOKEN: $secibuildtoken" "https://git.rwth-aachen.de/api/v4/projects/monticore%2Fauxiliary-development-tools%2Fmdlinkchecker/jobs/artifacts/master/raw/target/libs/MDLinkCheckerCLI.jar?job=build" --output MDLinkChecker.jar'

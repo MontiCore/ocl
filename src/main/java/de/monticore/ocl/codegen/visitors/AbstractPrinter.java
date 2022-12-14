@@ -2,11 +2,11 @@
 package de.monticore.ocl.codegen.visitors;
 
 import de.monticore.ocl.codegen.util.VariableNaming;
-import de.monticore.ocl.types.check.OCLDeriver;
-import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.check.SymTypePrimitive;
+import de.monticore.types.check.IDerive;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeOfGenerics;
+import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
@@ -27,16 +27,16 @@ public abstract class AbstractPrinter {
     return this.naming;
   }
 
-  protected OCLDeriver oclDeriver;
+  protected IDerive deriver;
 
-  protected OCLDeriver getOCLDeriver() {
-    return this.oclDeriver;
+  protected IDerive getDeriver() {
+    return this.deriver;
   }
 
-  protected OCLSynthesizer oclSynthesizer;
+  protected ISynthesize syntheziser;
 
-  protected OCLSynthesizer getOCLSynthesizer() {
-    return this.oclSynthesizer;
+  protected ISynthesize getSynthesizer() {
+    return this.syntheziser;
   }
 
   protected IndentPrinter printer;
@@ -48,8 +48,7 @@ public abstract class AbstractPrinter {
   // common functions
 
   /**
-   * boxes the type
-   * e.g. {@code List<int>} to {@code java.util.List<Integer>}
+   * boxes the type e.g. {@code List<int>} to {@code java.util.List<Integer>}
    *
    * @param type type to be printed
    * @return String of type, boxed
@@ -60,15 +59,13 @@ public abstract class AbstractPrinter {
     }
     if (type.getResult().isGenericType()) {
       return SymTypeOfGenerics.box((SymTypeOfGenerics) type.getResult());
-    }
-    else {
+    } else {
       return SymTypePrimitive.box(type.getResult().printFullName());
     }
   }
 
   /**
-   * prints an expression which returns the result of a Java code block,
-   * which is opened by this
+   * prints an expression which returns the result of a Java code block, which is opened by this
    * s.a. {@link AbstractPrinter#printExpressionEndLambda()}
    *
    * @param type the type of the expression
@@ -81,12 +78,11 @@ public abstract class AbstractPrinter {
   }
 
   /**
-   * prints the end of the expression which returns the result of a Java code block
-   * s.a. {@link AbstractPrinter#printExpressionBeginLambda}
+   * prints the end of the expression which returns the result of a Java code block s.a. {@link
+   * AbstractPrinter#printExpressionBeginLambda}
    */
   protected void printExpressionEndLambda() {
     this.getPrinter().unindent();
     this.getPrinter().print("}).get()");
   }
-
 }

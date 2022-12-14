@@ -1,0 +1,12 @@
+classdiagram Partial {
+
+  class Text {
+    boolean importantAttrib;  // Must be present in ALL ODs
+
+    int notImportant; // Nobody Cares, Never present!
+    int notImportant2; // Nobody Cares, Never present!
+
+    boolean aFlagForSometimesImportant;
+    String sometimesImportant;  // Present sometimes, but not always
+  }
+}

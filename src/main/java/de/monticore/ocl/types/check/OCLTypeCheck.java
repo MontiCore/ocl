@@ -4,23 +4,26 @@ package de.monticore.ocl.types.check;
 import com.google.common.collect.Lists;
 import de.monticore.types.check.*;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.List;
-import java.util.Optional;
 
 public class OCLTypeCheck extends TypeCheck {
 
-  protected static final List<String> collections = Lists
-    .newArrayList("java.util.List", "java.util.Set", "java.util.Collection", "java.util.Map",
-      "List", "Set", "Collection", "Map");
+  protected static final List<String> collections =
+      Lists.newArrayList(
+          "java.util.List",
+          "java.util.Set",
+          "java.util.Collection",
+          "java.util.Map",
+          "List",
+          "Set",
+          "Collection",
+          "Map");
 
-  protected OCLTypeCheck() {
-
-  }
+  protected OCLTypeCheck() {}
 
   /**
-   * Test whether 2 types are compatible by using TypeCheck class
-   * and extending it by checking whether FullQualifiedNames are different.
+   * Test whether 2 types are compatible by using TypeCheck class and extending it by checking
+   * whether FullQualifiedNames are different.
    *
    * @param left expression that should be assigned a value
    * @param right expression that should be assigned to left
@@ -30,10 +33,10 @@ public class OCLTypeCheck extends TypeCheck {
     if (!left.isPrimitive() && right.isNullType()) {
       return true;
     }
-    //check whether TypeCheck class deems types compatible
+    // check whether TypeCheck class deems types compatible
     boolean comp = TypeCheck.compatible(left, right);
 
-    //check whether last Part of FullQualifiedName is equal
+    // check whether last Part of FullQualifiedName is equal
     String leftName = left.print();
     String rightName = right.print();
     String[] leftNameArray = leftName.split("\\.");
@@ -52,48 +55,50 @@ public class OCLTypeCheck extends TypeCheck {
   }
 
   public static boolean isSubtypeOf(SymTypeExpression subType, SymTypeExpression superType) {
-    //Object is superType of all other types
+    // Object is superType of all other types
     if (superType.getTypeInfo().getName().equals("Object")) {
       return true;
     }
 
-    //Otherwise use default TypeCheck method
-    else
-      return TypeCheck.isSubtypeOf(subType, superType);
+    // Otherwise use default TypeCheck method
+    else return TypeCheck.isSubtypeOf(subType, superType);
   }
 
   public static boolean optionalCompatible(SymTypeExpression optional, SymTypeExpression right) {
-    //check that first argument is of Type Optional
+    // check that first argument is of Type Optional
     if (!optional.isGenericType() || optional.print().equals("Optional")) {
-      Log.error("function optionalCompatible requires an Optional SymType " +
-        "but was given " + optional.print());
+      Log.error(
+          "function optionalCompatible requires an Optional SymType "
+              + "but was given "
+              + optional.print());
       return false;
     }
 
-    //check whether value in optional argument and second argument are compatible
+    // check whether value in optional argument and second argument are compatible
     SymTypeExpression leftUnwrapped = ((SymTypeOfGenerics) optional).getArgument(0);
     return compatible(leftUnwrapped, right);
   }
 
-  public static Optional<SymTypeExpression> unwrapOptional(SymTypeExpression optional) {
-    //check that argument is of Type Optional
+  public static SymTypeExpression unwrapOptional(SymTypeExpression optional) {
+    // check that argument is of Type Optional
     if (!optional.isGenericType() || !optional.getTypeInfo().getName().equals("Optional")) {
-      Log.error("function optionalCompatible requires an Optional SymType " +
-        "but was given " + optional.print());
-      return Optional.empty();
+      Log.error(
+          "function optionalCompatible requires an Optional SymType "
+              + "but was given "
+              + optional.print());
+      return SymTypeExpressionFactory.createObscureType();
     }
 
-    //return type of optional
+    // return type of optional
     if (!((SymTypeOfGenerics) optional).getArgumentList().isEmpty()) {
-      return Optional.of(((SymTypeOfGenerics) optional).getArgument(0));
-    }
-    else {
-      return Optional.empty();
+      return ((SymTypeOfGenerics) optional).getArgument(0);
+    } else {
+      return SymTypeExpressionFactory.createObscureType();
     }
   }
 
   public static SymTypeExpression unwrapSet(SymTypeExpression set) {
-    //check that argument is of collection type
+    // check that argument is of collection type
     boolean correct = false;
     for (String s : collections) {
       if (set.isGenericType() && set.getTypeInfo().getName().equals(s)) {
@@ -101,15 +106,15 @@ public class OCLTypeCheck extends TypeCheck {
       }
     }
     if (!correct) {
-      //not a set, return type of object (maybe change later?)
+      // not a set, return type of object (maybe change later?)
       if (set.isObjectType()) {
         return set;
       }
-      Log.error("function unwrapSet requires a Collection SymType " +
-        "but was given " + set.print());
+      Log.error(
+          "function unwrapSet requires a Collection SymType " + "but was given " + set.print());
     }
 
-    //get SymType used in Collection
+    // get SymType used in Collection
     SymTypeExpression unwrapped = ((SymTypeOfGenerics) set).getArgument(0);
     return unwrapped;
   }

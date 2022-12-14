@@ -1,0 +1,41 @@
+
+package invariants;
+
+ocl Test01 {
+
+   inv SimpleTransitive_Closure:
+      exists Auction a1,a2,a3: // exact three auction
+        a1 != a2 &&
+        a1 != a3 &&
+        a2 != a3 &&
+        (forall Auction a4 :
+                 a4 == a1 ||
+                 a4 == a2 ||
+                 a4 == a3 )&&
+
+        a2 isin a1.auction &&
+        a3 isin a2.auction &&      // a1 -> a2 ->a3
+
+        a1 notin a3.auction &&
+        a3 notin a1.auction &&
+        a3 isin a1.auction** ;
+
+
+    inv SimpleTransitive_Closure_UNSAT:
+         exists Auction a1,a2,a3:
+           a1 != a2 &&
+           a1 != a3 &&
+           a2 != a3 &&
+           (forall Auction a4 :
+                 a4 == a1 ||
+                 a4 == a2 ||
+                 a4 == a3 )&&
+
+          a2 isin a1.auction &&
+          a3 isin a2.auction &&
+
+          a1 notin a3.auction &&
+          a3 notin a1.auction &&
+          a3 notin a1.auction**;
+ }
+

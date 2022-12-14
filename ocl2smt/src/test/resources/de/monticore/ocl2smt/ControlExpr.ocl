@@ -1,0 +1,20 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl Test02 {
+
+  inv ITE_sat:
+    if   true
+    then true
+    else false;
+
+  inv ITE_unsat1:
+      if   false
+      then true
+      else 2 == 4;
+
+  inv ITE_unsat2:
+        if   true
+        then  2==4
+        else true;
+}

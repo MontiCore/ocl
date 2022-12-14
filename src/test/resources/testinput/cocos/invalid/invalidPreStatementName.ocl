@@ -1,6 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-ocl invalidPreStatementName {
-  context boolean BidMessage.isAuctionsSpecific()
-  pre ias1 : true;
-  post ias2 : result == true;
-}

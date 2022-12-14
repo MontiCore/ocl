@@ -1,0 +1,41 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+ocl NC1 {
+
+  context Auction a inv Of_legal_age:
+    forall Person p1 in a.person:
+       p1.age >= 18 ;
+
+  context Auction a inv Diff_ids:
+      forall Person p1 in a.person, Person p2 in a.person:
+        p1 != p2 implies  p1.id != p2.id ;
+
+  inv AtLeast_2_Person:
+    forall Auction a :
+        exists Person p1 in a.person, Person p2 in a.person:
+         p1 != p2 ;
+
+  inv Same_Person_in_2_Auction:
+      forall Auction a1, a2 :
+        a1 != a2 implies
+        (exists Person p1 in a2.person, Person p2 in a2.person:
+            p1 == p2);
+
+
+/*
+//UNSAT
+ inv  NestedFieldAccess2_UNSAT:
+    forall Auction a , Parent p in a.person.parent :
+       (p.age == 59 )&&
+          (exists Parent p1 in a.person.parent  :
+            p1.age == 60 );
+
+   context Auction a inv NestedFieldAccessExpr:
+      forall Parent p1 in a.person.parent:
+         p1.age >= 50 ;
+
+*/
+
+
+}
+

@@ -12,12 +12,14 @@ buildscript {
 
 plugins {
   id 'java'
+
   id 'monticore' version "$mc_version"
   id 'com.github.johnrengelman.shadow' version '6.0.0'
   //id 'de.set.ecj' version '1.4.1' // Eclipse compiler as it's faster than javac
   id 'jacoco'
   id 'com.adarshr.test-logger' version '2.1.1'
   id 'maven-publish'
+  id "com.github.sherter.google-java-format" version "0.9"    // Task "verifyGoogleJavaFormat" and "googleJavaFormat"
 }
 
 /* ============================================================ */
@@ -75,7 +77,27 @@ repositories {
 
 //sourceCompatibility = '1.8'
 
-configurations { grammar }
+configurations {
+    grammar
+}
+
+
+googleJavaFormat {
+  exclude '**/target/**'
+}
+
+verifyGoogleJavaFormat{
+  ignoreFailures true
+  exclude "**"
+}  // do not check format in "build"
+
+task checkfmt(type: com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat) {}
+
+task fmt {
+  dependsOn tasks.named("googleJavaFormat")
+}
+
+
 
 test {
   useJUnitPlatform()
@@ -119,6 +141,10 @@ dependencies {
 /* ============================================================ */
 /* ========================== Tasks =========================== */
 /* ============================================================ */
+
+tasks.withType(Test){
+    useJUnitPlatform()
+}
 
 tasks.withType(JavaCompile) {
   options.fork = true
@@ -172,8 +198,6 @@ sourcesJar.dependsOn project.collect { it.tasks.withType(MCTask)}
 // generated java doc contains errors, disable for now
 javadoc.failOnError(false)
 
-
-// all in one tool-jar
 shadowJar {
   manifest {
     attributes "Main-Class": "de.monticore.ocl.ocl.${archiveBaseName.get().toUpperCase()}Tool"
@@ -183,12 +207,13 @@ shadowJar {
   minimize()
 }
 
-jar.dependsOn shadowJar
-
+jar.dependsOn(shadowJar)
 
 publishing {
   publications {
-    mavenJava(MavenPublication) { from components.java }
+    mavenJava(MavenPublication) {
+        from components.java
+    }
   }
   repositories.maven {
     name = "$SE_Nexus_ID"

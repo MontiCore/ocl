@@ -4,7 +4,6 @@ package de.monticore.ocl.ocl._cocos;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._cocos.ExpressionsBasisASTExpressionCoCo;
 import de.monticore.types.check.IDerive;
-
 import java.util.Optional;
 
 public class ExpressionValidCoCo implements ExpressionsBasisASTExpressionCoCo {

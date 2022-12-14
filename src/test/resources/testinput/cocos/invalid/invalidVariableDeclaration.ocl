@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+ocl invalidVariableDeclaration {
+  inv:
+    let
+      Set<Integer> set = {{1..2}, {1}}
+    in
+      true;
+}

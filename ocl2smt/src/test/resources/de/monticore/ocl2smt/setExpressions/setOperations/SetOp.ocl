@@ -1,0 +1,105 @@
+
+package invariants;
+
+ocl Test01 {
+
+inv  Only_one_auction:
+  exists Auction a :
+    forall Auction a1:
+     a1 == a ;
+
+ inv Only_two_Person:
+   exists Person p1 , p2 :
+     (p1 != p2 )&&
+     (forall  Person p3:
+     p3 == p1 || p3 == p2);
+
+ context Auction a inv All_Person_in_All_Auctions:
+   forall Person p :
+      p isin a.person ;
+
+ context Auction a inv One_Person_in_Any_Auctions:
+    exists Person p :
+       p notin a.person ;
+
+  inv Set_Union_Sat:
+     exists Person p1 , p2 :
+        exists Auction a :
+          a isin p1.auction union p2.auction;
+
+  inv Set_Union_one_side_sat:
+       exists Person p1 , p2 :
+          exists Auction a :
+             a isin p1.auction &&
+             a notin p2.auction &&
+             a isin p2.auction  union p1.auction;
+
+  inv Set_Union_one_side_Unsat:
+       exists Person p1 , p2 :
+         exists Auction a :
+           a isin p1.auction &&
+           a  notin p2.auction &&
+           a notin p1.auction union p2.auction;
+
+  inv Set_Intersection_Sat:
+      exists Person p1 , p2 :
+        exists Auction a :
+            (a isin p1.auction intersect p2.auction) &&
+            (p1 != p2);
+
+  inv Set_Intersection_Unsat:
+       exists Person p1 , p2 :
+         exists Auction a :
+             a isin p1.auction &&
+             a notin p2.auction &&
+             a isin p1.auction intersect p2.auction &&
+             p1 != p2;
+
+  inv Set_Minus_sat:
+       exists Person p1 , p2 :
+         exists Auction a :
+             a isin (p1.auction \ p2.auction) &&
+             p1 != p2;
+
+  inv Set_Minus_Unsat:
+       exists Person p1 , p2 :
+          exists Auction a :
+              a isin (p1.auction \ p2.auction) &&
+              a isin (p2.auction \ p1.auction) &&
+              p1 != p2;
+
+  inv Set_Minus_Unsat:
+       exists Person p1 , p2 :
+          exists Auction a :
+              a isin (p1.auction \ p2.auction) &&
+              a isin (p2.auction \ p1.auction) &&
+              p1 != p2;
+
+
+
+  inv Notin_isIn:
+     exists Auction a1 , a2:
+     (a1 != a2) &&
+     (exists Person p1 , p2 :
+     ( p1 != p2 &&
+      p1 isin a1.person&&
+      p1 notin a2.person &&
+      p2 isin a2.person &&
+      p2 notin a1.person)) ;
+
+  inv IsIn_notIn:
+       (forall Auction a:
+         forall Person p :
+           p isin a.person)&&
+       (exists Auction a1 , a2 :
+        a1 != a2) ;
+
+
+    inv Counter_Example:
+      (forall Auction a1, a2: (forall Person p: p isin a1.person implies p notin a2.person))
+       && (forall Auction a6: exists Person p1: p1 isin a6.person);
+
+
+
+ }
+

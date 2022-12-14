@@ -5,14 +5,13 @@ package de.monticore.ocl.ocl._cocos;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.se_rwth.commons.logging.Log;
 
-public class MethSignatureStartsWithLowerCaseLetter
-    implements OCLASTOCLMethodSignatureCoCo {
+public class MethSignatureStartsWithLowerCaseLetter implements OCLASTOCLMethodSignatureCoCo {
 
   @Override
   public void check(ASTOCLMethodSignature astMethSig) {
-    String methodName = astMethSig.getMethodName().getParts(1);
+    String methodName = astMethSig.getMethodName().getBaseName();
     if (!Character.isLowerCase(methodName.charAt(0))) {
-      Log.error(String.format("0xOCL05 Method '%s' must start in lower-case.", astMethSig.getMethodName()));
+      Log.error(String.format("0xOCL05 Method '%s' must start in lower-case.", methodName));
     }
   }
 }

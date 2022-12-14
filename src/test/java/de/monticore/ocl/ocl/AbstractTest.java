@@ -1,22 +1,21 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractTest {
 
@@ -35,33 +34,42 @@ public abstract class AbstractTest {
 
   protected IOCLGlobalScope globalScope;
 
-  public static String[] getParsableModels() {
-    File f = new File(RELATIVE_MODEL_PATH + "/testinput/validGrammarModels");
+  public static String[] getModels(String folderpath) {
+    File f = new File(RELATIVE_MODEL_PATH + folderpath);
     String[] filenames = f.list();
     assertThat(filenames).isNotNull();
-    filenames = Arrays.stream(filenames)
-      .sorted()
-      .collect(Collectors.toList())
-      .toArray(filenames);
+    filenames = Arrays.stream(filenames).sorted().collect(Collectors.toList()).toArray(filenames);
 
     return filenames;
   }
 
+  public static String[] getParsableModels() {
+    return getModels("/testinput/validGrammarModels");
+  }
+
+  public static String[] getValidCoCoModels() {
+    return getModels("/testinput/cocos/valid");
+  }
+
+  public static String[] getInvalidCoCoModels() {
+    return getModels("/testinput/cocos/invalid");
+  }
+
   public static String[] getModelsWithValidSymTab() {
-    List<String> files = Arrays.stream(getParsableModels())
-      .filter(f -> f.matches("^[a-n].*"))
-      .collect(Collectors.toList());
+    List<String> files =
+        Arrays.stream(getParsableModels())
+            .filter(f -> f.matches("^[a-n].*"))
+            .collect(Collectors.toList());
     String[] result = new String[files.size()];
     files.toArray(result);
     return result;
   }
 
   public static String prefixValidModelsPath(String fileName) {
-    return RELATIVE_MODEL_PATH + "/testinput/validGrammarModels/" + fileName;
+    return RELATIVE_MODEL_PATH + fileName;
   }
 
-  public Optional<ASTOCLCompilationUnit> parse(String relativeFilePath,
-    boolean expParserErrors) {
+  public Optional<ASTOCLCompilationUnit> parse(String relativeFilePath, boolean expParserErrors) {
     OCLParser parser = new OCLParser();
     Optional<ASTOCLCompilationUnit> optAst;
     try {

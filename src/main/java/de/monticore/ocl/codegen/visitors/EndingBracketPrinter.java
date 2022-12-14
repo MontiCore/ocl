@@ -9,8 +9,8 @@ import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.prettyprint.IndentPrinter;
 
 /**
- * As the AST structure does not always resemble the Structure of the printed code,
- * we sometimes need to have another printing run, only for missing brackets
+ * As the AST structure does not always resemble the Structure of the printed code, we sometimes
+ * need to have another printing run, only for missing brackets
  */
 public class EndingBracketPrinter implements OCLExpressionsHandler {
 
@@ -45,5 +45,4 @@ public class EndingBracketPrinter implements OCLExpressionsHandler {
       this.getPrinter().println("}");
     }
   }
-
 }
