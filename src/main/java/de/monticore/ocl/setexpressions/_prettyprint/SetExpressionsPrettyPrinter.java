@@ -37,8 +37,7 @@ public class SetExpressionsPrettyPrinter extends SetExpressionsPrettyPrinterTOP 
     }
     if (node.getOpeningBracket().equals("{")) {
       getPrinter().print("}");
-    }
-    else {
+    } else {
       getPrinter().print("]");
     }
     if (isPrintComments()) {
@@ -65,8 +64,7 @@ public class SetExpressionsPrettyPrinter extends SetExpressionsPrettyPrinterTOP 
     }
     if (node.getOpeningBracket().equals("{")) {
       getPrinter().print("}");
-    }
-    else {
+    } else {
       getPrinter().print("]");
     }
     if (isPrintComments()) {
