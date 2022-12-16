@@ -19,37 +19,39 @@ import java.util.Optional;
 
 public class TypeConverter {
 
-  public static Map<String, Sort> typeMap;
-  protected final Context ctx;
-  protected CD2SMTGenerator cd2SMTGenerator;
+  public static Map<OCLType, Sort> typeMap;
+  protected static Context ctx;
+  protected static CD2SMTGenerator cd2SMTGenerator;
 
-  public TypeConverter(CD2SMTGenerator cd2SMTGenerator) {
-    this.cd2SMTGenerator = cd2SMTGenerator;
-    this.ctx = cd2SMTGenerator.getContext();
+  public static void setup(CD2SMTGenerator cd2SMTGenerator) {
+    TypeConverter.cd2SMTGenerator = cd2SMTGenerator;
+    ctx = cd2SMTGenerator.getContext();
     buildTypeMap();
   }
 
-  private ASTCDDefinition getCD() {
+  private static ASTCDDefinition getCD() {
     return cd2SMTGenerator.getClassDiagram().getCDDefinition();
   }
 
-  private void buildTypeMap() {
+  private static void buildTypeMap() {
     typeMap = new HashMap<>();
-    typeMap.put("Boolean", ctx.mkBoolSort());
-    typeMap.put("Double", ctx.getRealSort());
-    typeMap.put("Integer", ctx.mkIntSort());
-    typeMap.put("boolean", ctx.mkBoolSort());
-    typeMap.put("double", ctx.getRealSort());
-    typeMap.put("int", ctx.mkIntSort());
-    typeMap.put("String", ctx.mkStringSort());
-    typeMap.put("java.lang.String", ctx.mkStringSort());
-    typeMap.put("java.lang.Boolean", ctx.mkBoolSort());
-    typeMap.put("java.lang.Double", ctx.mkRealSort());
-    typeMap.put("java.lang.Integer", ctx.mkIntSort());
+    typeMap.put(OCLType.buildOCLType("Boolean"), ctx.mkBoolSort());
+    typeMap.put(OCLType.buildOCLType("Double"), ctx.getRealSort());
+    typeMap.put(OCLType.buildOCLType("Integer"), ctx.mkIntSort());
+    typeMap.put(OCLType.buildOCLType("boolean"), ctx.mkBoolSort());
+    typeMap.put(OCLType.buildOCLType("double"), ctx.getRealSort());
+    typeMap.put(OCLType.buildOCLType("Real"), ctx.getRealSort());
+    typeMap.put(OCLType.buildOCLType("int"), ctx.mkIntSort());
+    typeMap.put(OCLType.buildOCLType("Int"), ctx.mkIntSort());
+    typeMap.put(OCLType.buildOCLType("String"), ctx.mkStringSort());
+    typeMap.put(OCLType.buildOCLType("java.lang.String"), ctx.mkStringSort());
+    typeMap.put(OCLType.buildOCLType("java.lang.Boolean"), ctx.mkBoolSort());
+    typeMap.put(OCLType.buildOCLType("java.lang.Double"), ctx.mkRealSort());
+    typeMap.put(OCLType.buildOCLType("java.lang.Integer"), ctx.mkIntSort());
   }
 
-  public Sort mctype2Sort(ASTMCType type) {
-    Sort res = null;
+  public static OCLType buildOCLType(ASTMCType type) {
+    OCLType res = null;
     if (type instanceof ASTMCPrimitiveType) {
       res = convertPrim((ASTMCPrimitiveType) type);
     } else if (type instanceof ASTMCQualifiedType) {
@@ -60,27 +62,35 @@ public class TypeConverter {
     return res;
   }
 
-  public Sort symbol2Sort(VariableSymbol symbol) {
+  public static OCLType buildOCLType(VariableSymbol symbol) {
     Log.info("I tried to get a Type from the  VariableSymbol", "SymbolTable");
     SymTypeExpression symTypeExpression = symbol.getType();
     assert symTypeExpression != null
         && (symTypeExpression.isObjectType() || symTypeExpression.isPrimitive());
     String typename = symTypeExpression.getTypeInfo().getName();
-
-    if (typeMap.containsKey(typename)) {
-      return typeMap.get(typename);
-    }
-    return getSortFromCD2SMT(typename).orElse(null);
+    return OCLType.buildOCLType(typename);
   }
 
-  private Sort convertPrim(ASTMCPrimitiveType type) {
-    Sort res = null;
+  public static Sort getSort(OCLType type) {
+    if (typeMap.containsKey(type)) {
+      return typeMap.get(type);
+    } else {
+      Optional<Sort> res = getSortFromCD2SMT(type);
+      if (res.isEmpty()) {
+        System.out.println("Je suis un idiot");
+      }
+      return res.get();
+    }
+  }
+
+  private static OCLType convertPrim(ASTMCPrimitiveType type) {
+    OCLType res = null;
     if (type.isBoolean()) {
-      res = ctx.mkBoolSort();
+      res = OCLType.buildOCLType("boolean");
     } else if (type.isDouble()) {
-      res = ctx.mkRealSort();
+      res = OCLType.buildOCLType("double");
     } else if (type.isInt()) {
-      res = ctx.mkIntSort();
+      res = OCLType.buildOCLType("int");
     } else {
       assert false;
       Log.error("primitive type conversion is only implemented for  int , double and boolean");
@@ -90,23 +100,23 @@ public class TypeConverter {
     return res;
   }
 
-  private Sort convertQualf(ASTMCQualifiedType type) {
+  private static OCLType convertQualf(ASTMCQualifiedType type) {
     String typeName = type.getMCQualifiedName().getQName();
     if (typeMap.containsKey(typeName)) {
-      return typeMap.get(typeName);
+      return OCLType.buildOCLType(typeName);
     }
-    return getSortFromCD2SMT(typeName).orElse(null);
+    return OCLType.buildOCLType(typeName);
   }
 
-  public Optional<Sort> getSortFromCD2SMT(String typeName) {
-    Sort sort = cd2SMTGenerator.getSort(CDHelper.getASTCDType(typeName, getCD()));
+  public static Optional<Sort> getSortFromCD2SMT(OCLType type) {
+    Sort sort = cd2SMTGenerator.getSort(CDHelper.getASTCDType(type.getName(), getCD()));
     if (sort == null) {
-      Log.error("Type or Class " + typeName + "not found in CDContext");
+      Log.error("Type or Class " + type.getName() + "not found in CDContext");
     }
     return Optional.ofNullable(sort);
   }
 
-  protected boolean isSet(ASTExpression node) {
+  protected static boolean isSet(ASTExpression node) {
     SymTypeExpression symTypeExpression = new OCLDeriver().deriveType(node).getResult();
     assert symTypeExpression != null;
     return (symTypeExpression.isGenericType()

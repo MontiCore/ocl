@@ -9,15 +9,15 @@ import java.util.function.Function;
 
 public class SMTSet {
   private final Function<Expr<? extends Sort>, BoolExpr> setFunction;
-  private final Sort sort;
+  private final OCLType type;
 
-  public SMTSet(Function<Expr<? extends Sort>, BoolExpr> setFunction, Sort sort) {
+  public SMTSet(Function<Expr<? extends Sort>, BoolExpr> setFunction, OCLType type) {
     this.setFunction = setFunction;
-    this.sort = sort;
+    this.type = type;
   }
 
   private static SMTSet mkSetOperation(SMTSet leftSet, SMTSet rightSet, Context ctx, OPERATION op) {
-    if (!rightSet.sort.equals(leftSet.sort)) {
+    if (!rightSet.type.equals(leftSet.type)) {
       Log.error("set intersection of Set from different Type not implemented");
     }
     Function<Expr<? extends Sort>, BoolExpr> setFunction;
@@ -35,7 +35,7 @@ public class SMTSet {
         Log.error("the Set Operation " + op + " is not implemented ");
         setFunction = s -> ctx.mkTrue();
     }
-    return new SMTSet(setFunction, leftSet.sort);
+    return new SMTSet(setFunction, leftSet.type);
   }
 
   public static SMTSet mkSetUnion(SMTSet leftSet, SMTSet rightSet, Context ctx) {
@@ -50,19 +50,19 @@ public class SMTSet {
     return mkSetOperation(leftSet, rightSet, ctx, OPERATION.MINUS);
   }
 
-  public Sort getSort() {
-    return sort;
+  public OCLType getType() {
+    return type;
   }
 
   public BoolExpr isIn(Expr<? extends Sort> expr) {
-    if (!expr.getSort().equals(sort)) {
+    if (!expr.getSort().equals(TypeConverter.getSort(type))) {
       Log.error(
           "the obj "
               + expr
               + " with the sort "
               + expr.getSort()
               + " cannot be in the set  with sort "
-              + sort);
+              + type.getName());
     }
     return setFunction.apply(expr);
   }
@@ -71,8 +71,12 @@ public class SMTSet {
     return ctx.mkNot(isIn(expr));
   }
 
+  public Sort getSort() {
+    return TypeConverter.getSort(type);
+  }
+
   public SMTSet collectAll(Function<Expr<? extends Sort>, SMTSet> function, Context ctx) {
-    Expr<? extends Sort> expr = ctx.mkConst("xollector", sort);
+    Expr<? extends Sort> expr = ctx.mkConst("xollector", TypeConverter.getSort(type));
     return new SMTSet(
         kii ->
             ctx.mkExists(
@@ -83,11 +87,11 @@ public class SMTSet {
                 null,
                 null,
                 null),
-        function.apply(expr).sort);
+        function.apply(expr).type);
   }
 
   public static BoolExpr mkSetEq(SMTSet set, SMTSet set2, Context ctx) {
-    Expr<? extends Sort> expr = ctx.mkConst("const", set.getSort());
+    Expr<? extends Sort> expr = ctx.mkConst("const", TypeConverter.getSort(set.getType()));
     return ctx.mkForall(
         new Expr[] {expr}, ctx.mkEq(set.isIn(expr), set2.isIn(expr)), 0, null, null, null, null);
   }
