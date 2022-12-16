@@ -12,13 +12,14 @@ import de.monticore.odlink._ast.ASTODLink;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TraceUnsatCore {
 
   protected static ASTODArtifact buildUnsatOD(
-      List<IdentifiableBoolExpr> posConstraints,
-      List<IdentifiableBoolExpr> negConstraints,
+      Set<IdentifiableBoolExpr> posConstraints,
+      Set<IdentifiableBoolExpr> negConstraints,
       List<ASTODLink> unsatCore) {
     // add All positive invariant objects
     ASTODArtifact unsatOd =

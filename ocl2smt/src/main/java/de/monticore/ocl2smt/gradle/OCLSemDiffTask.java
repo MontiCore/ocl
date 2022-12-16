@@ -78,7 +78,7 @@ public abstract class OCLSemDiffTask extends DefaultTask {
     // Compute Diff
     if (negativeOCL.isEmpty()) {
       witnesses = new HashSet<>();
-      witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL));
+      witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL, false));
     } else {
       diff = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL);
       witnesses = diff.getRight();

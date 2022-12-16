@@ -26,9 +26,11 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> pocl = new HashSet<>();
     pocl.add(parseOCl("Auction.cd", "PosConstraint1.ocl"));
     pocl.add(parseOCl("Auction.cd", "PosConstraint2.ocl"));
+
     Set<ASTOCLCompilationUnit> nocl = new HashSet<>();
     nocl.add(parseOCl("Auction.cd", "negConstraint2.ocl"));
     nocl.add(parseOCl("Auction.cd", "negConstraint1.ocl"));
+
     // make ocldiff
     Pair<ASTODArtifact, Set<ASTODArtifact>> diff = OCLDiffGenerator.oclDiff(ast, pocl, nocl);
     List<ASTODArtifact> satOds = new ArrayList<>(diff.getRight());
@@ -73,9 +75,9 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> posOCL = new HashSet<>();
     Set<ASTOCLCompilationUnit> negOCL = new HashSet<>();
     posOCL.add(parseOCl("2CDDiff/posCD.cd", "2CDDiff/posOCL.ocl"));
-    posOCL.add(parseOCl("2CDDiff/negCD.cd", "2CDDiff/negOCL.ocl"));
-    Pair<ASTODArtifact, Set<ASTODArtifact>> ods =
+    negOCL.add(parseOCl("2CDDiff/negCD.cd", "2CDDiff/negOCL.ocl"));
+    Pair<ASTODArtifact, Set<ASTODArtifact>> diff =
         OCLDiffGenerator.CDOCLDiff(posCD, negCD, posOCL, negOCL, false);
-    assertTrue(!ods.getRight().isEmpty());
+    assertTrue(diff.getRight().isEmpty());
   }
 }

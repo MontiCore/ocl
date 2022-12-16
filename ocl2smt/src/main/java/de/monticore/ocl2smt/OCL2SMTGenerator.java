@@ -44,9 +44,8 @@ public class OCL2SMTGenerator {
 
   protected final Set<BoolExpr> genInvConstraints = new HashSet<>();
 
-  public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit) {
-    this.ctx = buildContext();
-
+  public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
+    this.ctx = ctx;
     cd2smtGenerator = new CD2SMTGenerator();
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
     TypeConverter.setup(cd2smtGenerator);
@@ -625,8 +624,6 @@ public class OCL2SMTGenerator {
               obj -> ctx.mkOr(set2.isIn(obj), range.apply((ArithExpr<? extends Sort>) obj)),
               OCLType.buildOCLType(sort.getName().toString()));
     }
-    assert set != null;
-    assert set.getType() != null;
     return set;
   }
 
@@ -803,12 +800,6 @@ public class OCL2SMTGenerator {
             null);
     genInvConstraints.add(rel_is_assocFunc);
     return rel;
-  }
-
-  public Context buildContext() {
-    Map<String, String> cfg = new HashMap<>();
-    cfg.put("model", "true");
-    return new Context(cfg);
   }
 
   protected Expr<? extends Sort> declVariable(OCLType type, String name) {

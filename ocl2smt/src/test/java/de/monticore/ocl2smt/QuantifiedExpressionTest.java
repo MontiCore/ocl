@@ -17,7 +17,7 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest {
     OCLMill.init();
     CD4CodeMill.init();
     parse("MinAuction.cd", "QuantifiedExpr.ocl");
-    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
+    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buidlContext());
   }
 
   @Test

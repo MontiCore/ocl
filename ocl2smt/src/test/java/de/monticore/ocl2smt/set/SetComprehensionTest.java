@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class SetComprehensionTest extends ExpressionAbstractTest {
-
   @BeforeEach
   public void setup() throws IOException {
     Log.init();
@@ -20,7 +19,7 @@ public class SetComprehensionTest extends ExpressionAbstractTest {
     parse(
         "/setExpressions/setComprehension/SetComp.cd",
         "/setExpressions/setComprehension/SetComp.ocl");
-    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
+    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buidlContext());
   }
 
   @Test

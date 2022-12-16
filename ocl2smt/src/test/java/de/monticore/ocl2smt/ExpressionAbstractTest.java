@@ -106,13 +106,13 @@ public abstract class ExpressionAbstractTest {
     org.junit.jupiter.api.Assertions.assertSame(Status.UNSATISFIABLE, solver.check());
     ASTODArtifact od1 =
         TraceUnsatCore.buildUnsatOD(
-            new ArrayList<>(),
-            List.of(solverConstraints.get(0).negate(ocl2SMTGenerator.cd2smtGenerator.getContext())),
+            new HashSet<>(),
+            Set.of(solverConstraints.get(0).negate(ocl2SMTGenerator.cd2smtGenerator.getContext())),
             TraceUnsatCore.traceUnsatCore(solver));
     printOD(od1);
   }
 
-  public Context buildContext() {
+  public static Context buidlContext() {
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
     return new Context(cfg);

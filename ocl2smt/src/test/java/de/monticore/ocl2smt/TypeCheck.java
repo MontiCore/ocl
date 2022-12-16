@@ -15,7 +15,7 @@ public class TypeCheck extends ExpressionAbstractTest {
     OCLMill.init();
     CD4CodeMill.init();
     parse("/typecheck/typecheck.cd", "/typecheck/typecheck.ocl");
-    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
+    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buidlContext());
   }
 
   @Disabled
