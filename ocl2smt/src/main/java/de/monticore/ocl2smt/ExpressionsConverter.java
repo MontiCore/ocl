@@ -5,11 +5,14 @@ import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.literals.mccommonliterals._ast.*;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
 import de.se_rwth.commons.logging.Log;
+import java.util.HashMap;
+import java.util.Map;
 
-public class LiteralExpressionsConverter {
+public class ExpressionsConverter {
   protected final Context context;
+  protected final Map<Expr<? extends Sort>, OCLType> varTypes = new HashMap<>();
 
-  public LiteralExpressionsConverter(Context context) {
+  public ExpressionsConverter(Context context) {
     this.context = context;
   }
 
@@ -53,5 +56,18 @@ public class LiteralExpressionsConverter {
 
   protected FPNum convertDouble(ASTBasicDoubleLiteral node) {
     return context.mkFP(node.getValue(), context.mkFPSortDouble());
+  }
+
+  protected Expr<? extends Sort> declObj(OCLType type, String name) {
+    Expr<? extends Sort> expr = context.mkConst(name, TypeConverter.getSort(type));
+    varTypes.put(expr, type);
+    return expr;
+  }
+
+  public OCLType getType(Expr<? extends Sort> expr) {
+    if (varTypes.containsKey(expr)) {
+      return varTypes.get(expr); // Person p
+    }
+    return OCLType.buildOCLType(expr.getSort().getName().toString()); // x*x
   }
 }
