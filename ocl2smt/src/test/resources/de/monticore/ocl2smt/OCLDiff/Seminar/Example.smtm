@@ -1,0 +1,59 @@
+;declare class vehicle
+(declare-sort Vehicle_obj 0)
+
+;declare class Car
+(declare-sort Car_obj 0)
+(declare-fun car_attrib_isAutonomous (Car_obj) Bool)
+
+;declare class Wheel
+(declare-sort Wheel_obj 0)
+
+;declare class Person
+(declare-sort Person_obj 0)
+
+;inheritance relation Car --> vehicle
+(declare-fun Convert_Car_to_Vehicle (Car_obj) Vehicle_obj)
+(declare-datatypes ((Vehicle_subclasses 0)) (((TT_Car))))
+(declare-fun vehicle_get_subclass (Vehicle_obj) Vehicle_subclasses)
+;Constraints
+;...
+
+;association Vehicle -- Wheel
+(declare-fun vehicle_wheel (Car_obj Wheel_obj) Bool)
+;constraints
+;...
+
+;association vehicle -- driver
+(declare-fun vehicle_driver (Car_obj Person_obj) Bool)
+;constraints
+;...
+
+; ocl constraint Pos1
+(assert  (forall ((c Car_obj))
+             (! (exists ((w2 Wheel_obj) (w3 Wheel_obj) (w1 Wheel_obj))
+                  (! (and true
+                          (vehicle_wheel c w2)
+                          (vehicle_wheel c w3)
+                          (vehicle_wheel c w1)
+                          (not (= w1 w2))
+                          (not (= w2 w3))
+                          (not (= w3 w1)))
+                     :weight 0)
+                :weight 0))))))
+
+
+; ocl constraint Pos2
+(assert (forall ((c Car_obj))
+      (! (let ((a!1 (not (exists ((p Person_obj))
+                           (! (and true (vehicle_driver c p) true) :weight 0)))))
+           (= (car_attrib_isAutonomous c) a!1))
+         :weight 0))))
+
+
+;negation of the ocl constraint  Ex1
+(assert (let ((a!1 (forall ((c Car_obj))
+             (! (=> (not (car_attrib_isAutonomous c))
+                    (exists ((p Person_obj))
+                      (! (and true (vehicle_driver c p) true) :weight 0)))
+                :weight 0))))
+   (not a!1))))

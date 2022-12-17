@@ -7,7 +7,8 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class QuantifiedExpressionTest extends ExpressionAbstractTest {
 
@@ -20,111 +21,30 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest {
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 
-  @Test
-  public void forall_boolean_sat() {
-    addConstraint("B_fa_sat");
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "Quan1", "Quan2", "Quan5", "Quan6", "Quan8", "Quan9", "Quan13", "Quan15", "Quan16", "Quan17"
+      })
+  public void TestQuantifiedExpressionsSat(String value) {
+    addConstraint(value);
     Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
   }
 
-  @Test
-  public void forall_boolean_unsat() {
-    addConstraint("B_fa_unsat");
-    Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
-  }
-
-  @Test
-  public void forall_two_boolean_sat() {
-    addConstraint("BC_fa_sat");
-    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-  }
-
-  @Test
-  public void forall_auction_sat() {
-    addConstraint("Auction_fa_sat");
-    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-  }
-
-  @Test
-  public void forall_auction_unsat() {
-    addConstraint("Auction_fa_unsat");
-    Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
-  }
-
-  @Test
-  public void forall_many_forall_sat() {
-    addConstraint("Many_fa_sat");
-    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-  }
-
-  @Test
-  public void forall_many_forall_unsat() {
-    addConstraint("Many_fa_unsat");
-    Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
-  }
-
-  @Test
-  public void exists_boolean_sat() {
-    addConstraint("B_ex_sat");
-    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-  }
-
-  @Test
-  public void exists_many_exists_sat() {
-    addConstraint("Many_ex_sat");
-    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-  }
-
-  @Test
-  public void exists_many_exists_unsat() {
-    addConstraint("Many_ex_unsat");
-    Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
-  }
-
-  @Test
-  public void exists_boolean_unsat() {
-    addConstraint("B_ex_unsat");
-    Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
-  }
-
-  @Test
-  public void exists_two_boolean_unsat() {
-    addConstraint("BC_ex_sat");
-    Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
-  }
-
-  @Test
-  public void exists_auction_sat() {
-    addConstraint("Auction_ex_sat");
-    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-  }
-
-  @Test
-  public void exists_auction_unsat() {
-    addConstraint("Auction_ex_unsat");
-    Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
-  }
-
-  @Test
-  public void Two_auction_sat() {
-    addConstraint("Auction_two_sat");
-    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-  }
-
-  @Test
-  public void Two_auction_and_bool_sat() {
-    addConstraint("Two_auction_and_bool_sat");
-    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-  }
-
-  @Test
-  public void Two_auction_and_bool_sat_unsat() {
-    addConstraint("Ex_two_auction_and_bool_sat");
-    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-  }
-
-  @Test
-  public void Exists_two_auction_and_bool_sat_sat() {
-    addConstraint("Two_auction_and_bool_unsat");
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "Quan3UNSAT",
+        "Quan4UNSAT",
+        "Quan7UNSAT",
+        "Quan10UNSAT",
+        "Quan11UNSAT",
+        "Quan12UNSAT",
+        "Quan14UNSAT",
+        "Quan18UNSAT"
+      })
+  public void TestQuantifiedExpressionsUNSAT(String value) {
+    addConstraint(value);
     Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
   }
 }

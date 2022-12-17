@@ -5,8 +5,8 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class AssociationTest extends ExpressionAbstractTest {
 
@@ -19,35 +19,10 @@ public class AssociationTest extends ExpressionAbstractTest {
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 
-  @Test
-  public void of_legal_age() {
-    testInv("Of_legal_age");
-  }
-
-  @Test
-  public void different_ids() {
-    testInv("Diff_ids");
-  }
-
-  @Test
-  public void atLeast2Person() {
-    testInv("AtLeast_2_Person");
-  }
-
-  @Test
-  public void Same_Person_in_2_Auction() {
-    testInv("Same_Person_in_2_Auction");
-  }
-
-  @Disabled
-  @Test
-  public void TestNestedFieldAccessExpr() {
-    testInv("NestedFieldAccessExpr");
-  }
-
-  @Disabled
-  @Test
-  public void TestNestedFieldAccess_inDec_UNSAT() {
-    testUnsatInv("NestedFieldAccess2_UNSAT");
+  @ParameterizedTest
+  @ValueSource(
+      strings = {"Of_legal_age", "Diff_ids", "AtLeast_2_Person", "Same_Person_in_2_Auction"})
+  public void testAssociationNavigation(String inv) {
+    testInv(inv);
   }
 }

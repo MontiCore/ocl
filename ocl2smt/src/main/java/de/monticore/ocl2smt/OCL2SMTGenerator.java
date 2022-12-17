@@ -6,6 +6,7 @@ import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassData;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -624,6 +625,8 @@ public class OCL2SMTGenerator {
               obj -> ctx.mkOr(set2.isIn(obj), range.apply((ArithExpr<? extends Sort>) obj)),
               OCLType.buildOCLType(sort.getName().toString()));
     }
+    assert set != null;
+    assert set.getType() != null;
     return set;
   }
 
