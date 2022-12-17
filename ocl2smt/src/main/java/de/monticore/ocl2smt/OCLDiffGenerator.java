@@ -53,7 +53,7 @@ public class OCLDiffGenerator {
     resetContext();
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
     // check if the Model is consistent
-    if (oclWitness(cd, in, false) == null) {
+    if (oclWitnessInternal(cd, in, false) == null) {
       Log.info("The Model PosCD + PosOCL is not Consistent", "[MODEl-INCONSISTENT]");
     }
     ;

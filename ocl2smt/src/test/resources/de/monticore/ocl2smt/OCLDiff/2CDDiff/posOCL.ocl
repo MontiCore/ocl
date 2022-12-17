@@ -6,8 +6,8 @@ inv Test :
      forall Auction a :
             exists Person p :
                p isin a.person &&
-               (forall Person p1 :
-                  (p1 != p) implies (p1 notin a.person)) ;
+               (forall Person p1 in a.person:
+                  p1 == p );
 
 
 }
