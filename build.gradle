@@ -124,7 +124,6 @@ dependencies {
   implementation "commons-cli:commons-cli:1.4"
   implementation "org.antlr:antlr4:4.7.1"
   implementation "org.assertj:assertj-core:$assertj_version"
-  implementation "edu.mit.alloy:alloy:6"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
