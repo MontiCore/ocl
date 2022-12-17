@@ -28,23 +28,6 @@ public class OCLDiffGenerator {
     return oclWitnessInternal(cd, in, partial);
   }
 
-  private static ASTODArtifact oclWitnessInternal(
-      ASTCDCompilationUnit cd, Set<ASTOCLCompilationUnit> in, boolean partial) {
-
-    OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
-
-    Set<IdentifiableBoolExpr> solverConstraints = buildSmtBoolExpr(ocl2SMTGenerator, in);
-
-    // check if they exist a model for the list of positive Constraint
-    Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(new ArrayList<>(solverConstraints));
-    if (solver.check() != Status.SATISFIABLE) {
-      Log.error("there are no Model for the List Of Positive Constraints");
-    }
-
-    return buildOd(ocl2SMTGenerator.cd2smtGenerator, solver.getModel(), "Witness", partial)
-        .orElse(null);
-  }
-
   public static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiff(
       ASTCDCompilationUnit cd,
       Set<ASTOCLCompilationUnit> in,
@@ -106,6 +89,23 @@ public class OCLDiffGenerator {
     return oclDiff(cd, in, notIn, false);
   }
 
+  private static ASTODArtifact oclWitnessInternal(
+      ASTCDCompilationUnit cd, Set<ASTOCLCompilationUnit> in, boolean partial) {
+
+    OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
+
+    Set<IdentifiableBoolExpr> solverConstraints = buildSmtBoolExpr(ocl2SMTGenerator, in);
+
+    // check if they exist a model for the list of positive Constraint
+    Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(new ArrayList<>(solverConstraints));
+    if (solver.check() != Status.SATISFIABLE) {
+      Log.error("there are no Model for the List Of Positive Constraints");
+    }
+
+    return buildOd(ocl2SMTGenerator.cd2smtGenerator, solver.getModel(), "Witness", partial)
+        .orElse(null);
+  }
+
   private static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiffHelper(
       OCL2SMTGenerator ocl2SMTGenerator,
       Set<IdentifiableBoolExpr> posConstraintList,
@@ -122,6 +122,7 @@ public class OCLDiffGenerator {
           ocl2SMTGenerator.cd2smtGenerator.makeSolver(new ArrayList<>(posConstraintList));
 
       if (solver.check() == Status.SATISFIABLE) {
+
         satOdList.add(
             buildOd(
                     ocl2SMTGenerator.cd2smtGenerator,

@@ -5,6 +5,7 @@ import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.odbasis._ast.*;
+import de.monticore.odlink._ast.ASTODLink;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -76,12 +77,14 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> negOCL = new HashSet<>();
     posOCL.add(parseOCl("2CDDiff/posCD.cd", "2CDDiff/posOCL.ocl"));
     negOCL.add(parseOCl("2CDDiff/negCD.cd", "2CDDiff/negOCL.ocl"));
+    printOD(OCLDiffGenerator.oclWitness(posCD, posOCL, false));
     Pair<ASTODArtifact, Set<ASTODArtifact>> diff =
         OCLDiffGenerator.CDOCLDiff(posCD, negCD, posOCL, negOCL, false);
-   // assertTrue(diff.getRight().isEmpty());
-
-    for (ASTODArtifact od : diff.getRight()){
-      printOD(od);
-    }
+    assertTrue(diff.getRight().isEmpty());
+    assertTrue(
+        diff.getLeft().getObjectDiagram().getODElementList().stream()
+                .filter(x -> (x instanceof ASTODLink))
+                .count()
+            == 2);
   }
 }
