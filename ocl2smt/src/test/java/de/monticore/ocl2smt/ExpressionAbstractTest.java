@@ -112,7 +112,7 @@ public abstract class ExpressionAbstractTest {
     printOD(od1);
   }
 
-  public static Context buidlContext() {
+  public static Context buildContext() {
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
     return new Context(cfg);

@@ -1,5 +1,6 @@
 package de.monticore.ocl2smt;
 
+import static org.gradle.internal.impldep.org.testng.Assert.assertEquals;
 import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -7,18 +8,12 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.odbasis._ast.*;
 import de.monticore.odlink._ast.ASTODLink;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
 
 public class OCLDiffTest extends OCLDiffAbstractTest {
-  protected static final String RELATIVE_MODEL_PATH =
-      "src/test/resources/de/monticore/ocl2smt/OCLDiff";
-  protected static final String RELATIVE_TARGET_PATH =
-      "target/generated/sources/annotationProcessor/java/ocl2smttest";
 
   @Test
   public void test_ocl_diff() throws IOException {
@@ -70,7 +65,7 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   }
 
   @Test
-  public void testOCLDiff() throws IOException {
+  public void testCDOCLDiff() throws IOException {
     ASTCDCompilationUnit posCD = parseCD("2CDDiff/posCD.cd");
     ASTCDCompilationUnit negCD = parseCD("2CDDiff/negCD.cd");
     Set<ASTOCLCompilationUnit> posOCL = new HashSet<>();
@@ -81,10 +76,10 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     Pair<ASTODArtifact, Set<ASTODArtifact>> diff =
         OCLDiffGenerator.CDOCLDiff(posCD, negCD, posOCL, negOCL, false);
     assertTrue(diff.getRight().isEmpty());
-    assertTrue(
+    assertEquals(
         diff.getLeft().getObjectDiagram().getODElementList().stream()
                 .filter(x -> (x instanceof ASTODLink))
                 .count()
-            == 2);
+            ,2);
   }
 }

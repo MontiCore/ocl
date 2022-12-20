@@ -14,7 +14,7 @@ public class TransitiveClosureTest extends ExpressionAbstractTest {
     OCLMill.init();
     CD4CodeMill.init();
     parse("/Transitive-closure/transitiveClosure.cd", "/Transitive-closure/transitiveClosure.ocl");
-    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buidlContext());
+    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 
   @Test

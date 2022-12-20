@@ -19,7 +19,7 @@ public class SetComprehensionTest extends ExpressionAbstractTest {
     parse(
         "/setExpressions/setComprehension/SetComp.cd",
         "/setExpressions/setComprehension/SetComp.ocl");
-    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buidlContext());
+    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 
   @Test

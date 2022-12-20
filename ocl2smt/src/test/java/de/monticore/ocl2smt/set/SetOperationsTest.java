@@ -16,7 +16,7 @@ public class SetOperationsTest extends ExpressionAbstractTest {
     OCLMill.init();
     CD4CodeMill.init();
     parse("/setExpressions/setOperations/SetOp.cd", "/setExpressions/setOperations/SetOp.ocl");
-    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buidlContext());
+    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 
   @Test
