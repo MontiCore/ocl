@@ -19,6 +19,7 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
+import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.SMTSet;
 import de.monticore.ocl2smt.util.TypeConverter;
@@ -47,6 +48,13 @@ public class OCL2SMTGenerator {
   public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
     this.ctx = ctx;
     cd2smtGenerator = new CD2SMTGenerator();
+    cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
+    TypeConverter.setup(cd2smtGenerator);
+    this.exprConv = new ExpressionsConverter(ctx);
+  }
+  public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit, OCL2SMTGenerator ocl2SMTGenerator) {
+    this.ctx = ocl2SMTGenerator.ctx;
+    cd2smtGenerator = ocl2SMTGenerator.cd2smtGenerator;
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
     TypeConverter.setup(cd2smtGenerator);
     this.exprConv = new ExpressionsConverter(ctx);
