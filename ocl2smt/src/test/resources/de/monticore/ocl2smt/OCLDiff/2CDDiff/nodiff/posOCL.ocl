@@ -15,8 +15,6 @@ inv Pos3 :
             exists Auction a  :
                a isin p.auction ;
 
-
-
 }
 
 

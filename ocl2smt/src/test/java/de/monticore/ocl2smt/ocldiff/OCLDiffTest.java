@@ -1,21 +1,20 @@
 package de.monticore.ocl2smt.ocldiff;
 
+import static org.gradle.internal.impldep.org.junit.Assert.assertFalse;
+import static org.gradle.internal.impldep.org.testng.Assert.assertEquals;
+import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
+
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODNamedObject;
-import org.apache.commons.lang3.tuple.Pair;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.gradle.internal.impldep.org.junit.Assert.assertFalse;
-import static org.gradle.internal.impldep.org.testng.Assert.assertEquals;
-import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class OCLDiffTest extends OCLDiffAbstractTest {
 
@@ -39,13 +38,45 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   public void testOclDiff2CD_NoDiff() throws IOException {
     Pair<ASTODArtifact, Set<ASTODArtifact>> diff =
         computeDiff2CD(
-            "2CDDiff/posCD.cd", "2CDDiff/negCD.cd", "2CDDiff/posOCL.ocl", "2CDDiff/negOCL.ocl");
+            "2CDDiff/nodiff/posCD.cd",
+            "2CDDiff/nodiff/negCD.cd",
+            "2CDDiff/nodiff/posOCL.ocl",
+            "2CDDiff/nodiff/negOCL.ocl");
 
     assertTrue(diff.getRight().isEmpty());
     assertEquals(countLinks(diff.getLeft()), 3);
     assertTrue(checkLink("obj_Pos1", "obj_Cardinality_right", diff.getLeft()));
     assertTrue(checkLink("obj_Pos2", "obj_Cardinality_right", diff.getLeft()));
     assertTrue(checkLink("obj_Pos3", "obj_Cardinality_left", diff.getLeft()));
+  }
+
+  @Test
+  public void testOclDiff2CD_diff() throws IOException {
+    Pair<ASTODArtifact, Set<ASTODArtifact>> diff =
+        computeDiff2CD(
+            "2CDDiff/diff/posCD.cd",
+            "2CDDiff/diff/negCD.cd",
+            "2CDDiff/diff/posOCL.ocl",
+            "2CDDiff/diff/negOCL.ocl");
+    printDiff(diff);
+    assertEquals(diff.getRight().size(), 1);
+    assertEquals(
+        diff.getRight().iterator().next().getObjectDiagram().getName(), "Cardinality_right");
+    assertEquals(countLinks(diff.getLeft()), 1);
+    assertTrue(checkLink("obj_Pos1", "obj_Cardinality_left", diff.getLeft()));
+  }
+
+  @Test
+  public void testOclDiff2CD_CDDiff() throws IOException {
+    Pair<ASTODArtifact, Set<ASTODArtifact>> diff =
+        computeDiff2CD(
+            "2CDDiff/cddiff/posCD.cd",
+            "2CDDiff/cddiff/negCD.cd",
+            "2CDDiff/cddiff/posOCL.ocl",
+            "2CDDiff/cddiff/negOCL.ocl");
+    printDiff(diff);
+    assertTrue(diff.getLeft() == null);
+    assertTrue(diff.getRight().size() >= 1);
   }
 
   @Test
@@ -57,10 +88,10 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     ASTODArtifact od = OCLDiffGenerator.oclWitness(cdAST, oclSet, true);
     printOD(od);
 
-    for (ASTODElement element : od.getObjectDiagram().getODElementList()){
-      if (element instanceof  ASTODNamedObject){
-        ASTODNamedObject obj = (ASTODNamedObject) element ;
-        assertTrue(obj.getODAttributeList().size()<=3);
+    for (ASTODElement element : od.getObjectDiagram().getODElementList()) {
+      if (element instanceof ASTODNamedObject) {
+        ASTODNamedObject obj = (ASTODNamedObject) element;
+        assertTrue(obj.getODAttributeList().size() <= 3);
       }
     }
   }

@@ -102,7 +102,7 @@ public class TypeConverter {
 
   private static OCLType convertQualf(ASTMCQualifiedType type) {
     String typeName = type.getMCQualifiedName().getQName();
-    if (typeMap.containsKey(typeName)) {
+    if (typeMap.containsKey(OCLType.buildOCLType(typeName))) {
       return OCLType.buildOCLType(typeName);
     }
     return OCLType.buildOCLType(typeName);
@@ -116,7 +116,7 @@ public class TypeConverter {
     return Optional.ofNullable(sort);
   }
 
-  protected static boolean isSet(ASTExpression node) {
+  public static boolean isSet(ASTExpression node) {
     SymTypeExpression symTypeExpression = new OCLDeriver().deriveType(node).getResult();
     assert symTypeExpression != null;
     return (symTypeExpression.isGenericType()

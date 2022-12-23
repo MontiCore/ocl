@@ -9,8 +9,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
-import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.ocl2smt.ocldiff.TraceUnsatCore;
+import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import java.io.IOException;
@@ -92,7 +92,6 @@ public abstract class ExpressionAbstractTest {
     org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
     printOD(od.get());
   }
-
 
   public void testUnsatInv(String invName) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();

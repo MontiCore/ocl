@@ -9,10 +9,6 @@ import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.assertj.core.api.Assertions;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -20,6 +16,9 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.assertj.core.api.Assertions;
 
 public abstract class OCLDiffAbstractTest {
   protected static final String RELATIVE_MODEL_PATH =
@@ -32,10 +31,14 @@ public abstract class OCLDiffAbstractTest {
     OCLMill.init();
     CD4CodeMill.init();
   }
+
   public void printDiff(Pair<ASTODArtifact, Set<ASTODArtifact>> diff) {
-    printOD(diff.getLeft());
+    if (diff.getLeft() != null) {
+      printOD(diff.getLeft());
+    }
     diff.getRight().forEach(this::printOD);
   }
+
   protected ASTOCLCompilationUnit parseOCl(String cdFileName, String oclFileName)
       throws IOException {
     setUp();
@@ -61,6 +64,7 @@ public abstract class OCLDiffAbstractTest {
       Assertions.fail("It Was Not Possible to Print the Object Diagram");
     }
   }
+
   protected boolean checkLink(String left, String right, ASTODArtifact od) {
     Set<ASTODLink> links =
         od.getObjectDiagram().getODElementList().stream()
@@ -86,7 +90,7 @@ public abstract class OCLDiffAbstractTest {
   }
 
   public Pair<ASTODArtifact, Set<ASTODArtifact>> computeDiff2CD(
-          String posCDn, String negCDn, String posOCLn, String negOCLn) throws IOException {
+      String posCDn, String negCDn, String posOCLn, String negOCLn) throws IOException {
     ASTCDCompilationUnit posCD = parseCD(posCDn);
     ASTCDCompilationUnit negCD = parseCD(negCDn);
     Set<ASTOCLCompilationUnit> posOCL = new HashSet<>();
@@ -97,7 +101,7 @@ public abstract class OCLDiffAbstractTest {
   }
 
   public Pair<ASTODArtifact, Set<ASTODArtifact>> computeDiffOneCD(
-          String posCDn, String posOCLn, String negOCLn) throws IOException {
+      String posCDn, String posOCLn, String negOCLn) throws IOException {
     ASTCDCompilationUnit posCD = parseCD(posCDn);
     Set<ASTOCLCompilationUnit> posOCL = new HashSet<>();
     Set<ASTOCLCompilationUnit> negOCL = new HashSet<>();

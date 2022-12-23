@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 public class TraceUnsatCore {
 
   public static ASTODArtifact buildUnsatOD(
-          Set<IdentifiableBoolExpr> posConstraints,
-          Set<IdentifiableBoolExpr> negConstraints,
-          List<ASTODLink> unsatCore) {
+      Set<IdentifiableBoolExpr> posConstraints,
+      Set<IdentifiableBoolExpr> negConstraints,
+      List<ASTODLink> unsatCore) {
     // add All positive invariant objects
     ASTODArtifact unsatOd =
         ODHelper.buildOD(

@@ -40,7 +40,7 @@ public class OCLDiffGenerator {
     if (oclWitnessInternal(cd, in, false) == null) {
       Log.info("The Model PosCD + PosOCL is not Consistent", "[MODEl-INCONSISTENT]");
     }
-    ;
+
     // positive ocl constraint
     Set<IdentifiableBoolExpr> posConstList = buildSmtBoolExpr(ocl2SMTGenerator, in);
 
@@ -77,7 +77,7 @@ public class OCLDiffGenerator {
             posCd,
             negCd,
             CDDiff.getDefaultDiffsize(negCd, posCd),
-            1,
+            5,
             CDSemantics.SIMPLE_CLOSED_WORLD);
     if (!res.isEmpty()) {
       return new ImmutablePair<>(null, new HashSet<>(res));
