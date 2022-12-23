@@ -12,7 +12,7 @@ public class TestPreAndPostConditions extends OCLDiffTest {
     CD4AnalysisFullPrettyPrinter printer = new CD4AnalysisFullPrettyPrinter();
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/post-pre.cd");
     System.out.println(printer.prettyprint(ast));
-    Helper.buildPreAttribute(ast);
+    Helper.buildPreCD(ast);
     System.out.println(printer.prettyprint(ast));
   }
 }
