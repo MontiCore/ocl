@@ -96,10 +96,4 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     }
   }
 
-  @Test
-  public void testPostPreConditions() throws IOException {
-    parseCD("/post-pre-conditions/post-pre.cd");
-    Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();
-    oclSet.add(parseOCl("/post-pre-conditions/post-pre.cd", "/post-pre-conditions/post-pre.ocl"));
-  }
 }

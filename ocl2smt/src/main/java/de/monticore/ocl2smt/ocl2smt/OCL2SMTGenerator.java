@@ -15,10 +15,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.ocl.ocl.OCLMill;
-import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
-import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
-import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
-import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
+import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
@@ -68,15 +65,17 @@ public class OCL2SMTGenerator {
   }
 
   public IdentifiableBoolExpr convertConstr(ASTOCLConstraint constraint) {
+    IdentifiableBoolExpr res = null ;
     if (constraint instanceof ASTOCLInvariant) {
-      return convertInv((ASTOCLInvariant) constraint);
+      res = convertInv((ASTOCLInvariant) constraint);
     } else {
       assert false;
       Log.error(
           "the conversion of  ASTOCLConstraint of type   ASTOCLMethodSignature "
               + "and ASTOCLConstructorSignature in SMT is not implemented");
-      return null;
+     
     }
+    return  res  ;
   }
 
   protected IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
@@ -117,7 +116,13 @@ public class OCL2SMTGenerator {
         invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
     return IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name);
   }
+  public    Pair<IdentifiableBoolExpr,IdentifiableBoolExpr> convertOpConst(ASTOCLOperationConstraint node){
+    BoolExpr pre = convertBoolExpr(node.getPreCondition(0));
+    BoolExpr post = convertBoolExpr(node.getPostCondition(0));
 
+    return  new ImmutablePair<>(IdentifiableBoolExpr.buildIdentifiable(pre,node.getPreCondition(0).get_SourcePositionStart(), Optional.of("pre"))
+            ,IdentifiableBoolExpr.buildIdentifiable(post,node.getPreCondition(0).get_SourcePositionStart(), Optional.of("post")));
+  }
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
     BoolExpr result;
     if (node instanceof ASTBooleanAndOpExpression) {

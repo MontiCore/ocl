@@ -1,5 +1,6 @@
 package de.monticore.ocl2smt.ocldiff;
 
+import com.microsoft.z3.Context;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
@@ -13,7 +14,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
@@ -108,5 +111,10 @@ public abstract class OCLDiffAbstractTest {
     posOCL.add(parseOCl(posCDn, posOCLn));
     negOCL.add(parseOCl(posCDn, negOCLn));
     return OCLDiffGenerator.oclDiff(posCD, posOCL, negOCL, false);
+  }
+  public static Context buildContext() {
+    Map<String, String> cfg = new HashMap<>();
+    cfg.put("model", "true");
+    return new Context(cfg);
   }
 }
