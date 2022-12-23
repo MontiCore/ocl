@@ -4,14 +4,8 @@ package docs;
 classdiagram Auction {
 
  class  Person{
-   String changeCompany(String name);
+   int salary ;
+   int incSalary(int inc);
  }
-
- class  Company{
-  int employees ;
-  String name ;
-
- }
-  association [1] Person(person)     --     (company)Company [1];
 
 }

@@ -168,25 +168,26 @@ public class OCLDiffGenerator {
           Set<ASTOCLCompilationUnit> negOcl,
           boolean partial) {
     resetContext();
+    Helper.buildPreCD(ast);
     OCL2SMTGenerator ocl2smt = new OCL2SMTGenerator(ast,ctx);
     Pair<IdentifiableBoolExpr, IdentifiableBoolExpr> constraint1 = ocl2smt.convertOpConst((ASTOCLOperationConstraint) posOcl.iterator().next()
             .getOCLArtifact().getOCLConstraintList().get(0));
 
 
-    Helper.buildPreCD(ast);
-    OCL2SMTGenerator preOCL2smt = new OCL2SMTGenerator(ast,ctx) ;
+
+
     Pair<IdentifiableBoolExpr, IdentifiableBoolExpr> constraint2 = ocl2smt.convertOpConst((ASTOCLOperationConstraint) negOcl.iterator().next()
             .getOCLArtifact().getOCLConstraintList().get(0));
 
     Set<IdentifiableBoolExpr> posConstraint = new HashSet<>() ;
     posConstraint.add(constraint1.getLeft());
     posConstraint.add(constraint2.getLeft());
-    posConstraint.add(constraint2.getRight());
+    posConstraint.add(constraint1.getRight());
 
     Set<IdentifiableBoolExpr> negConstraints = new HashSet<>() ;
     negConstraints.add(constraint2.getRight().negate(ctx));
 
-    return oclDiffHelper(preOCL2smt,posConstraint,negConstraints,false);
+    return oclDiffHelper(ocl2smt,posConstraint,negConstraints,false);
 
   }
 

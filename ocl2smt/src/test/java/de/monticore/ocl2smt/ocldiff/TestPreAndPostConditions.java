@@ -31,7 +31,7 @@ public class TestPreAndPostConditions extends OCLDiffAbstractTest {
 
   @Test
   public void testPostPreConditions() throws IOException {
-    Context ctx = buildContext() ;
+    //Context ctx = buildContext() ;
    ASTCDCompilationUnit ast =  parseCD("/post-pre-conditions/pre-post.cd");
 
     Set<ASTOCLCompilationUnit> in = new HashSet<>();

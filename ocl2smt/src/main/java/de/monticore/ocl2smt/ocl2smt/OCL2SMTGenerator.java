@@ -25,6 +25,7 @@ import de.monticore.ocl2smt.util.SMTSet;
 import de.monticore.ocl2smt.util.TypeConverter;
 import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.oosymbols._ast.ASTField;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
@@ -238,7 +239,10 @@ public class OCL2SMTGenerator {
       res = convertIfTEl((ASTIfThenElseExpression) node);
     } else if (node instanceof ASTImpliesExpression) {
       res = convertImpl((ASTImpliesExpression) node);
-    } else {
+    }else if (node instanceof ASTOCLAtPreQualification) {
+      res = convertAt((ASTOCLAtPreQualification) node);
+    }
+    else {
       return Optional.empty();
     }
     return Optional.of(res);
@@ -818,6 +822,20 @@ public class OCL2SMTGenerator {
             null);
     genInvConstraints.add(rel_is_assocFunc);
     return rel;
+  }
+
+  protected  Expr<? extends  Sort>  convertAt(ASTOCLAtPreQualification node){
+    if (node.getExpression() instanceof ASTFieldAccessExpression){
+      ASTFieldAccessExpression fa = ((ASTFieldAccessExpression)node.getExpression());
+      fa.setName(fa.getName() + "__pre");
+      return convertExpr(fa);
+    } else if (node.getExpression() instanceof ASTNameExpression){
+      ASTNameExpression fa = ((ASTNameExpression)node.getExpression());
+      fa.setName(fa.getName() + "__pre");
+      return convertExpr(fa);
+    }
+    Log.error("conversion of ASTOCLAtPreQualification not totally implemented");
+    return  null ;
   }
 
   protected Expr<? extends Sort> declVariable(OCLType type, String name) {

@@ -13,6 +13,7 @@ import java.util.List;
 public class BuildPreAssociationTrafo extends CDAfterParseHelper
     implements CDAssociationVisitor2, CDAssociationHandler {
     protected CDAssociationTraverser traverser;
+    List<ASTCDAssociation> preAssociations = new ArrayList<>() ;
     @Override
     public CDAssociationTraverser getTraverser() {
         return traverser;
@@ -20,12 +21,12 @@ public class BuildPreAssociationTrafo extends CDAfterParseHelper
 
     @Override
     public void handle(ASTCDAssociation node) {
-        if (node.isPresentName()){
+      /*  if (node.isPresentName()){
             node.setName(node.getName()+ "___pre");
         }
         else {
             node.setName( "___pre");
-        }
+        }*/
 
     }
 
