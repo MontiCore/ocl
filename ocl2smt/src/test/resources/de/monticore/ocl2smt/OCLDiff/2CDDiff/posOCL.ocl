@@ -2,12 +2,19 @@
 package invariants;
 
 ocl posOCL {
-inv Test :
+inv Pos1 :
      forall Auction a :
             exists Person p :
-               p isin a.person &&
-               (forall Person p1:
-                 (p1 != p) implies p1  notin a.person) ;
+               p isin a.person ;
+context Auction a  inv Pos2 :
+     forall p1, p2 in a.person:
+          (p1 == p2) ;
+
+inv Pos3 :
+     forall Person p :
+            exists Auction a  :
+               a isin p.auction ;
+
 
 
 }

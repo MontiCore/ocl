@@ -7,9 +7,11 @@ ocl Test02 {
       forall Auction a:
          a.auctionIdent > 0 ;
 
+
   inv MaxIdent_7:
         forall Auction a:
            a.auctionIdent < 8 ;
+
 
   inv Auction_Names:
        forall Auction a :
@@ -17,6 +19,7 @@ ocl Test02 {
            a.name == "Twitter"||
            a.name == "BMW4" ||
            a.name == "Mercedes";
+
 
   inv Exists_Exact_3_Auction:
          exists Auction a1,a2,a3 :
@@ -29,11 +32,24 @@ ocl Test02 {
                    a == a2||
                    a == a3 );
 
+
   inv Auction_Ident_Unique:
          forall Auction a1 , a2 :
            (a1.auctionIdent != a2.auctionIdent implies a1 == a2) &&
            (a1 == a2 implies a1.auctionIdent == a2.auctionIdent ) ;
 
 
+   inv Facebook_ident_is_1:
+       forall Auction a:
+           if  a.name == "FaceBook1"
+           then a.auctionIdent == 1
+           else a.auctionIdent != 1;
+
+
+    inv BMW_ident_is_4:
+         forall Auction a:
+             if  a.name == "BMW4"
+             then a.auctionIdent == 4
+             else a.auctionIdent != 4;
 
 }

@@ -13,9 +13,12 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 
 public abstract class OCLDiffAbstractTest {
@@ -29,7 +32,10 @@ public abstract class OCLDiffAbstractTest {
     OCLMill.init();
     CD4CodeMill.init();
   }
-
+  public void printDiff(Pair<ASTODArtifact, Set<ASTODArtifact>> diff) {
+    printOD(diff.getLeft());
+    diff.getRight().forEach(this::printOD);
+  }
   protected ASTOCLCompilationUnit parseOCl(String cdFileName, String oclFileName)
       throws IOException {
     setUp();
@@ -55,38 +61,48 @@ public abstract class OCLDiffAbstractTest {
       Assertions.fail("It Was Not Possible to Print the Object Diagram");
     }
   }
+  protected boolean checkLink(String left, String right, ASTODArtifact od) {
+    Set<ASTODLink> links =
+        od.getObjectDiagram().getODElementList().stream()
+            .filter(x -> x instanceof ASTODLink)
+            .map(x -> (ASTODLink) x)
+            .collect(Collectors.toSet());
 
-  protected List<String> getUnsatInvLines(List<String> objNames, ASTODArtifact od) {
-    List<String> res = new ArrayList<>();
-    for (ASTODElement element : od.getObjectDiagram().getODElementList()) {
-      if (element instanceof ASTODNamedObject
-          && objNames.contains(((ASTODNamedObject) element).getName())) {
-        for (ASTODAttribute attribute :
-            ((ASTODNamedObject) element)
-                .getODAttributeList().stream()
-                    .filter(a -> a.getName().equals("line"))
-                    .collect(Collectors.toList())) {
-          res.add(((ASTODName) attribute.getODValue()).getName());
-        }
-      }
-    }
-    return res;
+    return links.stream()
+            .filter(
+                x ->
+                    x.getLeftReferenceNames().get(0).contains(left)
+                        && x.getRightReferenceNames().get(0).contains(right))
+            .collect(Collectors.toSet())
+            .size()
+        == 1;
   }
 
-  protected List<String> getUnsatInvNameList(ASTODArtifact unsatOD) {
-    List<ASTODLink> traceLinks =
-        unsatOD.getObjectDiagram().getODElementList().stream()
-            .filter(e -> e instanceof ASTODLink)
-            .collect(Collectors.toList())
-            .stream()
-            .map(e -> (ASTODLink) e)
-            .collect(Collectors.toList());
-    List<String> unsatInvNameList = new ArrayList<>();
-    traceLinks.forEach(
-        l -> {
-          unsatInvNameList.addAll(l.getLeftReferenceNames());
-          unsatInvNameList.addAll(l.getRightReferenceNames());
-        });
-    return unsatInvNameList;
+  protected int countLinks(ASTODArtifact od) {
+    return (int)
+        od.getObjectDiagram().getODElementList().stream()
+            .filter(x -> (x instanceof ASTODLink))
+            .count();
+  }
+
+  public Pair<ASTODArtifact, Set<ASTODArtifact>> computeDiff2CD(
+          String posCDn, String negCDn, String posOCLn, String negOCLn) throws IOException {
+    ASTCDCompilationUnit posCD = parseCD(posCDn);
+    ASTCDCompilationUnit negCD = parseCD(negCDn);
+    Set<ASTOCLCompilationUnit> posOCL = new HashSet<>();
+    Set<ASTOCLCompilationUnit> negOCL = new HashSet<>();
+    posOCL.add(parseOCl(posCDn, posOCLn));
+    negOCL.add(parseOCl(negCDn, negOCLn));
+    return OCLDiffGenerator.CDOCLDiff(posCD, negCD, posOCL, negOCL, false);
+  }
+
+  public Pair<ASTODArtifact, Set<ASTODArtifact>> computeDiffOneCD(
+          String posCDn, String posOCLn, String negOCLn) throws IOException {
+    ASTCDCompilationUnit posCD = parseCD(posCDn);
+    Set<ASTOCLCompilationUnit> posOCL = new HashSet<>();
+    Set<ASTOCLCompilationUnit> negOCL = new HashSet<>();
+    posOCL.add(parseOCl(posCDn, posOCLn));
+    negOCL.add(parseOCl(posCDn, negOCLn));
+    return OCLDiffGenerator.oclDiff(posCD, posOCL, negOCL, false);
   }
 }
