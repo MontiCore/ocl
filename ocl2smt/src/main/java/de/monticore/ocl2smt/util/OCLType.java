@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt;
+package de.monticore.ocl2smt.util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,5 +26,9 @@ public class OCLType {
 
   public String getName() {
     return name;
+  }
+
+  public boolean isPrimitiv() {
+    return TypeConverter.typeMap.containsKey(this);
   }
 }
