@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt;
+package de.monticore.ocl2smt.ocl2smt;
 
 import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
 
@@ -6,7 +6,6 @@ import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassData;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -23,6 +22,9 @@ import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
+import de.monticore.ocl2smt.util.OCLType;
+import de.monticore.ocl2smt.util.SMTSet;
+import de.monticore.ocl2smt.util.TypeConverter;
 import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -37,7 +39,7 @@ import org.apache.commons.lang3.tuple.Pair;
 public class OCL2SMTGenerator {
 
   protected final Context ctx;
-  protected final CD2SMTGenerator cd2smtGenerator;
+  public final CD2SMTGenerator cd2smtGenerator;
 
   protected final ExpressionsConverter exprConv;
 
@@ -65,7 +67,7 @@ public class OCL2SMTGenerator {
     return constraints;
   }
 
-  protected IdentifiableBoolExpr convertConstr(ASTOCLConstraint constraint) {
+  public IdentifiableBoolExpr convertConstr(ASTOCLConstraint constraint) {
     if (constraint instanceof ASTOCLInvariant) {
       return convertInv((ASTOCLInvariant) constraint);
     } else {

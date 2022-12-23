@@ -1,17 +1,21 @@
-package de.monticore.ocl2smt;
+package de.monticore.ocl2smt.ocldiff;
+
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odbasis._ast.ASTODElement;
+import de.monticore.odbasis._ast.ASTODNamedObject;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.gradle.internal.impldep.org.junit.Assert.assertFalse;
 import static org.gradle.internal.impldep.org.testng.Assert.assertEquals;
 import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
-
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.odbasis._ast.*;
-import java.io.IOException;
-import java.util.*;
-import org.apache.commons.lang3.tuple.Pair;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 
 public class OCLDiffTest extends OCLDiffAbstractTest {
 
@@ -59,5 +63,12 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
         assertTrue(obj.getODAttributeList().size()<=3);
       }
     }
+  }
+
+  @Test
+  public void testPostPreConditions() throws IOException {
+    parseCD("/post-pre-conditions/post-pre.cd");
+    Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();
+    oclSet.add(parseOCl("/post-pre-conditions/post-pre.cd", "/post-pre-conditions/post-pre.ocl"));
   }
 }

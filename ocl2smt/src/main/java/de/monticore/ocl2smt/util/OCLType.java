@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt;
+package de.monticore.ocl2smt.util;
 
 import java.util.HashMap;
 import java.util.Map;

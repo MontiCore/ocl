@@ -1,9 +1,11 @@
-package de.monticore.ocl2smt;
+package de.monticore.ocl2smt.ocl2smt;
 
 import com.microsoft.z3.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.literals.mccommonliterals._ast.*;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
+import de.monticore.ocl2smt.util.OCLType;
+import de.monticore.ocl2smt.util.TypeConverter;
 import de.se_rwth.commons.logging.Log;
 import java.util.HashMap;
 import java.util.Map;

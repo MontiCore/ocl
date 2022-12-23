@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt;
+package de.monticore.ocl2smt.util;
 
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Sort;

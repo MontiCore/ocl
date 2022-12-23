@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt;
+package de.monticore.ocl2smt.ocl2smt;
 
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
@@ -9,6 +9,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
+import de.monticore.ocl2smt.util.OCL_Loader;
+import de.monticore.ocl2smt.ocldiff.TraceUnsatCore;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import java.io.IOException;
@@ -91,12 +93,6 @@ public abstract class ExpressionAbstractTest {
     printOD(od.get());
   }
 
-  public void printSMTScript(String invName) {
-    List<IdentifiableBoolExpr> actualConstraint = new ArrayList<>();
-    actualConstraint.add(getConstraint(invName));
-    Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(actualConstraint);
-    System.out.println(solver);
-  }
 
   public void testUnsatInv(String invName) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();

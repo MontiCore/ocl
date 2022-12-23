@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt;
+package de.monticore.ocl2smt.ocl2smt;
 
 import com.microsoft.z3.Status;
 import de.monticore.cd4code.CD4CodeMill;
