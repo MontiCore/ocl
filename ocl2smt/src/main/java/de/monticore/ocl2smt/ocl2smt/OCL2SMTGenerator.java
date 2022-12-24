@@ -433,6 +433,7 @@ public class OCL2SMTGenerator {
     if (varNames.containsKey(node.getName())) {
       return varNames.get(node.getName());
     }
+    //TODO:check if it ist an attribute or association of the context
     assert node.getDefiningSymbol().isPresent();
     return declVariable(
         TypeConverter.buildOCLType((VariableSymbol) node.getDefiningSymbol().get()),

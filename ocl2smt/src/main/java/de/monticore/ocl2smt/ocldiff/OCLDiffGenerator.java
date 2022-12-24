@@ -122,7 +122,7 @@ public class OCLDiffGenerator {
           ocl2SMTGenerator.cd2smtGenerator.makeSolver(new ArrayList<>(posConstraintList));
 
       if (solver.check() == Status.SATISFIABLE) {
-
+       System.out.println(solver);
         satOdList.add(
             buildOd(
                     ocl2SMTGenerator.cd2smtGenerator,

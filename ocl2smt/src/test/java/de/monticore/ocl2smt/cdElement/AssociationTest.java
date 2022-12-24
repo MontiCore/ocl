@@ -1,7 +1,9 @@
-package de.monticore.ocl2smt.ocl2smt;
+package de.monticore.ocl2smt.cdElement;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.ocl.ocl.OCLMill;
+import de.monticore.ocl2smt.ocl2smt.ExpressionAbstractTest;
+import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +17,7 @@ public class AssociationTest extends ExpressionAbstractTest {
     Log.init();
     OCLMill.init();
     CD4CodeMill.init();
-    parse("/associations/Association.cd", "/associations/Association.ocl");
+    parse("/cdElement/associations/Association.cd", "/cdElement/associations/Association.ocl");
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 

@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+ocl NC1 {
+
+  context Person p inv Attr1:
+         age == 10 ;
+
+}
+
