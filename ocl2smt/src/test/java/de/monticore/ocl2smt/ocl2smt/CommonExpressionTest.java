@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt;
+package de.monticore.ocl2smt.ocl2smt;
 
 import com.microsoft.z3.BoolExpr;
 import de.monticore.cd4code.CD4CodeMill;
@@ -20,7 +20,7 @@ public class CommonExpressionTest extends ExpressionAbstractTest {
     OCLMill.init();
     CD4CodeMill.init();
     parse("MinAuction.cd", "CommonExpr.ocl");
-    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
+    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
     ocl2SMTGenerator.ocl2smt(oclAST.getOCLArtifact()).forEach(b -> res.add(b.getValue()));
   }
 

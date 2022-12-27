@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt;
+package de.monticore.ocl2smt.ocl2smt;
 
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.ocl.ocl.OCLMill;
@@ -14,7 +14,7 @@ public class TransitiveClosureTest extends ExpressionAbstractTest {
     OCLMill.init();
     CD4CodeMill.init();
     parse("/Transitive-closure/transitiveClosure.cd", "/Transitive-closure/transitiveClosure.ocl");
-    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST);
+    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 
   @Test

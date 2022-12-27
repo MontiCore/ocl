@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl posOCL {
+inv Pos1 :
+     forall Person p :
+            exists Auction a  :
+               a isin p.auction ;
+
+}
+
+
+

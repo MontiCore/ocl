@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt;
+package de.monticore.ocl2smt.ocl2smt;
 
 import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
 
@@ -22,6 +22,9 @@ import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
+import de.monticore.ocl2smt.util.OCLType;
+import de.monticore.ocl2smt.util.SMTSet;
+import de.monticore.ocl2smt.util.TypeConverter;
 import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -36,7 +39,7 @@ import org.apache.commons.lang3.tuple.Pair;
 public class OCL2SMTGenerator {
 
   protected final Context ctx;
-  protected final CD2SMTGenerator cd2smtGenerator;
+  public final CD2SMTGenerator cd2smtGenerator;
 
   protected final ExpressionsConverter exprConv;
 
@@ -44,9 +47,8 @@ public class OCL2SMTGenerator {
 
   protected final Set<BoolExpr> genInvConstraints = new HashSet<>();
 
-  public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit) {
-    this.ctx = buildContext();
-
+  public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
+    this.ctx = ctx;
     cd2smtGenerator = new CD2SMTGenerator();
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
     TypeConverter.setup(cd2smtGenerator);
@@ -65,7 +67,7 @@ public class OCL2SMTGenerator {
     return constraints;
   }
 
-  protected IdentifiableBoolExpr convertConstr(ASTOCLConstraint constraint) {
+  public IdentifiableBoolExpr convertConstr(ASTOCLConstraint constraint) {
     if (constraint instanceof ASTOCLInvariant) {
       return convertInv((ASTOCLInvariant) constraint);
     } else {
@@ -803,12 +805,6 @@ public class OCL2SMTGenerator {
             null);
     genInvConstraints.add(rel_is_assocFunc);
     return rel;
-  }
-
-  public Context buildContext() {
-    Map<String, String> cfg = new HashMap<>();
-    cfg.put("model", "true");
-    return new Context(cfg);
   }
 
   protected Expr<? extends Sort> declVariable(OCLType type, String name) {

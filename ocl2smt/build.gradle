@@ -27,10 +27,12 @@ dependencies {
   implementation group: 'de.monticore', name: 'monticore-runtime', version: mc_version
   implementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
   implementation "de.monticore.lang:cd4analysis:$mc_version:cd2smt"
+  implementation "de.monticore.lang:cd4analysis:$mc_version:cddiff"
   implementation "de.monticore.lang:od:$mc_version"
 
   implementation 'org.apache.commons:commons-lang3:3.12.0'
   implementation 'tools.aqua:z3-turnkey:4.11.2'
+  implementation "edu.mit.alloy:alloy:6"
 
   testImplementation "org.assertj:assertj-core:$assertj_version"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"

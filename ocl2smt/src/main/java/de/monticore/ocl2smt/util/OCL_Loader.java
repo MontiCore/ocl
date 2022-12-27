@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.ocl2smt;
+package de.monticore.ocl2smt.util;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis.CD4AnalysisMill;
