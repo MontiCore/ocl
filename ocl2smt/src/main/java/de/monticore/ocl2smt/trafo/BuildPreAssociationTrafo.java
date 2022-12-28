@@ -20,15 +20,7 @@ public class BuildPreAssociationTrafo extends CDAfterParseHelper
   }
 
   @Override
-  public void handle(ASTCDAssociation node) {
-    /*  if (node.isPresentName()){
-        node.setName(node.getName()+ "___pre");
-    }
-    else {
-        node.setName( "___pre");
-    }*/
-
-  }
+  public void handle(ASTCDAssociation node) {}
 
   @Override
   public void setTraverser(CDAssociationTraverser traverser) {

@@ -79,8 +79,9 @@ public class OCL2SMTGenerator {
     OCLConstraint res = null;
     if (constraint instanceof ASTOCLInvariant) {
       res = convertInv((ASTOCLInvariant) constraint);
+    } else if (constraint instanceof ASTOCLOperationConstraint) {
+      res = convertOpConst((ASTOCLOperationConstraint) constraint);
     } else {
-      assert false;
       Log.error(
           "the conversion of  ASTOCLConstraint of type   ASTOCLMethodSignature "
               + "and ASTOCLConstructorSignature in SMT is not implemented");
@@ -92,7 +93,7 @@ public class OCL2SMTGenerator {
     SourcePosition srcPos = invariant.get_SourcePositionStart();
 
     // convert parameter declaration  in context
-    Function<BoolExpr, BoolExpr> invCtx = convertInvCtx(invariant);
+    Function<BoolExpr, BoolExpr> invCtx = openInvScope(invariant);
 
     // convert inv Body in the Invariant context
     BoolExpr inv = invCtx.apply(convertBoolExpr(invariant.getExpression()));
@@ -103,17 +104,21 @@ public class OCL2SMTGenerator {
     }
 
     // clear constraints empty  //TODO: make an object with All this information and close  add a
-    // function closeContextScope
-    genInvConstraints.clear();
+
     Optional<String> name =
         invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
-    oclContext = null;
-    varNames.clear();
-    ;
+
+    closeInvScope();
     return new OCLConstraint(IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name));
   }
 
-  protected Function<BoolExpr, BoolExpr> convertInvCtx(ASTOCLInvariant invariant) {
+  protected void closeInvScope() {
+    genInvConstraints.clear();
+    oclContext = null;
+    varNames.clear();
+  }
+
+  protected Function<BoolExpr, BoolExpr> openInvScope(ASTOCLInvariant invariant) {
     List<Expr<? extends Sort>> vars = new ArrayList<>();
     for (ASTOCLContextDefinition invCtx : invariant.getOCLContextDefinitionList()) {
       if (invCtx.isPresentOCLParamDeclaration()) {
@@ -128,11 +133,11 @@ public class OCL2SMTGenerator {
     return bool -> bool;
   }
 
-  Function<BoolExpr, BoolExpr> convertOpCtx(ASTOCLOperationSignature node) {
+  Function<BoolExpr, BoolExpr> openOpScope(ASTOCLOperationSignature node) {
 
     ASTOCLMethodSignature method =
-        (ASTOCLMethodSignature) node; // TODO:fix when it isn't a method Ssignature
-    OCLType type = OCLType.buildOCLType(((ASTOCLMethodSignature) node).getMethodName().getParts(0));
+        (ASTOCLMethodSignature) node; // TODO:fix when it isn't a method Signature
+    OCLType type = OCLType.buildOCLType(method.getMethodName().getParts(0));
     Expr<? extends Sort> obj = declVariable(type, type.getName() + "__");
 
     oclContext = new ImmutablePair<>(type, obj);
@@ -140,17 +145,24 @@ public class OCL2SMTGenerator {
     return bool -> ctx.mkForall(new Expr[] {obj}, bool, 0, null, null, null, null);
   }
 
-  public Pair<IdentifiableBoolExpr, IdentifiableBoolExpr> convertOpConst(
-      ASTOCLOperationConstraint node) {
-    convertOpCtx(node.getOCLOperationSignature());
+  public OCLConstraint convertOpConst(ASTOCLOperationConstraint node) {
+
+    Function<BoolExpr, BoolExpr> opContext = openOpScope(node.getOCLOperationSignature());
     BoolExpr pre = convertBoolExpr(node.getPreCondition(0));
     BoolExpr post = convertBoolExpr(node.getPostCondition(0));
 
-    return new ImmutablePair<>(
+    IdentifiableBoolExpr preConstr =
         IdentifiableBoolExpr.buildIdentifiable(
-            pre, node.getPreCondition(0).get_SourcePositionStart(), Optional.of("pre")),
+            opContext.apply(pre),
+            node.getPreCondition(0).get_SourcePositionStart(),
+            Optional.of("pre"));
+    IdentifiableBoolExpr postConstr =
         IdentifiableBoolExpr.buildIdentifiable(
-            post, node.getPreCondition(0).get_SourcePositionStart(), Optional.of("post")));
+            opContext.apply(post),
+            node.getPostCondition(0).get_SourcePositionStart(),
+            Optional.of("post"));
+
+    return new OCLConstraint(preConstr, postConstr);
   }
 
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {

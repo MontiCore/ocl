@@ -27,6 +27,8 @@ public class AddPreAttributeTrafo implements CDBasisHandler, CDBasisVisitor2 {
 
   @Override
   public void handle(ASTCDClass node) {
+    // create for each attribute a pre-attribute
+    node.getCDAttributeList().forEach(attr -> node.addCDMember(createPreAttribute(attr)));
 
     // create boolean attribute to identify pre objects
     ASTMCType type = OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(1).build();
@@ -34,9 +36,6 @@ public class AddPreAttributeTrafo implements CDBasisHandler, CDBasisVisitor2 {
     ASTModifier mod = CDModifier.PUBLIC.build();
     ASTCDAttribute attribute = facade.createAttribute(mod, type, "ispre");
     node.addCDMember(attribute);
-
-    // create for each attribute a pre-attribute
-    node.getCDAttributeList().forEach(attr -> node.addCDMember(createPreAttribute(attr)));
   }
 
   private ASTCDAttribute createPreAttribute(ASTCDAttribute node) {

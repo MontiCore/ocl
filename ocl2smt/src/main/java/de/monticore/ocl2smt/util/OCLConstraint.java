@@ -24,7 +24,7 @@ public class OCLConstraint {
     return isInvariant;
   }
 
-  boolean isOpConstraint() {
+  public boolean isOpConstraint() {
     return !isInvariant;
   }
 

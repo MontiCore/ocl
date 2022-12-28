@@ -4,19 +4,29 @@ import static org.gradle.internal.impldep.org.junit.Assert.assertFalse;
 import static org.gradle.internal.impldep.org.testng.Assert.assertEquals;
 import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODNamedObject;
+import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class OCLDiffTest extends OCLDiffAbstractTest {
+  @BeforeEach
+  public void setUp() {
+    Log.init();
+    OCLMill.init();
+    CD4CodeMill.init();
+  }
 
   @Test
   public void testOCLDiffOneCD() throws IOException {

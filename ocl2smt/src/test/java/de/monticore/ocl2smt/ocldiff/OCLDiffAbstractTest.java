@@ -1,15 +1,12 @@
 package de.monticore.ocl2smt.ocldiff;
 
 import com.microsoft.z3.Context;
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
-import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -29,12 +26,6 @@ public abstract class OCLDiffAbstractTest {
   protected static final String RELATIVE_TARGET_PATH =
       "target/generated/sources/annotationProcessor/java/ocl2smttest";
 
-  public void setUp() {
-    Log.init();
-    OCLMill.init();
-    CD4CodeMill.init();
-  }
-
   public void printDiff(Pair<ASTODArtifact, Set<ASTODArtifact>> diff) {
     if (diff.getLeft() != null) {
       printOD(diff.getLeft());
@@ -44,14 +35,14 @@ public abstract class OCLDiffAbstractTest {
 
   protected ASTOCLCompilationUnit parseOCl(String cdFileName, String oclFileName)
       throws IOException {
-    setUp();
+
     return OCL_Loader.loadAndCheckOCL(
         Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(),
         Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
   }
 
   protected ASTCDCompilationUnit parseCD(String cdFileName) throws IOException {
-    setUp();
+
     return OCL_Loader.loadAndCheckCD(Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
   }
 

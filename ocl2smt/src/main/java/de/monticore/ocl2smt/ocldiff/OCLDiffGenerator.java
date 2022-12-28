@@ -143,7 +143,7 @@ public class OCLDiffGenerator {
     return cd2SMTGenerator.smt2od(model, partial, ODName);
   }
 
-  private static Set<IdentifiableBoolExpr> buildSmtBoolExpr(
+  protected static Set<IdentifiableBoolExpr> buildSmtBoolExpr(
       OCL2SMTGenerator ocl2SMTGenerator, Set<ASTOCLCompilationUnit> in) {
     return in.stream()
         .flatMap(
