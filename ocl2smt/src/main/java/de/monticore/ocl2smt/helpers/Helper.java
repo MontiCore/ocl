@@ -1,5 +1,8 @@
 package de.monticore.ocl2smt.helpers;
 
+import com.microsoft.z3.BoolExpr;
+import com.microsoft.z3.Expr;
+import com.microsoft.z3.Sort;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
@@ -26,6 +29,7 @@ public class Helper {
     ast.accept(associationTraverser);
 
   }
+
 
 
 

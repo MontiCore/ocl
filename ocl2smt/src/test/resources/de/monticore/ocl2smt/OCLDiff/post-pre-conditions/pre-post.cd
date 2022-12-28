@@ -8,4 +8,11 @@ classdiagram Auction {
    int incSalary(int inc);
  }
 
+ class Company {
+   String name ;
+   int employees ;
+ }
+
+ association Person -- (company)Company ;
+
 }

@@ -191,6 +191,23 @@ public class OCLDiffGenerator {
 
   }
 
+  private static ASTODArtifact oclWitnessInternal(
+          ASTCDCompilationUnit cd, Set<ASTOCLCompilationUnit> in, boolean partial) {
+
+    OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
+
+    Set<IdentifiableBoolExpr> solverConstraints = buildSmtBoolExpr(ocl2SMTGenerator, in);
+
+    // check if they exist a model for the list of positive Constraint
+    Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(new ArrayList<>(solverConstraints));
+    if (solver.check() != Status.SATISFIABLE) {
+      Log.error("there are no Model for the List Of Positive Constraints");
+    }
+
+    return buildOd(ocl2SMTGenerator.cd2smtGenerator, solver.getModel(), "Witness", partial)
+            .orElse(null);
+  }
+
 
 
 
