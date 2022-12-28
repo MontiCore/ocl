@@ -3,7 +3,7 @@
 package docs;
 ocl Person {
 context Person.incSalary(int inc)
-   pre : salary@pre > 500;
+   pre : salary > 500;
    post: salary == salary@pre + 500 ;
 
  /*context Person.changeCompany(String n)
