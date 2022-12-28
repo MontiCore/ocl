@@ -9,6 +9,7 @@ import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
+import de.monticore.ocl2smt.util.OCLConstraint;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
@@ -145,7 +146,11 @@ public class OCLDiffGenerator {
   private static Set<IdentifiableBoolExpr> buildSmtBoolExpr(
       OCL2SMTGenerator ocl2SMTGenerator, Set<ASTOCLCompilationUnit> in) {
     return in.stream()
-        .flatMap(p -> ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).stream())
+        .flatMap(
+            p ->
+                ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).stream()
+                    .filter(OCLConstraint::isInvariant)
+                    .map(OCLConstraint::getConstraint))
         .collect(Collectors.toSet());
   }
 

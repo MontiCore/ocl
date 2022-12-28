@@ -19,6 +19,7 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
+import de.monticore.ocl2smt.util.OCLConstraint;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.SMTSet;
 import de.monticore.ocl2smt.util.TypeConverter;
@@ -66,16 +67,16 @@ public class OCL2SMTGenerator {
     return cd2smtGenerator.getClassDiagram().getCDDefinition();
   }
 
-  public List<IdentifiableBoolExpr> ocl2smt(ASTOCLArtifact astoclArtifact) {
-    List<IdentifiableBoolExpr> constraints = new ArrayList<>();
+  public List<OCLConstraint> ocl2smt(ASTOCLArtifact astoclArtifact) {
+    List<OCLConstraint> constraints = new ArrayList<>();
     for (ASTOCLConstraint constraint : astoclArtifact.getOCLConstraintList()) {
       constraints.add(convertConstr(constraint));
     }
     return constraints;
   }
 
-  public IdentifiableBoolExpr convertConstr(ASTOCLConstraint constraint) {
-    IdentifiableBoolExpr res = null;
+  public OCLConstraint convertConstr(ASTOCLConstraint constraint) {
+    OCLConstraint res = null;
     if (constraint instanceof ASTOCLInvariant) {
       res = convertInv((ASTOCLInvariant) constraint);
     } else {
@@ -87,22 +88,7 @@ public class OCL2SMTGenerator {
     return res;
   }
 
-  protected Function<BoolExpr, BoolExpr> convertInvCtx(ASTOCLInvariant invariant) {
-    List<Expr<? extends Sort>> vars = new ArrayList<>();
-    for (ASTOCLContextDefinition invCtx : invariant.getOCLContextDefinitionList()) {
-      if (invCtx.isPresentOCLParamDeclaration()) {
-        vars.add(convertCtxParDec(invCtx.getOCLParamDeclaration()));
-      }
-    }
-
-    if (vars.size() > 0) {
-
-      return bool -> ctx.mkForall(vars.toArray(new Expr[0]), bool, 0, null, null, null, null);
-    }
-    return bool -> bool;
-  }
-
-  protected IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
+  protected OCLConstraint convertInv(ASTOCLInvariant invariant) {
     SourcePosition srcPos = invariant.get_SourcePositionStart();
 
     // convert parameter declaration  in context
@@ -124,7 +110,22 @@ public class OCL2SMTGenerator {
     oclContext = null;
     varNames.clear();
     ;
-    return IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name);
+    return new OCLConstraint(IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name));
+  }
+
+  protected Function<BoolExpr, BoolExpr> convertInvCtx(ASTOCLInvariant invariant) {
+    List<Expr<? extends Sort>> vars = new ArrayList<>();
+    for (ASTOCLContextDefinition invCtx : invariant.getOCLContextDefinitionList()) {
+      if (invCtx.isPresentOCLParamDeclaration()) {
+        vars.add(convertCtxParDec(invCtx.getOCLParamDeclaration()));
+      }
+    }
+
+    if (vars.size() > 0) {
+
+      return bool -> ctx.mkForall(vars.toArray(new Expr[0]), bool, 0, null, null, null, null);
+    }
+    return bool -> bool;
   }
 
   Function<BoolExpr, BoolExpr> convertOpCtx(ASTOCLOperationSignature node) {
