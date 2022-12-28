@@ -112,6 +112,7 @@ public abstract class OCLDiffAbstractTest {
     negOCL.add(parseOCl(posCDn, negOCLn));
     return OCLDiffGenerator.oclDiff(posCD, posOCL, negOCL, false);
   }
+
   public static Context buildContext() {
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");

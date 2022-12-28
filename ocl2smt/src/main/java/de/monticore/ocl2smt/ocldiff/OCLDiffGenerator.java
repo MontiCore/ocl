@@ -8,8 +8,6 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
-import de.monticore.ocl2smt.helpers.Helper;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
@@ -106,7 +104,7 @@ public class OCLDiffGenerator {
         .orElse(null);
   }
 
-  private static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiffHelper(
+  protected static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiffHelper(
       OCL2SMTGenerator ocl2SMTGenerator,
       Set<IdentifiableBoolExpr> posConstraintList,
       Set<IdentifiableBoolExpr> negConstList,
@@ -122,7 +120,7 @@ public class OCLDiffGenerator {
           ocl2SMTGenerator.cd2smtGenerator.makeSolver(new ArrayList<>(posConstraintList));
 
       if (solver.check() == Status.SATISFIABLE) {
-       System.out.println(solver);
+        System.out.println(solver);
         satOdList.add(
             buildOd(
                     ocl2SMTGenerator.cd2smtGenerator,
@@ -161,54 +159,4 @@ public class OCLDiffGenerator {
     cfg.put("model", "true");
     OCLDiffGenerator.ctx = new Context(cfg);
   }
-
-  public static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiffOp(
-          ASTCDCompilationUnit ast,
-          Set<ASTOCLCompilationUnit> posOcl,
-          Set<ASTOCLCompilationUnit> negOcl,
-          boolean partial) {
-    resetContext();
-    Helper.buildPreCD(ast);
-    OCL2SMTGenerator ocl2smt = new OCL2SMTGenerator(ast,ctx);
-    Pair<IdentifiableBoolExpr, IdentifiableBoolExpr> constraint1 = ocl2smt.convertOpConst((ASTOCLOperationConstraint) posOcl.iterator().next()
-            .getOCLArtifact().getOCLConstraintList().get(0));
-
-
-
-
-    Pair<IdentifiableBoolExpr, IdentifiableBoolExpr> constraint2 = ocl2smt.convertOpConst((ASTOCLOperationConstraint) negOcl.iterator().next()
-            .getOCLArtifact().getOCLConstraintList().get(0));
-
-    Set<IdentifiableBoolExpr> posConstraint = new HashSet<>() ;
-    posConstraint.add(constraint1.getLeft());
-    posConstraint.add(constraint2.getLeft());
-    posConstraint.add(constraint1.getRight());
-
-    Set<IdentifiableBoolExpr> negConstraints = new HashSet<>() ;
-    negConstraints.add(constraint2.getRight().negate(ctx));
-
-    return oclDiffHelper(ocl2smt,posConstraint,negConstraints,false);
-
-  }
-
-  private static ASTODArtifact oclWitnessInternal(
-          ASTCDCompilationUnit cd, Set<ASTOCLCompilationUnit> in, boolean partial) {
-
-    OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
-
-    Set<IdentifiableBoolExpr> solverConstraints = buildSmtBoolExpr(ocl2SMTGenerator, in);
-
-    // check if they exist a model for the list of positive Constraint
-    Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(new ArrayList<>(solverConstraints));
-    if (solver.check() != Status.SATISFIABLE) {
-      Log.error("there are no Model for the List Of Positive Constraints");
-    }
-
-    return buildOd(ocl2SMTGenerator.cd2smtGenerator, solver.getModel(), "Witness", partial)
-            .orElse(null);
-  }
-
-
-
-
 }

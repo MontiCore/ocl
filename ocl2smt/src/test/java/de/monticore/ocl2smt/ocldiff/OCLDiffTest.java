@@ -95,5 +95,4 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
       }
     }
   }
-
 }
