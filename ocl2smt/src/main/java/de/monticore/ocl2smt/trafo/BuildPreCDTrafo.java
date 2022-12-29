@@ -27,8 +27,9 @@ public class BuildPreCDTrafo implements CDBasisHandler, CDBasisVisitor2 {
 
   @Override
   public void handle(ASTCDDefinition node) {
-    node.getCDAssociationsList().forEach(assoc->node.addCDElement(Helper.buildPreAssociation(assoc)));
-    node.getCDClassesList().forEach(Class->Class.accept(traverser));
+    node.getCDAssociationsList()
+        .forEach(assoc -> node.addCDElement(Helper.buildPreAssociation(assoc)));
+    node.getCDClassesList().forEach(Class -> Class.accept(traverser));
   }
 
   @Override
@@ -43,8 +44,6 @@ public class BuildPreCDTrafo implements CDBasisHandler, CDBasisVisitor2 {
     ASTCDAttribute attribute = facade.createAttribute(mod, type, "ispre");
     node.addCDMember(attribute);
   }
-
-
 
   private ASTCDAttribute createPreAttribute(ASTCDAttribute node) {
     ASTMCType type = node.getMCType();

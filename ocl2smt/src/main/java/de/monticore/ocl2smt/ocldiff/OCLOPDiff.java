@@ -64,10 +64,11 @@ public class OCLOPDiff {
     Set<OCLConstraint> constraints = opConst2smt(ocl2SMTGenerator, in);
 
     // check if they exist a model for the list of positive Constraint
-    List<IdentifiableBoolExpr> solversConstraints = constraints.stream().map(OCLConstraint::getPreCond).collect(Collectors.toList());
-    solversConstraints.addAll(constraints.stream().map(OCLConstraint::getPostCond).collect(Collectors.toList()));
-    Solver solver =
-        ocl2SMTGenerator.cd2smtGenerator.makeSolver(solversConstraints);
+    List<IdentifiableBoolExpr> solversConstraints =
+        constraints.stream().map(OCLConstraint::getPreCond).collect(Collectors.toList());
+    solversConstraints.addAll(
+        constraints.stream().map(OCLConstraint::getPostCond).collect(Collectors.toList()));
+    Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solversConstraints);
 
     if (solver.check() != Status.SATISFIABLE) {
       Log.error("there are no Model for the List Of Positive Constraints");

@@ -11,14 +11,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ExpressionsConverter {
-  protected final Context context;
-  protected final Map<Expr<? extends Sort>, OCLType> varTypes = new HashMap<>();
+  protected static Context context;
+  protected static final Map<Expr<? extends Sort>, OCLType> varTypes = new HashMap<>();
 
-  public ExpressionsConverter(Context context) {
-    this.context = context;
+  public static void reset(Context context) {
+    ExpressionsConverter.context = context;
+    varTypes.clear();
   }
 
-  public Expr<? extends Sort> convert(ASTLiteralExpression node) {
+  public static Expr<? extends Sort> convert(ASTLiteralExpression node) {
     ASTLiteral literal = node.getLiteral();
     Expr<? extends Sort> res = null;
     if (literal instanceof ASTBooleanLiteral) {
@@ -40,33 +41,33 @@ public class ExpressionsConverter {
     return res;
   }
 
-  protected BoolExpr convertBool(ASTBooleanLiteral node) {
+  protected static BoolExpr convertBool(ASTBooleanLiteral node) {
     return context.mkBool(node.getValue());
   }
 
-  protected SeqExpr<CharSort> convertString(ASTStringLiteral node) {
+  protected static SeqExpr<CharSort> convertString(ASTStringLiteral node) {
     return context.mkString(node.getValue());
   }
 
-  protected IntNum convertNat(ASTNatLiteral node) {
+  protected static IntNum convertNat(ASTNatLiteral node) {
     return context.mkInt(node.getValue());
   }
 
-  protected IntNum convertChar(ASTCharLiteral node) { // TODO:: return a Char here
+  protected static IntNum convertChar(ASTCharLiteral node) { // TODO:: return a Char here
     return context.mkInt(node.getValue());
   }
 
-  protected FPNum convertDouble(ASTBasicDoubleLiteral node) {
+  protected static FPNum convertDouble(ASTBasicDoubleLiteral node) {
     return context.mkFP(node.getValue(), context.mkFPSortDouble());
   }
 
-  protected Expr<? extends Sort> declObj(OCLType type, String name) {
+  protected static Expr<? extends Sort> declObj(OCLType type, String name) {
     Expr<? extends Sort> expr = context.mkConst(name, TypeConverter.getSort(type));
     varTypes.put(expr, type);
     return expr;
   }
 
-  public OCLType getType(Expr<? extends Sort> expr) {
+  public static OCLType getType(Expr<? extends Sort> expr) {
     if (varTypes.containsKey(expr)) {
       return varTypes.get(expr); // Person p
     }
