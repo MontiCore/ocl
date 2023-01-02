@@ -15,8 +15,12 @@ import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.ocl2smt.ocl2smt.ExpressionsConverter;
 import de.monticore.ocl2smt.trafo.BuildPreCDTrafo;
 import de.monticore.ocl2smt.util.OCLType;
+import jdk.dynalink.linker.LinkerServices;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Helper {
 
@@ -67,8 +71,7 @@ public class Helper {
           cd2SMTGenerator);
     }
   }
-
-  public static BoolExpr evaluateLink(
+  private static BoolExpr evaluateLink(
       ASTCDAssociation association,
       Pair<ASTCDType, Expr<? extends Sort>> obj1,
       Pair<ASTCDType, Expr<? extends Sort>> obj2,
@@ -91,4 +94,6 @@ public class Helper {
       return type1;
     }
   }
+
+
 }

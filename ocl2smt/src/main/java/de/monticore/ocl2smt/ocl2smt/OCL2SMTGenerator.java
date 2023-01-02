@@ -106,11 +106,11 @@ public class OCL2SMTGenerator {
     Optional<String> name =
         invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
 
-    closeInvScope();
+    closeConstrScope();
     return new OCLConstraint(IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name));
   }
 
-  protected void closeInvScope() {
+  protected void closeConstrScope() {
     genInvConstraints.clear();
     oclContext = null;
     varNames.clear();
@@ -149,6 +149,10 @@ public class OCL2SMTGenerator {
     BoolExpr pre = convertBoolExpr(node.getPreCondition(0));
     BoolExpr post = convertBoolExpr(node.getPostCondition(0));
 
+    for (BoolExpr constr : genInvConstraints) {
+      pre = ctx.mkAnd(pre, constr);
+      post = ctx.mkAnd(post, constr);
+    }
     IdentifiableBoolExpr preConstr =
         IdentifiableBoolExpr.buildIdentifiable(
             opContext.apply(pre),
@@ -160,6 +164,7 @@ public class OCL2SMTGenerator {
             node.getPostCondition(0).get_SourcePositionStart(),
             Optional.of("post"));
 
+    closeConstrScope();
     return new OCLConstraint(preConstr, postConstr);
   }
 
@@ -467,9 +472,14 @@ public class OCL2SMTGenerator {
       if (attr.isPresent()) {
         return attr.get();
       }
+      Optional<Expr<? extends  Sort>> obj = getContextLink(node);
+      if (obj.isPresent()){
+        return obj.get() ;
+      }
     }
     // TODO:check if it ist an attribute or association of the context
-    assert node.getDefiningSymbol().isPresent();
+  //  assert node.getDefiningSymbol().isPresent();
+   // Log.error("Variable " + node.getName() + " not declared in this scope");
     return declVariable(
         TypeConverter.buildOCLType((VariableSymbol) node.getDefiningSymbol().get()),
         node.getName());
@@ -871,12 +881,15 @@ public class OCL2SMTGenerator {
             oclContext.getValue()));
   }
 
-  /*public Optional<Expr<? extends  Sort>> isContextAssoc(ASTNameExpression node) {
+  public Optional<Expr<? extends  Sort>> getContextLink(ASTNameExpression node) {
     // TODO::update to takeCare when the assoc is inhrited
-    ASTCDAssociation association = CDHelper.getAssociation(CDHelper.getASTCDType(oclContext.getKey().getName(),getCD()),node.getName(),getCD());
+    ASTCDAssociation association = Helper.getAssociation(oclContext.getKey(),node.getName(),getCD());
     if (association == null){
       return  Optional.empty();
     }
-    return cd2smtGenerator.evaluateLink(association,CDHelper.getLeftType(association,getCD()),CDHelper.getLeftType(association,getCD()), oclContext.getRight(), )
-  }*/
+    OCLType type2 = Helper.getOtherType(association,oclContext.getLeft());
+    Expr<? extends  Sort> expr = ExpressionsConverter.declObj(type2,node.getName()+"--");
+    genInvConstraints.add(Helper.evaluateLink(association,oclContext.getRight(),expr,cd2smtGenerator));
+    return Optional.of(expr);
+  }
 }
