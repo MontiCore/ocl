@@ -6,7 +6,6 @@ import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -27,19 +26,6 @@ public class Helper {
     traverser.add4CDBasis(preAttributeTrafo);
     traverser.setCDBasisHandler(preAttributeTrafo);
     ast.accept(traverser);
-  }
-
-  public static ASTCDAssociation buildPreAssociation(ASTCDAssociation association) {
-    return CDAssociationMill.cDAssociationBuilder()
-        .setModifier(association.getModifier())
-        .setLeft(association.getLeft())
-        .setRight(association.getRight())
-        .setCDAssocType(association.getCDAssocType())
-        .setName("pre")
-        .setCDAssocDir(association.getCDAssocDir())
-        .set_SourcePositionStart(association.get_SourcePositionStart())
-        .set_SourcePositionEnd(association.get_SourcePositionEnd())
-        .build(); // TODO: fix the association's name
   }
 
   public static BoolExpr evaluateLink(
@@ -90,5 +76,14 @@ public class Helper {
     } else {
       return type1;
     }
+  }
+
+  public static String mkPre(String s) {
+    return s + "__pre";
+  }
+
+  public static String removePre(String s) {
+    assert s.endsWith("__pre");
+    return s.substring(0, s.length() - 5);
   }
 }

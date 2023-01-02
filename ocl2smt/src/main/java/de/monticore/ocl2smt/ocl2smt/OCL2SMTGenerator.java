@@ -33,12 +33,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+// TODO: add documentation
 
 public class OCL2SMTGenerator {
 
   protected final Context ctx;
   public final CD2SMTGenerator cd2smtGenerator;
-
+  // TODO:add a class Constraint-Data to save  this three attributes
   Pair<OCLType, Expr<? extends Sort>> oclContext;
 
   protected final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
@@ -133,8 +134,8 @@ public class OCL2SMTGenerator {
 
   Function<BoolExpr, BoolExpr> openOpScope(ASTOCLOperationSignature node) {
 
-    ASTOCLMethodSignature method =
-        (ASTOCLMethodSignature) node; // TODO:fix when it isn't a method Signature
+    ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
+
     OCLType type = OCLType.buildOCLType(method.getMethodName().getParts(0));
     Expr<? extends Sort> obj = declVariable(type, type.getName() + "__");
 
@@ -153,11 +154,13 @@ public class OCL2SMTGenerator {
       pre = ctx.mkAnd(pre, constr);
       post = ctx.mkAnd(post, constr);
     }
+
     IdentifiableBoolExpr preConstr =
         IdentifiableBoolExpr.buildIdentifiable(
             opContext.apply(pre),
             node.getPreCondition(0).get_SourcePositionStart(),
             Optional.of("pre"));
+
     IdentifiableBoolExpr postConstr =
         IdentifiableBoolExpr.buildIdentifiable(
             opContext.apply(post),
