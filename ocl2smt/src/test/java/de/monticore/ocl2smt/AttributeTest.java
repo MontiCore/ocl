@@ -17,7 +17,7 @@ public class AttributeTest extends ExpressionAbstractTest {
     Log.init();
     OCLMill.init();
     CD4CodeMill.init();
-    parse("/cdElement/attribute/attribute.cd", "/cdElement/attribute/attribute.ocl");
+    parse("/attribute/attribute.cd", "/attribute/attribute.ocl");
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 

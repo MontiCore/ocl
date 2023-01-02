@@ -472,14 +472,14 @@ public class OCL2SMTGenerator {
       if (attr.isPresent()) {
         return attr.get();
       }
-      Optional<Expr<? extends  Sort>> obj = getContextLink(node);
-      if (obj.isPresent()){
-        return obj.get() ;
+      Optional<Expr<? extends Sort>> obj = getContextLink(node);
+      if (obj.isPresent()) {
+        return obj.get();
       }
     }
     // TODO:check if it ist an attribute or association of the context
-  //  assert node.getDefiningSymbol().isPresent();
-   // Log.error("Variable " + node.getName() + " not declared in this scope");
+    //  assert node.getDefiningSymbol().isPresent();
+    // Log.error("Variable " + node.getName() + " not declared in this scope");
     return declVariable(
         TypeConverter.buildOCLType((VariableSymbol) node.getDefiningSymbol().get()),
         node.getName());
@@ -881,15 +881,17 @@ public class OCL2SMTGenerator {
             oclContext.getValue()));
   }
 
-  public Optional<Expr<? extends  Sort>> getContextLink(ASTNameExpression node) {
+  public Optional<Expr<? extends Sort>> getContextLink(ASTNameExpression node) {
     // TODO::update to takeCare when the assoc is inhrited
-    ASTCDAssociation association = Helper.getAssociation(oclContext.getKey(),node.getName(),getCD());
-    if (association == null){
-      return  Optional.empty();
+    ASTCDAssociation association =
+        Helper.getAssociation(oclContext.getKey(), node.getName(), getCD());
+    if (association == null) {
+      return Optional.empty();
     }
-    OCLType type2 = Helper.getOtherType(association,oclContext.getLeft());
-    Expr<? extends  Sort> expr = ExpressionsConverter.declObj(type2,node.getName()+"--");
-    genInvConstraints.add(Helper.evaluateLink(association,oclContext.getRight(),expr,cd2smtGenerator));
+    OCLType type2 = Helper.getOtherType(association, oclContext.getLeft());
+    Expr<? extends Sort> expr = ExpressionsConverter.declObj(type2, node.getName() + "--");
+    genInvConstraints.add(
+        Helper.evaluateLink(association, oclContext.getRight(), expr, cd2smtGenerator));
     return Optional.of(expr);
   }
 }
