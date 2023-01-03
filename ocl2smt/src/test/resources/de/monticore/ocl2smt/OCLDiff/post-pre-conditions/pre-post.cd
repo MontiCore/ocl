@@ -4,8 +4,8 @@ package docs;
 classdiagram Auction {
 
  class  Person{
-   int salary ;
-   int incSalary(int inc);
+  // int salary ;
+   //int incSalary(int inc);
  }
 
  class Company {
@@ -13,6 +13,6 @@ classdiagram Auction {
    int employees ;
  }
 
- association Person -- (company)Company ;
+ association [*] Person -- (company)Company [1] ;
 
 }

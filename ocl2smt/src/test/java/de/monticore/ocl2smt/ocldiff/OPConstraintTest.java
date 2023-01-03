@@ -24,7 +24,7 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
   }
 
   @Test
-  public void TestAddPreAttribute() throws IOException {
+  public void TestBuildPreCD() throws IOException {
     CD4AnalysisFullPrettyPrinter printer = new CD4AnalysisFullPrettyPrinter();
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
     System.out.println(printer.prettyprint(ast));

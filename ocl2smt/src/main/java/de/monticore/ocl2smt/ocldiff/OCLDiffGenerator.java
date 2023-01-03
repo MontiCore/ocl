@@ -97,6 +97,7 @@ public class OCLDiffGenerator {
 
     // check if they exist a model for the list of positive Constraint
     Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(new ArrayList<>(solverConstraints));
+    System.out.println(solver); // TODO:: remove
     if (solver.check() != Status.SATISFIABLE) {
       Log.error("there are no Model for the List Of Positive Constraints");
     }

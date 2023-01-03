@@ -6,7 +6,7 @@ import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -14,6 +14,7 @@ import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.ocl2smt.ocl2smt.ExpressionsConverter;
 import de.monticore.ocl2smt.trafo.BuildPreCDTrafo;
 import de.monticore.ocl2smt.util.OCLType;
+import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -54,6 +55,34 @@ public class Helper {
     }
   }
 
+  public static BoolExpr evaluateLink(
+      ASTCDAssociation association,
+      Expr<? extends Sort> obj1,
+      Expr<? extends Sort> obj2,
+      CD2SMTGenerator cd2SMTGenerator,
+      boolean pre) {
+    if (pre) {
+      association = getPreAssoc(association, cd2SMTGenerator.getClassDiagram().getCDDefinition());
+    }
+
+    return evaluateLink(association, obj1, obj2, cd2SMTGenerator);
+  }
+
+  public static Expr<? extends Sort> getAttribute(
+      Expr<? extends Sort> obj,
+      OCLType type,
+      String attributeName,
+      CD2SMTGenerator cd2SMTGenerator,
+      boolean pre) {
+    if (pre && !isPre(attributeName)) {
+      attributeName = mkPre(attributeName);
+    }
+    return cd2SMTGenerator.getAttribute(
+        CDHelper.getASTCDType(type.getName(), cd2SMTGenerator.getClassDiagram().getCDDefinition()),
+        attributeName,
+        obj);
+  }
+
   private static BoolExpr evaluateLink(
       ASTCDAssociation association,
       Pair<ASTCDType, Expr<? extends Sort>> obj1,
@@ -83,7 +112,37 @@ public class Helper {
   }
 
   public static String removePre(String s) {
-    assert s.endsWith("__pre");
-    return s.substring(0, s.length() - 5);
+    if (isPre(s)) {
+      return s.substring(0, s.length() - 5);
+    }
+    return s;
+  }
+
+  public static boolean isPre(String s) {
+    return s.endsWith("__pre");
+  }
+
+  public static ASTCDAssociation getPreAssoc(ASTCDAssociation association, ASTCDDefinition cd) {
+
+    ASTCDAssocRightSide right = association.getRight();
+    ASTCDAssocLeftSide left = association.getLeft();
+    for (ASTCDAssociation preAssoc : cd.getCDAssociationsList()) {
+      ASTCDAssocRightSide preRight = preAssoc.getRight();
+      ASTCDAssocLeftSide preLeft = preAssoc.getLeft();
+      if (right.getMCQualifiedType().equals(preRight.getMCQualifiedType())
+          && right.getMCQualifiedType().equals(preRight.getMCQualifiedType())
+          && mkPre(left.getCDRole().getName()).equals(preLeft.getCDRole().getName())
+          && mkPre(right.getCDRole().getName()).equals(preRight.getCDRole().getName())) {
+        return preAssoc;
+      }
+    }
+    Log.info(
+        "pre-association "
+            + association.getLeftQualifiedName().getQName()
+            + " -- "
+            + association.getRightQualifiedName().getQName()
+            + " not found ",
+        "Pre Assoc Not Found");
+    return null;
   }
 }

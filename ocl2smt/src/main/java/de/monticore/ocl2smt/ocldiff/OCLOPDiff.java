@@ -69,8 +69,9 @@ public class OCLOPDiff {
     solversConstraints.addAll(
         constraints.stream().map(OCLConstraint::getPostCond).collect(Collectors.toList()));
     Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solversConstraints);
-
+    System.out.println(solver); // TODO:: remove
     if (solver.check() != Status.SATISFIABLE) {
+      System.out.println(Arrays.toString(solver.getUnsatCore()));
       Log.error("there are no Model for the List Of Positive Constraints");
     }
 

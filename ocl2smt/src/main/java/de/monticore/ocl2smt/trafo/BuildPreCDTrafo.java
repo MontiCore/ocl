@@ -3,14 +3,12 @@ package de.monticore.ocl2smt.trafo;
 import static de.monticore.ocl2smt.helpers.Helper.mkPre;
 
 import de.monticore.cd.facade.CDAttributeFacade;
-import de.monticore.cd.facade.CDModifier;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisHandler;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-import de.monticore.od4report.OD4ReportMill;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
@@ -40,18 +38,18 @@ public class BuildPreCDTrafo implements CDBasisHandler, CDBasisVisitor2 {
     node.getCDAttributeList().forEach(attr -> node.addCDMember(createPreAttribute(attr)));
 
     // create boolean attribute to identify pre objects
-    ASTMCType type = OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(1).build();
-    CDAttributeFacade facade = CDAttributeFacade.getInstance();
-    ASTModifier mod = CDModifier.PUBLIC.build();
-    ASTCDAttribute attribute = facade.createAttribute(mod, type, "ispre");
-    node.addCDMember(attribute);
+    // ASTMCType type = OD4ReportMill.mCPrimitiveTypeBuilder().setPrimitive(1).build();
+    // CDAttributeFacade facade = CDAttributeFacade.getInstance();
+    // ASTModifier mod = CDModifier.PUBLIC.build();
+    // ASTCDAttribute attribute = facade.createAttribute(mod, type, "ispre");
+    // node.addCDMember(attribute);
   }
 
   private ASTCDAttribute createPreAttribute(ASTCDAttribute node) {
     ASTMCType type = node.getMCType();
     CDAttributeFacade facade = CDAttributeFacade.getInstance();
     ASTModifier mod = node.getModifier();
-    return facade.createAttribute(mod, type, mkPre( node.getName() ));
+    return facade.createAttribute(mod, type, mkPre(node.getName()));
   }
 
   public ASTCDAssociation buildPreAssociation(ASTCDAssociation association) {
@@ -86,7 +84,7 @@ public class BuildPreCDTrafo implements CDBasisHandler, CDBasisVisitor2 {
     if (leftSide.isPresentCDCardinality()) {
       left.setCDCardinality(leftSide.getCDCardinality());
     }
-    if (leftSide.isPresentCDCardinality()) {
+    if (leftSide.isPresentCDQualifier()) {
       left.setCDQualifier(leftSide.getCDQualifier()).build();
     }
 
@@ -107,7 +105,7 @@ public class BuildPreCDTrafo implements CDBasisHandler, CDBasisVisitor2 {
     if (rightSide.isPresentCDCardinality()) {
       right.setCDCardinality(rightSide.getCDCardinality());
     }
-    if (rightSide.isPresentCDCardinality()) {
+    if (rightSide.isPresentCDQualifier()) {
       right.setCDQualifier(rightSide.getCDQualifier()).build();
     }
 
