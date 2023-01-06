@@ -33,7 +33,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class OCL2SMTGenerator {
-
+  //TODO:strategy for conversion of @pre
   protected final Context ctx;
   public final CD2SMTGenerator cd2smtGenerator;
 
@@ -865,6 +865,10 @@ public class OCL2SMTGenerator {
   }
 
   protected Expr<? extends Sort> convertAt(ASTOCLAtPreQualification node) {
+    // ? In eine Subklasse?
+    // stratManager.enterPre()
+    // convertExpr(node.getExpression());
+    // statManager.exitPre()
     if (node.getExpression() instanceof ASTFieldAccessExpression) {
       ASTFieldAccessExpression fa = ((ASTFieldAccessExpression) node.getExpression());
       fa.setName(fa.getName() + "__pre");
