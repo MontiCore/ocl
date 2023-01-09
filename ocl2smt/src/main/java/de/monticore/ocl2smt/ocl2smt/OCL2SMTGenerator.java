@@ -135,9 +135,9 @@ public class OCL2SMTGenerator {
     for (BoolExpr constr : constrData.genConstraints) {
       pre = ctx.mkAnd(pre, constr);
     }
-    if (!constrData.declExpr.isEmpty()) {
+    /*if (!constrData.declExpr.isEmpty()) {
       pre = ctx.mkExists(constrData.declExpr.toArray(new Expr[0]), pre, 0, null, null, null, null);
-    }
+    }*/
 
     return pre;
   }
@@ -148,10 +148,10 @@ public class OCL2SMTGenerator {
     for (BoolExpr constr : constrData.genConstraints) {
       post = ctx.mkAnd(post, constr);
     }
-    if (!constrData.declExpr.isEmpty()) {
+   /* if (!constrData.declExpr.isEmpty()) {
       post =
           ctx.mkExists(constrData.declExpr.toArray(new Expr[0]), post, 0, null, null, null, null);
-    }
+    }*/
     return post;
   }
 
@@ -911,7 +911,7 @@ public class OCL2SMTGenerator {
       name = name + "__pre";
     }
     Expr<? extends Sort> expr = ExpressionsConverter.declObj(type2, name);
-    constrData.addDeclExpr(expr);
+   // constrData.addDeclExpr(expr);
     constrData.genConstraints.add(
         Helper.evaluateLink(
             association, constrData.oclContext, expr, cd2smtGenerator, constrData.isPreCond()));
