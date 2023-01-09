@@ -2,9 +2,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package docs;
 ocl Person {
-/*context Person.incSalary(int inc)
-   pre : salary > 500 && inc > 0;
-   post: salary == salary@pre + inc ;*/
 
  context Person.changeCompany(String n)
    pre : company.name == "oldCompany"  &&
@@ -16,10 +13,9 @@ ocl Person {
          company.name == n &&
          company@pre.employees == company@pre.employees@pre - 1 &&
 
-
+         company.employees@pre == 0  &&
          company@pre.name@pre ==  company@pre.name&&
-         company.name@pre == company.name
-         ;
+         company.name@pre == company.name;
 
 
 

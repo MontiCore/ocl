@@ -114,33 +114,34 @@ public abstract class OCLDiffAbstractTest {
     return new Context(cfg);
   }
 
-  public  boolean containsAttribute(ASTCDClass c, String attribute){
-    for (ASTCDAttribute attr : c.getCDAttributeList()){
-      if (attr.getName().equals(attribute)){
-        return  true ;
+  public boolean containsAttribute(ASTCDClass c, String attribute) {
+    for (ASTCDAttribute attr : c.getCDAttributeList()) {
+      if (attr.getName().equals(attribute)) {
+        return true;
       }
     }
-    return  false ;
+    return false;
   }
 
-  public ASTCDClass getClass(ASTCDCompilationUnit cd , String className){
-    for (ASTCDClass astcdClass: cd.getCDDefinition().getCDClassesList()){
-      if (astcdClass.getName().equals(className)){
-        return  astcdClass ;
+  public ASTCDClass getClass(ASTCDCompilationUnit cd, String className) {
+    for (ASTCDClass astcdClass : cd.getCDDefinition().getCDClassesList()) {
+      if (astcdClass.getName().equals(className)) {
+        return astcdClass;
       }
     }
-    return  null ;
+    return null;
   }
 
-  public boolean containsAssoc(ASTCDCompilationUnit cd ,String left, String leftRole,String right, String rightRole){
-    for (ASTCDAssociation assoc : cd.getCDDefinition().getCDAssociationsList()){
-      if (left.equals(assoc.getLeftQualifiedName().getQName() )&&
-              right.equals(assoc.getRightQualifiedName().getQName() )&&
-              leftRole.equals(assoc.getLeft().getCDRole().getName()) &&
-              rightRole.equals(assoc.getRight().getCDRole().getName())){
-        return  true ;
+  public boolean containsAssoc(
+      ASTCDCompilationUnit cd, String left, String leftRole, String right, String rightRole) {
+    for (ASTCDAssociation assoc : cd.getCDDefinition().getCDAssociationsList()) {
+      if (left.equals(assoc.getLeftQualifiedName().getQName())
+          && right.equals(assoc.getRightQualifiedName().getQName())
+          && leftRole.equals(assoc.getLeft().getCDRole().getName())
+          && rightRole.equals(assoc.getRight().getCDRole().getName())) {
+        return true;
       }
     }
-    return  false ;
+    return false;
   }
 }

@@ -1,6 +1,6 @@
 package de.monticore.ocl2smt.trafo;
 
-import static de.monticore.ocl2smt.helpers.Helper.mkPre;
+import static de.monticore.ocl2smt.helpers.OCLHelper.mkPre;
 
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cdassociation.CDAssociationMill;

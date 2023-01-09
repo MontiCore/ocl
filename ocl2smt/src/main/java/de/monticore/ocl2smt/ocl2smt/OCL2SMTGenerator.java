@@ -20,7 +20,8 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
-import de.monticore.ocl2smt.helpers.Helper;
+import de.monticore.ocl2smt.helpers.OCLCDHelper;
+import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.util.*;
 import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -117,16 +118,13 @@ public class OCL2SMTGenerator {
     return bool -> bool;
   }
 
-  Function<BoolExpr, BoolExpr> openOpScope(ASTOCLOperationSignature node) {
-
+  void openOpScope(ASTOCLOperationSignature node) {
     ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
 
     OCLType type = OCLType.buildOCLType(method.getMethodName().getParts(0));
     Expr<? extends Sort> obj = declVariable(type, type.getName() + "__");
 
     constrData.setOCLContext(obj, type);
-
-    return bool -> ctx.mkForall(new Expr[] {obj}, bool, 0, null, null, null, null);
   }
 
   public BoolExpr convertPreCond(ASTOCLOperationConstraint node) {
@@ -135,9 +133,6 @@ public class OCL2SMTGenerator {
     for (BoolExpr constr : constrData.genConstraints) {
       pre = ctx.mkAnd(pre, constr);
     }
-    /*if (!constrData.declExpr.isEmpty()) {
-      pre = ctx.mkExists(constrData.declExpr.toArray(new Expr[0]), pre, 0, null, null, null, null);
-    }*/
 
     return pre;
   }
@@ -148,31 +143,23 @@ public class OCL2SMTGenerator {
     for (BoolExpr constr : constrData.genConstraints) {
       post = ctx.mkAnd(post, constr);
     }
-   /* if (!constrData.declExpr.isEmpty()) {
-      post =
-          ctx.mkExists(constrData.declExpr.toArray(new Expr[0]), post, 0, null, null, null, null);
-    }*/
     return post;
   }
 
   public OCLConstraint convertOpConst(ASTOCLOperationConstraint node) {
     constrData.initOpConst();
-    Function<BoolExpr, BoolExpr> opContext = openOpScope(node.getOCLOperationSignature());
+    openOpScope(node.getOCLOperationSignature());
 
     BoolExpr pre = convertPreCond(node);
     BoolExpr post = convertPostCond(node);
 
     IdentifiableBoolExpr preConstr =
         IdentifiableBoolExpr.buildIdentifiable(
-            opContext.apply(pre),
-            node.getPreCondition(0).get_SourcePositionStart(),
-            Optional.of("pre"));
+            pre, node.getPreCondition(0).get_SourcePositionStart(), Optional.of("pre"));
 
     IdentifiableBoolExpr postConstr =
         IdentifiableBoolExpr.buildIdentifiable(
-            opContext.apply(post),
-            node.getPostCondition(0).get_SourcePositionStart(),
-            Optional.of("post"));
+            post, node.getPostCondition(0).get_SourcePositionStart(), Optional.of("post"));
     return new OCLConstraint(preConstr, postConstr);
   }
 
@@ -498,7 +485,8 @@ public class OCL2SMTGenerator {
   protected Expr<? extends Sort> convertFieldAcc(ASTFieldAccessExpression node) {
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
     OCLType type = ExpressionsConverter.getType(obj);
-    return Helper.getAttribute(obj, type, node.getName(), cd2smtGenerator, constrData.isPreCond());
+    return OCLHelper.getAttribute(
+        obj, type, node.getName(), cd2smtGenerator, constrData.isPreCond());
   }
 
   // e.g  auction.person.parent
@@ -507,12 +495,12 @@ public class OCL2SMTGenerator {
 
       Expr<? extends Sort> auction = convertExpr(node.getExpression());
       OCLType type1 = ExpressionsConverter.getType(auction);
-      ASTCDAssociation association = Helper.getAssociation(type1, node.getName(), getCD());
-      OCLType type2 = Helper.getOtherType(association, type1);
+      ASTCDAssociation association = OCLCDHelper.getAssociation(type1, node.getName(), getCD());
+      OCLType type2 = OCLCDHelper.getOtherType(association, type1);
 
       Function<Expr<? extends Sort>, BoolExpr> auction_per_set =
           per ->
-              Helper.evaluateLink(
+              OCLHelper.evaluateLink(
                   association, auction, per, cd2smtGenerator, constrData.isPreCond());
       return new SMTSet(auction_per_set, type2);
     }
@@ -520,14 +508,14 @@ public class OCL2SMTGenerator {
     SMTSet pSet = convertSet(node.getExpression());
 
     OCLType type1 = pSet.getType();
-    ASTCDAssociation person_parent = Helper.getAssociation(type1, node.getName(), getCD());
-    OCLType type2 = Helper.getOtherType(person_parent, type1);
+    ASTCDAssociation person_parent = OCLCDHelper.getAssociation(type1, node.getName(), getCD());
+    OCLType type2 = OCLCDHelper.getOtherType(person_parent, type1);
 
     Function<Expr<? extends Sort>, SMTSet> function =
         obj1 ->
             new SMTSet(
                 obj2 ->
-                    Helper.evaluateLink(
+                    OCLHelper.evaluateLink(
                         person_parent, obj1, obj2, cd2smtGenerator, constrData.isPreCond()),
                 type2);
 
@@ -874,7 +862,7 @@ public class OCL2SMTGenerator {
       return convertExpr(fa);
     } else if (node.getExpression() instanceof ASTNameExpression) {
       ASTNameExpression fa = ((ASTNameExpression) node.getExpression());
-      fa.setName(Helper.mkPre(fa.getName()));
+      fa.setName(OCLHelper.mkPre(fa.getName()));
       return convertExpr(fa);
     }
     Log.error("conversion of ASTOCLAtPreQualification not totally implemented");
@@ -890,7 +878,7 @@ public class OCL2SMTGenerator {
   public Optional<Expr<? extends Sort>> getContextAttribute(ASTNameExpression node) {
     // TODO::update to takeCare when the attribute is inherited
     return Optional.ofNullable(
-        Helper.getAttribute(
+        OCLHelper.getAttribute(
             constrData.oclContext,
             constrData.oclContextType,
             node.getName(),
@@ -901,19 +889,19 @@ public class OCL2SMTGenerator {
   public Optional<Expr<? extends Sort>> getContextLink(ASTNameExpression node) {
     // TODO::update to takeCare when the assoc is inhrited
     ASTCDAssociation association =
-        Helper.getAssociation(constrData.oclContextType, node.getName(), getCD());
+        OCLCDHelper.getAssociation(constrData.oclContextType, node.getName(), getCD());
     if (association == null) {
       return Optional.empty();
     }
-    OCLType type2 = Helper.getOtherType(association, constrData.oclContextType);
+    OCLType type2 = OCLCDHelper.getOtherType(association, constrData.oclContextType);
     String name = node.getName();
     if (constrData.isPreCond()) {
       name = name + "__pre";
     }
     Expr<? extends Sort> expr = ExpressionsConverter.declObj(type2, name);
-   // constrData.addDeclExpr(expr);
+    // constrData.addDeclExpr(expr);
     constrData.genConstraints.add(
-        Helper.evaluateLink(
+        OCLHelper.evaluateLink(
             association, constrData.oclContext, expr, cd2smtGenerator, constrData.isPreCond()));
     return Optional.of(expr);
   }
