@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocl2smt;
 
 import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;

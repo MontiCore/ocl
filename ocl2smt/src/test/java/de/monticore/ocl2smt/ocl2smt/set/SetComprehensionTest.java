@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocl2smt.set;
 
 import de.monticore.cd4code.CD4CodeMill;

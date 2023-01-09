@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocldiff;
 ;
 import com.microsoft.z3.Solver;

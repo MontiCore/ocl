@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocldiff;
 
 import static org.gradle.internal.impldep.org.junit.Assert.assertFalse;

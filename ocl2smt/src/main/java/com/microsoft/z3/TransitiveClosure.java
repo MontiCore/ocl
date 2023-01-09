@@ -1,3 +1,4 @@
+/* (c) https://github.com/MontiCore/monticore */
 package com.microsoft.z3;
 
 public class TransitiveClosure {
