@@ -5,16 +5,14 @@ import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import java.util.*;
 
-/** this class contains all the necessary data for the conversion of a OCLConstraint */
-public class CurrentConstrData {
-  public Expr<? extends Sort> oclCtx;
-  public OCLType oclCtxType;
+/** this class contains all data obtains during the conversion of a OCLConstraint */
+public class ConstraintsData {
+  public Expr<? extends Sort> oclContext;
+  public OCLType oclContextType;
 
   public final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
 
-  public final Set<BoolExpr> genInvConstraints = new HashSet<>();
-
-  public List<Expr<? extends Sort>> declExpr = new ArrayList<>();
+  public final Set<BoolExpr> genConstraints = new HashSet<>();
 
   private boolean isPreCond = false;
 
@@ -23,11 +21,10 @@ public class CurrentConstrData {
   }
 
   private void reset() {
-    oclCtxType = null;
-    oclCtx = null;
+    oclContextType = null;
+    oclContext = null;
     varNames.clear();
-    genInvConstraints.clear();
-    declExpr.clear(); // TODO:use it local
+    genConstraints.clear();
     isPreCond = false;
   }
 
@@ -44,8 +41,7 @@ public class CurrentConstrData {
   }
 
   public void initPost() {
-    genInvConstraints.clear();
-    declExpr.clear();
+    genConstraints.clear();
     isPreCond = false;
   }
 
@@ -54,8 +50,8 @@ public class CurrentConstrData {
   }
 
   public void setOCLContext(Expr<? extends Sort> obj, OCLType type) {
-    this.oclCtx = obj;
-    this.oclCtxType = type;
+    this.oclContext = obj;
+    this.oclContextType = type;
   }
 
   public boolean containsVar(String name) {
@@ -67,14 +63,10 @@ public class CurrentConstrData {
   }
 
   public boolean isPresentContext() {
-    return oclCtx != null && oclCtxType != null;
+    return oclContext != null && oclContextType != null;
   }
 
   public void removeVar(String name) {
     varNames.remove(name);
-  }
-
-  public void addDeclExpr(Expr<? extends Sort> obj) {
-    declExpr.add(obj);
   }
 }

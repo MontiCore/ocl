@@ -2,6 +2,7 @@ package de.monticore.ocl2smt.util;
 
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 
+/** this Class is saves data obtains after the conversion of an OCL Constraint in SMT */
 public class OCLConstraint {
 
   public OCLConstraint(IdentifiableBoolExpr preCond, IdentifiableBoolExpr postCond) {

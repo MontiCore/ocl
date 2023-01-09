@@ -21,9 +21,10 @@ public class AttributeTest extends ExpressionAbstractTest {
     parse("/attribute/attribute.cd", "/attribute/attribute.ocl");
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
+
   @Disabled
   @ParameterizedTest
-  @ValueSource(strings = {"Attr1"}) //TODO: implement and Enable
+  @ValueSource(strings = {"Attr1"}) // TODO: implement and Enable
   public void testAttributeAccess(String inv) {
     testInv(inv);
   }

@@ -68,6 +68,15 @@ public class Helper {
     return evaluateLink(association, obj1, obj2, cd2SMTGenerator);
   }
 
+  private static BoolExpr evaluateLink(
+      ASTCDAssociation association,
+      Pair<ASTCDType, Expr<? extends Sort>> obj1,
+      Pair<ASTCDType, Expr<? extends Sort>> obj2,
+      CD2SMTGenerator cd2SMTGenerator) {
+    return cd2SMTGenerator.evaluateLink(
+        association, obj1.getLeft(), obj2.getLeft(), obj1.getRight(), obj2.getRight());
+  }
+
   public static Expr<? extends Sort> getAttribute(
       Expr<? extends Sort> obj,
       OCLType type,
@@ -81,15 +90,6 @@ public class Helper {
         CDHelper.getASTCDType(type.getName(), cd2SMTGenerator.getClassDiagram().getCDDefinition()),
         attributeName,
         obj);
-  }
-
-  private static BoolExpr evaluateLink(
-      ASTCDAssociation association,
-      Pair<ASTCDType, Expr<? extends Sort>> obj1,
-      Pair<ASTCDType, Expr<? extends Sort>> obj2,
-      CD2SMTGenerator cd2SMTGenerator) {
-    return cd2SMTGenerator.evaluateLink(
-        association, obj1.getLeft(), obj2.getLeft(), obj1.getRight(), obj2.getRight());
   }
 
   public static ASTCDAssociation getAssociation(
@@ -109,13 +109,6 @@ public class Helper {
 
   public static String mkPre(String s) {
     return s + "__pre";
-  }
-
-  public static String removePre(String s) {
-    if (isPre(s)) {
-      return s.substring(0, s.length() - 5);
-    }
-    return s;
   }
 
   public static boolean isPre(String s) {
