@@ -1,5 +1,6 @@
 package de.monticore.ocl2smt.helpers;
 
+import de.monticore.ocl2smt.util.OPDiffResult;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODElement;
@@ -14,7 +15,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class OCLODHelper {
-  public static Pair<ASTODArtifact, ASTODArtifact> splitPreOD(ASTODArtifact od) {
+  public static OPDiffResult splitPreOD(ASTODArtifact od) {
     List<ASTODElement> preOdElements = new ArrayList<>();
     List<ASTODElement> postOdElements = new ArrayList<>();
 
@@ -43,7 +44,7 @@ public class OCLODHelper {
         de.monticore.cd2smt.Helper.ODHelper.buildOD(
             "post_" + od.getObjectDiagram().getName(), postOdElements);
 
-    return new ImmutablePair<>(preOD, postOD);
+    return new OPDiffResult(preOD, postOD);
   }
 
   private static boolean isPreLink(ASTODLink link) {

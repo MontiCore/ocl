@@ -8,6 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.util.OCL_Loader;
+import de.monticore.ocl2smt.util.OPDiffResult;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
@@ -35,6 +36,18 @@ public abstract class OCLDiffAbstractTest {
       printOD(diff.getLeft());
     }
     diff.getRight().forEach(this::printOD);
+  }
+
+  public void printOPDiff(Pair<ASTODArtifact, Set<OPDiffResult>> diff) {
+    if (diff.getLeft() != null) {
+      printOD(diff.getLeft());
+    }
+    diff.getRight()
+        .forEach(
+            x -> {
+              printOD(x.getPostOD());
+              printOD(x.getPreOD());
+            });
   }
 
   protected ASTOCLCompilationUnit parseOCl(String cdFileName, String oclFileName)

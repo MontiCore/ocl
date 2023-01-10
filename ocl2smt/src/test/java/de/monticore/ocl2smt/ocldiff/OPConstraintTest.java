@@ -6,6 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.helpers.OCLCDHelper;
+import de.monticore.ocl2smt.util.OPDiffResult;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
@@ -41,23 +42,24 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> posOCl = new HashSet<>();
     posOCl.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/witness.ocl"));
 
-    Pair<ASTODArtifact, ASTODArtifact> witness = OCLOPDiff.oclWitness(ast, posOCl, false);
+    OPDiffResult witness = OCLOPDiff.oclWitness(ast, posOCl, false);
     Assertions.assertNotNull(witness);
-    printOD(witness.getLeft());
-    printOD(witness.getRight());
+    printOD(witness.getPostOD());
+    printOD(witness.getPreOD());
   }
 
   @Test
-  public void testPostPreConditions() throws IOException {
+  public void testOpConstraintDiff() throws IOException {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
 
     Set<ASTOCLCompilationUnit> in = new HashSet<>();
     in.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/pos.ocl"));
 
     Set<ASTOCLCompilationUnit> notin = new HashSet<>();
-    notin.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/witness.ocl"));
+    notin.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/neg.ocl"));
 
-    Pair<ASTODArtifact, Set<ASTODArtifact>> diff = OCLOPDiff.oclDiffOp(ast, in, notin, false);
-    printDiff(diff);
+    Pair<ASTODArtifact, Set<OPDiffResult>> diff = OCLOPDiff.oclDiffOp(ast, in, notin, false);
+    Assertions.assertEquals(countLinks(diff.getLeft()), 0);
+    printOPDiff(diff);
   }
 }

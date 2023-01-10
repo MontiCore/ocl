@@ -12,17 +12,19 @@ import de.monticore.ocl2smt.helpers.OCLCDHelper;
 import de.monticore.ocl2smt.helpers.OCLODHelper;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.util.OCLConstraint;
+import de.monticore.ocl2smt.util.OPDiffResult;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class OCLOPDiff {
 
   protected static Context ctx;
 
-  protected static Pair<ASTODArtifact, ASTODArtifact> oclWitness(
+  protected static OPDiffResult oclWitness(
       ASTCDCompilationUnit ast, Set<ASTOCLCompilationUnit> in, boolean partial) {
 
     resetContext();
@@ -53,11 +55,11 @@ public class OCLOPDiff {
     return OCLODHelper.splitPreOD(od);
   }
 
-  public static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiffOp(
-          ASTCDCompilationUnit ast,
-          Set<ASTOCLCompilationUnit> posOcl,
-          Set<ASTOCLCompilationUnit> negOcl,
-          boolean partial) {
+  public static Pair<ASTODArtifact, Set<OPDiffResult>> oclDiffOp(
+      ASTCDCompilationUnit ast,
+      Set<ASTOCLCompilationUnit> posOcl,
+      Set<ASTOCLCompilationUnit> negOcl,
+      boolean partial) {
     resetContext();
     OCLCDHelper.buildPreCD(ast);
 
@@ -74,7 +76,18 @@ public class OCLOPDiff {
     Set<IdentifiableBoolExpr> negConstraints = new HashSet<>();
     negConstraints.add(constraint2.iterator().next().getPostCond().negate(ctx));
 
-    return OCLDiffGenerator.oclDiffHelper(ocl2SMTGenerator, posConstraint, negConstraints, partial);
+    return diff2OPDiff(
+        OCLDiffGenerator.oclDiffHelper(ocl2SMTGenerator, posConstraint, negConstraints, partial));
+  }
+
+  public static Pair<ASTODArtifact, Set<OPDiffResult>> diff2OPDiff(
+      Pair<ASTODArtifact, Set<ASTODArtifact>> diff) {
+    Set<OPDiffResult> diffWitness = new HashSet<>();
+    for (ASTODArtifact element : diff.getRight()) {
+      diffWitness.add(OCLODHelper.splitPreOD(element));
+    }
+
+    return new ImmutablePair<>(diff.getLeft(), diffWitness);
   }
 
   protected static Set<OCLConstraint> opConst2smt(

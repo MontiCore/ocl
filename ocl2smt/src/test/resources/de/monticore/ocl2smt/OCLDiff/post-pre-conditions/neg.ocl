@@ -1,3 +1,4 @@
+
 /* (c) https://github.com/MontiCore/monticore */
 package docs;
 ocl Person {
@@ -7,6 +8,8 @@ ocl Person {
 
 
    post: company.employees@pre >= 0  &&
-         company@pre != company  ;
+         company@pre != company  &&
+         company.employees == company.employees@pre +1 &&
+         company@pre.employees == company@pre.employees@pre - 1 ;
 
 }

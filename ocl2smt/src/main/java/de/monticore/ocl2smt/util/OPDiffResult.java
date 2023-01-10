@@ -3,14 +3,19 @@ package de.monticore.ocl2smt.util;
 import de.monticore.odbasis._ast.ASTODArtifact;
 
 public class OPDiffResult {
-  private   ASTODArtifact preOD ;
-  private  ASTODArtifact postOD ;
+  private final ASTODArtifact preOD;
+  private final ASTODArtifact postOD;
 
-    public ASTODArtifact getPreOD() {
-        return preOD;
-    }
+  public OPDiffResult(ASTODArtifact preOD, ASTODArtifact postOD) {
+    this.preOD = preOD;
+    this.postOD = postOD;
+  }
 
-    public ASTODArtifact getPostOD() {
-        return postOD;
-    }
+  public ASTODArtifact getPreOD() {
+    return preOD;
+  }
+
+  public ASTODArtifact getPostOD() {
+    return postOD;
+  }
 }
