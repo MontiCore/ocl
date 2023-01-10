@@ -19,7 +19,7 @@ public class ControlExpressionTest extends ExpressionAbstractTest {
     CD4CodeMill.init();
     parse("MinAuction.cd", "ControlExpr.ocl");
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
-    solver = ocl2SMTGenerator.cd2smtGenerator.getContext().mkSolver();
+    solver = ocl2SMTGenerator.getCD2SMTGenerator().getContext().mkSolver();
   }
 
   @Test

@@ -3,15 +3,15 @@
 package docs;
 ocl Person {
 
- context Person.changeCompany(String n)
+ context boolean Person.changeCompany(String n)
    pre : company.employees > 1 ;
 
 
    post: company.employees@pre >= 0  &&
          company@pre != company  &&
          company.employees == company.employees@pre +1 &&
-         company@pre.employees == company@pre.employees@pre - 1 ;
-
+         company@pre.employees == company@pre.employees@pre - 1 &&
+         result == true;
 
 
 }

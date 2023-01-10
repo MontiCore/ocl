@@ -8,7 +8,7 @@ import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.ocl2smt.ocl2smt.ExpressionsConverter;
+import de.monticore.ocl2smt.ocl2smt.ConstConverter;
 import de.monticore.ocl2smt.util.OCLType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -25,7 +25,7 @@ public class OCLHelper {
 
     ASTCDType left = CDHelper.getLeftType(association, cd);
     ASTCDType right = CDHelper.getRightType(association, cd);
-    OCLType type1 = ExpressionsConverter.getType(obj1);
+    OCLType type1 = ConstConverter.getType(obj1);
     if (left.getName().equals(type1.getName())) {
       return evaluateLink(
           association,

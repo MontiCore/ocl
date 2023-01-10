@@ -97,13 +97,13 @@ public class OCLDiffGenerator {
     Set<IdentifiableBoolExpr> solverConstraints = buildSmtBoolExpr(ocl2SMTGenerator, in);
 
     // check if they exist a model for the list of positive Constraint
-    Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(new ArrayList<>(solverConstraints));
+    Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(new ArrayList<>(solverConstraints));
     System.out.println(solver); // TODO:: remove
     if (solver.check() != Status.SATISFIABLE) {
       Log.error("there are no Model for the List Of Positive Constraints");
     }
 
-    return buildOd(ocl2SMTGenerator.cd2smtGenerator, solver.getModel(), "Witness", partial)
+    return buildOd(ocl2SMTGenerator.getCD2SMTGenerator(), solver.getModel(), "Witness", partial)
         .orElse(null);
   }
 
@@ -120,13 +120,13 @@ public class OCLDiffGenerator {
     for (IdentifiableBoolExpr negConstraint : negConstList) {
       posConstraintList.add(negConstraint);
       Solver solver =
-          ocl2SMTGenerator.cd2smtGenerator.makeSolver(new ArrayList<>(posConstraintList));
+          ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(new ArrayList<>(posConstraintList));
 
       if (solver.check() == Status.SATISFIABLE) {
         System.out.println(solver);
         satOdList.add(
             buildOd(
-                    ocl2SMTGenerator.cd2smtGenerator,
+                    ocl2SMTGenerator.getCD2SMTGenerator(),
                     solver.getModel(),
                     negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0],
                     partial)

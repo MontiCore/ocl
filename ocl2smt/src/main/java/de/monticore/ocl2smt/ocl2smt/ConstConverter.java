@@ -11,12 +11,12 @@ import de.se_rwth.commons.logging.Log;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ExpressionsConverter {
+public class ConstConverter {
   protected static Context context;
   protected static final Map<Expr<? extends Sort>, OCLType> varTypes = new HashMap<>();
 
   public static void reset(Context context) {
-    ExpressionsConverter.context = context;
+    ConstConverter.context = context;
     varTypes.clear();
   }
 

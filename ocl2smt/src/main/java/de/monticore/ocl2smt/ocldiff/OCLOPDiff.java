@@ -40,7 +40,7 @@ public class OCLOPDiff {
     solversConstraints.addAll(
         constraints.stream().map(OCLConstraint::getPostCond).collect(Collectors.toList()));
 
-    Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solversConstraints);
+    Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solversConstraints);
     System.out.println(solver);
     if (solver.check() != Status.SATISFIABLE) {
       Log.info("there are no Model for the List Of Positive Constraints", "NOWitnessOD");
@@ -48,7 +48,7 @@ public class OCLOPDiff {
     }
 
     ASTODArtifact od =
-        buildOd(ocl2SMTGenerator.cd2smtGenerator, solver.getModel(), "Witness", partial)
+        buildOd(ocl2SMTGenerator.getCD2SMTGenerator(), solver.getModel(), "Witness", partial)
             .orElse(null);
 
     assert od != null;

@@ -3,8 +3,10 @@ package docs;
 
 classdiagram Auction {
 
- class  Person{
+ class  Person {
+   int salary ;
    boolean changeCompany(String n) ;
+   int increaseAndGetSalary(int salary ) ;
  }
 
  class Company {
