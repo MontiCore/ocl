@@ -53,6 +53,30 @@ public class OCLOPDiff {
     return OCLODHelper.splitPreOD(od);
   }
 
+  public static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiffOp(
+          ASTCDCompilationUnit ast,
+          Set<ASTOCLCompilationUnit> posOcl,
+          Set<ASTOCLCompilationUnit> negOcl,
+          boolean partial) {
+    resetContext();
+    OCLCDHelper.buildPreCD(ast);
+
+    //  oclWitness(ast,posOcl,false) ;
+    OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(ast, ctx);
+    Set<OCLConstraint> constraint1 = opConst2smt(ocl2SMTGenerator, posOcl);
+    Set<OCLConstraint> constraint2 = opConst2smt(ocl2SMTGenerator, negOcl);
+
+    Set<IdentifiableBoolExpr> posConstraint = new HashSet<>();
+    posConstraint.add(constraint1.iterator().next().getPreCond());
+    posConstraint.add(constraint1.iterator().next().getPostCond());
+    posConstraint.add(constraint2.iterator().next().getPreCond());
+
+    Set<IdentifiableBoolExpr> negConstraints = new HashSet<>();
+    negConstraints.add(constraint2.iterator().next().getPostCond().negate(ctx));
+
+    return OCLDiffGenerator.oclDiffHelper(ocl2SMTGenerator, posConstraint, negConstraints, partial);
+  }
+
   protected static Set<OCLConstraint> opConst2smt(
       OCL2SMTGenerator ocl2SMTGenerator, Set<ASTOCLCompilationUnit> in) {
     return in.stream()

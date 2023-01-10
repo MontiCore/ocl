@@ -46,4 +46,18 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     printOD(witness.getLeft());
     printOD(witness.getRight());
   }
+
+  @Test
+  public void testPostPreConditions() throws IOException {
+    ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
+
+    Set<ASTOCLCompilationUnit> in = new HashSet<>();
+    in.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/pos.ocl"));
+
+    Set<ASTOCLCompilationUnit> notin = new HashSet<>();
+    notin.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/witness.ocl"));
+
+    Pair<ASTODArtifact, Set<ASTODArtifact>> diff = OCLOPDiff.oclDiffOp(ast, in, notin, false);
+    printDiff(diff);
+  }
 }
