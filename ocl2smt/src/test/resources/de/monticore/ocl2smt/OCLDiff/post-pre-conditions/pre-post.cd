@@ -3,7 +3,9 @@ package docs;
 
 classdiagram Auction {
 
- class  Person;
+ class  Person{
+    void changeCompany() ;
+ }
 
  class Company {
    String name ;
