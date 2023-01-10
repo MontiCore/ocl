@@ -12,4 +12,6 @@ ocl Person {
          company.employees == company.employees@pre +1 &&
          company@pre.employees == company@pre.employees@pre - 1 ;
 
+
+
 }

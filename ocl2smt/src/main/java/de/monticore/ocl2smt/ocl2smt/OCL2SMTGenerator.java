@@ -102,7 +102,7 @@ public class OCL2SMTGenerator {
 
     return new OCLConstraint(IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name));
   }
-
+  //TODO:: fix context Decalration (OCLContextDefinition = MCType | GeneratorDeclaration | OCLParamDeclaration)
   protected Function<BoolExpr, BoolExpr> openInvScope(ASTOCLInvariant invariant) {
     List<Expr<? extends Sort>> vars = new ArrayList<>();
     for (ASTOCLContextDefinition invCtx : invariant.getOCLContextDefinitionList()) {
@@ -117,7 +117,7 @@ public class OCL2SMTGenerator {
     }
     return bool -> bool;
   }
-
+ //TODO:: fix   OCLOperationSignature = OCLMethodSignature | OCLConstructorSignature
   void openOpScope(ASTOCLOperationSignature node) {
     ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
 
@@ -899,7 +899,6 @@ public class OCL2SMTGenerator {
       name = name + "__pre";
     }
     Expr<? extends Sort> expr = ExpressionsConverter.declObj(type2, name);
-    // constrData.addDeclExpr(expr);
     constrData.genConstraints.add(
         OCLHelper.evaluateLink(
             association, constrData.oclContext, expr, cd2smtGenerator, constrData.isPreCond()));
