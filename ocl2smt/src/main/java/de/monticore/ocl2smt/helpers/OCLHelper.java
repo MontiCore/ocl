@@ -7,7 +7,6 @@ import de.monticore.ocl2smt.util.OCLType;
 
 public class OCLHelper {
 
-
   public static ASTCDAssociation getAssociation(
       OCLType type, String otherRole, ASTCDDefinition cd) {
     return CDHelper.getAssociation(CDHelper.getASTCDType(type.getName(), cd), otherRole, cd);

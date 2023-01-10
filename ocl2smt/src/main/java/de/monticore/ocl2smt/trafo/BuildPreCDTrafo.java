@@ -1,6 +1,5 @@
 package de.monticore.ocl2smt.trafo;
 
-
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.*;

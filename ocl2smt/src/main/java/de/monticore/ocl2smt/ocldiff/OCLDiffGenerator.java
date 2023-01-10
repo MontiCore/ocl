@@ -23,11 +23,12 @@ public class OCLDiffGenerator {
   protected static Context ctx;
   /**
    * converts CD + OCL Model in SMT and produces A witness Object Diagram
+   *
    * @param cd the class diagram
    * @param in Set of OCl constraints
    * @param partial if partial == true, the Object diagram will be partial regarding the attribute
    * @return the witness Object Diagram
-   * */
+   */
   public static ASTODArtifact oclWitness(
       ASTCDCompilationUnit cd, Set<ASTOCLCompilationUnit> in, boolean partial) {
     resetContext();
@@ -36,9 +37,10 @@ public class OCLDiffGenerator {
 
   /**
    * Computes if a Set of OCl constraint (notin) is a refinement of another Set (in)
-   * @param  cd the class diagram
+   *
+   * @param cd the class diagram
    * @param in first s
-   * */
+   */
   public static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiff(
       ASTCDCompilationUnit cd,
       Set<ASTOCLCompilationUnit> in,

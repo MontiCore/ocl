@@ -36,26 +36,30 @@ public class OCLExpression2SMT {
   protected final Context ctx;
   public final CD2SMTGenerator cd2smtGenerator;
   protected ConstraintsData constrData = new ConstraintsData();
-  OCL2SMTStrategy strategy = new OCL2SMTStrategy();
+  protected OCL2SMTStrategy strategy = new OCL2SMTStrategy();
+
+  protected ConstConverter cc = new ConstConverter();
 
   public OCLExpression2SMT(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
+    cc.reset(ctx);
     this.ctx = ctx;
     cd2smtGenerator = new CD2SMTGenerator();
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
     TypeConverter.setup(cd2smtGenerator);
   }
 
-  public void enterPreCond(){
+  public void enterPreCond() {
     strategy.enterPreCond();
   }
 
-  public  void exitPreCond(){
+  public void exitPreCond() {
     strategy.exitPre();
   }
 
   public OCLExpression2SMT(
       ASTCDCompilationUnit astcdCompilationUnit,
       de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator ocl2SMTGenerator) {
+    cc.reset(ocl2SMTGenerator.getCtx());
     this.ctx = ocl2SMTGenerator.getCtx();
     cd2smtGenerator = ocl2SMTGenerator.getCD2SMTGenerator();
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
@@ -162,7 +166,7 @@ public class OCLExpression2SMT {
   protected Optional<Expr<? extends Sort>> convertGenExprOpt(ASTExpression node) {
     Expr<? extends Sort> res;
     if (node instanceof ASTLiteralExpression) {
-      res = ConstConverter.convert((ASTLiteralExpression) node);
+      res = cc.convert((ASTLiteralExpression) node);
     } else if (node instanceof ASTBracketExpression) {
       res = convertBracket((ASTBracketExpression) node);
     } else if (node instanceof ASTNameExpression) {
@@ -387,7 +391,7 @@ public class OCLExpression2SMT {
 
   protected Expr<? extends Sort> convertFieldAcc(ASTFieldAccessExpression node) {
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
-    OCLType type = ConstConverter.getType(obj);
+    OCLType type = cc.getType(obj);
     return strategy.getAttribute(obj, type, node.getName(), cd2smtGenerator);
   }
 
@@ -396,12 +400,12 @@ public class OCLExpression2SMT {
     if (!(node.getExpression() instanceof ASTFieldAccessExpression)) {
 
       Expr<? extends Sort> auction = convertExpr(node.getExpression());
-      OCLType type1 = ConstConverter.getType(auction);
+      OCLType type1 = cc.getType(auction);
       ASTCDAssociation association = OCLHelper.getAssociation(type1, node.getName(), getCD());
       OCLType type2 = OCLHelper.getOtherType(association, type1);
 
       Function<Expr<? extends Sort>, BoolExpr> auction_per_set =
-          per -> strategy.evaluateLink(association, auction, per, cd2smtGenerator);
+          per -> strategy.evaluateLink(association, auction, per, cd2smtGenerator, cc);
       return new SMTSet(auction_per_set, type2);
     }
 
@@ -414,7 +418,8 @@ public class OCLExpression2SMT {
     Function<Expr<? extends Sort>, SMTSet> function =
         obj1 ->
             new SMTSet(
-                obj2 -> strategy.evaluateLink(person_parent, obj1, obj2, cd2smtGenerator), type2);
+                obj2 -> strategy.evaluateLink(person_parent, obj1, obj2, cd2smtGenerator, cc),
+                type2);
 
     return pSet.collectAll(function, ctx);
   }
@@ -633,7 +638,7 @@ public class OCLExpression2SMT {
                     null,
                     null,
                     null),
-            ConstConverter.getType(expr1));
+            cc.getType(expr1));
   }
 
   protected Function<BoolExpr, SMTSet> convertSetVarDeclLeft(ASTSetVariableDeclaration node) {
@@ -650,7 +655,7 @@ public class OCLExpression2SMT {
                     null,
                     null,
                     null),
-            ConstConverter.getType(expr));
+            cc.getType(expr));
   }
 
   protected BoolExpr convertSetVarDeclRight(ASTSetVariableDeclaration node) {
@@ -697,7 +702,7 @@ public class OCLExpression2SMT {
                     null,
                     null,
                     null),
-            ConstConverter.getType(expr));
+            cc.getType(expr));
   }
 
   // a.auction**
@@ -709,13 +714,12 @@ public class OCLExpression2SMT {
     ASTFieldAccessExpression fieldAcc = (ASTFieldAccessExpression) node.getExpression();
     Expr<? extends Sort> auction = convertExpr(fieldAcc.getExpression());
 
-    FuncDecl<BoolSort> rel =
-        buildReflexiveNewAssocFunc(ConstConverter.getType(auction), fieldAcc.getName());
+    FuncDecl<BoolSort> rel = buildReflexiveNewAssocFunc(cc.getType(auction), fieldAcc.getName());
     FuncDecl<BoolSort> trans_rel = TransitiveClosure.mkTransitiveClosure(ctx, rel);
 
     Function<Expr<? extends Sort>, BoolExpr> setFunc =
         obj -> (BoolExpr) trans_rel.apply(auction, obj);
-    return new SMTSet(setFunc, ConstConverter.getType(auction));
+    return new SMTSet(setFunc, cc.getType(auction));
   }
 
   private FuncDecl<BoolSort> buildReflexiveNewAssocFunc(OCLType type, String otherRole) {
@@ -749,7 +753,7 @@ public class OCLExpression2SMT {
   }
 
   protected Expr<? extends Sort> declVariable(OCLType type, String name) {
-    Expr<? extends Sort> res = ConstConverter.declObj(type, name);
+    Expr<? extends Sort> res = cc.declObj(type, name);
     constrData.addVar(name, res);
     return res;
   }
@@ -771,11 +775,11 @@ public class OCLExpression2SMT {
     OCLType type2 = OCLHelper.getOtherType(association, constrData.oclContextType);
     String name = node.getName();
     if (constrData.isPreCond()) {
-      name = name + "__pre";
+      name = strategy.mkObjName(name);
     }
-    Expr<? extends Sort> expr = ConstConverter.declObj(type2, name);
+    Expr<? extends Sort> expr = cc.declObj(type2, name);
     constrData.genConstraints.add(
-        strategy.evaluateLink(association, constrData.oclContext, expr, cd2smtGenerator));
+        strategy.evaluateLink(association, constrData.oclContext, expr, cd2smtGenerator, cc));
     return Optional.of(expr);
   }
 }
