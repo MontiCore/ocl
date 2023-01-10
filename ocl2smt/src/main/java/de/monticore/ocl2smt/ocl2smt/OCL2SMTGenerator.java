@@ -17,7 +17,7 @@ import java.util.function.Function;
 // TODO: add documentation
 
 public class OCL2SMTGenerator {
-  // TODO:strategy for conversion of @pre
+
   private final OCLExpression2SMT expression2SMT;
   private final Context ctx;
 
@@ -39,15 +39,24 @@ public class OCL2SMTGenerator {
   public CD2SMTGenerator getCD2SMTGenerator() {
     return expression2SMT.cd2smtGenerator;
   }
-
-  public List<OCLConstraint> ocl2smt(ASTOCLArtifact astoclArtifact) {
+ /**
+  * Convert an ASTOCLArtifact in a Set of SMT BoolExpr
+  * @param astOclArtifact ocl Artifact to transform
+  * @return the list of SMT BoolExpr
+  *
+  */
+  public List<OCLConstraint> ocl2smt(ASTOCLArtifact astOclArtifact) {
     List<OCLConstraint> constraints = new ArrayList<>();
-    for (ASTOCLConstraint constraint : astoclArtifact.getOCLConstraintList()) {
+    for (ASTOCLConstraint constraint : astOclArtifact.getOCLConstraintList()) {
       constraints.add(convertConstr(constraint));
     }
     return constraints;
   }
 
+  /**
+   *convert a single OCLConstraint  into A SMT BoolExpr
+   * @param constraint constraint OCLConstraint to Convert
+   */
   public OCLConstraint convertConstr(ASTOCLConstraint constraint) {
     ConstConverter.reset(ctx);
     OCLConstraint res = null;
@@ -116,12 +125,13 @@ public class OCL2SMTGenerator {
   }
 
   public BoolExpr convertPreCond(ASTOCLOperationConstraint node) {
+      expression2SMT.enterPreCond();
     expression2SMT.constrData.initPre();
     BoolExpr pre = expression2SMT.convertBoolExpr(node.getPreCondition(0));
     for (BoolExpr constr : expression2SMT.constrData.genConstraints) {
       pre = ctx.mkAnd(pre, constr);
     }
-
+    expression2SMT.exitPreCond();
     return pre;
   }
 
