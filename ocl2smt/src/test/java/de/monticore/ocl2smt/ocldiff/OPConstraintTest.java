@@ -31,9 +31,11 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
     OCL2SMTStrategy.buildPreCD(ast);
     ASTCDClass company = getClass(ast, "Company");
-    Assertions.assertTrue(containsAttribute(company, "name__pre"));
-    Assertions.assertTrue(containsAttribute(company, "employees__pre"));
-    Assertions.assertTrue(containsAssoc(ast, "Person", "person__pre", "Company", "company__pre"));
+    Assertions.assertTrue(containsAttribute(company, OCLHelper.mkPre("name")));
+    Assertions.assertTrue(containsAttribute(company, OCLHelper.mkPre("employees")));
+    Assertions.assertTrue(
+        containsAssoc(
+            ast, "Person", OCLHelper.mkPre("person"), "Company", OCLHelper.mkPre("company")));
   }
 
   @Test
