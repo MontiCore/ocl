@@ -103,7 +103,10 @@ public abstract class ExpressionAbstractTest {
     ASTODArtifact od1 =
         TraceUnsatCore.buildUnsatOD(
             new HashSet<>(),
-            Set.of(solverConstraints.get(0).negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),
+            Set.of(
+                solverConstraints
+                    .get(0)
+                    .negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),
             TraceUnsatCore.traceUnsatCore(solver));
     printOD(od1);
   }

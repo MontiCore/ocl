@@ -1,64 +1,44 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocl2smt;
 
-import static de.monticore.cd2smt.Helper.CDHelper.createCDSymTab;
-import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
-
 import com.microsoft.z3.*;
-import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.expressions.commonexpressions._ast.*;
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
-import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
-import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.*;
-import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
-import de.monticore.ocl2smt.helpers.OCLCDHelper;
-import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.util.*;
-import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 // TODO: add documentation
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class OCL2SMTGenerator {
   // TODO:strategy for conversion of @pre
-private final OCLExpression2SMT expression2SMT ;
-private final Context ctx ;
-
+  private final OCLExpression2SMT expression2SMT;
+  private final Context ctx;
 
   public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
-    expression2SMT = new OCLExpression2SMT(astcdCompilationUnit,ctx);
-    this.ctx   = ctx ;
+    expression2SMT = new OCLExpression2SMT(astcdCompilationUnit, ctx);
+    this.ctx = ctx;
   }
 
   public OCL2SMTGenerator(
       ASTCDCompilationUnit astcdCompilationUnit, OCL2SMTGenerator ocl2SMTGenerator) {
-   expression2SMT = new OCLExpression2SMT(astcdCompilationUnit,ocl2SMTGenerator);
-   this.ctx = ocl2SMTGenerator.ctx ;
+    expression2SMT = new OCLExpression2SMT(astcdCompilationUnit, ocl2SMTGenerator);
+    this.ctx = ocl2SMTGenerator.ctx;
   }
 
   public Context getCtx() {
     return ctx;
   }
 
- public CD2SMTGenerator getCD2SMTGenerator(){
+  public CD2SMTGenerator getCD2SMTGenerator() {
     return expression2SMT.cd2smtGenerator;
- }
+  }
 
   public List<OCLConstraint> ocl2smt(ASTOCLArtifact astoclArtifact) {
     List<OCLConstraint> constraints = new ArrayList<>();
@@ -83,13 +63,13 @@ private final Context ctx ;
     return res;
   }
 
-
   protected Expr<? extends Sort> convertCtxParDec(ASTOCLParamDeclaration node) {
     OCLType oclType = TypeConverter.buildOCLType(node.getMCType());
     Expr<? extends Sort> obj = expression2SMT.declVariable(oclType, node.getName());
     expression2SMT.constrData.setOCLContext(obj, oclType); // TODO: do that in  the  ConvertInv
     return obj;
   }
+
   protected OCLConstraint convertInv(ASTOCLInvariant invariant) {
     SourcePosition srcPos = invariant.get_SourcePositionStart();
 
@@ -100,7 +80,7 @@ private final Context ctx ;
     BoolExpr inv = invCtx.apply(expression2SMT.convertBoolExpr(invariant.getExpression()));
 
     // add general invConstraints
-    for (BoolExpr constr :expression2SMT.constrData.genConstraints) {
+    for (BoolExpr constr : expression2SMT.constrData.genConstraints) {
       inv = ctx.mkAnd(inv, constr);
     }
 
@@ -170,6 +150,4 @@ private final Context ctx ;
             post, node.getPostCondition(0).get_SourcePositionStart(), Optional.of("post"));
     return new OCLConstraint(preConstr, postConstr);
   }
-
-
 }

@@ -8,9 +8,9 @@ import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl2smt.helpers.OCLCDHelper;
-import de.monticore.ocl2smt.helpers.OCLODHelper;
+import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
+import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
 import de.monticore.ocl2smt.util.OCLConstraint;
 import de.monticore.ocl2smt.util.OPDiffResult;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -28,7 +28,7 @@ public class OCLOPDiff {
       ASTCDCompilationUnit ast, Set<ASTOCLCompilationUnit> in, boolean partial) {
 
     resetContext();
-    OCLCDHelper.buildPreCD(ast);
+    OCL2SMTStrategy.buildPreCD(ast);
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(ast, ctx);
 
     Set<OCLConstraint> constraints = opConst2smt(ocl2SMTGenerator, in);
@@ -52,7 +52,7 @@ public class OCLOPDiff {
             .orElse(null);
 
     assert od != null;
-    return OCLODHelper.splitPreOD(od);
+    return OCL2SMTStrategy.splitPreOD(od);
   }
 
   public static Pair<ASTODArtifact, Set<OPDiffResult>> oclDiffOp(
@@ -61,7 +61,7 @@ public class OCLOPDiff {
       Set<ASTOCLCompilationUnit> negOcl,
       boolean partial) {
     resetContext();
-    OCLCDHelper.buildPreCD(ast);
+    OCL2SMTStrategy.buildPreCD(ast);
 
     //  oclWitness(ast,posOcl,false) ;
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(ast, ctx);
@@ -84,7 +84,7 @@ public class OCLOPDiff {
       Pair<ASTODArtifact, Set<ASTODArtifact>> diff) {
     Set<OPDiffResult> diffWitness = new HashSet<>();
     for (ASTODArtifact element : diff.getRight()) {
-      diffWitness.add(OCLODHelper.splitPreOD(element));
+      diffWitness.add(OCL2SMTStrategy.splitPreOD(element));
     }
 
     return new ImmutablePair<>(diff.getLeft(), diffWitness);
