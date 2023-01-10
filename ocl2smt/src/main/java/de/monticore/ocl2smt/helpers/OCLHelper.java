@@ -19,13 +19,14 @@ public class OCLHelper {
       ASTCDAssociation association,
       Expr<? extends Sort> obj1,
       Expr<? extends Sort> obj2,
-      CD2SMTGenerator cd2SMTGenerator) {
+      CD2SMTGenerator cd2SMTGenerator,
+      ExpressionsConverter ec) {
 
     ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
 
     ASTCDType left = CDHelper.getLeftType(association, cd);
     ASTCDType right = CDHelper.getRightType(association, cd);
-    OCLType type1 = ExpressionsConverter.getType(obj1);
+    OCLType type1 = ec.getType(obj1);
     if (left.getName().equals(type1.getName())) {
       return evaluateLink(
           association,
@@ -46,14 +47,15 @@ public class OCLHelper {
       Expr<? extends Sort> obj1,
       Expr<? extends Sort> obj2,
       CD2SMTGenerator cd2SMTGenerator,
-      boolean pre) {
+      boolean pre,
+      ExpressionsConverter ec) {
     if (pre) {
       association =
           OCLCDHelper.getPreAssociation(
               association, cd2SMTGenerator.getClassDiagram().getCDDefinition());
     }
 
-    return evaluateLink(association, obj1, obj2, cd2SMTGenerator);
+    return evaluateLink(association, obj1, obj2, cd2SMTGenerator, ec);
   }
 
   private static BoolExpr evaluateLink(
