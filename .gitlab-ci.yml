@@ -163,6 +163,14 @@ trigger-montifun-main:
   only:
     - master
 
+trigger-montifun-dev:
+  stage: trigger_languages
+  trigger:
+    project: monticore/languages/montifun
+    branch: dev
+  only:
+    - develop
+
 
 # Mirrors this repository's `develop` and `master` branch to GitHub.
 #
