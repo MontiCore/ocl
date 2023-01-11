@@ -12,11 +12,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ExpressionsConverter {
-  protected final Context context;
+  protected Context context;
   protected final Map<Expr<? extends Sort>, OCLType> varTypes = new HashMap<>();
 
-  public ExpressionsConverter(Context context) {
+  public void reset(Context context) {
     this.context = context;
+    varTypes.clear();
   }
 
   public Expr<? extends Sort> convert(ASTLiteralExpression node) {

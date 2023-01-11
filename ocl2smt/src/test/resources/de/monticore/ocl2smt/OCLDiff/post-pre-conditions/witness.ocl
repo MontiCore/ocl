@@ -1,0 +1,24 @@
+
+/* (c) https://github.com/MontiCore/monticore */
+package docs;
+ocl Person {
+
+ context Person.changeCompany(String n)
+   pre : company.name == "oldCompany"  &&
+         company.employees == 4 &&
+         n == "newCompany";
+
+   post: company.employees == company.employees@pre +1 &&
+         company@pre != company  &&
+         company.name == n &&
+         company@pre.employees == company@pre.employees@pre - 1 &&
+
+         company.employees@pre == 0  &&
+         company@pre.name@pre ==  company@pre.name&&
+         company.name@pre == company.name;
+
+
+
+
+
+}

@@ -1,10 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocldiff;
 
-import com.microsoft.z3.Context;
-import com.microsoft.z3.Model;
-import com.microsoft.z3.Solver;
-import com.microsoft.z3.Status;
+import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
@@ -13,6 +10,7 @@ import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
+import de.monticore.ocl2smt.util.OCLConstraint;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
@@ -108,7 +106,7 @@ public class OCLDiffGenerator {
         .orElse(null);
   }
 
-  private static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiffHelper(
+  protected static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiffHelper(
       OCL2SMTGenerator ocl2SMTGenerator,
       Set<IdentifiableBoolExpr> posConstraintList,
       Set<IdentifiableBoolExpr> negConstList,
@@ -124,7 +122,6 @@ public class OCLDiffGenerator {
           ocl2SMTGenerator.cd2smtGenerator.makeSolver(new ArrayList<>(posConstraintList));
 
       if (solver.check() == Status.SATISFIABLE) {
-
         satOdList.add(
             buildOd(
                     ocl2SMTGenerator.cd2smtGenerator,
@@ -146,10 +143,14 @@ public class OCLDiffGenerator {
     return cd2SMTGenerator.smt2od(model, partial, ODName);
   }
 
-  private static Set<IdentifiableBoolExpr> buildSmtBoolExpr(
+  protected static Set<IdentifiableBoolExpr> buildSmtBoolExpr(
       OCL2SMTGenerator ocl2SMTGenerator, Set<ASTOCLCompilationUnit> in) {
     return in.stream()
-        .flatMap(p -> ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).stream())
+        .flatMap(
+            p ->
+                ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).stream()
+                    .filter(OCLConstraint::isInvariant)
+                    .map(OCLConstraint::getConstraint))
         .collect(Collectors.toSet());
   }
 

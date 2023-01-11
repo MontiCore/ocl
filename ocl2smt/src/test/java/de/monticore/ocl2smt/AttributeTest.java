@@ -9,21 +9,23 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
-public class TypeCheck extends ExpressionAbstractTest {
+public class AttributeTest extends ExpressionAbstractTest {
   @BeforeEach
   public void setup() throws IOException {
     Log.init();
     OCLMill.init();
     CD4CodeMill.init();
-    parse("/typecheck/typecheck.cd", "/typecheck/typecheck.ocl");
+    parse("/attribute/attribute.cd", "/attribute/attribute.ocl");
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 
   @Disabled
-  @Test
-  public void testTypeCheck() {
-    testInv("TypeCheck");
+  @ParameterizedTest
+  @ValueSource(strings = {"Attr1"}) // TODO: implement and Enable
+  public void testAttributeAccess(String inv) {
+    testInv(inv);
   }
 }
