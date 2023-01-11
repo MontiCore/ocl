@@ -1,20 +1,23 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocldiff;
 
-import de.monticore.cd4code.CD4CodeMill;
+import com.microsoft.z3.Context;
+import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDAttribute;
+import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
-import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
@@ -27,12 +30,6 @@ public abstract class OCLDiffAbstractTest {
   protected static final String RELATIVE_TARGET_PATH =
       "target/generated/sources/annotationProcessor/java/ocl2smttest";
 
-  public void setUp() {
-    Log.init();
-    OCLMill.init();
-    CD4CodeMill.init();
-  }
-
   public void printDiff(Pair<ASTODArtifact, Set<ASTODArtifact>> diff) {
     if (diff.getLeft() != null) {
       printOD(diff.getLeft());
@@ -42,14 +39,14 @@ public abstract class OCLDiffAbstractTest {
 
   protected ASTOCLCompilationUnit parseOCl(String cdFileName, String oclFileName)
       throws IOException {
-    setUp();
+
     return OCL_Loader.loadAndCheckOCL(
         Paths.get(RELATIVE_MODEL_PATH, oclFileName).toFile(),
         Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
   }
 
   protected ASTCDCompilationUnit parseCD(String cdFileName) throws IOException {
-    setUp();
+
     return OCL_Loader.loadAndCheckCD(Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
   }
 
@@ -109,5 +106,42 @@ public abstract class OCLDiffAbstractTest {
     posOCL.add(parseOCl(posCDn, posOCLn));
     negOCL.add(parseOCl(posCDn, negOCLn));
     return OCLDiffGenerator.oclDiff(posCD, posOCL, negOCL, false);
+  }
+
+  public static Context buildContext() {
+    Map<String, String> cfg = new HashMap<>();
+    cfg.put("model", "true");
+    return new Context(cfg);
+  }
+
+  public boolean containsAttribute(ASTCDClass c, String attribute) {
+    for (ASTCDAttribute attr : c.getCDAttributeList()) {
+      if (attr.getName().equals(attribute)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public ASTCDClass getClass(ASTCDCompilationUnit cd, String className) {
+    for (ASTCDClass astcdClass : cd.getCDDefinition().getCDClassesList()) {
+      if (astcdClass.getName().equals(className)) {
+        return astcdClass;
+      }
+    }
+    return null;
+  }
+
+  public boolean containsAssoc(
+      ASTCDCompilationUnit cd, String left, String leftRole, String right, String rightRole) {
+    for (ASTCDAssociation assoc : cd.getCDDefinition().getCDAssociationsList()) {
+      if (left.equals(assoc.getLeftQualifiedName().getQName())
+          && right.equals(assoc.getRightQualifiedName().getQName())
+          && leftRole.equals(assoc.getLeft().getCDRole().getName())
+          && rightRole.equals(assoc.getRight().getCDRole().getName())) {
+        return true;
+      }
+    }
+    return false;
   }
 }
