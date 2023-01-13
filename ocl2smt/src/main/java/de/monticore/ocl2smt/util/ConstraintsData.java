@@ -14,15 +14,12 @@ public class ConstraintsData {
 
   public final Set<BoolExpr> genConstraints = new HashSet<>();
 
-
   private void reset() {
     oclContextType = null;
     oclContext = null;
     varNames.clear();
     genConstraints.clear();
   }
-
-
 
   public void addVar(String name, Expr<? extends Sort> obj) {
     varNames.put(name, obj);

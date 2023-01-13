@@ -6,7 +6,6 @@ import com.microsoft.z3.Model;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
 import de.monticore.cdassociation._ast.ASTCDAssocRightSide;
@@ -18,6 +17,7 @@ import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.ocl2smt.trafo.BuildPreCDTrafo;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.OPDiffResult;
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODElement;
@@ -25,20 +25,27 @@ import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
+import de.monticore.umlmodifier._ast.ASTModifier;
+import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-
-import javax.xml.parsers.SAXParser;
 
 public class OCL2SMTStrategy {
   private boolean isPreStrategy = false;
   private boolean isPreCond = false;
 
-  public List<Expr<? extends Sort>> exprList = new ArrayList<>() ;
+  private Expr<? extends Sort> thisObj;
+
+  public void setThis(Expr<? extends Sort> thisObj) {
+    this.thisObj = thisObj;
+  }
+
+  public List<Expr<? extends Sort>> linkedObj = new ArrayList<>();
 
   public void enterPre() {
     isPreStrategy = true;
@@ -57,7 +64,6 @@ public class OCL2SMTStrategy {
     isPreCond = false;
     isPreStrategy = false;
   }
-
 
   public BoolExpr evaluateLink(
       ASTCDAssociation association,
@@ -111,11 +117,58 @@ public class OCL2SMTStrategy {
     return res;
   }
 
-  public    OPDiffResult splitPreOD(ASTODArtifact od, Model model) {
+  public ASTModifier mkThisModifier() {
+    return buildModifier("This", "true");
+  }
+
+  public ASTModifier mkLinkModifier() {
+    return buildModifier("Link", "true");
+  }
+
+  public ASTModifier mkResultModifier(String value) {
+    return buildModifier("Result", "true");
+  }
+
+  public ASTStereotype mkResultStereotype(String value) {
+    return buildStereotype("Result", value);
+  }
+
+  public ASTModifier buildModifier(String stereotypeName, String stereotypeValue) {
+    return OD4ReportMill.modifierBuilder()
+        .setStereotype(buildStereotype(stereotypeName, stereotypeValue))
+        .build();
+  }
+
+  public ASTStereotype buildStereotype(String stereotypeName, String stereotypeValue) {
+    return OD4ReportMill.stereotypeBuilder()
+        .addValues(
+            OD4ReportMill.stereoValueBuilder()
+                .setName(stereotypeName)
+                .setContent(" ")
+                .setText(OD4ReportMill.stringLiteralBuilder().setSource(stereotypeValue).build())
+                .build())
+        .build();
+  }
+
+  public OPDiffResult splitPreOD(ASTODArtifact od, Model model) {
     List<ASTODElement> preOdElements = new ArrayList<>();
     List<ASTODElement> postOdElements = new ArrayList<>();
-    List<Expr<? extends  Sort>> elements = exprList.stream().map(e->model.evaluate(e,true)).collect(Collectors.toList());
+    Set<Expr<? extends Sort>> elements =
+        linkedObj.stream().map(e -> model.evaluate(e, true)).collect(Collectors.toSet());
     System.out.println(elements);
+    ASTModifier modifier =
+        OD4ReportMill.modifierBuilder()
+            .setStereotype(
+                OD4ReportMill.stereotypeBuilder()
+                    .addValues(
+                        OD4ReportMill.stereoValueBuilder()
+                            .setName("Modified")
+                            .setContent(" ")
+                            .setText(OD4ReportMill.stringLiteralBuilder().setSource("true").build())
+                            .build())
+                    .build())
+            .build();
+
     for (ASTODElement element : od.getObjectDiagram().getODElementList()) {
       if (element instanceof ASTODLink) {
         ASTODLink link = (ASTODLink) element;
@@ -128,8 +181,11 @@ public class OCL2SMTStrategy {
 
       if (element instanceof ASTODNamedObject) {
         ASTODNamedObject obj = (ASTODNamedObject) element;
-        Pair<ASTODNamedObject, ASTODNamedObject> objects = splitPreObject(obj);
+        obj.setModifier(modifier);
 
+        Pair<ASTODNamedObject, ASTODNamedObject> objects = splitPreObject(obj);
+        objects.getLeft().setModifier(modifier);
+        objects.getRight().setModifier(modifier);
         preOdElements.add(objects.getLeft());
         postOdElements.add(objects.getRight());
       }
@@ -144,7 +200,7 @@ public class OCL2SMTStrategy {
     return new OPDiffResult(preOD, postOD);
   }
 
-  private static   boolean isPreLink(ASTODLink link) {
+  private static boolean isPreLink(ASTODLink link) {
     return isPre(link.getODLinkLeftSide().getRole()) && isPre(link.getODLinkRightSide().getRole());
   }
 
@@ -233,7 +289,7 @@ public class OCL2SMTStrategy {
     return s;
   }
 
-  public void addExpr( Expr<? extends  Sort> expr){
-    exprList.add(expr);
+  public void addLink(Expr<? extends Sort> expr) {
+    linkedObj.add(expr);
   }
 }

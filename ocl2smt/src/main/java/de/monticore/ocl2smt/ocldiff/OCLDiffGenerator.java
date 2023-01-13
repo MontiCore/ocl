@@ -116,8 +116,7 @@ public class OCLDiffGenerator {
       Log.error("there are no Model for the List Of Positive Constraints");
     }
 
-    return ocl2SMTGenerator.buildOd(solver.getModel(), "Witness", partial)
-        .orElse(null);
+    return ocl2SMTGenerator.buildOd(solver.getModel(), "Witness", partial).orElse(null);
   }
 
   protected static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiffHelper(
@@ -137,7 +136,8 @@ public class OCLDiffGenerator {
 
       if (solver.check() == Status.SATISFIABLE) {
         satOdList.add(
-          ocl2SMTGenerator.buildOd(
+            ocl2SMTGenerator
+                .buildOd(
                     solver.getModel(),
                     negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0],
                     partial)
@@ -150,8 +150,6 @@ public class OCLDiffGenerator {
     return new ImmutablePair<>(
         TraceUnsatCore.buildUnsatOD(posConstraintList, negConstList, traceUnsat), satOdList);
   }
-
-
 
   protected static Set<IdentifiableBoolExpr> buildSmtBoolExpr(
       OCL2SMTGenerator ocl2SMTGenerator, Set<ASTOCLCompilationUnit> in) {

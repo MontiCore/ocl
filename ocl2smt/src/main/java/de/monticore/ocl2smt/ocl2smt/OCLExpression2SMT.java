@@ -5,7 +5,6 @@ import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -48,7 +47,6 @@ public class OCLExpression2SMT {
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
     TypeConverter.setup(cd2smtGenerator);
   }
-
 
   public OCLExpression2SMT(
       ASTCDCompilationUnit astcdCompilationUnit,
@@ -412,7 +410,9 @@ public class OCLExpression2SMT {
     Function<Expr<? extends Sort>, SMTSet> function =
         obj1 ->
             new SMTSet(
-                obj2 -> strategy.evaluateLink(person_parent, obj1, obj2, cd2smtGenerator, constConverter),
+                obj2 ->
+                    strategy.evaluateLink(
+                        person_parent, obj1, obj2, cd2smtGenerator, constConverter),
                 type2);
 
     return pSet.collectAll(function, ctx);
@@ -708,7 +708,8 @@ public class OCLExpression2SMT {
     ASTFieldAccessExpression fieldAcc = (ASTFieldAccessExpression) node.getExpression();
     Expr<? extends Sort> auction = convertExpr(fieldAcc.getExpression());
 
-    FuncDecl<BoolSort> rel = buildReflexiveNewAssocFunc(constConverter.getType(auction), fieldAcc.getName());
+    FuncDecl<BoolSort> rel =
+        buildReflexiveNewAssocFunc(constConverter.getType(auction), fieldAcc.getName());
     FuncDecl<BoolSort> trans_rel = TransitiveClosure.mkTransitiveClosure(ctx, rel);
 
     Function<Expr<? extends Sort>, BoolExpr> setFunc =
@@ -740,7 +741,7 @@ public class OCLExpression2SMT {
   }
 
   protected Expr<? extends Sort> convertAt(ASTOCLAtPreQualification node) {
-     //TODO:fix this function
+    // TODO:fix this function
     if (node.getExpression() instanceof ASTFieldAccessExpression) {
       ASTFieldAccessExpression fa = ((ASTFieldAccessExpression) node.getExpression());
       fa.setName(fa.getName() + "__pre");
@@ -777,12 +778,13 @@ public class OCLExpression2SMT {
     OCLType type2 = OCLHelper.getOtherType(association, constrData.oclContextType);
     String name = node.getName();
 
-      name = strategy.mkObjName(name);
+    name = strategy.mkObjName(name);
 
     Expr<? extends Sort> expr = constConverter.declObj(type2, name);
-    strategy.addExpr(expr);    //TODO: handle differently
+    strategy.addLink(expr); // TODO: handle differently
     constrData.genConstraints.add(
-        strategy.evaluateLink(association, constrData.oclContext, expr, cd2smtGenerator, constConverter));
+        strategy.evaluateLink(
+            association, constrData.oclContext, expr, cd2smtGenerator, constConverter));
     return Optional.of(expr);
   }
 }

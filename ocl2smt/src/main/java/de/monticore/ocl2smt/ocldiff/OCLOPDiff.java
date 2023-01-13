@@ -1,6 +1,5 @@
 package de.monticore.ocl2smt.ocldiff;
 
-
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Solver;
@@ -23,7 +22,7 @@ public class OCLOPDiff {
 
   protected static Context ctx;
 
-  protected static OPDiffResult oclWitness( //TODO: Unsatcore when not Consistent
+  protected static OPDiffResult oclWitness( // TODO: Unsatcore when not Consistent
       ASTCDCompilationUnit ast, Set<ASTOCLCompilationUnit> in, boolean partial) {
 
     resetContext();
@@ -43,12 +42,12 @@ public class OCLOPDiff {
     System.out.println(solver);
     if (solver.check() != Status.SATISFIABLE) {
       Log.info("there are no Model for the List Of Positive Constraints", "NOWitnessOD");
-      Arrays.stream(solver.getUnsatCore()).forEach(x->System.out.println(x));
+      Arrays.stream(solver.getUnsatCore()).forEach(x -> System.out.println(x));
       return null;
     }
 
-     Model model = solver.getModel() ;
-    return ocl2SMTGenerator.buildOPOd(model,"Witness",partial);
+    Model model = solver.getModel();
+    return ocl2SMTGenerator.buildOPOd(model, "Witness", partial);
   }
 
   public static Pair<ASTODArtifact, Set<OPDiffResult>> oclDiffOp(
@@ -73,14 +72,15 @@ public class OCLOPDiff {
     negConstraints.add(constraint2.iterator().next().getPostCond().negate(ctx));
 
     return diff2OPDiff(
-        OCLDiffGenerator.oclDiffHelper(ocl2SMTGenerator, posConstraint, negConstraints, partial),ocl2SMTGenerator);
+        OCLDiffGenerator.oclDiffHelper(ocl2SMTGenerator, posConstraint, negConstraints, partial),
+        ocl2SMTGenerator);
   }
 
   public static Pair<ASTODArtifact, Set<OPDiffResult>> diff2OPDiff(
       Pair<ASTODArtifact, Set<ASTODArtifact>> diff, OCL2SMTGenerator ocl2SMTGenerator) {
     Set<OPDiffResult> diffWitness = new HashSet<>();
     for (ASTODArtifact element : diff.getRight()) {
-     // diffWitness.add(ocl2SMTGenerator.splitPreOD(element));
+      // diffWitness.add(ocl2SMTGenerator.splitPreOD(element));
     }
 
     return new ImmutablePair<>(diff.getLeft(), diffWitness);

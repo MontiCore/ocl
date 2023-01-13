@@ -4,14 +4,12 @@ package de.monticore.ocl2smt.ocl2smt;
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;import de.monticore.ocl.ocl._ast.*;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.util.*;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.lang3.builder.DiffResult;
-import org.gradle.internal.impldep.org.junit.Assert;
-
 import java.util.*;
 import java.util.function.Function;
 
@@ -71,7 +69,8 @@ public class OCL2SMTGenerator {
     }
     return res;
   }
-  // TODO:: fix context Decalration (OCLContextDefinition = MCType | GeneratorDeclaration |OCLParamDeclaration)
+  // TODO:: fix context Decalration (OCLContextDefinition = MCType | GeneratorDeclaration
+  // |OCLParamDeclaration)
   protected Expr<? extends Sort> convertCtxParDec(ASTOCLParamDeclaration node) {
     OCLType oclType = TypeConverter.buildOCLType(node.getMCType());
     Expr<? extends Sort> obj = expression2SMT.declVariable(oclType, node.getName());
@@ -134,7 +133,7 @@ public class OCL2SMTGenerator {
   }
 
   public BoolExpr convertPostCond(ASTOCLOperationConstraint node) {
-
+    // expression2SMT.strategy.setThis();
     BoolExpr post = expression2SMT.convertBoolExpr(node.getPostCondition(0));
     for (BoolExpr constr : expression2SMT.constrData.genConstraints) {
       post = ctx.mkAnd(post, constr);
@@ -159,15 +158,15 @@ public class OCL2SMTGenerator {
     return new OCLConstraint(preConstr, postConstr);
   }
 
-  public   Optional<ASTODArtifact> buildOd(Model model, String ODName, boolean partial) {
+  public Optional<ASTODArtifact> buildOd(Model model, String ODName, boolean partial) {
     return expression2SMT.cd2smtGenerator.smt2od(model, partial, ODName);
   }
 
-  public   OPDiffResult buildOPOd(Model model, String ODName, boolean partial) {
-   return splitPreOD(expression2SMT.cd2smtGenerator.smt2od(model, partial, ODName).get(),model);
+  public OPDiffResult buildOPOd(Model model, String ODName, boolean partial) {
+    return splitPreOD(expression2SMT.cd2smtGenerator.smt2od(model, partial, ODName).get(), model);
   }
 
-  public OPDiffResult splitPreOD(ASTODArtifact od, Model model){
+  public OPDiffResult splitPreOD(ASTODArtifact od, Model model) {
     return expression2SMT.strategy.splitPreOD(od, model);
   }
 }
