@@ -3,7 +3,7 @@
 package docs;
 ocl Person {
 
- /*context Person.changeCompany(String n)
+ context Person.changeCompany(String n)
    pre : company.name == "oldCompany"  &&
          company.employees > 0 &&
          n == "newCompany";
@@ -14,15 +14,15 @@ ocl Person {
          company@pre.employees == company@pre.employees@pre - 1 &&
 
          company.employees@pre >= 0  &&
-         company@pre.name@pre ==  company@pre.name&&
-         company.name@pre == company.name;*/
+         company@pre.name@pre ==  company@pre.name &&
+         company.name@pre == company.name;
 
 
 
- context int Person.increaseAndGetSalary(int s )
+/* context int Person.increaseAndGetSalary(int s )
    pre: salary > 500 &&
         s > 5;
 
    post: salary == salary@pre + s &&
-         result == salary ;
+         result == salary ;*/
 }

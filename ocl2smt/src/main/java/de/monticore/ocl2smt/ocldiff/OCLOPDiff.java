@@ -23,7 +23,7 @@ public class OCLOPDiff {
 
   protected static Context ctx;
 
-  protected static OPDiffResult oclWitness(
+  protected static OPDiffResult oclWitness( //TODO: Unsatcore when not Consistent
       ASTCDCompilationUnit ast, Set<ASTOCLCompilationUnit> in, boolean partial) {
 
     resetContext();
@@ -43,8 +43,10 @@ public class OCLOPDiff {
     System.out.println(solver);
     if (solver.check() != Status.SATISFIABLE) {
       Log.info("there are no Model for the List Of Positive Constraints", "NOWitnessOD");
+      Arrays.stream(solver.getUnsatCore()).forEach(x->System.out.println(x));
       return null;
     }
+
      Model model = solver.getModel() ;
     return ocl2SMTGenerator.buildOPOd(model,"Witness",partial);
   }

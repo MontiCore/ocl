@@ -124,18 +124,17 @@ public class OCL2SMTGenerator {
   }
 
   public BoolExpr convertPreCond(ASTOCLOperationConstraint node) {
-    expression2SMT.enterPreCond();
-    expression2SMT.constrData.initPre();
+    expression2SMT.strategy.enterPreCond();
     BoolExpr pre = expression2SMT.convertBoolExpr(node.getPreCondition(0));
     for (BoolExpr constr : expression2SMT.constrData.genConstraints) {
       pre = ctx.mkAnd(pre, constr);
     }
-    expression2SMT.exitPreCond();
+    expression2SMT.strategy.exitPreCond();
     return pre;
   }
 
   public BoolExpr convertPostCond(ASTOCLOperationConstraint node) {
-    expression2SMT.constrData.initPost();
+
     BoolExpr post = expression2SMT.convertBoolExpr(node.getPostCondition(0));
     for (BoolExpr constr : expression2SMT.constrData.genConstraints) {
       post = ctx.mkAnd(post, constr);
@@ -144,7 +143,7 @@ public class OCL2SMTGenerator {
   }
 
   public OCLConstraint convertOpConst(ASTOCLOperationConstraint node) {
-    expression2SMT.constrData.initOpConst();
+
     openOpScope(node.getOCLOperationSignature());
 
     BoolExpr pre = convertPreCond(node);

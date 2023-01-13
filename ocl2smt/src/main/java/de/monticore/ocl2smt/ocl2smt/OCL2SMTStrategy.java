@@ -54,9 +54,10 @@ public class OCL2SMTStrategy {
   }
 
   public void exitPreCond() {
-    this.isPreStrategy = false;
-    this.isPreCond = false;
+    isPreCond = false;
+    isPreStrategy = false;
   }
+
 
   public BoolExpr evaluateLink(
       ASTCDAssociation association,
@@ -84,7 +85,7 @@ public class OCL2SMTStrategy {
       res = cd2SMTGenerator.evaluateLink(association, right, left, obj1, obj2);
     }
     if (!isPreCond) {
-      exitPreCond();
+      exitPre();
     }
     return res;
   }

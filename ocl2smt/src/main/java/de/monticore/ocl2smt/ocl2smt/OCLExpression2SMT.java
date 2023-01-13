@@ -49,13 +49,6 @@ public class OCLExpression2SMT {
     TypeConverter.setup(cd2smtGenerator);
   }
 
-  public void enterPreCond() {
-    strategy.enterPreCond();
-  }
-
-  public void exitPreCond() {
-    strategy.exitPre();
-  }
 
   public OCLExpression2SMT(
       ASTCDCompilationUnit astcdCompilationUnit,
@@ -747,10 +740,18 @@ public class OCLExpression2SMT {
   }
 
   protected Expr<? extends Sort> convertAt(ASTOCLAtPreQualification node) {
-    strategy.enterPre();
-    Expr<? extends Sort> res = convertExpr(node.getExpression());
-    strategy.exitPre();
-    return res;
+     //TODO:fix this function
+    if (node.getExpression() instanceof ASTFieldAccessExpression) {
+      ASTFieldAccessExpression fa = ((ASTFieldAccessExpression) node.getExpression());
+      fa.setName(fa.getName() + "__pre");
+      return convertExpr(fa);
+    } else if (node.getExpression() instanceof ASTNameExpression) {
+      ASTNameExpression fa = ((ASTNameExpression) node.getExpression());
+      fa.setName(OCL2SMTStrategy.mkPre(fa.getName()));
+      return convertExpr(fa);
+    }
+
+    return convertExpr(node.getExpression());
   }
 
   protected Expr<? extends Sort> declVariable(OCLType type, String name) {

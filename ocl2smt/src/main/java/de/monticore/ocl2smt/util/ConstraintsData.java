@@ -14,36 +14,15 @@ public class ConstraintsData {
 
   public final Set<BoolExpr> genConstraints = new HashSet<>();
 
-  private boolean isPreCond = false;
-
-  public boolean isPreCond() {
-    return isPreCond;
-  }
 
   private void reset() {
     oclContextType = null;
     oclContext = null;
     varNames.clear();
     genConstraints.clear();
-    isPreCond = false;
   }
 
-  public void initInv() {
-    reset();
-  }
 
-  public void initOpConst() {
-    reset();
-  }
-
-  public void initPre() {
-    isPreCond = true;
-  }
-
-  public void initPost() {
-    genConstraints.clear();
-    isPreCond = false;
-  }
 
   public void addVar(String name, Expr<? extends Sort> obj) {
     varNames.put(name, obj);
