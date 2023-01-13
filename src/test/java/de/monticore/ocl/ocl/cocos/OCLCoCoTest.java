@@ -46,7 +46,6 @@ public class OCLCoCoTest extends AbstractTest {
     assumeFalse(filename.endsWith("validVariableDeclaration.ocl"));
     assumeFalse(filename.endsWith("validVariableName.ocl"));
 
-
     // given
     final Optional<ASTOCLCompilationUnit> ast =
         parse(prefixValidModelsPath("/testinput/cocos/valid/" + filename), false);

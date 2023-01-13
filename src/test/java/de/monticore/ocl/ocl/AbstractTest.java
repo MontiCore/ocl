@@ -90,10 +90,10 @@ public abstract class AbstractTest {
   }
 
   protected void assertNoFindings() {
-    assertTrue(Log.getFindings().isEmpty(),
+    assertTrue(
+        Log.getFindings().isEmpty(),
         Log.getFindings().stream()
             .map(Finding::buildMsg)
-            .collect(Collectors.joining(System.lineSeparator()))
-    );
+            .collect(Collectors.joining(System.lineSeparator())));
   }
 }

@@ -63,8 +63,7 @@ public class VariableDeclarationOfCorrectType
                 "0xOCL33 (%s): Type of variable %s is incompatible with expression type %s.",
                 node.get_SourcePositionStart(),
                 type.getResult().printFullName(),
-                result.getResult().printFullName()
-            ));
+                result.getResult().printFullName()));
       }
     }
   }
