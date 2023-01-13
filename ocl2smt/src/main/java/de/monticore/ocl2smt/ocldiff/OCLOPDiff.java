@@ -1,8 +1,8 @@
 package de.monticore.ocl2smt.ocldiff;
 
-import static de.monticore.ocl2smt.ocldiff.OCLDiffGenerator.buildOd;
 
 import com.microsoft.z3.Context;
+import com.microsoft.z3.Model;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
@@ -45,13 +45,8 @@ public class OCLOPDiff {
       Log.info("there are no Model for the List Of Positive Constraints", "NOWitnessOD");
       return null;
     }
-
-    ASTODArtifact od =
-        buildOd(ocl2SMTGenerator.getCD2SMTGenerator(), solver.getModel(), "Witness", partial)
-            .orElse(null);
-
-    assert od != null;
-    return OCL2SMTStrategy.splitPreOD(od);
+     Model model = solver.getModel() ;
+    return ocl2SMTGenerator.buildOPOd(model,"Witness",partial);
   }
 
   public static Pair<ASTODArtifact, Set<OPDiffResult>> oclDiffOp(
@@ -76,14 +71,14 @@ public class OCLOPDiff {
     negConstraints.add(constraint2.iterator().next().getPostCond().negate(ctx));
 
     return diff2OPDiff(
-        OCLDiffGenerator.oclDiffHelper(ocl2SMTGenerator, posConstraint, negConstraints, partial));
+        OCLDiffGenerator.oclDiffHelper(ocl2SMTGenerator, posConstraint, negConstraints, partial),ocl2SMTGenerator);
   }
 
   public static Pair<ASTODArtifact, Set<OPDiffResult>> diff2OPDiff(
-      Pair<ASTODArtifact, Set<ASTODArtifact>> diff) {
+      Pair<ASTODArtifact, Set<ASTODArtifact>> diff, OCL2SMTGenerator ocl2SMTGenerator) {
     Set<OPDiffResult> diffWitness = new HashSet<>();
     for (ASTODArtifact element : diff.getRight()) {
-      diffWitness.add(OCL2SMTStrategy.splitPreOD(element));
+     // diffWitness.add(ocl2SMTGenerator.splitPreOD(element));
     }
 
     return new ImmutablePair<>(diff.getLeft(), diffWitness);

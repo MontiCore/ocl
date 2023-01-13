@@ -4,24 +4,19 @@ package de.monticore.ocl2smt.ocl2smt;
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.expressions.commonexpressions._ast.*;
-import de.monticore.ocl.ocl._ast.*;
-import de.monticore.ocl.oclexpressions._ast.*;
-import de.monticore.ocl.setexpressions._ast.*;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.util.*;
+import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.lang3.builder.DiffResult;
+import org.gradle.internal.impldep.org.junit.Assert;
+
 import java.util.*;
 import java.util.function.Function;
-// TODO: add documentation
 
 public class OCL2SMTGenerator {
-
-  public ConstConverter cc = new ConstConverter();
-
-  ConstraintsData constrData = new ConstraintsData();
-  private OCLExpression2SMT expression2SMT;
+  private final OCLExpression2SMT expression2SMT;
   private final Context ctx;
 
   public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
@@ -31,6 +26,7 @@ public class OCL2SMTGenerator {
 
   public OCL2SMTGenerator(
       ASTCDCompilationUnit astcdCompilationUnit, OCL2SMTGenerator ocl2SMTGenerator) {
+    expression2SMT = new OCLExpression2SMT(astcdCompilationUnit, ocl2SMTGenerator);
     this.ctx = ocl2SMTGenerator.ctx;
   }
 
@@ -59,9 +55,10 @@ public class OCL2SMTGenerator {
    * convert a single OCLConstraint into A SMT BoolExpr
    *
    * @param constraint constraint OCLConstraint to Convert
+   * @return the Constraint in SMT
    */
   public OCLConstraint convertConstr(ASTOCLConstraint constraint) {
-    cc.reset(ctx);
+    expression2SMT.constConverter.reset(ctx);
     OCLConstraint res = null;
     if (constraint instanceof ASTOCLInvariant) {
       res = convertInv((ASTOCLInvariant) constraint);
@@ -74,11 +71,11 @@ public class OCL2SMTGenerator {
     }
     return res;
   }
-
+  // TODO:: fix context Decalration (OCLContextDefinition = MCType | GeneratorDeclaration |OCLParamDeclaration)
   protected Expr<? extends Sort> convertCtxParDec(ASTOCLParamDeclaration node) {
     OCLType oclType = TypeConverter.buildOCLType(node.getMCType());
     Expr<? extends Sort> obj = expression2SMT.declVariable(oclType, node.getName());
-    expression2SMT.constrData.setOCLContext(obj, oclType); // TODO: do that in  the  ConvertInv
+    expression2SMT.constrData.setOCLContext(obj, oclType);
     return obj;
   }
 
@@ -101,8 +98,7 @@ public class OCL2SMTGenerator {
 
     return new OCLConstraint(IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name));
   }
-  // TODO:: fix context Decalration (OCLContextDefinition = MCType | GeneratorDeclaration |
-  // OCLParamDeclaration)
+
   protected Function<BoolExpr, BoolExpr> openInvScope(ASTOCLInvariant invariant) {
     List<Expr<? extends Sort>> vars = new ArrayList<>();
     for (ASTOCLContextDefinition invCtx : invariant.getOCLContextDefinitionList()) {
@@ -162,5 +158,17 @@ public class OCL2SMTGenerator {
         IdentifiableBoolExpr.buildIdentifiable(
             post, node.getPostCondition(0).get_SourcePositionStart(), Optional.of("post"));
     return new OCLConstraint(preConstr, postConstr);
+  }
+
+  public   Optional<ASTODArtifact> buildOd(Model model, String ODName, boolean partial) {
+    return expression2SMT.cd2smtGenerator.smt2od(model, partial, ODName);
+  }
+
+  public   OPDiffResult buildOPOd(Model model, String ODName, boolean partial) {
+   return splitPreOD(expression2SMT.cd2smtGenerator.smt2od(model, partial, ODName).get(),model);
+  }
+
+  public OPDiffResult splitPreOD(ASTODArtifact od, Model model){
+    return expression2SMT.strategy.splitPreOD(od, model);
   }
 }

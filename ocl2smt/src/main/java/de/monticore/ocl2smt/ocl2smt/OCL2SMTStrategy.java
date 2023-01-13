@@ -2,9 +2,11 @@ package de.monticore.ocl2smt.ocl2smt;
 
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Expr;
+import com.microsoft.z3.Model;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
 import de.monticore.cdassociation._ast.ASTCDAssocRightSide;
@@ -30,10 +32,13 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
+import javax.xml.parsers.SAXParser;
+
 public class OCL2SMTStrategy {
   private boolean isPreStrategy = false;
-
   private boolean isPreCond = false;
+
+  public List<Expr<? extends Sort>> exprList = new ArrayList<>() ;
 
   public void enterPre() {
     isPreStrategy = true;
@@ -105,10 +110,11 @@ public class OCL2SMTStrategy {
     return res;
   }
 
-  public static OPDiffResult splitPreOD(ASTODArtifact od) {
+  public    OPDiffResult splitPreOD(ASTODArtifact od, Model model) {
     List<ASTODElement> preOdElements = new ArrayList<>();
     List<ASTODElement> postOdElements = new ArrayList<>();
-
+    List<Expr<? extends  Sort>> elements = exprList.stream().map(e->model.evaluate(e,true)).collect(Collectors.toList());
+    System.out.println(elements);
     for (ASTODElement element : od.getObjectDiagram().getODElementList()) {
       if (element instanceof ASTODLink) {
         ASTODLink link = (ASTODLink) element;
@@ -137,7 +143,7 @@ public class OCL2SMTStrategy {
     return new OPDiffResult(preOD, postOD);
   }
 
-  private static boolean isPreLink(ASTODLink link) {
+  private static   boolean isPreLink(ASTODLink link) {
     return isPre(link.getODLinkLeftSide().getRole()) && isPre(link.getODLinkRightSide().getRole());
   }
 
@@ -224,5 +230,9 @@ public class OCL2SMTStrategy {
       return s.substring(0, s.length() - 5);
     }
     return s;
+  }
+
+  public void addExpr( Expr<? extends  Sort> expr){
+    exprList.add(expr);
   }
 }
