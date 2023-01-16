@@ -31,11 +31,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class OCLExpression2SMT {
 
-  // TODO: add documentation
-
-  // TODO:strategy for conversion of @pre
   protected final Context ctx;
-  public final CD2SMTGenerator cd2smtGenerator;
+  protected final CD2SMTGenerator cd2smtGenerator;
   protected ConstraintsData constrData = new ConstraintsData();
   protected OCL2SMTStrategy strategy = new OCL2SMTStrategy();
 
@@ -57,6 +54,11 @@ public class OCLExpression2SMT {
     cd2smtGenerator = ocl2SMTGenerator.getCD2SMTGenerator();
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
     TypeConverter.setup(cd2smtGenerator);
+  }
+
+  public void init() {
+    constrData = new ConstraintsData();
+    constConverter = new ConstConverter();
   }
 
   private ASTCDDefinition getCD() {

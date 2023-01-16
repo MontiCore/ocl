@@ -56,6 +56,7 @@ public class OCL2SMTGenerator {
    * @return the Constraint in SMT
    */
   public OCLConstraint convertConstr(ASTOCLConstraint constraint) {
+    expression2SMT.init();
     OCLConstraint res = null;
     if (constraint instanceof ASTOCLInvariant) {
       res = convertInv((ASTOCLInvariant) constraint);
@@ -116,7 +117,7 @@ public class OCL2SMTGenerator {
 
     OCLType type = OCLType.buildOCLType(method.getMethodName().getParts(0));
     // declare the object to which the method will be applied
-    Expr<? extends Sort> obj = expression2SMT.declVariable(type, type.getName() + "__");
+    Expr<? extends Sort> obj = expression2SMT.declVariable(type, type.getName() + "__This");
 
     expression2SMT.constrData.setOCLContext(obj, type);
   }
