@@ -42,7 +42,6 @@ public class OCLOPDiff {
     System.out.println(solver);
     if (solver.check() != Status.SATISFIABLE) {
       Log.info("there are no Model for the List Of Positive Constraints", "NOWitnessOD");
-      Arrays.stream(solver.getUnsatCore()).forEach(x -> System.out.println(x));
       return null;
     }
 

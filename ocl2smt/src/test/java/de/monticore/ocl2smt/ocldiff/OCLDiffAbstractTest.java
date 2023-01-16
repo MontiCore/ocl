@@ -7,19 +7,21 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.ocl2smt.util.OPDiffResult;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odbasis._ast.ASTODAttribute;
+import de.monticore.odbasis._ast.ASTODName;
+import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odlink._ast.ASTODLink;
+import de.monticore.umlstereotype._ast.ASTStereotype;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -156,5 +158,51 @@ public abstract class OCLDiffAbstractTest {
       }
     }
     return false;
+  }
+
+  ASTODNamedObject getThisObj(ASTODArtifact od) {
+    for (ASTODNamedObject obj : OCLHelper.getObjectList(od)) {
+      if (obj.getModifier().isPresentStereotype()) {
+        ASTStereotype stereotype = obj.getModifier().getStereotype();
+        if (stereotype.contains("This") && stereotype.getValue("This").equals("true")) {
+          System.out.println(stereotype.getValue("This"));
+          return obj;
+        }
+      }
+    }
+    return null;
+  }
+
+  String getAttribute(ASTODNamedObject obj, String attributeName) {
+    assert obj != null;
+    for (ASTODAttribute attribute : obj.getODAttributeList()) {
+      if (attribute.getName().equals(attributeName)) {
+        ASTODName value = (ASTODName) attribute.getODValue();
+        return value.getName();
+      }
+    }
+    return null;
+  }
+
+  List<ASTODNamedObject> getLinkedObjects(ASTODNamedObject obj, ASTODArtifact od) {
+    List<String> res = new ArrayList<>();
+    for (ASTODLink link : OCLHelper.getLinkList(od)) {
+      if (link.getRightReferenceNames().contains(obj.getName())) {
+        res.addAll(link.getLeftReferenceNames());
+      }
+      if (link.getLeftReferenceNames().contains(obj.getName())) {
+        res.addAll(link.getRightReferenceNames());
+      }
+    }
+    return res.stream().map(name -> getObject(od, name)).collect(Collectors.toList());
+  }
+
+  public ASTODNamedObject getObject(ASTODArtifact od, String objectName) {
+    for (ASTODNamedObject obj : OCLHelper.getObjectList(od)) {
+      if (obj.getName().equals(objectName)) {
+        return obj;
+      }
+    }
+    return null;
   }
 }

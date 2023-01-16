@@ -124,7 +124,7 @@ public class OCL2SMTStrategy {
         .addValues(
             OD4ReportMill.stereoValueBuilder()
                 .setName(stereotypeName)
-                .setContent(" ")
+                .setContent(stereotypeValue)
                 .setText(OD4ReportMill.stringLiteralBuilder().setSource(stereotypeValue).build())
                 .build())
         .build();

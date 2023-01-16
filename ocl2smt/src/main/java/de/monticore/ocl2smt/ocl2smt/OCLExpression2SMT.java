@@ -35,11 +35,10 @@ public class OCLExpression2SMT {
   protected final CD2SMTGenerator cd2smtGenerator;
   protected ConstraintsData constrData = new ConstraintsData();
   protected OCL2SMTStrategy strategy = new OCL2SMTStrategy();
-
-  protected ConstConverter constConverter = new ConstConverter();
+  protected ConstConverter constConverter;
 
   public OCLExpression2SMT(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
-    constConverter.reset(ctx);
+    constConverter = new ConstConverter(ctx);
     this.ctx = ctx;
     cd2smtGenerator = new CD2SMTGenerator();
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
@@ -49,7 +48,7 @@ public class OCLExpression2SMT {
   public OCLExpression2SMT(
       ASTCDCompilationUnit astcdCompilationUnit,
       de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator ocl2SMTGenerator) {
-    constConverter.reset(ocl2SMTGenerator.getCtx());
+    constConverter = new ConstConverter(ocl2SMTGenerator.getCtx());
     this.ctx = ocl2SMTGenerator.getCtx();
     cd2smtGenerator = ocl2SMTGenerator.getCD2SMTGenerator();
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
@@ -58,7 +57,7 @@ public class OCLExpression2SMT {
 
   public void init() {
     constrData = new ConstraintsData();
-    constConverter = new ConstConverter();
+    constConverter.reset();
   }
 
   private ASTCDDefinition getCD() {

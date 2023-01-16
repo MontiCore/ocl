@@ -15,8 +15,11 @@ public class ConstConverter {
   protected Context context;
   protected final Map<Expr<? extends Sort>, OCLType> varTypes = new HashMap<>();
 
-  public void reset(Context context) {
-    this.context = context;
+  public ConstConverter(Context ctx) {
+    this.context = ctx;
+  }
+
+  public void reset() {
     varTypes.clear();
   }
 
