@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ConstConverter {
-  protected  Context context;
-  protected  final Map<Expr<? extends Sort>, OCLType> varTypes = new HashMap<>();
+  protected Context context;
+  protected final Map<Expr<? extends Sort>, OCLType> varTypes = new HashMap<>();
 
   public void reset(Context context) {
     this.context = context;

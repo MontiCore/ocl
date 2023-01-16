@@ -115,17 +115,16 @@ public class OCL2SMTGenerator {
     ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
 
     OCLType type = OCLType.buildOCLType(method.getMethodName().getParts(0));
-    //declare the object to which the method will be applied
+    // declare the object to which the method will be applied
     Expr<? extends Sort> obj = expression2SMT.declVariable(type, type.getName() + "__");
 
     expression2SMT.constrData.setOCLContext(obj, type);
-
   }
 
   private BoolExpr convertPreCond(ASTOCLOperationConstraint node) {
     expression2SMT.strategy.enterPreCond();
 
-    //TODO:fix if many pre conditions
+    // TODO:fix if many pre conditions
     BoolExpr pre = expression2SMT.convertBoolExpr(node.getPreCondition(0));
     for (BoolExpr constr : expression2SMT.constrData.genConstraints) {
       pre = ctx.mkAnd(pre, constr);
@@ -135,8 +134,8 @@ public class OCL2SMTGenerator {
     return pre;
   }
 
-    private BoolExpr convertPostCond(ASTOCLOperationConstraint node) {
-    //TODO : fix if many Post conditions
+  private BoolExpr convertPostCond(ASTOCLOperationConstraint node) {
+    // TODO : fix if many Post conditions
     BoolExpr post = expression2SMT.convertBoolExpr(node.getPostCondition(0));
     for (BoolExpr constr : expression2SMT.constrData.genConstraints) {
       post = ctx.mkAnd(post, constr);
@@ -148,7 +147,7 @@ public class OCL2SMTGenerator {
   public OCLConstraint convertOpConst(ASTOCLOperationConstraint node) {
     openOpScope(node.getOCLOperationSignature());
 
-    //convert pre and post conditions
+    // convert pre and post conditions
     BoolExpr pre = convertPreCond(node);
     BoolExpr post = convertPostCond(node);
 

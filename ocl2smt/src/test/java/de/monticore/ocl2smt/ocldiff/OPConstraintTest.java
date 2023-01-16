@@ -15,7 +15,6 @@ import java.util.Set;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class OPConstraintTest extends OCLDiffAbstractTest {
@@ -54,7 +53,6 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     printOD(witness.getPostOD());
     printOD(witness.getPreOD());
   }
-
 
   @Test
   public void testOpConstraintDiff() throws IOException {

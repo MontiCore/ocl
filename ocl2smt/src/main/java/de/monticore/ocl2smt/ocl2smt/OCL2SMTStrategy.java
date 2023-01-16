@@ -41,9 +41,6 @@ public class OCL2SMTStrategy {
   private boolean isPreStrategy = false;
   private boolean isPreCond = false;
 
-
-
-
   public void enterPre() {
     isPreStrategy = true;
   }
@@ -137,15 +134,14 @@ public class OCL2SMTStrategy {
     List<ASTODElement> preOdElements = new ArrayList<>();
     List<ASTODElement> postOdElements = new ArrayList<>();
 
-
-    //split links
+    // split links
     for (ASTODNamedObject object : OCLHelper.getObjectList(od)) {
       Pair<ASTODNamedObject, ASTODNamedObject> objects = splitPreObject(object);
       preOdElements.add(objects.getLeft());
       postOdElements.add(objects.getRight());
     }
 
-    //split objects
+    // split objects
     for (ASTODLink link : OCLHelper.getLinkList(od)) {
       if (isPreLink(link)) {
         preOdElements.add(preLink2Link(link));
@@ -162,12 +158,13 @@ public class OCL2SMTStrategy {
         de.monticore.cd2smt.Helper.ODHelper.buildOD(
             "post_" + od.getObjectDiagram().getName(), postOdElements);
 
-    return setStereotypes(new OPDiffResult(preOD, postOD), model,constraintsData);
+    return setStereotypes(new OPDiffResult(preOD, postOD), model, constraintsData);
   }
 
-  private OPDiffResult setStereotypes(OPDiffResult diff, Model model,ConstraintsData constraintsData) {
-    setStereotypes(diff.getPreOD(), model,constraintsData);
-    setStereotypes(diff.getPostOD(), model,constraintsData);
+  private OPDiffResult setStereotypes(
+      OPDiffResult diff, Model model, ConstraintsData constraintsData) {
+    setStereotypes(diff.getPreOD(), model, constraintsData);
+    setStereotypes(diff.getPostOD(), model, constraintsData);
     return diff;
   }
 
@@ -190,22 +187,22 @@ public class OCL2SMTStrategy {
   private void setStereotypes(ASTODArtifact od, Model model, ConstraintsData constraintsData) {
 
     for (ASTODNamedObject obj : OCLHelper.getObjectList(od)) {
-      if (isThis(obj, model,constraintsData.getOClContextValue())) {
+      if (isThis(obj, model, constraintsData.getOClContextValue())) {
         setThisModifier(obj);
       }
 
-      if (isLinkedObj(obj, model,constraintsData.getOClContextLinks())) {
+      if (isLinkedObj(obj, model, constraintsData.getOClContextLinks())) {
         setLinkModifier(obj);
       }
     }
   }
 
-
   private boolean isThis(ASTODNamedObject obj, Model model, Expr<? extends Sort> thisObj) {
     return obj.getName().equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true)));
   }
 
-  private boolean isLinkedObj(ASTODNamedObject obj, Model model, List<Expr<? extends  Sort>> linkedObj) {
+  private boolean isLinkedObj(
+      ASTODNamedObject obj, Model model, List<Expr<? extends Sort>> linkedObj) {
     List<String> linkedObjName =
         linkedObj.stream()
             .map(expr -> SMTHelper.buildObjectName(model.evaluate(expr, true)))
@@ -303,5 +300,4 @@ public class OCL2SMTStrategy {
     }
     return s;
   }
-
 }

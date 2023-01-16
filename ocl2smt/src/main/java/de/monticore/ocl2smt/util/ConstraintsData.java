@@ -7,19 +7,18 @@ import java.util.*;
 
 /** this class contains all data obtains during the conversion of a OCLConstraint */
 public class ConstraintsData {
-  private OCLContext oclContext ;
+  private OCLContext oclContext;
 
   public final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
 
   public final Set<BoolExpr> genConstraints = new HashSet<>();
-
 
   public void addVar(String name, Expr<? extends Sort> obj) {
     varNames.put(name, obj);
   }
 
   public void setOCLContext(Expr<? extends Sort> obj, OCLType type) {
-    oclContext = new OCLContext(type,obj);
+    oclContext = new OCLContext(type, obj);
   }
 
   public boolean containsVar(String name) {
@@ -38,7 +37,7 @@ public class ConstraintsData {
     varNames.remove(name);
   }
 
-  public void addOCLContextLink(Expr<? extends  Sort> obj){
+  public void addOCLContextLink(Expr<? extends Sort> obj) {
     oclContext.addLink(obj);
   }
 

@@ -771,7 +771,8 @@ public class OCLExpression2SMT {
 
     return Optional.ofNullable(
         strategy.getAttribute(
-            constrData.getOClContextValue(),constrData.getOCLContextType(),
+            constrData.getOClContextValue(),
+            constrData.getOCLContextType(),
             node.getName(),
             cd2smtGenerator,
             isPre));
@@ -795,7 +796,12 @@ public class OCLExpression2SMT {
     // add association constraints to the general constraints
     constrData.genConstraints.add(
         strategy.evaluateLink(
-            association, constrData.getOClContextValue(), expr, cd2smtGenerator, constConverter, isPre));
+            association,
+            constrData.getOClContextValue(),
+            expr,
+            cd2smtGenerator,
+            constConverter,
+            isPre));
 
     return Optional.of(expr);
   }
