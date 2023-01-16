@@ -359,14 +359,16 @@ public class OCLExpression2SMT {
 
   // -----------------------------------general----------------------------------------------------------------------*/
   protected Expr<? extends Sort> convertName(ASTNameExpression node) {
+    boolean isPre = strategy.isPreStrategy();
+    strategy.exitPre();
     if (constrData.containsVar(node.getName())) {
       return constrData.getVar(node.getName());
     } else if (constrData.isPresentContext()) {
-      Optional<Expr<? extends Sort>> attr = getContextAttribute(node);
+      Optional<Expr<? extends Sort>> attr = getContextAttribute(node, isPre);
       if (attr.isPresent()) {
         return attr.get();
       }
-      Optional<Expr<? extends Sort>> obj = getContextLink(node);
+      Optional<Expr<? extends Sort>> obj = getContextLink(node, isPre);
       if (obj.isPresent()) {
         return obj.get();
       }
@@ -382,13 +384,17 @@ public class OCLExpression2SMT {
   }
 
   protected Expr<? extends Sort> convertFieldAcc(ASTFieldAccessExpression node) {
+    boolean isPre = strategy.isPreStrategy();
+    strategy.exitPre();
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
     OCLType type = constConverter.getType(obj);
-    return strategy.getAttribute(obj, type, node.getName(), cd2smtGenerator);
+    return strategy.getAttribute(obj, type, node.getName(), cd2smtGenerator, isPre);
   }
 
   // e.g  auction.person.parent
   protected SMTSet convertFieldAccAssoc(ASTFieldAccessExpression node) {
+    boolean isPre = strategy.isPreStrategy();
+    strategy.exitPre();
     if (!(node.getExpression() instanceof ASTFieldAccessExpression)) {
 
       Expr<? extends Sort> auction = convertExpr(node.getExpression());
@@ -397,7 +403,10 @@ public class OCLExpression2SMT {
       OCLType type2 = OCLHelper.getOtherType(association, type1);
 
       Function<Expr<? extends Sort>, BoolExpr> auction_per_set =
-          per -> strategy.evaluateLink(association, auction, per, cd2smtGenerator, constConverter);
+          per ->
+              strategy.evaluateLink(
+                  association, auction, per, cd2smtGenerator, constConverter, isPre);
+
       return new SMTSet(auction_per_set, type2);
     }
 
@@ -412,7 +421,7 @@ public class OCLExpression2SMT {
             new SMTSet(
                 obj2 ->
                     strategy.evaluateLink(
-                        person_parent, obj1, obj2, cd2smtGenerator, constConverter),
+                        person_parent, obj1, obj2, cd2smtGenerator, constConverter, isPre),
                 type2);
 
     return pSet.collectAll(function, ctx);
@@ -741,17 +750,7 @@ public class OCLExpression2SMT {
   }
 
   protected Expr<? extends Sort> convertAt(ASTOCLAtPreQualification node) {
-    // TODO:fix this function
-    if (node.getExpression() instanceof ASTFieldAccessExpression) {
-      ASTFieldAccessExpression fa = ((ASTFieldAccessExpression) node.getExpression());
-      fa.setName(fa.getName() + "__pre");
-      return convertExpr(fa);
-    } else if (node.getExpression() instanceof ASTNameExpression) {
-      ASTNameExpression fa = ((ASTNameExpression) node.getExpression());
-      fa.setName(OCL2SMTStrategy.mkPre(fa.getName()));
-      return convertExpr(fa);
-    }
-
+    strategy.enterPre();
     return convertExpr(node.getExpression());
   }
 
@@ -761,30 +760,39 @@ public class OCLExpression2SMT {
     return res;
   }
 
-  private Optional<Expr<? extends Sort>> getContextAttribute(ASTNameExpression node) {
+  private Optional<Expr<? extends Sort>> getContextAttribute(
+      ASTNameExpression node, boolean isPre) {
     // TODO::update to takeCare when the attribute is inherited
+
     return Optional.ofNullable(
         strategy.getAttribute(
-            constrData.oclContext, constrData.oclContextType, node.getName(), cd2smtGenerator));
+            constrData.oclContext,
+            constrData.oclContextType,
+            node.getName(),
+            cd2smtGenerator,
+            isPre));
   }
-
-  private Optional<Expr<? extends Sort>> getContextLink(ASTNameExpression node) {
-    // TODO::update to takeCare when the assoc is inhrited
+  /** this function is use to get a Linked object of the Context */
+  private Optional<Expr<? extends Sort>> getContextLink(ASTNameExpression node, boolean isPre) {
+    // TODO::update to takeCare when the assoc is inherited
     ASTCDAssociation association =
         OCLHelper.getAssociation(constrData.oclContextType, node.getName(), getCD());
     if (association == null) {
       return Optional.empty();
     }
+
+    //declare the linked object
     OCLType type2 = OCLHelper.getOtherType(association, constrData.oclContextType);
-    String name = node.getName();
-
-    name = strategy.mkObjName(name);
-
+    String name = strategy.mkObjName(node.getName(), isPre);
     Expr<? extends Sort> expr = constConverter.declObj(type2, name);
-    strategy.addLink(expr); // TODO: handle differently
+
+    strategy.addLink(expr);
+
+    //add association constraints to the general constraints
     constrData.genConstraints.add(
         strategy.evaluateLink(
-            association, constrData.oclContext, expr, cd2smtGenerator, constConverter));
+            association, constrData.oclContext, expr, cd2smtGenerator, constConverter, isPre));
+
     return Optional.of(expr);
   }
 }

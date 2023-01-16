@@ -14,6 +14,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
+import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.trafo.BuildPreCDTrafo;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.OPDiffResult;
@@ -52,7 +53,9 @@ public class OCL2SMTStrategy {
   }
 
   public void exitPre() {
-    this.isPreStrategy = false;
+    if (!isPreCond) {
+      this.isPreStrategy = false;
+    }
   }
 
   public void enterPreCond() {
@@ -65,20 +68,22 @@ public class OCL2SMTStrategy {
     isPreStrategy = false;
   }
 
+  public boolean isPreStrategy() {
+    return isPreStrategy;
+  }
+
   public BoolExpr evaluateLink(
       ASTCDAssociation association,
       Expr<? extends Sort> obj1,
       Expr<? extends Sort> obj2,
       CD2SMTGenerator cd2SMTGenerator,
-      ConstConverter cc) {
-
-    if (isPreStrategy) {
-      association =
-          getPreAssociation(association, cd2SMTGenerator.getClassDiagram().getCDDefinition());
-    }
+      ConstConverter cc,
+      boolean ispre) {
 
     ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
-
+    if (ispre) {
+      association = getPreAssociation(association, cd);
+    }
     assert association != null;
     ASTCDType left = CDHelper.getLeftType(association, cd);
     ASTCDType right = CDHelper.getRightType(association, cd);
@@ -90,18 +95,26 @@ public class OCL2SMTStrategy {
     } else {
       res = cd2SMTGenerator.evaluateLink(association, right, left, obj1, obj2);
     }
-    if (!isPreCond) {
+
+    return res;
+  }
+
+  public ASTCDAssociation getAssociation(OCLType thisType, String otherRole, ASTCDDefinition cd) {
+    ASTCDAssociation association = OCLHelper.getAssociation(thisType, otherRole, cd);
+    if (isPreStrategy) {
+      association = getPreAssociation(association, cd);
       exitPre();
     }
-    return res;
+    return association;
   }
 
   public Expr<? extends Sort> getAttribute(
       Expr<? extends Sort> obj,
       OCLType type,
       String attributeName,
-      CD2SMTGenerator cd2SMTGenerator) {
-    if (isPreStrategy) {
+      CD2SMTGenerator cd2SMTGenerator,
+      boolean isPre) {
+    if (isPre) {
       attributeName = mkPre(attributeName);
     }
 
@@ -111,9 +124,8 @@ public class OCL2SMTStrategy {
                 type.getName(), cd2SMTGenerator.getClassDiagram().getCDDefinition()),
             attributeName,
             obj);
-    if (!isPreCond) {
-      exitPre();
-    }
+    exitPre();
+
     return res;
   }
 
@@ -271,8 +283,8 @@ public class OCL2SMTStrategy {
     return s + "__pre";
   }
 
-  public String mkObjName(String name) {
-    if (isPreStrategy) {
+  public String mkObjName(String name, boolean isPre) {
+    if (isPre) {
       return mkPre(name);
     }
     return name;
