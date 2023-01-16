@@ -5,6 +5,7 @@ import com.microsoft.z3.Expr;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.CDHelper;
+import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
@@ -31,7 +32,6 @@ import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -42,11 +42,11 @@ public class OCL2SMTStrategy {
 
   private Expr<? extends Sort> thisObj;
 
+  public List<Expr<? extends Sort>> linkedObj = new ArrayList<>();
+
   public void setThis(Expr<? extends Sort> thisObj) {
     this.thisObj = thisObj;
   }
-
-  public List<Expr<? extends Sort>> linkedObj = new ArrayList<>();
 
   public void enterPre() {
     isPreStrategy = true;
@@ -99,15 +99,6 @@ public class OCL2SMTStrategy {
     return res;
   }
 
-  public ASTCDAssociation getAssociation(OCLType thisType, String otherRole, ASTCDDefinition cd) {
-    ASTCDAssociation association = OCLHelper.getAssociation(thisType, otherRole, cd);
-    if (isPreStrategy) {
-      association = getPreAssociation(association, cd);
-      exitPre();
-    }
-    return association;
-  }
-
   public Expr<? extends Sort> getAttribute(
       Expr<? extends Sort> obj,
       OCLType type,
@@ -127,22 +118,6 @@ public class OCL2SMTStrategy {
     exitPre();
 
     return res;
-  }
-
-  public ASTModifier mkThisModifier() {
-    return buildModifier("This", "true");
-  }
-
-  public ASTModifier mkLinkModifier() {
-    return buildModifier("Link", "true");
-  }
-
-  public ASTModifier mkResultModifier(String value) {
-    return buildModifier("Result", "true");
-  }
-
-  public ASTStereotype mkResultStereotype(String value) {
-    return buildStereotype("Result", value);
   }
 
   public ASTModifier buildModifier(String stereotypeName, String stereotypeValue) {
@@ -165,43 +140,23 @@ public class OCL2SMTStrategy {
   public OPDiffResult splitPreOD(ASTODArtifact od, Model model) {
     List<ASTODElement> preOdElements = new ArrayList<>();
     List<ASTODElement> postOdElements = new ArrayList<>();
-    Set<Expr<? extends Sort>> elements =
-        linkedObj.stream().map(e -> model.evaluate(e, true)).collect(Collectors.toSet());
-    System.out.println(elements);
-    ASTModifier modifier =
-        OD4ReportMill.modifierBuilder()
-            .setStereotype(
-                OD4ReportMill.stereotypeBuilder()
-                    .addValues(
-                        OD4ReportMill.stereoValueBuilder()
-                            .setName("Modified")
-                            .setContent(" ")
-                            .setText(OD4ReportMill.stringLiteralBuilder().setSource("true").build())
-                            .build())
-                    .build())
-            .build();
 
-    for (ASTODElement element : od.getObjectDiagram().getODElementList()) {
-      if (element instanceof ASTODLink) {
-        ASTODLink link = (ASTODLink) element;
-        if (isPreLink(link)) {
-          preOdElements.add(preLink2Link(link));
-        } else {
-          postOdElements.add(link);
-        }
-      }
 
-      if (element instanceof ASTODNamedObject) {
-        ASTODNamedObject obj = (ASTODNamedObject) element;
-        obj.setModifier(modifier);
 
-        Pair<ASTODNamedObject, ASTODNamedObject> objects = splitPreObject(obj);
-        objects.getLeft().setModifier(modifier);
-        objects.getRight().setModifier(modifier);
-        preOdElements.add(objects.getLeft());
-        postOdElements.add(objects.getRight());
+    for (ASTODNamedObject object : OCLHelper.getObjectList(od)) {
+      Pair<ASTODNamedObject, ASTODNamedObject> objects = splitPreObject(object);
+      preOdElements.add(objects.getLeft());
+      postOdElements.add(objects.getRight());
+    }
+
+    for (ASTODLink link : OCLHelper.getLinkList(od)) {
+      if (isPreLink(link)) {
+        preOdElements.add(preLink2Link(link));
+      } else {
+        postOdElements.add(link);
       }
     }
+
     ASTODArtifact preOD =
         de.monticore.cd2smt.Helper.ODHelper.buildOD(
             "pre_" + od.getObjectDiagram().getName(), preOdElements);
@@ -209,7 +164,54 @@ public class OCL2SMTStrategy {
         de.monticore.cd2smt.Helper.ODHelper.buildOD(
             "post_" + od.getObjectDiagram().getName(), postOdElements);
 
-    return new OPDiffResult(preOD, postOD);
+    return setStereotypes(new OPDiffResult(preOD, postOD), model);
+  }
+
+  private OPDiffResult setStereotypes(OPDiffResult diff, Model model) {
+    setStereotypes(diff.getPostOD(), model);
+    setStereotypes(diff.getPostOD(), model);
+    return diff;
+  }
+
+  public void setThisModifier(ASTODNamedObject obj) {
+    obj.setModifier(buildModifier("This", "true"));
+  }
+
+  public void setLinkModifier(ASTODNamedObject obj) {
+    obj.setModifier(buildModifier("Link", "true"));
+  }
+
+  public ASTModifier mkResultModifier(String value) {
+    return buildModifier("Result", "true");
+  }
+
+  public ASTStereotype mkResultStereotype(String value) {
+    return buildStereotype("Result", value);
+  }
+
+  private void setStereotypes(ASTODArtifact od, Model model) {
+
+    for (ASTODNamedObject obj : OCLHelper.getObjectList(od)) {
+      if (isThis(obj, model)) {
+        setThisModifier(obj);
+      }
+
+      if (isLinkedObj(obj, model)) {
+        setLinkModifier(obj);
+      }
+    }
+  }
+
+  private boolean isThis(ASTODNamedObject obj, Model model) {
+    return obj.getName().equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true)));
+  }
+
+  private boolean isLinkedObj(ASTODNamedObject obj, Model model) {
+    List<String> linkedObjName =
+        linkedObj.stream()
+            .map(expr -> SMTHelper.buildObjectName(model.evaluate(expr, true)))
+            .collect(Collectors.toList());
+    return linkedObjName.contains(obj.getName());
   }
 
   private static boolean isPreLink(ASTODLink link) {
@@ -230,9 +232,11 @@ public class OCL2SMTStrategy {
 
     String type =
         object.getMCObjectType().printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()));
+
     ASTODNamedObject preObj =
         de.monticore.cd2smt.Helper.ODHelper.buildObject(
             object.getName(), type, preObjAttributeList);
+
     ASTODNamedObject obj =
         de.monticore.cd2smt.Helper.ODHelper.buildObject(object.getName(), type, postAttributeList);
     return new ImmutablePair<>(preObj, obj);

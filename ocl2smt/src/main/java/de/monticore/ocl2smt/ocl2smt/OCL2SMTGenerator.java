@@ -113,13 +113,15 @@ public class OCL2SMTGenerator {
     return bool -> bool;
   }
   // TODO:: fix   OCLOperationSignature = OCLMethodSignature | OCLConstructorSignature
-  void openOpScope(ASTOCLOperationSignature node) {
+  Expr<? extends Sort> openOpScope(ASTOCLOperationSignature node) {
     ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
 
     OCLType type = OCLType.buildOCLType(method.getMethodName().getParts(0));
     Expr<? extends Sort> obj = expression2SMT.declVariable(type, type.getName() + "__");
 
     expression2SMT.constrData.setOCLContext(obj, type);
+
+    return obj;
   }
 
   public BoolExpr convertPreCond(ASTOCLOperationConstraint node) {
@@ -133,7 +135,6 @@ public class OCL2SMTGenerator {
   }
 
   public BoolExpr convertPostCond(ASTOCLOperationConstraint node) {
-    // expression2SMT.strategy.setThis();
     BoolExpr post = expression2SMT.convertBoolExpr(node.getPostCondition(0));
     for (BoolExpr constr : expression2SMT.constrData.genConstraints) {
       post = ctx.mkAnd(post, constr);
@@ -143,8 +144,8 @@ public class OCL2SMTGenerator {
 
   public OCLConstraint convertOpConst(ASTOCLOperationConstraint node) {
 
-    openOpScope(node.getOCLOperationSignature());
-
+    Expr<? extends Sort> thisObj = openOpScope(node.getOCLOperationSignature());
+    expression2SMT.enterOpConst(thisObj);
     BoolExpr pre = convertPreCond(node);
     BoolExpr post = convertPostCond(node);
 

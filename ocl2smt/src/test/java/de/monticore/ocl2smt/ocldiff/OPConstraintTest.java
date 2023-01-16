@@ -55,7 +55,7 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     printOD(witness.getPreOD());
   }
 
-  @Disabled
+
   @Test
   public void testOpConstraintDiff() throws IOException {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");

@@ -62,6 +62,10 @@ public class OCLExpression2SMT {
     return cd2smtGenerator.getClassDiagram().getCDDefinition();
   }
 
+  public void enterOpConst(Expr<? extends Sort> thisObj) {
+    strategy.setThis(thisObj);
+  }
+
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
     BoolExpr result;
     if (node instanceof ASTBooleanAndOpExpression) {
@@ -781,14 +785,14 @@ public class OCLExpression2SMT {
       return Optional.empty();
     }
 
-    //declare the linked object
+    // declare the linked object
     OCLType type2 = OCLHelper.getOtherType(association, constrData.oclContextType);
     String name = strategy.mkObjName(node.getName(), isPre);
     Expr<? extends Sort> expr = constConverter.declObj(type2, name);
 
     strategy.addLink(expr);
 
-    //add association constraints to the general constraints
+    // add association constraints to the general constraints
     constrData.genConstraints.add(
         strategy.evaluateLink(
             association, constrData.oclContext, expr, cd2smtGenerator, constConverter, isPre));

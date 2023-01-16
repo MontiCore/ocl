@@ -4,6 +4,11 @@ import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.ocl2smt.util.OCLType;
+import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odbasis._ast.ASTODNamedObject;
+import de.monticore.odlink._ast.ASTODLink;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class OCLHelper {
 
@@ -20,5 +25,20 @@ public class OCLHelper {
     } else {
       return type1;
     }
+  }
+
+  public static List<ASTODNamedObject> getObjectList(ASTODArtifact od) {
+    return od.getObjectDiagram().getODElementList().stream()
+        .filter(x -> x instanceof ASTODNamedObject)
+        .map(x -> (ASTODNamedObject) x)
+        .collect(Collectors.toList());
+  }
+
+  public static List<ASTODLink> getLinkList(ASTODArtifact od) {
+
+    return od.getObjectDiagram().getODElementList().stream()
+        .filter(x -> x instanceof ASTODLink)
+        .map(x -> (ASTODLink) x)
+        .collect(Collectors.toList());
   }
 }
