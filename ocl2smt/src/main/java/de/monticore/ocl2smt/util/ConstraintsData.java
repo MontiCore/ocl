@@ -7,27 +7,19 @@ import java.util.*;
 
 /** this class contains all data obtains during the conversion of a OCLConstraint */
 public class ConstraintsData {
-  public Expr<? extends Sort> oclContext;
-  public OCLType oclContextType;
+  private OCLContext oclContext ;
 
   public final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
 
   public final Set<BoolExpr> genConstraints = new HashSet<>();
 
-  private void reset() {
-    oclContextType = null;
-    oclContext = null;
-    varNames.clear();
-    genConstraints.clear();
-  }
 
   public void addVar(String name, Expr<? extends Sort> obj) {
     varNames.put(name, obj);
   }
 
   public void setOCLContext(Expr<? extends Sort> obj, OCLType type) {
-    this.oclContext = obj;
-    this.oclContextType = type;
+    oclContext = new OCLContext(type,obj);
   }
 
   public boolean containsVar(String name) {
@@ -39,10 +31,26 @@ public class ConstraintsData {
   }
 
   public boolean isPresentContext() {
-    return oclContext != null && oclContextType != null;
+    return oclContext != null;
   }
 
   public void removeVar(String name) {
     varNames.remove(name);
+  }
+
+  public void addOCLContextLink(Expr<? extends  Sort> obj){
+    oclContext.addLink(obj);
+  }
+
+  public OCLType getOCLContextType() {
+    return oclContext.getType();
+  }
+
+  public Expr<? extends Sort> getOClContextValue() {
+    return oclContext.getValue();
+  }
+
+  public List<Expr<? extends Sort>> getOClContextLinks() {
+    return oclContext.getLinkedObj();
   }
 }

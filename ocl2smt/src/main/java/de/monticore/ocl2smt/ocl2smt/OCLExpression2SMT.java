@@ -20,6 +20,7 @@ import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.util.*;
 import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
+import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
@@ -62,8 +63,8 @@ public class OCLExpression2SMT {
     return cd2smtGenerator.getClassDiagram().getCDDefinition();
   }
 
-  public void enterOpConst(Expr<? extends Sort> thisObj) {
-    strategy.setThis(thisObj);
+  public OPDiffResult splitPreOD(ASTODArtifact od, Model model) {
+    return strategy.splitPreOD(od, model, constrData);
   }
 
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
@@ -770,8 +771,7 @@ public class OCLExpression2SMT {
 
     return Optional.ofNullable(
         strategy.getAttribute(
-            constrData.oclContext,
-            constrData.oclContextType,
+            constrData.getOClContextValue(),constrData.getOCLContextType(),
             node.getName(),
             cd2smtGenerator,
             isPre));
@@ -780,22 +780,22 @@ public class OCLExpression2SMT {
   private Optional<Expr<? extends Sort>> getContextLink(ASTNameExpression node, boolean isPre) {
     // TODO::update to takeCare when the assoc is inherited
     ASTCDAssociation association =
-        OCLHelper.getAssociation(constrData.oclContextType, node.getName(), getCD());
+        OCLHelper.getAssociation(constrData.getOCLContextType(), node.getName(), getCD());
     if (association == null) {
       return Optional.empty();
     }
 
     // declare the linked object
-    OCLType type2 = OCLHelper.getOtherType(association, constrData.oclContextType);
+    OCLType type2 = OCLHelper.getOtherType(association, constrData.getOCLContextType());
     String name = strategy.mkObjName(node.getName(), isPre);
     Expr<? extends Sort> expr = constConverter.declObj(type2, name);
 
-    strategy.addLink(expr);
+    constrData.addOCLContextLink(expr);
 
     // add association constraints to the general constraints
     constrData.genConstraints.add(
         strategy.evaluateLink(
-            association, constrData.oclContext, expr, cd2smtGenerator, constConverter, isPre));
+            association, constrData.getOClContextValue(), expr, cd2smtGenerator, constConverter, isPre));
 
     return Optional.of(expr);
   }

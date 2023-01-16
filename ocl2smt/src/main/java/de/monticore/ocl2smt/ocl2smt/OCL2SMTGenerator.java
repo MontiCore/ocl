@@ -56,7 +56,6 @@ public class OCL2SMTGenerator {
    * @return the Constraint in SMT
    */
   public OCLConstraint convertConstr(ASTOCLConstraint constraint) {
-    expression2SMT.constConverter.reset(ctx);
     OCLConstraint res = null;
     if (constraint instanceof ASTOCLInvariant) {
       res = convertInv((ASTOCLInvariant) constraint);
@@ -84,7 +83,7 @@ public class OCL2SMTGenerator {
     // convert parameter declaration  in context
     Function<BoolExpr, BoolExpr> invCtx = openInvScope(invariant);
 
-    // convert inv Body in the Invariant context
+    // convert the inv body
     BoolExpr inv = invCtx.apply(expression2SMT.convertBoolExpr(invariant.getExpression()));
 
     // add general invConstraints
@@ -107,45 +106,49 @@ public class OCL2SMTGenerator {
     }
 
     if (vars.size() > 0) {
-
       return bool -> ctx.mkForall(vars.toArray(new Expr[0]), bool, 0, null, null, null, null);
     }
     return bool -> bool;
   }
   // TODO:: fix   OCLOperationSignature = OCLMethodSignature | OCLConstructorSignature
-  Expr<? extends Sort> openOpScope(ASTOCLOperationSignature node) {
+  void openOpScope(ASTOCLOperationSignature node) {
     ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
 
     OCLType type = OCLType.buildOCLType(method.getMethodName().getParts(0));
+    //declare the object to which the method will be applied
     Expr<? extends Sort> obj = expression2SMT.declVariable(type, type.getName() + "__");
 
     expression2SMT.constrData.setOCLContext(obj, type);
 
-    return obj;
   }
 
-  public BoolExpr convertPreCond(ASTOCLOperationConstraint node) {
+  private BoolExpr convertPreCond(ASTOCLOperationConstraint node) {
     expression2SMT.strategy.enterPreCond();
+
+    //TODO:fix if many pre conditions
     BoolExpr pre = expression2SMT.convertBoolExpr(node.getPreCondition(0));
     for (BoolExpr constr : expression2SMT.constrData.genConstraints) {
       pre = ctx.mkAnd(pre, constr);
     }
+
     expression2SMT.strategy.exitPreCond();
     return pre;
   }
 
-  public BoolExpr convertPostCond(ASTOCLOperationConstraint node) {
+    private BoolExpr convertPostCond(ASTOCLOperationConstraint node) {
+    //TODO : fix if many Post conditions
     BoolExpr post = expression2SMT.convertBoolExpr(node.getPostCondition(0));
     for (BoolExpr constr : expression2SMT.constrData.genConstraints) {
       post = ctx.mkAnd(post, constr);
     }
+
     return post;
   }
 
   public OCLConstraint convertOpConst(ASTOCLOperationConstraint node) {
+    openOpScope(node.getOCLOperationSignature());
 
-    Expr<? extends Sort> thisObj = openOpScope(node.getOCLOperationSignature());
-    expression2SMT.enterOpConst(thisObj);
+    //convert pre and post conditions
     BoolExpr pre = convertPreCond(node);
     BoolExpr post = convertPostCond(node);
 
@@ -156,6 +159,7 @@ public class OCL2SMTGenerator {
     IdentifiableBoolExpr postConstr =
         IdentifiableBoolExpr.buildIdentifiable(
             post, node.getPostCondition(0).get_SourcePositionStart(), Optional.of("post"));
+
     return new OCLConstraint(preConstr, postConstr);
   }
 
@@ -168,6 +172,6 @@ public class OCL2SMTGenerator {
   }
 
   public OPDiffResult splitPreOD(ASTODArtifact od, Model model) {
-    return expression2SMT.strategy.splitPreOD(od, model);
+    return expression2SMT.splitPreOD(od, model);
   }
 }
