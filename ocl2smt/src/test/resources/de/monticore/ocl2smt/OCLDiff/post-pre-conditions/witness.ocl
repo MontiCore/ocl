@@ -17,12 +17,4 @@ ocl Person {
          company@pre.name@pre ==  company@pre.name &&
          company.name@pre == company.name;
 
-
-
-/* context int Person.increaseAndGetSalary(int s )
-   pre: salary > 500 &&
-        s > 5;
-
-   post: salary == salary@pre + s &&
-         result == salary ;*/
 }

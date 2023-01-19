@@ -43,6 +43,10 @@ public class OCLExpression2SMT {
     TypeConverter.setup(cd2smtGenerator);
   }
 
+  public ConstraintsData getConstrData() {
+    return constrData;
+  }
+
   public OCLExpression2SMT(
       ASTCDCompilationUnit astcdCompilationUnit,
       de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator ocl2SMTGenerator) {

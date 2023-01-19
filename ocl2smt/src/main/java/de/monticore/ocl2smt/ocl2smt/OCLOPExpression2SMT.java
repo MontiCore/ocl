@@ -1,8 +1,10 @@
 package de.monticore.ocl2smt.ocl2smt;
 
-import com.microsoft.z3.*;
+import com.microsoft.z3.BoolExpr;
+import com.microsoft.z3.Expr;
+import com.microsoft.z3.Model;
+import com.microsoft.z3.Sort;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.expressions.commonexpressions._ast.ASTBracketExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
@@ -22,7 +24,7 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class OCLOPExpression2SMT extends  OCLExpression2SMT {
+public class OCLOPExpression2SMT extends OCLExpression2SMT {
     protected OCL2SMTStrategy strategy = new OCL2SMTStrategy();
 
     public OCLOPExpression2SMT(OCLExpression2SMT expr) {
@@ -32,28 +34,46 @@ public class OCLOPExpression2SMT extends  OCLExpression2SMT {
     public OPDiffResult splitPreOD(ASTODArtifact od, Model model) {
         return strategy.splitPreOD(od, model, constrData);
     }
- @Override
+
+    @Override
     protected Optional<Expr<? extends Sort>> convertGenExprOpt(ASTExpression node) {
-        OCLExpression2SMT e = this;
-        Optional<Expr<? extends Sort>> res = e.convertGenExprOpt(node);
-        if (res.isEmpty()){
-            res = Optional.ofNullable(convertAt((ASTOCLAtPreQualification) node));
+        Expr<? extends Sort> res;
+        if (node instanceof ASTLiteralExpression) {
+            res = constConverter.convert((ASTLiteralExpression) node);
+        } else if (node instanceof ASTBracketExpression) {
+            res = convertBracket((ASTBracketExpression) node);
+        } else if (node instanceof ASTNameExpression) {
+            res = convertName((ASTNameExpression) node);
+        } else if (node instanceof ASTFieldAccessExpression) {
+            res = convertFieldAcc((ASTFieldAccessExpression) node);
+        } else if (node instanceof ASTIfThenElseExpression) {
+            res = convertIfTEl((ASTIfThenElseExpression) node);
+        } else if (node instanceof ASTImpliesExpression) {
+            res = convertImpl((ASTImpliesExpression) node);
+        } else if (node instanceof ASTOCLAtPreQualification) {
+            res = convertAt((ASTOCLAtPreQualification) node);
+        } else {
+            return Optional.empty();
         }
-         return  res ;
+        return Optional.of(res);
     }
+
 
     protected Expr<? extends Sort> convertAt(ASTOCLAtPreQualification node) {
         strategy.enterPre();
         return convertExpr(node.getExpression());
     }
+
     @Override
     protected Expr<? extends Sort> convertName(ASTNameExpression node) {
         boolean isPre = strategy.isPreStrategy();
         strategy.exitPre();
-        Expr<? extends  Sort> res = null ;
+        Expr<? extends Sort> res = null;
+
         if (constrData.containsVar(node.getName())) {
             res = constrData.getVar(node.getName());
-        } else if (constrData.isPresentContext()) {
+        }
+        if (constrData.isPresentContext()) {
             Optional<Expr<? extends Sort>> attr = getContextAttribute(node, isPre);
             if (attr.isPresent()) {
                 res = attr.get();
@@ -62,16 +82,18 @@ public class OCLOPExpression2SMT extends  OCLExpression2SMT {
             if (obj.isPresent()) {
                 res = obj.get();
             }
-        }else {
-            res = declVariable(
-                    TypeConverter.buildOCLType((VariableSymbol) node.getDefiningSymbol().get()),
-                    node.getName()) ;
         }
 
-        return  res ;
+        if (res == null){
+            res = declVariable(
+                    TypeConverter.buildOCLType((VariableSymbol) node.getDefiningSymbol().get()),
+                    node.getName());
+        }
+
+        return res;
     }
 
-  @Override
+    @Override
     protected SMTSet convertFieldAccAssoc(ASTFieldAccessExpression node) {
         boolean isPre = strategy.isPreStrategy();
         strategy.exitPre();
@@ -106,7 +128,8 @@ public class OCLOPExpression2SMT extends  OCLExpression2SMT {
 
         return pSet.collectAll(function, ctx);
     }
-  @Override
+
+    @Override
     protected Expr<? extends Sort> convertFieldAcc(ASTFieldAccessExpression node) {
         boolean isPre = strategy.isPreStrategy();
         strategy.exitPre();
@@ -127,6 +150,7 @@ public class OCLOPExpression2SMT extends  OCLExpression2SMT {
                         cd2smtGenerator,
                         isPre));
     }
+
     /** this function is use to get a Linked object of the Context */
     private Optional<Expr<? extends Sort>> getContextLink(ASTNameExpression node, boolean isPre) {
         // TODO::update to takeCare when the assoc is inherited

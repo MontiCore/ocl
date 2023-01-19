@@ -93,13 +93,13 @@ public class OCL2SMTStrategy {
     return OCLHelper.getAttribute(obj,type,attributeName,cd2SMTGenerator);
   }
 
-  public ASTModifier buildModifier(String stereotypeName, String stereotypeValue) {
+  private static ASTModifier buildModifier(String stereotypeName, String stereotypeValue) {
     return OD4ReportMill.modifierBuilder()
         .setStereotype(buildStereotype(stereotypeName, stereotypeValue))
         .build();
   }
 
-  public ASTStereotype buildStereotype(String stereotypeName, String stereotypeValue) {
+  private static ASTStereotype buildStereotype(String stereotypeName, String stereotypeValue) {
     return OD4ReportMill.stereotypeBuilder()
         .addValues(
             OD4ReportMill.stereoValueBuilder()
@@ -110,7 +110,7 @@ public class OCL2SMTStrategy {
         .build();
   }
 
-  public OPDiffResult splitPreOD(ASTODArtifact od, Model model, ConstraintsData constraintsData) {
+  public static OPDiffResult splitPreOD(ASTODArtifact od, Model model, ConstraintsData constraintsData) {
     List<ASTODElement> preOdElements = new ArrayList<>();
     List<ASTODElement> postOdElements = new ArrayList<>();
 
@@ -141,27 +141,27 @@ public class OCL2SMTStrategy {
     return setStereotypes(new OPDiffResult(preOD, postOD), model, constraintsData);
   }
 
-  private OPDiffResult setStereotypes(
+  private static OPDiffResult setStereotypes(
       OPDiffResult diff, Model model, ConstraintsData constraintsData) {
     setStereotypes(diff.getPreOD(), model, constraintsData);
     setStereotypes(diff.getPostOD(), model, constraintsData);
     return diff;
   }
 
-  public void setThisModifier(ASTODNamedObject obj) {
+  private static void setThisModifier(ASTODNamedObject obj) {
     obj.setModifier(buildModifier("This", "true"));
   }
 
 
-  public ASTModifier mkResultModifier(String value) {
+  private ASTModifier mkResultModifier(String value) {
     return buildModifier("Result", value);
   }
 
-  public ASTStereotype mkResultStereotype(String value) {
+  private ASTStereotype mkResultStereotype(String value) {
     return buildStereotype("Result", value);
   }
 
-  private void setStereotypes(ASTODArtifact od, Model model, ConstraintsData constraintsData) {
+  private static void setStereotypes(ASTODArtifact od, Model model, ConstraintsData constraintsData) {
 
     for (ASTODNamedObject obj : OCLHelper.getObjectList(od)) {
       if (isThis(obj, model, constraintsData.getOClContextValue())) {
@@ -172,7 +172,7 @@ public class OCL2SMTStrategy {
     }
   }
 
-  private boolean isThis(ASTODNamedObject obj, Model model, Expr<? extends Sort> thisObj) {
+  private static boolean isThis(ASTODNamedObject obj, Model model, Expr<? extends Sort> thisObj) {
     return obj.getName().equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true)));
   }
 
@@ -212,7 +212,7 @@ public class OCL2SMTStrategy {
     return preLink;
   }
 
-  public static ASTCDAssociation getPreAssociation(
+  private static ASTCDAssociation getPreAssociation(
       ASTCDAssociation association, ASTCDDefinition cd) {
 
     ASTCDAssocRightSide right = association.getRight();

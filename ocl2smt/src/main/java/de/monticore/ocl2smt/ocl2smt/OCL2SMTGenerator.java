@@ -14,7 +14,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public class OCL2SMTGenerator {
-  private final OCLExpression2SMT expression2SMT;
+  protected OCLExpression2SMT expression2SMT;
 
   private final Context ctx;
 
@@ -23,6 +23,10 @@ public class OCL2SMTGenerator {
      expression2SMT = new OCLExpression2SMT(ast, ctx);
 
     this.ctx = ctx;
+  }
+
+  public OCLExpression2SMT getExpression2SMT() { //TODo remove later
+    return expression2SMT;
   }
 
   public OCL2SMTGenerator(
@@ -126,7 +130,7 @@ public class OCL2SMTGenerator {
   }
 
   private BoolExpr convertPreCond(ASTOCLOperationConstraint node, OCLOPExpression2SMT opConverter) {
-    //expression2SMT.strategy.enterPreCond();
+    opConverter.strategy.enterPreCond();
 
     // TODO:fix if many pre conditions
     BoolExpr pre = opConverter.convertBoolExpr(node.getPreCondition(0));
@@ -134,7 +138,7 @@ public class OCL2SMTGenerator {
       pre = ctx.mkAnd(pre, constr);
     }
 
-   // expression2SMT.strategy.exitPreCond();
+    opConverter.strategy.exitPreCond();
     return pre;
   }
 
@@ -150,6 +154,7 @@ public class OCL2SMTGenerator {
 
   public OCLConstraint convertOpConst(ASTOCLOperationConstraint node) {
     OCLOPExpression2SMT opConverter = new OCLOPExpression2SMT(expression2SMT);
+    expression2SMT = opConverter ; //TODO: fix that
     openOpScope(node.getOCLOperationSignature(),opConverter);
 
     // convert pre and post conditions

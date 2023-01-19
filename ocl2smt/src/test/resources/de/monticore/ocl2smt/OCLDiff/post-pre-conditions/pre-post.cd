@@ -18,6 +18,6 @@ classdiagram Auction {
     double balance ;
  }
 
- //association [*] Person -- (company)Company [1] ;
+ association [*] Person -- (company)Company [1] ;
  association [1] Person -- (account)Account [*] ;
 }

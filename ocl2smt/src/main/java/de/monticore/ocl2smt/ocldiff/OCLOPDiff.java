@@ -5,6 +5,7 @@ import com.microsoft.z3.Model;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
+import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
@@ -46,8 +47,10 @@ public class OCLOPDiff {
     }
 
     Model model = solver.getModel();
-   // return ocl2SMTGenerator.buildOPOd(model, "Witness", partial);
-    return  null ;
+    Optional<ASTODArtifact> od = ocl2SMTGenerator.buildOd(model, "Witness", partial);
+    assert od.isPresent();
+
+    return OCL2SMTStrategy.splitPreOD(od.get(),model,ocl2SMTGenerator.getExpression2SMT().getConstrData());
   }
 
   public static Pair<ASTODArtifact, Set<OPDiffResult>> oclDiffOp(

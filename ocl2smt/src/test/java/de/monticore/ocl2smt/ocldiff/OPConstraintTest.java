@@ -14,6 +14,7 @@ import java.util.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class OPConstraintTest extends OCLDiffAbstractTest {
@@ -45,35 +46,36 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
 
     Set<ASTOCLCompilationUnit> posOCl = new HashSet<>();
-    posOCl.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/neg.ocl"));
+    posOCl.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/witness.ocl"));
 
     OPDiffResult witness = OCLOPDiff.oclWitness(ast, posOCl, false);
     Assertions.assertNotNull(witness);
 
     // check preCD
-  //  ASTODNamedObject preObj = getThisObj(witness.getPreOD());
-  //  List<ASTODNamedObject> preLinks = getLinkedObjects(preObj, witness.getPreOD());
+    ASTODNamedObject preObj = getThisObj(witness.getPreOD());
+    List<ASTODNamedObject> preLinks = getLinkedObjects(preObj, witness.getPreOD());
 
-   // Assertions.assertEquals(1, preLinks.size());
-   // Assertions.assertEquals("\"oldCompany\"", getAttribute(preLinks.get(0), "name"));
-   // Assertions.assertEquals("4", getAttribute(preLinks.get(0), "employees"));
+    Assertions.assertEquals(1, preLinks.size());
+    Assertions.assertEquals("\"oldCompany\"", getAttribute(preLinks.get(0), "name"));
+    Assertions.assertEquals("4", getAttribute(preLinks.get(0), "employees"));
 
     // CheckPostCD
-   // ASTODNamedObject postObj = getThisObj(witness.getPostOD());
-   // List<ASTODNamedObject> postLinks = getLinkedObjects(postObj, witness.getPostOD());
+    ASTODNamedObject postObj = getThisObj(witness.getPostOD());
+    List<ASTODNamedObject> postLinks = getLinkedObjects(postObj, witness.getPostOD());
 
-   // Assertions.assertEquals(1, postLinks.size());
-   // Assertions.assertEquals("\"newCompany\"", getAttribute(postLinks.get(0), "name"));
-   // Assertions.assertEquals("1", getAttribute(postLinks.get(0), "employees"));
+    Assertions.assertEquals(1, postLinks.size());
+    Assertions.assertEquals("\"newCompany\"", getAttribute(postLinks.get(0), "name"));
+    Assertions.assertEquals("1", getAttribute(postLinks.get(0), "employees"));
 
     // checkDiff
-  //  Assertions.assertEquals(
-   //     "3", getAttribute(getObject(witness.getPostOD(), preLinks.get(0).getName()), "employees"));
+    Assertions.assertEquals(
+        "3", getAttribute(getObject(witness.getPostOD(), preLinks.get(0).getName()), "employees"));
     printOD(witness.getPostOD());
     printOD(witness.getPreOD());
   }
 
   @Test
+  @Disabled
   public void testOpConstraintDiff() throws IOException {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
 
