@@ -20,17 +20,16 @@ public class OCL2SMTGenerator {
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
 
-     expression2SMT = new OCLExpression2SMT(ast, ctx);
+    expression2SMT = new OCLExpression2SMT(ast, ctx);
 
     this.ctx = ctx;
   }
 
-  public OCLExpression2SMT getExpression2SMT() { //TODo remove later
+  public OCLExpression2SMT getExpression2SMT() { // TODo remove later
     return expression2SMT;
   }
 
-  public OCL2SMTGenerator(
-      ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
+  public OCL2SMTGenerator(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
     expression2SMT = new OCLExpression2SMT(ast, ocl2SMTGenerator);
     this.ctx = ocl2SMTGenerator.ctx;
   }
@@ -119,7 +118,7 @@ public class OCL2SMTGenerator {
     return bool -> bool;
   }
   // TODO:: fix   OCLOperationSignature = OCLMethodSignature | OCLConstructorSignature
-  void openOpScope(ASTOCLOperationSignature node,OCLExpression2SMT opConverter) {
+  void openOpScope(ASTOCLOperationSignature node, OCLExpression2SMT opConverter) {
     ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
 
     OCLType type = OCLType.buildOCLType(method.getMethodName().getParts(0));
@@ -142,7 +141,8 @@ public class OCL2SMTGenerator {
     return pre;
   }
 
-  private BoolExpr convertPostCond(ASTOCLOperationConstraint node,OCLOPExpression2SMT opConverter) {
+  private BoolExpr convertPostCond(
+      ASTOCLOperationConstraint node, OCLOPExpression2SMT opConverter) {
     // TODO : fix if many Post conditions
     BoolExpr post = opConverter.convertBoolExpr(node.getPostCondition(0));
     for (BoolExpr constr : opConverter.constrData.genConstraints) {
@@ -154,12 +154,12 @@ public class OCL2SMTGenerator {
 
   public OCLConstraint convertOpConst(ASTOCLOperationConstraint node) {
     OCLOPExpression2SMT opConverter = new OCLOPExpression2SMT(expression2SMT);
-    expression2SMT = opConverter ; //TODO: fix that
-    openOpScope(node.getOCLOperationSignature(),opConverter);
+    expression2SMT = opConverter; // TODO: fix that
+    openOpScope(node.getOCLOperationSignature(), opConverter);
 
     // convert pre and post conditions
-    BoolExpr pre = convertPreCond(node,opConverter);
-    BoolExpr post = convertPostCond(node,opConverter);
+    BoolExpr pre = convertPreCond(node, opConverter);
+    BoolExpr post = convertPostCond(node, opConverter);
 
     IdentifiableBoolExpr preConstr =
         IdentifiableBoolExpr.buildIdentifiable(
@@ -175,5 +175,4 @@ public class OCL2SMTGenerator {
   public Optional<ASTODArtifact> buildOd(Model model, String ODName, boolean partial) {
     return expression2SMT.cd2smtGenerator.smt2od(model, partial, ODName);
   }
-
 }

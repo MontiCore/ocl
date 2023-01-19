@@ -5,7 +5,6 @@ import com.microsoft.z3.Model;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
@@ -32,15 +31,26 @@ public class OCLOPDiff {
 
     Set<OCLConstraint> constraints = opConst2smt(ocl2SMTGenerator, in);
 
-    // check if they exist a model for the list of positive Constraint
+    // add the pre-condition
     List<IdentifiableBoolExpr> solversConstraints =
-        constraints.stream().map(OCLConstraint::getPreCond).collect(Collectors.toList());
+        constraints.stream()
+            .filter(OCLConstraint::isOpConstraint)
+            .map(OCLConstraint::getPreCond)
+            .collect(Collectors.toList());
 
+    // add the post condition
     solversConstraints.addAll(
         constraints.stream().map(OCLConstraint::getPostCond).collect(Collectors.toList()));
 
+    // add the invariants
+    solversConstraints.addAll(
+        constraints.stream()
+            .filter(OCLConstraint::isInvariant)
+            .map(OCLConstraint::getInvariant)
+            .collect(Collectors.toList()));
+
     Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solversConstraints);
-    System.out.println(solver);
+
     if (solver.check() != Status.SATISFIABLE) {
       Log.info("there are no Model for the List Of Positive Constraints", "NOWitnessOD");
       return null;
@@ -50,7 +60,8 @@ public class OCLOPDiff {
     Optional<ASTODArtifact> od = ocl2SMTGenerator.buildOd(model, "Witness", partial);
     assert od.isPresent();
 
-    return OCL2SMTStrategy.splitPreOD(od.get(),model,ocl2SMTGenerator.getExpression2SMT().getConstrData());
+    return OCL2SMTStrategy.splitPreOD(
+        od.get(), model, ocl2SMTGenerator.getExpression2SMT().getConstrData());
   }
 
   public static Pair<ASTODArtifact, Set<OPDiffResult>> oclDiffOp(

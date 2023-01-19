@@ -158,7 +158,7 @@ public class OCLDiffGenerator {
             p ->
                 ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).stream()
                     .filter(OCLConstraint::isInvariant)
-                    .map(OCLConstraint::getConstraint))
+                    .map(OCLConstraint::getInvariant))
         .collect(Collectors.toSet());
   }
 

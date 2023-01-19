@@ -48,41 +48,38 @@ public class OCLHelper {
         .collect(Collectors.toList());
   }
 
+  public static BoolExpr evaluateLink(
+      ASTCDAssociation association,
+      Expr<? extends Sort> obj1,
+      Expr<? extends Sort> obj2,
+      CD2SMTGenerator cd2SMTGenerator,
+      ConstConverter cc) {
 
-    public static BoolExpr evaluateLink(
-            ASTCDAssociation association,
-            Expr<? extends Sort > obj1,
-            Expr<? extends Sort> obj2,
-            CD2SMTGenerator cd2SMTGenerator,
-            ConstConverter cc) {
+    ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
 
-      ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
+    ASTCDType left = CDHelper.getLeftType(association, cd);
+    ASTCDType right = CDHelper.getRightType(association, cd);
 
-      ASTCDType left = CDHelper.getLeftType(association, cd);
-      ASTCDType right = CDHelper.getRightType(association, cd);
-
-      OCLType type1 = cc.getType(obj1);
-      BoolExpr res;
-      if (left.getName().equals(type1.getName())) {
-        res = cd2SMTGenerator.evaluateLink(association, left, right, obj1, obj2);
-      } else {
-        res = cd2SMTGenerator.evaluateLink(association, right, left, obj1, obj2);
-      }
-
-      return res;
+    OCLType type1 = cc.getType(obj1);
+    BoolExpr res;
+    if (left.getName().equals(type1.getName())) {
+      res = cd2SMTGenerator.evaluateLink(association, left, right, obj1, obj2);
+    } else {
+      res = cd2SMTGenerator.evaluateLink(association, right, left, obj1, obj2);
     }
 
+    return res;
+  }
+
   public static Expr<? extends Sort> getAttribute(
-          Expr<? extends Sort> obj,
-          OCLType type,
-          String attributeName,
-          CD2SMTGenerator cd2SMTGenerator) {
+      Expr<? extends Sort> obj,
+      OCLType type,
+      String attributeName,
+      CD2SMTGenerator cd2SMTGenerator) {
 
     return cd2SMTGenerator.getAttribute(
-            CDHelper.getASTCDType(
-                    type.getName(), cd2SMTGenerator.getClassDiagram().getCDDefinition()),
-            attributeName,
-            obj);
+        CDHelper.getASTCDType(type.getName(), cd2SMTGenerator.getClassDiagram().getCDDefinition()),
+        attributeName,
+        obj);
   }
-  }
-
+}

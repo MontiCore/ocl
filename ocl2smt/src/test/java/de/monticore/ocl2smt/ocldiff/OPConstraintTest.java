@@ -11,10 +11,8 @@ import de.monticore.odbasis._ast.*;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.*;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class OPConstraintTest extends OCLDiffAbstractTest {
@@ -75,7 +73,6 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
   }
 
   @Test
-  @Disabled
   public void testOpConstraintDiff() throws IOException {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
 
@@ -84,8 +81,12 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
 
     Set<ASTOCLCompilationUnit> notin = new HashSet<>();
     notin.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/neg.ocl"));
-    Pair<ASTODArtifact, Set<OPDiffResult>> diff = OCLOPDiff.oclDiffOp(ast, in, notin, false);
-    Assertions.assertEquals(countLinks(diff.getLeft()), 0);
-    printOPDiff(diff);
+    OPDiffResult witness = OCLOPDiff.oclWitness(ast, notin, false);
+    assert witness != null;
+    printOD(witness.getPostOD());
+    printOD(witness.getPreOD());
+    // Pair<ASTODArtifact, Set<OPDiffResult>> diff = OCLOPDiff.oclDiffOp(ast, in, notin, false);
+    // Assertions.assertEquals(countLinks(diff.getLeft()), 0);
+    // printOPDiff(diff);
   }
 }

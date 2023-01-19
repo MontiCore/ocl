@@ -11,13 +11,13 @@ public class OCLConstraint {
     this.isInvariant = false;
   }
 
-  public OCLConstraint(IdentifiableBoolExpr constraint) {
-    this.constraint = constraint;
+  public OCLConstraint(IdentifiableBoolExpr getInvariant) {
+    this.getInvariant = getInvariant;
     this.isInvariant = true;
   }
 
   boolean isInvariant;
-  IdentifiableBoolExpr constraint;
+  IdentifiableBoolExpr getInvariant;
   IdentifiableBoolExpr preCond;
   IdentifiableBoolExpr postCond;
 
@@ -29,8 +29,8 @@ public class OCLConstraint {
     return !isInvariant;
   }
 
-  public IdentifiableBoolExpr getConstraint() {
-    return constraint;
+  public IdentifiableBoolExpr getInvariant() {
+    return getInvariant;
   }
 
   public IdentifiableBoolExpr getPostCond() {

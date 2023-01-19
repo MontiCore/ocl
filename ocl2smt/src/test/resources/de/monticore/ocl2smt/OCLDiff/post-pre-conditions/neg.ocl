@@ -3,18 +3,15 @@
 package docs;
 ocl Person {
 
- context boolean Person.transferMoney(int myAccount ,int destAccount, double amount)
-   pre : amount > 1 &&
-         exists Account a : a.id == destAccount;
-         exists  a in account : a.id == myAccount &&  a.balance > amount ;
+ context double Person.withdraw(int accountID, double amount)
 
-
+   pre : amount > 500 &&
+         exists  a in account : a.id == accountID &&  a.balance > amount ;
 
 
    post:
-          exists  a in account : a.id == myAccount &&  a.balance@pre == amount + a.balance ;
-          exists Account a : a.id == destAccount && a.balance == a.balance@pre + amount;
-         result == true;
+          exists  a in account : a.id == accountID &&  a.balance@pre == amount + a.balance &&
+         result == amount;
 
    context Account a inv UniqueID:
       forall Account a1 : a1 != a implies a.id != a1.id ;

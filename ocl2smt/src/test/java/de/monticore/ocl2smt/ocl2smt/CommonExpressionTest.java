@@ -24,7 +24,7 @@ public class CommonExpressionTest extends ExpressionAbstractTest {
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
     ocl2SMTGenerator
         .ocl2smt(oclAST.getOCLArtifact())
-        .forEach(b -> res.add(b.getConstraint().getValue()));
+        .forEach(b -> res.add(b.getInvariant().getValue()));
   }
 
   @Test

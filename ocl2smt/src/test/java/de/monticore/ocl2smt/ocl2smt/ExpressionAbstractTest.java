@@ -67,7 +67,7 @@ public abstract class ExpressionAbstractTest {
             .filter(p -> search.equals(p.getName()))
             .findAny()
             .get();
-    return ocl2SMTGenerator.convertConstr(constr).getConstraint();
+    return ocl2SMTGenerator.convertConstr(constr).getInvariant();
   }
 
   public void printOD(ASTODArtifact od) {

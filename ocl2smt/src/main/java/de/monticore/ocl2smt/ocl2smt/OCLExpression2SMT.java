@@ -66,8 +66,6 @@ public class OCLExpression2SMT {
     return cd2smtGenerator.getClassDiagram().getCDDefinition();
   }
 
-
-
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
     BoolExpr result;
     if (node instanceof ASTBooleanAndOpExpression) {
@@ -363,15 +361,16 @@ public class OCLExpression2SMT {
 
   // -----------------------------------general----------------------------------------------------------------------*/
   protected Expr<? extends Sort> convertName(ASTNameExpression node) {
-     Expr<? extends  Sort> res;
+    Expr<? extends Sort> res;
     if (constrData.containsVar(node.getName())) {
       res = constrData.getVar(node.getName());
-    }else {
-      res = declVariable(
+    } else {
+      res =
+          declVariable(
               TypeConverter.buildOCLType((VariableSymbol) node.getDefiningSymbol().get()),
               node.getName());
     }
-    return  res ;
+    return res;
   }
 
   protected Expr<? extends Sort> convertBracket(ASTBracketExpression node) {
@@ -384,29 +383,27 @@ public class OCLExpression2SMT {
     return OCLHelper.getAttribute(obj, type, node.getName(), cd2smtGenerator);
   }
 
-  // e.g  auction.person.parent
-  protected SMTSet convertFieldAccAssoc(ASTFieldAccessExpression node) {
+  protected SMTSet convertSimpleFieldAccessAssoc(Expr<? extends Sort> obj, String role) {
+    OCLType type1 = constConverter.getType(obj);
+    ASTCDAssociation association = OCLHelper.getAssociation(type1, role, getCD());
+    OCLType type2 = OCLHelper.getOtherType(association, type1);
 
+    Function<Expr<? extends Sort>, BoolExpr> auction_per_set =
+        per -> OCLHelper.evaluateLink(association, obj, per, cd2smtGenerator, constConverter);
 
-    if (!(node.getExpression() instanceof ASTFieldAccessExpression)) {
+    return new SMTSet(auction_per_set, type2);
+  }
 
-      Expr<? extends Sort> auction = convertExpr(node.getExpression());
-      OCLType type1 = constConverter.getType(auction);
-      ASTCDAssociation association = OCLHelper.getAssociation(type1, node.getName(), getCD());
-      OCLType type2 = OCLHelper.getOtherType(association, type1);
-
-      Function<Expr<? extends Sort>, BoolExpr> auction_per_set =
-          per ->
-              OCLHelper.evaluateLink(
-                  association, auction, per, cd2smtGenerator, constConverter);
-
-      return new SMTSet(auction_per_set, type2);
+  protected SMTSet convertFieldAccessHelper(ASTExpression node, String name) {
+    if (!(node instanceof ASTFieldAccessExpression)) {
+      Expr<? extends Sort> expr = convertExpr(node);
+      return convertSimpleFieldAccessAssoc(expr, name);
     }
 
-    SMTSet pSet = convertSet(node.getExpression());
+    SMTSet pSet = convertSet(node);
 
     OCLType type1 = pSet.getType();
-    ASTCDAssociation person_parent = OCLHelper.getAssociation(type1, node.getName(), getCD());
+    ASTCDAssociation person_parent = OCLHelper.getAssociation(type1, name, getCD());
     OCLType type2 = OCLHelper.getOtherType(person_parent, type1);
 
     Function<Expr<? extends Sort>, SMTSet> function =
@@ -418,6 +415,10 @@ public class OCLExpression2SMT {
                 type2);
 
     return pSet.collectAll(function, ctx);
+  }
+
+  protected SMTSet convertFieldAccAssoc(ASTFieldAccessExpression node) {
+    return convertFieldAccessHelper(node.getExpression(), node.getName());
   }
 
   protected void closeScope(List<ASTInDeclaration> inDeclarations) {
@@ -451,6 +452,16 @@ public class OCLExpression2SMT {
   }
 
   protected SMTSet convertSet(ASTExpression node) {
+    Optional<SMTSet> res = convertSetOpt(node);
+    if (res.isPresent()) {
+      return res.get();
+    } else {
+      Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
+    }
+    return null;
+  }
+
+  protected Optional<SMTSet> convertSetOpt(ASTExpression node) {
     Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
     SMTSet set = null;
     if (node instanceof ASTFieldAccessExpression) {
@@ -481,10 +492,8 @@ public class OCLExpression2SMT {
       set = convertSetComp((ASTSetComprehension) node);
     } else if (node instanceof ASTSetEnumeration) {
       set = convertSetEnum((ASTSetEnumeration) node);
-    } else {
-      Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
     }
-    return set;
+    return Optional.ofNullable(set);
   }
 
   private Set<String> openSetCompScope(ASTSetComprehension node) {
@@ -742,13 +751,9 @@ public class OCLExpression2SMT {
     return rel;
   }
 
-
-
   protected Expr<? extends Sort> declVariable(OCLType type, String name) {
     Expr<? extends Sort> res = constConverter.declObj(type, name);
     constrData.addVar(name, res);
     return res;
   }
-
-
 }

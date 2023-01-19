@@ -44,5 +44,4 @@ public class ConstraintsData {
   public Expr<? extends Sort> getOClContextValue() {
     return oclContext.getValue();
   }
-
 }

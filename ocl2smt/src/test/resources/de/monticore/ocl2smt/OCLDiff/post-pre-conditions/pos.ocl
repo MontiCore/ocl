@@ -2,11 +2,5 @@
 package docs;
 ocl Person {
 
- context Person.changeCompany(String n)
-   pre : company.employees > 1 ;
-
-
-   post: company.employees@pre >= 0  &&
-         company@pre != company  ;
 
 }

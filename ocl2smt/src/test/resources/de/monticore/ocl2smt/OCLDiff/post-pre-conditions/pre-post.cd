@@ -5,7 +5,8 @@ classdiagram Auction {
 
  class  Person {
    boolean changeCompany(String n) ;
-   boolean transferMoney(int myAccount, int destAccount, double amount);
+   double withdraw(int accountID, double amount);
+   int age ;
  }
 
  class Company {
@@ -14,10 +15,11 @@ classdiagram Auction {
  }
 
  class Account {
-    int id ;
-    double balance ;
+  int id ;
+  double balance ;
  }
 
+
+ association [*] Person -- (account)Account [*] ;
  association [*] Person -- (company)Company [1] ;
- association [1] Person -- (account)Account [*] ;
 }
