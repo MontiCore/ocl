@@ -15,16 +15,19 @@ import java.util.function.Function;
 
 public class OCL2SMTGenerator {
   private final OCLExpression2SMT expression2SMT;
+
   private final Context ctx;
 
-  public OCL2SMTGenerator(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
-    expression2SMT = new OCLExpression2SMT(astcdCompilationUnit, ctx);
+  public OCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
+
+     expression2SMT = new OCLExpression2SMT(ast, ctx);
+
     this.ctx = ctx;
   }
 
   public OCL2SMTGenerator(
-      ASTCDCompilationUnit astcdCompilationUnit, OCL2SMTGenerator ocl2SMTGenerator) {
-    expression2SMT = new OCLExpression2SMT(astcdCompilationUnit, ocl2SMTGenerator);
+      ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
+    expression2SMT = new OCLExpression2SMT(ast, ocl2SMTGenerator);
     this.ctx = ocl2SMTGenerator.ctx;
   }
 
@@ -112,33 +115,33 @@ public class OCL2SMTGenerator {
     return bool -> bool;
   }
   // TODO:: fix   OCLOperationSignature = OCLMethodSignature | OCLConstructorSignature
-  void openOpScope(ASTOCLOperationSignature node) {
+  void openOpScope(ASTOCLOperationSignature node,OCLExpression2SMT opConverter) {
     ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
 
     OCLType type = OCLType.buildOCLType(method.getMethodName().getParts(0));
     // declare the object to which the method will be applied
-    Expr<? extends Sort> obj = expression2SMT.declVariable(type, type.getName() + "__This");
+    Expr<? extends Sort> obj = opConverter.declVariable(type, type.getName() + "__This");
 
-    expression2SMT.constrData.setOCLContext(obj, type);
+    opConverter.constrData.setOCLContext(obj, type);
   }
 
-  private BoolExpr convertPreCond(ASTOCLOperationConstraint node) {
-    expression2SMT.strategy.enterPreCond();
+  private BoolExpr convertPreCond(ASTOCLOperationConstraint node, OCLOPExpression2SMT opConverter) {
+    //expression2SMT.strategy.enterPreCond();
 
     // TODO:fix if many pre conditions
-    BoolExpr pre = expression2SMT.convertBoolExpr(node.getPreCondition(0));
-    for (BoolExpr constr : expression2SMT.constrData.genConstraints) {
+    BoolExpr pre = opConverter.convertBoolExpr(node.getPreCondition(0));
+    for (BoolExpr constr : opConverter.constrData.genConstraints) {
       pre = ctx.mkAnd(pre, constr);
     }
 
-    expression2SMT.strategy.exitPreCond();
+   // expression2SMT.strategy.exitPreCond();
     return pre;
   }
 
-  private BoolExpr convertPostCond(ASTOCLOperationConstraint node) {
+  private BoolExpr convertPostCond(ASTOCLOperationConstraint node,OCLOPExpression2SMT opConverter) {
     // TODO : fix if many Post conditions
-    BoolExpr post = expression2SMT.convertBoolExpr(node.getPostCondition(0));
-    for (BoolExpr constr : expression2SMT.constrData.genConstraints) {
+    BoolExpr post = opConverter.convertBoolExpr(node.getPostCondition(0));
+    for (BoolExpr constr : opConverter.constrData.genConstraints) {
       post = ctx.mkAnd(post, constr);
     }
 
@@ -146,11 +149,12 @@ public class OCL2SMTGenerator {
   }
 
   public OCLConstraint convertOpConst(ASTOCLOperationConstraint node) {
-    openOpScope(node.getOCLOperationSignature());
+    OCLOPExpression2SMT opConverter = new OCLOPExpression2SMT(expression2SMT);
+    openOpScope(node.getOCLOperationSignature(),opConverter);
 
     // convert pre and post conditions
-    BoolExpr pre = convertPreCond(node);
-    BoolExpr post = convertPostCond(node);
+    BoolExpr pre = convertPreCond(node,opConverter);
+    BoolExpr post = convertPostCond(node,opConverter);
 
     IdentifiableBoolExpr preConstr =
         IdentifiableBoolExpr.buildIdentifiable(
@@ -167,11 +171,4 @@ public class OCL2SMTGenerator {
     return expression2SMT.cd2smtGenerator.smt2od(model, partial, ODName);
   }
 
-  public OPDiffResult buildOPOd(Model model, String ODName, boolean partial) {
-    return splitPreOD(expression2SMT.cd2smtGenerator.smt2od(model, partial, ODName).get(), model);
-  }
-
-  public OPDiffResult splitPreOD(ASTODArtifact od, Model model) {
-    return expression2SMT.splitPreOD(od, model);
-  }
 }

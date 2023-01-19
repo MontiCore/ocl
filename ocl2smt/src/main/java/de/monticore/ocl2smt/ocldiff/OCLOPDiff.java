@@ -46,7 +46,8 @@ public class OCLOPDiff {
     }
 
     Model model = solver.getModel();
-    return ocl2SMTGenerator.buildOPOd(model, "Witness", partial);
+   // return ocl2SMTGenerator.buildOPOd(model, "Witness", partial);
+    return  null ;
   }
 
   public static Pair<ASTODArtifact, Set<OPDiffResult>> oclDiffOp(

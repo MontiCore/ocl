@@ -77,19 +77,7 @@ public class OCL2SMTStrategy {
     if (isPre) {
       association = getPreAssociation(association, cd);
     }
-    assert association != null;
-    ASTCDType left = CDHelper.getLeftType(association, cd);
-    ASTCDType right = CDHelper.getRightType(association, cd);
-
-    OCLType type1 = cc.getType(obj1);
-    BoolExpr res;
-    if (left.getName().equals(type1.getName())) {
-      res = cd2SMTGenerator.evaluateLink(association, left, right, obj1, obj2);
-    } else {
-      res = cd2SMTGenerator.evaluateLink(association, right, left, obj1, obj2);
-    }
-
-    return res;
+  return OCLHelper.evaluateLink(association,obj1,obj2,cd2SMTGenerator,cc);
   }
 
   public Expr<? extends Sort> getAttribute(
@@ -102,15 +90,7 @@ public class OCL2SMTStrategy {
       attributeName = mkPre(attributeName);
     }
 
-    Expr<? extends Sort> res =
-        cd2SMTGenerator.getAttribute(
-            CDHelper.getASTCDType(
-                type.getName(), cd2SMTGenerator.getClassDiagram().getCDDefinition()),
-            attributeName,
-            obj);
-    exitPre();
-
-    return res;
+    return OCLHelper.getAttribute(obj,type,attributeName,cd2SMTGenerator);
   }
 
   public ASTModifier buildModifier(String stereotypeName, String stereotypeValue) {
@@ -172,9 +152,6 @@ public class OCL2SMTStrategy {
     obj.setModifier(buildModifier("This", "true"));
   }
 
-  public void setLinkModifier(ASTODNamedObject obj) {
-    obj.setModifier(buildModifier("Link", "true"));
-  }
 
   public ASTModifier mkResultModifier(String value) {
     return buildModifier("Result", value);
@@ -191,9 +168,7 @@ public class OCL2SMTStrategy {
         setThisModifier(obj);
       }
 
-      if (isLinkedObj(obj, model, constraintsData.getOClContextLinks())) {
-        setLinkModifier(obj);
-      }
+
     }
   }
 
@@ -201,14 +176,7 @@ public class OCL2SMTStrategy {
     return obj.getName().equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true)));
   }
 
-  private boolean isLinkedObj(
-      ASTODNamedObject obj, Model model, List<Expr<? extends Sort>> linkedObj) {
-    List<String> linkedObjName =
-        linkedObj.stream()
-            .map(expr -> SMTHelper.buildObjectName(model.evaluate(expr, true)))
-            .collect(Collectors.toList());
-    return linkedObjName.contains(obj.getName());
-  }
+
 
   private static boolean isPreLink(ASTODLink link) {
     return isPre(link.getODLinkLeftSide().getRole()) && isPre(link.getODLinkRightSide().getRole());

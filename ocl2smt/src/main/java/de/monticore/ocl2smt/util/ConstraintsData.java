@@ -37,10 +37,6 @@ public class ConstraintsData {
     varNames.remove(name);
   }
 
-  public void addOCLContextLink(Expr<? extends Sort> obj) {
-    oclContext.addLink(obj);
-  }
-
   public OCLType getOCLContextType() {
     return oclContext.getType();
   }
@@ -49,7 +45,4 @@ public class ConstraintsData {
     return oclContext.getValue();
   }
 
-  public List<Expr<? extends Sort>> getOClContextLinks() {
-    return oclContext.getLinkedObj();
-  }
 }
