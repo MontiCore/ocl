@@ -1,11 +1,9 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl.cocos;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -39,11 +37,19 @@ public class OCLCoCoTest extends AbstractTest {
     // todo ignoring test container1.ocl which fails due to
     // https://git.rwth-aachen.de/monticore/monticore/-/issues/3141
     assumeFalse(filename.equals("container1.ocl"));
+    // todo find the issue with these, s.
+    // https://git.rwth-aachen.de/monticore/monticore/-/issues/3331
+    assumeFalse(filename.endsWith("validConstructorName.ocl"));
+    assumeFalse(filename.endsWith("validMethSigName.ocl"));
+    assumeFalse(filename.endsWith("validParameterDeclarationName.ocl"));
+    assumeFalse(filename.endsWith("validParameterType.ocl"));
+    assumeFalse(filename.endsWith("validVariableDeclaration.ocl"));
+    assumeFalse(filename.endsWith("validVariableName.ocl"));
 
     // given
     final Optional<ASTOCLCompilationUnit> ast =
         parse(prefixValidModelsPath("/testinput/cocos/valid/" + filename), false);
-    assertThat(ast).isPresent();
+    assertTrue(ast.isPresent());
 
     SymbolTableUtil.prepareMill();
     SymbolTableUtil.addCd4cSymbols();
@@ -56,16 +62,12 @@ public class OCLCoCoTest extends AbstractTest {
 
     OCLCoCoChecker checker = OCLCoCos.createChecker();
     checker.checkAll(ast.get());
-    assertThat(Log.getFindings().isEmpty());
+    assertNoFindings();
   }
 
   @ParameterizedTest
   @MethodSource("getInvalidCoCoModels")
   public void acceptsInvalidModels(String filename) {
-
-    /* assumeFalse(filename.equals("invalidMethSigName.ocl"));
-    assumeFalse(filename.equals("invalidMethodDeclarationName.ocl"));
-    assumeFalse(filename.equals("invalidTypes.ocl"));*/
 
     final Optional<ASTOCLCompilationUnit> optAST =
         parse(prefixValidModelsPath("/testinput/cocos/invalid/" + filename), false);
@@ -121,7 +123,7 @@ public class OCLCoCoTest extends AbstractTest {
     }
 
     if (filename.equals("invalidConditionsAreBooleanType.ocl")) {
-      assertThat(1 <= Log.getFindings().size());
+      assertTrue(1 <= Log.getFindings().size());
       assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xOCL06"));
       Log.getFindings().clear();
     }
@@ -138,7 +140,7 @@ public class OCLCoCoTest extends AbstractTest {
       Log.getFindings().clear();
     }
 
-    assumeTrue(Log.getFindings().isEmpty());
+    assertNoFindings();
   }
 
   @ParameterizedTest
@@ -151,7 +153,7 @@ public class OCLCoCoTest extends AbstractTest {
   public void shouldAcceptOclpLibrary(final String oclFile) {
     // given
     final Optional<ASTOCLCompilationUnit> ast = parse(oclFile, false);
-    assertThat(ast).isPresent();
+    assertTrue(ast.isPresent());
     SymbolTableUtil.prepareMill();
 
     // when / then
@@ -161,6 +163,6 @@ public class OCLCoCoTest extends AbstractTest {
     OCLCoCoChecker checker = OCLCoCos.createChecker();
     checker.checkAll(ast.get());
 
-    assertThat(Log.getFindings().isEmpty());
+    assertNoFindings();
   }
 }

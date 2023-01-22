@@ -15,6 +15,7 @@ stages:
   - build
   - test
   - post-test
+  - trigger_languages
   - mirror
 
 Validate Gradle:
@@ -153,6 +154,22 @@ Deploy Docker:
     - docker login -u sebot -p $sebot $CI_REGISTRY
     - docker build -t $CI_REGISTRY_IMAGE/ocl:latest .
     - docker image push $CI_REGISTRY_IMAGE/ocl:latest
+
+trigger-montifun-main:
+  stage: trigger_languages
+  trigger:
+    project: monticore/languages/montifun
+    branch: main
+  only:
+    - master
+
+trigger-montifun-dev:
+  stage: trigger_languages
+  trigger:
+    project: monticore/languages/montifun
+    branch: dev
+  only:
+    - develop
 
 
 # Mirrors this repository's `develop` and `master` branch to GitHub.

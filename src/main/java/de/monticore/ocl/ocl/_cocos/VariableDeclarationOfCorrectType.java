@@ -60,8 +60,10 @@ public class VariableDeclarationOfCorrectType
       if (!OCLTypeCheck.compatible(result.getResult(), type.getResult())) {
         Log.error(
             String.format(
-                "0xOCL33 Type of Variable at %s is incompatible with given Declaration Type.",
-                node.get_SourcePositionStart()));
+                "0xOCL33 (%s): Type of variable %s is incompatible with expression type %s.",
+                node.get_SourcePositionStart(),
+                type.getResult().printFullName(),
+                result.getResult().printFullName()));
       }
     }
   }

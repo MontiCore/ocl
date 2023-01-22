@@ -2,10 +2,12 @@
 package de.monticore.ocl.ocl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
+import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
@@ -85,5 +87,13 @@ public abstract class AbstractTest {
       assertThat(optAst).isPresent();
     }
     return optAst;
+  }
+
+  protected void assertNoFindings() {
+    assertTrue(
+        Log.getFindings().isEmpty(),
+        Log.getFindings().stream()
+            .map(Finding::buildMsg)
+            .collect(Collectors.joining(System.lineSeparator())));
   }
 }
