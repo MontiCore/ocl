@@ -8,8 +8,9 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.helpers.OCLHelper;
+import de.monticore.ocl2smt.ocldiff.invarianteDiff.OCLInvDiffResult;
+import de.monticore.ocl2smt.ocldiff.operationDiff.OPWitness;
 import de.monticore.ocl2smt.util.OCL_Loader;
-import de.monticore.ocl2smt.util.OPDiffResult;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
@@ -33,14 +34,14 @@ public abstract class OCLDiffAbstractTest {
   protected static final String RELATIVE_TARGET_PATH =
       "target/generated/sources/annotationProcessor/java/ocl2smttest";
 
-  public void printDiff(Pair<ASTODArtifact, Set<ASTODArtifact>> diff) {
-    if (diff.getLeft() != null) {
-      printOD(diff.getLeft());
+  public void printResult(OCLInvDiffResult diff) {
+    if (diff.getUnSatCore() != null) {
+      printOD(diff.getUnSatCore());
     }
-    diff.getRight().forEach(this::printOD);
+    diff.getDiffWitness().forEach(this::printOD);
   }
 
-  public void printOPDiff(Pair<ASTODArtifact, Set<OPDiffResult>> diff) {
+  public void printOPDiff(Pair<ASTODArtifact, Set<OPWitness>> diff) {
     if (diff.getLeft() != null) {
       printOD(diff.getLeft());
     }
@@ -102,7 +103,7 @@ public abstract class OCLDiffAbstractTest {
             .count();
   }
 
-  public Pair<ASTODArtifact, Set<ASTODArtifact>> computeDiff2CD(
+  public OCLInvDiffResult computeDiff2CD(
       String posCDn, String negCDn, String posOCLn, String negOCLn) throws IOException {
     ASTCDCompilationUnit posCD = parseCD(posCDn);
     ASTCDCompilationUnit negCD = parseCD(negCDn);
@@ -110,11 +111,11 @@ public abstract class OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> negOCL = new HashSet<>();
     posOCL.add(parseOCl(posCDn, posOCLn));
     negOCL.add(parseOCl(negCDn, negOCLn));
-    return OCLDiffGenerator.CDOCLDiff(posCD, negCD, posOCL, negOCL, false);
+    return OCLDiffGenerator.oclDiff(posCD, negCD, posOCL, negOCL, false);
   }
 
-  public Pair<ASTODArtifact, Set<ASTODArtifact>> computeDiffOneCD(
-      String posCDn, String posOCLn, String negOCLn) throws IOException {
+  public OCLInvDiffResult computeDiffOneCD(String posCDn, String posOCLn, String negOCLn)
+      throws IOException {
     ASTCDCompilationUnit posCD = parseCD(posCDn);
     Set<ASTOCLCompilationUnit> posOCL = new HashSet<>();
     Set<ASTOCLCompilationUnit> negOCL = new HashSet<>();

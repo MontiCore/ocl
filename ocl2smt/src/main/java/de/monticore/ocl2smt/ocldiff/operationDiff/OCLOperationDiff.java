@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt.ocldiff;
+package de.monticore.ocl2smt.ocldiff.operationDiff;
 
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Model;
@@ -9,8 +9,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
+import de.monticore.ocl2smt.ocldiff.TraceUnsatCore;
 import de.monticore.ocl2smt.util.OCLConstraint;
-import de.monticore.ocl2smt.util.OPDiffResult;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class OCLOPDiff {
+public class OCLOperationDiff {
 
-  protected static Context ctx;
+  protected Context ctx;
 
-  protected static OPDiffResult oclWitness(
+  public OPWitness oclWitness(
       ASTCDCompilationUnit ast, Set<ASTOCLCompilationUnit> in, boolean partial) {
 
     resetContext();
@@ -64,7 +64,7 @@ public class OCLOPDiff {
     return ocl2SMTGenerator.buildOPOd(model, "Witness", partial);
   }
 
-  public static Pair<ASTODArtifact, Set<OPDiffResult>> oclDiffOp(
+  public Pair<ASTODArtifact, Set<OPWitness>> oclDiffOp(
       ASTCDCompilationUnit ast,
       Set<ASTOCLCompilationUnit> oldOcl,
       Set<ASTOCLCompilationUnit> newOcl,
@@ -72,7 +72,7 @@ public class OCLOPDiff {
 
     // setup
     resetContext();
-    Pair<ASTODArtifact, Set<OPDiffResult>> res = null;
+    Pair<ASTODArtifact, Set<OPWitness>> res = null;
     OCL2SMTStrategy.buildPreCD(ast);
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(ast, ctx);
 
@@ -92,7 +92,7 @@ public class OCLOPDiff {
     return res;
   }
   // TODO: fix this  in case of many  constraints per operation
-  private static Pair<ASTODArtifact, Set<OPDiffResult>> oclDiffSingleOp(
+  private Pair<ASTODArtifact, Set<OPWitness>> oclDiffSingleOp(
       List<ASTOCLOperationConstraint> oldConstraintList,
       List<ASTOCLOperationConstraint> newConstraintList,
       OCL2SMTGenerator ocl2SMTGenerator,
@@ -111,7 +111,7 @@ public class OCLOPDiff {
     return oclDiffOpHelper(ocl2SMTGenerator, posConstraint, negConstraints, partial);
   }
 
-  private static Map<ASTOCLMethodSignature, List<ASTOCLOperationConstraint>> sortOPConstraint(
+  private Map<ASTOCLMethodSignature, List<ASTOCLOperationConstraint>> sortOPConstraint(
       Set<ASTOCLCompilationUnit> oclSet) {
     List<ASTOCLConstraint> constraintList =
         oclSet.stream()
@@ -142,19 +142,19 @@ public class OCLOPDiff {
     return res;
   }
 
-  public static boolean containsKey(
+  public boolean containsKey(
       Map<ASTOCLMethodSignature, List<ASTOCLOperationConstraint>> map,
       ASTOCLMethodSignature method) {
     return map.keySet().stream().anyMatch(key -> key.deepEquals(method));
   }
 
-  protected static Pair<ASTODArtifact, Set<OPDiffResult>> oclDiffOpHelper(
+  protected Pair<ASTODArtifact, Set<OPWitness>> oclDiffOpHelper(
       OCL2SMTGenerator ocl2SMTGenerator,
       Set<IdentifiableBoolExpr> posConstraintList,
       Set<IdentifiableBoolExpr> negConstList,
       boolean partial) {
 
-    Set<OPDiffResult> satOdList = new HashSet<>();
+    Set<OPWitness> satOdList = new HashSet<>();
     List<ASTODLink> traceUnsat = new ArrayList<>();
 
     // add one by one all Constraints to the Solver and check if  it can always produce a Model
@@ -179,14 +179,14 @@ public class OCLOPDiff {
         TraceUnsatCore.buildUnsatOD(posConstraintList, negConstList, traceUnsat), satOdList);
   }
 
-  protected static Set<OCLConstraint> opConst2smt(
+  protected Set<OCLConstraint> opConst2smt(
       OCL2SMTGenerator ocl2SMTGenerator, Set<ASTOCLCompilationUnit> in) {
     return in.stream()
         .flatMap(p -> ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).stream())
         .collect(Collectors.toSet());
   }
 
-  public static void resetContext() {
+  public void resetContext() {
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
     ctx = new Context(cfg);

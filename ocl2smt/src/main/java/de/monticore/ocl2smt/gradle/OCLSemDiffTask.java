@@ -6,6 +6,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
+import de.monticore.ocl2smt.ocldiff.invarianteDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -15,7 +16,6 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
@@ -73,7 +73,7 @@ public abstract class OCLSemDiffTask extends DefaultTask {
     Set<ASTOCLCompilationUnit> negativeOCL =
         loadOCL(getCd().get().getAsFile(), getNegativeOCL().getFiles());
 
-    Pair<ASTODArtifact, Set<ASTODArtifact>> diff;
+    OCLInvDiffResult diff;
     Set<ASTODArtifact> witnesses;
     ASTODArtifact trace;
     // Compute Diff
@@ -81,10 +81,11 @@ public abstract class OCLSemDiffTask extends DefaultTask {
       witnesses = new HashSet<>();
       witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL, false));
     } else {
-      diff = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL);
-      witnesses = diff.getRight();
+
+      diff = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL, false);
+      witnesses = diff.getDiffWitness();
       if (getTraceOD().isPresent()) {
-        trace = diff.getLeft();
+        trace = diff.getUnSatCore();
         FileUtils.writeStringToFile(
             getTraceOD().getAsFile().get(),
             new OD4ReportFullPrettyPrinter().prettyprint(trace),

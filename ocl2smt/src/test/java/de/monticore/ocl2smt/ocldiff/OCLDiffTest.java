@@ -9,6 +9,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl2smt.ocldiff.invarianteDiff.OCLInvDiffResult;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODNamedObject;
@@ -16,7 +17,6 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,62 +32,61 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   @Test
   public void testOCLDiffOneCD() throws IOException {
 
-    Pair<ASTODArtifact, Set<ASTODArtifact>> diff =
-        computeDiffOneCD("Auction.cd", "pos.ocl", "neg.ocl");
-    printDiff(diff);
-    Assertions.assertEquals(4, diff.getRight().size());
+    OCLInvDiffResult diff = computeDiffOneCD("Auction.cd", "pos.ocl", "neg.ocl");
+    printResult(diff);
+    Assertions.assertEquals(4, diff.getDiffWitness().size());
 
-    assertTrue(checkLink("obj_False", "obj_False", diff.getLeft()));
-    assertTrue(checkLink("obj_Min_Ident_1", "obj_Ident_Between_2_And_19", diff.getLeft()));
-    assertTrue(checkLink("obj_MaxIdent_7", "obj_Ident_Between_2_And_19", diff.getLeft()));
-    assertTrue(checkLink("obj_Auction_Names", "obj_No_Auction_Facebook", diff.getLeft()));
-    assertTrue(checkLink("obj_MaxIdent_7", "obj_MaxIdent_9", diff.getLeft()));
-    assertFalse(checkLink("obj_MaxIdent_7", "obj_No_Auction_Facebook", diff.getLeft()));
+    assertTrue(checkLink("obj_False", "obj_False", diff.getUnSatCore()));
+    assertTrue(checkLink("obj_Min_Ident_1", "obj_Ident_Between_2_And_19", diff.getUnSatCore()));
+    assertTrue(checkLink("obj_MaxIdent_7", "obj_Ident_Between_2_And_19", diff.getUnSatCore()));
+    assertTrue(checkLink("obj_Auction_Names", "obj_No_Auction_Facebook", diff.getUnSatCore()));
+    assertTrue(checkLink("obj_MaxIdent_7", "obj_MaxIdent_9", diff.getUnSatCore()));
+    assertFalse(checkLink("obj_MaxIdent_7", "obj_No_Auction_Facebook", diff.getUnSatCore()));
   }
 
   @Test
   public void testOclDiff2CD_NoDiff() throws IOException {
-    Pair<ASTODArtifact, Set<ASTODArtifact>> diff =
+    OCLInvDiffResult diff =
         computeDiff2CD(
             "2CDDiff/nodiff/posCD.cd",
             "2CDDiff/nodiff/negCD.cd",
             "2CDDiff/nodiff/posOCL.ocl",
             "2CDDiff/nodiff/negOCL.ocl");
 
-    assertTrue(diff.getRight().isEmpty());
-    assertEquals(countLinks(diff.getLeft()), 3);
-    assertTrue(checkLink("obj_Pos1", "obj_Cardinality_right", diff.getLeft()));
-    assertTrue(checkLink("obj_Pos2", "obj_Cardinality_right", diff.getLeft()));
-    assertTrue(checkLink("obj_Pos3", "obj_Cardinality_left", diff.getLeft()));
+    assertTrue(diff.getDiffWitness().isEmpty());
+    assertEquals(countLinks(diff.getUnSatCore()), 3);
+    assertTrue(checkLink("obj_Pos1", "obj_Cardinality_right", diff.getUnSatCore()));
+    assertTrue(checkLink("obj_Pos2", "obj_Cardinality_right", diff.getUnSatCore()));
+    assertTrue(checkLink("obj_Pos3", "obj_Cardinality_left", diff.getUnSatCore()));
   }
 
   @Test
   public void testOclDiff2CD_diff() throws IOException {
-    Pair<ASTODArtifact, Set<ASTODArtifact>> diff =
+    OCLInvDiffResult diff =
         computeDiff2CD(
             "2CDDiff/diff/posCD.cd",
             "2CDDiff/diff/negCD.cd",
             "2CDDiff/diff/posOCL.ocl",
             "2CDDiff/diff/negOCL.ocl");
-    printDiff(diff);
-    assertEquals(diff.getRight().size(), 1);
+    printResult(diff);
+    assertEquals(diff.getDiffWitness().size(), 1);
     assertEquals(
-        diff.getRight().iterator().next().getObjectDiagram().getName(), "Cardinality_right");
-    assertEquals(countLinks(diff.getLeft()), 1);
-    assertTrue(checkLink("obj_Pos1", "obj_Cardinality_left", diff.getLeft()));
+        diff.getDiffWitness().iterator().next().getObjectDiagram().getName(), "Cardinality_right");
+    assertEquals(countLinks(diff.getUnSatCore()), 1);
+    assertTrue(checkLink("obj_Pos1", "obj_Cardinality_left", diff.getUnSatCore()));
   }
 
   @Test
   public void testOclDiff2CD_CDDiff() throws IOException {
-    Pair<ASTODArtifact, Set<ASTODArtifact>> diff =
+    OCLInvDiffResult diff =
         computeDiff2CD(
             "2CDDiff/cddiff/posCD.cd",
             "2CDDiff/cddiff/negCD.cd",
             "2CDDiff/cddiff/posOCL.ocl",
             "2CDDiff/cddiff/negOCL.ocl");
-    printDiff(diff);
-    assertTrue(diff.getLeft() == null);
-    assertTrue(diff.getRight().size() >= 1);
+    printResult(diff);
+    assertTrue(diff.getUnSatCore() == null);
+    assertTrue(diff.getDiffWitness().size() >= 1);
   }
 
   @Test

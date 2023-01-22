@@ -1,12 +1,12 @@
-package de.monticore.ocl2smt.util;
+package de.monticore.ocl2smt.ocldiff.operationDiff;
 
 import de.monticore.odbasis._ast.ASTODArtifact;
 
-public class OPDiffResult {
+public class OPWitness {
   private final ASTODArtifact preOD;
   private final ASTODArtifact postOD;
 
-  public OPDiffResult(ASTODArtifact preOD, ASTODArtifact postOD) {
+  public OPWitness(ASTODArtifact preOD, ASTODArtifact postOD) {
     this.preOD = preOD;
     this.postOD = postOD;
   }

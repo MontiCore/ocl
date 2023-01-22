@@ -4,22 +4,22 @@ package de.monticore.ocl.types.check;
 import com.google.common.collect.Lists;
 import de.monticore.types.check.*;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Collections;
 import java.util.List;
 
 public class OCLTypeCheck extends TypeCheck {
 
   protected static final List<String> collections =
-          Collections.unmodifiableList(Lists.newArrayList(
-          "java.util.List",
-          "java.util.Set",
-          "java.util.Collection",
-          "java.util.Map",
-          "List",
-          "Set",
-          "Collection",
-          "Map"));
+      Collections.unmodifiableList(
+          Lists.newArrayList(
+              "java.util.List",
+              "java.util.Set",
+              "java.util.Collection",
+              "java.util.Map",
+              "List",
+              "Set",
+              "Collection",
+              "Map"));
 
   protected OCLTypeCheck() {}
 
