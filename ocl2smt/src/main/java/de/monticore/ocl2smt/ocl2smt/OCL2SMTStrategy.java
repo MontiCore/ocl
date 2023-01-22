@@ -147,7 +147,7 @@ public class OCL2SMTStrategy {
   }
 
   private static Pair<ASTODNamedObject, ASTODNamedObject> splitPreObject(ASTODNamedObject object) {
-    //split attributes
+    // split attributes
     List<ASTODAttribute> postAttributeList =
         object.getODAttributeList().stream()
             .filter(a -> !isPre(a.getName()))
@@ -176,8 +176,6 @@ public class OCL2SMTStrategy {
     preLink.getODLinkRightSide().setRole(removePre(preLink.getODLinkRightSide().getRole()));
     return preLink;
   }
-
-
 
   public static void buildPreCD(ASTCDCompilationUnit ast) {
     final BuildPreCDTrafo preAttributeTrafo = new BuildPreCDTrafo();

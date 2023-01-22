@@ -135,13 +135,9 @@ public class OCLDiffGenerator {
           ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(new ArrayList<>(posConstraintList));
 
       if (solver.check() == Status.SATISFIABLE) {
-        satOdList.add(
-            ocl2SMTGenerator
-                .buildOd(
-                    solver.getModel(),
-                    negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0],
-                    partial)
-                .get());
+        String invName =
+            negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0];
+        satOdList.add(ocl2SMTGenerator.buildOd(solver.getModel(), invName, partial).get());
       } else {
         traceUnsat.addAll(TraceUnsatCore.traceUnsatCore(solver));
       }

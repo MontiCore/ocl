@@ -90,11 +90,18 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
 
     double preSalary = Double.parseDouble(getAttribute(preThisObj, "salary"));
     double postSalary = Double.parseDouble(getAttribute(postThisObj, "salary"));
-    Assertions.assertEquals(preSalary + 100, postSalary );
+    Assertions.assertEquals(preSalary + 100, postSalary);
 
-   String result =  diff.getRight().iterator().next().getPostOD().getObjectDiagram().getStereotype().getValue("result");
+    String result =
+        diff.getRight()
+            .iterator()
+            .next()
+            .getPostOD()
+            .getObjectDiagram()
+            .getStereotype()
+            .getValue("result");
 
-   Assertions.assertEquals(result, "false");
+    Assertions.assertEquals(result, "false");
     printOPDiff(diff);
   }
 }

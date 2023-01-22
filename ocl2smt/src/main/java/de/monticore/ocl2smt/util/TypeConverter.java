@@ -77,9 +77,6 @@ public class TypeConverter {
       return typeMap.get(type);
     } else {
       Optional<Sort> res = getSortFromCD2SMT(type);
-      if (res.isEmpty()) {
-        System.out.println("Je suis un idiot");
-      }
       return res.get();
     }
   }

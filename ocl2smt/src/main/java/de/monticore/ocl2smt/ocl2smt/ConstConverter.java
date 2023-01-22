@@ -73,8 +73,8 @@ public class ConstConverter {
 
   public OCLType getType(Expr<? extends Sort> expr) {
     if (varTypes.containsKey(expr)) {
-      return varTypes.get(expr); // Person p
+      return varTypes.get(expr);
     }
-    return OCLType.buildOCLType(expr.getSort().getName().toString()); // x*x
+    return OCLType.buildOCLType(expr.getSort().getName().toString());
   }
 }

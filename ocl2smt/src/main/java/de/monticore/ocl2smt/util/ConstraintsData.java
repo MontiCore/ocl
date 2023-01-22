@@ -7,11 +7,10 @@ import java.util.*;
 
 /** this class contains all data obtains during the conversion of a OCLConstraint */
 public class ConstraintsData {
-  private OCLContext oclContext;
+  private final OCLContext oclContext;
+  public Map<String, Expr<? extends Sort>> varNames;
 
-  public Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
-
-  public Set<BoolExpr> genConstraints = new HashSet<>();
+  public Set<BoolExpr> genConstraints;
 
   public ConstraintsData() {
     this.varNames = new HashMap<>();
@@ -36,7 +35,7 @@ public class ConstraintsData {
   }
 
   public boolean isPresentContext() {
-    return oclContext != null;
+    return oclContext.getType() != null && oclContext.getValue() != null;
   }
 
   public void removeVar(String name) {
@@ -61,11 +60,5 @@ public class ConstraintsData {
 
   public OCLType getOpResultType() {
     return oclContext.getOpResultType();
-  }
-
-  public void reset() {
-    this.genConstraints.clear();
-    ;
-    this.varNames.clear();
   }
 }

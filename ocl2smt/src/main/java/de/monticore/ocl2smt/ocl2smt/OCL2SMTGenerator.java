@@ -15,18 +15,11 @@ import java.util.function.Function;
 
 public class OCL2SMTGenerator {
   protected OCLExpression2SMT expression2SMT;
-
   private final Context ctx;
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
-
     expression2SMT = new OCLExpression2SMT(ast, ctx);
-
     this.ctx = ctx;
-  }
-
-  public OCLExpression2SMT getExpression2SMT() { // TODo remove later
-    return expression2SMT;
   }
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
@@ -118,6 +111,7 @@ public class OCL2SMTGenerator {
     }
     return bool -> bool;
   }
+
   // TODO:: fix   OCLOperationSignature = OCLMethodSignature | OCLConstructorSignature
   void openOpScope(ASTOCLOperationSignature node, OCLExpression2SMT opConverter) {
     ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
@@ -176,5 +170,11 @@ public class OCL2SMTGenerator {
 
   public Optional<ASTODArtifact> buildOd(Model model, String ODName, boolean partial) {
     return expression2SMT.cd2smtGenerator.smt2od(model, partial, ODName);
+  }
+
+  public OPDiffResult buildOPOd(Model model, String odName, boolean partial) {
+    Optional<ASTODArtifact> od = buildOd(model, odName, partial);
+    assert od.isPresent();
+    return OCL2SMTStrategy.splitPreOD(od.get(), model, expression2SMT.getConstrData());
   }
 }

@@ -11,7 +11,6 @@ import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTIfThenElseExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTImpliesExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLAtPreQualification;
-import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.util.*;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;

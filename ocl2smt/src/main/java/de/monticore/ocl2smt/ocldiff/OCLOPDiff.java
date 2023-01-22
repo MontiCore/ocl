@@ -23,7 +23,7 @@ public class OCLOPDiff {
 
   protected static Context ctx;
 
-  protected static OPDiffResult oclWitness( // TODO: Unsatcore when not Consistent
+  protected static OPDiffResult oclWitness(
       ASTCDCompilationUnit ast, Set<ASTOCLCompilationUnit> in, boolean partial) {
 
     resetContext();
@@ -46,7 +46,7 @@ public class OCLOPDiff {
             .map(OCLConstraint::getPostCond)
             .collect(Collectors.toList()));
 
-    // add the invariants
+    // add the invariants    TODO:prePost with Invariants
     solversConstraints.addAll(
         constraints.stream()
             .filter(OCLConstraint::isInvariant)
@@ -61,11 +61,7 @@ public class OCLOPDiff {
     }
 
     Model model = solver.getModel();
-    Optional<ASTODArtifact> od = ocl2SMTGenerator.buildOd(model, "Witness", partial);
-    assert od.isPresent();
-
-    return OCL2SMTStrategy.splitPreOD(
-        od.get(), model, ocl2SMTGenerator.getExpression2SMT().getConstrData());
+    return ocl2SMTGenerator.buildOPOd(model, "Witness", partial);
   }
 
   public static Pair<ASTODArtifact, Set<OPDiffResult>> oclDiffOp(
@@ -111,12 +107,8 @@ public class OCLOPDiff {
         Model model = solver.getModel();
         String invName =
             negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0];
-        Optional<ASTODArtifact> od = ocl2SMTGenerator.buildOd(model, invName, partial);
-        assert od.isPresent();
 
-        satOdList.add(
-            OCL2SMTStrategy.splitPreOD(
-                od.get(), model, ocl2SMTGenerator.getExpression2SMT().getConstrData()));
+        satOdList.add(ocl2SMTGenerator.buildOPOd(model, invName, partial));
 
       } else {
         traceUnsat.addAll(TraceUnsatCore.traceUnsatCore(solver));
