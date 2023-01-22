@@ -9,16 +9,22 @@ import java.util.*;
 public class ConstraintsData {
   private OCLContext oclContext;
 
-  public final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
+  public Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
 
-  public final Set<BoolExpr> genConstraints = new HashSet<>();
+  public Set<BoolExpr> genConstraints = new HashSet<>();
+
+  public ConstraintsData() {
+    this.varNames = new HashMap<>();
+    this.genConstraints = new HashSet<>();
+    oclContext = new OCLContext();
+  }
 
   public void addVar(String name, Expr<? extends Sort> obj) {
     varNames.put(name, obj);
   }
 
   public void setOCLContext(Expr<? extends Sort> obj, OCLType type) {
-    oclContext = new OCLContext(type, obj);
+    oclContext.setOClContext(obj, type);
   }
 
   public boolean containsVar(String name) {
@@ -43,5 +49,23 @@ public class ConstraintsData {
 
   public Expr<? extends Sort> getOClContextValue() {
     return oclContext.getValue();
+  }
+
+  public void setOpResult(Expr<? extends Sort> result, OCLType type) {
+    oclContext.setResult(result, type);
+  }
+
+  public Expr<? extends Sort> getOpResult() {
+    return oclContext.getResult();
+  }
+
+  public OCLType getOpResultType() {
+    return oclContext.getOpResultType();
+  }
+
+  public void reset() {
+    this.genConstraints.clear();
+    ;
+    this.varNames.clear();
   }
 }

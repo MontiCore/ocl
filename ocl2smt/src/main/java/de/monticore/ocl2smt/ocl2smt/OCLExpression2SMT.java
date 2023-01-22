@@ -32,13 +32,14 @@ public class OCLExpression2SMT {
 
   protected final Context ctx;
   protected final CD2SMTGenerator cd2smtGenerator;
-  protected ConstraintsData constrData = new ConstraintsData();
+  protected ConstraintsData constrData;
   protected ConstConverter constConverter;
 
   public OCLExpression2SMT(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
     constConverter = new ConstConverter(ctx);
     this.ctx = ctx;
     cd2smtGenerator = new CD2SMTGenerator();
+    constrData = new ConstraintsData();
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
     TypeConverter.setup(cd2smtGenerator);
   }

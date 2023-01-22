@@ -5,15 +5,12 @@ import com.microsoft.z3.Model;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cdassociation._ast.ASTCDAssocLeftSide;
-import de.monticore.cdassociation._ast.ASTCDAssocRightSide;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.trafo.BuildPreCDTrafo;
 import de.monticore.ocl2smt.util.ConstraintsData;
+import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.OPDiffResult;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -25,7 +22,6 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
-import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -112,30 +108,33 @@ public class OCL2SMTStrategy {
 
   private static OPDiffResult setStereotypes(
       OPDiffResult diff, Model model, ConstraintsData constraintsData) {
-    setStereotypes(diff.getPreOD(), model, constraintsData);
-    setStereotypes(diff.getPostOD(), model, constraintsData);
+    setThisStereotypes(diff.getPreOD(), model, constraintsData);
+    setThisStereotypes(diff.getPostOD(), model, constraintsData);
+
+    setResultStereotypes(diff.getPostOD(), model, constraintsData);
     return diff;
   }
 
-  private static void setThisModifier(ASTODNamedObject obj) {
-    obj.setModifier(buildModifier("This", "true"));
-  }
-
-  private ASTModifier mkResultModifier(String value) {
+  private static ASTModifier mkResultModifier(String value) {
     return buildModifier("Result", value);
   }
 
-  private ASTStereotype mkResultStereotype(String value) {
-    return buildStereotype("Result", value);
-  }
-
-  private static void setStereotypes(
-      ASTODArtifact od, Model model, ConstraintsData constraintsData) {
+  private static void setThisStereotypes(ASTODArtifact od, Model model, ConstraintsData constData) {
 
     for (ASTODNamedObject obj : OCLHelper.getObjectList(od)) {
-      if (isThis(obj, model, constraintsData.getOClContextValue())) {
-        setThisModifier(obj);
+      if (isThis(obj, model, constData.getOClContextValue())) {
+        obj.setModifier(buildModifier("This", "true"));
       }
+    }
+  }
+
+  private static void setResultStereotypes(
+      ASTODArtifact od, Model model, ConstraintsData constData) {
+
+    OCLType type = constData.getOpResultType();
+    if (type.isPrimitiv()) {
+      String res = model.evaluate(constData.getOpResult(), true).getSExpr();
+      od.getObjectDiagram().setStereotype(buildStereotype("Result", res));
     }
   }
 
@@ -177,7 +176,7 @@ public class OCL2SMTStrategy {
     return preLink;
   }
 
-  private static ASTCDAssociation getPreAssociation(
+  /* private static ASTCDAssociation getPreAssociation(
       ASTCDAssociation association, ASTCDDefinition cd) {
 
     ASTCDAssocRightSide right = association.getRight();
@@ -201,7 +200,7 @@ public class OCL2SMTStrategy {
             + " not found ",
         "Pre Assoc Not Found");
     return null;
-  }
+  }*/
 
   public static void buildPreCD(ASTCDCompilationUnit ast) {
     final BuildPreCDTrafo preAttributeTrafo = new BuildPreCDTrafo();

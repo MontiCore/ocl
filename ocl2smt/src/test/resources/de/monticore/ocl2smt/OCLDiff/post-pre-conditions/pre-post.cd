@@ -4,9 +4,10 @@ package docs;
 classdiagram Auction {
 
  class  Person {
+   double salary;
+    int age ;
    boolean changeCompany(String n) ;
-   double withdraw(int accountID, double amount);
-   int age ;
+   int increaseSalary(double amount);
  }
 
  class Company {
@@ -14,12 +15,6 @@ classdiagram Auction {
    int employees ;
  }
 
- class Account {
-  int id ;
-  double balance ;
- }
 
-
- association [*] Person -- (account)Account [*] ;
  association [*] Person -- (company)Company [1] ;
 }

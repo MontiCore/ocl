@@ -1,7 +1,6 @@
 package de.monticore.ocl2smt.ocl2smt;
 
 import com.microsoft.z3.Expr;
-import com.microsoft.z3.Model;
 import com.microsoft.z3.Sort;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.expressions.commonexpressions._ast.ASTBracketExpression;
@@ -14,11 +13,7 @@ import de.monticore.ocl.oclexpressions._ast.ASTImpliesExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLAtPreQualification;
 import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl2smt.helpers.OCLHelper;
-import de.monticore.ocl2smt.util.OCLType;
-import de.monticore.ocl2smt.util.OPDiffResult;
-import de.monticore.ocl2smt.util.SMTSet;
-import de.monticore.ocl2smt.util.TypeConverter;
-import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.ocl2smt.util.*;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
@@ -28,10 +23,13 @@ public class OCLOPExpression2SMT extends OCLExpression2SMT {
 
   public OCLOPExpression2SMT(OCLExpression2SMT expr) {
     super(expr.cd2smtGenerator.getClassDiagram(), expr.ctx);
+    this.constrData = expr.constrData;
   }
 
-  public OPDiffResult splitPreOD(ASTODArtifact od, Model model) {
-    return strategy.splitPreOD(od, model, constrData);
+  @Override
+  public void init() {
+    constrData.genConstraints.clear();
+    constrData.varNames.clear();
   }
 
   @Override
@@ -83,10 +81,12 @@ public class OCLOPExpression2SMT extends OCLExpression2SMT {
     }
 
     if (res == null) {
-      res =
-          declVariable(
-              TypeConverter.buildOCLType((VariableSymbol) node.getDefiningSymbol().get()),
-              node.getName());
+      OCLType type = TypeConverter.buildOCLType((VariableSymbol) node.getDefiningSymbol().get());
+      res = declVariable(type, node.getName());
+
+      if (node.getName().equals("result")) {
+        constrData.setOpResult(res, type);
+      }
     }
 
     return res;
@@ -121,13 +121,13 @@ public class OCLOPExpression2SMT extends OCLExpression2SMT {
     // TODO::update to takeCare when the attribute is inherited
     String attributeName = node.getName();
     if (isPre) {
-      attributeName = node.getName();
+      attributeName = OCL2SMTStrategy.mkPre(node.getName());
     }
     return Optional.ofNullable(
         OCLHelper.getAttribute(
             constrData.getOClContextValue(),
             constrData.getOCLContextType(),
-            node.getName(),
+            attributeName,
             cd2smtGenerator));
   }
 

@@ -12,6 +12,7 @@ import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
 import de.monticore.ocl2smt.util.OCLConstraint;
 import de.monticore.ocl2smt.util.OPDiffResult;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -40,7 +41,10 @@ public class OCLOPDiff {
 
     // add the post condition
     solversConstraints.addAll(
-        constraints.stream().map(OCLConstraint::getPostCond).collect(Collectors.toList()));
+        constraints.stream()
+            .filter(OCLConstraint::isOpConstraint)
+            .map(OCLConstraint::getPostCond)
+            .collect(Collectors.toList()));
 
     // add the invariants
     solversConstraints.addAll(
@@ -66,47 +70,67 @@ public class OCLOPDiff {
 
   public static Pair<ASTODArtifact, Set<OPDiffResult>> oclDiffOp(
       ASTCDCompilationUnit ast,
-      Set<ASTOCLCompilationUnit> posOcl,
-      Set<ASTOCLCompilationUnit> negOcl,
+      Set<ASTOCLCompilationUnit> oldOcl,
+      Set<ASTOCLCompilationUnit> newOcl,
       boolean partial) {
     resetContext();
     OCL2SMTStrategy.buildPreCD(ast);
 
     //  oclWitness(ast,posOcl,false) ;
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(ast, ctx);
-    Set<OCLConstraint> constraint1 = opConst2smt(ocl2SMTGenerator, posOcl);
-    Set<OCLConstraint> constraint2 = opConst2smt(ocl2SMTGenerator, negOcl);
+    Set<OCLConstraint> oldConstr = opConst2smt(ocl2SMTGenerator, oldOcl);
+    Set<OCLConstraint> newConstr = opConst2smt(ocl2SMTGenerator, newOcl);
 
     Set<IdentifiableBoolExpr> posConstraint = new HashSet<>();
-    posConstraint.add(constraint1.iterator().next().getPreCond());
-    posConstraint.add(constraint1.iterator().next().getPostCond());
-    posConstraint.add(constraint2.iterator().next().getPreCond());
+    posConstraint.add(newConstr.iterator().next().getPreCond());
+    posConstraint.add(newConstr.iterator().next().getPostCond());
+    posConstraint.add(oldConstr.iterator().next().getPreCond());
 
     Set<IdentifiableBoolExpr> negConstraints = new HashSet<>();
-    negConstraints.add(constraint2.iterator().next().getPostCond().negate(ctx));
+    negConstraints.add(oldConstr.iterator().next().getPostCond().negate(ctx));
 
-    return diff2OPDiff(
-        OCLDiffGenerator.oclDiffHelper(ocl2SMTGenerator, posConstraint, negConstraints, partial),
-        ocl2SMTGenerator);
+    return oclDiffOpHelper(ocl2SMTGenerator, posConstraint, negConstraints, partial);
   }
 
-  public static Pair<ASTODArtifact, Set<OPDiffResult>> diff2OPDiff(
-      Pair<ASTODArtifact, Set<ASTODArtifact>> diff, OCL2SMTGenerator ocl2SMTGenerator) {
-    Set<OPDiffResult> diffWitness = new HashSet<>();
-    for (ASTODArtifact element : diff.getRight()) {
-      // diffWitness.add(ocl2SMTGenerator.splitPreOD(element));
-    }
+  protected static Pair<ASTODArtifact, Set<OPDiffResult>> oclDiffOpHelper(
+      OCL2SMTGenerator ocl2SMTGenerator,
+      Set<IdentifiableBoolExpr> posConstraintList,
+      Set<IdentifiableBoolExpr> negConstList,
+      boolean partial) {
 
-    return new ImmutablePair<>(diff.getLeft(), diffWitness);
+    Set<OPDiffResult> satOdList = new HashSet<>();
+    List<ASTODLink> traceUnsat = new ArrayList<>();
+
+    // add one by one all Constraints to the Solver and check if  it can always produce a Model
+    for (IdentifiableBoolExpr negConstraint : negConstList) {
+      posConstraintList.add(negConstraint);
+      Solver solver =
+          ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(new ArrayList<>(posConstraintList));
+
+      if (solver.check() == Status.SATISFIABLE) {
+        Model model = solver.getModel();
+        String invName =
+            negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0];
+        Optional<ASTODArtifact> od = ocl2SMTGenerator.buildOd(model, invName, partial);
+        assert od.isPresent();
+
+        satOdList.add(
+            OCL2SMTStrategy.splitPreOD(
+                od.get(), model, ocl2SMTGenerator.getExpression2SMT().getConstrData()));
+
+      } else {
+        traceUnsat.addAll(TraceUnsatCore.traceUnsatCore(solver));
+      }
+      posConstraintList.remove(negConstraint);
+    }
+    return new ImmutablePair<>(
+        TraceUnsatCore.buildUnsatOD(posConstraintList, negConstList, traceUnsat), satOdList);
   }
 
   protected static Set<OCLConstraint> opConst2smt(
       OCL2SMTGenerator ocl2SMTGenerator, Set<ASTOCLCompilationUnit> in) {
     return in.stream()
-        .flatMap(
-            p ->
-                ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).stream()
-                    .filter(OCLConstraint::isOpConstraint))
+        .flatMap(p -> ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).stream())
         .collect(Collectors.toSet());
   }
 

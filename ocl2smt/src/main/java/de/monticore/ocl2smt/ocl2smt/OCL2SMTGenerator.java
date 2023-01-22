@@ -62,7 +62,7 @@ public class OCL2SMTGenerator {
    * @return the Constraint in SMT
    */
   public OCLConstraint convertConstr(ASTOCLConstraint constraint) {
-    expression2SMT.init();
+
     OCLConstraint res = null;
     if (constraint instanceof ASTOCLInvariant) {
       res = convertInv((ASTOCLInvariant) constraint);
@@ -85,6 +85,7 @@ public class OCL2SMTGenerator {
   }
 
   protected OCLConstraint convertInv(ASTOCLInvariant invariant) {
+    expression2SMT.init();
     SourcePosition srcPos = invariant.get_SourcePositionStart();
 
     // convert parameter declaration  in context
@@ -154,6 +155,7 @@ public class OCL2SMTGenerator {
 
   public OCLConstraint convertOpConst(ASTOCLOperationConstraint node) {
     OCLOPExpression2SMT opConverter = new OCLOPExpression2SMT(expression2SMT);
+    opConverter.init();
     expression2SMT = opConverter; // TODO: fix that
     openOpScope(node.getOCLOperationSignature(), opConverter);
 

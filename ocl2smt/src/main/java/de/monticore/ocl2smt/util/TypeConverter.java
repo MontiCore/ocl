@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class TypeConverter {
-
+  // todo delete static variables ;
   public static Map<OCLType, Sort> typeMap;
   protected static Context ctx;
   protected static CD2SMTGenerator cd2SMTGenerator;
