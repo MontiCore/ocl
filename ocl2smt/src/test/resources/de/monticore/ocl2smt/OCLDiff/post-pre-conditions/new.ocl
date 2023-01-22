@@ -3,7 +3,7 @@ package docs;
 ocl Person {
 
    context boolean Person.increaseSalary(double amount)
-     pre :   salary > 2000   && amount > 100;
+     pre :   salary > 0   && amount == 100;
 
      post: salary == salary@pre + amount &&
            result == true;

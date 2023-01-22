@@ -84,7 +84,17 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     notin.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/old.ocl"));
 
     Pair<ASTODArtifact, Set<OPDiffResult>> diff = OCLOPDiff.oclDiffOp(ast, in, notin, false);
-    //  Assertions.assertEquals(countLinks(diff.getLeft()), 0);
+
+    ASTODNamedObject preThisObj = getThisObj(diff.getRight().iterator().next().getPreOD());
+    ASTODNamedObject postThisObj = getThisObj(diff.getRight().iterator().next().getPostOD());
+
+    double preSalary = Double.parseDouble(getAttribute(preThisObj, "salary"));
+    double postSalary = Double.parseDouble(getAttribute(postThisObj, "salary"));
+    Assertions.assertEquals(preSalary + 100, postSalary );
+
+   String result =  diff.getRight().iterator().next().getPostOD().getObjectDiagram().getStereotype().getValue("result");
+
+   Assertions.assertEquals(result, "false");
     printOPDiff(diff);
   }
 }

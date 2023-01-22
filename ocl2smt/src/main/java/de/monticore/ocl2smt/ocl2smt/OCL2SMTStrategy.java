@@ -134,7 +134,7 @@ public class OCL2SMTStrategy {
     OCLType type = constData.getOpResultType();
     if (type.isPrimitiv()) {
       String res = model.evaluate(constData.getOpResult(), true).getSExpr();
-      od.getObjectDiagram().setStereotype(buildStereotype("Result", res));
+      od.getObjectDiagram().setStereotype(buildStereotype("result", res));
     }
   }
 
@@ -147,6 +147,7 @@ public class OCL2SMTStrategy {
   }
 
   private static Pair<ASTODNamedObject, ASTODNamedObject> splitPreObject(ASTODNamedObject object) {
+    //split attributes
     List<ASTODAttribute> postAttributeList =
         object.getODAttributeList().stream()
             .filter(a -> !isPre(a.getName()))
@@ -176,31 +177,7 @@ public class OCL2SMTStrategy {
     return preLink;
   }
 
-  /* private static ASTCDAssociation getPreAssociation(
-      ASTCDAssociation association, ASTCDDefinition cd) {
 
-    ASTCDAssocRightSide right = association.getRight();
-    ASTCDAssocLeftSide left = association.getLeft();
-    for (ASTCDAssociation preAssoc : cd.getCDAssociationsList()) {
-      ASTCDAssocRightSide preRight = preAssoc.getRight();
-      ASTCDAssocLeftSide preLeft = preAssoc.getLeft();
-      if (right.getMCQualifiedType().equals(preRight.getMCQualifiedType())
-          && right.getMCQualifiedType().equals(preRight.getMCQualifiedType())
-          && OCL2SMTStrategy.mkPre(left.getCDRole().getName()).equals(preLeft.getCDRole().getName())
-          && OCL2SMTStrategy.mkPre(right.getCDRole().getName())
-              .equals(preRight.getCDRole().getName())) {
-        return preAssoc;
-      }
-    }
-    Log.info(
-        "pre-association "
-            + association.getLeftQualifiedName().getQName()
-            + " -- "
-            + association.getRightQualifiedName().getQName()
-            + " not found ",
-        "Pre Assoc Not Found");
-    return null;
-  }*/
 
   public static void buildPreCD(ASTCDCompilationUnit ast) {
     final BuildPreCDTrafo preAttributeTrafo = new BuildPreCDTrafo();
