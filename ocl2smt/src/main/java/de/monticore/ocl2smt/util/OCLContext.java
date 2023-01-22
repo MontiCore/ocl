@@ -7,7 +7,6 @@ public class OCLContext {
   private OCLType type;
   private Expr<? extends Sort> value;
   private Expr<? extends Sort> result;
-
   private OCLType opResultType;
 
   public Expr<? extends Sort> getValue() {

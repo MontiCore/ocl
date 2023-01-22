@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt.ocl2smt;
+package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
 import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
 
@@ -18,6 +18,8 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl2smt.helpers.OCLHelper;
+import de.monticore.ocl2smt.ocl2smt.ConstConverter;
+import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.util.*;
 import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -44,17 +46,11 @@ public class OCLExpression2SMT {
     TypeConverter.setup(cd2smtGenerator);
   }
 
-  public ConstraintsData getConstrData() {
-    return constrData;
-  }
-
-  public OCLExpression2SMT(
-      ASTCDCompilationUnit astcdCompilationUnit,
-      de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator ocl2SMTGenerator) {
+  public OCLExpression2SMT(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
     constConverter = new ConstConverter(ocl2SMTGenerator.getCtx());
     this.ctx = ocl2SMTGenerator.getCtx();
     cd2smtGenerator = ocl2SMTGenerator.getCD2SMTGenerator();
-    cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
+    cd2smtGenerator.cd2smt(ast, ctx);
     TypeConverter.setup(cd2smtGenerator);
   }
 
@@ -63,8 +59,55 @@ public class OCLExpression2SMT {
     constConverter.reset();
   }
 
-  protected ASTCDDefinition getCD() {
+  public Set<BoolExpr> getGenConstraint() {
+    return constrData.genConstraints;
+  }
+
+  public ASTCDDefinition getCD() {
     return cd2smtGenerator.getClassDiagram().getCDDefinition();
+  }
+
+  public CD2SMTGenerator getCd2smtGenerator() {
+    return cd2smtGenerator;
+  }
+
+  public ConstraintsData getConstrData() {
+    return constrData;
+  }
+
+  public BoolExpr convertBoolExpr(ASTExpression node) {
+    Optional<BoolExpr> result = convertBoolExprOpt(node);
+    if (result.isEmpty()) {
+      Log.error(
+          "the conversion of expressions with the type "
+              + node.getClass().getName()
+              + "is   not totally  implemented");
+      assert false;
+    }
+    return result.get();
+  }
+
+  public void setOCLContext(Expr<? extends Sort> obj, OCLType oclType) {
+    constrData.setOCLContext(obj, oclType);
+  }
+
+  public Expr<? extends Sort> convertExpr(ASTExpression node) {
+    Expr<? extends Sort> res;
+    Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
+    res = convertGenExprOpt(node).orElse(null);
+    if (res == null) {
+      res = convertBoolExprOpt(node).orElse(null);
+      if (res == null) {
+        res = convertExprArith(node);
+      }
+    }
+    return res;
+  }
+
+  public Expr<? extends Sort> declVariable(OCLType type, String name) {
+    Expr<? extends Sort> res = constConverter.declObj(type, name);
+    constrData.addVar(name, res);
+    return res;
   }
 
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
@@ -107,18 +150,6 @@ public class OCLExpression2SMT {
     }
 
     return Optional.of(result);
-  }
-
-  protected BoolExpr convertBoolExpr(ASTExpression node) {
-    Optional<BoolExpr> result = convertBoolExprOpt(node);
-    if (result.isEmpty()) {
-      Log.error(
-          "the conversion of expressions with the type "
-              + node.getClass().getName()
-              + "is   not totally  implemented");
-      assert false;
-    }
-    return result.get();
   }
 
   protected Optional<ArithExpr<? extends ArithSort>> convertExprArithOpt(ASTExpression node) {
@@ -180,21 +211,7 @@ public class OCLExpression2SMT {
     return Optional.of(res);
   }
 
-  protected Expr<? extends Sort> convertExpr(ASTExpression node) {
-    Expr<? extends Sort> res;
-    Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
-    res = convertGenExprOpt(node).orElse(null);
-    if (res == null) {
-      res = convertBoolExprOpt(node).orElse(null);
-      if (res == null) {
-        res = convertExprArith(node);
-      }
-    }
-    return res;
-  }
-
-  // ----------------------Arithmetic
-  // ----------------------------------------
+  // ----------------------Arit--------------------
   protected ArithExpr<? extends ArithSort> convertMinPref(ASTMinusPrefixExpression node) {
     return ctx.mkMul(ctx.mkInt(-1), convertExprArith(node.getExpression()));
   }
@@ -270,7 +287,7 @@ public class OCLExpression2SMT {
   }
 
   /*------------------------------------quantified expressions----------------------------------------------------------*/
-  Map<Expr<? extends Sort>, Optional<ASTExpression>> openScope(
+  private Map<Expr<? extends Sort>, Optional<ASTExpression>> openScope(
       List<ASTInDeclaration> inDeclarations) {
     Map<Expr<? extends Sort>, Optional<ASTExpression>> variableList = new HashMap<>();
     for (ASTInDeclaration decl : inDeclarations) {
@@ -750,11 +767,5 @@ public class OCLExpression2SMT {
             null);
     constrData.genConstraints.add(rel_is_assocFunc);
     return rel;
-  }
-
-  protected Expr<? extends Sort> declVariable(OCLType type, String name) {
-    Expr<? extends Sort> res = constConverter.declObj(type, name);
-    constrData.addVar(name, res);
-    return res;
   }
 }

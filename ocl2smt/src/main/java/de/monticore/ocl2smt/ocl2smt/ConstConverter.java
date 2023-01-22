@@ -65,7 +65,7 @@ public class ConstConverter {
     return context.mkFP(node.getValue(), context.mkFPSortDouble());
   }
 
-  protected Expr<? extends Sort> declObj(OCLType type, String name) {
+  public Expr<? extends Sort> declObj(OCLType type, String name) {
     Expr<? extends Sort> expr = context.mkConst(name, TypeConverter.getSort(type));
     varTypes.put(expr, type);
     return expr;

@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt.ocl2smt;
+package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
@@ -12,7 +12,10 @@ import de.monticore.ocl.oclexpressions._ast.ASTIfThenElseExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTImpliesExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLAtPreQualification;
 import de.monticore.ocl2smt.helpers.OCLHelper;
-import de.monticore.ocl2smt.util.*;
+import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
+import de.monticore.ocl2smt.util.OCLType;
+import de.monticore.ocl2smt.util.SMTSet;
+import de.monticore.ocl2smt.util.TypeConverter;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
@@ -29,6 +32,14 @@ public class OCLOPExpression2SMT extends OCLExpression2SMT {
   public void init() {
     constrData.genConstraints.clear();
     constrData.varNames.clear();
+  }
+
+  public void enterPreCond() {
+    strategy.enterPreCond();
+  }
+
+  public void exitPreCond() {
+    strategy.exitPreCond();
   }
 
   @Override

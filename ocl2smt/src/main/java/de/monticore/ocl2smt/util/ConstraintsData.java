@@ -61,4 +61,8 @@ public class ConstraintsData {
   public OCLType getOpResultType() {
     return oclContext.getOpResultType();
   }
+
+  public boolean isPresentResult() {
+    return (oclContext.getResult() != null || oclContext.getOpResultType() != null);
+  }
 }

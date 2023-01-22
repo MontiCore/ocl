@@ -6,6 +6,8 @@ import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
+import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpression2SMT;
+import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLOPExpression2SMT;
 import de.monticore.ocl2smt.util.*;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.SourcePosition;
@@ -32,7 +34,7 @@ public class OCL2SMTGenerator {
   }
 
   public CD2SMTGenerator getCD2SMTGenerator() {
-    return expression2SMT.cd2smtGenerator;
+    return expression2SMT.getCd2smtGenerator();
   }
   /**
    * Convert an ASTOCLArtifact in a Set of SMT BoolExpr
@@ -73,7 +75,7 @@ public class OCL2SMTGenerator {
   protected Expr<? extends Sort> convertCtxParDec(ASTOCLParamDeclaration node) {
     OCLType oclType = TypeConverter.buildOCLType(node.getMCType());
     Expr<? extends Sort> obj = expression2SMT.declVariable(oclType, node.getName());
-    expression2SMT.constrData.setOCLContext(obj, oclType);
+    expression2SMT.setOCLContext(obj, oclType);
     return obj;
   }
 
@@ -88,7 +90,7 @@ public class OCL2SMTGenerator {
     BoolExpr inv = invCtx.apply(expression2SMT.convertBoolExpr(invariant.getExpression()));
 
     // add general invConstraints
-    for (BoolExpr constr : expression2SMT.constrData.genConstraints) {
+    for (BoolExpr constr : expression2SMT.getGenConstraint()) {
       inv = ctx.mkAnd(inv, constr);
     }
 
@@ -120,19 +122,19 @@ public class OCL2SMTGenerator {
     // declare the object to which the method will be applied
     Expr<? extends Sort> obj = opConverter.declVariable(type, type.getName() + "__This");
 
-    opConverter.constrData.setOCLContext(obj, type);
+    opConverter.setOCLContext(obj, type);
   }
 
   private BoolExpr convertPreCond(ASTOCLOperationConstraint node, OCLOPExpression2SMT opConverter) {
-    opConverter.strategy.enterPreCond();
+    opConverter.enterPreCond();
 
     // TODO:fix if many pre conditions
     BoolExpr pre = opConverter.convertBoolExpr(node.getPreCondition(0));
-    for (BoolExpr constr : opConverter.constrData.genConstraints) {
+    for (BoolExpr constr : opConverter.getGenConstraint()) {
       pre = ctx.mkAnd(pre, constr);
     }
 
-    opConverter.strategy.exitPreCond();
+    opConverter.exitPreCond();
     return pre;
   }
 
@@ -140,7 +142,7 @@ public class OCL2SMTGenerator {
       ASTOCLOperationConstraint node, OCLOPExpression2SMT opConverter) {
     // TODO : fix if many Post conditions
     BoolExpr post = opConverter.convertBoolExpr(node.getPostCondition(0));
-    for (BoolExpr constr : opConverter.constrData.genConstraints) {
+    for (BoolExpr constr : opConverter.getGenConstraint()) {
       post = ctx.mkAnd(post, constr);
     }
 
@@ -169,7 +171,7 @@ public class OCL2SMTGenerator {
   }
 
   public Optional<ASTODArtifact> buildOd(Model model, String ODName, boolean partial) {
-    return expression2SMT.cd2smtGenerator.smt2od(model, partial, ODName);
+    return expression2SMT.getCd2smtGenerator().smt2od(model, partial, ODName);
   }
 
   public OPDiffResult buildOPOd(Model model, String odName, boolean partial) {

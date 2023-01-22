@@ -131,10 +131,14 @@ public class OCL2SMTStrategy {
   private static void setResultStereotypes(
       ASTODArtifact od, Model model, ConstraintsData constData) {
 
-    OCLType type = constData.getOpResultType();
-    if (type.isPrimitiv()) {
-      String res = model.evaluate(constData.getOpResult(), true).getSExpr();
-      od.getObjectDiagram().setStereotype(buildStereotype("result", res));
+    if (!constData.isPresentResult()) {
+      od.getObjectDiagram().setStereotype(buildStereotype("result", "Undefined"));
+    } else {
+      OCLType resultType = constData.getOpResultType();
+      if (resultType.isPrimitiv()) {
+        String res = model.evaluate(constData.getOpResult(), true).getSExpr();
+        od.getObjectDiagram().setStereotype(buildStereotype("result", res));
+      }
     }
   }
 
