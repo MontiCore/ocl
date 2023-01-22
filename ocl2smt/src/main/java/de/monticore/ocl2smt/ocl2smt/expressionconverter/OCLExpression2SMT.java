@@ -18,7 +18,6 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl2smt.helpers.OCLHelper;
-import de.monticore.ocl2smt.ocl2smt.ConstConverter;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.util.*;
 import de.monticore.ocl2smt.visitors.NameExpressionVisitor;

@@ -85,6 +85,7 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
 
     Pair<ASTODArtifact, Set<OPDiffResult>> diff = OCLOPDiff.oclDiffOp(ast, in, notin, false);
 
+    assert diff != null;
     ASTODNamedObject preThisObj = getThisObj(diff.getRight().iterator().next().getPreOD());
     ASTODNamedObject postThisObj = getThisObj(diff.getRight().iterator().next().getPostOD());
 

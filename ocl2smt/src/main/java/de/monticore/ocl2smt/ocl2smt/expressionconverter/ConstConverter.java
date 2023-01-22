@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.ocl2smt.ocl2smt;
+package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
 import com.microsoft.z3.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
