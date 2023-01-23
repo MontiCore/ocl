@@ -2,8 +2,9 @@
 package de.monticore.ocl.codegen;
 
 import com.google.common.base.Preconditions;
-import de.monticore.expressions.prettyprint.ExpressionsBasisPrettyPrinter;
-import de.monticore.literals.prettyprint.MCCommonLiteralsPrettyPrinter;
+import de.monticore.expressions.expressionsbasis._prettyprint.ExpressionsBasisPrettyPrinter;
+import de.monticore.literals.mccommonliterals._prettyprint.MCCommonLiteralsPrettyPrinter;
+import de.monticore.mcbasics._prettyprint.MCBasicsPrettyPrinter;
 import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.codegen.visitors.CommonExpressionsPrinter;
 import de.monticore.ocl.codegen.visitors.OCLExpressionsPrinter;
@@ -16,12 +17,11 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.types.check.OCLDeriver;
 import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.prettyprint.MCBasicsPrettyPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
-import de.monticore.types.prettyprint.MCBasicTypesPrettyPrinter;
-import de.monticore.types.prettyprint.MCCollectionTypesPrettyPrinter;
-import de.monticore.types.prettyprint.MCSimpleGenericTypesPrettyPrinter;
+import de.monticore.types.mcbasictypes._prettyprint.MCBasicTypesPrettyPrinter;
+import de.monticore.types.mccollectiontypes._prettyprint.MCCollectionTypesPrettyPrinter;
+import de.monticore.types.mcsimplegenerictypes._prettyprint.MCSimpleGenericTypesPrettyPrinter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -86,7 +86,7 @@ public class OCL2JavaGenerator {
         new CommonExpressionsPrinter(printer, naming, deriver, syntheziser);
     this.traverser.setCommonExpressionsHandler(comExprPrinter);
     this.traverser.add4CommonExpressions(comExprPrinter);
-    ExpressionsBasisPrettyPrinter exprBasPrinter = new ExpressionsBasisPrettyPrinter(printer);
+    ExpressionsBasisPrettyPrinter exprBasPrinter = new ExpressionsBasisPrettyPrinter(printer, true);
     this.traverser.setExpressionsBasisHandler(exprBasPrinter);
     this.traverser.add4ExpressionsBasis(exprBasPrinter);
     OCLExpressionsPrinter oclExprPrinter =
@@ -104,19 +104,19 @@ public class OCL2JavaGenerator {
 
     // Types
     MCSimpleGenericTypesPrettyPrinter simpleGenericTypes =
-        new MCSimpleGenericTypesPrettyPrinter(printer);
+        new MCSimpleGenericTypesPrettyPrinter(printer, true);
     traverser.setMCSimpleGenericTypesHandler(simpleGenericTypes);
     traverser.add4MCSimpleGenericTypes(simpleGenericTypes);
-    MCCollectionTypesPrettyPrinter collectionTypes = new MCCollectionTypesPrettyPrinter(printer);
+    MCCollectionTypesPrettyPrinter collectionTypes = new MCCollectionTypesPrettyPrinter(printer, true);
     traverser.setMCCollectionTypesHandler(collectionTypes);
     traverser.add4MCCollectionTypes(collectionTypes);
-    MCBasicTypesPrettyPrinter basicTypes = new MCBasicTypesPrettyPrinter(printer);
+    MCBasicTypesPrettyPrinter basicTypes = new MCBasicTypesPrettyPrinter(printer, true);
     traverser.setMCBasicTypesHandler(basicTypes);
     traverser.add4MCBasicTypes(basicTypes);
-    MCBasicsPrettyPrinter basics = new MCBasicsPrettyPrinter(printer);
+    MCBasicsPrettyPrinter basics = new MCBasicsPrettyPrinter(printer, true);
     traverser.add4MCBasics(basics);
 
-    MCCommonLiteralsPrettyPrinter comLitPrinter = new MCCommonLiteralsPrettyPrinter(printer);
+    MCCommonLiteralsPrettyPrinter comLitPrinter = new MCCommonLiteralsPrettyPrinter(printer, true);
     this.traverser.setMCCommonLiteralsHandler(comLitPrinter);
     this.traverser.add4MCCommonLiterals(comLitPrinter);
 

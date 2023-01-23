@@ -4,11 +4,13 @@ package de.monticore.ocl.ocl;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.ocl._symboltable.OCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
-import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.util.SymbolTableUtil;
 import java.util.Optional;
+
+import de.monticore.prettyprint.IndentPrinter;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -28,7 +30,7 @@ public class DocsTest extends AbstractTest {
     assertThat(ast).isPresent();
 
     // when (prettyprint)
-    new OCLFullPrettyPrinter().prettyprint(ast.get());
+    new OCLFullPrettyPrinter(new IndentPrinter(), true).prettyprint(ast.get());
 
     // when (create symbol table)
     SymbolTableUtil.prepareMill();

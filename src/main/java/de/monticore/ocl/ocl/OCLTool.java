@@ -6,11 +6,11 @@ import de.monticore.io.paths.MCPath;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._cocos.*;
 import de.monticore.ocl.ocl._parser.OCLParser;
+import de.monticore.ocl.ocl._prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
 import de.monticore.ocl.ocl._symboltable.OCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
-import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.oclexpressions._cocos.IterateExpressionVariableUsageIsCorrect;
 import de.monticore.ocl.setexpressions._cocos.SetComprehensionHasGenerator;
 import de.monticore.ocl.types.check.OCLDeriver;
@@ -287,8 +287,7 @@ public class OCLTool extends OCLToolTOP {
   @Override
   public void prettyPrint(ASTOCLCompilationUnit oCLCompilationUnit, String file) {
     // pretty print AST
-    OCLFullPrettyPrinter pp = new OCLFullPrettyPrinter(new IndentPrinter());
-    String OCL = pp.prettyprint(oCLCompilationUnit);
+    String OCL = new OCLFullPrettyPrinter(new IndentPrinter(), true).prettyprint(oCLCompilationUnit);
     print(OCL, file);
   }
 
