@@ -1,9 +1,14 @@
 package de.monticore.ocl2smt.util;
 
+import com.microsoft.z3.Context;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 
 /** this Class is saves data obtains after the conversion of an OCL Constraint in SMT */
 public class OCLConstraint {
+  boolean isInvariant;
+  IdentifiableBoolExpr invariant;
+  IdentifiableBoolExpr preCond;
+  IdentifiableBoolExpr postCond;
 
   public OCLConstraint(IdentifiableBoolExpr preCond, IdentifiableBoolExpr postCond) {
     this.preCond = preCond;
@@ -12,14 +17,16 @@ public class OCLConstraint {
   }
 
   public OCLConstraint(IdentifiableBoolExpr getInvariant) {
-    this.getInvariant = getInvariant;
+    this.invariant = getInvariant;
     this.isInvariant = true;
   }
 
-  boolean isInvariant;
-  IdentifiableBoolExpr getInvariant;
-  IdentifiableBoolExpr preCond;
-  IdentifiableBoolExpr postCond;
+  public OCLConstraint negateInv(Context ctx){
+    invariant = invariant.negate(ctx);
+    return this ;
+  }
+
+
 
   public boolean isInvariant() {
     return isInvariant;
@@ -30,7 +37,7 @@ public class OCLConstraint {
   }
 
   public IdentifiableBoolExpr getInvariant() {
-    return getInvariant;
+    return invariant;
   }
 
   public IdentifiableBoolExpr getPostCond() {

@@ -5,6 +5,7 @@ import com.microsoft.z3.Solver;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.Helper.ODHelper;
+import de.monticore.ocl2smt.util.OCLConstraint;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
@@ -19,8 +20,8 @@ import java.util.stream.Collectors;
 public class TraceUnsatCore {
 
   public static ASTODArtifact buildUnsatOD(
-      Set<IdentifiableBoolExpr> posConstraints,
-      Set<IdentifiableBoolExpr> negConstraints,
+      Set<OCLConstraint> posConstraints,
+      Set<OCLConstraint> negConstraints,
       List<ASTODLink> unsatCore) {
     // add All positive invariant objects
     ASTODArtifact unsatOd =
@@ -101,9 +102,9 @@ public class TraceUnsatCore {
     return attributeList;
   }
 
-  protected static ASTODNamedObject buildInvObject(IdentifiableBoolExpr identifiable) {
+  protected static ASTODNamedObject buildInvObject(OCLConstraint oclConstraint) {
     return ODHelper.buildObject(
-        getInvObjName(identifiable), "OCLInv", buildInvODAttributeList(identifiable));
+        getInvObjName(oclConstraint.getInvariant()), "OCLInv", buildInvODAttributeList(oclConstraint.getInvariant()));
   }
 
   protected static String getInvObjName(IdentifiableBoolExpr identifiable) {

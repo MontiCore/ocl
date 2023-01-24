@@ -6,12 +6,12 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
+import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPWitness;
 import de.monticore.odbasis._ast.*;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.*;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,8 +47,9 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> posOCl = new HashSet<>();
     posOCl.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/witness.ocl"));
 
-    OPWitness witness = OCLDiffGenerator.oclOpWitness(ast, posOCl, false);
-    Assertions.assertNotNull(witness);
+    Set<OPWitness> witnessList = OCLDiffGenerator.oclOpWitness(ast, posOCl, false);
+    Assertions.assertEquals(witnessList.size(), 1);
+    OPWitness witness = witnessList.iterator().next();
 
     // check preCD
     ASTODNamedObject preObj = getThisObj(witness.getPreOD());
@@ -83,18 +84,18 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> notin = new HashSet<>();
     notin.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/old.ocl"));
 
-    Pair<ASTODArtifact, Set<OPWitness>> diff = OCLDiffGenerator.oclOPDiff(ast, in, notin, false);
+    OCLOPDiffResult diff = OCLDiffGenerator.oclOPDiff(ast, in, notin, false);
 
     assert diff != null;
-    ASTODNamedObject preThisObj = getThisObj(diff.getRight().iterator().next().getPreOD());
-    ASTODNamedObject postThisObj = getThisObj(diff.getRight().iterator().next().getPostOD());
+    ASTODNamedObject preThisObj = getThisObj(diff.getDiffWitness().iterator().next().getPreOD());
+    ASTODNamedObject postThisObj = getThisObj(diff.getDiffWitness().iterator().next().getPostOD());
 
     double preSalary = Double.parseDouble(getAttribute(preThisObj, "salary"));
     double postSalary = Double.parseDouble(getAttribute(postThisObj, "salary"));
     Assertions.assertEquals(preSalary + 100, postSalary);
 
     String result =
-        diff.getRight()
+        diff.getDiffWitness()
             .iterator()
             .next()
             .getPostOD()

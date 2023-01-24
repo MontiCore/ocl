@@ -19,7 +19,7 @@ import java.util.function.Function;
 public class OCL2SMTGenerator {
   protected OCLExpression2SMT expression2SMT;
   private final Context ctx;
-
+  // TODO Inv2SMT and Operation to SMT trenen
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
     expression2SMT = new OCLExpression2SMT(ast, ctx);
     this.ctx = ctx;
@@ -175,9 +175,10 @@ public class OCL2SMTGenerator {
     return expression2SMT.getCd2smtGenerator().smt2od(model, partial, ODName);
   }
 
-  public OPWitness buildOPOd(Model model, String odName, boolean partial) {
+  public OPWitness buildOPOd(
+      Model model, String odName, boolean partial, ASTOCLMethodSignature method) {
     Optional<ASTODArtifact> od = buildOd(model, odName, partial);
     assert od.isPresent();
-    return OCL2SMTStrategy.splitPreOD(od.get(), model, expression2SMT.getConstrData());
+    return OCL2SMTStrategy.splitPreOD(method, od.get(), model, expression2SMT.getConstrData());
   }
 }

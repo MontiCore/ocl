@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.ocl2smt.ocldiff.invarianteDiff;
+package de.monticore.ocl2smt.ocldiff.invariantDiff;
 
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
@@ -10,6 +10,7 @@ import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
+import de.monticore.ocl2smt.ocldiff.OCLDiffHelper;
 import de.monticore.ocl2smt.ocldiff.TraceUnsatCore;
 import de.monticore.ocl2smt.util.OCLConstraint;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -20,26 +21,13 @@ import java.util.stream.Collectors;
 
 public class OCLInvariantDiff {
   protected Context ctx;
-  /**
-   * converts CD + OCL Model in SMT and produces A witness Object Diagram
-   *
-   * @param cd the class diagram
-   * @param in Set of OCl constraints
-   * @param partial if partial == true, the Object diagram will be partial regarding the attribute
-   * @return the witness Object Diagram
-   */
+
   public ASTODArtifact oclWitness(
       ASTCDCompilationUnit cd, Set<ASTOCLCompilationUnit> in, boolean partial) {
     resetContext();
     return oclWitnessInternal(cd, in, partial);
   }
 
-  /**
-   * Computes if a Set of OCl constraint (notin) is a refinement of another Set (in)
-   *
-   * @param cd the class diagram
-   * @param in first s
-   */
   public OCLInvDiffResult oclDiff(
       ASTCDCompilationUnit cd,
       Set<ASTOCLCompilationUnit> in,
@@ -53,10 +41,10 @@ public class OCLInvariantDiff {
     }
 
     // positive ocl constraint
-    Set<IdentifiableBoolExpr> posConstList = buildSmtBoolExpr(ocl2SMTGenerator, in);
+    Set<OCLConstraint> posConstList = OCLDiffHelper.invariant2SMT(ocl2SMTGenerator, in);
 
     // negative ocl constraints
-    Set<IdentifiableBoolExpr> negConstList = negate(buildSmtBoolExpr(ocl2SMTGenerator, notIn), ctx);
+    Set<OCLConstraint> negConstList = negate(OCLDiffHelper.invariant2SMT(ocl2SMTGenerator, notIn), ctx);
 
     return oclDiffHelper(ocl2SMTGenerator, posConstList, negConstList, partial);
   }
@@ -71,12 +59,12 @@ public class OCLInvariantDiff {
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(posCd, ctx);
 
     // list of positive OCl Constraints
-    Set<IdentifiableBoolExpr> posConstraints = buildSmtBoolExpr(ocl2SMTGenerator, posOcl);
+    Set<OCLConstraint> posConstraints = OCLDiffHelper.invariant2SMT(ocl2SMTGenerator, posOcl);
 
     // list of negative OCL Constraints
     CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
-    Set<IdentifiableBoolExpr> negConstraints =
-        negate(buildSmtBoolExpr(ocl2SMTGenerator, negOcl), ctx);
+    Set<OCLConstraint> negConstraints =
+        negate(OCLDiffHelper.invariant2SMT(ocl2SMTGenerator, negOcl), ctx);
     cd2SMTGenerator.cd2smt(negCd, ctx);
     negConstraints.addAll(negate(cd2SMTGenerator.getAssociationsConstraints(), ctx));
 
@@ -96,17 +84,12 @@ public class OCLInvariantDiff {
     return oclDiffHelper(ocl2SMTGenerator, posConstraints, negConstraints, partial);
   }
 
-  public OCLInvDiffResult oclDiff(
-      ASTCDCompilationUnit cd, Set<ASTOCLCompilationUnit> in, Set<ASTOCLCompilationUnit> notIn) {
-    return oclDiff(cd, in, notIn, false);
-  }
-
   private ASTODArtifact oclWitnessInternal(
       ASTCDCompilationUnit cd, Set<ASTOCLCompilationUnit> in, boolean partial) {
 
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
 
-    Set<IdentifiableBoolExpr> solverConstraints = buildSmtBoolExpr(ocl2SMTGenerator, in);
+    Set<OCLConstraint> solverConstraints = OCLDiffHelper.invariant2SMT(ocl2SMTGenerator, in);
 
     // check if they exist a model for the list of positive Constraint
     Solver solver =
@@ -120,46 +103,35 @@ public class OCLInvariantDiff {
 
   protected OCLInvDiffResult oclDiffHelper(
       OCL2SMTGenerator ocl2SMTGenerator,
-      Set<IdentifiableBoolExpr> posConstraintList,
-      Set<IdentifiableBoolExpr> negConstList,
+      Set<OCLConstraint> newConstraintSet,
+      Set<OCLConstraint> oldConstraintsSet,
       boolean partial) {
 
     Set<ASTODArtifact> satOdList = new HashSet<>();
-    List<ASTODLink> traceUnsat = new ArrayList<>();
+    List<ASTODLink> traceUnSat = new ArrayList<>();
 
     // add one by one all Constraints to the Solver and check if  it can always produce a Model
-    for (IdentifiableBoolExpr negConstraint : negConstList) {
-      posConstraintList.add(negConstraint);
+    for (OCLConstraint negConstraint : oldConstraintsSet) {
+      newConstraintSet.add(negConstraint);
       Solver solver =
-          ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(new ArrayList<>(posConstraintList));
+          ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(OCLDiffHelper.extractInv(newConstraintSet));
 
       if (solver.check() == Status.SATISFIABLE) {
         String invName =
-            negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0];
+            negConstraint.getInvariant().getInvariantName().orElse("NoInvName").split("_____NegInv")[0];
         satOdList.add(ocl2SMTGenerator.buildOd(solver.getModel(), invName, partial).get());
       } else {
-        traceUnsat.addAll(TraceUnsatCore.traceUnsatCore(solver));
+        traceUnSat.addAll(TraceUnsatCore.traceUnsatCore(solver));
       }
-      posConstraintList.remove(negConstraint);
+      newConstraintSet.remove(negConstraint);
     }
     return new OCLInvDiffResult(
-        TraceUnsatCore.buildUnsatOD(posConstraintList, negConstList, traceUnsat), satOdList);
+        TraceUnsatCore.buildUnsatOD(newConstraintSet, oldConstraintsSet, traceUnSat), satOdList);
   }
 
-  protected Set<IdentifiableBoolExpr> buildSmtBoolExpr(
-      OCL2SMTGenerator ocl2SMTGenerator, Set<ASTOCLCompilationUnit> in) {
-    return in.stream()
-        .flatMap(
-            p ->
-                ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).stream()
-                    .filter(OCLConstraint::isInvariant)
-                    .map(OCLConstraint::getInvariant))
-        .collect(Collectors.toSet());
-  }
 
-  private Set<IdentifiableBoolExpr> negate(Set<IdentifiableBoolExpr> constraints, Context ctx) {
-    return constraints.stream().map(x -> x.negate(ctx)).collect(Collectors.toSet());
-  }
+
+
 
   public void resetContext() {
     Map<String, String> cfg = new HashMap<>();

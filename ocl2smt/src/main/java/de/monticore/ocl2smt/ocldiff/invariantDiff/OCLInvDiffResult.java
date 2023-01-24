@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt.ocldiff.invarianteDiff;
+package de.monticore.ocl2smt.ocldiff.invariantDiff;
 
 import de.monticore.odbasis._ast.ASTODArtifact;
 import java.util.Set;

@@ -6,24 +6,22 @@ import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
 import de.monticore.ocl2smt.ocldiff.TraceUnsatCore;
 import de.monticore.ocl2smt.util.OCLConstraint;
-import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class OCLOperationDiff {
 
   protected Context ctx;
 
-  public OPWitness oclWitness(
+  public Set<OPWitness> oclWitness(
       ASTCDCompilationUnit ast, Set<ASTOCLCompilationUnit> in, boolean partial) {
 
     resetContext();
@@ -61,10 +59,15 @@ public class OCLOperationDiff {
     }
 
     Model model = solver.getModel();
-    return ocl2SMTGenerator.buildOPOd(model, "Witness", partial);
+
+    Set<OPWitness> res = new HashSet<>();
+    res.add(
+        ocl2SMTGenerator.buildOPOd(
+            model, "Witness", partial, OCLMill.oCLMethodSignatureBuilder().build())); // TODO:: fix
+    return res;
   }
 
-  public Pair<ASTODArtifact, Set<OPWitness>> oclDiffOp(
+  public OCLOPDiffResult oclDiffOp(
       ASTCDCompilationUnit ast,
       Set<ASTOCLCompilationUnit> oldOcl,
       Set<ASTOCLCompilationUnit> newOcl,
@@ -72,7 +75,7 @@ public class OCLOperationDiff {
 
     // setup
     resetContext();
-    Pair<ASTODArtifact, Set<OPWitness>> res = null;
+    OCLOPDiffResult res = null;
     OCL2SMTStrategy.buildPreCD(ast);
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(ast, ctx);
 
@@ -92,7 +95,7 @@ public class OCLOperationDiff {
     return res;
   }
   // TODO: fix this  in case of many  constraints per operation
-  private Pair<ASTODArtifact, Set<OPWitness>> oclDiffSingleOp(
+  private OCLOPDiffResult oclDiffSingleOp(
       List<ASTOCLOperationConstraint> oldConstraintList,
       List<ASTOCLOperationConstraint> newConstraintList,
       OCL2SMTGenerator ocl2SMTGenerator,
@@ -111,31 +114,34 @@ public class OCLOperationDiff {
     return oclDiffOpHelper(ocl2SMTGenerator, posConstraint, negConstraints, partial);
   }
 
+  private List<ASTOCLOperationConstraint> getOperationsConstraints(
+      Set<ASTOCLCompilationUnit> oclSet) {
+    return oclSet.stream()
+        .map(ocl -> ocl.getOCLArtifact().getOCLConstraintList())
+        .collect(Collectors.toList())
+        .stream()
+        .flatMap(List::stream)
+        .filter(c -> c instanceof ASTOCLOperationConstraint)
+        .map(c -> (ASTOCLOperationConstraint) c)
+        .collect(Collectors.toList());
+  }
+
   private Map<ASTOCLMethodSignature, List<ASTOCLOperationConstraint>> sortOPConstraint(
       Set<ASTOCLCompilationUnit> oclSet) {
-    List<ASTOCLConstraint> constraintList =
-        oclSet.stream()
-            .map(ocl -> ocl.getOCLArtifact().getOCLConstraintList())
-            .collect(Collectors.toList())
-            .stream()
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
+
     Map<ASTOCLMethodSignature, List<ASTOCLOperationConstraint>> res = new HashMap<>();
-    for (ASTOCLConstraint constraint : constraintList) {
+    for (ASTOCLOperationConstraint opConstraint : getOperationsConstraints(oclSet)) {
 
-      if (constraint instanceof ASTOCLOperationConstraint) {
-        ASTOCLOperationConstraint opConstraint = (ASTOCLOperationConstraint) constraint;
-        ASTOCLOperationSignature opSignature = opConstraint.getOCLOperationSignature();
+      ASTOCLOperationSignature opSignature = opConstraint.getOCLOperationSignature();
 
-        if (opSignature instanceof ASTOCLMethodSignature) {
+      if (opSignature instanceof ASTOCLMethodSignature) {
 
-          if (containsKey(res, (ASTOCLMethodSignature) opSignature)) {
-            res.get((ASTOCLMethodSignature) opSignature).add(opConstraint);
-          } else {
-            List<ASTOCLOperationConstraint> opConstraintList = new ArrayList<>();
-            opConstraintList.add(opConstraint);
-            res.put((ASTOCLMethodSignature) opSignature, opConstraintList);
-          }
+        if (containsKey(res, (ASTOCLMethodSignature) opSignature)) {
+          res.get((ASTOCLMethodSignature) opSignature).add(opConstraint);
+        } else {
+          List<ASTOCLOperationConstraint> opConstraintList = new ArrayList<>();
+          opConstraintList.add(opConstraint);
+          res.put((ASTOCLMethodSignature) opSignature, opConstraintList);
         }
       }
     }
@@ -148,13 +154,13 @@ public class OCLOperationDiff {
     return map.keySet().stream().anyMatch(key -> key.deepEquals(method));
   }
 
-  protected Pair<ASTODArtifact, Set<OPWitness>> oclDiffOpHelper(
+  protected OCLOPDiffResult oclDiffOpHelper(
       OCL2SMTGenerator ocl2SMTGenerator,
       Set<IdentifiableBoolExpr> posConstraintList,
       Set<IdentifiableBoolExpr> negConstList,
       boolean partial) {
 
-    Set<OPWitness> satOdList = new HashSet<>();
+    Set<OPWitness> diffWitness = new HashSet<>();
     List<ASTODLink> traceUnsat = new ArrayList<>();
 
     // add one by one all Constraints to the Solver and check if  it can always produce a Model
@@ -168,15 +174,15 @@ public class OCLOperationDiff {
         String invName =
             negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0];
 
-        satOdList.add(ocl2SMTGenerator.buildOPOd(model, invName, partial));
+        diffWitness.add(ocl2SMTGenerator.buildOPOd(model, invName, partial));
 
       } else {
         traceUnsat.addAll(TraceUnsatCore.traceUnsatCore(solver));
       }
       posConstraintList.remove(negConstraint);
     }
-    return new ImmutablePair<>(
-        TraceUnsatCore.buildUnsatOD(posConstraintList, negConstList, traceUnsat), satOdList);
+    return new OCLOPDiffResult(
+        TraceUnsatCore.buildUnsatOD(posConstraintList, negConstList, traceUnsat), diffWitness);
   }
 
   protected Set<OCLConstraint> opConst2smt(

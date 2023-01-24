@@ -8,8 +8,8 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.helpers.OCLHelper;
-import de.monticore.ocl2smt.ocldiff.invarianteDiff.OCLInvDiffResult;
-import de.monticore.ocl2smt.ocldiff.operationDiff.OPWitness;
+import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
+import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -25,7 +25,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 
 public abstract class OCLDiffAbstractTest {
@@ -41,11 +40,11 @@ public abstract class OCLDiffAbstractTest {
     diff.getDiffWitness().forEach(this::printOD);
   }
 
-  public void printOPDiff(Pair<ASTODArtifact, Set<OPWitness>> diff) {
-    if (diff.getLeft() != null) {
-      printOD(diff.getLeft());
+  public void printOPDiff(OCLOPDiffResult diff) {
+    if (diff.getUnSatCore() != null) {
+      printOD(diff.getUnSatCore());
     }
-    diff.getRight()
+    diff.getDiffWitness()
         .forEach(
             x -> {
               printOD(x.getPostOD());
