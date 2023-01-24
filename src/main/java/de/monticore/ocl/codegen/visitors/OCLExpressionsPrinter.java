@@ -65,8 +65,100 @@ public class OCLExpressionsPrinter extends AbstractPrinter
   }
 
   @Override
+  public void handle(ASTTypeIfExpression node) {
+    printExpressionBeginLambda(getDeriver().deriveType(node));
+    // returnType newName;
+    TypeCheckResult type = this.getDeriver().deriveType(node);
+    if (!type.isPresentResult()) {
+      Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
+      return;
+    } else {
+      this.getPrinter().print(type.getResult().getTypeInfo().getFullName());
+      this.getPrinter().print(" ");
+    }
+    this.getPrinter().print(getNaming().getName(node));
+    this.getPrinter().println(";");
+    // if (name instanceof type) {
+    this.getPrinter().print("if(");
+    this.getPrinter().print(node.getName());
+    this.getPrinter().print(" instanceof ");
+    node.getMCType().accept(getTraverser());
+    this.getPrinter().println(") {");
+    this.getPrinter().indent();
+    // make name known as type in the thenExpression only(!)
+    // type tmpName = (type)name;
+    getPrinter().print(boxType(getSynthesizer().synthesizeType(node.getMCType())));
+    this.getPrinter().print(" ");
+    this.getPrinter().print(getNaming().getName(node));
+    this.getPrinter().print("_ShadowingVar");
+    this.getPrinter().print(" = ");
+    this.getPrinter().print("(");
+    getPrinter().print(boxType(getSynthesizer().synthesizeType(node.getMCType())));
+    this.getPrinter().print(")");
+    this.getPrinter().print(node.getName());
+    this.getPrinter().println(";");
+    // open shadowing scope
+    this.getPrinter().print("class ");
+    this.getPrinter().print(getNaming().getName(node));
+    this.getPrinter().print("_ShadowedCalculation");
+    this.getPrinter().println("{");
+    this.getPrinter().indent();
+    this.getPrinter().print(type.getResult().getTypeInfo().getFullName());
+    this.getPrinter().print(" ");
+    this.getPrinter().print("calculate");
+    this.getPrinter().print("()");
+    this.getPrinter().println("{");
+    this.getPrinter().indent();
+    // type name = tmpName; // shadows
+    getPrinter().print(boxType(getSynthesizer().synthesizeType(node.getMCType())));
+    this.getPrinter().print(" ");
+    this.getPrinter().print(node.getName());
+    this.getPrinter().print(" = ");
+    this.getPrinter().print(getNaming().getName(node));
+    this.getPrinter().print("_ShadowingVar");
+    this.getPrinter().println(";");
+    // return thenExpression; // from scope
+    this.getPrinter().print("return ");
+    node.getThenExpression().accept(getTraverser());
+    this.getPrinter().println(";");
+    // close shadowing scope
+    this.getPrinter().unindent();
+    this.getPrinter().println("}");
+    this.getPrinter().unindent();
+    this.getPrinter().println("}");
+    // set newName to scoped calculation result;
+    this.getPrinter().print(getNaming().getName(node));
+    this.getPrinter().print(" = ");
+    this.getPrinter().print("new ");
+    this.getPrinter().print(getNaming().getName(node));
+    this.getPrinter().print("_ShadowedCalculation");
+    this.getPrinter().print("()");
+    this.getPrinter().print(".calculate()");
+    this.getPrinter().println(";");
+    // } else {
+    this.getPrinter().unindent();
+    this.getPrinter().println("} else {");
+    this.getPrinter().indent();
+    // in elseExpression, name is NOT known as type
+    // newName = elseExpression;
+    this.getPrinter().print(getNaming().getName(node));
+    this.getPrinter().print(" = ");
+    node.getElseExpression().accept(getTraverser());
+    this.getPrinter().println(";");
+    // }
+    this.getPrinter().unindent();
+    this.getPrinter().println("}");
+    // return newName;
+    this.getPrinter().print("return ");
+    this.getPrinter().print(this.getNaming().getName(node));
+    this.getPrinter().println(";");
+    printExpressionEndLambda();
+  }
+
+  @Override
   public void handle(ASTIfThenElseExpression node) {
     printExpressionBeginLambda(getDeriver().deriveType(node));
+    // expressionType newName;
     TypeCheckResult type = this.getDeriver().deriveType(node);
     if (!type.isPresentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
@@ -76,23 +168,29 @@ public class OCLExpressionsPrinter extends AbstractPrinter
     }
     this.getPrinter().print(getNaming().getName(node));
     this.getPrinter().println(";");
+    // if(condition) {
     this.getPrinter().print("if(");
     node.getCondition().accept(this.getTraverser());
     this.getPrinter().println(") {");
     this.getPrinter().indent();
+    // newName = thenExpression;
     this.getPrinter().print(getNaming().getName(node));
     this.getPrinter().print(" = ");
     node.getThenExpression().accept(getTraverser());
     this.getPrinter().println(";");
+    // } else {
     this.getPrinter().unindent();
     this.getPrinter().println("} else {");
     this.getPrinter().indent();
+    // newName = elseExpression;
     this.getPrinter().print(getNaming().getName(node));
     this.getPrinter().print(" = ");
     node.getElseExpression().accept(getTraverser());
     this.getPrinter().println(";");
+    // }
     this.getPrinter().unindent();
     this.getPrinter().println("}");
+    // return newName;
     this.getPrinter().print("return ");
     this.getPrinter().print(this.getNaming().getName(node));
     this.getPrinter().println(";");
@@ -246,23 +344,6 @@ public class OCLExpressionsPrinter extends AbstractPrinter
       node.getExpression().accept(this.getTraverser());
     }
     this.getPrinter().println(";");
-  }
-
-  @Override
-  public void handle(ASTTypeIfExpression node) {
-    this.getPrinter().print("((");
-    this.getPrinter().print(node.getName());
-    this.getPrinter().print(" instanceof ");
-    getPrinter().print(boxType(getSynthesizer().synthesizeType(node.getMCType())));
-    this.getPrinter().print(") ? ");
-    // todo make "Name" known as type MCType, does this work in Java?
-    // not even instanceof-pattern-matching (Java 14) is enough (creates a new symbol)
-    // might work using new Java scope?
-    // -> tested: it does not work using Lambda...
-    node.getThenExpression().accept(this.getTraverser());
-    this.getPrinter().print(" : ");
-    node.getElseExpression().accept(this.getTraverser());
-    this.getPrinter().print(")");
   }
 
   @Override

@@ -4,6 +4,7 @@ package de.monticore.ocl.oclexpressions._symboltable;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclarationVariable;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
+import de.monticore.ocl.oclexpressions._ast.ASTTypeIfExpression;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsHandler;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
@@ -76,6 +77,23 @@ public class OCLExpressionsSymbolTableCompleter
     OCLExpressionsHandler.super.traverse(node);
     for (IOCLExpressionsScope subscope : node.getSubScopes()) {
       subscope.accept(this.getTraverser());
+    }
+  }
+
+  @Override
+  public void visit(ASTTypeIfExpression node) {
+    // get the shadowing variable that has been added in OCLExpressionsScopesGenitor
+    VariableSymbol shadowingSymbol =
+        node.getThenExpression().getSpannedScope().getLocalVariableSymbols().get(0);
+    TypeCheckResult shadowingSymbolType = synthesizer.synthesizeType(node.getMCType());
+    if (!shadowingSymbolType.isPresentResult()) {
+      Log.error(
+          String.format(
+              "The type (%s) of the object (%s) could not be calculated",
+              node.getMCType(), node.getName()));
+    } else {
+      shadowingSymbol.setType(shadowingSymbolType.getResult());
+      shadowingSymbol.setIsReadOnly(true);
     }
   }
 
