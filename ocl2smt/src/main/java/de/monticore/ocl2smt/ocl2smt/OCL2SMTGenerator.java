@@ -8,7 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpression2SMT;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLOPExpression2SMT;
-import de.monticore.ocl2smt.ocldiff.operationDiff.OPWitness;
+import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.util.*;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.SourcePosition;
@@ -175,10 +175,14 @@ public class OCL2SMTGenerator {
     return expression2SMT.getCd2smtGenerator().smt2od(model, partial, ODName);
   }
 
-  public OPWitness buildOPOd(
-      Model model, String odName, boolean partial, ASTOCLMethodSignature method) {
+  public OCLOPWitness buildOPOd(
+      Model model, String odName, ASTOCLMethodSignature method, boolean partial) {
     Optional<ASTODArtifact> od = buildOd(model, odName, partial);
     assert od.isPresent();
     return OCL2SMTStrategy.splitPreOD(method, od.get(), model, expression2SMT.getConstrData());
+  }
+
+  public Solver makeSolver(List<IdentifiableBoolExpr> constraints) {
+    return expression2SMT.getCd2smtGenerator().makeSolver(constraints);
   }
 }

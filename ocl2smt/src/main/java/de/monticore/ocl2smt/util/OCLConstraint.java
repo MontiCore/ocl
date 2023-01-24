@@ -21,12 +21,10 @@ public class OCLConstraint {
     this.isInvariant = true;
   }
 
-  public OCLConstraint negateInv(Context ctx){
+  public OCLConstraint negateInv(Context ctx) {
     invariant = invariant.negate(ctx);
-    return this ;
+    return this;
   }
-
-
 
   public boolean isInvariant() {
     return isInvariant;

@@ -7,7 +7,7 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
-import de.monticore.ocl2smt.ocldiff.operationDiff.OPWitness;
+import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.odbasis._ast.*;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
@@ -47,9 +47,9 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> posOCl = new HashSet<>();
     posOCl.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/witness.ocl"));
 
-    Set<OPWitness> witnessList = OCLDiffGenerator.oclOpWitness(ast, posOCl, false);
+    Set<OCLOPWitness> witnessList = OCLDiffGenerator.oclOpWitness(ast, posOCl, false);
     Assertions.assertEquals(witnessList.size(), 1);
-    OPWitness witness = witnessList.iterator().next();
+    OCLOPWitness witness = witnessList.iterator().next();
 
     // check preCD
     ASTODNamedObject preObj = getThisObj(witness.getPreOD());
@@ -84,7 +84,7 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> notin = new HashSet<>();
     notin.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/old.ocl"));
 
-    OCLOPDiffResult diff = OCLDiffGenerator.oclOPDiff(ast, in, notin, false);
+    OCLOPDiffResult diff = OCLDiffGenerator.oclopDiff(ast, in, notin, false);
 
     assert diff != null;
     ASTODNamedObject preThisObj = getThisObj(diff.getDiffWitness().iterator().next().getPreOD());

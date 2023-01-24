@@ -102,8 +102,8 @@ public abstract class ExpressionAbstractTest {
     org.junit.jupiter.api.Assertions.assertSame(Status.UNSATISFIABLE, solver.check());
     ASTODArtifact od1 =
         TraceUnsatCore.buildUnsatOD(
-            new HashSet<>(),
-            Set.of(
+            new ArrayList<>(),
+            List.of(
                 solverConstraints
                     .get(0)
                     .negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),

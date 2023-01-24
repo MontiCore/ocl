@@ -5,7 +5,6 @@ import com.microsoft.z3.Solver;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.Helper.ODHelper;
-import de.monticore.ocl2smt.util.OCLConstraint;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
@@ -14,14 +13,13 @@ import de.monticore.odlink._ast.ASTODLink;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TraceUnsatCore {
 
   public static ASTODArtifact buildUnsatOD(
-      Set<OCLConstraint> posConstraints,
-      Set<OCLConstraint> negConstraints,
+      List<IdentifiableBoolExpr> posConstraints,
+      List<IdentifiableBoolExpr> negConstraints,
       List<ASTODLink> unsatCore) {
     // add All positive invariant objects
     ASTODArtifact unsatOd =
@@ -102,9 +100,9 @@ public class TraceUnsatCore {
     return attributeList;
   }
 
-  protected static ASTODNamedObject buildInvObject(OCLConstraint oclConstraint) {
+  protected static ASTODNamedObject buildInvObject(IdentifiableBoolExpr oclConstraint) {
     return ODHelper.buildObject(
-        getInvObjName(oclConstraint.getInvariant()), "OCLInv", buildInvODAttributeList(oclConstraint.getInvariant()));
+        getInvObjName(oclConstraint), "OCLInv", buildInvODAttributeList(oclConstraint));
   }
 
   protected static String getInvObjName(IdentifiableBoolExpr identifiable) {

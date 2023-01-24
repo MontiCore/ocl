@@ -9,7 +9,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl2smt.helpers.OCLHelper;
-import de.monticore.ocl2smt.ocldiff.operationDiff.OPWitness;
+import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.trafo.BuildPreCDTrafo;
 import de.monticore.ocl2smt.util.ConstraintsData;
 import de.monticore.ocl2smt.util.OCLType;
@@ -75,7 +75,7 @@ public class OCL2SMTStrategy {
         .build();
   }
 
-  public static OPWitness splitPreOD(
+  public static OCLOPWitness splitPreOD(
       ASTOCLMethodSignature method,
       ASTODArtifact od,
       Model model,
@@ -107,11 +107,11 @@ public class OCL2SMTStrategy {
         de.monticore.cd2smt.Helper.ODHelper.buildOD(
             "post_" + od.getObjectDiagram().getName(), postOdElements);
 
-    return setStereotypes(new OPWitness(method, preOD, postOD), model, constraintsData);
+    return setStereotypes(new OCLOPWitness(method, preOD, postOD), model, constraintsData);
   }
 
-  private static OPWitness setStereotypes(
-      OPWitness diff, Model model, ConstraintsData constraintsData) {
+  private static OCLOPWitness setStereotypes(
+          OCLOPWitness diff, Model model, ConstraintsData constraintsData) {
     setThisStereotypes(diff.getPreOD(), model, constraintsData);
     setThisStereotypes(diff.getPostOD(), model, constraintsData);
 
