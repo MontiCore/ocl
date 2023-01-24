@@ -32,7 +32,7 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   @Test
   public void testOCLDiffOneCD() throws IOException {
 
-    OCLInvDiffResult diff = computeDiffOneCD("Auction.cd", "pos.ocl", "neg.ocl");
+    OCLInvDiffResult diff = computeDiffOneCD("Auction.cd","old.ocl" ,"new.ocl" );
     printResult(diff);
     Assertions.assertEquals(4, diff.getDiffWitness().size());
 
@@ -48,10 +48,10 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   public void testOclDiff2CD_NoDiff() throws IOException {
     OCLInvDiffResult diff =
         computeDiff2CD(
-            "2CDDiff/nodiff/posCD.cd",
-            "2CDDiff/nodiff/negCD.cd",
-            "2CDDiff/nodiff/posOCL.ocl",
-            "2CDDiff/nodiff/negOCL.ocl");
+            "2CDDiff/nodiff/old.cd",
+            "2CDDiff/nodiff/new.cd",
+            "2CDDiff/nodiff/old.ocl",
+            "2CDDiff/nodiff/new.ocl");
 
     assertTrue(diff.getDiffWitness().isEmpty());
     assertEquals(countLinks(diff.getUnSatCore()), 3);
@@ -64,10 +64,10 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   public void testOclDiff2CD_diff() throws IOException {
     OCLInvDiffResult diff =
         computeDiff2CD(
-            "2CDDiff/diff/posCD.cd",
-            "2CDDiff/diff/negCD.cd",
-            "2CDDiff/diff/posOCL.ocl",
-            "2CDDiff/diff/negOCL.ocl");
+            "2CDDiff/diff/old.cd",
+            "2CDDiff/diff/new.cd",
+            "2CDDiff/diff/old.ocl",
+            "2CDDiff/diff/new.ocl");
     printResult(diff);
     assertEquals(diff.getDiffWitness().size(), 1);
     assertEquals(
@@ -80,10 +80,10 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   public void testOclDiff2CD_CDDiff() throws IOException {
     OCLInvDiffResult diff =
         computeDiff2CD(
-            "2CDDiff/cddiff/posCD.cd",
-            "2CDDiff/cddiff/negCD.cd",
-            "2CDDiff/cddiff/posOCL.ocl",
-            "2CDDiff/cddiff/negOCL.ocl");
+            "2CDDiff/cddiff/old.cd",
+            "2CDDiff/cddiff/new.cd",
+            "2CDDiff/cddiff/old.ocl",
+            "2CDDiff/cddiff/new.ocl");
     printResult(diff);
     assertTrue(diff.getUnSatCore() == null);
     assertTrue(diff.getDiffWitness().size() >= 1);

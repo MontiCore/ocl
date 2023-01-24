@@ -6,7 +6,7 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
@@ -113,21 +113,16 @@ public abstract class OCLDiffAbstractTest {
     return OCLDiffGenerator.oclDiff(posCD, negCD, posOCL, negOCL, false);
   }
 
-  public OCLInvDiffResult computeDiffOneCD(String posCDn, String posOCLn, String negOCLn)
+  public OCLInvDiffResult computeDiffOneCD(String cdName, String oldOCLName, String newOCLName)
       throws IOException {
-    ASTCDCompilationUnit posCD = parseCD(posCDn);
-    Set<ASTOCLCompilationUnit> posOCL = new HashSet<>();
-    Set<ASTOCLCompilationUnit> negOCL = new HashSet<>();
-    posOCL.add(parseOCl(posCDn, posOCLn));
-    negOCL.add(parseOCl(posCDn, negOCLn));
-    return OCLDiffGenerator.oclDiff(posCD, posOCL, negOCL, false);
+    ASTCDCompilationUnit cd = parseCD(cdName);
+    Set<ASTOCLCompilationUnit> newOCL = new HashSet<>();
+    Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
+    newOCL.add(parseOCl(cdName, newOCLName));
+    oldOCL.add(parseOCl(cdName, oldOCLName));
+    return OCLDiffGenerator.oclDiff(cd, oldOCL, newOCL, false);
   }
 
-  public static Context buildContext() {
-    Map<String, String> cfg = new HashMap<>();
-    cfg.put("model", "true");
-    return new Context(cfg);
-  }
 
   public boolean containsAttribute(ASTCDClass c, String attribute) {
     for (ASTCDAttribute attr : c.getCDAttributeList()) {
@@ -205,4 +200,23 @@ public abstract class OCLDiffAbstractTest {
     }
     return null;
   }
+
+  public ASTOCLMethodSignature getMethodSignature(Set<ASTOCLCompilationUnit> oclSet, String name){
+     ASTOCLMethodSignature res  = null;
+    for (ASTOCLCompilationUnit ocl: oclSet) {
+      for (ASTOCLConstraint constraint : ocl.getOCLArtifact().getOCLConstraintList()){
+        if (constraint instanceof  ASTOCLOperationConstraint ){
+          ASTOCLOperationConstraint opConstraint = (ASTOCLOperationConstraint)constraint ;
+          if (opConstraint.getOCLOperationSignature() instanceof  ASTOCLMethodSignature){
+            ASTOCLMethodSignature method = (ASTOCLMethodSignature)opConstraint.getOCLOperationSignature();
+            if (method.getMethodName().getQName().contains(name)){
+               res =  method ;
+            }
+          }
+        }
+
+      }
+    }
+      return  res ;
+    }
 }

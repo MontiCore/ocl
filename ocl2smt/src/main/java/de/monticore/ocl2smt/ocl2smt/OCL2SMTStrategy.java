@@ -111,7 +111,7 @@ public class OCL2SMTStrategy {
   }
 
   private static OCLOPWitness setStereotypes(
-          OCLOPWitness diff, Model model, ConstraintsData constraintsData) {
+      OCLOPWitness diff, Model model, ConstraintsData constraintsData) {
     setThisStereotypes(diff.getPreOD(), model, constraintsData);
     setThisStereotypes(diff.getPostOD(), model, constraintsData);
 

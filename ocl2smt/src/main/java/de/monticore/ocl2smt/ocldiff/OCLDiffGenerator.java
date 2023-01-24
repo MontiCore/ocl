@@ -5,8 +5,8 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvariantDiff;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
-import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOperationDiff;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
+import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOperationDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import java.util.*;
 
@@ -45,19 +45,30 @@ public class OCLDiffGenerator {
     return operator.CDOCLDiff(oldCD, newCD, oldOCL, newOCL, partial);
   }
 
-  public static Set<OCLOPWitness> oclOpWitness(
-      ASTCDCompilationUnit ast, Set<ASTOCLCompilationUnit> ocl, boolean partial) {
+  public static Set<OCLOPWitness> oclOPWitness(
+      ASTCDCompilationUnit ast,
+      Set<ASTOCLCompilationUnit> ocl,
+      ASTOCLMethodSignature method,
+      boolean partial) {
+    OCLOperationDiff operator = new OCLOperationDiff();
+    return operator.oclWitness(ast, ocl, method,partial);
+  }
+  public static Set<OCLOPWitness> oclOPWitness(
+          ASTCDCompilationUnit ast,
+          Set<ASTOCLCompilationUnit> ocl,
+          boolean partial) {
     OCLOperationDiff operator = new OCLOperationDiff();
     return operator.oclWitness(ast, ocl, partial);
   }
 
- /* public static OCLOPDiffResult oclOPDiff(
+  public static OCLOPDiffResult oclOPDiff(
       ASTCDCompilationUnit ast,
       Set<ASTOCLCompilationUnit> oldOcl,
       Set<ASTOCLCompilationUnit> newOcl,
+      ASTOCLMethodSignature method,
       boolean partial) {
 
     OCLOperationDiff operator = new OCLOperationDiff();
-    return operator.oclDiff(ast, oldOcl, newOcl, partial);
-  }*/
+    return operator.oclDiff(ast, oldOcl, newOcl, method, partial);
+  }
 }

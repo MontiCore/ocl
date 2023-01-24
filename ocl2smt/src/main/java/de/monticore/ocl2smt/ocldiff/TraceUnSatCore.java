@@ -15,28 +15,28 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TraceUnsatCore {
+public class TraceUnSatCore {
 
-  public static ASTODArtifact buildUnsatOD(
+  public static ASTODArtifact buildUnSatOD(
       List<IdentifiableBoolExpr> posConstraints,
       List<IdentifiableBoolExpr> negConstraints,
-      List<ASTODLink> unsatCore) {
+      List<ASTODLink> unSatCore) {
     // add All positive invariant objects
-    ASTODArtifact unsatOd =
+    ASTODArtifact unSatOD =
         ODHelper.buildOD(
             "UNSAT_CORE_OD",
             posConstraints.stream()
-                .map(TraceUnsatCore::buildInvObject)
+                .map(TraceUnSatCore::buildInvObject)
                 .collect(Collectors.toList()));
     // add All negative invariant objects
-    negConstraints.forEach(i -> unsatOd.getObjectDiagram().addODElement(buildInvObject(i)));
+    negConstraints.forEach(i -> unSatOD.getObjectDiagram().addODElement(buildInvObject(i)));
     // add All links
-    unsatOd.getObjectDiagram().addAllODElements(unsatCore);
+    unSatOD.getObjectDiagram().addAllODElements(unSatCore);
 
-    return unsatOd;
+    return unSatOD;
   }
 
-  public static List<ASTODLink> traceUnsatCore(Solver solver) {
+  public static List<ASTODLink> traceUnSatCore(Solver solver) {
     List<ASTODLink> elementList = new ArrayList<>();
     List<IdentifiableBoolExpr> posConstraints = new ArrayList<>();
     List<IdentifiableBoolExpr> negConstraints = new ArrayList<>();

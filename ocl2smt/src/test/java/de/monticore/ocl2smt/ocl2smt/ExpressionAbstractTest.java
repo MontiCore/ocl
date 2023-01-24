@@ -10,7 +10,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
-import de.monticore.ocl2smt.ocldiff.TraceUnsatCore;
+import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -101,13 +101,13 @@ public abstract class ExpressionAbstractTest {
 
     org.junit.jupiter.api.Assertions.assertSame(Status.UNSATISFIABLE, solver.check());
     ASTODArtifact od1 =
-        TraceUnsatCore.buildUnsatOD(
+        TraceUnSatCore.buildUnSatOD(
             new ArrayList<>(),
             List.of(
                 solverConstraints
                     .get(0)
                     .negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),
-            TraceUnsatCore.traceUnsatCore(solver));
+            TraceUnSatCore.traceUnSatCore(solver));
     printOD(od1);
   }
 

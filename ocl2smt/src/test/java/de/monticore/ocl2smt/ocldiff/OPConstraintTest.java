@@ -5,6 +5,7 @@ import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
@@ -47,7 +48,7 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> posOCl = new HashSet<>();
     posOCl.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/witness.ocl"));
 
-    Set<OCLOPWitness> witnessList = OCLDiffGenerator.oclOpWitness(ast, posOCl, false);
+    Set<OCLOPWitness> witnessList = OCLDiffGenerator.oclOPWitness(ast, posOCl, false);
     Assertions.assertEquals(witnessList.size(), 1);
     OCLOPWitness witness = witnessList.iterator().next();
 
@@ -78,13 +79,15 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
   public void testOpConstraintDiff() throws IOException {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
 
-    Set<ASTOCLCompilationUnit> in = new HashSet<>();
-    in.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/new.ocl"));
+    Set<ASTOCLCompilationUnit> newOCL = new HashSet<>();
+    newOCL.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/new.ocl"));
 
-    Set<ASTOCLCompilationUnit> notin = new HashSet<>();
-    notin.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/old.ocl"));
+    Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
+    oldOCL.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/old.ocl"));
 
-    OCLOPDiffResult diff = OCLDiffGenerator.oclopDiff(ast, in, notin, false);
+    ASTOCLMethodSignature method  = getMethodSignature(newOCL,"Person.increaseSalary");
+
+    OCLOPDiffResult diff = OCLDiffGenerator.oclOPDiff(ast, oldOCL, newOCL, method,false);
 
     assert diff != null;
     ASTODNamedObject preThisObj = getThisObj(diff.getDiffWitness().iterator().next().getPreOD());

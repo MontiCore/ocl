@@ -13,7 +13,7 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.ocldiff.OCLDiffHelper;
-import de.monticore.ocl2smt.ocldiff.TraceUnsatCore;
+import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.ocl2smt.util.OCLConstraint;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
@@ -134,11 +134,11 @@ public class OCLInvariantDiff {
         assert witness.isPresent();
         satOdList.add(witness.get());
       } else {
-        traceUnSat.addAll(TraceUnsatCore.traceUnsatCore(solver));
+        traceUnSat.addAll(TraceUnSatCore.traceUnSatCore(solver));
       }
       posConstraintList.remove(negConstraint);
     }
     return new OCLInvDiffResult(
-        TraceUnsatCore.buildUnsatOD(posConstraintList, negConstraintList, traceUnSat), satOdList);
+        TraceUnSatCore.buildUnSatOD(posConstraintList, negConstraintList, traceUnSat), satOdList);
   }
 }
