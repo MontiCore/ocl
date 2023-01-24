@@ -5,6 +5,7 @@ import de.monticore.ocl.oclexpressions.OCLExpressionsMill;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclarationVariable;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
+import de.monticore.ocl.oclexpressions._ast.ASTTypeIfExpression;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.IDerive;
 import de.se_rwth.commons.logging.Log;
@@ -27,6 +28,16 @@ public class OCLExpressionsScopesGenitor extends OCLExpressionsScopesGenitorTOP 
 
   @Override
   public void visit(ASTOCLVariableDeclaration node) {}
+
+  @Override
+  public void endVisit(ASTTypeIfExpression node) {
+    VariableSymbol shadowingSymbol =
+        OCLExpressionsMill.variableSymbolBuilder().setName(node.getName()).build();
+    // scopes
+    IOCLExpressionsScope scope = node.getThenExpression().getSpannedScope();
+    shadowingSymbol.setEnclosingScope(scope);
+    scope.add(shadowingSymbol);
+  }
 
   @Override
   public void endVisit(ASTOCLVariableDeclaration node) {
