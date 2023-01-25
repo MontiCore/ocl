@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.ocl2smt.ocl2smt;
+package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
 import com.microsoft.z3.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
@@ -11,12 +11,15 @@ import de.se_rwth.commons.logging.Log;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ExpressionsConverter {
+public class ConstConverter {
   protected Context context;
   protected final Map<Expr<? extends Sort>, OCLType> varTypes = new HashMap<>();
 
-  public void reset(Context context) {
-    this.context = context;
+  public ConstConverter(Context ctx) {
+    this.context = ctx;
+  }
+
+  public void reset() {
     varTypes.clear();
   }
 
@@ -62,7 +65,7 @@ public class ExpressionsConverter {
     return context.mkFP(node.getValue(), context.mkFPSortDouble());
   }
 
-  protected Expr<? extends Sort> declObj(OCLType type, String name) {
+  public Expr<? extends Sort> declObj(OCLType type, String name) {
     Expr<? extends Sort> expr = context.mkConst(name, TypeConverter.getSort(type));
     varTypes.put(expr, type);
     return expr;
@@ -70,8 +73,8 @@ public class ExpressionsConverter {
 
   public OCLType getType(Expr<? extends Sort> expr) {
     if (varTypes.containsKey(expr)) {
-      return varTypes.get(expr); // Person p
+      return varTypes.get(expr);
     }
-    return OCLType.buildOCLType(expr.getSort().getName().toString()); // x*x
+    return OCLType.buildOCLType(expr.getSort().getName().toString());
   }
 }

@@ -3,8 +3,11 @@ package docs;
 
 classdiagram Auction {
 
- class  Person{
-    void changeCompany() ;
+ class  Person {
+   double salary;
+    int age ;
+   boolean changeCompany(String n) ;
+   int increaseSalary(double amount);
  }
 
  class Company {
@@ -12,6 +15,6 @@ classdiagram Auction {
    int employees ;
  }
 
- association [*] Person -- (company)Company [1] ;
 
+ association [*] Person -- (company)Company [1] ;
 }

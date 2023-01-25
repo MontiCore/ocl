@@ -56,7 +56,7 @@ public abstract class ExpressionAbstractTest {
   // Used to make the tests shorter & readable
   protected IdentifiableBoolExpr addConstraint(String search) {
     IdentifiableBoolExpr constraint = getConstraint(search);
-    solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(List.of(constraint));
+    solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(List.of(constraint));
     return constraint;
   }
 
@@ -67,7 +67,7 @@ public abstract class ExpressionAbstractTest {
             .filter(p -> search.equals(p.getName()))
             .findAny()
             .get();
-    return ocl2SMTGenerator.convertConstr(constr).getConstraint();
+    return ocl2SMTGenerator.convertConstr(constr).getInvariant();
   }
 
   public void printOD(ASTODArtifact od) {
@@ -86,10 +86,10 @@ public abstract class ExpressionAbstractTest {
   public void testInv(String invName) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
     solverConstraints.add(getConstraint(invName));
-    Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
+    Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
     org.junit.jupiter.api.Assertions.assertSame(Status.SATISFIABLE, solver.check());
     Optional<ASTODArtifact> od =
-        ocl2SMTGenerator.cd2smtGenerator.smt2od(solver.getModel(), false, invName);
+        ocl2SMTGenerator.getCD2SMTGenerator().smt2od(solver.getModel(), false, invName);
     org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
     printOD(od.get());
   }
@@ -97,13 +97,16 @@ public abstract class ExpressionAbstractTest {
   public void testUnsatInv(String invName) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
     solverConstraints.add(getConstraint(invName));
-    Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
+    Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
 
     org.junit.jupiter.api.Assertions.assertSame(Status.UNSATISFIABLE, solver.check());
     ASTODArtifact od1 =
         TraceUnsatCore.buildUnsatOD(
             new HashSet<>(),
-            Set.of(solverConstraints.get(0).negate(ocl2SMTGenerator.cd2smtGenerator.getContext())),
+            Set.of(
+                solverConstraints
+                    .get(0)
+                    .negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),
             TraceUnsatCore.traceUnsatCore(solver));
     printOD(od1);
   }
