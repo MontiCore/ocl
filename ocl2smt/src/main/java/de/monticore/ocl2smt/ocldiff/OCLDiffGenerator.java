@@ -21,13 +21,26 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class OCLDiffGenerator {
   protected static Context ctx;
-
+  /**
+   * converts CD + OCL Model in SMT and produces A witness Object Diagram
+   *
+   * @param cd the class diagram
+   * @param in Set of OCl constraints
+   * @param partial if partial == true, the Object diagram will be partial regarding the attribute
+   * @return the witness Object Diagram
+   */
   public static ASTODArtifact oclWitness(
       ASTCDCompilationUnit cd, Set<ASTOCLCompilationUnit> in, boolean partial) {
     resetContext();
     return oclWitnessInternal(cd, in, partial);
   }
 
+  /**
+   * Computes if a Set of OCl constraint (notin) is a refinement of another Set (in)
+   *
+   * @param cd the class diagram
+   * @param in first s
+   */
   public static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiff(
       ASTCDCompilationUnit cd,
       Set<ASTOCLCompilationUnit> in,
@@ -97,13 +110,13 @@ public class OCLDiffGenerator {
     Set<IdentifiableBoolExpr> solverConstraints = buildSmtBoolExpr(ocl2SMTGenerator, in);
 
     // check if they exist a model for the list of positive Constraint
-    Solver solver = ocl2SMTGenerator.cd2smtGenerator.makeSolver(new ArrayList<>(solverConstraints));
+    Solver solver =
+        ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(new ArrayList<>(solverConstraints));
     if (solver.check() != Status.SATISFIABLE) {
       Log.error("there are no Model for the List Of Positive Constraints");
     }
 
-    return buildOd(ocl2SMTGenerator.cd2smtGenerator, solver.getModel(), "Witness", partial)
-        .orElse(null);
+    return ocl2SMTGenerator.buildOd(solver.getModel(), "Witness", partial).orElse(null);
   }
 
   protected static Pair<ASTODArtifact, Set<ASTODArtifact>> oclDiffHelper(
@@ -119,16 +132,12 @@ public class OCLDiffGenerator {
     for (IdentifiableBoolExpr negConstraint : negConstList) {
       posConstraintList.add(negConstraint);
       Solver solver =
-          ocl2SMTGenerator.cd2smtGenerator.makeSolver(new ArrayList<>(posConstraintList));
+          ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(new ArrayList<>(posConstraintList));
 
       if (solver.check() == Status.SATISFIABLE) {
-        satOdList.add(
-            buildOd(
-                    ocl2SMTGenerator.cd2smtGenerator,
-                    solver.getModel(),
-                    negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0],
-                    partial)
-                .get());
+        String invName =
+            negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0];
+        satOdList.add(ocl2SMTGenerator.buildOd(solver.getModel(), invName, partial).get());
       } else {
         traceUnsat.addAll(TraceUnsatCore.traceUnsatCore(solver));
       }
@@ -138,11 +147,6 @@ public class OCLDiffGenerator {
         TraceUnsatCore.buildUnsatOD(posConstraintList, negConstList, traceUnsat), satOdList);
   }
 
-  protected static Optional<ASTODArtifact> buildOd(
-      CD2SMTGenerator cd2SMTGenerator, Model model, String ODName, boolean partial) {
-    return cd2SMTGenerator.smt2od(model, partial, ODName);
-  }
-
   protected static Set<IdentifiableBoolExpr> buildSmtBoolExpr(
       OCL2SMTGenerator ocl2SMTGenerator, Set<ASTOCLCompilationUnit> in) {
     return in.stream()
@@ -150,7 +154,7 @@ public class OCLDiffGenerator {
             p ->
                 ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).stream()
                     .filter(OCLConstraint::isInvariant)
-                    .map(OCLConstraint::getConstraint))
+                    .map(OCLConstraint::getInvariant))
         .collect(Collectors.toSet());
   }
 

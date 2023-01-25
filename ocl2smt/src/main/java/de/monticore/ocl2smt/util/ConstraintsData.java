@@ -7,42 +7,15 @@ import java.util.*;
 
 /** this class contains all data obtains during the conversion of a OCLConstraint */
 public class ConstraintsData {
-  public Expr<? extends Sort> oclContext;
-  public OCLType oclContextType;
+  private final OCLContext oclContext;
+  public Map<String, Expr<? extends Sort>> varNames;
 
-  public final Map<String, Expr<? extends Sort>> varNames = new HashMap<>();
+  public Set<BoolExpr> genConstraints;
 
-  public final Set<BoolExpr> genConstraints = new HashSet<>();
-
-  private boolean isPreCond = false;
-
-  public boolean isPreCond() {
-    return isPreCond;
-  }
-
-  private void reset() {
-    oclContextType = null;
-    oclContext = null;
-    varNames.clear();
-    genConstraints.clear();
-    isPreCond = false;
-  }
-
-  public void initInv() {
-    reset();
-  }
-
-  public void initOpConst() {
-    reset();
-  }
-
-  public void initPre() {
-    isPreCond = true;
-  }
-
-  public void initPost() {
-    genConstraints.clear();
-    isPreCond = false;
+  public ConstraintsData() {
+    this.varNames = new HashMap<>();
+    this.genConstraints = new HashSet<>();
+    oclContext = new OCLContext();
   }
 
   public void addVar(String name, Expr<? extends Sort> obj) {
@@ -50,8 +23,7 @@ public class ConstraintsData {
   }
 
   public void setOCLContext(Expr<? extends Sort> obj, OCLType type) {
-    this.oclContext = obj;
-    this.oclContextType = type;
+    oclContext.setOClContext(obj, type);
   }
 
   public boolean containsVar(String name) {
@@ -63,10 +35,34 @@ public class ConstraintsData {
   }
 
   public boolean isPresentContext() {
-    return oclContext != null && oclContextType != null;
+    return oclContext.getType() != null && oclContext.getValue() != null;
   }
 
   public void removeVar(String name) {
     varNames.remove(name);
+  }
+
+  public OCLType getOCLContextType() {
+    return oclContext.getType();
+  }
+
+  public Expr<? extends Sort> getOClContextValue() {
+    return oclContext.getValue();
+  }
+
+  public void setOpResult(Expr<? extends Sort> result, OCLType type) {
+    oclContext.setResult(result, type);
+  }
+
+  public Expr<? extends Sort> getOpResult() {
+    return oclContext.getResult();
+  }
+
+  public OCLType getOpResultType() {
+    return oclContext.getOpResultType();
+  }
+
+  public boolean isPresentResult() {
+    return (oclContext.getResult() != null || oclContext.getOpResultType() != null);
   }
 }

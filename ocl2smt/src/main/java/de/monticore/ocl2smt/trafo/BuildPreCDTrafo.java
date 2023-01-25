@@ -1,7 +1,5 @@
 package de.monticore.ocl2smt.trafo;
 
-import static de.monticore.ocl2smt.helpers.OCLHelper.mkPre;
-
 import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.*;
@@ -9,6 +7,7 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisHandler;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
+import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
@@ -41,15 +40,15 @@ public class BuildPreCDTrafo implements CDBasisHandler, CDBasisVisitor2 {
     ASTMCType type = node.getMCType();
     CDAttributeFacade facade = CDAttributeFacade.getInstance();
     ASTModifier mod = node.getModifier();
-    return facade.createAttribute(mod, type, mkPre(node.getName()));
+    return facade.createAttribute(mod, type, OCL2SMTStrategy.mkPre(node.getName()));
   }
 
   public ASTCDAssociation buildPreAssociation(ASTCDAssociation association) {
     ASTCDAssocLeftSide left = copyAssocLeftSide(association.getLeft());
-    left.getCDRole().setName(mkPre(left.getCDRole().getName()));
+    left.getCDRole().setName(OCL2SMTStrategy.mkPre(left.getCDRole().getName()));
 
     ASTCDAssocRightSide right = copyAssocRightSide(association.getRight());
-    right.getCDRole().setName((mkPre(right.getCDRole().getName())));
+    right.getCDRole().setName((OCL2SMTStrategy.mkPre(right.getCDRole().getName())));
 
     return CDAssociationMill.cDAssociationBuilder()
         .setModifier(association.getModifier())
