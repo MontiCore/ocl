@@ -287,7 +287,8 @@ public class OCLTool extends OCLToolTOP {
   @Override
   public void prettyPrint(ASTOCLCompilationUnit oCLCompilationUnit, String file) {
     // pretty print AST
-    String OCL = new OCLFullPrettyPrinter(new IndentPrinter(), true).prettyprint(oCLCompilationUnit);
+    String OCL =
+        new OCLFullPrettyPrinter(new IndentPrinter(), true).prettyprint(oCLCompilationUnit);
     print(OCL, file);
   }
 

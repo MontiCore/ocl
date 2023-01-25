@@ -8,9 +8,8 @@ import de.monticore.ocl.ocl._prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.ocl._symboltable.OCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.util.SymbolTableUtil;
-import java.util.Optional;
-
 import de.monticore.prettyprint.IndentPrinter;
+import java.util.Optional;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 

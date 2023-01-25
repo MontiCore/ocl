@@ -6,14 +6,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.ocl.ocl.AbstractTest;
-import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
-import java.io.IOException;
-import java.util.Optional;
-
 import de.monticore.ocl.ocl._prettyprint.OCLFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
+import java.io.IOException;
+import java.util.Optional;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 

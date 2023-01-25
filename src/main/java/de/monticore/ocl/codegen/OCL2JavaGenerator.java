@@ -107,7 +107,8 @@ public class OCL2JavaGenerator {
         new MCSimpleGenericTypesPrettyPrinter(printer, true);
     traverser.setMCSimpleGenericTypesHandler(simpleGenericTypes);
     traverser.add4MCSimpleGenericTypes(simpleGenericTypes);
-    MCCollectionTypesPrettyPrinter collectionTypes = new MCCollectionTypesPrettyPrinter(printer, true);
+    MCCollectionTypesPrettyPrinter collectionTypes =
+        new MCCollectionTypesPrettyPrinter(printer, true);
     traverser.setMCCollectionTypesHandler(collectionTypes);
     traverser.add4MCCollectionTypes(collectionTypes);
     MCBasicTypesPrettyPrinter basicTypes = new MCBasicTypesPrettyPrinter(printer, true);

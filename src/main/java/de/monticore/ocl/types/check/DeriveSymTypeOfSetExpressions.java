@@ -7,7 +7,6 @@ import static de.monticore.types.check.SymTypePrimitive.unbox;
 
 import com.google.common.collect.Lists;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.ocl._visitor.NameExpressionsFromExpressionVisitor;
 import de.monticore.ocl.setexpressions.SetExpressionsMill;
@@ -213,7 +212,7 @@ public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
             "0xA0309 "
                 + node.getLeft().get_SourcePositionStart()
                 + " Could not calculate type of expression \""
-                + new OCLFullPrettyPrinter(new IndentPrinter(),false).prettyprint(node.getLeft())
+                + new OCLFullPrettyPrinter(new IndentPrinter(), false).prettyprint(node.getLeft())
                 + "\" on the left side of SetComprehension ");
       } else {
         if (getTypeCheckResult().getResult().isObscureType()) {

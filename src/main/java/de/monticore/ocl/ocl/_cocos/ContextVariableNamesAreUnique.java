@@ -4,7 +4,6 @@ package de.monticore.ocl.ocl._cocos;
 import de.monticore.ocl.ocl._ast.ASTOCLContextDefinition;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.mcsimplegenerictypes.MCSimpleGenericTypesMill;
 import de.monticore.types.prettyprint.MCSimpleGenericTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
