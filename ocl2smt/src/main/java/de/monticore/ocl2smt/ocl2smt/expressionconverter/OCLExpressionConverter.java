@@ -44,7 +44,7 @@ public class OCLExpressionConverter {
     constConverter = new LiteralConverter(ctx);
     this.ctx = ctx;
     genConstraints = new HashSet<>();
-    varNames = new HashMap<>() ;
+    varNames = new HashMap<>();
     cd2smtGenerator = new CD2SMTGenerator();
 
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
