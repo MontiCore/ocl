@@ -4,9 +4,6 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvariantDiff;
-import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
-import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
-import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOperationDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import java.util.*;
 
@@ -44,7 +41,7 @@ public class OCLDiffGenerator {
     OCLInvariantDiff operator = new OCLInvariantDiff();
     return operator.CDOCLDiff(oldCD, newCD, oldOCL, newOCL, partial);
   }
-/*
+  /*
   public static Set<OCLOPWitness> oclOPWitness(
       ASTCDCompilationUnit ast,
       Set<ASTOCLCompilationUnit> ocl,

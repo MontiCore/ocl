@@ -17,6 +17,7 @@ import java.util.function.Function;
 public class OCL2SMTGenerator {
   protected OCLExpressionConverter exprConv;
   private final Context ctx;
+
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
     exprConv = new OCLExpressionConverter(ast, ctx);
     this.ctx = ctx;
@@ -53,9 +54,7 @@ public class OCL2SMTGenerator {
   // |OCLParamDeclaration)
   protected Expr<? extends Sort> convertCtxParDec(ASTOCLParamDeclaration node) {
     OCLType oclType = TypeConverter.buildOCLType(node.getMCType());
-    Expr<? extends Sort> obj = exprConv.declVariable(oclType, node.getName());
-   exprConv.setOCLContext(obj, oclType);
-    return obj;
+    return exprConv.declVariable(oclType, node.getName());
   }
 
   protected IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
@@ -69,7 +68,7 @@ public class OCL2SMTGenerator {
     BoolExpr inv = invCtx.apply(exprConv.convertBoolExpr(invariant.getExpression()));
 
     // add general invConstraints
-    for (BoolExpr constr : exprConv.getGenConstraint()) {
+    for (BoolExpr constr : exprConv.genConstraints) {
       inv = ctx.mkAnd(inv, constr);
     }
 
@@ -101,7 +100,7 @@ public class OCL2SMTGenerator {
       Model model, String odName, ASTOCLMethodSignature method, boolean partial) {
     Optional<ASTODArtifact> od = buildOd(model, odName, partial);
     assert od.isPresent();
-    return OCL2SMTStrategy.splitPreOD(method, od.get(), model, exprConv.getConstrData());
+    return OCL2SMTStrategy.splitPreOD(method, od.get(), model, null);
   }
 
   public Solver makeSolver(List<IdentifiableBoolExpr> constraints) {

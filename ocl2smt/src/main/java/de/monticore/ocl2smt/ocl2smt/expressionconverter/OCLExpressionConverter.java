@@ -33,14 +33,20 @@ public class OCLExpressionConverter {
 
   protected final Context ctx;
   protected final CD2SMTGenerator cd2smtGenerator;
-  protected ConstraintsData constrData;
-  protected LiteralConverter constConverter;
+
+  public Map<String, Expr<? extends Sort>> varNames;
+
+  public Set<BoolExpr> genConstraints;
+
+  public LiteralConverter constConverter;
 
   public OCLExpressionConverter(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
     constConverter = new LiteralConverter(ctx);
     this.ctx = ctx;
+    genConstraints = new HashSet<>();
+    varNames = new HashMap<>() ;
     cd2smtGenerator = new CD2SMTGenerator();
-    constrData = new ConstraintsData();
+
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
     TypeConverter.setup(cd2smtGenerator);
   }
@@ -54,12 +60,7 @@ public class OCLExpressionConverter {
   }
 
   public void init() {
-    constrData = new ConstraintsData();
     constConverter.reset();
-  }
-
-  public Set<BoolExpr> getGenConstraint() {
-    return constrData.genConstraints;
   }
 
   public ASTCDDefinition getCD() {
@@ -70,8 +71,8 @@ public class OCLExpressionConverter {
     return cd2smtGenerator;
   }
 
-  public ConstraintsData getConstrData() {
-    return constrData;
+  public Set<BoolExpr> getGenConstraints() {
+    return genConstraints;
   }
 
   public BoolExpr convertBoolExpr(ASTExpression node) {
@@ -84,10 +85,6 @@ public class OCLExpressionConverter {
       assert false;
     }
     return result.get();
-  }
-
-  public void setOCLContext(Expr<? extends Sort> obj, OCLType oclType) {
-    constrData.setOCLContext(obj, oclType);
   }
 
   public Expr<? extends Sort> convertExpr(ASTExpression node) {
@@ -105,7 +102,7 @@ public class OCLExpressionConverter {
 
   public Expr<? extends Sort> declVariable(OCLType type, String name) {
     Expr<? extends Sort> res = constConverter.declObj(type, name);
-    constrData.addVar(name, res);
+    varNames.put(name, res);
     return res;
   }
 
@@ -379,8 +376,8 @@ public class OCLExpressionConverter {
   // -----------------------------------general----------------------------------------------------------------------*/
   protected Expr<? extends Sort> convertName(ASTNameExpression node) {
     Expr<? extends Sort> res;
-    if (constrData.containsVar(node.getName())) {
-      res = constrData.getVar(node.getName());
+    if (varNames.containsKey(node.getName())) {
+      res = varNames.get(node.getName());
     } else {
       res =
           declVariable(
@@ -441,8 +438,8 @@ public class OCLExpressionConverter {
   protected void closeScope(List<ASTInDeclaration> inDeclarations) {
     for (ASTInDeclaration decl : inDeclarations) {
       for (ASTInDeclarationVariable var : decl.getInDeclarationVariableList()) {
-        assert constrData.containsVar(var.getName());
-        constrData.removeVar(var.getName());
+        assert varNames.containsKey(var.getName());
+        varNames.remove(var.getName());
       }
     }
   }
@@ -522,7 +519,7 @@ public class OCLExpressionConverter {
 
     // just return Variable which was declared in the  ASTSetComprehension scope
     return collectVarName.getVariableNameSet().stream()
-        .filter(name -> !constrData.containsVar(name))
+        .filter(name -> !varNames.containsKey(name))
         .collect(Collectors.toSet());
   }
 
@@ -550,7 +547,7 @@ public class OCLExpressionConverter {
 
   private void closeSetCompScope(Set<String> setCompVarNames) {
     for (String name : setCompVarNames) {
-      constrData.removeVar(name);
+      varNames.remove(name);
     }
     setCompVarNames.clear();
   }
@@ -644,8 +641,8 @@ public class OCLExpressionConverter {
     Set<Expr<? extends Sort>> vars = new HashSet<>();
     setCompVarNames.forEach(
         x -> {
-          if (constrData.containsVar(x)) {
-            vars.add(constrData.getVar(x));
+          if (varNames.containsKey(x)) {
+            vars.add(varNames.get(x));
           }
           vars.add(expr2);
         });
@@ -764,7 +761,7 @@ public class OCLExpressionConverter {
             null,
             null,
             null);
-    constrData.genConstraints.add(rel_is_assocFunc);
+    genConstraints.add(rel_is_assocFunc);
     return rel;
   }
 }

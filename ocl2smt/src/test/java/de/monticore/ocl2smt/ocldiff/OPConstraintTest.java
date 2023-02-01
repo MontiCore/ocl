@@ -4,11 +4,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
-import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
-import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
-import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.odbasis._ast.*;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
@@ -41,7 +37,7 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
             OCL2SMTStrategy.mkPre("company")));
   }
 
- /* @Test
+  /* @Test
   public void testOPConstraintWitness() throws IOException {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
 
