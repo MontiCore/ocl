@@ -51,12 +51,11 @@ public class OCLDiffGenerator {
       ASTOCLMethodSignature method,
       boolean partial) {
     OCLOperationDiff operator = new OCLOperationDiff();
-    return operator.oclWitness(ast, ocl, method,partial);
+    return operator.oclWitness(ast, ocl, method, partial);
   }
+
   public static Set<OCLOPWitness> oclOPWitness(
-          ASTCDCompilationUnit ast,
-          Set<ASTOCLCompilationUnit> ocl,
-          boolean partial) {
+      ASTCDCompilationUnit ast, Set<ASTOCLCompilationUnit> ocl, boolean partial) {
     OCLOperationDiff operator = new OCLOperationDiff();
     return operator.oclWitness(ast, ocl, partial);
   }

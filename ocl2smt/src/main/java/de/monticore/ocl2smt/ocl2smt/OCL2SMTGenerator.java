@@ -12,7 +12,6 @@ import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.util.*;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.SourcePosition;
-import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.function.Function;
 
@@ -43,34 +42,15 @@ public class OCL2SMTGenerator {
    * @param astOclArtifact ocl Artifact to transform
    * @return the list of SMT BoolExpr
    */
-  public List<OCLConstraint> ocl2smt(ASTOCLArtifact astOclArtifact) {
-    List<OCLConstraint> constraints = new ArrayList<>();
+  public List<IdentifiableBoolExpr> inv2smt(ASTOCLArtifact astOclArtifact) {
+    List<IdentifiableBoolExpr> constraints = new ArrayList<>();
     for (ASTOCLConstraint constraint : astOclArtifact.getOCLConstraintList()) {
-      constraints.add(convertConstr(constraint));
+      if (constraint instanceof ASTOCLInvariant)
+        constraints.add(convertInv((ASTOCLInvariant) constraint));
     }
     return constraints;
   }
 
-  /**
-   * convert a single OCLConstraint into A SMT BoolExpr
-   *
-   * @param constraint constraint OCLConstraint to Convert
-   * @return the Constraint in SMT
-   */
-  public OCLConstraint convertConstr(ASTOCLConstraint constraint) {
-
-    OCLConstraint res = null;
-    if (constraint instanceof ASTOCLInvariant) {
-      res = convertInv((ASTOCLInvariant) constraint);
-    } else if (constraint instanceof ASTOCLOperationConstraint) {
-      res = convertOpConst((ASTOCLOperationConstraint) constraint);
-    } else {
-      Log.error(
-          "the conversion of  ASTOCLConstraint of type   ASTOCLMethodSignature "
-              + "and ASTOCLConstructorSignature in SMT is not implemented");
-    }
-    return res;
-  }
   // TODO:: fix context Decalration (OCLContextDefinition = MCType | GeneratorDeclaration
   // |OCLParamDeclaration)
   protected Expr<? extends Sort> convertCtxParDec(ASTOCLParamDeclaration node) {
@@ -80,7 +60,7 @@ public class OCL2SMTGenerator {
     return obj;
   }
 
-  protected OCLConstraint convertInv(ASTOCLInvariant invariant) {
+  protected IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
     expression2SMT.init();
     SourcePosition srcPos = invariant.get_SourcePositionStart();
 
@@ -98,7 +78,7 @@ public class OCL2SMTGenerator {
     Optional<String> name =
         invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
 
-    return new OCLConstraint(IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name));
+    return IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name);
   }
 
   protected Function<BoolExpr, BoolExpr> openInvScope(ASTOCLInvariant invariant) {

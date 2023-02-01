@@ -32,7 +32,7 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   @Test
   public void testOCLDiffOneCD() throws IOException {
 
-    OCLInvDiffResult diff = computeDiffOneCD("Auction.cd","old.ocl" ,"new.ocl" );
+    OCLInvDiffResult diff = computeDiffOneCD("Auction.cd", "old.ocl", "new.ocl");
     printResult(diff);
     Assertions.assertEquals(4, diff.getDiffWitness().size());
 

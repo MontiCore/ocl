@@ -8,7 +8,6 @@ import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.ocl2smt.util.OCL_Loader;
@@ -61,13 +60,13 @@ public abstract class ExpressionAbstractTest {
   }
 
   protected IdentifiableBoolExpr getConstraint(String search) {
-    ASTOCLConstraint constr =
+    ASTOCLInvariant constr =
         oclAST.getOCLArtifact().getOCLConstraintList().stream()
             .map(p -> (ASTOCLInvariant) p)
             .filter(p -> search.equals(p.getName()))
             .findAny()
             .get();
-    return ocl2SMTGenerator.convertConstr(constr).getInvariant();
+    return ocl2SMTGenerator.convertInv(constr);
   }
 
   public void printOD(ASTODArtifact od) {

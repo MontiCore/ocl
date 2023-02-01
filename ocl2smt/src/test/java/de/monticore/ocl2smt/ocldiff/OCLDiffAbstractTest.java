@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocldiff;
 
-import com.microsoft.z3.Context;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
@@ -70,7 +69,6 @@ public abstract class OCLDiffAbstractTest {
     try {
       FileUtils.writeStringToFile(
           outputFile.toFile(),
-
           new OD4ReportFullPrettyPrinter().prettyprint(od),
           Charset.defaultCharset());
     } catch (Exception e) {
@@ -111,7 +109,7 @@ public abstract class OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> newOCL = new HashSet<>();
     oldOCL.add(parseOCl(oldCDn, oldOCLn));
     newOCL.add(parseOCl(newCDn, newOCLn));
-    return OCLDiffGenerator.oclDiff(oldCD,newCD, oldOCL, newOCL, false);
+    return OCLDiffGenerator.oclDiff(oldCD, newCD, oldOCL, newOCL, false);
   }
 
   public OCLInvDiffResult computeDiffOneCD(String cdName, String oldOCLName, String newOCLName)
@@ -123,7 +121,6 @@ public abstract class OCLDiffAbstractTest {
     oldOCL.add(parseOCl(cdName, oldOCLName));
     return OCLDiffGenerator.oclDiff(cd, oldOCL, newOCL, false);
   }
-
 
   public boolean containsAttribute(ASTCDClass c, String attribute) {
     for (ASTCDAttribute attr : c.getCDAttributeList()) {
@@ -202,22 +199,22 @@ public abstract class OCLDiffAbstractTest {
     return null;
   }
 
-  public ASTOCLMethodSignature getMethodSignature(Set<ASTOCLCompilationUnit> oclSet, String name){
-     ASTOCLMethodSignature res  = null;
-    for (ASTOCLCompilationUnit ocl: oclSet) {
-      for (ASTOCLConstraint constraint : ocl.getOCLArtifact().getOCLConstraintList()){
-        if (constraint instanceof  ASTOCLOperationConstraint ){
-          ASTOCLOperationConstraint opConstraint = (ASTOCLOperationConstraint)constraint ;
-          if (opConstraint.getOCLOperationSignature() instanceof  ASTOCLMethodSignature){
-            ASTOCLMethodSignature method = (ASTOCLMethodSignature)opConstraint.getOCLOperationSignature();
-            if (method.getMethodName().getQName().contains(name)){
-               res =  method ;
+  public ASTOCLMethodSignature getMethodSignature(Set<ASTOCLCompilationUnit> oclSet, String name) {
+    ASTOCLMethodSignature res = null;
+    for (ASTOCLCompilationUnit ocl : oclSet) {
+      for (ASTOCLConstraint constraint : ocl.getOCLArtifact().getOCLConstraintList()) {
+        if (constraint instanceof ASTOCLOperationConstraint) {
+          ASTOCLOperationConstraint opConstraint = (ASTOCLOperationConstraint) constraint;
+          if (opConstraint.getOCLOperationSignature() instanceof ASTOCLMethodSignature) {
+            ASTOCLMethodSignature method =
+                (ASTOCLMethodSignature) opConstraint.getOCLOperationSignature();
+            if (method.getMethodName().getQName().contains(name)) {
+              res = method;
             }
           }
         }
-
       }
     }
-      return  res ;
-    }
+    return res;
+  }
 }

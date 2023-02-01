@@ -5,25 +5,15 @@ import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.util.OCLConstraint;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class OCLDiffHelper {
-  public static Set<OCLConstraint> invariant2SMT(
+  public static List<IdentifiableBoolExpr> invariant2SMT(
       OCL2SMTGenerator ocl2SMTGenerator, Set<ASTOCLCompilationUnit> oclSet) {
     return oclSet.stream()
-        .flatMap(
-            p ->
-                ocl2SMTGenerator.ocl2smt(p.getOCLArtifact()).stream()
-                    .filter(OCLConstraint::isInvariant)
-                    .map(OCLConstraint::getInvariant))
-        .collect(Collectors.toSet())
-        .stream()
-        .map(OCLConstraint::new)
-        .collect(Collectors.toSet());
+        .flatMap(x -> ocl2SMTGenerator.inv2smt(x.getOCLArtifact()).stream())
+        .collect(Collectors.toList());
   }
 
   public static ArrayList<IdentifiableBoolExpr> extractInv(Set<OCLConstraint> constraintList) {
@@ -36,9 +26,9 @@ public class OCLDiffHelper {
     return constraints.stream().map(x -> x.negateInv(ctx)).collect(Collectors.toSet());
   }
 
-  public static Set<IdentifiableBoolExpr> negateId(
-      Set<IdentifiableBoolExpr> constraints, Context ctx) {
-    return constraints.stream().map(x -> x.negate(ctx)).collect(Collectors.toSet());
+  public static List<IdentifiableBoolExpr> negateId(
+      List<IdentifiableBoolExpr> constraints, Context ctx) {
+    return constraints.stream().map(x -> x.negate(ctx)).collect(Collectors.toList());
   }
 
   public static String buildInvName(IdentifiableBoolExpr constr) {

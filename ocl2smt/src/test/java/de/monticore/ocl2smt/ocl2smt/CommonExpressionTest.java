@@ -22,9 +22,7 @@ public class CommonExpressionTest extends ExpressionAbstractTest {
     CD4CodeMill.init();
     parse("MinAuction.cd", "CommonExpr.ocl");
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
-    ocl2SMTGenerator
-        .ocl2smt(oclAST.getOCLArtifact())
-        .forEach(b -> res.add(b.getInvariant().getValue()));
+    ocl2SMTGenerator.inv2smt(oclAST.getOCLArtifact()).forEach(b -> res.add(b.getValue()));
   }
 
   @Test

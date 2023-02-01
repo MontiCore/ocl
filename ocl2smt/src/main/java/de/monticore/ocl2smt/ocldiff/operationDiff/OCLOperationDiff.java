@@ -42,7 +42,7 @@ public class OCLOperationDiff {
     Set<OCLOPWitness> res = new HashSet<>();
 
     for (ASTOCLMethodSignature method : getMethodList(ocl)) {
-      res.addAll(oclWitnessHelper( ocl, ocl2SMTGenerator, method, partial));
+      res.addAll(oclWitnessHelper(ocl, ocl2SMTGenerator, method, partial));
     }
     return res;
   }
@@ -105,14 +105,15 @@ public class OCLOperationDiff {
     OCL2SMTStrategy.buildPreCD(ast);
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(ast, ctx);
 
-    //get new OCL constraints
+    // get new OCL constraints
     List<OCLConstraint> newConstraints =
-        opConst2smt(ocl2SMTGenerator, getOperationsConstraints(method,newOcl));
+        opConst2smt(ocl2SMTGenerator, getOperationsConstraints(method, newOcl));
 
-    //get old ocl Constraints
-    List<OCLConstraint> oldConstraints = opConst2smt(ocl2SMTGenerator,getOperationsConstraints(method,oldOcl));
+    // get old ocl Constraints
+    List<OCLConstraint> oldConstraints =
+        opConst2smt(ocl2SMTGenerator, getOperationsConstraints(method, oldOcl));
 
-    //transform  pre , post =====> pre implies post
+    // transform  pre , post =====> pre implies post
     List<IdentifiableBoolExpr> posConstraints =
         newConstraints.stream()
             .map(x -> mkOperationConstraint(x, ctx))

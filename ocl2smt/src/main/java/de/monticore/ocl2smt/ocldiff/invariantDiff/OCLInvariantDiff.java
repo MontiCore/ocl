@@ -14,7 +14,6 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.ocldiff.OCLDiffHelper;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
-import de.monticore.ocl2smt.util.OCLConstraint;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
@@ -42,14 +41,13 @@ public class OCLInvariantDiff {
     }
 
     // add new ocl Constraint
-    Set<OCLConstraint> newConstraints = invariant2SMT(ocl2SMTGenerator, newOcl);
+    List<IdentifiableBoolExpr> newConstraints = invariant2SMT(ocl2SMTGenerator, newOcl);
 
     // negate and add old ocl constraints
-    Set<OCLConstraint> oldConstraints = invariant2SMT(ocl2SMTGenerator, oldOcl);
+    List<IdentifiableBoolExpr> oldConstraints = invariant2SMT(ocl2SMTGenerator, oldOcl);
 
-    List<IdentifiableBoolExpr> negConstraints = extractInv(negate(oldConstraints, ctx));
-    List<IdentifiableBoolExpr> posConstraints = extractInv(newConstraints);
-    return oclDiffHelper(ocl2SMTGenerator, posConstraints, negConstraints, partial);
+    List<IdentifiableBoolExpr> negConstraints = negateId(oldConstraints, ctx);
+    return oclDiffHelper(ocl2SMTGenerator, newConstraints, negConstraints, partial);
   }
 
   public OCLInvDiffResult CDOCLDiff(
@@ -63,14 +61,15 @@ public class OCLInvariantDiff {
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(newCD, ctx);
 
     // list of new OCl Constraints
-    Set<OCLConstraint> newOClConstraints = invariant2SMT(ocl2SMTGenerator, newOCL);
+    List<IdentifiableBoolExpr> newOClConstraints = invariant2SMT(ocl2SMTGenerator, newOCL);
 
     // list of old OCL Constraints
-    Set<OCLConstraint> oldOCLConstraints = invariant2SMT(ocl2SMTGenerator, oldOCl);
+    List<IdentifiableBoolExpr> oldOCLConstraints = invariant2SMT(ocl2SMTGenerator, oldOCl);
 
     CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
     cd2SMTGenerator.cd2smt(oldCD, ctx);
-    Set<IdentifiableBoolExpr> oldAssocConstr = cd2SMTGenerator.getAssociationsConstraints();
+    List<IdentifiableBoolExpr> oldAssocConstr =
+        new ArrayList<>(cd2SMTGenerator.getAssociationsConstraints());
 
     // remove assoc cardinality and compute CDDiff
     CDHelper.removeAssocCard(oldCD);
@@ -87,11 +86,11 @@ public class OCLInvariantDiff {
     }
 
     // build positive constraint List
-    List<IdentifiableBoolExpr> posConstraint = new ArrayList<>(extractInv(newOClConstraints));
+    List<IdentifiableBoolExpr> posConstraint = new ArrayList<>(newOClConstraints);
 
     // build negative constraintList
-    List<IdentifiableBoolExpr> negConstraint = extractInv(negate(oldOCLConstraints, ctx));
-    negConstraint.addAll(negateId(oldAssocConstr,ctx));
+    List<IdentifiableBoolExpr> negConstraint = negateId(oldOCLConstraints, ctx);
+    negConstraint.addAll(negateId(oldAssocConstr, ctx));
 
     return oclDiffHelper(ocl2SMTGenerator, posConstraint, negConstraint, partial);
   }
@@ -101,10 +100,10 @@ public class OCLInvariantDiff {
 
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
 
-    Set<OCLConstraint> solverConstraints = invariant2SMT(ocl2SMTGenerator, in);
+    List<IdentifiableBoolExpr> solverConstraints = invariant2SMT(ocl2SMTGenerator, in);
 
     // check if they exist a model for the list of positive Constraint
-    Solver solver = ocl2SMTGenerator.makeSolver(extractInv(solverConstraints));
+    Solver solver = ocl2SMTGenerator.makeSolver(solverConstraints);
     if (solver.check() != Status.SATISFIABLE) {
       Log.error("there are no Model for the List Of Positive Constraints");
     }

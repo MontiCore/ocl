@@ -85,9 +85,9 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
     oldOCL.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/old.ocl"));
 
-    ASTOCLMethodSignature method  = getMethodSignature(newOCL,"Person.increaseSalary");
+    ASTOCLMethodSignature method = getMethodSignature(newOCL, "Person.increaseSalary");
 
-    OCLOPDiffResult diff = OCLDiffGenerator.oclOPDiff(ast, oldOCL, newOCL, method,false);
+    OCLOPDiffResult diff = OCLDiffGenerator.oclOPDiff(ast, oldOCL, newOCL, method, false);
 
     assert diff != null;
     ASTODNamedObject preThisObj = getThisObj(diff.getDiffWitness().iterator().next().getPreOD());
