@@ -25,7 +25,7 @@ import java.util.Optional;
 public class FullOCLExpressionConverter extends OCLExpressionConverter {
   protected OCL2SMTStrategy strategy = new OCL2SMTStrategy();
 
-  protected Expr<? extends Sort> thisObj;
+  public Expr<? extends Sort> thisObj;
 
   public FullOCLExpressionConverter(ASTCDCompilationUnit ast, Context ctx) {
     super(ast, ctx);
@@ -76,7 +76,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     if (varNames.containsKey(node.getName())) {
       res = varNames.get(node.getName());
     }
-    if (thisObj == null) {
+    if (thisObj != null) {
       Optional<Expr<? extends Sort>> attr = getContextAttribute(node, isPre);
       if (attr.isPresent()) {
         res = attr.get();

@@ -68,4 +68,8 @@ public class OPConstraint {
   public OCLType getThisType() {
     return ThisType;
   }
+
+  public boolean isPresentResult() {
+    return this.result != null;
+  }
 }
