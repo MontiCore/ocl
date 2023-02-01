@@ -29,14 +29,14 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-public class OCLExpression2SMT {
+public class OCLExpressionConverter {
 
   protected final Context ctx;
   protected final CD2SMTGenerator cd2smtGenerator;
   protected ConstraintsData constrData;
   protected LiteralConverter constConverter;
 
-  public OCLExpression2SMT(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
+  public OCLExpressionConverter(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
     constConverter = new LiteralConverter(ctx);
     this.ctx = ctx;
     cd2smtGenerator = new CD2SMTGenerator();
@@ -45,7 +45,7 @@ public class OCLExpression2SMT {
     TypeConverter.setup(cd2smtGenerator);
   }
 
-  public OCLExpression2SMT(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
+  public OCLExpressionConverter(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
     constConverter = new LiteralConverter(ocl2SMTGenerator.getCtx());
     this.ctx = ocl2SMTGenerator.getCtx();
     cd2smtGenerator = ocl2SMTGenerator.getCD2SMTGenerator();

@@ -6,8 +6,8 @@ import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpression2SMT;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.FullOCLOPExpression2SMT;
+import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
+import de.monticore.ocl2smt.ocl2smt.expressionconverter.FullOCLOPExpressionConverter;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.util.*;
@@ -17,16 +17,16 @@ import java.util.*;
 import java.util.function.Function;
 
 public class OCL2SMTGenerator {
-  protected OCLExpression2SMT expression2SMT;
+  protected OCLExpressionConverter expression2SMT;
   private final Context ctx;
   // TODO Inv2SMT and Operation to SMT trenen
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
-    expression2SMT = new OCLExpression2SMT(ast, ctx);
+    expression2SMT = new OCLExpressionConverter(ast, ctx);
     this.ctx = ctx;
   }
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
-    expression2SMT = new OCLExpression2SMT(ast, ocl2SMTGenerator);
+    expression2SMT = new OCLExpressionConverter(ast, ocl2SMTGenerator);
     this.ctx = ocl2SMTGenerator.ctx;
   }
 
@@ -97,7 +97,7 @@ public class OCL2SMTGenerator {
   }
 
   // TODO:: fix   OCLOperationSignature = OCLMethodSignature | OCLConstructorSignature
-  void openOpScope(ASTOCLOperationSignature node, OCLExpression2SMT opConverter) {
+  void openOpScope(ASTOCLOperationSignature node, OCLExpressionConverter opConverter) {
     ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
 
     OCLType type = OCLType.buildOCLType(method.getMethodName().getParts(0));
@@ -107,7 +107,7 @@ public class OCL2SMTGenerator {
     opConverter.setOCLContext(obj, type);
   }
 
-  private BoolExpr convertPreCond(ASTOCLOperationConstraint node, FullOCLOPExpression2SMT opConverter) {
+  private BoolExpr convertPreCond(ASTOCLOperationConstraint node, FullOCLOPExpressionConverter opConverter) {
     opConverter.enterPreCond();
 
     // TODO:fix if many pre conditions
@@ -121,7 +121,7 @@ public class OCL2SMTGenerator {
   }
 
   private BoolExpr convertPostCond(
-      ASTOCLOperationConstraint node, FullOCLOPExpression2SMT opConverter) {
+      ASTOCLOperationConstraint node, FullOCLOPExpressionConverter opConverter) {
     // TODO : fix if many Post conditions
     BoolExpr post = opConverter.convertBoolExpr(node.getPostCondition(0));
     for (BoolExpr constr : opConverter.getGenConstraint()) {
@@ -132,7 +132,7 @@ public class OCL2SMTGenerator {
   }
 
   public OPConstraint convertOpConst(ASTOCLOperationConstraint node) {
-    FullOCLOPExpression2SMT opConverter = new FullOCLOPExpression2SMT(expression2SMT);
+    FullOCLOPExpressionConverter opConverter = new FullOCLOPExpressionConverter(expression2SMT);
     opConverter.init();
     expression2SMT = opConverter; // TODO: fix that
     openOpScope(node.getOCLOperationSignature(), opConverter);
