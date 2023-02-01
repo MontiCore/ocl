@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class OPConstraintTest extends OCLDiffAbstractTest {
+public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
   @BeforeEach
   public void setUp() {
     Log.init();

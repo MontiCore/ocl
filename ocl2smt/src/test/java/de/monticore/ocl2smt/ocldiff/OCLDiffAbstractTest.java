@@ -10,12 +10,13 @@ import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.util.OCL_Loader;
-import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
+import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODName;
 import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odlink._ast.ASTODLink;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -69,7 +70,7 @@ public abstract class OCLDiffAbstractTest {
     try {
       FileUtils.writeStringToFile(
           outputFile.toFile(),
-          new OD4ReportFullPrettyPrinter().prettyprint(od),
+          new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od),
           Charset.defaultCharset());
     } catch (Exception e) {
       e.printStackTrace();

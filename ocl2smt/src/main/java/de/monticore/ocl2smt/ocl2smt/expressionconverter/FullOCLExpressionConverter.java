@@ -27,6 +27,8 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   private boolean isPreStrategy = false;
   private boolean isPreCond = false;
 
+  private Expr<? extends Sort> thisObj;
+
   public void enterPre() {
     isPreStrategy = true;
   }
@@ -35,6 +37,14 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     if (!isPreCond) {
       this.isPreStrategy = false;
     }
+  }
+
+  public void setThisObj(Expr<? extends Sort> thisObj) {
+    this.thisObj = thisObj;
+  }
+
+  public Expr<? extends Sort> getThisObj() {
+    return thisObj;
   }
 
   public void enterPreCond() {
@@ -53,7 +63,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
 
 
 
-  public Expr<? extends Sort> thisObj;
+
 
   public FullOCLExpressionConverter(ASTCDCompilationUnit ast, Context ctx) {
     super(ast, ctx);

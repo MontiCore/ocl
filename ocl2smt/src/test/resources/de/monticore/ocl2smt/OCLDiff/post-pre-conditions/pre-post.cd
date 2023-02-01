@@ -6,7 +6,7 @@ classdiagram Auction {
  class  Person {
    int  salary;
    int age ;
-   boolean changeCompany(String n) ;
+   Company changeCompany(String n) ;
    int increaseSalary(double amount);
  }
 

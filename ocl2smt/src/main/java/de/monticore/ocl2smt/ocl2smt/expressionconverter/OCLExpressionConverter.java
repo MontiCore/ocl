@@ -45,6 +45,7 @@ public class OCLExpressionConverter {
 
   public LiteralConverter constConverter;
 
+
   public OCLExpressionConverter(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
     constConverter = new LiteralConverter(ctx);
     this.ctx = ctx;

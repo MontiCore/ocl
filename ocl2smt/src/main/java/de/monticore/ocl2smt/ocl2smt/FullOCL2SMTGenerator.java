@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 public class FullOCL2SMTGenerator {
-  // TODO::  fix name
-
   protected FullOCLExpressionConverter fullExprConv;
   private final Context ctx;
 
@@ -73,7 +71,7 @@ public class FullOCL2SMTGenerator {
     fullExprConv.init();
 
     Expr<? extends Sort> thisObj = openOpScope(node.getOCLOperationSignature(), fullExprConv);
-    fullExprConv.thisObj = thisObj;
+    fullExprConv.setThisObj(thisObj);
 
     // convert pre and post conditions
     BoolExpr pre = convertPreCond(node);
