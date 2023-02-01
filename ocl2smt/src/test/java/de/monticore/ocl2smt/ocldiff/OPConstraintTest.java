@@ -41,7 +41,7 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
             OCL2SMTStrategy.mkPre("company")));
   }
 
-  @Test
+ /* @Test
   public void testOPConstraintWitness() throws IOException {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
 
@@ -108,5 +108,5 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
 
     Assertions.assertEquals(result, "false");
     printOPDiff(diff);
-  }
+  }*/
 }

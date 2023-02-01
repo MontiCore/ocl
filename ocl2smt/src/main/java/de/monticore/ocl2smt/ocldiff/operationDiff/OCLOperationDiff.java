@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class OCLOperationDiff {
-
+/*
   protected Context ctx;
 
   public Set<OCLOPWitness> oclWitness(
@@ -210,5 +210,5 @@ public class OCLOperationDiff {
     return operationConstraints.stream()
         .map(ocl2SMTGenerator::convertOpConst)
         .collect(Collectors.toList());
-  }
+  }*/
 }

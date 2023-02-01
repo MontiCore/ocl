@@ -44,7 +44,7 @@ public class OCLDiffGenerator {
     OCLInvariantDiff operator = new OCLInvariantDiff();
     return operator.CDOCLDiff(oldCD, newCD, oldOCL, newOCL, partial);
   }
-
+/*
   public static Set<OCLOPWitness> oclOPWitness(
       ASTCDCompilationUnit ast,
       Set<ASTOCLCompilationUnit> ocl,
@@ -69,5 +69,5 @@ public class OCLDiffGenerator {
 
     OCLOperationDiff operator = new OCLOperationDiff();
     return operator.oclDiff(ast, oldOcl, newOcl, method, partial);
-  }
+  }*/
 }
