@@ -4,7 +4,7 @@ import com.microsoft.z3.Context;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
-import de.monticore.ocl2smt.util.OCLConstraint;
+import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,13 +16,13 @@ public class OCLDiffHelper {
         .collect(Collectors.toList());
   }
 
-  public static ArrayList<IdentifiableBoolExpr> extractInv(Set<OCLConstraint> constraintList) {
+  public static ArrayList<IdentifiableBoolExpr> extractInv(Set<OPConstraint> constraintList) {
     return constraintList.stream()
-        .map(OCLConstraint::getInvariant)
+        .map(OPConstraint::getInvariant)
         .collect(Collectors.toCollection(ArrayList::new));
   }
 
-  public static Set<OCLConstraint> negate(Set<OCLConstraint> constraints, Context ctx) {
+  public static Set<OPConstraint> negate(Set<OPConstraint> constraints, Context ctx) {
     return constraints.stream().map(x -> x.negateInv(ctx)).collect(Collectors.toSet());
   }
 

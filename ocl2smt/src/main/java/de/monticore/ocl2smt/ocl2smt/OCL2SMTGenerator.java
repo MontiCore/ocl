@@ -7,7 +7,8 @@ import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpression2SMT;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLOPExpression2SMT;
+import de.monticore.ocl2smt.ocl2smt.expressionconverter.FullOCLOPExpression2SMT;
+import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.util.*;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -106,7 +107,7 @@ public class OCL2SMTGenerator {
     opConverter.setOCLContext(obj, type);
   }
 
-  private BoolExpr convertPreCond(ASTOCLOperationConstraint node, OCLOPExpression2SMT opConverter) {
+  private BoolExpr convertPreCond(ASTOCLOperationConstraint node, FullOCLOPExpression2SMT opConverter) {
     opConverter.enterPreCond();
 
     // TODO:fix if many pre conditions
@@ -120,7 +121,7 @@ public class OCL2SMTGenerator {
   }
 
   private BoolExpr convertPostCond(
-      ASTOCLOperationConstraint node, OCLOPExpression2SMT opConverter) {
+      ASTOCLOperationConstraint node, FullOCLOPExpression2SMT opConverter) {
     // TODO : fix if many Post conditions
     BoolExpr post = opConverter.convertBoolExpr(node.getPostCondition(0));
     for (BoolExpr constr : opConverter.getGenConstraint()) {
@@ -130,8 +131,8 @@ public class OCL2SMTGenerator {
     return post;
   }
 
-  public OCLConstraint convertOpConst(ASTOCLOperationConstraint node) {
-    OCLOPExpression2SMT opConverter = new OCLOPExpression2SMT(expression2SMT);
+  public OPConstraint convertOpConst(ASTOCLOperationConstraint node) {
+    FullOCLOPExpression2SMT opConverter = new FullOCLOPExpression2SMT(expression2SMT);
     opConverter.init();
     expression2SMT = opConverter; // TODO: fix that
     openOpScope(node.getOCLOperationSignature(), opConverter);
@@ -148,7 +149,7 @@ public class OCL2SMTGenerator {
         IdentifiableBoolExpr.buildIdentifiable(
             post, node.getPostCondition(0).get_SourcePositionStart(), Optional.of("post"));
 
-    return new OCLConstraint(preConstr, postConstr);
+    return new OPConstraint(preConstr, postConstr);
   }
 
   public Optional<ASTODArtifact> buildOd(Model model, String ODName, boolean partial) {

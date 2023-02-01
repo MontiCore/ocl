@@ -8,7 +8,7 @@ import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.ConstConverter;
+import de.monticore.ocl2smt.ocl2smt.expressionconverter.LiteralConverter;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODNamedObject;
@@ -53,7 +53,7 @@ public class OCLHelper {
       Expr<? extends Sort> obj1,
       Expr<? extends Sort> obj2,
       CD2SMTGenerator cd2SMTGenerator,
-      ConstConverter cc) {
+      LiteralConverter cc) {
 
     ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
 

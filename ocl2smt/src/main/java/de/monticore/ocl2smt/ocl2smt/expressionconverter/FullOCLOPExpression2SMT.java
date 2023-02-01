@@ -20,10 +20,10 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
-public class OCLOPExpression2SMT extends OCLExpression2SMT {
+public class FullOCLOPExpression2SMT extends OCLExpression2SMT {
   protected OCL2SMTStrategy strategy = new OCL2SMTStrategy();
 
-  public OCLOPExpression2SMT(OCLExpression2SMT expr) {
+  public FullOCLOPExpression2SMT(OCLExpression2SMT expr) {
     super(expr.cd2smtGenerator.getClassDiagram(), expr.ctx);
     this.constrData = expr.constrData;
   }

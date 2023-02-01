@@ -34,10 +34,10 @@ public class OCLExpression2SMT {
   protected final Context ctx;
   protected final CD2SMTGenerator cd2smtGenerator;
   protected ConstraintsData constrData;
-  protected ConstConverter constConverter;
+  protected LiteralConverter constConverter;
 
   public OCLExpression2SMT(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
-    constConverter = new ConstConverter(ctx);
+    constConverter = new LiteralConverter(ctx);
     this.ctx = ctx;
     cd2smtGenerator = new CD2SMTGenerator();
     constrData = new ConstraintsData();
@@ -46,7 +46,7 @@ public class OCLExpression2SMT {
   }
 
   public OCLExpression2SMT(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
-    constConverter = new ConstConverter(ocl2SMTGenerator.getCtx());
+    constConverter = new LiteralConverter(ocl2SMTGenerator.getCtx());
     this.ctx = ocl2SMTGenerator.getCtx();
     cd2smtGenerator = ocl2SMTGenerator.getCD2SMTGenerator();
     cd2smtGenerator.cd2smt(ast, ctx);
