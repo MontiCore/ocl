@@ -146,14 +146,14 @@ public class OCLHelper {
   }
 
   private static ASTModifier mkResultModifier(String value) {
-    return buildModifier("Result", value);
+    return buildModifier("result", value);
   }
 
   private static void setThisStereotypes(ASTODArtifact od, Model model, OPConstraint opConstraint) {
 
     for (ASTODNamedObject obj : OCLHelper.getObjectList(od)) {
       if (isThis(obj, model, opConstraint.getThisObj())) {
-        obj.setModifier(buildModifier("This", "true"));
+        obj.setModifier(buildModifier("this", "true"));
       }
     }
   }
