@@ -6,20 +6,18 @@ import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.ocl2smt.util.OCL_Loader;
-
+import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.prettyprint.IndentPrinter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-
-import de.monticore.prettyprint.IndentPrinter;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
 
@@ -32,8 +30,6 @@ public abstract class ExpressionAbstractTest {
   protected static ASTCDCompilationUnit cdAST;
   protected static Solver solver;
   protected static OCL2SMTGenerator ocl2SMTGenerator;
-
-
 
   protected void parse(String cdFileName, String oclFileName) throws IOException {
     oclAST =

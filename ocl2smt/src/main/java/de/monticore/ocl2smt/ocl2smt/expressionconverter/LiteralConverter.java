@@ -10,10 +10,8 @@ import de.monticore.ocl2smt.util.TypeConverter;
 import de.se_rwth.commons.logging.Log;
 import java.util.HashMap;
 import java.util.Map;
-/**
- * This class convert variable and Object in SMT and save their types in VarTypes
- *
- * */
+
+/** This class convert variable and Object in SMT and save their types in VarTypes */
 public class LiteralConverter {
   protected Context context;
   protected final Map<Expr<? extends Sort>, OCLType> varTypes = new HashMap<>();

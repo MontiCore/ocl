@@ -29,11 +29,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-/**
- * This class convert All OCL-Expressions except  @Pre-Expressions in SMT
- *
- * */
-
+/** This class convert All OCL-Expressions except @Pre-Expressions in SMT */
 public class OCLExpressionConverter {
 
   protected final Context ctx;
@@ -44,7 +40,6 @@ public class OCLExpressionConverter {
   public Set<BoolExpr> genConstraints;
 
   public LiteralConverter constConverter;
-
 
   public OCLExpressionConverter(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
     constConverter = new LiteralConverter(ctx);

@@ -1,13 +1,10 @@
 package de.monticore.ocl2smt.helpers;
 
-
-
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Model;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.CDHelper;
-import de.monticore.cd2smt.Helper.ODHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -29,7 +26,6 @@ import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.prettyprint.IndentPrinter;
-
 import de.monticore.types.mcbasictypes._prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
@@ -135,23 +131,20 @@ public class OCLHelper {
         de.monticore.cd2smt.Helper.ODHelper.buildOD(
             "post_" + od.getObjectDiagram().getName(), postOdElements);
 
-    return setStereotypes(new OCLOPWitness(method, preOD, postOD), model, opConstraint);
+    return setStereotypes(method, new OCLOPWitness(method, preOD, postOD), model, opConstraint);
   }
 
   private static OCLOPWitness setStereotypes(
-      OCLOPWitness diff, Model model, OPConstraint opConstraint) {
-    setThisStereotypes(diff.getPreOD(), model, opConstraint);
-    setThisStereotypes(diff.getPostOD(), model, opConstraint);
+      ASTOCLMethodSignature method, OCLOPWitness diff, Model model, OPConstraint opConstraint) {
+    setThisStereotypes(diff.getPreOD(), method, model, opConstraint);
+    setThisStereotypes(diff.getPostOD(), method, model, opConstraint);
 
-    setResultStereotypes(diff.getPostOD(), model, opConstraint);
+    setResultStereotypes(diff.getPostOD(), method, model, opConstraint);
     return diff;
   }
 
-  private static ASTModifier mkResultModifier(String value) {
-    return buildModifier("Result", value);
-  }
-
-  private static void setThisStereotypes(ASTODArtifact od, Model model, OPConstraint opConstraint) {
+  private static void setThisStereotypes(
+      ASTODArtifact od, ASTOCLMethodSignature method, Model model, OPConstraint opConstraint) {
 
     for (ASTODNamedObject obj : OCLHelper.getObjectList(od)) {
       if (isThis(obj, model, opConstraint.getThisObj())) {
@@ -178,20 +171,27 @@ public class OCLHelper {
   }
 
   private static void setResultStereotypes(
-      ASTODArtifact od, Model model, OPConstraint opConstraint) {
+      ASTODArtifact od, ASTOCLMethodSignature method, Model model, OPConstraint opConstraint) {
 
     if (!opConstraint.isPresentResult()) {
-      od.getObjectDiagram().setStereotype(buildStereotype("result", "Undefined"));
+      if (!new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
+          .prettyprint(method.getMCReturnType())
+          .equals("void")) {
+        od.getObjectDiagram().setStereotype(buildStereotype("result", "Unspecified"));
+      }
     } else {
       OCLType resultType = opConstraint.getResultType();
       if (resultType.isPrimitiv()) {
         String res = model.evaluate(opConstraint.getResult(), true).getSExpr();
         od.getObjectDiagram().setStereotype(buildStereotype("result", res));
-      }
-      else {
-         Expr<? extends  Sort> result = model.evaluate(opConstraint.getResult(),true);
-         String resName = SMTHelper.buildObjectName(result) ;
-       ASTODNamedObject obj  = OCLHelper.getObjectList(od).stream().filter(x->x.getName().equals(resName)).findFirst().orElse(null);
+      } else {
+        Expr<? extends Sort> result = model.evaluate(opConstraint.getResult(), true);
+        String resName = SMTHelper.buildObjectName(result);
+        ASTODNamedObject obj =
+            OCLHelper.getObjectList(od).stream()
+                .filter(x -> x.getName().equals(resName))
+                .findFirst()
+                .orElse(null);
 
         assert obj != null;
         obj.setModifier(buildModifier("result", "true"));
@@ -221,7 +221,8 @@ public class OCLHelper {
     preObjAttributeList.forEach(a -> a.setName(removePre(a.getName())));
 
     String type =
-        new MCBasicTypesFullPrettyPrinter(new IndentPrinter()).prettyprint(object.getMCObjectType());
+        new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
+            .prettyprint(object.getMCObjectType());
     ASTODNamedObject preObj =
         de.monticore.cd2smt.Helper.ODHelper.buildObject(
             object.getName(), type, preObjAttributeList);
@@ -245,11 +246,10 @@ public class OCLHelper {
     traverser.setCDBasisHandler(preAttributeTrafo);
     ast.accept(traverser);
   }
+
   public static String mkPre(String s) {
     return s + "__pre";
   }
-
-
 
   public static boolean isPre(String s) {
     return s.endsWith("__pre");

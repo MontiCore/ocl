@@ -70,5 +70,4 @@ public class OCLDiffGenerator {
     OCLOperationDiff operator = new OCLOperationDiff();
     return operator.oclDiff(ast, oldOcl, newOcl, method, partial);
   }
-
 }

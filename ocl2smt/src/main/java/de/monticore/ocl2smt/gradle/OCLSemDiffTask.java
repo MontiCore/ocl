@@ -8,16 +8,14 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.util.OCL_Loader;
-import de.monticore.od4report.OD4ReportMill;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.prettyprint.IndentPrinter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
-
-import de.monticore.prettyprint.IndentPrinter;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -93,7 +91,6 @@ public abstract class OCLSemDiffTask extends DefaultTask {
             getTraceOD().getAsFile().get(),
             new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(trace),
             Charset.defaultCharset());
-
       }
     }
 

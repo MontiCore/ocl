@@ -3,7 +3,7 @@
 package docs;
 ocl Person {
 
- context Company Person.changeCompany(String n)
+ context void Person.changeCompany(String n)
    pre : company.name == "oldCompany"  &&
          company.employees == 4 &&
          n == "newCompany";
@@ -15,7 +15,9 @@ ocl Person {
 
          company.employees@pre == 0  &&
          company@pre.name@pre ==  company@pre.name &&
-         company.name@pre == company.name ;
-         result == company ;
+         company.name@pre == company.name &&
+         true ;
+       //  result == company ;
+
 
 }
