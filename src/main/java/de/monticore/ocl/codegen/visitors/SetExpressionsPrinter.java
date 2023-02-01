@@ -10,12 +10,7 @@ import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
 import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.check.IDerive;
-import de.monticore.types.check.ISynthesize;
-import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.SymTypeOfGenerics;
-import de.monticore.types.check.SymTypePrimitive;
-import de.monticore.types.check.TypeCheckResult;
+import de.monticore.types.check.*;
 import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 

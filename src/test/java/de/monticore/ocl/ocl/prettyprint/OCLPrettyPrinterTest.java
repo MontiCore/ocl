@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
+import de.monticore.ocl.ocl._prettyprint.OCLFullPrettyPrinter;
 import de.monticore.prettyprint.IndentPrinter;
 import java.io.IOException;
 import java.util.Optional;
@@ -22,11 +23,10 @@ public class OCLPrettyPrinterTest extends AbstractTest {
     // given
     final Optional<ASTOCLCompilationUnit> ast =
         parse(prefixValidModelsPath("/testinput/validGrammarModels/" + filename), false);
-    final OCLFullPrettyPrinter printer = new OCLFullPrettyPrinter(new IndentPrinter());
     assertThat(ast).isNotNull();
 
     // when
-    String output = printer.prettyprint(ast.get());
+    String output = new OCLFullPrettyPrinter(new IndentPrinter(), true).prettyprint(ast.get());
 
     // then
     OCLParser parser = new OCLParser();

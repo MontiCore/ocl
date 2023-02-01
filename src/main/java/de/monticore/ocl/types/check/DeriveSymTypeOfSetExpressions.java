@@ -7,14 +7,15 @@ import static de.monticore.types.check.SymTypePrimitive.unbox;
 
 import com.google.common.collect.Lists;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.ocl.ocl._prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.ocl._visitor.NameExpressionsFromExpressionVisitor;
-import de.monticore.ocl.ocl.prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.setexpressions.SetExpressionsMill;
 import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
 import de.monticore.ocl.util.LogHelper;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 import de.monticore.types.check.AbstractDeriveFromExpression;
@@ -207,12 +208,11 @@ public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
       varNames = nameVisitor.getVarNames();
       node.getLeft().getExpression().accept(getTraverser());
       if (!getTypeCheckResult().isPresentResult()) {
-        OCLFullPrettyPrinter printer = new OCLFullPrettyPrinter();
         Log.error(
             "0xA0309 "
                 + node.getLeft().get_SourcePositionStart()
                 + " Could not calculate type of expression \""
-                + printer.prettyprint(node.getLeft())
+                + new OCLFullPrettyPrinter(new IndentPrinter(), false).prettyprint(node.getLeft())
                 + "\" on the left side of SetComprehension ");
       } else {
         if (getTypeCheckResult().getResult().isObscureType()) {
