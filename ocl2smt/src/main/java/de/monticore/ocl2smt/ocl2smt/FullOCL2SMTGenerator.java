@@ -34,16 +34,6 @@ public class FullOCL2SMTGenerator {
     return ctx;
   }
 
-  public CD2SMTGenerator getCD2SMTGenerator() {
-    return fullExprConv.getCd2smtGenerator();
-  }
-
-  // TODO:: fix context Decalration (OCLContextDefinition = MCType | GeneratorDeclaration
-  // |OCLParamDeclaration)
-  protected Expr<? extends Sort> convertCtxParDec(ASTOCLParamDeclaration node) {
-    OCLType oclType = TypeConverter.buildOCLType(node.getMCType());
-    return fullExprConv.declVariable(oclType, node.getName());
-  }
 
   // TODO:: fix   OCLOperationSignature = OCLMethodSignature | OCLConstructorSignature
   private Expr<? extends Sort> openOpScope(
@@ -124,7 +114,7 @@ public class FullOCL2SMTGenerator {
       boolean partial) {
     Optional<ASTODArtifact> od = buildOd(model, odName, partial);
     assert od.isPresent();
-    return OCLHelper.splitPreOD(method, od.get(), model, opConstraint); // FIXME
+    return OCLHelper.splitPreOD(method, od.get(), model, opConstraint);
   }
 
   public Solver makeSolver(List<IdentifiableBoolExpr> constraints) {

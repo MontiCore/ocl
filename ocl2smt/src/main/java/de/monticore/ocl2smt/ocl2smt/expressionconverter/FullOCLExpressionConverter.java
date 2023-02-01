@@ -5,16 +5,11 @@ import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.expressions.commonexpressions._ast.ASTBracketExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
-import de.monticore.ocl.oclexpressions._ast.ASTIfThenElseExpression;
-import de.monticore.ocl.oclexpressions._ast.ASTImpliesExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLAtPreQualification;
 import de.monticore.ocl2smt.helpers.OCLHelper;
-import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.SMTSet;
 import de.monticore.ocl2smt.util.TypeConverter;
@@ -22,8 +17,41 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
+import static de.monticore.ocl2smt.helpers.OCLHelper.mkPre;
+
+/**
+ * This class convert All OCL-Expressions including  @Pre-Expressions in SMT
+ *
+ * */
 public class FullOCLExpressionConverter extends OCLExpressionConverter {
-  protected OCL2SMTStrategy strategy = new OCL2SMTStrategy();
+  private boolean isPreStrategy = false;
+  private boolean isPreCond = false;
+
+  public void enterPre() {
+    isPreStrategy = true;
+  }
+
+  public void exitPre() {
+    if (!isPreCond) {
+      this.isPreStrategy = false;
+    }
+  }
+
+  public void enterPreCond() {
+    isPreCond = true;
+    isPreStrategy = true;
+  }
+
+  public void exitPreCond() {
+    isPreCond = false;
+    isPreStrategy = false;
+  }
+
+  public boolean isPreStrategy() {
+    return isPreStrategy;
+  }
+
+
 
   public Expr<? extends Sort> thisObj;
 
@@ -31,46 +59,30 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     super(ast, ctx);
   }
 
-  public void enterPreCond() {
-    strategy.enterPreCond();
-  }
 
-  public void exitPreCond() {
-    strategy.exitPreCond();
-  }
 
   @Override
   protected Optional<Expr<? extends Sort>> convertGenExprOpt(ASTExpression node) {
-    Expr<? extends Sort> res;
-    if (node instanceof ASTLiteralExpression) {
-      res = constConverter.convert((ASTLiteralExpression) node);
-    } else if (node instanceof ASTBracketExpression) {
-      res = convertBracket((ASTBracketExpression) node);
-    } else if (node instanceof ASTNameExpression) {
-      res = convertName((ASTNameExpression) node);
-    } else if (node instanceof ASTFieldAccessExpression) {
-      res = convertFieldAcc((ASTFieldAccessExpression) node);
-    } else if (node instanceof ASTIfThenElseExpression) {
-      res = convertIfTEl((ASTIfThenElseExpression) node);
-    } else if (node instanceof ASTImpliesExpression) {
-      res = convertImpl((ASTImpliesExpression) node);
-    } else if (node instanceof ASTOCLAtPreQualification) {
-      res = convertAt((ASTOCLAtPreQualification) node);
-    } else {
-      return Optional.empty();
+    Optional<Expr<? extends Sort>> res = super.convertGenExprOpt(node);
+    if (res.isPresent()){
+      return  res ;
+    } else if (node instanceof  ASTOCLAtPreQualification) {
+       res = Optional.ofNullable(convertAt((ASTOCLAtPreQualification) node)) ;
+    }else {
+       res = Optional.empty() ;
     }
-    return Optional.of(res);
+    return  res ;
   }
 
   protected Expr<? extends Sort> convertAt(ASTOCLAtPreQualification node) {
-    strategy.enterPre();
+    enterPre();
     return convertExpr(node.getExpression());
   }
 
   @Override
   protected Expr<? extends Sort> convertName(ASTNameExpression node) {
-    boolean isPre = strategy.isPreStrategy();
-    strategy.exitPre();
+    boolean isPre = isPreStrategy();
+    exitPre();
     Expr<? extends Sort> res = null;
 
     if (varNames.containsKey(node.getName())) {
@@ -97,22 +109,22 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
 
   @Override
   protected SMTSet convertFieldAccAssoc(ASTFieldAccessExpression node) {
-    boolean isPre = strategy.isPreStrategy();
-    strategy.exitPre();
+    boolean isPre = isPreStrategy();
+    exitPre();
     String name = node.getName();
     if (isPre) {
-      name = OCL2SMTStrategy.mkPre(name);
+      name = OCLHelper.mkPre(name);
     }
     return convertFieldAccessHelper(node.getExpression(), name);
   }
 
   @Override
   protected Expr<? extends Sort> convertFieldAcc(ASTFieldAccessExpression node) {
-    boolean isPre = strategy.isPreStrategy();
-    strategy.exitPre();
+    boolean isPre = isPreStrategy();
+    exitPre();
     String attributeName = node.getName();
     if (isPre) {
-      attributeName = OCL2SMTStrategy.mkPre(attributeName);
+      attributeName = OCLHelper.mkPre(attributeName);
     }
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
     OCLType type = constConverter.getType(obj);
@@ -124,7 +136,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     // TODO::update to takeCare when the attribute is inherited
     String attributeName = node.getName();
     if (isPre) {
-      attributeName = OCL2SMTStrategy.mkPre(node.getName());
+      attributeName = OCLHelper.mkPre(node.getName());
     }
     return Optional.ofNullable(
         OCLHelper.getAttribute(
@@ -135,7 +147,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   private Optional<Expr<? extends Sort>> getContextLink(ASTNameExpression node, boolean isPre) {
     String role = node.getName();
     if (isPre) {
-      role = OCL2SMTStrategy.mkPre(role);
+      role = OCLHelper.mkPre(role);
     }
     // TODO::update to takeCare when the assoc is inherited
     ASTCDAssociation association =
@@ -146,7 +158,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
 
     // declare the linked object
     OCLType type2 = OCLHelper.getOtherType(association, constConverter.getType(thisObj));
-    String name = strategy.mkObjName(node.getName(), isPre);
+    String name = mkObjName(node.getName(), isPre);
     Expr<? extends Sort> expr = constConverter.declObj(type2, name);
 
     // add association constraints to the general constraints
@@ -171,13 +183,20 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   }
 
   protected SMTSet convertNameSet(ASTNameExpression node) {
-    boolean isPre = strategy.isPreStrategy();
+    boolean isPre = isPreStrategy();
     String role = node.getName();
-    strategy.exitPre();
+    exitPre();
     if (isPre) {
-      role = OCL2SMTStrategy.mkPre(node.getName());
+      role = OCLHelper.mkPre(node.getName());
     }
 
     return convertSimpleFieldAccessAssoc(thisObj, role);
+  }
+
+  public String mkObjName(String name, boolean isPre) {
+    if (isPre) {
+      return mkPre(name);
+    }
+    return name;
   }
 }

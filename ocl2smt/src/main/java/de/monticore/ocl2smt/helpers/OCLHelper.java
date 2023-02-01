@@ -1,7 +1,6 @@
 package de.monticore.ocl2smt.helpers;
 
-import static de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy.isPre;
-import static de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy.removePre;
+
 
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Expr;
@@ -236,5 +235,21 @@ public class OCLHelper {
     traverser.add4CDBasis(preAttributeTrafo);
     traverser.setCDBasisHandler(preAttributeTrafo);
     ast.accept(traverser);
+  }
+  public static String mkPre(String s) {
+    return s + "__pre";
+  }
+
+
+
+  public static boolean isPre(String s) {
+    return s.endsWith("__pre");
+  }
+
+  public static String removePre(String s) {
+    if (isPre(s)) {
+      return s.substring(0, s.length() - 5);
+    }
+    return s;
   }
 }

@@ -7,7 +7,6 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl2smt.helpers.OCLHelper;
-import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.odbasis._ast.*;
@@ -31,15 +30,15 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
     OCLHelper.buildPreCD(ast);
     ASTCDClass company = getClass(ast, "Company");
-    Assertions.assertTrue(containsAttribute(company, OCL2SMTStrategy.mkPre("name")));
-    Assertions.assertTrue(containsAttribute(company, OCL2SMTStrategy.mkPre("employees")));
+    Assertions.assertTrue(containsAttribute(company, OCLHelper.mkPre("name")));
+    Assertions.assertTrue(containsAttribute(company, OCLHelper.mkPre("employees")));
     Assertions.assertTrue(
         containsAssoc(
             ast,
             "Person",
-            OCL2SMTStrategy.mkPre("person"),
+            OCLHelper.mkPre("person"),
             "Company",
-            OCL2SMTStrategy.mkPre("company")));
+            OCLHelper.mkPre("company")));
   }
 
   @Test

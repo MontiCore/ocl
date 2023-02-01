@@ -7,7 +7,7 @@ import de.monticore.cdbasis._ast.*;
 import de.monticore.cdbasis._visitor.CDBasisHandler;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
-import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
+import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
@@ -40,15 +40,15 @@ public class BuildPreCDTrafo implements CDBasisHandler, CDBasisVisitor2 {
     ASTMCType type = node.getMCType();
     CDAttributeFacade facade = CDAttributeFacade.getInstance();
     ASTModifier mod = node.getModifier();
-    return facade.createAttribute(mod, type, OCL2SMTStrategy.mkPre(node.getName()));
+    return facade.createAttribute(mod, type, OCLHelper.mkPre(node.getName()));
   }
 
   public ASTCDAssociation buildPreAssociation(ASTCDAssociation association) {
     ASTCDAssocLeftSide left = copyAssocLeftSide(association.getLeft());
-    left.getCDRole().setName(OCL2SMTStrategy.mkPre(left.getCDRole().getName()));
+    left.getCDRole().setName(OCLHelper.mkPre(left.getCDRole().getName()));
 
     ASTCDAssocRightSide right = copyAssocRightSide(association.getRight());
-    right.getCDRole().setName((OCL2SMTStrategy.mkPre(right.getCDRole().getName())));
+    right.getCDRole().setName((OCLHelper.mkPre(right.getCDRole().getName())));
 
     return CDAssociationMill.cDAssociationBuilder()
         .setModifier(association.getModifier())
