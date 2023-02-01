@@ -7,8 +7,6 @@ import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.FullOCLOPExpressionConverter;
-import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.util.*;
 import de.monticore.odbasis._ast.ASTODArtifact;

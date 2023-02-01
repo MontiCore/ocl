@@ -1,8 +1,10 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
+import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.expressions.commonexpressions._ast.ASTBracketExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
@@ -13,6 +15,7 @@ import de.monticore.ocl.oclexpressions._ast.ASTImpliesExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLAtPreQualification;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTStrategy;
+import de.monticore.ocl2smt.util.ConstraintsData;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.SMTSet;
 import de.monticore.ocl2smt.util.TypeConverter;
@@ -20,12 +23,12 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
-public class FullOCLOPExpressionConverter extends OCLExpressionConverter {
+public class FullOCLExpressionConverter extends OCLExpressionConverter {
   protected OCL2SMTStrategy strategy = new OCL2SMTStrategy();
 
-  public FullOCLOPExpressionConverter(OCLExpressionConverter expr) {
-    super(expr.cd2smtGenerator.getClassDiagram(), expr.ctx);
-    this.constrData = expr.constrData;
+  public FullOCLExpressionConverter(ASTCDCompilationUnit ast , Context ctx ) {
+    super(ast, ctx);
+    this.constrData = new ConstraintsData() ;
   }
 
   @Override
