@@ -44,7 +44,7 @@ public class FullOCL2SMTGenerator {
 
     // TODO:fix if many pre conditions
     BoolExpr pre = fullExprConv.convertBoolExpr(node.getPreCondition(0));
-    for (BoolExpr constr : fullExprConv.genConstraints) {
+    for (BoolExpr constr : fullExprConv.getGenConstraints()) {
       pre = ctx.mkAnd(pre, constr);
     }
 
@@ -55,7 +55,7 @@ public class FullOCL2SMTGenerator {
   private BoolExpr convertPostCond(ASTOCLOperationConstraint node) {
     // TODO : fix if many Post conditions
     BoolExpr post = fullExprConv.convertBoolExpr(node.getPostCondition(0));
-    for (BoolExpr constr : fullExprConv.genConstraints) {
+    for (BoolExpr constr : fullExprConv.getGenConstraints()) {
       post = ctx.mkAnd(post, constr);
     }
 
@@ -82,9 +82,9 @@ public class FullOCL2SMTGenerator {
             post, node.getPostCondition(0).get_SourcePositionStart(), Optional.of("post"));
     Expr<? extends Sort> res = null;
     OCLType resType = null;
-    if (fullExprConv.varNames.containsKey("result")) {
-      res = fullExprConv.varNames.get("result");
-      resType = fullExprConv.constConverter.getType(res);
+    if (fullExprConv.getVarNames().containsKey("result")) {
+      res = fullExprConv.getVarNames().get("result");
+      resType = fullExprConv.getLiteralConverter().getType(res);
     }
     return new OPConstraint(
         preConstr,
@@ -92,7 +92,7 @@ public class FullOCL2SMTGenerator {
         res,
         thisObj,
         resType,
-        fullExprConv.constConverter.getType(thisObj),
+        fullExprConv.getLiteralConverter().getType(thisObj),
         ctx);
   }
 
