@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-classdiagram MinAuction {
+classdiagram NewCD {
 
   public class Auction {
     String auctionIdent;

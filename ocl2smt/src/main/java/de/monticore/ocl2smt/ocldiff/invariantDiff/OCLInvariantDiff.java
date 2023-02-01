@@ -48,7 +48,7 @@ public class OCLInvariantDiff {
     Set<OCLConstraint> oldConstraints = invariant2SMT(ocl2SMTGenerator, oldOcl);
 
     List<IdentifiableBoolExpr> negConstraints = extractInv(negate(oldConstraints, ctx));
-    List<IdentifiableBoolExpr> posConstraints = extractInv(negate(newConstraints, ctx));
+    List<IdentifiableBoolExpr> posConstraints = extractInv(newConstraints);
     return oclDiffHelper(ocl2SMTGenerator, posConstraints, negConstraints, partial);
   }
 
@@ -70,7 +70,7 @@ public class OCLInvariantDiff {
 
     CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
     cd2SMTGenerator.cd2smt(oldCD, ctx);
-    Set<IdentifiableBoolExpr> newAssocConstr = cd2SMTGenerator.getAssociationsConstraints();
+    Set<IdentifiableBoolExpr> oldAssocConstr = cd2SMTGenerator.getAssociationsConstraints();
 
     // remove assoc cardinality and compute CDDiff
     CDHelper.removeAssocCard(oldCD);
@@ -87,11 +87,11 @@ public class OCLInvariantDiff {
     }
 
     // build positive constraint List
-    List<IdentifiableBoolExpr> posConstraint = new ArrayList<>(newAssocConstr);
-    posConstraint.addAll(extractInv(newOClConstraints));
+    List<IdentifiableBoolExpr> posConstraint = new ArrayList<>(extractInv(newOClConstraints));
 
     // build negative constraintList
     List<IdentifiableBoolExpr> negConstraint = extractInv(negate(oldOCLConstraints, ctx));
+    negConstraint.addAll(negateId(oldAssocConstr,ctx));
 
     return oclDiffHelper(ocl2SMTGenerator, posConstraint, negConstraint, partial);
   }

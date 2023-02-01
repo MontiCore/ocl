@@ -60,7 +60,7 @@ public class OCLOperationDiff {
     List<IdentifiableBoolExpr> preConditionsList =
         constraints.stream().map(OCLConstraint::getPreCond).collect(Collectors.toList());
 
-    // add the post condition
+    // add the opConstraints
     List<IdentifiableBoolExpr> opConstraints =
         constraints.stream().map(op -> mkOperationConstraint(op, ctx)).collect(Collectors.toList());
 
@@ -86,7 +86,7 @@ public class OCLOperationDiff {
     }
     BoolExpr opConstraint =
         ctx.mkImplies(
-            oclConstraint.getPostCond().getValue(), oclConstraint.getPostCond().getValue());
+            oclConstraint.getPreCond().getValue(), oclConstraint.getPostCond().getValue());
     return IdentifiableBoolExpr.buildIdentifiable(
         opConstraint, oclConstraint.getPreCond().getSourcePosition(), Optional.of("pre ==> Post"));
   }

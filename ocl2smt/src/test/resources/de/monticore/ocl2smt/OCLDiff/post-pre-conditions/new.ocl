@@ -2,10 +2,9 @@
 package docs;
 ocl Person {
 
-   context boolean Person.increaseSalary(double amount)
-     pre :   salary > 0   && amount == 100;
+ context boolean Person.increaseSalary(int amount)
+   pre :   salary > 1000   && amount == 100;
 
-     post: salary == salary@pre + amount &&
-           result == true;
+   post: salary == salary@pre + amount ;
 
 }

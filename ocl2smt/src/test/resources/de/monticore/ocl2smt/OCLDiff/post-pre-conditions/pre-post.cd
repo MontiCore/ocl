@@ -4,8 +4,8 @@ package docs;
 classdiagram Auction {
 
  class  Person {
-   double salary;
-    int age ;
+   int  salary;
+   int age ;
    boolean changeCompany(String n) ;
    int increaseSalary(double amount);
  }

@@ -70,6 +70,7 @@ public abstract class OCLDiffAbstractTest {
     try {
       FileUtils.writeStringToFile(
           outputFile.toFile(),
+
           new OD4ReportFullPrettyPrinter().prettyprint(od),
           Charset.defaultCharset());
     } catch (Exception e) {
@@ -103,14 +104,14 @@ public abstract class OCLDiffAbstractTest {
   }
 
   public OCLInvDiffResult computeDiff2CD(
-      String posCDn, String negCDn, String posOCLn, String negOCLn) throws IOException {
-    ASTCDCompilationUnit posCD = parseCD(posCDn);
-    ASTCDCompilationUnit negCD = parseCD(negCDn);
-    Set<ASTOCLCompilationUnit> posOCL = new HashSet<>();
-    Set<ASTOCLCompilationUnit> negOCL = new HashSet<>();
-    posOCL.add(parseOCl(posCDn, posOCLn));
-    negOCL.add(parseOCl(negCDn, negOCLn));
-    return OCLDiffGenerator.oclDiff(posCD, negCD, posOCL, negOCL, false);
+      String oldCDn, String newCDn, String oldOCLn, String newOCLn) throws IOException {
+    ASTCDCompilationUnit oldCD = parseCD(oldCDn);
+    ASTCDCompilationUnit newCD = parseCD(newCDn);
+    Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
+    Set<ASTOCLCompilationUnit> newOCL = new HashSet<>();
+    oldOCL.add(parseOCl(oldCDn, oldOCLn));
+    newOCL.add(parseOCl(newCDn, newOCLn));
+    return OCLDiffGenerator.oclDiff(oldCD,newCD, oldOCL, newOCL, false);
   }
 
   public OCLInvDiffResult computeDiffOneCD(String cdName, String oldOCLName, String newOCLName)
