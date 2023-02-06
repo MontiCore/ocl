@@ -11,7 +11,6 @@ import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
 import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.*;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 
 public class SetExpressionsPrinter extends AbstractPrinter
@@ -329,7 +328,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(" = ");
     if (node.getMCType()
-        .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
+        .printType()
         .contains("Set")) {
       getPrinter().println("new java.util.HashSet<>();");
     } else {
@@ -434,7 +433,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(" = ");
     if (node.getMCType()
-        .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
+        .printType()
         .contains("Set")) {
       getPrinter().println("new java.util.HashSet<>();");
     } else {

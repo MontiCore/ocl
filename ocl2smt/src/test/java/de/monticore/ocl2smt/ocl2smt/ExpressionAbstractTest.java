@@ -12,7 +12,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl2smt.ocldiff.TraceUnsatCore;
 import de.monticore.ocl2smt.util.OCL_Loader;
-import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -75,7 +75,7 @@ public abstract class ExpressionAbstractTest {
     try {
       FileUtils.writeStringToFile(
           outputFile.toFile(),
-          new OD4ReportFullPrettyPrinter().prettyprint(od),
+          OD4ReportMill.prettyPrint(od, true),
           Charset.defaultCharset());
     } catch (Exception e) {
       e.printStackTrace();

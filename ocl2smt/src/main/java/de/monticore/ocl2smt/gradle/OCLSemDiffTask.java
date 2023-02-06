@@ -7,7 +7,7 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
 import de.monticore.ocl2smt.util.OCL_Loader;
-import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import java.io.File;
 import java.io.IOException;
@@ -87,7 +87,7 @@ public abstract class OCLSemDiffTask extends DefaultTask {
         trace = diff.getLeft();
         FileUtils.writeStringToFile(
             getTraceOD().getAsFile().get(),
-            new OD4ReportFullPrettyPrinter().prettyprint(trace),
+            OD4ReportMill.prettyPrint(trace, false),
             Charset.defaultCharset());
       }
     }
@@ -97,7 +97,7 @@ public abstract class OCLSemDiffTask extends DefaultTask {
       String fileName = wit.getObjectDiagram().getName() + ".od";
       FileUtils.writeStringToFile(
           getOutputDir().file(fileName).get().getAsFile(),
-          new OD4ReportFullPrettyPrinter().prettyprint(wit),
+          OD4ReportMill.prettyPrint(wit, false),
           Charset.defaultCharset());
     }
   }
