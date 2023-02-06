@@ -6,10 +6,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.ocl.ocl.AbstractTest;
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
-import de.monticore.ocl.ocl._prettyprint.OCLFullPrettyPrinter;
-import de.monticore.prettyprint.IndentPrinter;
 import java.io.IOException;
 import java.util.Optional;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,13 +19,14 @@ public class OCLPrettyPrinterTest extends AbstractTest {
   @ParameterizedTest
   @MethodSource("getParsableModels")
   public void testOCLCompilationUnit(String filename) throws IOException {
+    OCLMill.init();
     // given
     final Optional<ASTOCLCompilationUnit> ast =
         parse(prefixValidModelsPath("/testinput/validGrammarModels/" + filename), false);
     assertThat(ast).isNotNull();
 
     // when
-    String output = new OCLFullPrettyPrinter(new IndentPrinter(), true).prettyprint(ast.get());
+    String output = OCLMill.prettyPrint(ast.get(), true);
 
     // then
     OCLParser parser = new OCLParser();
