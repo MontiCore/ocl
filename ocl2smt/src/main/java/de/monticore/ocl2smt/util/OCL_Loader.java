@@ -12,7 +12,9 @@ import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.ICD4CodeScope;
+import de.monticore.cd4code._visitor.CD4CodeTraverser;
 import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
+import de.monticore.cd4code.trafo.CD4CodeAfterParseTrafo;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -37,6 +39,12 @@ public class OCL_Loader {
   public static ASTCDCompilationUnit loadAndCheckCD(File cdFile) throws IOException {
     assert cdFile.getName().endsWith(".cd");
     ASTCDCompilationUnit cdAST = parseCDModel(cdFile.getAbsolutePath());
+
+    // apply role name trafo
+    CD4CodeTraverser t = CD4CodeMill.traverser();
+    t.add4CDAssociation(new CDAssociationRoleNameTrafo());
+    cdAST.accept(t);
+
     cdAST.setEnclosingScope(createCDSymTab(cdAST));
     setAssociationsRoles(cdAST);
     checkCDCoCos(cdAST);
@@ -50,8 +58,7 @@ public class OCL_Loader {
     final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo = new CDAssociationRoleNameTrafo();
     final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
     traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
-    traverser.setCDAssociationHandler(cdAssociationRoleNameTrafo);
-    cdAssociationRoleNameTrafo.transform(ast);
+    ast.accept(traverser);
   }
 
   protected static void transformAllRoles(ASTCDCompilationUnit cdAST) {
