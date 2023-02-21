@@ -148,7 +148,7 @@ public class OCLHelper {
 
     for (ASTODNamedObject obj : OCLHelper.getObjectList(od)) {
       if (isThis(obj, model, opConstraint.getThisObj())) {
-        obj.setModifier(buildModifier("This", "true"));
+        obj.setModifier(buildModifier("this", "true"));
       }
     }
   }
