@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package docs;
 
+import java.lang.*;
+
 classdiagram Auction {
 
  class  Person {
