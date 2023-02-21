@@ -60,7 +60,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
 
 
 
-  public Expr<? extends Sort> thisObj;
+
 
   public FullOCLExpressionConverter(ASTCDCompilationUnit ast, Context ctx) {
     super(ast, ctx);
