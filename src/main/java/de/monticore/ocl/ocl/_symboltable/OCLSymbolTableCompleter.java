@@ -9,7 +9,6 @@ import de.monticore.ocl.ocl._visitor.OCLHandler;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
 import de.monticore.ocl.types.check.OCLSynthesizer;
-import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -18,7 +17,6 @@ import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types.prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
@@ -114,7 +112,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
             VariableSymbol typeName =
                 new VariableSymbol(
                     cd.getMCType()
-                        .printType(new MCBasicTypesFullPrettyPrinter(new IndentPrinter()))
+                        .printType()
                         .toLowerCase());
             typeName.setType(typeResult.getResult());
             typeName.setIsReadOnly(true);

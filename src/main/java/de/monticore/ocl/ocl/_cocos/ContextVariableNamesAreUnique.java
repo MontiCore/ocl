@@ -3,8 +3,6 @@ package de.monticore.ocl.ocl._cocos;
 
 import de.monticore.ocl.ocl._ast.ASTOCLContextDefinition;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
-import de.monticore.prettyprint.IndentPrinter;
-import de.monticore.types.prettyprint.MCSimpleGenericTypesFullPrettyPrinter;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,21 +18,21 @@ public class ContextVariableNamesAreUnique implements OCLASTOCLInvariantCoCo {
           if (s.equals(
               contextDefinition
                   .getMCType()
-                  .printType(new MCSimpleGenericTypesFullPrettyPrinter(new IndentPrinter()))
+                  .printType()
                   .toLowerCase())) {
             Log.error(
                 String.format(
                     "0xOCL22 Variable name '%s' occurs twice in invariant ",
                     contextDefinition
                         .getMCType()
-                        .printType(new MCSimpleGenericTypesFullPrettyPrinter(new IndentPrinter()))
+                        .printType()
                         .toLowerCase()));
           }
         }
         varNames.add(
             contextDefinition
                 .getMCType()
-                .printType(new MCSimpleGenericTypesFullPrettyPrinter(new IndentPrinter()))
+                .printType()
                 .toLowerCase());
       } else if (contextDefinition.isPresentOCLParamDeclaration()) {
         for (String s : varNames) {
