@@ -1,5 +1,7 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
+import static de.monticore.ocl2smt.helpers.OCLHelper.mkPre;
+
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
@@ -17,12 +19,7 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
-import static de.monticore.ocl2smt.helpers.OCLHelper.mkPre;
-
-/**
- * This class convert All OCL-Expressions including  @Pre-Expressions in SMT
- *
- * */
+/** This class convert All OCL-Expressions including @Pre-Expressions in SMT */
 public class FullOCLExpressionConverter extends OCLExpressionConverter {
   private boolean isPreStrategy = false;
   private boolean isPreCond = false;
@@ -51,27 +48,23 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     return isPreStrategy;
   }
 
-
-
   public Expr<? extends Sort> thisObj;
 
   public FullOCLExpressionConverter(ASTCDCompilationUnit ast, Context ctx) {
     super(ast, ctx);
   }
 
-
-
   @Override
   protected Optional<Expr<? extends Sort>> convertGenExprOpt(ASTExpression node) {
     Optional<Expr<? extends Sort>> res = super.convertGenExprOpt(node);
-    if (res.isPresent()){
-      return  res ;
-    } else if (node instanceof  ASTOCLAtPreQualification) {
-       res = Optional.ofNullable(convertAt((ASTOCLAtPreQualification) node)) ;
-    }else {
-       res = Optional.empty() ;
+    if (res.isPresent()) {
+      return res;
+    } else if (node instanceof ASTOCLAtPreQualification) {
+      res = Optional.ofNullable(convertAt((ASTOCLAtPreQualification) node));
+    } else {
+      res = Optional.empty();
     }
-    return  res ;
+    return res;
   }
 
   protected Expr<? extends Sort> convertAt(ASTOCLAtPreQualification node) {

@@ -2,19 +2,16 @@ package de.monticore.ocl2smt.ocl2smt;
 
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLOperationSignature;
-import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.FullOCLExpressionConverter;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.ocl2smt.util.OCLType;
-import de.monticore.ocl2smt.util.TypeConverter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +30,6 @@ public class FullOCL2SMTGenerator {
   public Context getCtx() {
     return ctx;
   }
-
 
   // TODO:: fix   OCLOperationSignature = OCLMethodSignature | OCLConstructorSignature
   private Expr<? extends Sort> openOpScope(

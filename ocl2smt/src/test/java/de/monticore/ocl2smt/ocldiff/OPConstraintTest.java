@@ -34,11 +34,7 @@ public class OPConstraintTest extends OCLDiffAbstractTest {
     Assertions.assertTrue(containsAttribute(company, OCLHelper.mkPre("employees")));
     Assertions.assertTrue(
         containsAssoc(
-            ast,
-            "Person",
-            OCLHelper.mkPre("person"),
-            "Company",
-            OCLHelper.mkPre("company")));
+            ast, "Person", OCLHelper.mkPre("person"), "Company", OCLHelper.mkPre("company")));
   }
 
   @Test
