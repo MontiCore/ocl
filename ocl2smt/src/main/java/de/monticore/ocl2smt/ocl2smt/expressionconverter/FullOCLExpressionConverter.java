@@ -1,7 +1,5 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
-import static de.monticore.ocl2smt.helpers.OCLHelper.mkPre;
-
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
@@ -19,10 +17,17 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
-/** This class convert All OCL-Expressions including @Pre-Expressions in SMT */
+import static de.monticore.ocl2smt.helpers.OCLHelper.mkPre;
+
+/**
+ * This class convert All OCL-Expressions including  @Pre-Expressions in SMT
+ *
+ * */
 public class FullOCLExpressionConverter extends OCLExpressionConverter {
   private boolean isPreStrategy = false;
   private boolean isPreCond = false;
+
+  private Expr<? extends Sort> thisObj;
 
   public void enterPre() {
     isPreStrategy = true;
@@ -33,6 +38,11 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
       this.isPreStrategy = false;
     }
   }
+
+  public void setThisObj(Expr<? extends Sort> thisObj) {
+    this.thisObj = thisObj;
+  }
+
 
   public void enterPreCond() {
     isPreCond = true;
@@ -48,11 +58,15 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     return isPreStrategy;
   }
 
+
+
   public Expr<? extends Sort> thisObj;
 
   public FullOCLExpressionConverter(ASTCDCompilationUnit ast, Context ctx) {
     super(ast, ctx);
   }
+
+
 
   @Override
   protected Optional<Expr<? extends Sort>> convertGenExprOpt(ASTExpression node) {
@@ -120,7 +134,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
       attributeName = OCLHelper.mkPre(attributeName);
     }
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
-    OCLType type = constConverter.getType(obj);
+    OCLType type = literalConverter.getType(obj);
     return OCLHelper.getAttribute(obj, type, attributeName, cd2smtGenerator);
   }
 
@@ -133,10 +147,10 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     }
     return Optional.ofNullable(
         OCLHelper.getAttribute(
-            thisObj, constConverter.getType(thisObj), attributeName, cd2smtGenerator));
+            thisObj, literalConverter.getType(thisObj), attributeName, cd2smtGenerator));
   }
 
-  /** this function is use to get a Linked object of the Context */
+  /** this function is used to get a Linked object of the Context */
   private Optional<Expr<? extends Sort>> getContextLink(ASTNameExpression node, boolean isPre) {
     String role = node.getName();
     if (isPre) {
@@ -144,19 +158,19 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     }
     // TODO::update to takeCare when the assoc is inherited
     ASTCDAssociation association =
-        OCLHelper.getAssociation(constConverter.getType(thisObj), role, getCD());
+        OCLHelper.getAssociation(literalConverter.getType(thisObj), role, getCD());
     if (association == null) {
       return Optional.empty();
     }
 
     // declare the linked object
-    OCLType type2 = OCLHelper.getOtherType(association, constConverter.getType(thisObj));
+    OCLType type2 = OCLHelper.getOtherType(association, literalConverter.getType(thisObj));
     String name = mkObjName(node.getName(), isPre);
-    Expr<? extends Sort> expr = constConverter.declObj(type2, name);
+    Expr<? extends Sort> expr = literalConverter.declObj(type2, name);
 
     // add association constraints to the general constraints
     genConstraints.add(
-        OCLHelper.evaluateLink(association, thisObj, expr, cd2smtGenerator, constConverter));
+        OCLHelper.evaluateLink(association, thisObj, expr, cd2smtGenerator, literalConverter));
 
     return Optional.of(expr);
   }

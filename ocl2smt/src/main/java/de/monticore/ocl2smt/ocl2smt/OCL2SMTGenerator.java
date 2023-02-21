@@ -69,7 +69,7 @@ public class OCL2SMTGenerator {
     BoolExpr inv = invCtx.apply(exprConv.convertBoolExpr(invariant.getExpression()));
 
     // add general invConstraints
-    for (BoolExpr constr : exprConv.genConstraints) {
+    for (BoolExpr constr : exprConv.getGenConstraints()) {
       inv = ctx.mkAnd(inv, constr);
     }
 

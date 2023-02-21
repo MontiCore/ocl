@@ -5,14 +5,14 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.ocl2smt.util.OCL_Loader;
-import de.monticore.od4report.prettyprinter.OD4ReportFullPrettyPrinter;
+import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.prettyprint.IndentPrinter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -30,19 +30,6 @@ public abstract class ExpressionAbstractTest {
   protected static ASTCDCompilationUnit cdAST;
   protected static Solver solver;
   protected static OCL2SMTGenerator ocl2SMTGenerator;
-
-  public static void printCD(ASTCDCompilationUnit cd, String name) {
-    Path outputFile = Paths.get(RELATIVE_TARGET_PATH, name + ".od");
-    try {
-      FileUtils.writeStringToFile(
-          outputFile.toFile(),
-          new CD4AnalysisFullPrettyPrinter().prettyprint(cd),
-          Charset.defaultCharset());
-    } catch (Exception e) {
-      e.printStackTrace();
-      Assertions.fail("It Was Not Possible to Print the Class Diagram");
-    }
-  }
 
   protected void parse(String cdFileName, String oclFileName) throws IOException {
     oclAST =
@@ -74,7 +61,7 @@ public abstract class ExpressionAbstractTest {
     try {
       FileUtils.writeStringToFile(
           outputFile.toFile(),
-          new OD4ReportFullPrettyPrinter().prettyprint(od),
+          new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od),
           Charset.defaultCharset());
     } catch (Exception e) {
       e.printStackTrace();
