@@ -22,6 +22,7 @@ import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.util.*;
 import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symboltable.ISymbol;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.function.Function;
@@ -388,10 +389,7 @@ public class OCLExpressionConverter {
     if (varNames.containsKey(node.getName())) {
       res = varNames.get(node.getName());
     } else {
-      res =
-          declVariable(
-              TypeConverter.buildOCLType((VariableSymbol) node.getDefiningSymbol().get()),
-              node.getName());
+      res = createVarFromSymbol(node);
     }
     return res;
   }
@@ -772,5 +770,17 @@ public class OCLExpressionConverter {
             null);
     genConstraints.add(rel_is_assocFunc);
     return rel;
+  }
+
+  protected Expr<? extends Sort> createVarFromSymbol(ASTNameExpression node) {
+    Expr<? extends Sort> res = null;
+    Optional<ISymbol> symbol = node.getDefiningSymbol();
+    if (symbol.isPresent()) {
+      OCLType type = TypeConverter.buildOCLType((VariableSymbol) symbol.get());
+      res = declVariable(type, node.getName());
+    } else {
+      Log.error(node.getClass().getName() + " Unrecognized Symbol " + node.getName());
+    }
+    return res;
   }
 }

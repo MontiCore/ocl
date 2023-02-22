@@ -1,7 +1,5 @@
 package de.monticore.ocl2smt.ocldiff.operationDiff;
 
-import static de.monticore.ocl2smt.ocldiff.OCLDiffHelper.buildContext;
-
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -201,5 +199,11 @@ public class OCLOperationDiff {
     return operationConstraints.stream()
         .map(fullOCL2SMTGenerator::convertOpConst)
         .collect(Collectors.toList());
+  }
+
+  public Context buildContext() {
+    Map<String, String> cfg = new HashMap<>();
+    cfg.put("model", "true");
+    return new Context(cfg);
   }
 }

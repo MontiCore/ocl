@@ -136,15 +136,14 @@ public class OCLHelper {
 
   private static OCLOPWitness setStereotypes(
       ASTOCLMethodSignature method, OCLOPWitness diff, Model model, OPConstraint opConstraint) {
-    setThisStereotypes(diff.getPreOD(), method, model, opConstraint);
-    setThisStereotypes(diff.getPostOD(), method, model, opConstraint);
+    setThisStereotypes(diff.getPreOD(), model, opConstraint);
+    setThisStereotypes(diff.getPostOD(), model, opConstraint);
 
     setResultStereotypes(diff.getPostOD(), method, model, opConstraint);
     return diff;
   }
 
-  private static void setThisStereotypes(
-      ASTODArtifact od, ASTOCLMethodSignature method, Model model, OPConstraint opConstraint) {
+  private static void setThisStereotypes(ASTODArtifact od, Model model, OPConstraint opConstraint) {
 
     for (ASTODNamedObject obj : OCLHelper.getObjectList(od)) {
       if (isThis(obj, model, opConstraint.getThisObj())) {

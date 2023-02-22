@@ -4,8 +4,8 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import java.util.Set;
 
 public class OCLInvDiffResult {
-  private ASTODArtifact unSatCore;
-  private Set<ASTODArtifact> diffWitness;
+  private final ASTODArtifact unSatCore;
+  private final Set<ASTODArtifact> diffWitness;
 
   public OCLInvDiffResult(ASTODArtifact unSatCore, Set<ASTODArtifact> diffWitness) {
     this.diffWitness = diffWitness;

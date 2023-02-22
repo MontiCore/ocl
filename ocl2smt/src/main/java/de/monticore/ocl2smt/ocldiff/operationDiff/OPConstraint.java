@@ -41,10 +41,6 @@ public class OPConstraint {
             op, preCond.getSourcePosition(), Optional.of("pre ==> Post"));
   }
 
-  public IdentifiableBoolExpr getPostCond() {
-    return postCond;
-  }
-
   public IdentifiableBoolExpr getPreCond() {
     return preCond;
   }
@@ -63,10 +59,6 @@ public class OPConstraint {
 
   public OCLType getResultType() {
     return resultType;
-  }
-
-  public OCLType getThisType() {
-    return ThisType;
   }
 
   public boolean isPresentResult() {

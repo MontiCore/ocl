@@ -14,8 +14,6 @@ import de.monticore.ocl.oclexpressions._ast.ASTOCLAtPreQualification;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.SMTSet;
-import de.monticore.ocl2smt.util.TypeConverter;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
@@ -97,8 +95,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     }
 
     if (res == null) {
-      OCLType type = TypeConverter.buildOCLType((VariableSymbol) node.getDefiningSymbol().get());
-      res = declVariable(type, node.getName());
+      res = createVarFromSymbol(node);
     }
 
     return res;

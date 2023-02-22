@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocldiff.invariantDiff;
 
-import static de.monticore.ocl2smt.ocldiff.OCLDiffHelper.*;
-
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
@@ -12,19 +10,19 @@ import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
-import de.monticore.ocl2smt.ocldiff.OCLDiffHelper;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class OCLInvariantDiff {
   protected Context ctx;
 
   public ASTODArtifact oclWitness(
       ASTCDCompilationUnit cd, Set<ASTOCLCompilationUnit> ocl, boolean partial) {
-    ctx = buildContext();
+    resetContext();
     return oclWitnessInternal(cd, ocl, partial);
   }
 
@@ -33,7 +31,7 @@ public class OCLInvariantDiff {
       Set<ASTOCLCompilationUnit> oldOcl,
       Set<ASTOCLCompilationUnit> newOcl,
       boolean partial) {
-    ctx = buildContext();
+    resetContext();
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
     // check if the Model is consistent
     if (oclWitnessInternal(cd, newOcl, false) == null) {
@@ -57,7 +55,7 @@ public class OCLInvariantDiff {
       Set<ASTOCLCompilationUnit> newOCL,
       boolean partial) {
 
-    ctx = OCLDiffHelper.buildContext();
+    resetContext();
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(newCD, ctx);
 
     // list of new OCl Constraints
@@ -126,7 +124,7 @@ public class OCLInvariantDiff {
       Solver solver = ocl2SMTGenerator.makeSolver(posConstraintList);
 
       if (solver.check() == Status.SATISFIABLE) {
-        String name = OCLDiffHelper.buildInvName(negConstraint);
+        String name = buildInvName(negConstraint);
         Optional<ASTODArtifact> witness =
             ocl2SMTGenerator.buildOd(solver.getModel(), name, partial);
 
@@ -139,5 +137,27 @@ public class OCLInvariantDiff {
     }
     return new OCLInvDiffResult(
         TraceUnSatCore.buildUnSatOD(posConstraintList, negConstraintList, traceUnSat), satOdList);
+  }
+
+  public String buildInvName(IdentifiableBoolExpr constr) {
+    return constr.getInvariantName().orElse("NoInvName").split("_____NegInv")[0];
+  }
+
+  public static List<IdentifiableBoolExpr> negateId(
+      List<IdentifiableBoolExpr> constraints, Context ctx) {
+    return constraints.stream().map(x -> x.negate(ctx)).collect(Collectors.toList());
+  }
+
+  public static List<IdentifiableBoolExpr> invariant2SMT(
+      OCL2SMTGenerator ocl2SMTGenerator, Set<ASTOCLCompilationUnit> oclSet) {
+    return oclSet.stream()
+        .flatMap(x -> ocl2SMTGenerator.inv2smt(x.getOCLArtifact()).stream())
+        .collect(Collectors.toList());
+  }
+
+  public void resetContext() {
+    Map<String, String> cfg = new HashMap<>();
+    cfg.put("model", "true");
+    ctx = new Context(cfg);
   }
 }
