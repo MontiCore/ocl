@@ -109,11 +109,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
             }
 
             // create VariableSymbol for Name of Type
-            VariableSymbol typeName =
-                new VariableSymbol(
-                    cd.getMCType()
-                        .printType()
-                        .toLowerCase());
+            VariableSymbol typeName = new VariableSymbol(cd.getMCType().printType().toLowerCase());
             typeName.setType(typeResult.getResult());
             typeName.setIsReadOnly(true);
             cd.getEnclosingScope().add(typeName);
