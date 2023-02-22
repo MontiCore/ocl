@@ -34,6 +34,7 @@ public class OCLDiffGenerator {
    * @param oldOcl the old OCL-Model.
    * @param newOCL the new OCl-Model.
    * @param partial if partial == true, the Object diagram will be partial regarding the attributes.
+   * @return the diff witness
    */
   public static OCLInvDiffResult oclDiff(
       ASTCDCompilationUnit cd,
@@ -54,6 +55,7 @@ public class OCLDiffGenerator {
    * @param newOCL the new OCl-Model.
    * @param oldOCL the old OCL-Model.
    * @param partial if partial == true, the Object Diagram will be partial regarding the attributes.
+   * @return the diff witness
    */
   public static OCLInvDiffResult oclDiff(
       ASTCDCompilationUnit oldCD,
@@ -110,6 +112,7 @@ public class OCLDiffGenerator {
    * @param method the method for which the diff of the constraints has to be calculated.
    * @param partial if partial == true, the Object Diagrams will be partial regarding the
    *     attributes.
+   * @return the diff witness
    */
   public static OCLOPDiffResult oclOPDiff(
       ASTCDCompilationUnit cd,
