@@ -74,9 +74,7 @@ public abstract class ExpressionAbstractTest {
     Path outputFile = Paths.get(RELATIVE_TARGET_PATH, od.getObjectDiagram().getName() + ".od");
     try {
       FileUtils.writeStringToFile(
-          outputFile.toFile(),
-          OD4ReportMill.prettyPrint(od, true),
-          Charset.defaultCharset());
+          outputFile.toFile(), OD4ReportMill.prettyPrint(od, true), Charset.defaultCharset());
     } catch (Exception e) {
       e.printStackTrace();
       Assertions.fail("It Was Not Possible to Print the Object Diagram");
