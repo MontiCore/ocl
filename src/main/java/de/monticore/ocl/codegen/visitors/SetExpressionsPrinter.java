@@ -327,9 +327,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print(" ");
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(" = ");
-    if (node.getMCType()
-        .printType()
-        .contains("Set")) {
+    if (node.getMCType().printType().contains("Set")) {
       getPrinter().println("new java.util.HashSet<>();");
     } else {
       getPrinter().println("new java.util.LinkedList<>();");
@@ -432,9 +430,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().print(" ");
     getPrinter().print(getNaming().getName(node));
     getPrinter().print(" = ");
-    if (node.getMCType()
-        .printType()
-        .contains("Set")) {
+    if (node.getMCType().printType().contains("Set")) {
       getPrinter().println("new java.util.HashSet<>();");
     } else {
       getPrinter().println("new java.util.LinkedList<>();");

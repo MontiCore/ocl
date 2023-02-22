@@ -15,25 +15,14 @@ public class ContextVariableNamesAreUnique implements OCLASTOCLInvariantCoCo {
     for (ASTOCLContextDefinition contextDefinition : node.getOCLContextDefinitionList()) {
       if (contextDefinition.isPresentMCType()) {
         for (String s : varNames) {
-          if (s.equals(
-              contextDefinition
-                  .getMCType()
-                  .printType()
-                  .toLowerCase())) {
+          if (s.equals(contextDefinition.getMCType().printType().toLowerCase())) {
             Log.error(
                 String.format(
                     "0xOCL22 Variable name '%s' occurs twice in invariant ",
-                    contextDefinition
-                        .getMCType()
-                        .printType()
-                        .toLowerCase()));
+                    contextDefinition.getMCType().printType().toLowerCase()));
           }
         }
-        varNames.add(
-            contextDefinition
-                .getMCType()
-                .printType()
-                .toLowerCase());
+        varNames.add(contextDefinition.getMCType().printType().toLowerCase());
       } else if (contextDefinition.isPresentOCLParamDeclaration()) {
         for (String s : varNames) {
           if (s.equals(contextDefinition.getOCLParamDeclaration().getName())) {
