@@ -11,11 +11,12 @@ import de.se_rwth.commons.logging.Log;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ConstConverter {
+/** This class convert variable and Object in SMT and save their types in VarTypes */
+public class LiteralConverter {
   protected Context context;
   protected final Map<Expr<? extends Sort>, OCLType> varTypes = new HashMap<>();
 
-  public ConstConverter(Context ctx) {
+  public LiteralConverter(Context ctx) {
     this.context = ctx;
   }
 

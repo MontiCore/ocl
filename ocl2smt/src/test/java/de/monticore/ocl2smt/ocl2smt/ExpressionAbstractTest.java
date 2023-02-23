@@ -5,15 +5,14 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.cd4analysis.prettyprint.CD4AnalysisFullPrettyPrinter;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
-import de.monticore.ocl2smt.ocldiff.TraceUnsatCore;
+import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.ocl2smt.util.OCL_Loader;
-import de.monticore.od4report.OD4ReportMill;
+import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.prettyprint.IndentPrinter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -32,19 +31,6 @@ public abstract class ExpressionAbstractTest {
   protected static Solver solver;
   protected static OCL2SMTGenerator ocl2SMTGenerator;
 
-  public static void printCD(ASTCDCompilationUnit cd, String name) {
-    Path outputFile = Paths.get(RELATIVE_TARGET_PATH, name + ".od");
-    try {
-      FileUtils.writeStringToFile(
-          outputFile.toFile(),
-          new CD4AnalysisFullPrettyPrinter().prettyprint(cd),
-          Charset.defaultCharset());
-    } catch (Exception e) {
-      e.printStackTrace();
-      Assertions.fail("It Was Not Possible to Print the Class Diagram");
-    }
-  }
-
   protected void parse(String cdFileName, String oclFileName) throws IOException {
     oclAST =
         OCL_Loader.loadAndCheckOCL(
@@ -61,20 +47,22 @@ public abstract class ExpressionAbstractTest {
   }
 
   protected IdentifiableBoolExpr getConstraint(String search) {
-    ASTOCLConstraint constr =
+    ASTOCLInvariant constr =
         oclAST.getOCLArtifact().getOCLConstraintList().stream()
             .map(p -> (ASTOCLInvariant) p)
             .filter(p -> search.equals(p.getName()))
             .findAny()
             .get();
-    return ocl2SMTGenerator.convertConstr(constr).getInvariant();
+    return ocl2SMTGenerator.convertInv(constr);
   }
 
   public void printOD(ASTODArtifact od) {
     Path outputFile = Paths.get(RELATIVE_TARGET_PATH, od.getObjectDiagram().getName() + ".od");
     try {
       FileUtils.writeStringToFile(
-          outputFile.toFile(), OD4ReportMill.prettyPrint(od, true), Charset.defaultCharset());
+          outputFile.toFile(),
+          new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od),
+          Charset.defaultCharset());
     } catch (Exception e) {
       e.printStackTrace();
       Assertions.fail("It Was Not Possible to Print the Object Diagram");
@@ -99,13 +87,13 @@ public abstract class ExpressionAbstractTest {
 
     org.junit.jupiter.api.Assertions.assertSame(Status.UNSATISFIABLE, solver.check());
     ASTODArtifact od1 =
-        TraceUnsatCore.buildUnsatOD(
-            new HashSet<>(),
-            Set.of(
+        TraceUnSatCore.buildUnSatOD(
+            new ArrayList<>(),
+            List.of(
                 solverConstraints
                     .get(0)
                     .negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),
-            TraceUnsatCore.traceUnsatCore(solver));
+            TraceUnSatCore.traceUnSatCore(solver));
     printOD(od1);
   }
 

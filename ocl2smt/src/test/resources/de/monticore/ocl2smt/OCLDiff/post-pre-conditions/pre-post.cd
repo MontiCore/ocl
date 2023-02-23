@@ -6,9 +6,9 @@ import java.lang.*;
 classdiagram Auction {
 
  class  Person {
-   double salary;
-    int age ;
-   boolean changeCompany(String n) ;
+   int  salary;
+   int age ;
+   Company changeCompany(String n) ;
    int increaseSalary(double amount);
  }
 

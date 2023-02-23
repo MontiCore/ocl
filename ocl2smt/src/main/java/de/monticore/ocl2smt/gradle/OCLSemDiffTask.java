@@ -6,16 +6,17 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
+import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.util.OCL_Loader;
-import de.monticore.od4report.OD4ReportMill;
+import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.monticore.prettyprint.IndentPrinter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
@@ -73,7 +74,7 @@ public abstract class OCLSemDiffTask extends DefaultTask {
     Set<ASTOCLCompilationUnit> negativeOCL =
         loadOCL(getCd().get().getAsFile(), getNegativeOCL().getFiles());
 
-    Pair<ASTODArtifact, Set<ASTODArtifact>> diff;
+    OCLInvDiffResult diff;
     Set<ASTODArtifact> witnesses;
     ASTODArtifact trace;
     // Compute Diff
@@ -81,13 +82,14 @@ public abstract class OCLSemDiffTask extends DefaultTask {
       witnesses = new HashSet<>();
       witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL, false));
     } else {
-      diff = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL);
-      witnesses = diff.getRight();
+
+      diff = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL, false);
+      witnesses = diff.getDiffWitness();
       if (getTraceOD().isPresent()) {
-        trace = diff.getLeft();
+        trace = diff.getUnSatCore();
         FileUtils.writeStringToFile(
             getTraceOD().getAsFile().get(),
-            OD4ReportMill.prettyPrint(trace, false),
+            new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(trace),
             Charset.defaultCharset());
       }
     }
@@ -97,7 +99,7 @@ public abstract class OCLSemDiffTask extends DefaultTask {
       String fileName = wit.getObjectDiagram().getName() + ".od";
       FileUtils.writeStringToFile(
           getOutputDir().file(fileName).get().getAsFile(),
-          OD4ReportMill.prettyPrint(wit, false),
+          new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(wit),
           Charset.defaultCharset());
     }
   }

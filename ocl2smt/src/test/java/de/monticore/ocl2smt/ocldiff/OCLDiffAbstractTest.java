@@ -1,21 +1,22 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocldiff;
 
-import com.microsoft.z3.Context;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.helpers.OCLHelper;
+import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
+import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.util.OCL_Loader;
-import de.monticore.ocl2smt.util.OPDiffResult;
-import de.monticore.od4report.OD4ReportMill;
+import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
 import de.monticore.odbasis._ast.ASTODName;
 import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odlink._ast.ASTODLink;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -24,7 +25,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
 
 public abstract class OCLDiffAbstractTest {
@@ -33,18 +33,18 @@ public abstract class OCLDiffAbstractTest {
   protected static final String RELATIVE_TARGET_PATH =
       "target/generated/sources/annotationProcessor/java/ocl2smttest";
 
-  public void printDiff(Pair<ASTODArtifact, Set<ASTODArtifact>> diff) {
-    if (diff.getLeft() != null) {
-      printOD(diff.getLeft());
+  public void printResult(OCLInvDiffResult diff) {
+    if (diff.getUnSatCore() != null) {
+      printOD(diff.getUnSatCore());
     }
-    diff.getRight().forEach(this::printOD);
+    diff.getDiffWitness().forEach(this::printOD);
   }
 
-  public void printOPDiff(Pair<ASTODArtifact, Set<OPDiffResult>> diff) {
-    if (diff.getLeft() != null) {
-      printOD(diff.getLeft());
+  public void printOPDiff(OCLOPDiffResult diff) {
+    if (diff.getUnSatCore() != null) {
+      printOD(diff.getUnSatCore());
     }
-    diff.getRight()
+    diff.getDiffWitness()
         .forEach(
             x -> {
               printOD(x.getPostOD());
@@ -69,7 +69,9 @@ public abstract class OCLDiffAbstractTest {
     Path outputFile = Paths.get(RELATIVE_TARGET_PATH, od.getObjectDiagram().getName() + ".od");
     try {
       FileUtils.writeStringToFile(
-          outputFile.toFile(), OD4ReportMill.prettyPrint(od, true), Charset.defaultCharset());
+          outputFile.toFile(),
+          new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od),
+          Charset.defaultCharset());
     } catch (Exception e) {
       e.printStackTrace();
       Assertions.fail("It Was Not Possible to Print the Object Diagram");
@@ -100,31 +102,25 @@ public abstract class OCLDiffAbstractTest {
             .count();
   }
 
-  public Pair<ASTODArtifact, Set<ASTODArtifact>> computeDiff2CD(
-      String posCDn, String negCDn, String posOCLn, String negOCLn) throws IOException {
-    ASTCDCompilationUnit posCD = parseCD(posCDn);
-    ASTCDCompilationUnit negCD = parseCD(negCDn);
-    Set<ASTOCLCompilationUnit> posOCL = new HashSet<>();
-    Set<ASTOCLCompilationUnit> negOCL = new HashSet<>();
-    posOCL.add(parseOCl(posCDn, posOCLn));
-    negOCL.add(parseOCl(negCDn, negOCLn));
-    return OCLDiffGenerator.CDOCLDiff(posCD, negCD, posOCL, negOCL, false);
+  public OCLInvDiffResult computeDiff2CD(
+      String oldCDn, String newCDn, String oldOCLn, String newOCLn) throws IOException {
+    ASTCDCompilationUnit oldCD = parseCD(oldCDn);
+    ASTCDCompilationUnit newCD = parseCD(newCDn);
+    Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
+    Set<ASTOCLCompilationUnit> newOCL = new HashSet<>();
+    oldOCL.add(parseOCl(oldCDn, oldOCLn));
+    newOCL.add(parseOCl(newCDn, newOCLn));
+    return OCLDiffGenerator.oclDiff(oldCD, newCD, oldOCL, newOCL, false);
   }
 
-  public Pair<ASTODArtifact, Set<ASTODArtifact>> computeDiffOneCD(
-      String posCDn, String posOCLn, String negOCLn) throws IOException {
-    ASTCDCompilationUnit posCD = parseCD(posCDn);
-    Set<ASTOCLCompilationUnit> posOCL = new HashSet<>();
-    Set<ASTOCLCompilationUnit> negOCL = new HashSet<>();
-    posOCL.add(parseOCl(posCDn, posOCLn));
-    negOCL.add(parseOCl(posCDn, negOCLn));
-    return OCLDiffGenerator.oclDiff(posCD, posOCL, negOCL, false);
-  }
-
-  public static Context buildContext() {
-    Map<String, String> cfg = new HashMap<>();
-    cfg.put("model", "true");
-    return new Context(cfg);
+  public OCLInvDiffResult computeDiffOneCD(String cdName, String oldOCLName, String newOCLName)
+      throws IOException {
+    ASTCDCompilationUnit cd = parseCD(cdName);
+    Set<ASTOCLCompilationUnit> newOCL = new HashSet<>();
+    Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
+    newOCL.add(parseOCl(cdName, newOCLName));
+    oldOCL.add(parseOCl(cdName, oldOCLName));
+    return OCLDiffGenerator.oclDiff(cd, oldOCL, newOCL, false);
   }
 
   public boolean containsAttribute(ASTCDClass c, String attribute) {
@@ -162,8 +158,8 @@ public abstract class OCLDiffAbstractTest {
     for (ASTODNamedObject obj : OCLHelper.getObjectList(od)) {
       if (obj.getModifier().isPresentStereotype()) {
         ASTStereotype stereotype = obj.getModifier().getStereotype();
-        if (stereotype.contains("This") && stereotype.getValue("This").equals("true")) {
-          System.out.println(stereotype.getValue("This"));
+        if (stereotype.contains("this") && stereotype.getValue("this").equals("true")) {
+          System.out.println(stereotype.getValue("this"));
           return obj;
         }
       }
@@ -202,5 +198,24 @@ public abstract class OCLDiffAbstractTest {
       }
     }
     return null;
+  }
+
+  public ASTOCLMethodSignature getMethodSignature(Set<ASTOCLCompilationUnit> oclSet, String name) {
+    ASTOCLMethodSignature res = null;
+    for (ASTOCLCompilationUnit ocl : oclSet) {
+      for (ASTOCLConstraint constraint : ocl.getOCLArtifact().getOCLConstraintList()) {
+        if (constraint instanceof ASTOCLOperationConstraint) {
+          ASTOCLOperationConstraint opConstraint = (ASTOCLOperationConstraint) constraint;
+          if (opConstraint.getOCLOperationSignature() instanceof ASTOCLMethodSignature) {
+            ASTOCLMethodSignature method =
+                (ASTOCLMethodSignature) opConstraint.getOCLOperationSignature();
+            if (method.getMethodName().getQName().contains(name)) {
+              res = method;
+            }
+          }
+        }
+      }
+    }
+    return res;
   }
 }
