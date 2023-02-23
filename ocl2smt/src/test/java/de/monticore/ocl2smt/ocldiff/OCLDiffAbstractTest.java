@@ -157,8 +157,8 @@ public abstract class OCLDiffAbstractTest {
     for (ASTODNamedObject obj : OCLHelper.getObjectList(od)) {
       if (obj.getModifier().isPresentStereotype()) {
         ASTStereotype stereotype = obj.getModifier().getStereotype();
-        if (stereotype.contains("This") && stereotype.getValue("This").equals("true")) {
-          System.out.println(stereotype.getValue("This"));
+        if (stereotype.contains("this") && stereotype.getValue("this").equals("true")) {
+          System.out.println(stereotype.getValue("this"));
           return obj;
         }
       }

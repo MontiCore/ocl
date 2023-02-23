@@ -1,5 +1,7 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
+import static de.monticore.ocl2smt.helpers.OCLHelper.mkPre;
+
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
@@ -12,17 +14,10 @@ import de.monticore.ocl.oclexpressions._ast.ASTOCLAtPreQualification;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.SMTSet;
-import de.monticore.ocl2smt.util.TypeConverter;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
-import static de.monticore.ocl2smt.helpers.OCLHelper.mkPre;
-
-/**
- * This class convert All OCL-Expressions including  @Pre-Expressions in SMT
- *
- * */
+/** This class convert All OCL-Expressions including @Pre-Expressions in SMT */
 public class FullOCLExpressionConverter extends OCLExpressionConverter {
   private boolean isPreStrategy = false;
   private boolean isPreCond = false;
@@ -43,7 +38,6 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     this.thisObj = thisObj;
   }
 
-
   public void enterPreCond() {
     isPreCond = true;
     isPreStrategy = true;
@@ -58,15 +52,9 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     return isPreStrategy;
   }
 
-
-
-
-
   public FullOCLExpressionConverter(ASTCDCompilationUnit ast, Context ctx) {
     super(ast, ctx);
   }
-
-
 
   @Override
   protected Optional<Expr<? extends Sort>> convertGenExprOpt(ASTExpression node) {
@@ -107,8 +95,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     }
 
     if (res == null) {
-      OCLType type = TypeConverter.buildOCLType((VariableSymbol) node.getDefiningSymbol().get());
-      res = declVariable(type, node.getName());
+      res = createVarFromSymbol(node);
     }
 
     return res;
