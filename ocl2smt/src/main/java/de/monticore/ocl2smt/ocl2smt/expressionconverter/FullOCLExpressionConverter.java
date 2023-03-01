@@ -121,8 +121,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
       attributeName = OCLHelper.mkPre(attributeName);
     }
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
-    OCLType type = literalConverter.getType(obj);
-    return OCLHelper.getAttribute(obj, type, attributeName, cd2smtGenerator);
+    return convertFieldAccessHelper(obj, attributeName);
   }
 
   private Optional<Expr<? extends Sort>> getContextAttribute(
