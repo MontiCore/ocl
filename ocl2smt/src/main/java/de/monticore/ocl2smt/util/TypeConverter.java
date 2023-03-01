@@ -68,7 +68,7 @@ public class TypeConverter {
     SymTypeExpression symTypeExpression = symbol.getType();
     assert symTypeExpression != null
         && (symTypeExpression.isObjectType() || symTypeExpression.isPrimitive());
-    String typename = symTypeExpression.getTypeInfo().getName();
+    String typename = symTypeExpression.getTypeInfo().getFullName();
     return OCLType.buildOCLType(typename);
   }
 
