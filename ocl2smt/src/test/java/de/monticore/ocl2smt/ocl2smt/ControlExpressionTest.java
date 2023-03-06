@@ -8,7 +8,8 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class ControlExpressionTest extends ExpressionAbstractTest {
 
@@ -22,21 +23,17 @@ public class ControlExpressionTest extends ExpressionAbstractTest {
     solver = ocl2SMTGenerator.getCD2SMTGenerator().getContext().mkSolver();
   }
 
-  @Test
-  public void if_then_else_boolean_sat() {
-    addConstraint("ITE_sat");
+  @ParameterizedTest
+  @ValueSource(strings = {"ITE_UNSAT1", "ITE_UNSAT2", "Cond_UNSAT"})
+  public void testControlExprUNSAT(String value) {
+    addConstraint(value);
+    Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"ITE_SAT", "Cond_SAT"})
+  public void testControlExprSAT(String value) {
+    addConstraint(value);
     Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
-  }
-
-  @Test
-  public void if_then_else_boolean_unsat1() {
-    addConstraint("ITE_unsat1");
-    Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
-  }
-
-  @Test
-  public void if_then_else_boolean_unsat2() {
-    addConstraint("ITE_unsat2");
-    Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
   }
 }

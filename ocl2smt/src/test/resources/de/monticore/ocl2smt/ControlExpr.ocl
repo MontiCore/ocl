@@ -3,18 +3,26 @@ package invariants;
 
 ocl Test02 {
 
-  inv ITE_sat:
+  inv ITE_SAT:
     if   true
     then true
     else false;
 
-  inv ITE_unsat1:
+  inv ITE_UNSAT1:
       if   false
       then true
       else 2 == 4;
 
-  inv ITE_unsat2:
+  inv ITE_UNSAT2:
         if   true
         then  2==4
         else true;
+
+   context Auction a inv Cond_UNSAT:
+     a.auctionIdent == (true ? 10 : 11) &&
+     a.auctionIdent == 11 ;
+
+    context Auction a inv Cond_SAT:
+        a.auctionIdent == ("Auto" == "Auto" ? 10 : 11) &&
+        a.auctionIdent == 10 ;
 }

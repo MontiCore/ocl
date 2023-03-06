@@ -210,6 +210,8 @@ public class OCLExpressionConverter {
       res = convertFieldAcc((ASTFieldAccessExpression) node);
     } else if (node instanceof ASTIfThenElseExpression) {
       res = convertIfTEl((ASTIfThenElseExpression) node);
+    } else if (node instanceof ASTConditionalExpression) {
+      res = convertCond((ASTConditionalExpression) node);
     } else if (node instanceof ASTImpliesExpression) {
       res = convertImpl((ASTImpliesExpression) node);
     } else {
@@ -378,6 +380,13 @@ public class OCLExpressionConverter {
         convertBoolExpr(node.getCondition()),
         convertExpr(node.getThenExpression()),
         convertExpr(node.getElseExpression()));
+  }
+
+  protected Expr<? extends Sort> convertCond(ASTConditionalExpression node) {
+    return ctx.mkITE(
+        convertBoolExpr(node.getCondition()),
+        convertExpr(node.getTrueExpression()),
+        convertExpr(node.getFalseExpression()));
   }
 
   protected Expr<? extends Sort> convertImpl(ASTImpliesExpression node) {
