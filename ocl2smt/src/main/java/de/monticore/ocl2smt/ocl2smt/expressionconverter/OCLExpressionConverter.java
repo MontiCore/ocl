@@ -4,6 +4,7 @@ import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
 
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
+import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -398,10 +399,28 @@ public class OCLExpressionConverter {
     return convertExpr(node.getExpression());
   }
 
+  protected Expr<? extends Sort> convertFieldAccessHelper(Expr<? extends Sort> obj, String name) {
+    OCLType type = literalConverter.getType(obj);
+    ASTCDDefinition cd = cd2smtGenerator.getClassDiagram().getCDDefinition();
+    Expr<? extends Sort> res;
+    if (OCLHelper.containsAttribute(
+        CDHelper.getASTCDType(type.getName(), cd), name, cd)) { // case obj.attribute
+      res = OCLHelper.getAttribute(obj, type, name, cd2smtGenerator);
+    } else { // case obj.link
+      ASTCDAssociation association = OCLHelper.getAssociation(type, name, getCD());
+      OCLType type2 = OCLHelper.getOtherType(association, type);
+      String resName = obj.getSExpr() + SMTHelper.fCharToLowerCase(type2.getName());
+      res = declVariable(type2, resName);
+      genConstraints.add(
+          OCLHelper.evaluateLink(association, obj, res, cd2smtGenerator, literalConverter));
+    }
+
+    return res;
+  }
+
   protected Expr<? extends Sort> convertFieldAcc(ASTFieldAccessExpression node) {
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
-    OCLType type = literalConverter.getType(obj);
-    return OCLHelper.getAttribute(obj, type, node.getName(), cd2smtGenerator);
+    return convertFieldAccessHelper(obj, node.getName());
   }
 
   protected SMTSet convertSimpleFieldAccessAssoc(Expr<? extends Sort> obj, String role) {

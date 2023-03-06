@@ -260,4 +260,22 @@ public class OCLHelper {
     }
     return s;
   }
+
+  public static boolean containsAttribute(
+      ASTCDType astCdType, String attributeName, ASTCDDefinition cd) {
+    if (CDHelper.containsProperAttribute(astCdType, attributeName)) {
+      return true;
+    }
+    List<ASTCDType> superclassList = CDHelper.getSuperTypeList(astCdType, cd);
+
+    for (ASTCDType superType : superclassList) {
+      boolean res = containsAttribute(superType, attributeName, cd);
+
+      if (res) {
+        return res;
+      }
+    }
+
+    return false;
+  }
 }

@@ -23,7 +23,7 @@ public class AssociationTest extends ExpressionAbstractTest {
 
   @ParameterizedTest
   @ValueSource(
-      strings = {"Of_legal_age", "Diff_ids", "AtLeast_2_Person", "Same_Person_in_2_Auction"})
+      strings = {"Of_legal_age", "Diff_ids", "AtLeast_2_Person", "Same_Person_in_2_Auction", "Fix"})
   public void testAssociationNavigation(String inv) {
     testInv(inv);
   }
