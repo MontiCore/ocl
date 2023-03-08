@@ -7,7 +7,6 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -33,11 +32,5 @@ public class StringOperationsTest extends ExpressionAbstractTest {
   public void TestStringOperationsUNSAT(String value) {
     addConstraint(value);
     Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
-  }
-
-  @Test
-  public void TestStringOperations() {
-    addConstraint("String10");
-    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
   }
 }

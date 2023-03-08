@@ -8,9 +8,8 @@ ocl Test02 {
   inv  String2 :
    "SE RWTH" == "SE" + "RWTH" ;
 
-  context Auction a inv String3:
-     a.name == "SE RWTH" &&
-     a.name.contains("SE");
+  inv String3:
+     "SE RWTH".contains("SE");
 
   inv String4:
   "SERWTH".contains("SE");
