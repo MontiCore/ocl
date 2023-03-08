@@ -153,7 +153,7 @@ public class OCLExpressionConverter {
       result = convertSetNotIn((ASTSetNotInExpression) node);
     } else if (node instanceof ASTImpliesExpression) {
       result = convertImpl((ASTImpliesExpression) node);
-    } else if (node instanceof ASTCallExpression) {
+    } else if (node instanceof ASTCallExpression && methodReturnsBool((ASTCallExpression) node)) {
       result = convertBoolMethodCall((ASTCallExpression) node);
     } else {
       Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
@@ -200,8 +200,12 @@ public class OCLExpressionConverter {
     SeqExpr<CharSort> result;
 
     if ((node instanceof ASTPlusExpression)
-        && convertExpr(((ASTPlusExpression) node).getLeft()).isString()) {
+        && convertExpr(((ASTPlusExpression) node).getLeft()).getSort().getName().isStringSymbol()) {
       result = convertStringConcat((ASTPlusExpression) node);
+    } else if (node instanceof ASTCallExpression
+        && methodReturnsString((ASTCallExpression) node)
+        && ((ASTCallExpression) node).getExpression() instanceof ASTFieldAccessExpression) {
+      result = convertStringMethodCall((ASTCallExpression) node);
     } else {
       Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
       if (buf.isPresent() && buf.get().getSort().getName().isStringSymbol()) {
@@ -224,6 +228,26 @@ public class OCLExpressionConverter {
       assert false;
     }
     return result.get();
+  }
+
+  protected SeqExpr<CharSort> convertStringMethodCall(ASTCallExpression node) {
+    SeqExpr<CharSort> res = null;
+    if (node.getDefiningSymbol().isPresent()) {
+      String name = node.getDefiningSymbol().get().getName();
+      if (node.getExpression() instanceof ASTFieldAccessExpression) {
+        SeqExpr<CharSort> arg1 = convertExprString(node.getArguments().getExpression(0));
+        SeqExpr<CharSort> arg2 = convertExprString(node.getArguments().getExpression(1));
+        SeqExpr<CharSort> str =
+            convertExprString(((ASTFieldAccessExpression) node.getExpression()).getExpression());
+        if ("replace".equals(name)) {
+          res = ctx.mkReplace(str, arg1, arg2);
+
+        }
+      }
+      return res;
+    }
+    Log.error("conversion of " + node.getClass().getName() + " not completely implemented");
+    return res;
   }
 
   protected ArithExpr<? extends ArithSort> convertExprArith(ASTExpression node) {
@@ -339,18 +363,29 @@ public class OCLExpressionConverter {
   }
 
   protected BoolExpr convertBoolMethodCall(ASTCallExpression node) {
-
+    BoolExpr res = null;
     if (node.getDefiningSymbol().isPresent()) {
       String name = node.getDefiningSymbol().get().getName();
-      if (name.equals("contains") && node.getExpression() instanceof ASTFieldAccessExpression) {
+      if (node.getExpression() instanceof ASTFieldAccessExpression) {
         SeqExpr<CharSort> arg = convertExprString(node.getArguments().getExpression(0));
         SeqExpr<CharSort> str =
             convertExprString(((ASTFieldAccessExpression) node.getExpression()).getExpression());
-        return ctx.mkContains(str, arg);
+        switch (name) {
+          case "contains":
+            res = ctx.mkContains(str, arg);
+            break;
+          case "endsWith":
+            res = ctx.mkSuffixOf(arg, str);
+            break;
+          case "startsWith":
+            res = ctx.mkPrefixOf(arg, str);
+            break;
+        }
       }
+      return res;
     }
     Log.error("conversion of " + node.getClass().getName() + " not completely implemented");
-    return null;
+    return res;
   }
 
   protected BoolExpr convertImpl(ASTImpliesExpression node) {
@@ -870,10 +905,19 @@ public class OCLExpressionConverter {
     return res;
   }
 
-  public static void main(String[] args) {
-    Context context = new Context();
-    boolean bool = context.mkString("valdes").isString();
+  private boolean methodReturnsBool(ASTCallExpression node) {
+    if (node.getDefiningSymbol().isPresent()) {
+      String name = node.getDefiningSymbol().get().getName();
+      return (Set.of("contains", "endsWith", "startsWith").contains(name));
+    }
+    return false;
+  }
 
-    assert bool;
+  private boolean methodReturnsString(ASTCallExpression node) {
+    if (node.getDefiningSymbol().isPresent()) {
+      String name = node.getDefiningSymbol().get().getName();
+      return (name.equals("replace"));
+    }
+    return false;
   }
 }

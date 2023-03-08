@@ -7,6 +7,7 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -21,16 +22,22 @@ public class StringOperationsTest extends ExpressionAbstractTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"String1", "String3", "String4"})
+  @ValueSource(strings = {"String1", "String3", "String4", "String6", "String8", "String10"})
   public void TestStringOperationsSAT(String value) {
     addConstraint(value);
     Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"String2", "String5"})
+  @ValueSource(strings = {"String2", "String5", "String7", "String9", "String11"})
   public void TestStringOperationsUNSAT(String value) {
     addConstraint(value);
     Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
+  }
+
+  @Test
+  public void TestStringOperations() {
+    addConstraint("String10");
+    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
   }
 }
