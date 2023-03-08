@@ -87,6 +87,7 @@ public class OCLExpressionConverter {
   }
 
   public BoolExpr convertBoolExpr(ASTExpression node) {
+    Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
     Optional<BoolExpr> result = convertBoolExprOpt(node);
     if (result.isEmpty()) {
       Log.error(
@@ -105,7 +106,10 @@ public class OCLExpressionConverter {
     if (res == null) {
       res = convertBoolExprOpt(node).orElse(null);
       if (res == null) {
-        res = convertExprArith(node);
+        res = convertExprArithOpt(node).orElse(null);
+        if (res == null) {
+          res = convertExprString(node);
+        }
       }
     }
     return res;
@@ -147,6 +151,10 @@ public class OCLExpressionConverter {
       result = convertSetIn((ASTSetInExpression) node);
     } else if (node instanceof ASTSetNotInExpression) {
       result = convertSetNotIn((ASTSetNotInExpression) node);
+    } else if (node instanceof ASTImpliesExpression) {
+      result = convertImpl((ASTImpliesExpression) node);
+    } else if (node instanceof ASTCallExpression) {
+      result = convertBoolMethodCall((ASTCallExpression) node);
     } else {
       Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
       if (buf.isPresent() && buf.get() instanceof BoolExpr) {
@@ -165,7 +173,9 @@ public class OCLExpressionConverter {
       result = convertMinPref((ASTMinusPrefixExpression) node);
     } else if (node instanceof ASTPlusPrefixExpression) {
       result = convertPlusPref((ASTPlusPrefixExpression) node);
-    } else if (node instanceof ASTPlusExpression) {
+    } else if ((node instanceof ASTPlusExpression)
+        && (convertExpr(((ASTPlusExpression) node).getLeft()).isInt()
+            || convertExpr(((ASTPlusExpression) node).getLeft()).isReal())) {
       result = convertPlus((ASTPlusExpression) node);
     } else if (node instanceof ASTMinusExpression) {
       result = convertMinus((ASTMinusExpression) node);
@@ -186,7 +196,38 @@ public class OCLExpressionConverter {
     return Optional.of(result);
   }
 
+  protected Optional<SeqExpr<CharSort>> convertExprStringOpt(ASTExpression node) {
+    SeqExpr<CharSort> result;
+
+    if ((node instanceof ASTPlusExpression)
+        && convertExpr(((ASTPlusExpression) node).getLeft()).isString()) {
+      result = convertStringConcat((ASTPlusExpression) node);
+    } else {
+      Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
+      if (buf.isPresent() && buf.get().getSort().getName().isStringSymbol()) {
+        result = (SeqExpr<CharSort>) buf.get();
+      } else {
+        return Optional.empty();
+      }
+    }
+    return Optional.of(result);
+  }
+
+  protected SeqExpr<CharSort> convertExprString(ASTExpression node) {
+    Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
+    Optional<SeqExpr<CharSort>> result = convertExprStringOpt(node);
+    if (result.isEmpty()) {
+      Log.error(
+          "the conversion of expressions with the type "
+              + node.getClass().getName()
+              + "is   not totally  implemented");
+      assert false;
+    }
+    return result.get();
+  }
+
   protected ArithExpr<? extends ArithSort> convertExprArith(ASTExpression node) {
+    Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
     Optional<ArithExpr<? extends ArithSort>> result = convertExprArithOpt(node);
     if (result.isEmpty()) {
       Log.error(
@@ -212,12 +253,14 @@ public class OCLExpressionConverter {
       res = convertIfTEl((ASTIfThenElseExpression) node);
     } else if (node instanceof ASTConditionalExpression) {
       res = convertCond((ASTConditionalExpression) node);
-    } else if (node instanceof ASTImpliesExpression) {
-      res = convertImpl((ASTImpliesExpression) node);
     } else {
       return Optional.empty();
     }
     return Optional.of(res);
+  }
+  // -----------String--------------
+  protected SeqExpr<CharSort> convertStringConcat(ASTPlusExpression node) {
+    return ctx.mkConcat(convertExprString(node.getLeft()), convertExprString(node.getRight()));
   }
 
   // ----------------------Arit--------------------
@@ -293,6 +336,25 @@ public class OCLExpressionConverter {
 
   protected BoolExpr convertNEq(ASTNotEqualsExpression node) {
     return ctx.mkNot(ctx.mkEq(convertExpr(node.getLeft()), convertExpr(node.getRight())));
+  }
+
+  protected BoolExpr convertBoolMethodCall(ASTCallExpression node) {
+
+    if (node.getDefiningSymbol().isPresent()) {
+      String name = node.getDefiningSymbol().get().getName();
+      if (name.equals("contains") && node.getExpression() instanceof ASTFieldAccessExpression) {
+        SeqExpr<CharSort> arg = convertExprString(node.getArguments().getExpression(0));
+        SeqExpr<CharSort> str =
+            convertExprString(((ASTFieldAccessExpression) node.getExpression()).getExpression());
+        return ctx.mkContains(str, arg);
+      }
+    }
+    Log.error("conversion of " + node.getClass().getName() + " not completely implemented");
+    return null;
+  }
+
+  protected BoolExpr convertImpl(ASTImpliesExpression node) {
+    return ctx.mkImplies(convertBoolExpr(node.getLeft()), convertBoolExpr(node.getRight()));
   }
 
   /*------------------------------------quantified expressions----------------------------------------------------------*/
@@ -387,10 +449,6 @@ public class OCLExpressionConverter {
         convertBoolExpr(node.getCondition()),
         convertExpr(node.getTrueExpression()),
         convertExpr(node.getFalseExpression()));
-  }
-
-  protected Expr<? extends Sort> convertImpl(ASTImpliesExpression node) {
-    return ctx.mkImplies(convertBoolExpr(node.getLeft()), convertBoolExpr(node.getRight()));
   }
 
   // -----------------------------------general----------------------------------------------------------------------*/
@@ -501,6 +559,7 @@ public class OCLExpressionConverter {
   }
 
   protected SMTSet convertSet(ASTExpression node) {
+    Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
     Optional<SMTSet> res = convertSetOpt(node);
     if (res.isPresent()) {
       return res.get();
@@ -511,7 +570,6 @@ public class OCLExpressionConverter {
   }
 
   protected Optional<SMTSet> convertSetOpt(ASTExpression node) {
-    Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
     SMTSet set = null;
     if (node instanceof ASTFieldAccessExpression) {
       set = convertFieldAccAssoc((ASTFieldAccessExpression) node);
@@ -810,5 +868,12 @@ public class OCLExpressionConverter {
       Log.error(node.getClass().getName() + " Unrecognized Symbol " + node.getName());
     }
     return res;
+  }
+
+  public static void main(String[] args) {
+    Context context = new Context();
+    boolean bool = context.mkString("valdes").isString();
+
+    assert bool;
   }
 }
