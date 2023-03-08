@@ -173,9 +173,7 @@ public class OCLExpressionConverter {
       result = convertMinPref((ASTMinusPrefixExpression) node);
     } else if (node instanceof ASTPlusPrefixExpression) {
       result = convertPlusPref((ASTPlusPrefixExpression) node);
-    } else if ((node instanceof ASTPlusExpression)
-        && (convertExpr(((ASTPlusExpression) node).getLeft()).isInt()
-            || convertExpr(((ASTPlusExpression) node).getLeft()).isReal())) {
+    } else if ((node instanceof ASTPlusExpression) && isAddition((ASTPlusExpression) node)) {
       result = convertPlus((ASTPlusExpression) node);
     } else if (node instanceof ASTMinusExpression) {
       result = convertMinus((ASTMinusExpression) node);
@@ -199,8 +197,7 @@ public class OCLExpressionConverter {
   protected Optional<SeqExpr<CharSort>> convertExprStringOpt(ASTExpression node) {
     SeqExpr<CharSort> result;
 
-    if ((node instanceof ASTPlusExpression)
-        && convertExpr(((ASTPlusExpression) node).getLeft()).getSort().getName().isStringSymbol()) {
+    if ((node instanceof ASTPlusExpression && isStringConcat((ASTPlusExpression) node))) {
       result = convertStringConcat((ASTPlusExpression) node);
     } else if (node instanceof ASTCallExpression
         && methodReturnsString((ASTCallExpression) node)
@@ -241,13 +238,12 @@ public class OCLExpressionConverter {
             convertExprString(((ASTFieldAccessExpression) node.getExpression()).getExpression());
         if ("replace".equals(name)) {
           res = ctx.mkReplace(str, arg1, arg2);
-
         }
       }
       return res;
     }
     Log.error("conversion of " + node.getClass().getName() + " not completely implemented");
-    return res;
+    return null;
   }
 
   protected ArithExpr<? extends ArithSort> convertExprArith(ASTExpression node) {
@@ -385,7 +381,7 @@ public class OCLExpressionConverter {
       return res;
     }
     Log.error("conversion of " + node.getClass().getName() + " not completely implemented");
-    return res;
+    return null;
   }
 
   protected BoolExpr convertImpl(ASTImpliesExpression node) {
@@ -919,5 +915,13 @@ public class OCLExpressionConverter {
       return (name.equals("replace"));
     }
     return false;
+  }
+
+  private boolean isAddition(ASTPlusExpression node) {
+    return (convertExpr(node.getLeft()).isInt() || convertExpr(node.getLeft()).isReal());
+  }
+
+  private boolean isStringConcat(ASTPlusExpression node) {
+    return convertExpr((node).getLeft()).getSort().getName().isStringSymbol();
   }
 }
