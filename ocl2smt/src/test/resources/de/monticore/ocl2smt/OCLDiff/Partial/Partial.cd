@@ -5,12 +5,12 @@ import java.lang.*;
 classdiagram Partial {
 
   class Text {
-    boolean importantAttrib;  // Must be present in ALL ODs
+    boolean importantAttrib;
 
-    int notImportant; // Nobody Cares, Never present!
-    int notImportant2; // Nobody Cares, Never present!
+    int notImportant;
+    int notImportant2;
 
     boolean aFlagForSometimesImportant;
-    String sometimesImportant;  // Present sometimes, but not always
+    String sometimesImportant;
   }
 }
