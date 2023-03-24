@@ -363,19 +363,21 @@ public class OCLExpressionConverter {
     if (node.getDefiningSymbol().isPresent()) {
       String name = node.getDefiningSymbol().get().getName();
       if (node.getExpression() instanceof ASTFieldAccessExpression) {
-        SeqExpr<CharSort> arg = convertExprString(node.getArguments().getExpression(0));
-        SeqExpr<CharSort> str =
-            convertExprString(((ASTFieldAccessExpression) node.getExpression()).getExpression());
-        switch (name) {
-          case "contains":
-            res = ctx.mkContains(str, arg);
-            break;
-          case "endsWith":
-            res = ctx.mkSuffixOf(arg, str);
-            break;
-          case "startsWith":
-            res = ctx.mkPrefixOf(arg, str);
-            break;
+
+        if (isCallerString(name)) {
+          res =
+              convertBoolStringOp(
+                  (ASTFieldAccessExpression) node.getExpression(),
+                  node.getArguments().getExpression(0),
+                  name);
+        }
+
+        if (isCallerDate(name)) {
+          res =
+              convertBoolDateOp(
+                  (ASTFieldAccessExpression) node.getExpression(),
+                  node.getArguments().getExpression(0),
+                  name);
         }
       }
       return res;
@@ -386,6 +388,43 @@ public class OCLExpressionConverter {
 
   protected BoolExpr convertImpl(ASTImpliesExpression node) {
     return ctx.mkImplies(convertBoolExpr(node.getLeft()), convertBoolExpr(node.getRight()));
+  }
+
+  protected BoolExpr convertBoolDateOp(
+      ASTFieldAccessExpression node, ASTExpression arg, String methodName) {
+    BoolExpr res = null;
+
+    ArithExpr<? extends ArithSort> argument = convertExprArith(arg);
+    ArithExpr<? extends ArithSort> date = convertExprArith(node.getExpression());
+    switch (methodName) {
+      case "before":
+        res = ctx.mkLt(date, argument);
+        break;
+
+      case "after":
+        res = ctx.mkGt(date, argument);
+        break;
+    }
+    return res;
+  }
+
+  protected BoolExpr convertBoolStringOp(
+      ASTFieldAccessExpression node, ASTExpression arg, String methodName) {
+    BoolExpr res = null;
+    SeqExpr<CharSort> argument = convertExprString(arg);
+    SeqExpr<CharSort> str = convertExprString(node.getExpression());
+    switch (methodName) {
+      case "contains":
+        res = ctx.mkContains(str, argument);
+        break;
+      case "endsWith":
+        res = ctx.mkSuffixOf(argument, str);
+        break;
+      case "startsWith":
+        res = ctx.mkPrefixOf(argument, str);
+        break;
+    }
+    return res;
   }
 
   /*------------------------------------quantified expressions----------------------------------------------------------*/
@@ -901,10 +940,18 @@ public class OCLExpressionConverter {
     return res;
   }
 
+  private boolean isCallerString(String methodName) {
+    return Set.of("contains", "endsWith", "startsWith").contains(methodName);
+  }
+
+  private boolean isCallerDate(String methodName) {
+    return Set.of("after", "before").contains(methodName);
+  }
+
   private boolean methodReturnsBool(ASTCallExpression node) {
     if (node.getDefiningSymbol().isPresent()) {
       String name = node.getDefiningSymbol().get().getName();
-      return (Set.of("contains", "endsWith", "startsWith").contains(name));
+      return (Set.of("contains", "endsWith", "startsWith", "before", "after").contains(name));
     }
     return false;
   }

@@ -8,7 +8,6 @@ import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -18,13 +17,12 @@ public class AttributeTest extends ExpressionAbstractTest {
     Log.init();
     OCLMill.init();
     CD4CodeMill.init();
-    parse("/attribute/attribute.cd", "/attribute/attribute.ocl");
+    parse("/attribute/Attribute.cd", "/attribute/Attribute.ocl");
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 
-  @Disabled
   @ParameterizedTest
-  @ValueSource(strings = {"Attr1"}) // TODO: implement and Enable
+  @ValueSource(strings = {"Date1", "Date2"})
   public void testAttributeAccess(String inv) {
     testInv(inv);
   }
