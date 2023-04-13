@@ -102,6 +102,7 @@ public class OCL_Loader {
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     ICD4CodeArtifactScope as = CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
     as.addImports(new ImportStatement("java.lang", true));
+    as.addImports(new ImportStatement("java.util", true));
     CD4CodeSymbolTableCompleter c =
         new CD4CodeSymbolTableCompleter(
             ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
@@ -112,6 +113,7 @@ public class OCL_Loader {
   protected static IOCLArtifactScope createOCLSymTab(ASTOCLCompilationUnit ast) {
     IOCLArtifactScope as = OCLMill.scopesGenitorDelegator().createFromAST(ast);
     as.addImports(new ImportStatement("java.lang", true));
+    as.addImports(new ImportStatement("java.util", true));
     OCLSymbolTableCompleter c =
         new OCLSymbolTableCompleter(
             ast.getMCImportStatementList(),
@@ -134,6 +136,7 @@ public class OCL_Loader {
   protected static void loadCDModel(ASTOCLCompilationUnit oclAST, ASTCDCompilationUnit cdAST) {
     String serialized =
         new CD4CodeSymbols2Json().serialize((ICD4CodeScope) cdAST.getEnclosingScope());
+    serialized = serialized.replaceAll("Optional", "java.util.Optional");
     Log.trace(serialized, OCL_Loader.class.getName());
     SymbolTableUtil.prepareMill();
     SymbolTableUtil.addCd4cSymbols();

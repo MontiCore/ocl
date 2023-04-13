@@ -5,6 +5,7 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
+import de.monticore.ocl2smt.util.OCLMethodResult;
 import de.monticore.ocl2smt.util.OCLType;
 import java.util.Optional;
 
@@ -15,23 +16,21 @@ public class OPConstraint {
   protected IdentifiableBoolExpr postCond;
   protected IdentifiableBoolExpr operationConstraint;
 
-  protected final Expr<? extends Sort> result;
   protected final Expr<? extends Sort> thisObj;
-  protected final OCLType resultType;
+  protected final OCLMethodResult result;
   protected final OCLType ThisType;
 
   public OPConstraint(
       IdentifiableBoolExpr preCond,
       IdentifiableBoolExpr postCond,
-      Expr<? extends Sort> res,
+      OCLMethodResult res,
       Expr<? extends Sort> ThisObj,
-      OCLType resType,
       OCLType thisType,
       Context ctx) {
     this.preCond = preCond;
     this.postCond = postCond;
     this.result = res;
-    this.resultType = resType;
+
     this.ThisType = thisType;
     this.thisObj = ThisObj;
 
@@ -53,12 +52,8 @@ public class OPConstraint {
     return thisObj;
   }
 
-  public Expr<? extends Sort> getResult() {
+  public OCLMethodResult getResult() {
     return result;
-  }
-
-  public OCLType getResultType() {
-    return resultType;
   }
 
   public boolean isPresentResult() {

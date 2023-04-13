@@ -49,7 +49,7 @@ public class OCLTool extends OCLToolTOP {
       CommandLine cmd = cliparser.parse(options, args);
 
       // help: when --help
-      if (cmd.hasOption("h") || !cmd.hasOption("i")) {
+      if (cmd.hasOption("h")) { // if (cmd.hasOption("h") || !cmd.hasOption("i")) {
         printHelp(options);
         // do not continue, when help is printed
         return;

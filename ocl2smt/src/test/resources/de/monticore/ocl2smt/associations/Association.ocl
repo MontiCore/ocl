@@ -2,42 +2,65 @@
 package invariants;
 ocl NC1 {
 
-  context Auction a inv Of_legal_age:
+  context Auction a inv Assoc1:
     forall Person p1 in a.person:
        p1.age >= 18 ;
 
-  context Auction a inv Diff_ids:
+  context Auction a inv Assoc2:
       forall Person p1 in a.person, Person p2 in a.person:
         p1 != p2 implies  p1.id != p2.id ;
 
-  inv AtLeast_2_Person:
+  inv Assoc3:
     forall Auction a :
         exists Person p1 in a.person, Person p2 in a.person:
          p1 != p2 ;
 
-  inv Same_Person_in_2_Auction:
+  inv Assoc4:
       forall Auction a1, a2 :
         a1 != a2 implies
         (exists Person p1 in a2.person, Person p2 in a2.person:
             p1 == p2);
 
-  context Person p1, Person p2 inv Fix:
+  context Person p1, Person p2 inv Assoc5:
     p1.parent == p2.parent ;
 
 
-/*
-//UNSAT
- inv  NestedFieldAccess2_UNSAT:
-    forall Auction a , Parent p in a.person.parent :
-       (p.age == 59 )&&
-          (exists Parent p1 in a.person.parent  :
-            p1.age == 60 );
+ context Person p  inv Assoc6 :
+     p.enterprise.isPresent();
 
-   context Auction a inv NestedFieldAccessExpr:
-      forall Parent p1 in a.person.parent:
-         p1.age >= 50 ;
+ context Person p  inv Assoc7 :
+       p.enterprise.isEmpty();
 
-*/
+ context Person p  inv Assoc8 :
+      p.enterprise.get().name == "Microsoft";
+
+ context Person p  inv Assoc9 :
+     p.enterprise.isEmpty() && p.enterprise.isPresent();
+
+ context Person p  inv Assoc10 :
+     p.enterprise.get().name == "Microsoft" && p.enterprise.isEmpty();
+
+ context Person p inv Assoc11 :
+   exists Enterprise e :
+           e.person.contains(p) && p.age == 75 && e.name == "Microsoft";
+
+ context Person p inv Assoc12 :
+    exists Enterprise e :
+            e.person.contains(p) && !e.person.contains(p);
+
+ context Enterprise e inv Assoc13 :
+     e.person.containsAll(e.person);
+
+
+
+ context Enterprise e inv Assoc14 :
+     !e.person.containsAll(e.person);
+
+ context Enterprise e inv Assoc15 :
+      e.person.isEmpty() && exists p in e.person :true;
+
+
+
 
 
 }

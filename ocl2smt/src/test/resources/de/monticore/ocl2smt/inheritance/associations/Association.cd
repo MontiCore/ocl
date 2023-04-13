@@ -1,0 +1,32 @@
+  classdiagram AssociationInheritance{
+
+
+
+
+   class BigCar extends Car  {
+         boolean isBigCar ;
+   }
+
+ abstract  class Car extends Vehicle {
+      boolean isCar ;
+   }
+
+  abstract  class Vehicle {
+         boolean isVehicle ;
+    }
+
+   class CarDummy {
+      boolean isCarDummy ;
+   }
+   class VDummy {
+    boolean isVehicleDummy ;
+   }
+
+
+
+    association [1] Car      --  CarDummy  [1];
+    association [1]  VDummy  --  Vehicle    [1];
+
+
+
+   }

@@ -67,8 +67,8 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     // checkDiff
     Assertions.assertEquals(
         "3", getAttribute(getObject(witness.getPostOD(), preLinks.get(0).getName()), "employees"));
-    printOD(witness.getPostOD());
-    printOD(witness.getPreOD());
+    printOD(witness.getPostOD(), "OPConstraintWitness");
+    printOD(witness.getPreOD(), "OPConstraintWitness");
   }
 
   @Test
@@ -103,6 +103,6 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
             .getValue("result");
 
     Assertions.assertEquals(result, "false");
-    printOPDiff(diff);
+    printOPDiff(diff, "OpConstraintDiff");
   }
 }

@@ -20,6 +20,10 @@ public class LiteralConverter {
     this.context = ctx;
   }
 
+  public Context getContext() {
+    return context;
+  }
+
   public void reset() {
     varTypes.clear();
   }
@@ -75,7 +79,10 @@ public class LiteralConverter {
   public OCLType getType(Expr<? extends Sort> expr) {
     if (varTypes.containsKey(expr)) {
       return varTypes.get(expr);
+    } else if (TypeConverter.isPrimitiv(expr.getSort())) {
+      return OCLType.buildOCLType(expr.getSort().toString());
     }
+    Log.error("Type not found for the Variable " + expr);
     return OCLType.buildOCLType(expr.getSort().getName().toString());
   }
 }

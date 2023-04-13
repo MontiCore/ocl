@@ -11,11 +11,17 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
+import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
+import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.apache.commons.io.FileUtils;
 
 public class OCLInvariantDiff {
   protected Context ctx;
@@ -56,7 +62,8 @@ public class OCLInvariantDiff {
       boolean partial) {
 
     resetContext();
-    OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(newCD, ctx);
+    OCL2SMTGenerator ocl2SMTGenerator =
+        new OCL2SMTGenerator(newCD, ctx); // Fixme: translate both classdiagram
 
     // list of new OCl Constraints
     List<IdentifiableBoolExpr> newOClConstraints = invariant2SMT(ocl2SMTGenerator, newOCL);
@@ -70,14 +77,16 @@ public class OCLInvariantDiff {
         new ArrayList<>(cd2SMTGenerator.getAssociationsConstraints());
 
     // remove assoc cardinality and compute CDDiff
-    CDHelper.removeAssocCard(oldCD);
-    CDHelper.removeAssocCard(oldCD);
+    ASTCDCompilationUnit oldCDClone = oldCD.deepClone();
+    ASTCDCompilationUnit newCDClone = newCD.deepClone();
+    CDHelper.removeAssocCard(oldCDClone);
+    CDHelper.removeAssocCard(newCDClone);
     List<ASTODArtifact> res =
         CDDiff.computeAlloySemDiff(
-            oldCD,
-            newCD,
-            CDDiff.getDefaultDiffsize(oldCD, oldCD),
-            5,
+            newCDClone,
+            oldCDClone,
+            CDDiff.getDefaultDiffsize(newCDClone, oldCDClone),
+            1,
             CDSemantics.SIMPLE_CLOSED_WORLD);
     if (!res.isEmpty()) {
       return new OCLInvDiffResult(null, new HashSet<>(res));
@@ -103,7 +112,13 @@ public class OCLInvariantDiff {
     // check if they exist a model for the list of positive Constraint
     Solver solver = ocl2SMTGenerator.makeSolver(solverConstraints);
     if (solver.check() != Status.SATISFIABLE) {
-      Log.error("there are no Model for the List Of Positive Constraints");
+      List<IdentifiableBoolExpr> list = solverConstraints;
+      list.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getAssociationsConstraints());
+      list.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getInheritanceConstraints());
+
+      return TraceUnSatCore.buildUnSatOD(
+          list, new ArrayList<>(), TraceUnSatCore.traceUnSatCoreWitness(solver));
+      // Log.error("there are no Model for the List Of Positive Constraints");
     }
 
     return ocl2SMTGenerator.buildOd(solver.getModel(), "Witness", partial).orElse(null);
@@ -159,5 +174,28 @@ public class OCLInvariantDiff {
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
     ctx = new Context(cfg);
+  }
+
+  public void printResult(OCLInvDiffResult diff) {
+    if (diff.getUnSatCore() != null) {
+      printOD(diff.getUnSatCore());
+    }
+    diff.getDiffWitness().forEach(this::printOD);
+  }
+
+  public void printOD(ASTODArtifact od) {
+    Path outputFile =
+        Paths.get(
+            "target/generated/sources/annotationProcessor/java/ocl2smttest",
+            od.getObjectDiagram().getName() + ".od");
+    try {
+      FileUtils.writeStringToFile(
+          outputFile.toFile(),
+          new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od),
+          Charset.defaultCharset());
+    } catch (Exception e) {
+      e.printStackTrace();
+      // Assertions.fail("It Was Not Possible to Print the Object Diagram");
+    }
   }
 }

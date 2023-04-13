@@ -9,6 +9,7 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
+import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -33,23 +34,31 @@ public abstract class OCLDiffAbstractTest {
   protected static final String RELATIVE_TARGET_PATH =
       "target/generated/sources/annotationProcessor/java/ocl2smttest";
 
-  public void printResult(OCLInvDiffResult diff) {
+  public void printResult(OCLInvDiffResult diff, String directory) {
     if (diff.getUnSatCore() != null) {
-      printOD(diff.getUnSatCore());
+      printOD(diff.getUnSatCore(), directory);
     }
-    diff.getDiffWitness().forEach(this::printOD);
+    diff.getDiffWitness().forEach(x -> printOD(x, directory));
   }
 
-  public void printOPDiff(OCLOPDiffResult diff) {
+  public void printOPDiff(OCLOPDiffResult diff, String directory) {
     if (diff.getUnSatCore() != null) {
-      printOD(diff.getUnSatCore());
+      printOD(diff.getUnSatCore(), directory);
     }
     diff.getDiffWitness()
         .forEach(
             x -> {
-              printOD(x.getPostOD());
-              printOD(x.getPreOD());
+              printOD(x.getPostOD(), directory);
+              printOD(x.getPreOD(), directory);
             });
+  }
+
+  public void printOPWitness(Set<OCLOPWitness> witness, String directory) {
+    witness.forEach(
+        x -> {
+          printOD(x.getPostOD(), directory);
+          printOD(x.getPreOD(), directory);
+        });
   }
 
   protected ASTOCLCompilationUnit parseOCl(String cdFileName, String oclFileName)
@@ -65,8 +74,9 @@ public abstract class OCLDiffAbstractTest {
     return OCL_Loader.loadAndCheckCD(Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
   }
 
-  public void printOD(ASTODArtifact od) {
-    Path outputFile = Paths.get(RELATIVE_TARGET_PATH, od.getObjectDiagram().getName() + ".od");
+  public void printOD(ASTODArtifact od, String directory) {
+    Path outputFile =
+        Paths.get(RELATIVE_TARGET_PATH + "/" + directory, od.getObjectDiagram().getName() + ".od");
     try {
       FileUtils.writeStringToFile(
           outputFile.toFile(),

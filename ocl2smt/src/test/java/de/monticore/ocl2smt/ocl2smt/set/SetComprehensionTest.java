@@ -8,8 +8,8 @@ import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class SetComprehensionTest extends ExpressionAbstractTest {
   @BeforeEach
@@ -23,69 +23,15 @@ public class SetComprehensionTest extends ExpressionAbstractTest {
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 
-  @Test
-  public void test_Set_Comp_1() {
-    testInv("Test1");
+  @ParameterizedTest
+  @ValueSource(strings = {"Test1", "Test3", "Test7", "Test8", "Test10", "Test12", "Test13"})
+  public void testSetComprehensionSat(String value) {
+    testInv(value, "setComprehension");
   }
 
-  @Test
-  public void test_Set_Comp_2() {
-    testUnsatInv("Test2");
-  }
-
-  @Test
-  public void test_Set_Comp_3() {
-    testInv("Test3");
-  }
-
-  @Test
-  public void test_Set_Comp_4() {
-    testUnsatInv("Test4");
-  }
-
-  @Test
-  public void test_Set_Comp_5() {
-    testUnsatInv("Test5");
-  }
-
-  @Test
-  public void test_Set_Comp_7() {
-    testInv("Test7");
-  }
-
-  @Test
-  public void test_Set_Comp_8() {
-    testInv("Test8");
-  }
-
-  @Test
-  public void test_Set_Comp_9() {
-    testUnsatInv("Test9");
-  }
-
-  @Test
-  public void test_Set_Comp_10() {
-    testInv("Test10");
-  }
-
-  @Test
-  public void test_Set_Comp_11() {
-    testUnsatInv("Test11");
-  }
-
-  @Test
-  public void test_Set_Comp_12() {
-    testInv("Test12");
-  }
-
-  @Test
-  public void test_Set_Comp_13() {
-    testInv("Test13");
-  }
-
-  @Disabled
-  @Test
-  public void test_Set_String() {
-    testInv("String");
+  @ParameterizedTest
+  @ValueSource(strings = {"Test2", "Test4", "Test5", "Test9", "Test11"})
+  public void testSetComprehensionUnSat(String value) {
+    testUnsatInv(value, "setComprehension");
   }
 }

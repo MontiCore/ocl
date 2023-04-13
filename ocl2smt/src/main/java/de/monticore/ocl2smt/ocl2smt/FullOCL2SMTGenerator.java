@@ -34,6 +34,9 @@ public class FullOCL2SMTGenerator {
       ASTOCLOperationSignature node, OCLExpressionConverter opConverter) {
     ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
 
+    // set the type of the method result
+    fullExprConv.setResultType(method.getMCReturnType());
+
     OCLType type = OCLType.buildOCLType(method.getMethodName().getParts(0));
     // declare the object to which the method will be applied
     return opConverter.declVariable(type, type.getName() + "__This");
@@ -80,18 +83,12 @@ public class FullOCL2SMTGenerator {
     IdentifiableBoolExpr postConstr =
         IdentifiableBoolExpr.buildIdentifiable(
             post, node.getPostCondition(0).get_SourcePositionStart(), Optional.of("post"));
-    Expr<? extends Sort> res = null;
-    OCLType resType = null;
-    if (fullExprConv.getVarNames().containsKey("result")) {
-      res = fullExprConv.getVarNames().get("result");
-      resType = fullExprConv.getLiteralConverter().getType(res);
-    }
+
     return new OPConstraint(
         preConstr,
         postConstr,
-        res,
+        fullExprConv.getResult(),
         thisObj,
-        resType,
         fullExprConv.getLiteralConverter().getType(thisObj),
         ctx);
   }

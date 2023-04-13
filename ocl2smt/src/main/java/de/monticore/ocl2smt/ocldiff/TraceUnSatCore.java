@@ -73,6 +73,32 @@ public class TraceUnSatCore {
     return elementList;
   }
 
+  public static List<ASTODLink> traceUnSatCoreWitness(Solver solver) {
+    List<ASTODLink> elementList = new ArrayList<>();
+    List<IdentifiableBoolExpr> posConstraints = new ArrayList<>();
+
+    // get the constraints from the id
+    Arrays.stream(solver.getUnsatCore())
+        .forEach(
+            b -> {
+              int i = Integer.parseInt(b.getSExpr().replace("|", ""));
+              IdentifiableBoolExpr constraint = IdentifiableBoolExpr.getBoolExprIdentifiable(i);
+              // add the constraints to the corresponding constraints list
+              posConstraints.add(constraint);
+            });
+
+    // add links
+
+    for (int i = 1; i <= posConstraints.size(); i++) {
+      ASTODLink link =
+          ODHelper.buildLink(
+              getInvObjName(posConstraints.get(0)), getInvObjName(posConstraints.get(0)), "trace");
+      link.setODLinkDirection(OD4ReportMill.oDLeftToRightDirBuilder().build());
+      elementList.add(link);
+    }
+    return elementList;
+  }
+
   protected static List<ASTODAttribute> buildInvODAttributeList(IdentifiableBoolExpr identifiable) {
     List<ASTODAttribute> attributeList = new ArrayList<>();
     attributeList.add(
