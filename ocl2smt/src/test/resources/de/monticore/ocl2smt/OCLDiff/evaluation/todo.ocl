@@ -1,0 +1,61 @@
+/* (c) https://github.com/MontiCore/monticore */
+  // ______________________________________________________
+  // Artifact
+  // ______________________________________________________
+
+ocl  ArtifactKindModel {
+
+
+
+
+
+  context JavaArtifact inv:
+    parent.fullName.replaceAll("/", ".")
+      .endsWith(belongsTo.fullName);
+
+  context JavaSourceFile inv:
+    forall n in {t.fullName.replaceAll(".", "/") |
+      t in defines, !t.isInnerType}:
+        fullName.endsWith(n + ".java");
+
+  context JavaClassFile inv:
+    parent.fullName.replaceAll("/", ".")
+      .endsWith(defines.package.fullName);
+
+  context JavaClassFile inv:
+    {simpleName} == defines.name;
+
+  //______________________________________________________
+  // Language
+  //______________________________________________________
+
+
+
+  context GrammarFile inv:
+    refersTo.containsAll(includes);   //Fixme : cannot find the symbol includes
+
+
+
+
+
+  context CDModelFile m, JavaArtifact a,
+    Type t1 in m.defines, Type t2 in a.defines inv:
+      t1.reliesOn.contains(t2) implies m.reliesOn.contains(a); //FixMe link not defined
+
+
+
+
+
+  context Generator g, JavaArtifact a in g.consistsOf inv:   //Fixme : uses
+    g.template == g.uses.addAll(g.template.reliesOnTemplate**)
+                        .addAll(a.reliesOnTemplate);
+
+  context Generator inv:
+    consistsOf.contains(template);                           //Fixme :: parse error
+
+  context Generator inv:
+    consistsOf.contains(template.reliesOnJavaArtifact);   //Fixme : vekettn FieldAccess
+
+
+
+    }

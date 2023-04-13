@@ -33,7 +33,7 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   public void testOCLDiffOneCD() throws IOException {
 
     OCLInvDiffResult diff = computeDiffOneCD("Auction.cd", "old.ocl", "new.ocl");
-    printResult(diff);
+    printResult(diff, "OCLDiffOneCD");
     Assertions.assertEquals(4, diff.getDiffWitness().size());
 
     assertTrue(checkLink("obj_False", "obj_False", diff.getUnSatCore()));
@@ -68,7 +68,7 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
             "2CDDiff/diff/new.cd",
             "2CDDiff/diff/old.ocl",
             "2CDDiff/diff/new.ocl");
-    printResult(diff);
+    printResult(diff, "OclDiff2CD_diff");
     assertEquals(diff.getDiffWitness().size(), 1);
     assertEquals(
         diff.getDiffWitness().iterator().next().getObjectDiagram().getName(), "Cardinality_right");
@@ -84,7 +84,7 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
             "2CDDiff/cddiff/new.cd",
             "2CDDiff/cddiff/old.ocl",
             "2CDDiff/cddiff/new.ocl");
-    printResult(diff);
+    printResult(diff, "OclDiff2CD_CDDiff");
     assertTrue(diff.getUnSatCore() == null);
     assertTrue(diff.getDiffWitness().size() >= 1);
   }
@@ -96,7 +96,7 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     oclSet.add(parseOCl("Partial/Partial.cd", "Partial/partial.ocl"));
 
     ASTODArtifact od = OCLDiffGenerator.oclWitness(cdAST, oclSet, true);
-    printOD(od);
+    printOD(od, "OCLDiffPartial");
 
     for (ASTODElement element : od.getObjectDiagram().getODElementList()) {
       if (element instanceof ASTODNamedObject) {

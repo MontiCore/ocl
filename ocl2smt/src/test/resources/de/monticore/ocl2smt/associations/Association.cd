@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-
+import java.lang.* ;
 
 classdiagram MinAuction {
   class Auction {
@@ -10,14 +10,18 @@ classdiagram MinAuction {
     int age;
   }
 
+  class Enterprise {
+   String name ;
+  }
+
   class  Person{
    int age ;
    int id;
   }
 
-
   association [1] Auction(auction)     --     (person)Person [1..*];
   association [*] Person(person)      --     (parent)Parent [1] ;
+  association [*] Person            --      Enterprise[0..1] ;
 
 
 }

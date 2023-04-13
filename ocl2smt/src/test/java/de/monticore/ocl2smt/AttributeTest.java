@@ -24,6 +24,6 @@ public class AttributeTest extends ExpressionAbstractTest {
   @ParameterizedTest
   @ValueSource(strings = {"Date1", "Date2"})
   public void testAttributeAccess(String inv) {
-    testInv(inv);
+    testInv(inv, "attribute");
   }
 }

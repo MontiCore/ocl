@@ -56,8 +56,9 @@ public abstract class ExpressionAbstractTest {
     return ocl2SMTGenerator.convertInv(constr);
   }
 
-  public void printOD(ASTODArtifact od) {
-    Path outputFile = Paths.get(RELATIVE_TARGET_PATH, od.getObjectDiagram().getName() + ".od");
+  public void printOD(ASTODArtifact od, String directory) {
+    Path outputFile =
+        Paths.get(RELATIVE_TARGET_PATH + "/" + directory, od.getObjectDiagram().getName() + ".od");
     try {
       FileUtils.writeStringToFile(
           outputFile.toFile(),
@@ -69,7 +70,7 @@ public abstract class ExpressionAbstractTest {
     }
   }
 
-  public void testInv(String invName) {
+  public void testInv(String invName, String directory) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
     solverConstraints.add(getConstraint(invName));
     Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
@@ -77,10 +78,10 @@ public abstract class ExpressionAbstractTest {
     Optional<ASTODArtifact> od =
         ocl2SMTGenerator.getCD2SMTGenerator().smt2od(solver.getModel(), false, invName);
     org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
-    printOD(od.get());
+    printOD(od.get(), directory);
   }
 
-  public void testUnsatInv(String invName) {
+  public void testUnsatInv(String invName, String directory) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
     solverConstraints.add(getConstraint(invName));
     Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
@@ -94,7 +95,7 @@ public abstract class ExpressionAbstractTest {
                     .get(0)
                     .negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),
             TraceUnSatCore.traceUnSatCore(solver));
-    printOD(od1);
+    printOD(od1, directory);
   }
 
   public static Context buildContext() {

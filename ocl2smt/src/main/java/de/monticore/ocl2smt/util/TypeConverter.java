@@ -17,6 +17,7 @@ import de.se_rwth.commons.logging.Log;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 public class TypeConverter {
   // todo delete static variables ;
@@ -64,7 +65,7 @@ public class TypeConverter {
   }
 
   public static OCLType buildOCLType(VariableSymbol symbol) {
-    Log.info("I tried to get a Type from the  VariableSymbol", "SymbolTable");
+    //  Log.info("I tried to get a Type from the  VariableSymbol", "SymbolTable");
     SymTypeExpression symTypeExpression = symbol.getType();
     assert symTypeExpression != null
         && (symTypeExpression.isObjectType() || symTypeExpression.isPrimitive());
@@ -115,9 +116,40 @@ public class TypeConverter {
   }
 
   public static boolean isSet(ASTExpression node) {
+    return hasGenericType(node, Set.of("Set", "java.util.set"));
+  }
+
+  public static boolean isOptional(ASTExpression node) {
+    return hasGenericType(node, Set.of("Optional", "java.util.Optional"));
+  }
+
+  public static boolean isDate(ASTExpression node) {
+    return hasObjectType(node, Set.of("Date", "java.util.Date"));
+  }
+
+  public static boolean isString(ASTExpression node) {
+    return hasObjectType(node, Set.of("String", "java.lang.String"));
+  }
+
+  public static boolean hasObjectType(ASTExpression node, Set<String> typeNames) {
+    SymTypeExpression symTypeExpression = new OCLDeriver().deriveType(node).getResult();
+    assert symTypeExpression != null;
+    return symTypeExpression.isObjectType()
+        && typeNames.contains(symTypeExpression.getTypeInfo().getName());
+  }
+
+  private static boolean hasGenericType(ASTExpression node, Set<String> typeNames) {
     SymTypeExpression symTypeExpression = new OCLDeriver().deriveType(node).getResult();
     assert symTypeExpression != null;
     return (symTypeExpression.isGenericType()
-        && symTypeExpression.getTypeInfo().getName().equals("Set"));
+        && typeNames.contains(symTypeExpression.getTypeInfo().getName()));
+  }
+
+  public static boolean isPrimitiv(Sort sort) {
+    return typeMap.containsKey(OCLType.buildOCLType(sort.toString()));
+  }
+
+  public static boolean isPrimitiv(String typeName) {
+    return typeMap.containsKey(OCLType.buildOCLType(typeName));
   }
 }
