@@ -1,8 +1,6 @@
 package de.monticore.ocl2smt.ocldiff.evaluation;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocldiff.OCLDiffAbstractTest;
 import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
@@ -20,9 +18,8 @@ import org.junit.jupiter.api.Test;
 public class EvaluationTest extends OCLDiffAbstractTest {
   @BeforeEach
   public void setUp() {
-    Log.init();
-    OCLMill.init();
-    CD4CodeMill.init();
+    super.initLogger();
+    super.initMills();
   }
 
   private List<ASTCDCompilationUnit> ast;

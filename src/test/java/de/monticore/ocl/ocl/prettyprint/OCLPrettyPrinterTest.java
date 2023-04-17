@@ -11,15 +11,21 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import java.io.IOException;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class OCLPrettyPrinterTest extends AbstractTest {
 
+  @BeforeEach
+  public void setUp() {
+    super.initLogger();
+    super.initMills();
+  }
+
   @ParameterizedTest
   @MethodSource("getParsableModels")
   public void testOCLCompilationUnit(String filename) throws IOException {
-    OCLMill.init();
     // given
     final Optional<ASTOCLCompilationUnit> ast =
         parse(prefixValidModelsPath("/testinput/validGrammarModels/" + filename), false);

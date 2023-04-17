@@ -42,10 +42,15 @@ public class OCL2JavaGeneratorTest {
 
   protected static final String TEST_TARGET_PATH = "codegen/invariants";
 
-  @BeforeEach
-  protected void init() {
+  private void initLogger() {
     LogStub.init();
     Log.enableFailQuick(false);
+    Log.getFindings().clear();
+  }
+
+  @BeforeEach
+  protected void init() {
+    this.initLogger();
     this.setup();
   }
 

@@ -5,11 +5,18 @@ import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import de.monticore.ocl.ocl.AbstractTest;
 import java.nio.file.Paths;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class OCLParserTest extends AbstractTest {
+
+  @BeforeEach
+  public void setUp() {
+    super.initLogger();
+    super.initMills();
+  }
 
   protected static final String RELATIVE_MODEL_PATH = "src/test/resources";
 

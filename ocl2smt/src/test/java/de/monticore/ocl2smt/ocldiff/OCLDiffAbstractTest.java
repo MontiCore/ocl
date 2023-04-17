@@ -1,10 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocldiff;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
@@ -19,6 +21,8 @@ import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlstereotype._ast.ASTStereotype;
+import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -33,6 +37,21 @@ public abstract class OCLDiffAbstractTest {
       "src/test/resources/de/monticore/ocl2smt/OCLDiff";
   protected static final String RELATIVE_TARGET_PATH =
       "target/generated/sources/annotationProcessor/java/ocl2smttest";
+
+  protected void initMills() {
+    OCLMill.reset();
+    OCLMill.init();
+    OCLMill.globalScope().clear();
+
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
+    CD4CodeMill.globalScope().clear();
+  }
+
+  protected void initLogger() {
+    LogStub.init();
+    Log.enableFailQuick(false);
+  }
 
   public void printResult(OCLInvDiffResult diff, String directory) {
     if (diff.getUnSatCore() != null) {

@@ -16,19 +16,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractTest {
 
-  @BeforeAll
-  public static void init() {
-    LogStub.init();
-    Log.enableFailQuick(false);
+  protected void initMills() {
+    OCLMill.reset();
+    OCLMill.init();
+    OCLMill.globalScope().clear();
   }
 
-  @BeforeEach
-  public void setUp() {
+  protected void initLogger() {
+    LogStub.init();
+    Log.enableFailQuick(false);
     Log.getFindings().clear();
   }
 
