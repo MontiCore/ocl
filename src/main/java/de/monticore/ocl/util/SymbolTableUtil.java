@@ -32,6 +32,7 @@ import de.se_rwth.commons.logging.Log;
  * @since 24.03.21
  */
 public class SymbolTableUtil {
+
   public static void prepareMill() {
     OCLMill.reset();
     OCLMill.init();

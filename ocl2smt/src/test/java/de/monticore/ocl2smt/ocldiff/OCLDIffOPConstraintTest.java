@@ -1,16 +1,13 @@
 package de.monticore.ocl2smt.ocldiff;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.odbasis._ast.*;
-import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.*;
 import org.junit.jupiter.api.Assertions;
@@ -20,9 +17,8 @@ import org.junit.jupiter.api.Test;
 public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
   @BeforeEach
   public void setUp() {
-    Log.init();
-    OCLMill.init();
-    CD4CodeMill.init();
+    super.initLogger();
+    super.initMills();
   }
 
   @Test

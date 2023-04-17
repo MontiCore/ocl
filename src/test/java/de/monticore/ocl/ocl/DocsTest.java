@@ -10,11 +10,18 @@ import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.prettyprint.IndentPrinter;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 /** Checks that the example used in the tutorial is correct */
 public class DocsTest extends AbstractTest {
+
+  @BeforeEach
+  public void setUp() {
+    super.initLogger();
+    super.initMills();
+  }
 
   @ParameterizedTest
   @CsvSource({

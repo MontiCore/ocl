@@ -11,9 +11,16 @@ import de.monticore.types.check.IDerive;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class TypeCheckTest extends AbstractTest {
+
+  @BeforeEach
+  public void setUp() {
+    super.initLogger();
+    super.initMills();
+  }
 
   @Test
   public void testTypCheckForGenericMethodCalls() {

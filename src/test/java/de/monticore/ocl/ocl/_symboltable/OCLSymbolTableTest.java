@@ -8,10 +8,17 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.util.SymbolTableUtil;
 import java.io.IOException;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class OCLSymbolTableTest extends AbstractTest {
+
+  @BeforeEach
+  public void setUp() {
+    super.initLogger();
+    super.initMills();
+  }
 
   @ParameterizedTest
   @MethodSource("getModelsWithValidSymTab")

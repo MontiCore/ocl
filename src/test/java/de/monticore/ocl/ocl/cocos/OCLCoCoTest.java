@@ -10,9 +10,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._cocos.*;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.se_rwth.commons.logging.Log;
-import de.se_rwth.commons.logging.LogStub;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -20,15 +18,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 public class OCLCoCoTest extends AbstractTest {
 
-  @BeforeAll
-  public static void init() {
-    LogStub.init();
-    Log.enableFailQuick(false);
-  }
-
   @BeforeEach
-  public void setup() {
-    Log.getFindings().clear();
+  public void setUp() {
+    super.initLogger();
+    super.initMills();
   }
 
   @ParameterizedTest

@@ -34,12 +34,10 @@ public class OCLScopesGenitorTest extends AbstractTest {
         "inv A: true;", "inv B(): true;", "inv C(int a): true;", "inv D(int a, int b): true;");
   }
 
-  @Override
   @BeforeEach
   public void setUp() {
-    super.setUp();
-    OCLMill.globalScope().clear();
-    OCLMill.init();
+    super.initLogger();
+    super.initMills();
   }
 
   @ParameterizedTest

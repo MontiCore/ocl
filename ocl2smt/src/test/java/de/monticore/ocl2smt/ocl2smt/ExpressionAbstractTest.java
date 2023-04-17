@@ -5,7 +5,9 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
@@ -13,6 +15,8 @@ import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.prettyprint.IndentPrinter;
+import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -30,6 +34,21 @@ public abstract class ExpressionAbstractTest {
   protected static ASTCDCompilationUnit cdAST;
   protected static Solver solver;
   protected static OCL2SMTGenerator ocl2SMTGenerator;
+
+  protected void initMills() {
+    OCLMill.reset();
+    OCLMill.init();
+    OCLMill.globalScope().clear();
+
+    CD4CodeMill.reset();
+    CD4CodeMill.init();
+    CD4CodeMill.globalScope().clear();
+  }
+
+  protected void initLogger() {
+    LogStub.init();
+    Log.enableFailQuick(false);
+  }
 
   protected void parse(String cdFileName, String oclFileName) throws IOException {
     oclAST =
