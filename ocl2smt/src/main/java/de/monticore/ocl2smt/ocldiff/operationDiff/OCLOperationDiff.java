@@ -67,7 +67,8 @@ public class OCLOperationDiff {
       solver = fullOCL2SMTGenerator.makeSolver(opConstraints);
       if (solver.check() == Status.SATISFIABLE) {
         res.add(
-            fullOCL2SMTGenerator.buildOPOd(solver.getModel(), "Name", method, constraint, partial));
+            fullOCL2SMTGenerator.buildOPOd(
+                solver.getModel(), method.getMethodName().getQName(), method, constraint, partial));
       } else {
         Log.info("the Preconditions XXXXXX is not Satisfiable", "");
       }

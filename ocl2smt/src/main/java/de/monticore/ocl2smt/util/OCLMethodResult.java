@@ -119,4 +119,8 @@ public class OCLMethodResult {
     }
     return res;
   }
+
+  public boolean isPresent() {
+    return this.res != null || this.resSet != null;
+  }
 }

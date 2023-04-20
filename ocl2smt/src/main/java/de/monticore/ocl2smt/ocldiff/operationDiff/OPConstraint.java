@@ -57,6 +57,6 @@ public class OPConstraint {
   }
 
   public boolean isPresentResult() {
-    return this.result != null;
+    return this.result != null && result.isPresent();
   }
 }

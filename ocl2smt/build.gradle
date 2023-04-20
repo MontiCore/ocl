@@ -41,6 +41,12 @@ dependencies {
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
 }
 
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(11)
+  }
+}
 tasks.withType(Test){
   useJUnitPlatform()
   finalizedBy jacocoTestReport

@@ -1,0 +1,54 @@
+plugins {
+  id 'java'
+  id 'com.github.johnrengelman.shadow' //version '6.0.0'
+}
+
+repositories {
+  if(("true").equals(getProperty('useLocalRepo'))) {
+    mavenLocal()
+  }
+
+  maven {
+    url sePublicRepo
+  }
+  mavenCentral()
+}
+
+dependencies {
+  implementation(project(':'))
+  implementation(project(":ocl2smt"))
+
+  implementation "commons-cli:commons-cli:1.4"
+  implementation "de.monticore:monticore-runtime:$mc_version"
+  implementation "de.monticore:monticore-grammar:$mc_version"
+  implementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
+  testImplementation(project(':').sourceSets.test.output)
+  testImplementation project(path: ':')
+  testImplementation "org.assertj:assertj-core:$assertj_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
+}
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(11)
+  }
+}
+
+tasks.withType(Test){
+  useJUnitPlatform()
+}
+
+shadowJar {
+  manifest {
+    attributes "Main-Class": "de.monticore.ocl.tool.Main"
+  }
+  archiveFileName = "MCOCL.jar"
+  archiveClassifier = "mc-tool"
+  minimize {
+    exclude(dependency('org.freemarker:freemarker:.*'))
+  }
+}
+
+jar.dependsOn(shadowJar)
