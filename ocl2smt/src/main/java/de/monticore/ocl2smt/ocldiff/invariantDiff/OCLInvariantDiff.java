@@ -175,27 +175,4 @@ public class OCLInvariantDiff {
     cfg.put("model", "true");
     ctx = new Context(cfg);
   }
-
-  public void printResult(OCLInvDiffResult diff) {
-    if (diff.getUnSatCore() != null) {
-      printOD(diff.getUnSatCore());
-    }
-    diff.getDiffWitness().forEach(this::printOD);
-  }
-
-  public void printOD(ASTODArtifact od) {
-    Path outputFile =
-        Paths.get(
-            "target/generated/sources/annotationProcessor/java/ocl2smttest",
-            od.getObjectDiagram().getName() + ".od");
-    try {
-      FileUtils.writeStringToFile(
-          outputFile.toFile(),
-          new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od),
-          Charset.defaultCharset());
-    } catch (Exception e) {
-      e.printStackTrace();
-      // Assertions.fail("It Was Not Possible to Print the Object Diagram");
-    }
-  }
 }

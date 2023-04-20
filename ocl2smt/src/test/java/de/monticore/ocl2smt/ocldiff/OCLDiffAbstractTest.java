@@ -152,6 +152,14 @@ public abstract class OCLDiffAbstractTest {
     return OCLDiffGenerator.oclDiff(cd, oldOCL, newOCL, false);
   }
 
+  public ASTODArtifact computeWitness(String cdName, String oldOCLName) throws IOException {
+    ASTCDCompilationUnit cd = parseCD(cdName);
+    Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
+    oldOCL.add(parseOCl(cdName, oldOCLName));
+    return OCLDiffGenerator.oclWitness(cd, oldOCL, false);
+  }
+
+
   public boolean containsAttribute(ASTCDClass c, String attribute) {
     for (ASTCDAttribute attr : c.getCDAttributeList()) {
       if (attr.getName().equals(attribute)) {

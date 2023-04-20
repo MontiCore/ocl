@@ -1,8 +1,7 @@
 // (c) https://github.com/MontiCore/monticore
-package de.monticore.ocl.ocl;
+package de.monticore.ocl.tool;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl.ocl._symboltable.OCLArtifactScope;
@@ -10,17 +9,17 @@ import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.prettyprint.IndentPrinter;
 import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 /** Checks that the example used in the tutorial is correct */
 public class DocsTest extends AbstractTest {
-
   @BeforeEach
-  public void setUp() {
-    super.initLogger();
-    super.initMills();
+  public void setup() {
+    initLogger();
+    initMills();
   }
 
   @ParameterizedTest
@@ -33,7 +32,7 @@ public class DocsTest extends AbstractTest {
 
     // when (parse)
     final Optional<ASTOCLCompilationUnit> ast = parse(oclFile, false);
-    assertThat(ast).isPresent();
+    Assertions.assertThat(ast).isPresent();
 
     // when (prettyprint)
     new OCLFullPrettyPrinter(new IndentPrinter(), true).prettyprint(ast.get());

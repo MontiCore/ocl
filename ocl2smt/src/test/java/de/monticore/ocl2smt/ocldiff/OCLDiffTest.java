@@ -4,6 +4,7 @@ package de.monticore.ocl2smt.ocldiff;
 import static org.gradle.internal.impldep.org.junit.Assert.assertFalse;
 import static org.gradle.internal.impldep.org.testng.Assert.assertEquals;
 import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -17,6 +18,8 @@ import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class OCLDiffTest extends OCLDiffAbstractTest {
   @BeforeEach
@@ -100,5 +103,16 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
         assertTrue(obj.getODAttributeList().size() <= 3);
       }
     }
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"new", "old"})
+  public void testMotivatingExample_Sat(String oclFile) throws IOException {
+    ASTODArtifact diff =
+            computeWitness(
+                    "motivatingExample/BankManagementSystem.cd", "motivatingExample/" + oclFile + ".ocl");
+
+    assertNotEquals("UNSAT_CORE_OD", diff.getObjectDiagram().getName());
+    printOD(diff, "MotivatingExample_" + oclFile);
   }
 }

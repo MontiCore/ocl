@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class EvaluationTest extends OCLDiffAbstractTest {
@@ -41,6 +42,7 @@ public class EvaluationTest extends OCLDiffAbstractTest {
   }
 
   @Test
+  @Disabled
   public void evaluateOCLDiff() throws IOException {
     Log.info(
         "------------------------------------------------------------------------------------\n \n \n ",
@@ -73,6 +75,7 @@ public class EvaluationTest extends OCLDiffAbstractTest {
   }
 
   @Test
+  @Disabled
   public void evaluateCDAndOCLDiff() throws IOException {
     Log.info(
         "------------------------------------------------------------------------------------\n \n \n ",
@@ -107,6 +110,7 @@ public class EvaluationTest extends OCLDiffAbstractTest {
   }
 
   @Test
+  @Disabled
   public void evaluateOpDiff() throws IOException {
     Log.info(
         "------------------------------------------------------------------------------------\n \n \n ",

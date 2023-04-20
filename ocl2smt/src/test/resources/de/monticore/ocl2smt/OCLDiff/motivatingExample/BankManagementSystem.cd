@@ -1,0 +1,17 @@
+classdiagram BankManagementSystem {
+  class Customer{
+    String id;
+  }
+
+  class Account {
+    double balance;
+    String id;
+
+    withdraw(double amount);
+ }
+
+  class BusinessAcc extends Account;
+
+  association ownerOf [1]Customer   --  Account[1];
+  association readAccess [1..*]Customer  --  BusinessAcc;
+}

@@ -24,7 +24,7 @@ public class TraceUnSatCore {
     // add All positive invariant objects
     ASTODArtifact unSatOD =
         ODHelper.buildOD(
-            "UNSAT_CORE_OD",
+            "Trace",
             posConstraints.stream()
                 .map(TraceUnSatCore::buildInvObject)
                 .collect(Collectors.toList()));
