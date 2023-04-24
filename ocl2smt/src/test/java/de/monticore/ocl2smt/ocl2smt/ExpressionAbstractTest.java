@@ -10,20 +10,17 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
+import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.ocl2smt.util.OCL_Loader;
-import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
-import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
+
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import org.apache.commons.io.FileUtils;
-import org.assertj.core.api.Assertions;
 
 public abstract class ExpressionAbstractTest {
   protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
@@ -75,46 +72,32 @@ public abstract class ExpressionAbstractTest {
     return ocl2SMTGenerator.convertInv(constr);
   }
 
-  public void printOD(ASTODArtifact od, String directory) {
-    Path outputFile =
-        Paths.get(RELATIVE_TARGET_PATH + "/" + directory, od.getObjectDiagram().getName() + ".od");
-    try {
-      FileUtils.writeStringToFile(
-          outputFile.toFile(),
-          new OD4ReportFullPrettyPrinter(new IndentPrinter()).prettyprint(od),
-          Charset.defaultCharset());
-    } catch (Exception e) {
-      e.printStackTrace();
-      Assertions.fail("It Was Not Possible to Print the Object Diagram");
-    }
-  }
-
   public void testInv(String invName, String directory) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
     solverConstraints.add(getConstraint(invName));
     Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
     org.junit.jupiter.api.Assertions.assertSame(Status.SATISFIABLE, solver.check());
     Optional<ASTODArtifact> od =
-        ocl2SMTGenerator.getCD2SMTGenerator().smt2od(solver.getModel(), false, invName);
+            ocl2SMTGenerator.getCD2SMTGenerator().smt2od(solver.getModel(), false, invName);
     org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
-    printOD(od.get(), directory);
+    IOHelper.printOD(od.get(), Path.of(directory));
   }
 
-  public void testUnsatInv(String invName, String directory) {
+  public void testUnsatInv(Set<String> invNames, String directory) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
-    solverConstraints.add(getConstraint(invName));
-    Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
+    invNames.forEach(name -> solverConstraints.add(getConstraint(name)));
 
+    IOHelper.printOD(checkUnSat(solverConstraints), Path.of(directory));
+  }
+
+  public ASTODArtifact checkUnSat(List<IdentifiableBoolExpr> solverConstraints) {
+    Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
     org.junit.jupiter.api.Assertions.assertSame(Status.UNSATISFIABLE, solver.check());
-    ASTODArtifact od1 =
-        TraceUnSatCore.buildUnSatOD(
+    return TraceUnSatCore.buildUnSatOD(
             new ArrayList<>(),
             List.of(
-                solverConstraints
-                    .get(0)
-                    .negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),
+                    solverConstraints.get(0).negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),
             TraceUnSatCore.traceUnSatCore(solver));
-    printOD(od1, directory);
   }
 
   public static Context buildContext() {

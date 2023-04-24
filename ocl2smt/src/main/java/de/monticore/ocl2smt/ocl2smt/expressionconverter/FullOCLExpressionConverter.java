@@ -186,7 +186,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   }
 
   @Override
-  protected SMTSet convertSet(ASTExpression node) {
+  public SMTSet convertSet(ASTExpression node) {
     Optional<SMTSet> res = convertSetOpt(node);
     if (res.isPresent()) {
       return res.get();

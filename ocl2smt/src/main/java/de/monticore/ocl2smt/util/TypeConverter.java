@@ -20,22 +20,21 @@ import java.util.Optional;
 import java.util.Set;
 
 public class TypeConverter {
-  // todo delete static variables ;
   public static Map<OCLType, Sort> typeMap;
-  protected static Context ctx;
-  protected static CD2SMTGenerator cd2SMTGenerator;
+  protected Context ctx;
+  protected CD2SMTGenerator cd2SMTGenerator;
 
-  public static void setup(CD2SMTGenerator cd2SMTGenerator) {
-    TypeConverter.cd2SMTGenerator = cd2SMTGenerator;
+  public TypeConverter(CD2SMTGenerator cd2SMTGenerator) {
+    this.cd2SMTGenerator = cd2SMTGenerator;
     ctx = cd2SMTGenerator.getContext();
     buildTypeMap();
   }
 
-  private static ASTCDDefinition getCD() {
+  private ASTCDDefinition getCD() {
     return cd2SMTGenerator.getClassDiagram().getCDDefinition();
   }
 
-  private static void buildTypeMap() {
+  private void buildTypeMap() {
     typeMap = new HashMap<>();
     typeMap.put(OCLType.buildOCLType("Boolean"), ctx.mkBoolSort());
     typeMap.put(OCLType.buildOCLType("Double"), ctx.getRealSort());
@@ -52,7 +51,7 @@ public class TypeConverter {
     typeMap.put(OCLType.buildOCLType("java.lang.Integer"), ctx.mkIntSort());
   }
 
-  public static OCLType buildOCLType(ASTMCType type) {
+  public OCLType buildOCLType(ASTMCType type) {
     OCLType res = null;
     if (type instanceof ASTMCPrimitiveType) {
       res = convertPrim((ASTMCPrimitiveType) type);
@@ -64,7 +63,7 @@ public class TypeConverter {
     return res;
   }
 
-  public static OCLType buildOCLType(VariableSymbol symbol) {
+  public OCLType buildOCLType(VariableSymbol symbol) {
     //  Log.info("I tried to get a Type from the  VariableSymbol", "SymbolTable");
     SymTypeExpression symTypeExpression = symbol.getType();
     assert symTypeExpression != null
@@ -73,16 +72,20 @@ public class TypeConverter {
     return OCLType.buildOCLType(typename);
   }
 
-  public static Sort getSort(OCLType type) {
+  public Sort getSort(OCLType type) {
     if (typeMap.containsKey(type)) {
       return typeMap.get(type);
     } else {
       Optional<Sort> res = getSortFromCD2SMT(type);
+      if (res.isEmpty()) {
+        Log.error("Type " + type.getName() + " Not found in the CD2SMTGenerator");
+        assert false;
+      }
       return res.get();
     }
   }
 
-  private static OCLType convertPrim(ASTMCPrimitiveType type) {
+  private OCLType convertPrim(ASTMCPrimitiveType type) {
     OCLType res = null;
     if (type.isBoolean()) {
       res = OCLType.buildOCLType("boolean");
@@ -99,15 +102,15 @@ public class TypeConverter {
     return res;
   }
 
-  private static OCLType convertQualf(ASTMCQualifiedType type) {
+  private OCLType convertQualf(ASTMCQualifiedType type) {
     String typeName = type.getMCQualifiedName().getQName();
     if (typeMap.containsKey(OCLType.buildOCLType(typeName))) {
-      return OCLType.buildOCLType(typeName);
+      return OCLType.typeNames.get(typeName);
     }
     return OCLType.buildOCLType(typeName);
   }
 
-  public static Optional<Sort> getSortFromCD2SMT(OCLType type) {
+  public Optional<Sort> getSortFromCD2SMT(OCLType type) {
     Sort sort = cd2SMTGenerator.getSort(CDHelper.getASTCDType(type.getName(), getCD()));
     if (sort == null) {
       Log.error("Type or Class " + type.getName() + "not found in CDContext");
