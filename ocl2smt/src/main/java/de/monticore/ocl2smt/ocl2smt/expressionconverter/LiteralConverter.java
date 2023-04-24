@@ -15,9 +15,11 @@ import java.util.Map;
 public class LiteralConverter {
   protected Context context;
   protected final Map<Expr<? extends Sort>, OCLType> varTypes = new HashMap<>();
+  protected final TypeConverter typeConverter;
 
-  public LiteralConverter(Context ctx) {
-    this.context = ctx;
+  public LiteralConverter(Context context, TypeConverter typeConverter) {
+    this.context = context;
+    this.typeConverter = typeConverter;
   }
 
   public Context getContext() {
@@ -62,7 +64,7 @@ public class LiteralConverter {
     return context.mkInt(node.getValue());
   }
 
-  protected IntNum convertChar(ASTCharLiteral node) { // TODO:: return a Char here
+  protected IntNum convertChar(ASTCharLiteral node) {
     return context.mkInt(node.getValue());
   }
 
@@ -71,7 +73,7 @@ public class LiteralConverter {
   }
 
   public Expr<? extends Sort> declObj(OCLType type, String name) {
-    Expr<? extends Sort> expr = context.mkConst(name, TypeConverter.getSort(type));
+    Expr<? extends Sort> expr = context.mkConst(name, typeConverter.getSort(type));
     varTypes.put(expr, type);
     return expr;
   }
@@ -83,6 +85,6 @@ public class LiteralConverter {
       return OCLType.buildOCLType(expr.getSort().toString());
     }
     Log.error("Type not found for the Variable " + expr);
-    return OCLType.buildOCLType(expr.getSort().getName().toString());
+    return null;
   }
 }

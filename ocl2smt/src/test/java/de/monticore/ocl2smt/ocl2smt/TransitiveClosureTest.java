@@ -1,10 +1,12 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocl2smt;
 
-import java.io.IOException;
-import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.Set;
 
 public class TransitiveClosureTest extends ExpressionAbstractTest {
   @BeforeEach
@@ -23,6 +25,6 @@ public class TransitiveClosureTest extends ExpressionAbstractTest {
 
   @Test
   public void Test_SimpleTransitive_ClosureUNSAT() {
-    testUnsatInv("SimpleTransitive_Closure_UNSAT", "transitive-closure");
+    testUnsatInv(Set.of("SimpleTransitive_Closure_UNSAT"), "transitive-closure");
   }
 }

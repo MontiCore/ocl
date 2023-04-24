@@ -4,4 +4,9 @@ classdiagram MinAuction {
   public class Auction {
     int auctionIdent;
   }
+
+  public class Person {
+    int age ;
+  }
+   association [*]Person -- Auction[*];
 }

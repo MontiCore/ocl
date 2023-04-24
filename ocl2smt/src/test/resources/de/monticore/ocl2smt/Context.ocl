@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl Context {
+ context Boolean a, Boolean b , Auction a1 inv Context1 :
+   b == true && a== true && a!=b;
+
+ context Auction a, Person p inv Context2:
+    !a.person.isEmpty() &&  (a.person.contains(p) implies p.age != 10);
+
+ context Auction a , p in a.person  inv Context3 :
+        p.age ==10 ;
+
+
+}
