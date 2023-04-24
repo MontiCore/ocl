@@ -20,4 +20,9 @@ ocl Person {
        //  result == company ;
 
 
+
+  context Person p  inv OfLegalAge :
+      p.age == 18 ;
+
+
 }

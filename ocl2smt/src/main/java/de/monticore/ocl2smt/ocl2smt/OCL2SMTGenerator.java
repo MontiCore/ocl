@@ -18,7 +18,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class OCL2SMTGenerator {
   protected OCLExpressionConverter exprConv;
-  private final Context ctx;
+  protected final Context ctx;
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
     exprConv = new OCLExpressionConverter(ast, ctx);
@@ -65,7 +65,7 @@ public class OCL2SMTGenerator {
     return new ImmutablePair<>(expr, set.contains(expr));
   }
 
-  protected IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
+  public IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
     exprConv.init();
     SourcePosition srcPos = invariant.get_SourcePositionStart();
 

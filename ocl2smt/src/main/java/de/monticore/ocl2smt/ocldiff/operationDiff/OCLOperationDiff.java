@@ -49,22 +49,25 @@ public class OCLOperationDiff {
       FullOCL2SMTGenerator fullOCL2SMTGenerator,
       ASTOCLMethodSignature method,
       boolean partial) {
+    List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
+    List<IdentifiableBoolExpr> invConstraints =
+        inv2smt(fullOCL2SMTGenerator, getInvariantList(ocl));
 
-    List<OPConstraint> constraintList =
+    List<OPConstraint> opConstraints =
         opConst2smt(fullOCL2SMTGenerator, getOperationsConstraints(method, ocl));
 
     // add the opConstraints
-    List<IdentifiableBoolExpr> opConstraints =
-        constraintList.stream()
-            .map(OPConstraint::getOperationConstraint)
-            .collect(Collectors.toList());
+    opConstraints.forEach(op -> solverConstraints.add(op.getOperationConstraint()));
+
+    // add invariants
+    solverConstraints.addAll(invConstraints);
 
     Set<OCLOPWitness> res = new HashSet<>();
     Solver solver;
 
-    for (OPConstraint constraint : constraintList) {
-      opConstraints.add(constraint.getPreCond());
-      solver = fullOCL2SMTGenerator.makeSolver(opConstraints);
+    for (OPConstraint constraint : opConstraints) {
+      solverConstraints.add(constraint.getPreCond());
+      solver = fullOCL2SMTGenerator.makeSolver(solverConstraints);
       if (solver.check() == Status.SATISFIABLE) {
         res.add(
             fullOCL2SMTGenerator.buildOPOd(
@@ -72,7 +75,7 @@ public class OCLOperationDiff {
       } else {
         Log.info("the Preconditions XXXXXX is not Satisfiable", "");
       }
-      opConstraints.remove(constraint.getPreCond());
+      solverConstraints.remove(constraint.getPreCond());
     }
     return res;
   }
@@ -188,6 +191,17 @@ public class OCLOperationDiff {
     return res;
   }
 
+  public List<ASTOCLInvariant> getInvariantList(Set<ASTOCLCompilationUnit> oclSet) {
+    return oclSet.stream()
+        .map(ocl -> ocl.getOCLArtifact().getOCLConstraintList())
+        .collect(Collectors.toList())
+        .stream()
+        .flatMap(List::stream)
+        .filter(c -> c instanceof ASTOCLInvariant)
+        .map(c -> (ASTOCLInvariant) c)
+        .collect(Collectors.toList());
+  }
+
   public boolean containsKey(
       Map<ASTOCLMethodSignature, List<ASTOCLOperationConstraint>> map,
       ASTOCLMethodSignature method) {
@@ -195,11 +209,23 @@ public class OCLOperationDiff {
   }
 
   protected List<OPConstraint> opConst2smt(
-      FullOCL2SMTGenerator fullOCL2SMTGenerator,
-      List<ASTOCLOperationConstraint> operationConstraints) {
-    return operationConstraints.stream()
+      FullOCL2SMTGenerator fullOCL2SMTGenerator, List<ASTOCLOperationConstraint> opConstraints) {
+    return opConstraints.stream()
         .map(fullOCL2SMTGenerator::convertOpConst)
         .collect(Collectors.toList());
+  }
+
+  protected List<IdentifiableBoolExpr> inv2smt(
+      FullOCL2SMTGenerator fullOCL2SMT, List<ASTOCLInvariant> invList) {
+    List<IdentifiableBoolExpr> res = new ArrayList<>();
+
+    // add post invariant
+    invList.forEach(inv -> res.add(fullOCL2SMT.convertInv(inv)));
+
+    // add pre invariant
+    invList.forEach(inv -> res.add(fullOCL2SMT.convertPreInv(inv)));
+
+    return res;
   }
 
   public Context buildContext() {
