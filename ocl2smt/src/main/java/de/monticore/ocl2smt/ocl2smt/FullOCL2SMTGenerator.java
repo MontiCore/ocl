@@ -90,7 +90,7 @@ public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
   }
 
   public IdentifiableBoolExpr convertPreInv(ASTOCLInvariant invariant) {
-
+    exprConv.reset();
     ((FullOCLExpressionConverter) exprConv).enterPreCond();
     IdentifiableBoolExpr res = super.convertInv(invariant);
     ((FullOCLExpressionConverter) exprConv).exitPreCond();

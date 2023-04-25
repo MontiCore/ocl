@@ -65,7 +65,7 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     Assertions.assertEquals("\"newCompany\"", getAttribute(postLinks.get(0), "name"));
     Assertions.assertEquals("1", getAttribute(postLinks.get(0), "employees"));
     int postAge = Integer.parseInt(getAttribute(preObj, "age"));
-    Assertions.assertTrue(postAge >= 18);
+   Assertions.assertTrue(postAge >= 18);
 
     // checkDiff
     Assertions.assertEquals(

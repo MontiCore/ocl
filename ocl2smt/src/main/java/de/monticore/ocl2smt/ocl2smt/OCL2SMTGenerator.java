@@ -70,7 +70,7 @@ public class OCL2SMTGenerator {
   }
 
   public IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
-    exprConv.reset();
+
     SourcePosition srcPos = invariant.get_SourcePositionStart();
 
     // convert parameter declaration  in context
