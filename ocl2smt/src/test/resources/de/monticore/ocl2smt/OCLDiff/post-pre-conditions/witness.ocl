@@ -15,14 +15,11 @@ ocl Person {
 
          company.employees@pre == 0  &&
          company@pre.name@pre ==  company@pre.name &&
-         company.name@pre == company.name &&
-         true ;
-       //  result == company ;
-
-
+         company.name@pre == company.name;
 
   context Person p  inv OfLegalAge :
-      p.age == 18 ;
+      p.age >= 18 ;
+
 
 
 }

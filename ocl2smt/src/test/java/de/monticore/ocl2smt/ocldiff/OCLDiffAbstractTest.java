@@ -36,7 +36,7 @@ public abstract class OCLDiffAbstractTest {
   protected static final String RELATIVE_MODEL_PATH =
       "src/test/resources/de/monticore/ocl2smt/OCLDiff";
   protected static final String RELATIVE_TARGET_PATH =
-      "target/generated/sources/annotationProcessor/java/ocl2smttest";
+      "target/generated/sources/annotationProcessor/java/ocl2smttest/";
 
   protected void initMills() {
     OCLMill.reset();

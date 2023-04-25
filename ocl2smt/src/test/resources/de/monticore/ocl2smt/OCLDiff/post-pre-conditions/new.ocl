@@ -3,8 +3,12 @@ package docs;
 ocl Person {
 
  context boolean Person.increaseSalary(int amount)
-   pre :   salary > 1000   && amount == 100;
+   pre :  amount == 100;
 
    post: salary == salary@pre + amount ;
+
+
+   context Person p  inv OfLegalAge :
+        p.age >= 18 && salary > 100 ;
 
 }

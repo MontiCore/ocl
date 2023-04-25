@@ -30,7 +30,6 @@ public class OCLOperationDiff {
     return oclWitnessHelper(ocl, fullOCL2SMTGenerator, method, partial);
   }
 
-  // TODO: take care of invariant
   public Set<OCLOPWitness> oclWitness(
       ASTCDCompilationUnit ast, Set<ASTOCLCompilationUnit> ocl, boolean partial) {
     ctx = buildContext();
@@ -94,6 +93,9 @@ public class OCLOperationDiff {
     OCLHelper.buildPreCD(ast);
     FullOCL2SMTGenerator fullOCL2SMTGenerator = new FullOCL2SMTGenerator(ast, ctx);
 
+    //get new invariants
+    List<IdentifiableBoolExpr> newInvariants = inv2smt(fullOCL2SMTGenerator,getInvariantList(newOcl));
+
     // get new OCL constraints
     List<OPConstraint> newConstraints =
         opConst2smt(fullOCL2SMTGenerator, getOperationsConstraints(method, newOcl));
@@ -102,15 +104,19 @@ public class OCLOperationDiff {
     List<OPConstraint> oldConstraints =
         opConst2smt(fullOCL2SMTGenerator, getOperationsConstraints(method, oldOcl));
 
-    // transform  pre , post =====> pre implies post
-    List<IdentifiableBoolExpr> posConstraints =
-        newConstraints.stream()
-            .map(OPConstraint::getOperationConstraint)
-            .collect(Collectors.toList());
+    //get old ocl invariants
+    List<IdentifiableBoolExpr> oldInvariants = inv2smt(fullOCL2SMTGenerator,getInvariantList(oldOcl));
+
+    // build the set of positive constraints from  new opConstraints and Op invariants;
+    List<IdentifiableBoolExpr> posConstraints = new ArrayList<>();
+    newConstraints.forEach(op->posConstraints.add(op.getOperationConstraint()));
+    posConstraints.addAll(newInvariants);
 
     List<IdentifiableBoolExpr> negativeConstraints = new ArrayList<>();
+
     Solver solver;
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>(posConstraints);
+
 
     for (OPConstraint oldConstraint : oldConstraints) {
       solverConstraints.add(oldConstraint.getPreCond());
@@ -130,7 +136,27 @@ public class OCLOperationDiff {
         trace.addAll(TraceUnSatCore.traceUnSatCore(solver));
       }
       posConstraints.remove(oldConstraint.getPreCond());
-      posConstraints.remove(oldOpConstraint);
+      solverConstraints.remove(oldOpConstraint);
+    }
+
+    for (IdentifiableBoolExpr oldInv : oldInvariants) {
+
+
+     IdentifiableBoolExpr negInv = oldInv.negate(ctx);
+      solverConstraints.add(negInv);
+      negativeConstraints.add(negInv);
+
+      solver = fullOCL2SMTGenerator.makeSolver(solverConstraints);
+
+      if (solver.check() == Status.SATISFIABLE) {
+        diffWitness.add(
+                fullOCL2SMTGenerator.buildOPOd(
+                        solver.getModel(), "Witness", method, oldInv, partial));
+      } else {
+        trace.addAll(TraceUnSatCore.traceUnSatCore(solver));
+      }
+
+      solverConstraints.remove(negInv);
     }
     ASTODArtifact unSatCore =
         TraceUnSatCore.buildUnSatOD(posConstraints, negativeConstraints, trace);

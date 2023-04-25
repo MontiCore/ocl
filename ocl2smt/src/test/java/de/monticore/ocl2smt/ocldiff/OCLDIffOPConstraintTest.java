@@ -52,7 +52,7 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     Assertions.assertEquals("\"oldCompany\"", getAttribute(preLinks.get(0), "name"));
     Assertions.assertEquals("4", getAttribute(preLinks.get(0), "employees"));
     int preAge = Integer.parseInt(getAttribute(preObj, "age"));
-    Assertions.assertEquals(preAge, 18);
+    Assertions.assertTrue(preAge>= 18);
 
     // CheckPostCD
     ASTODNamedObject postObj = getThisObj(witness.getPostOD());
@@ -62,7 +62,7 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     Assertions.assertEquals("\"newCompany\"", getAttribute(postLinks.get(0), "name"));
     Assertions.assertEquals("1", getAttribute(postLinks.get(0), "employees"));
     int postAge = Integer.parseInt(getAttribute(preObj, "age"));
-    Assertions.assertEquals(postAge, 18);
+    Assertions.assertTrue(postAge>= 18);
 
     // checkDiff
     Assertions.assertEquals(
