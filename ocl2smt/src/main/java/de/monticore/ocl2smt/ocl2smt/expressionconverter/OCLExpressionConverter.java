@@ -76,9 +76,9 @@ public class OCLExpressionConverter {
   }
 
   public void reset() {
-      literalConverter.reset();
-      varNames.clear();
-      genConstraints.clear();
+    literalConverter.reset();
+    varNames.clear();
+    genConstraints.clear();
   }
 
   public ASTCDDefinition getCD() {

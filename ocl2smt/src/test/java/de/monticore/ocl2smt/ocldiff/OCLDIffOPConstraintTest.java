@@ -102,9 +102,9 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
                     .iterator()
                     .next()
                     .getPostOD()
-            .getObjectDiagram()
-            .getStereotype()
-            .getValue("result");
+                    .getObjectDiagram()
+                    .getStereotype()
+                    .getValue("result");
 
     Assertions.assertEquals(result, "false");
     printOPDiff(diff, "/OpConstraintDiff");

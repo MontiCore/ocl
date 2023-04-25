@@ -83,8 +83,6 @@ public abstract class OCLDiffAbstractTest {
                       String subdir = x.getPostOD().getObjectDiagram().getName().split("_")[1];
                       printOD(x.getPostOD(), directory + "/" + subdir);
                       printOD(x.getPreOD(), directory + "/" + subdir);
-                      printOD(x.getPostOD(), directory);
-                      printOD(x.getPreOD(), directory);
                     });
   }
 
