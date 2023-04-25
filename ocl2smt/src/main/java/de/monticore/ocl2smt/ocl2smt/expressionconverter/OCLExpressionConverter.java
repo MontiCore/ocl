@@ -1,7 +1,5 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
-import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
-
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
@@ -27,11 +25,14 @@ import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+
+import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
 
 /** This class convert All OCL-Expressions except @Pre-Expressions in SMT */
 public class OCLExpressionConverter {
@@ -74,10 +75,10 @@ public class OCLExpressionConverter {
     return varNames;
   }
 
-  public void init() {
-    literalConverter.reset();
-    varNames.clear();
-    genConstraints.clear();
+  public void reset() {
+      literalConverter.reset();
+      varNames.clear();
+      genConstraints.clear();
   }
 
   public ASTCDDefinition getCD() {

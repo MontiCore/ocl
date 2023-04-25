@@ -1,11 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 package docs;
-ocl Person {
+ocl Old {
 
    context boolean Person.increaseSalary(int amount)
      pre : amount == 100;
 
      post: salary == salary@pre + amount &&
            result == true;
+
+   context Person p  inv OfLegalAgeOld :
+           p.age >= 18 && p.salary > 1000 ;
 
 }

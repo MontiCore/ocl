@@ -1,7 +1,5 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
-import static de.monticore.ocl2smt.helpers.OCLHelper.mkPre;
-
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -17,8 +15,11 @@ import de.monticore.ocl2smt.util.SMTSet;
 import de.monticore.ocl2smt.util.TypeConverter;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.se_rwth.commons.logging.Log;
-import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Optional;
+
+import static de.monticore.ocl2smt.helpers.OCLHelper.mkPre;
 
 /** This class convert All OCL-Expressions including @Pre-Expressions in SMT */
 public class FullOCLExpressionConverter extends OCLExpressionConverter {
@@ -37,6 +38,15 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     if (!isPreCond) {
       this.isPreStrategy = false;
     }
+  }
+
+  @Override
+  public void reset() {
+    super.reset();
+    isPreStrategy = false;
+    isPreCond = false;
+    thisObj = null;
+    result = null;
   }
 
   public void setThisObj(Expr<? extends Sort> thisObj) {

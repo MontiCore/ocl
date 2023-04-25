@@ -7,12 +7,15 @@ import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
-import de.monticore.odbasis._ast.*;
-import java.io.IOException;
-import java.util.*;
+import de.monticore.odbasis._ast.ASTODNamedObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
   @BeforeEach
@@ -52,7 +55,7 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     Assertions.assertEquals("\"oldCompany\"", getAttribute(preLinks.get(0), "name"));
     Assertions.assertEquals("4", getAttribute(preLinks.get(0), "employees"));
     int preAge = Integer.parseInt(getAttribute(preObj, "age"));
-    Assertions.assertTrue(preAge>= 18);
+    Assertions.assertTrue(preAge >= 18);
 
     // CheckPostCD
     ASTODNamedObject postObj = getThisObj(witness.getPostOD());
@@ -62,7 +65,7 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     Assertions.assertEquals("\"newCompany\"", getAttribute(postLinks.get(0), "name"));
     Assertions.assertEquals("1", getAttribute(postLinks.get(0), "employees"));
     int postAge = Integer.parseInt(getAttribute(preObj, "age"));
-    Assertions.assertTrue(postAge>= 18);
+    Assertions.assertTrue(postAge >= 18);
 
     // checkDiff
     Assertions.assertEquals(
@@ -86,23 +89,24 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     OCLOPDiffResult diff = OCLDiffGenerator.oclOPDiff(ast, oldOCL, newOCL, method, false);
 
     assert diff != null;
-    ASTODNamedObject preThisObj = getThisObj(diff.getDiffWitness().iterator().next().getPreOD());
-    ASTODNamedObject postThisObj = getThisObj(diff.getDiffWitness().iterator().next().getPostOD());
+    ASTODNamedObject preThisObj = getThisObj(diff.getOpDiffWitness().iterator().next().getPreOD());
+    ASTODNamedObject postThisObj =
+            getThisObj(diff.getOpDiffWitness().iterator().next().getPostOD());
 
     double preSalary = Integer.parseInt(getAttribute(preThisObj, "salary"));
     double postSalary = Integer.parseInt(getAttribute(postThisObj, "salary"));
     Assertions.assertEquals(preSalary + 100, postSalary);
 
     String result =
-        diff.getDiffWitness()
-            .iterator()
-            .next()
-            .getPostOD()
+            diff.getOpDiffWitness()
+                    .iterator()
+                    .next()
+                    .getPostOD()
             .getObjectDiagram()
             .getStereotype()
             .getValue("result");
 
     Assertions.assertEquals(result, "false");
-    printOPDiff(diff, "OpConstraintDiff");
+    printOPDiff(diff, "/OpConstraintDiff");
   }
 }

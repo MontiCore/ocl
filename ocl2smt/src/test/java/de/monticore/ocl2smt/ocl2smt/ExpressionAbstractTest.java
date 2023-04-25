@@ -80,14 +80,14 @@ public abstract class ExpressionAbstractTest {
     Optional<ASTODArtifact> od =
             ocl2SMTGenerator.getCD2SMTGenerator().smt2od(solver.getModel(), false, invName);
     org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
-    IOHelper.printOD(od.get(), Path.of(RELATIVE_TARGET_PATH+directory));
+    IOHelper.printOD(od.get(), Path.of(RELATIVE_TARGET_PATH + directory));
   }
 
   public void testUnsatInv(Set<String> invNames, String directory) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
     invNames.forEach(name -> solverConstraints.add(getConstraint(name)));
 
-    IOHelper.printOD(checkUnSat(solverConstraints), Path.of(RELATIVE_TARGET_PATH+directory));
+    IOHelper.printOD(checkUnSat(solverConstraints), Path.of(RELATIVE_TARGET_PATH + directory));
   }
 
   public ASTODArtifact checkUnSat(List<IdentifiableBoolExpr> solverConstraints) {

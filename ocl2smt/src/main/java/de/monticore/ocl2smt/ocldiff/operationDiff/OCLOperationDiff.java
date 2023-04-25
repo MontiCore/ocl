@@ -1,6 +1,8 @@
 package de.monticore.ocl2smt.ocldiff.operationDiff;
 
-import com.microsoft.z3.*;
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Solver;
+import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
@@ -10,6 +12,7 @@ import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -88,28 +91,28 @@ public class OCLOperationDiff {
 
     // setup
     ctx = buildContext();
-    Set<OCLOPWitness> diffWitness = new HashSet<>();
+    Set<OCLOPWitness> opDiffWitness = new HashSet<>();
     List<ASTODLink> trace = new ArrayList<>();
     OCLHelper.buildPreCD(ast);
-    FullOCL2SMTGenerator fullOCL2SMTGenerator = new FullOCL2SMTGenerator(ast, ctx);
+    FullOCL2SMTGenerator fullOcl2smt = new FullOCL2SMTGenerator(ast, ctx);
 
-    //get new invariants
-    List<IdentifiableBoolExpr> newInvariants = inv2smt(fullOCL2SMTGenerator,getInvariantList(newOcl));
+    // get new invariants
+    List<IdentifiableBoolExpr> newInvariants = inv2smt(fullOcl2smt, getInvariantList(newOcl));
 
     // get new OCL constraints
     List<OPConstraint> newConstraints =
-        opConst2smt(fullOCL2SMTGenerator, getOperationsConstraints(method, newOcl));
+            opConst2smt(fullOcl2smt, getOperationsConstraints(method, newOcl));
 
     // get old ocl Constraints
     List<OPConstraint> oldConstraints =
-        opConst2smt(fullOCL2SMTGenerator, getOperationsConstraints(method, oldOcl));
+            opConst2smt(fullOcl2smt, getOperationsConstraints(method, oldOcl));
 
-    //get old ocl invariants
-    List<IdentifiableBoolExpr> oldInvariants = inv2smt(fullOCL2SMTGenerator,getInvariantList(oldOcl));
+    // get old ocl invariants
+    List<IdentifiableBoolExpr> oldInvariants = inv2smt(fullOcl2smt, getInvariantList(oldOcl));
 
     // build the set of positive constraints from  new opConstraints and Op invariants;
     List<IdentifiableBoolExpr> posConstraints = new ArrayList<>();
-    newConstraints.forEach(op->posConstraints.add(op.getOperationConstraint()));
+    newConstraints.forEach(op -> posConstraints.add(op.getOperationConstraint()));
     posConstraints.addAll(newInvariants);
 
     List<IdentifiableBoolExpr> negativeConstraints = new ArrayList<>();
@@ -117,7 +120,7 @@ public class OCLOperationDiff {
     Solver solver;
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>(posConstraints);
 
-
+    // diff between new  on operations constraints
     for (OPConstraint oldConstraint : oldConstraints) {
       solverConstraints.add(oldConstraint.getPreCond());
       posConstraints.add(oldConstraint.getPreCond());
@@ -126,12 +129,11 @@ public class OCLOperationDiff {
       solverConstraints.add(oldOpConstraint);
       negativeConstraints.add(oldOpConstraint);
 
-      solver = fullOCL2SMTGenerator.makeSolver(solverConstraints);
+      solver = fullOcl2smt.makeSolver(solverConstraints);
 
       if (solver.check() == Status.SATISFIABLE) {
-        diffWitness.add(
-            fullOCL2SMTGenerator.buildOPOd(
-                solver.getModel(), "Witness", method, oldConstraint, partial));
+        opDiffWitness.add(
+                fullOcl2smt.buildOPOd(solver.getModel(), "Witness", method, oldConstraint, partial));
       } else {
         trace.addAll(TraceUnSatCore.traceUnSatCore(solver));
       }
@@ -139,19 +141,23 @@ public class OCLOperationDiff {
       solverConstraints.remove(oldOpConstraint);
     }
 
+    // compute diff on invariants
+    Set<OCLOPWitness> invDiffWitness = new HashSet<>();
     for (IdentifiableBoolExpr oldInv : oldInvariants) {
 
-
-     IdentifiableBoolExpr negInv = oldInv.negate(ctx);
+      IdentifiableBoolExpr negInv = oldInv.negate(ctx);
       solverConstraints.add(negInv);
       negativeConstraints.add(negInv);
 
-      solver = fullOCL2SMTGenerator.makeSolver(solverConstraints);
+      solver = fullOcl2smt.makeSolver(solverConstraints);
 
       if (solver.check() == Status.SATISFIABLE) {
-        diffWitness.add(
-                fullOCL2SMTGenerator.buildOPOd(
-                        solver.getModel(), "Witness", method, oldInv, partial));
+
+        String invName = buildInvName(oldInv);
+        OCLOPWitness witness =
+                fullOcl2smt.buildOPOd(solver.getModel(), invName, method, null, partial);
+        invDiffWitness.add(witness);
+
       } else {
         trace.addAll(TraceUnSatCore.traceUnSatCore(solver));
       }
@@ -160,7 +166,7 @@ public class OCLOperationDiff {
     }
     ASTODArtifact unSatCore =
         TraceUnSatCore.buildUnSatOD(posConstraints, negativeConstraints, trace);
-    return new OCLOPDiffResult(unSatCore, diffWitness);
+    return new OCLOPDiffResult(unSatCore, opDiffWitness, invDiffWitness);
   }
   // TODO: fix this  in case of many  constraints per operation
 
@@ -242,16 +248,24 @@ public class OCLOperationDiff {
   }
 
   protected List<IdentifiableBoolExpr> inv2smt(
-      FullOCL2SMTGenerator fullOCL2SMT, List<ASTOCLInvariant> invList) {
+          FullOCL2SMTGenerator fullOcl2smt, List<ASTOCLInvariant> invList) {
     List<IdentifiableBoolExpr> res = new ArrayList<>();
 
-    // add post invariant
-    invList.forEach(inv -> res.add(fullOCL2SMT.convertInv(inv)));
+    for (ASTOCLInvariant inv : invList) {
+      IdentifiableBoolExpr postInv = fullOcl2smt.convertInv(inv);
+      IdentifiableBoolExpr preInv = fullOcl2smt.convertPreInv(inv);
 
-    // add pre invariant
-    invList.forEach(inv -> res.add(fullOCL2SMT.convertPreInv(inv)));
-
+      res.add(
+              IdentifiableBoolExpr.buildIdentifiable(
+                      ctx.mkAnd(preInv.getValue(), postInv.getValue()),
+                      preInv.getSourcePosition(),
+                      preInv.getInvariantName()));
+    }
     return res;
+  }
+
+  public String buildInvName(IdentifiableBoolExpr constr) {
+    return constr.getInvariantName().orElse("NoInvName").split("_____NegInv")[0];
   }
 
   public Context buildContext() {

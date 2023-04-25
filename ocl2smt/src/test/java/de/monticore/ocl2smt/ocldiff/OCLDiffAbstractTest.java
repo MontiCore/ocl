@@ -7,7 +7,10 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
-import de.monticore.ocl.ocl._ast.*;
+import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
+import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
+import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
@@ -23,14 +26,18 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
+import org.apache.commons.io.FileUtils;
+import org.assertj.core.api.Assertions;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-import org.apache.commons.io.FileUtils;
-import org.assertj.core.api.Assertions;
 
 public abstract class OCLDiffAbstractTest {
   protected static final String RELATIVE_MODEL_PATH =
@@ -64,12 +71,21 @@ public abstract class OCLDiffAbstractTest {
     if (diff.getUnSatCore() != null) {
       printOD(diff.getUnSatCore(), directory);
     }
-    diff.getDiffWitness()
-        .forEach(
-            x -> {
-              printOD(x.getPostOD(), directory);
-              printOD(x.getPreOD(), directory);
-            });
+    diff.getOpDiffWitness()
+            .forEach(
+                    x -> {
+                      printOD(x.getPostOD(), directory);
+                      printOD(x.getPreOD(), directory);
+                    });
+    diff.getInvDiffWitness()
+            .forEach(
+                    x -> {
+                      String subdir = x.getPostOD().getObjectDiagram().getName().split("_")[1];
+                      printOD(x.getPostOD(), directory + "/" + subdir);
+                      printOD(x.getPreOD(), directory + "/" + subdir);
+                      printOD(x.getPostOD(), directory);
+                      printOD(x.getPreOD(), directory);
+                    });
   }
 
   public void printOPWitness(Set<OCLOPWitness> witness, String directory) {
@@ -158,7 +174,6 @@ public abstract class OCLDiffAbstractTest {
     oldOCL.add(parseOCl(cdName, oldOCLName));
     return OCLDiffGenerator.oclWitness(cd, oldOCL, false);
   }
-
 
   public boolean containsAttribute(ASTCDClass c, String attribute) {
     for (ASTCDAttribute attr : c.getCDAttributeList()) {

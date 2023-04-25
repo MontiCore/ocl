@@ -14,6 +14,7 @@ import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.odbasis._ast.ASTODArtifact;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -62,7 +63,7 @@ public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
 
   public OPConstraint convertOpConst(ASTOCLOperationConstraint node) {
 
-    exprConv.init();
+    exprConv.reset();
 
     Expr<? extends Sort> thisObj = openOpScope(node.getOCLOperationSignature(), exprConv);
     ((FullOCLExpressionConverter) exprConv).setThisObj(thisObj);

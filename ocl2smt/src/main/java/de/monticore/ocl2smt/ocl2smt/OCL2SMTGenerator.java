@@ -8,13 +8,17 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
-import de.monticore.ocl2smt.util.*;
+import de.monticore.ocl2smt.util.OCLType;
+import de.monticore.ocl2smt.util.SMTSet;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.SourcePosition;
-import java.util.*;
-import java.util.function.Function;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 public class OCL2SMTGenerator {
   protected OCLExpressionConverter exprConv;
@@ -66,7 +70,7 @@ public class OCL2SMTGenerator {
   }
 
   public IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
-    exprConv.init();
+    exprConv.reset();
     SourcePosition srcPos = invariant.get_SourcePositionStart();
 
     // convert parameter declaration  in context

@@ -13,6 +13,8 @@ import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -20,7 +22,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-import org.apache.commons.io.FileUtils;
 
 public class IOHelper {
   public static Set<ASTOCLCompilationUnit> parseOCl(File cdFile, Set<File> oclFiles) {
@@ -59,7 +60,7 @@ public class IOHelper {
     if (diff.getUnSatCore() != null) {
       printOD(diff.getUnSatCore(), output);
     }
-    diff.getDiffWitness()
+    diff.getOpDiffWitness()
         .forEach(
             x -> {
               String dir = x.getMethod().getMethodName().getQName();

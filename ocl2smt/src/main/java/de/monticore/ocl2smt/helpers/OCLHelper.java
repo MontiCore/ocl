@@ -29,11 +29,12 @@ import de.monticore.types.mcbasictypes._prettyprint.MCBasicTypesFullPrettyPrinte
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class OCLHelper {
 
@@ -156,14 +157,17 @@ public class OCLHelper {
     }
 
     ASTODArtifact preOD =
-        de.monticore.cd2smt.Helper.ODHelper.buildOD(
-            "pre_" + od.getObjectDiagram().getName(), preOdElements);
+            de.monticore.cd2smt.Helper.ODHelper.buildOD(
+                    "pre_" + od.getObjectDiagram().getName(), preOdElements);
 
     ASTODArtifact postOD =
-        de.monticore.cd2smt.Helper.ODHelper.buildOD(
-            "post_" + od.getObjectDiagram().getName(), postOdElements);
-
-    return setStereotypes(new OCLOPWitness(method, preOD, postOD), model, opConstraint);
+            de.monticore.cd2smt.Helper.ODHelper.buildOD(
+                    "post_" + od.getObjectDiagram().getName(), postOdElements);
+    if (opConstraint == null) {
+      return new OCLOPWitness(method, preOD, postOD);
+    } else {
+      return setStereotypes(new OCLOPWitness(method, preOD, postOD), model, opConstraint);
+    }
   }
 
   private static OCLOPWitness setStereotypes(
