@@ -1,6 +1,8 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.util.library;
 
+import static de.monticore.ocl.util.library.TypeUtil.*;
+
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -9,11 +11,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
 
-import static de.monticore.ocl.util.library.TypeUtil.*;
-
-/**
- * Adds symbols for OCL/P lists
- */
+/** Adds symbols for OCL/P lists */
 public class ListType {
   protected TypeSymbol listSymbol;
 
@@ -22,16 +20,17 @@ public class ListType {
   public void addListType() {
     typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
 
-    SymTypeOfGenerics superType = SymTypeExpressionFactory
-      .createGenerics(getCollectionType(),
-        SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    SymTypeOfGenerics superType =
+        SymTypeExpressionFactory.createGenerics(
+            getCollectionType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
 
-    listSymbol = OCLMill.typeSymbolBuilder()
-      .setName("List")
-      .setEnclosingScope(OCLMill.globalScope())
-      .setSpannedScope(OCLMill.scope())
-      .addSuperTypes(superType)
-      .build();
+    listSymbol =
+        OCLMill.typeSymbolBuilder()
+            .setName("List")
+            .setEnclosingScope(OCLMill.globalScope())
+            .setSpannedScope(OCLMill.scope())
+            .addSuperTypes(superType)
+            .build();
     listSymbol.getSpannedScope().setName("List");
     listSymbol.addTypeVarSymbol(typeVarSymbol);
 
@@ -72,25 +71,25 @@ public class ListType {
 
   protected FunctionSymbol createMethod(String name) {
     return OCLMill.functionSymbolBuilder()
-      .setName(name)
-      .setEnclosingScope(listSymbol.getSpannedScope())
-      .setSpannedScope(OCLMill.scope())
-      .build();
+        .setName(name)
+        .setEnclosingScope(listSymbol.getSpannedScope())
+        .setSpannedScope(OCLMill.scope())
+        .build();
   }
 
   protected SymTypeExpression getListOfXSymType() {
-    return SymTypeExpressionFactory
-      .createGenerics(listSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    return SymTypeExpressionFactory.createGenerics(
+        listSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
   }
 
   protected SymTypeExpression getSetOfXSymType() {
-    return SymTypeExpressionFactory
-            .createGenerics(getSetType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    return SymTypeExpressionFactory.createGenerics(
+        getSetType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
   }
 
   protected SymTypeExpression getCollectionOfXSymType() {
-    return SymTypeExpressionFactory
-            .createGenerics(getCollectionType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    return SymTypeExpressionFactory.createGenerics(
+        getCollectionType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
   }
 
   /* ============================================================ */
@@ -175,16 +174,14 @@ public class ListType {
 
   protected void addFunctionIndexOf() {
     FunctionSymbol function = createMethod("indexOf");
-    addParam(function, "o",
-      SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
     function.setType(getIntSymType());
     listSymbol.getSpannedScope().add(function);
   }
 
   protected void addFunctionLastIndexOf() {
     FunctionSymbol function = createMethod("lastIndexOf");
-    addParam(function, "o",
-            SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+    addParam(function, "o", SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
     function.setType(getIntSymType());
     listSymbol.getSpannedScope().add(function);
   }
@@ -253,11 +250,12 @@ public class ListType {
   }
 
   protected void addFunctionFlatten() {
-    //TODO: besser implementieren
+    // TODO: besser implementieren
     FunctionSymbol function = createMethod("flatten");
     TypeVarSymbol typeVarSymbolY = OCLMill.typeVarSymbolBuilder().setName("Y").build();
-    SymTypeExpression returnType = SymTypeExpressionFactory
-            .createGenerics(listSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbolY));
+    SymTypeExpression returnType =
+        SymTypeExpressionFactory.createGenerics(
+            listSymbol, SymTypeExpressionFactory.createTypeVariable(typeVarSymbolY));
     function.setType(returnType);
     listSymbol.getSpannedScope().add(function);
   }

@@ -1,19 +1,17 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.util.library;
 
+import static de.monticore.ocl.util.library.TypeUtil.*;
+
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 
-import static de.monticore.ocl.util.library.TypeUtil.*;
-
-/**
- * Adds symbols for static queries which are available in the OCL/P global scope
- */
+/** Adds symbols for static queries which are available in the OCL/P global scope */
 public class GlobalQueries {
-  
+
   protected IOCLGlobalScope globalScope;
 
   public GlobalQueries() {
@@ -21,15 +19,15 @@ public class GlobalQueries {
   }
 
   public void addMethodsAndFields() {
-    //int methods
+    // int methods
     addFunctionSumInt();
     addFunctionMaxInt();
     addFunctionMinInt();
     addFunctionAverageInt();
     addFunctionSortInt();
 
-    //long methods
-    //TODO: long methods
+    // long methods
+    // TODO: long methods
     /*addFunctionSumLong();
     addFunctionMaxLong();
     addFunctionMinLong();
@@ -46,10 +44,10 @@ public class GlobalQueries {
 
   protected FunctionSymbol createMethod(String name) {
     return OCLMill.functionSymbolBuilder()
-            .setName(name)
-            .setEnclosingScope(globalScope)
-            .setSpannedScope(OCLMill.scope())
-            .build();
+        .setName(name)
+        .setEnclosingScope(globalScope)
+        .setSpannedScope(OCLMill.scope())
+        .build();
   }
 
   protected SymTypeExpression getCollectionOfIntSymType() {

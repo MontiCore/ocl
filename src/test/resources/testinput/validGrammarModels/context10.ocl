@@ -1,0 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+// use variable from superclass
+ocl context10 {
+  inv:
+    forall bmst in BidMessage: bmst.time > 0;
+}

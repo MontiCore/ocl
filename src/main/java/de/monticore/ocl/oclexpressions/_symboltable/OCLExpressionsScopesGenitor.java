@@ -5,6 +5,7 @@ import de.monticore.ocl.oclexpressions.OCLExpressionsMill;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclarationVariable;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
+import de.monticore.ocl.oclexpressions._ast.ASTTypeIfExpression;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.IDerive;
 import de.se_rwth.commons.logging.Log;
@@ -13,28 +14,36 @@ public class OCLExpressionsScopesGenitor extends OCLExpressionsScopesGenitorTOP 
 
   protected IDerive deriver;
 
-  public OCLExpressionsScopesGenitor(){
+  public OCLExpressionsScopesGenitor() {
     super();
   }
 
   public void setDeriver(IDerive deriver) {
     if (deriver != null) {
       this.deriver = deriver;
-    }
-    else {
+    } else {
       Log.error("0xA3201 The typesVisitor has to be set");
     }
   }
 
   @Override
-  public void visit(ASTOCLVariableDeclaration node){
+  public void visit(ASTOCLVariableDeclaration node) {}
 
+  @Override
+  public void endVisit(ASTTypeIfExpression node) {
+    VariableSymbol shadowingSymbol =
+        OCLExpressionsMill.variableSymbolBuilder().setName(node.getName()).build();
+    // scopes
+    IOCLExpressionsScope scope = node.getThenExpression().getSpannedScope();
+    shadowingSymbol.setEnclosingScope(scope);
+    scope.add(shadowingSymbol);
   }
 
   @Override
-  public void endVisit(ASTOCLVariableDeclaration node){
-    VariableSymbol symbol = OCLExpressionsMill.variableSymbolBuilder().setName(node.getName()).build();
-    if(getCurrentScope().isPresent()){
+  public void endVisit(ASTOCLVariableDeclaration node) {
+    VariableSymbol symbol =
+        OCLExpressionsMill.variableSymbolBuilder().setName(node.getName()).build();
+    if (getCurrentScope().isPresent()) {
       symbol.setEnclosingScope(getCurrentScope().get());
     }
     if (getCurrentScope().isPresent()) {
@@ -51,15 +60,16 @@ public class OCLExpressionsScopesGenitor extends OCLExpressionsScopesGenitorTOP 
   }
 
   @Override
-  public void visit(ASTInDeclaration node){
-
-  }
+  public void visit(ASTInDeclaration node) {}
 
   @Override
-  public void endVisit(ASTInDeclaration node){
-    for(int i = 0; i < node.getInDeclarationVariableList().size(); i++){
-      VariableSymbol symbol = OCLExpressionsMill.variableSymbolBuilder().setName(node.getInDeclarationVariable(i).getName()).build();
-      if(getCurrentScope().isPresent()){
+  public void endVisit(ASTInDeclaration node) {
+    for (int i = 0; i < node.getInDeclarationVariableList().size(); i++) {
+      VariableSymbol symbol =
+          OCLExpressionsMill.variableSymbolBuilder()
+              .setName(node.getInDeclarationVariable(i).getName())
+              .build();
+      if (getCurrentScope().isPresent()) {
         symbol.setEnclosingScope(getCurrentScope().get());
       }
       if (getCurrentScope().isPresent()) {
@@ -81,7 +91,5 @@ public class OCLExpressionsScopesGenitor extends OCLExpressionsScopesGenitorTOP 
   }
 
   @Override
-  public void visit(ASTInDeclarationVariable node){
-
-  }
+  public void visit(ASTInDeclarationVariable node) {}
 }

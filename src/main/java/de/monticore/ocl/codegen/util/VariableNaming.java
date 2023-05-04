@@ -3,7 +3,6 @@ package de.monticore.ocl.codegen.util;
 
 import com.google.common.base.Preconditions;
 import de.monticore.ast.ASTNode;
-
 import java.util.HashMap;
 
 public class VariableNaming {
@@ -30,8 +29,7 @@ public class VariableNaming {
     // Assign number to hash if it has not been done before and increment counter
     if (!instances.containsKey(hash)) {
       int prev = 0;
-      if (counter.containsKey(c))
-        prev = counter.get(c);
+      if (counter.containsKey(c)) prev = counter.get(c);
       instances.put(hash, prev);
       counter.put(c, prev + 1);
     }

@@ -1,0 +1,21 @@
+ocl New {
+
+  inv AccountID_unique:
+    forall Account a1, a2:
+      a1 != a2 implies a1.id != a2.id;
+
+  inv AccountID_Eq_CustomerID:
+    forall Account a:
+      a.id == a.customer.id;
+
+  // Balance_positive missing
+
+  context Account.withdraw(double amount)
+  pre: balance >= amount;
+  post: balance == balance@pre - amount;
+
+}
+
+
+
+

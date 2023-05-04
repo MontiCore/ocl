@@ -7,20 +7,15 @@ import de.se_rwth.commons.logging.Log;
 public class SetExpressionsScopesGenitor extends SetExpressionsScopesGenitorTOP {
   protected IDerive deriver;
 
-  public SetExpressionsScopesGenitor(){
+  public SetExpressionsScopesGenitor() {
     super();
   }
 
   public void setDeriver(IDerive deriver) {
     if (deriver != null) {
       this.deriver = deriver;
-    }
-    else {
+    } else {
       Log.error("0xA3201 The typesVisitor has to be set");
     }
   }
-
-
-
-
 }

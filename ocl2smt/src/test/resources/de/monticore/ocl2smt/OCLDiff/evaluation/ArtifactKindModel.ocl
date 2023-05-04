@@ -1,0 +1,220 @@
+/* (c) https://github.com/MontiCore/monticore */
+  // ______________________________________________________
+  // Artifact
+  // ______________________________________________________
+
+ocl  ArtifactKindModel {
+
+  context Artifact a inv Inv0:
+    a.name == ((a.nameExtension == "") ? a.simpleName :
+      a.simpleName + "." + a.nameExtension);
+
+  //______________________________________________________
+  // ArtifactContainer
+  //______________________________________________________
+
+ context Artifact a inv:
+    (a.isRoot <=> a.parent.isEmpty()) &&
+    ( !a.isRoot implies
+               (exists p in a.parent.get()** :
+                   p.isRoot &&
+                   (forall p2 in a.parent.get()** :
+                      p2.isRoot implies (p == p2))));
+
+
+  context Artifact a inv:
+    a.fullName == (a.isRoot ? "/" :
+                (a.parent.get().isRoot ? "/" + a.name :
+                 a.parent.get().fullName + "/" + a.name));
+
+  context Artifact a, Artifact b inv Inv02:
+    (a.name == b.name && a.parent == b.parent)
+      implies a == b;
+
+  //______________________________________________________
+  // Directory
+  //______________________________________________________
+
+  context Directory d inv:
+    d.nameExtension == "";
+
+
+  context Artifact a inv:
+    a.isRoot <=> (a.simpleName == "/");
+
+  context Artifact a inv:
+    a.name.contains("/") implies a.isRoot;
+
+  // ______________________________________________________
+  // JavaArtifacts
+  // ______________________________________________________
+
+  context JavaArtifact a inv:
+    a.refersTo.containsAll(a.reliesOnJavaArtifact);
+
+  // ______________________________________________________
+  // JavaSourceFile
+  // ______________________________________________________
+
+ context JavaSourceFile f inv:
+     f.reliesOnJavaArtifact.containsAll(f.imports);
+
+context JavaSourceFile  f inv:
+    f.produces.containsAll(f.compiledTo);
+
+  context JavaSourceFile jsf inv:
+   jsf.nameExtension == "java";
+
+  // ______________________________________________________
+  // JavaClassFile
+  // ______________________________________________________
+
+  context JavaClassFile ja inv:
+    ja.nameExtension == "class";
+
+  // ______________________________________________________
+  // JavaArchive
+  // ______________________________________________________
+
+  context JavaArchive ja inv:
+    ja.nameExtension == "jar";
+
+  // ______________________________________________________
+  // Package
+  // ______________________________________________________
+
+  context Package p inv:
+    !p.name.contains(".");
+
+  context Package pk inv:
+    (pk.isRoot <=> pk.parent.isEmpty()) &&
+    (!pk.isRoot implies (exists p1 in pk.parent.get()** :
+                             p1.isRoot &&
+                             (forall p2 in pk.parent.get()** :
+                                 p2.isRoot implies (p1 == p2))));
+
+  context Package p inv:
+    !p.isRoot implies
+      p.fullName == p.parent.get().fullName + "." + p.name;
+
+  context Package a, Package b inv:
+    (a.parent.get() == b.parent.get() && a.name == b.name) implies a == b;
+
+  // ______________________________________________________
+  // Type
+  // ______________________________________________________
+
+  context JavaType t inv:
+    (t.isInnerType <=> !t.containingType.isEmpty()) &&
+    (t.isInnerType implies
+                      (exists t1 in t.containingType.get()** :
+                            t1.isInnerType &&
+                            (forall t2 in t.containingType.get()** :
+                               t2.isInnerType implies (t1 == t2))));
+
+
+
+  context JavaType t inv:
+    t.name == (t.isInnerType ?
+      t.containingType.get().name + "." + t.simpleName : t.simpleName);
+
+  context JavaType t inv:
+    t.fullName == (t.typePackage.isRoot ? t.name :
+      t.typePackage.fullName + "." + t.simpleName);
+
+  // ______________________________________________________
+  // Relation between Java Artifacts and Java Types
+  // ______________________________________________________
+
+    context JavaSourceFile f inv:
+     exists t in f.definedType :
+          !t.isInnerType &&
+          (forall t1 in f.definedType :
+                 t1 != t implies t.isInnerType);
+
+ context JavaArtifact a1,JavaArtifact a2 inv:
+    forall JavaType t1 in a1.definedType, JavaType t2 in a2.definedType :
+      t1.reliesOn.contains(t2) implies
+        (a1 == a2 || a1.reliesOnJavaArtifact.contains(a2));
+
+ context JavaArtifact a, JavaType inv :
+   forall  t in a.definedType :
+    !t.isInnerType implies t.simpleName == a.simpleName;
+
+
+  //______________________________________________________
+  // Language
+  //______________________________________________________
+
+  context Language l inv:
+    l.name != "";
+
+  //______________________________________________________
+  // GrammarFile
+  //______________________________________________________
+
+  context GrammarFile gf inv:
+    gf.nameExtension == "mc4";
+
+  // ______________________________________________________
+  // CDModelFile
+  // ______________________________________________________
+
+ context CDModelFile cdf inv:
+   cdf.nameExtension == "cd";
+
+
+   context CDModelFile f inv:
+      f.reliesOn.containsAll(f.imports);
+
+  context CDModelFile f inv:
+    f.refersTo.containsAll(f.reliesOn);
+
+  context CDModelFile m1, CDModelFile  m2 inv:
+    forall CDType t1 in m1.definesType , CDType t2 in m2.definesType :
+       t1.reliesOnType.contains(t2) implies
+         (m1 == m2 || m1.reliesOn.contains(m2));
+
+
+  // ______________________________________________________
+  // FreeMarkerTemplate
+  // ______________________________________________________
+
+  context FreeMarkerTemplate ftl inv:
+    ftl.nameExtension == "ftl";
+
+  context FreeMarkerTemplate t inv:
+    t.refersTo.containsAll(t.reliesOnTemplate);
+
+  context FreeMarkerTemplate t inv:
+    t.refersTo.containsAll(t.reliesOnJavaArtifact);
+
+  context JavaArtifact a inv:
+    a.refersTo.containsAll(a.reliesOnTemplate);
+
+   context JavaArtifact a inv:
+       a.refersTo.containsAll(a.reliesOnTemplate);
+
+  // ______________________________________________________
+  // Generator
+  // ______________________________________________________
+
+
+
+  // ______________________________________________________
+  // Action
+  // ______________________________________________________
+
+  context Action a inv Inv42:
+     a.start.before(a.end);
+
+  context Event e inv Inv43:
+    e.start.before(e.end);
+
+  context Action a inv:
+    forall Action s in a.subaction :
+      a.start.before(s.start) && s.end.before(a.end);
+
+
+
+    }

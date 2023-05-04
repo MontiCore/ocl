@@ -11,41 +11,41 @@ import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
 
 public class SideEffectFreeExpressions {
-  public static boolean sideEffectFree(ASTExpression e){
+  public static boolean sideEffectFree(ASTExpression e) {
     if (e instanceof ASTTypeCastExpression) {
       return true;
     }
-    if(e instanceof ASTTypeIfExpression){
+    if (e instanceof ASTTypeIfExpression) {
       return true;
     }
-    if(e instanceof ASTIfThenElseExpression){
+    if (e instanceof ASTIfThenElseExpression) {
       return true;
     }
-    if(e instanceof ASTImpliesExpression){
+    if (e instanceof ASTImpliesExpression) {
       return true;
     }
-    if(e instanceof ASTEquivalentExpression){
+    if (e instanceof ASTEquivalentExpression) {
       return true;
     }
-    if(e instanceof ASTForallExpression){
+    if (e instanceof ASTForallExpression) {
       return true;
     }
-    if(e instanceof ASTExistsExpression){
+    if (e instanceof ASTExistsExpression) {
       return true;
     }
-    if(e instanceof ASTAnyExpression){
+    if (e instanceof ASTAnyExpression) {
       return true;
     }
-    if(e instanceof ASTLetinExpression){
+    if (e instanceof ASTLetinExpression) {
       return true;
     }
-    if(e instanceof ASTIterateExpression){
+    if (e instanceof ASTIterateExpression) {
       return true;
     }
-    if(e instanceof ASTInstanceOfExpression){
+    if (e instanceof ASTInstanceOfExpression) {
       return true;
     }
-    if(e instanceof ASTOCLArrayQualification){
+    if (e instanceof ASTOCLArrayQualification) {
       return true;
     }
     if (e instanceof ASTOCLTransitiveQualification) {
@@ -81,46 +81,46 @@ public class SideEffectFreeExpressions {
     if (e instanceof ASTSetOrExpression) {
       return true;
     }
-    if(e instanceof ASTSetComprehension){
+    if (e instanceof ASTSetComprehension) {
       return true;
     }
-    if(e instanceof ASTSetEnumeration){
+    if (e instanceof ASTSetEnumeration) {
       return true;
     }
-    if(e instanceof ASTInfixExpression){
+    if (e instanceof ASTInfixExpression) {
       return true;
     }
-    if(e instanceof ASTPlusPrefixExpression){
+    if (e instanceof ASTPlusPrefixExpression) {
       return true;
     }
-    if(e instanceof ASTMinusPrefixExpression){
+    if (e instanceof ASTMinusPrefixExpression) {
       return true;
     }
-    if(e instanceof ASTBooleanNotExpression){
+    if (e instanceof ASTBooleanNotExpression) {
       return true;
     }
-    if(e instanceof ASTLogicalNotExpression){
+    if (e instanceof ASTLogicalNotExpression) {
       return true;
     }
-    if(e instanceof ASTConditionalExpression){
+    if (e instanceof ASTConditionalExpression) {
       return true;
     }
-    if(e instanceof ASTBracketExpression){
+    if (e instanceof ASTBracketExpression) {
       return true;
     }
-    if(e instanceof ASTLiteralExpression){
+    if (e instanceof ASTLiteralExpression) {
       return true;
     }
-    if(e instanceof ASTFieldAccessExpression){
+    if (e instanceof ASTFieldAccessExpression) {
       return true;
     }
-    if(e instanceof ASTNameExpression){
+    if (e instanceof ASTNameExpression) {
       return true;
     }
-    if(e instanceof ASTCallExpression){
+    if (e instanceof ASTCallExpression) {
       return true;
     }
-    if(e instanceof ASTBinaryOrOpExpression){
+    if (e instanceof ASTBinaryOrOpExpression) {
       return true;
     }
     return false;

@@ -1,0 +1,52 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+ocl NC1 {
+//UNSAT
+  inv MaxIdent_9:
+        forall Auction a:
+           a.auctionIdent <= 9 ;
+
+
+  //UNSAT
+ inv No_Auction_Facebook:
+      exists Auction a :
+        a.name != "Facebook";
+
+  //UNSAT
+ inv Ident_Between_2_And_19:
+       forall Auction a:
+          (a.auctionIdent >= 0) &&
+           (a.auctionIdent < 19);
+
+ //UNSAT
+ inv False:
+    1==1;
+
+
+ //SAT
+ inv BMW_ident_is_3:
+        forall Auction a:
+            if  a.name == "BMW4"
+            then a.auctionIdent == 3
+            else a.auctionIdent != 3;
+
+ //SAT
+  inv Exists_Exactly_2_Auction:
+          exists Auction a1,a2 :
+              a1 != a2 &&
+              ( forall Auction a :
+                    a == a1 ||
+                    a == a2);
+
+  //SAT
+    inv MinIdent_5:
+        forall Auction a:
+           a.auctionIdent > 5 ;
+
+
+    //SAT
+   inv Exists_ONLY_Facebook_AND_BMW4:
+          forall Auction a:
+             a.name == "FaceBook1" ||
+             a.name == "BMW4" ;
+}

@@ -1,0 +1,39 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl Test02 {
+  inv String1:
+   "SE RWTH" == "SE" + " RWTH" ;
+
+  inv  String2 :
+   "SE RWTH" == "SE" + "RWTH" ;
+
+  inv String3:
+     "SE RWTH".contains("SE");
+
+  inv String4:
+  "SERWTH".contains("SE");
+
+  inv String5:
+    "SE RWTH".contains("a");
+
+  inv String6:
+      "Auction.java".endsWith("." + "java");
+
+  inv String7:
+        "Auction.java".endsWith("." + "jav");
+
+  inv String8:
+        "Auction.java".startsWith("Auc" + "tion");
+
+  inv String9:
+       "Auction.java".startsWith("Auc" + "B");
+
+  inv String10:
+   "BAA" ==   "AAA".replace("A","B");
+
+  inv String11:
+     "AAA" ==   "AAA".replace("A","B");
+
+
+}

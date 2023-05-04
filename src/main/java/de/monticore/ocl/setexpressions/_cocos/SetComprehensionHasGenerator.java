@@ -9,13 +9,15 @@ public class SetComprehensionHasGenerator implements SetExpressionsASTSetCompreh
 
   @Override
   public void check(ASTSetComprehension node) {
-    if (!node.getLeft().isPresentGeneratorDeclaration() && !node.getLeft().isPresentSetVariableDeclaration()){
-      for (ASTSetComprehensionItem setComprehensionItem : node.getSetComprehensionItemList()){
-        if (setComprehensionItem.isPresentGeneratorDeclaration()){
+    if (!node.getLeft().isPresentGeneratorDeclaration()
+        && !node.getLeft().isPresentSetVariableDeclaration()) {
+      for (ASTSetComprehensionItem setComprehensionItem : node.getSetComprehensionItemList()) {
+        if (setComprehensionItem.isPresentGeneratorDeclaration()) {
           return;
         }
       }
-      Log.error("0xOCL24 SetComprehension requires at least one generator or a variable Declaration");
+      Log.error(
+          "0xOCL24 SetComprehension requires at least one generator or a variable Declaration");
     }
   }
 }

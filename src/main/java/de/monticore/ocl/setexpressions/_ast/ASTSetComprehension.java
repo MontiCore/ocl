@@ -13,16 +13,12 @@ public class ASTSetComprehension extends ASTSetComprehensionTOP {
     ASTMCQualifiedName qname;
     if (getOpeningBracket().equals("{")) {
       qname = new ASTMCQualifiedNameBuilder().addParts("Set").build();
-    }
-    else {
+    } else {
       qname = new ASTMCQualifiedNameBuilder().addParts("List").build();
     }
     qname.setEnclosingScope(getEnclosingScope());
-    ASTMCQualifiedType mcType = new ASTMCQualifiedTypeBuilder()
-        .setMCQualifiedName(qname)
-        .build();
+    ASTMCQualifiedType mcType = new ASTMCQualifiedTypeBuilder().setMCQualifiedName(qname).build();
     mcType.setEnclosingScope(getEnclosingScope());
     return mcType;
   }
-
 }

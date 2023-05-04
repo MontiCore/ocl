@@ -9,9 +9,7 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.types.check.AbstractDeriveFromExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
-public class DeriveSymTypeOfOCL
-  extends AbstractDeriveFromExpression
-  implements OCLHandler {
+public class DeriveSymTypeOfOCL extends AbstractDeriveFromExpression implements OCLHandler {
 
   protected OCLTraverser traverser;
 
@@ -29,7 +27,8 @@ public class DeriveSymTypeOfOCL
     OCLHandler.super.traverse(node);
   }
 
-  @Override public OCLTraverser getTraverser() {
+  @Override
+  public OCLTraverser getTraverser() {
     return traverser;
   }
 

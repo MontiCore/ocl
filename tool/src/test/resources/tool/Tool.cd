@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.*;
+import java.util.Date;
+classdiagram Tool{
+
+
+   class Tool {
+     String name ;
+     int run1();
+     int run2();
+  }
+
+}

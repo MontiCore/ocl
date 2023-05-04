@@ -1,14 +1,15 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
+import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -16,18 +17,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 public abstract class AbstractTest {
 
-  @BeforeAll
-  public static void init() {
-    LogStub.init();
-    Log.enableFailQuick(false);
+  protected void initMills() {
+    OCLMill.reset();
+    OCLMill.init();
+    OCLMill.globalScope().clear();
   }
 
-  @BeforeEach
-  public void setUp() {
+  protected void initLogger() {
+    LogStub.init();
+    Log.enableFailQuick(false);
     Log.getFindings().clear();
   }
 
@@ -39,30 +39,28 @@ public abstract class AbstractTest {
     File f = new File(RELATIVE_MODEL_PATH + folderpath);
     String[] filenames = f.list();
     assertThat(filenames).isNotNull();
-    filenames = Arrays.stream(filenames)
-      .sorted()
-      .collect(Collectors.toList())
-      .toArray(filenames);
+    filenames = Arrays.stream(filenames).sorted().collect(Collectors.toList()).toArray(filenames);
 
     return filenames;
   }
-  
+
   public static String[] getParsableModels() {
     return getModels("/testinput/validGrammarModels");
   }
-  
+
   public static String[] getValidCoCoModels() {
     return getModels("/testinput/cocos/valid");
   }
-  
+
   public static String[] getInvalidCoCoModels() {
     return getModels("/testinput/cocos/invalid");
   }
 
   public static String[] getModelsWithValidSymTab() {
-    List<String> files = Arrays.stream(getParsableModels())
-      .filter(f -> f.matches("^[a-n].*"))
-      .collect(Collectors.toList());
+    List<String> files =
+        Arrays.stream(getParsableModels())
+            .filter(f -> f.matches("^[a-n].*"))
+            .collect(Collectors.toList());
     String[] result = new String[files.size()];
     files.toArray(result);
     return result;
@@ -72,8 +70,7 @@ public abstract class AbstractTest {
     return RELATIVE_MODEL_PATH + fileName;
   }
 
-  public Optional<ASTOCLCompilationUnit> parse(String relativeFilePath,
-    boolean expParserErrors) {
+  public Optional<ASTOCLCompilationUnit> parse(String relativeFilePath, boolean expParserErrors) {
     OCLParser parser = new OCLParser();
     Optional<ASTOCLCompilationUnit> optAst;
     try {
@@ -89,5 +86,13 @@ public abstract class AbstractTest {
       assertThat(optAst).isPresent();
     }
     return optAst;
+  }
+
+  protected void assertNoFindings() {
+    assertTrue(
+        Log.getFindings().isEmpty(),
+        Log.getFindings().stream()
+            .map(Finding::buildMsg)
+            .collect(Collectors.joining(System.lineSeparator())));
   }
 }

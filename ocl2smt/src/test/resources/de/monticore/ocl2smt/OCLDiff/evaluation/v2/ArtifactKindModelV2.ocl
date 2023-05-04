@@ -1,0 +1,130 @@
+/* (c) https://github.com/MontiCore/monticore */
+  // ______________________________________________________
+  // Artifact
+  // ______________________________________________________
+/*
+ *
+ *add new OCL Invariant in  lines 99-132
+ * to specify property of class JavaType added in the previous version
+*/
+ocl  ArtifactKindModel {
+
+  context Artifact a inv Inv0:
+    a.name == ((a.nameExtension == "") ? a.simpleName :
+      a.simpleName + "." + a.nameExtension);
+
+  //______________________________________________________
+  // ArtifactContainer
+  //______________________________________________________
+
+  context Artifact a inv Inv1:
+    (a.isRoot <=> a.parent.isEmpty());
+
+  context Artifact a inv Inv2:
+     a.fullName == (a.isRoot ? "." :
+                (a.parent.get().isRoot ? "." + a.name :
+                 a.parent.get().fullName + "." + a.name));
+
+
+  context Artifact a, Artifact b inv Inv03:
+    (a.name == b.name && a.parent == b.parent)
+        implies a == b;
+
+  //______________________________________________________
+  // Directory
+  //______________________________________________________
+
+  context Directory d inv Inv4:
+    d.nameExtension == "";
+
+
+  context Artifact a inv Inv5:
+    a.isRoot <=> (a.simpleName == ".");
+
+  context Artifact a inv Inv6:
+    a.name.contains(".") implies a.isRoot;
+
+  // ______________________________________________________
+  // JavaArtifacts
+  // ______________________________________________________
+
+  context JavaArtifact a inv Inv7:
+    a.refersTo.containsAll(a.reliesOnJavaArtifact);
+
+
+
+  // ______________________________________________________
+  // JavaSourceFile
+  // ______________________________________________________
+
+ context JavaSourceFile f inv Inv8:
+     f.reliesOnJavaArtifact.containsAll(f.imports);
+
+
+
+  context JavaSourceFile f inv Inv9:
+    f.nameExtension == "java";
+
+  // ______________________________________________________
+  // JavaClassFile
+  // ______________________________________________________
+
+  context JavaClassFile f inv Inv10:
+    f.nameExtension == "class";
+
+
+
+  // ______________________________________________________
+  // Package
+  // ______________________________________________________
+
+  context Package p inv Inv11:
+    !p.name.contains(".");
+
+  context Package pk inv Inv12:
+    (pk.isRoot <=> pk.parent.isEmpty());
+
+      context Package p inv Inv13:
+        !p.isRoot implies
+          p.fullName == p.parent.get().fullName + "." + p.name;
+
+  context Package a, Package b inv Inv14:
+     ((a.parent.get() == b.parent.get()) && (a.name == b.name)) implies a == b;
+
+
+  // ______________________________________________________
+  // Type
+  // ______________________________________________________
+
+  context JavaType t inv Inv15:
+    (t.isInnerType <=> !t.containingType.isEmpty());
+
+  context JavaType t inv Inv16:
+    t.name == (t.isInnerType ?
+      t.containingType.get().name + "." + t.simpleName : t.simpleName);
+
+  context JavaType t inv Inv17:
+    t.fullName == (t.typePackage.isRoot ? t.name :
+      t.typePackage.fullName + "." + t.simpleName);
+
+  // ______________________________________________________
+  // Relation between Java Artifacts and Java Types
+  // ______________________________________________________
+  context JavaSourceFile f inv Inv18a:
+    !{t| t in f.definedType , !t.isInnerType}.isEmpty();
+
+  context JavaSourceFile f ,JavaType t1, JavaType t2 inv Inv18b:
+    !(!t1.isInnerType && !t2.isInnerType && t1 isin f.definedType && t2 isin f.definedType && t1 != t2 );
+
+ context JavaArtifact a1,JavaArtifact a2 inv Inv19:
+    forall JavaType t1 in a1.definedType, JavaType t2 in a2.definedType :
+      t1.reliesOn.contains(t2) implies
+        (a1 == a2 || a1.reliesOnJavaArtifact.contains(a2));
+
+
+ context JavaArtifact a inv  Inv20:
+   forall  t in a.definedType :
+     !t.isInnerType implies t.simpleName == a.simpleName;
+
+
+  }

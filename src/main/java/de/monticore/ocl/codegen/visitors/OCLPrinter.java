@@ -17,7 +17,6 @@ import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -27,8 +26,8 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
 
   protected OCLTraverser traverser;
 
-  public OCLPrinter(IndentPrinter printer, VariableNaming naming,
-      IDerive deriver, ISynthesize syntheziser) {
+  public OCLPrinter(
+      IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
     Preconditions.checkNotNull(deriver);
@@ -108,11 +107,9 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
   public void handle(ASTOCLContextDefinition node) {
     if (node.isPresentMCType()) {
       this.getPrinter().print(boxType(this.getSynthesizer().synthesizeType(node.getMCType())));
-    }
-    else if (node.isPresentOCLParamDeclaration()) {
+    } else if (node.isPresentOCLParamDeclaration()) {
       node.getOCLParamDeclaration().accept(this.getTraverser());
-    }
-    else {
+    } else {
       Log.error(UNEXPECTED_STATE_AST_NODE, node.get_SourcePositionStart());
     }
   }
@@ -135,8 +132,7 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
 
     if (node.isPresentName()) {
       this.getPrinter().print(node.getName());
-    }
-    else {
+    } else {
       this.getPrinter().print(this.getNaming().getName(node));
     }
 
@@ -186,7 +182,7 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
   /**
    * Prints a collection
    *
-   * @param items     to be printed
+   * @param items to be printed
    * @param seperator string for seperating items
    */
   protected void printList(Collection<? extends ASTNode> items, String seperator) {
@@ -199,5 +195,4 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
       sep = seperator;
     }
   }
-
 }

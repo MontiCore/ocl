@@ -1,0 +1,116 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.*;
+import java.util.Date;
+classdiagram ArtifactKindModel {
+/*
+ *
+ * l.110: change cardinality of association contain
+ *
+*/
+  // ______________________________________________________
+  // Artifact
+  // ______________________________________________________
+
+  abstract class Artifact {
+    String simpleName;
+    String nameExtension;
+    String name;
+    String fullName;
+    Date modified ;
+    boolean isRoot;
+  }
+
+  association  [*] Artifact -> (refersTo)Artifact [*];
+
+  //______________________________________________________
+  // ArtifactContainer
+  //______________________________________________________
+
+  abstract class ArtifactContainer  extends Artifact;
+
+  composition  [0..1] ArtifactContainer(parent) -> ( contains)Artifact [*];
+
+  //______________________________________________________
+  // Directory
+  //______________________________________________________
+
+  class Directory extends ArtifactContainer;
+
+  //______________________________________________________
+  // Archive
+  //______________________________________________________
+
+
+   class JavaArchive  extends ArtifactContainer;
+
+  // ______________________________________________________
+  // JavaArtifacts
+  // ______________________________________________________
+
+  abstract  class JavaArtifact {
+       String simpleName;
+        String nameExtension;
+        String name;
+        String fullName;
+        Date modified ;
+        boolean isRoot;
+
+   }
+
+  association  [*] JavaArtifact -> (refersTo)JavaArtifact [*];
+
+  association [*] JavaArtifact -> (reliesOnJavaArtifact)JavaArtifact [*];
+
+  // ______________________________________________________
+  // JavaSourceFile
+  // ______________________________________________________
+
+  class JavaSourceFile extends JavaArtifact {}
+
+  association  [*] JavaSourceFile -> (imports)JavaArtifact [*];
+
+  association  [1] JavaSourceFile -> (compiledTo)JavaClassFile [*];
+
+  association  [1] JavaSourceFile -> (produces)JavaArtifact [*];
+
+  // ______________________________________________________
+  // JavaClassFile
+  // ______________________________________________________
+
+  class JavaClassFile extends JavaArtifact {}
+
+  // ______________________________________________________
+  // Package
+  // ______________________________________________________
+
+  class Package {
+    String name;
+    String fullName;
+    boolean isRoot;
+  }
+
+  association belongsTo [*] JavaSourceFile -> (belongsTo)Package [1];
+
+  composition subPackage [0..1] Package (parent) -> (child) Package [*];
+
+  // ______________________________________________________
+  // JavaType
+  // ______________________________________________________
+
+  class JavaType  {
+    String simpleName;
+    String name;
+    String fullName;
+    boolean isInnerType;
+  }
+
+
+  association  [1..*] JavaArtifact -> (definedType) JavaType [*];
+
+  composition contain [1] Package(typePackage) -> JavaType [*];
+
+  composition [0..1] JavaType (containingType) -> (innerType) JavaType [*];
+
+  association  [*] JavaType -> (reliesOn)JavaType [*];
+
+}

@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+ocl NC1 {
+
+  context Person p inv Date1:
+       p.birthDate.before(p.dayOfDeath);
+
+  context Person p inv Date2:
+       p.dayOfDeath.after(p.birthDate);
+
+}
+

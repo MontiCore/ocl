@@ -1,57 +1,37 @@
 package de.monticore.ocl2smt;
 
-
-import com.microsoft.z3.Solver;
-import com.microsoft.z3.Status;
-import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.odbasis._ast.ASTODArtifact;
-import org.junit.jupiter.api.Assertions;
+import de.monticore.ocl2smt.ocl2smt.ExpressionAbstractTest;
+import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Set;
 
 public class AssociationTest extends ExpressionAbstractTest {
-    List<IdentifiableBoolExpr> constraintList;
 
-    @BeforeEach
-    public void setup() throws IOException {
-        parse("/associations/Auction.cd", "/associations/Association.ocl");
-        Set<ASTOCLCompilationUnit> oclFiles = new HashSet<>();
-        oclFiles.add(oclAST);
-        constraintList = OCLDiffGenerator.getPositiveSolverConstraints(cdAST, oclFiles);
-    }
+  @BeforeEach
+  public void setup() throws IOException {
+    super.initLogger();
+    super.initMills();
+    parse("/associations/Association.cd", "/associations/Association.ocl");
+    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
+  }
 
-    void testInv(String invName) {
-        List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
-        solverConstraints.add(addConstraint(invName));
-        Solver solver =ocl2SMTGenerator.cd2smtGenerator.makeSolver(solverConstraints);
-        Assertions.assertSame(solver.check(), Status.SATISFIABLE);
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "Assoc1", "Assoc2", "Assoc3", "Assoc4", "Assoc5", "Assoc6", "Assoc7", "Assoc8", "Assoc11",
+        "Assoc13"
+      })
+  public void testAssociationNavigationSat(String inv) {
+    testInv(inv, "association");
+  }
 
-        Optional<ASTODArtifact> od =ocl2SMTGenerator.cd2smtGenerator.smt2od(solver.getModel(), false, invName);
-        Assertions.assertTrue(od.isPresent());
-        printOD(od.get());
-    }
-
-    @Test
-    public void of_legal_age() {
-        testInv("Of_legal_age");
-    }
-
-    @Test
-    public void different_ids() {
-        testInv("Diff_ids");
-    }
-
-    @Test
-    public void atLeast2Person() {
-        testInv("AtLeast_2_Person");
-    }
-
-    @Test
-    public void Same_Person_in_2_Auction() {
-        testInv("Same_Person_in_2_Auction");
-    }
+  @ParameterizedTest
+  @ValueSource(strings = {"Assoc10", "Assoc9", "Assoc12", "Assoc14", "Assoc15"})
+  public void testAssociationNavigationUnSat(String inv) {
+    testUnsatInv(Set.of(inv), "association");
+  }
 }

@@ -3,17 +3,17 @@ package invariants;
 
 ocl Test02 {
 
-  inv B_fa_sat:
+  inv Quan1:
     forall Boolean b:
          b == !(!(b));
 
-  inv Many_fa_sat:
+  inv Quan2:
       forall Boolean b:
         forall boolean c:
           forall boolean d:
             b == !(!(b));
 
-  inv Many_fa_unsat:
+  inv Quan3UNSAT:
         forall Boolean b:
           forall boolean c:
             forall boolean d:
@@ -22,36 +22,36 @@ ocl Test02 {
               c == d &&
               d == false ;
 
-  inv B_fa_unsat:
+  inv Quan4UNSAT:
       forall Boolean b:
            b == true;
 
-  inv BC_fa_sat:
+  inv Quan5:
       forall Boolean b, c:
            b == !(!(b))&&
            c == c;
 
-  inv Auction_fa_sat:
+  inv Quan6:
     forall Auction a:
          a.auctionIdent == 13;
 
-  inv Auction_fa_unsat:
+  inv Quan7UNSAT:
       forall Auction a:
            a.auctionIdent == 13&&
            a.auctionIdent == 14;
 
 
 //----------------exists---------------------------------------
-  inv B_ex_sat:
+  inv Quan8:
       exists Boolean b:
            b == !(!(b));
-  inv Many_ex_sat:
+  inv Quan9:
         exists Boolean b:
           exists boolean c:
             exists boolean d:
               b == !(!(b));
 
-  inv Many_ex_unsat:
+  inv Quan10UNSAT:
           exists Boolean b:
             exists boolean c:
               exists boolean d:
@@ -60,40 +60,40 @@ ocl Test02 {
                 c == d &&
                 d == false ;
 
-  inv B_ex_unsat:
+  inv Quan11UNSAT:
         exists Boolean b:
              b == !b;
 
-   inv BC_ex_sat:
+   inv Quan12UNSAT:
         exists Boolean b ,c:
              b == true&&
              b == c &&
              c == false;
 
-   inv Auction_ex_sat:
+   inv Quan13:
        exists Auction a:
             a.auctionIdent == 13;
 
-   inv Auction_ex_unsat:
+   inv Quan14UNSAT:
          exists Auction a:
               a.auctionIdent == 13&&
               a.auctionIdent == 14;
 
-  inv Ex_two_auction_and_bool_sat:
+  inv Quan15:
            exists Auction a,b, Boolean c:
              a != b &&
              c == true ;
 
 
 //--------------------------exists and forall---------------
-inv Auction_two_sat:
+inv Quan16:
        exists Auction a1 , b1:
          a1 != b1 &&
          (forall Auction a ,b :
            a.auctionIdent == b.auctionIdent &&
            a.auctionIdent == 10)  ;
 
-  inv Two_auction_and_bool_sat:
+  inv Quan17:
          exists Auction a1,b1, Boolean c:
            c == true &&
            (forall Auction a ,b :
@@ -104,7 +104,7 @@ inv Auction_two_sat:
            a1 != b1 ;
 
 
-  inv Two_auction_and_bool_unsat:
+  inv Quan18UNSAT:
            exists Auction a1,b1, Boolean c:
              a1 != b1 &&
              c == true &&

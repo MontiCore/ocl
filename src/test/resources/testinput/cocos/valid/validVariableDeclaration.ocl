@@ -2,7 +2,8 @@
 ocl validVariableDeclaration {
   inv:
   let
-    Set<Integer> set = {1..5}
+    Set<Integer> set = {1..5};
+    Collection<Integer> collection = set
   in
     true;
 }

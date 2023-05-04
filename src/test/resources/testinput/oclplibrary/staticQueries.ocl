@@ -2,14 +2,14 @@
 ocl list {
   inv:
     let
-      ca = Set{(int) 1, (int) 2, (int) 3};
-      cb = Set{(long) 1, (long) 2, (long) 3}
+      Set<int> ca = Set{(int) 1, (int) 2, (int) 3};
+      Set<long> cb = Set{(long) 1, (long) 2, (long) 3}
     in
       sum(ca) == 6 &&
       max(ca) == 3 &&
       min(ca) == 1 &&
       average(ca) == 2 &&
-      sort(ca) == ca.asList &&
+      sort(ca) == ca.asList() &&
       even(2) &&
       odd(2) == false
     ;

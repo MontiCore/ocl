@@ -6,14 +6,12 @@ import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class OCLSymbolTableHelper {
 
-  private OCLSymbolTableHelper() {
-  }
+  private OCLSymbolTableHelper() {}
 
   public static String getNameOfModel(final ASTOCLArtifact astFile) {
     return astFile.getName();
@@ -23,7 +21,7 @@ public class OCLSymbolTableHelper {
     return getNameOfModel(compilationUnit.getOCLArtifact());
   }
 
-  public static List<ImportStatement> getImportStatements (List<ASTMCImportStatement> input) {
+  public static List<ImportStatement> getImportStatements(List<ASTMCImportStatement> input) {
     List<ImportStatement> imports = new ArrayList<>();
     for (ASTMCImportStatement importStatement : input) {
       imports.add(new ImportStatement(importStatement.getQName(), importStatement.isStar()));

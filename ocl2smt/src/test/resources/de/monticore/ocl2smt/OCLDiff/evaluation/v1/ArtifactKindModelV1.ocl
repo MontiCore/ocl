@@ -1,0 +1,96 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+/*
+ *
+ *No changes since the previous Version
+ *
+*/
+  // ______________________________________________________
+  // Artifact
+  // ______________________________________________________
+
+ocl  ArtifactKindModel {
+
+  context Artifact a inv Inv0:
+    a.name == ((a.nameExtension == "") ? a.simpleName :
+      a.simpleName + "." + a.nameExtension);
+
+  //______________________________________________________
+  // ArtifactContainer
+  //______________________________________________________
+
+  context Artifact a inv Inv1:
+    (a.isRoot <=> a.parent.isEmpty());
+
+  context Artifact a inv Inv2:
+     a.fullName == (a.isRoot ? "." :
+                (a.parent.get().isRoot ? "." + a.name :
+                 a.parent.get().fullName + "." + a.name));
+
+
+  context Artifact a, Artifact b inv Inv03:
+    (a.name == b.name && a.parent == b.parent)
+        implies a == b;
+
+  //______________________________________________________
+  // Directory
+  //______________________________________________________
+
+  context Directory d inv Inv4:
+    d.nameExtension == "";
+
+
+  context Artifact a inv Inv5:
+    a.isRoot <=> (a.simpleName == ".");
+
+  context Artifact a inv Inv6:
+    a.name.contains(".") implies a.isRoot;
+
+  // ______________________________________________________
+  // JavaArtifacts
+  // ______________________________________________________
+
+  context JavaArtifact a inv Inv7:
+    a.refersTo.containsAll(a.reliesOnJavaArtifact);
+
+
+
+  // ______________________________________________________
+  // JavaSourceFile
+  // ______________________________________________________
+
+ context JavaSourceFile f inv Inv8:
+     f.reliesOnJavaArtifact.containsAll(f.imports);
+
+
+
+  context JavaSourceFile f inv Inv9:
+    f.nameExtension == "java";
+
+  // ______________________________________________________
+  // JavaClassFile
+  // ______________________________________________________
+
+  context JavaClassFile f inv Inv10:
+    f.nameExtension == "class";
+
+
+
+  // ______________________________________________________
+  // Package
+  // ______________________________________________________
+
+  context Package p inv Inv11:
+    !p.name.contains(".");
+
+  context Package pk inv Inv12:
+    (pk.isRoot <=> pk.parent.isEmpty());
+
+  context Package p inv Inv13:
+    !p.isRoot implies
+      p.fullName == p.parent.get().fullName + "." + p.name;
+
+  context Package a, Package b inv Inv14:
+    (a.parent.get() == b.parent.get() && a.name == b.name) implies a == b;
+
+  }

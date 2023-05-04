@@ -1,17 +1,16 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl._symboltable;
 
+import static de.monticore.ocl.ocl._symboltable.OCLSymbolTableHelper.getImportStatements;
+
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.symboltable.ImportStatement;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static de.monticore.ocl.ocl._symboltable.OCLSymbolTableHelper.getImportStatements;
 
 public class OCLScopesGenitor extends OCLScopesGenitorTOP {
   public OCLScopesGenitor() {
@@ -20,8 +19,9 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
 
   @Override
   public IOCLArtifactScope createFromAST(ASTOCLCompilationUnit node) {
-    Log.errorIfNull(node,
-      "0xAE884 Error by creating of the OCLScopesGenitor symbol table: top ast node is null");
+    Log.errorIfNull(
+        node,
+        "0xAE884 Error by creating of the OCLScopesGenitor symbol table: top ast node is null");
     IOCLArtifactScope artifactScope = OCLMill.artifactScope();
     artifactScope.setPackageName(node.getPackage());
     List<ImportStatement> imports = getImportStatements(node.getMCImportStatementList());
@@ -38,14 +38,16 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
     super.visit(compilationUnit);
 
     final String oclFile = OCLSymbolTableHelper.getNameOfModel(compilationUnit);
-    Log.debug("Building Symboltable for OCL: " + oclFile,
-      OCLScopesGenitor.class.getSimpleName());
+    Log.debug("Building Symboltable for OCL: " + oclFile, OCLScopesGenitor.class.getSimpleName());
 
     final String compilationUnitPackage = Names.getQualifiedName(compilationUnit.getPackageList());
 
     // imports
-    final List<ImportStatement> imports = compilationUnit.streamMCImportStatements()
-      .map(i -> new ImportStatement(i.getQName(), i.isStar())).collect(Collectors.toList());
+    final List<ImportStatement> imports =
+        compilationUnit
+            .streamMCImportStatements()
+            .map(i -> new ImportStatement(i.getQName(), i.isStar()))
+            .collect(Collectors.toList());
 
     getCurrentScope().get().setAstNode(compilationUnit);
 
@@ -61,10 +63,13 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
   }
 
   @Override
-  public void visit(final ASTOCLInvariant node)  {
+  public void visit(final ASTOCLInvariant node) {
     if (!getCurrentScope().isPresent()) {
-      Log.debug(String.format("%s: Visiting %s, missing scope on scope stack.",
-        node.get_SourcePositionStart(), node.getClass()), "ScopesGenitor");
+      Log.debug(
+          String.format(
+              "%s: Visiting %s, missing scope on scope stack.",
+              node.get_SourcePositionStart(), node.getClass()),
+          "ScopesGenitor");
       return;
     }
     // link the ast with its enclosing scope
@@ -77,7 +82,8 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
 
     if (node.isPresentName()) {
       // create the symbol
-      OCLInvariantSymbol symbol = OCLMill.oCLInvariantSymbolBuilder().setName(node.getName()).build();
+      OCLInvariantSymbol symbol =
+          OCLMill.oCLInvariantSymbolBuilder().setName(node.getName()).build();
       // link the symbol with its enclosing scope
       getCurrentScope().get().add(symbol);
       symbol.setEnclosingScope(getCurrentScope().get());
@@ -92,10 +98,10 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
   }
 
   @Override
-  public void endVisit(ASTOCLInvariant inv){
+  public void endVisit(ASTOCLInvariant inv) {
     removeCurrentScope();
     initScopeHP2(inv.getSpannedScope());
-    if(inv.isPresentSymbol()){
+    if (inv.isPresentSymbol()) {
       initOCLInvariantHP2(inv.getSymbol());
     }
   }

@@ -81,7 +81,9 @@ component grammar OCLExpressions
    *             The type to which the variable should be compared
    *  @attribute thenExpression
    *             resulting expression in which the variable can be used with
-   *             the type defined by MCType (if the type check returns true)
+   *             the type defined by MCType (if the type check returns true),
+   *             as such TypeIfThenExpression is used to shadow the variable
+   *             with the more concrete typing
    *  @attribute elseExpression
    *             resulting expression which will be evaluated if the variable
    *             is not of the type defined by MCType
@@ -93,9 +95,10 @@ component grammar OCLExpressions
    */
   TypeIfExpression implements Expression <100> =
     "typeif" Name@Variable "instanceof" MCType
-    "then"   thenExpression:Expression
+    "then"   thenExpression:TypeIfThenExpression
     "else"   elseExpression:Expression
     ;
+  scope (shadowing non_exporting) TypeIfThenExpression = Expression;
 
   /**
    * IfThenElseExpression defines a case distinction operator.

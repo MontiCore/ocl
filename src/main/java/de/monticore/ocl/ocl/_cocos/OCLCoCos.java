@@ -18,11 +18,11 @@ public class OCLCoCos {
   public static OCLCoCoChecker createChecker(ISynthesize synthesizer) {
     return createChecker(new OCLDeriver(), synthesizer);
   }
-  
+
   public static OCLCoCoChecker createChecker(IDerive deriver) {
     return createChecker(deriver, new OCLSynthesizer());
   }
-  
+
   public static OCLCoCoChecker createChecker(IDerive deriver, ISynthesize synthesizer) {
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new MethSignatureStartsWithLowerCaseLetter());

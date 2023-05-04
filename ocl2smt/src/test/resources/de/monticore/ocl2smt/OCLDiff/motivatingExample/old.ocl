@@ -1,0 +1,14 @@
+ocl Old {
+
+  inv CustomerID_unique:
+    forall Customer c1, c2:
+      c1 != c2 implies c1.id != c2.id;
+  inv Balance_positive:
+    forall Account a:
+      a.balance >= 0;
+
+  context Account.withdraw(double amount)
+  pre: balance >= amount;
+  // post condition not (yet) specified
+
+}

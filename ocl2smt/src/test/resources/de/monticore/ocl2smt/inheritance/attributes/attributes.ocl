@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+ocl NC1 {
+context BigBigCar bbc inv ALL:
+     bbc.isBigBigCar == true &&
+     bbc.isBigCarInterface == false &&
+     bbc.isBigCar == true &&
+     bbc.isCar == true &&
+     bbc.isVehicle == true &&
+     bbc.isCarInterface1 == true &&
+     bbc.isCarInterface2 == true ;
+}
+

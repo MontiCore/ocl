@@ -1,0 +1,15 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl Test08 {
+  inv(Object o):
+    let
+      int charCount = typeif o instanceof String
+                      then o.length()
+                      else 0
+                      // o.toString().lenght()
+                      // todo change 0 after fix of
+                      // https://git.rwth-aachen.de/monticore/monticore/-/issues/3336
+      in
+        charCount < 5;
+}

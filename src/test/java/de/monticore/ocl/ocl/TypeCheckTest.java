@@ -1,4 +1,7 @@
+/* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.ocl;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
@@ -7,13 +10,17 @@ import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 public class TypeCheckTest extends AbstractTest {
+
+  @BeforeEach
+  public void setUp() {
+    super.initLogger();
+    super.initMills();
+  }
 
   @Test
   public void testTypCheckForGenericMethodCalls() {
@@ -23,8 +30,7 @@ public class TypeCheckTest extends AbstractTest {
 
     // given
     final Optional<ASTOCLCompilationUnit> ast =
-        parse(RELATIVE_MODEL_PATH + "/testinput"+"/typeInferringModels/" +filename,
-        false);
+        parse(RELATIVE_MODEL_PATH + "/testinput" + "/typeInferringModels/" + filename, false);
     assertThat(ast).isPresent();
 
     SymbolTableUtil.prepareMill();
@@ -38,7 +44,9 @@ public class TypeCheckTest extends AbstractTest {
 
     IDerive deriver = new OCLDeriver();
 
-    TypeCheckResult t = deriver.deriveType(((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getExpression());
+    TypeCheckResult t =
+        deriver.deriveType(
+            ((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getExpression());
 
     // Additional check that nothing broke
     assertThat(Log.getErrorCount()).isEqualTo(0);

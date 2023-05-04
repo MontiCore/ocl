@@ -1,0 +1,17 @@
+
+
+ocl  ArtifactKindModel {
+
+
+  inv V:
+      true;
+
+  context int Tool.run1()
+   pre: true ;
+   post: true ;
+
+  context int Tool.run2()
+   pre: true ;
+   post: true ;
+
+  }

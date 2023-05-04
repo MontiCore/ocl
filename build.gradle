@@ -19,6 +19,7 @@ plugins {
   id 'jacoco'
   id 'com.adarshr.test-logger' version '2.1.1'
   id 'maven-publish'
+  id "com.github.sherter.google-java-format" version "0.9"    // Task "verifyGoogleJavaFormat" and "googleJavaFormat"
 }
 
 /* ============================================================ */
@@ -80,6 +81,24 @@ configurations {
     grammar
 }
 
+
+googleJavaFormat {
+  exclude '**/target/**'
+}
+
+verifyGoogleJavaFormat{
+  ignoreFailures true
+  exclude "**"
+}  // do not check format in "build"
+
+task checkfmt(type: com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat) {}
+
+task fmt {
+  dependsOn tasks.named("googleJavaFormat")
+}
+
+
+
 test {
   useJUnitPlatform()
   finalizedBy jacocoTestReport
@@ -102,14 +121,12 @@ dependencies {
   implementation "de.monticore:monticore-runtime:$mc_version"
   implementation "de.monticore:monticore-grammar:$mc_version"
   implementation "org.apache.commons:commons-lang3:3.9"
-  implementation "commons-cli:commons-cli:1.4"
   implementation "org.antlr:antlr4:4.7.1"
   implementation "org.assertj:assertj-core:$assertj_version"
 
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
-  testImplementation "de.monticore:monticore-runtime:$mc_version"
 }
 
 configurations {
@@ -129,8 +146,8 @@ tasks.withType(Test){
 
 tasks.withType(JavaCompile) {
   options.fork = true
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+  sourceCompatibility = JavaVersion.VERSION_11
+  targetCompatibility = JavaVersion.VERSION_11
   options.encoding = 'UTF-8'
   options.headerOutputDirectory.convention(null)
   options.deprecation = false
@@ -185,7 +202,9 @@ shadowJar {
   }
   archiveFileName = "MC${archiveBaseName.get().toUpperCase()}.${archiveExtension.get()}"
   archiveClassifier = "mc-tool"
-  minimize()
+  minimize {
+    exclude(dependency('org.freemarker:freemarker:.*'))
+  }
 }
 
 jar.dependsOn(shadowJar)

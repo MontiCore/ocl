@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+ocl typeif1 {
+  context Object o inv:
+    let
+      int charCount = typeif o instanceof String
+                      then o.size()
+                      else o.toString().size()
+    in
+      charCount < 5;
+}

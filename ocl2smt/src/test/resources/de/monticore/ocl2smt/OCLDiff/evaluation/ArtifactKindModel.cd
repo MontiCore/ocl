@@ -1,0 +1,267 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.*;
+import java.util.Date;
+classdiagram ArtifactKindModel {
+
+  // ______________________________________________________
+  // Artifact
+  // ______________________________________________________
+
+  abstract class Artifact {
+    String simpleName;
+    String nameExtension;
+    Date modified;
+    String name;
+    String fullName;
+    boolean isRoot;
+  }
+
+  association  [*] Artifact -> (refersTo)Artifact [*];  //02
+
+  //______________________________________________________
+  // ArtifactContainer
+  //______________________________________________________
+
+  abstract class ArtifactContainer  extends Artifact {
+  }
+
+  composition  [0..1] Artifact (parent) -> ( contains)Artifact [*];
+
+  //______________________________________________________
+  // Directory
+  //______________________________________________________
+
+  class Directory extends ArtifactContainer {
+  }
+
+  //______________________________________________________
+  // Archive
+  //______________________________________________________
+
+  class Archive extends ArtifactContainer {}
+
+  // ______________________________________________________
+  // JavaArtifacts
+  // ______________________________________________________
+
+  abstract class JavaArtifact extends Artifact {}  //46
+
+  association [*] JavaArtifact -> (reliesOnJavaArtifact)JavaArtifact [*];
+
+  // ______________________________________________________
+  // JavaSourceFile
+  // ______________________________________________________
+
+  class JavaSourceFile extends JavaArtifact {}
+
+  association  [*] JavaSourceFile -> (imports)JavaArtifact [*];
+
+  association  [1] JavaSourceFile -> (compiledTo)JavaClassFile [*];
+
+  association  [1] JavaSourceFile -> (produces)JavaArtifact [*]; // Fixme i added
+
+  // ______________________________________________________
+  // JavaClassFile
+  // ______________________________________________________
+
+  class JavaClassFile extends JavaArtifact {}
+
+  // ______________________________________________________
+  // Package
+  // ______________________________________________________
+
+  class Package {
+    String name;
+    String fullName;
+    boolean isRoot;
+  }
+
+  association belongsTo [*] JavaSourceFile -> Package [1];
+
+  composition subPackage
+    [0..1] Package (parent) -> (child) Package [*];
+
+  // ______________________________________________________
+  // JavaType
+  // ______________________________________________________
+
+  class JavaType  extends Type{
+    String simpleName;
+    String name;
+    String fullName;
+    boolean isInnerType;
+  }
+
+  abstract class Type;
+
+  association  [1..*] JavaArtifact -> (definedType) JavaType [*]; //conficlt two assoc with name define
+
+  composition contains1 [1] Package(typePackage) -> JavaType [*];  //conficlt two assoc with name contains
+
+  composition
+    [0..1] JavaType (containingType) -> (innerType) JavaType [*];
+
+  association  [*] JavaType -> (reliesOn)JavaType [*];
+
+  // ______________________________________________________
+  // Relation between Java Artifacts and Java Types
+  // ______________________________________________________
+
+  //______________________________________________________
+  // Language
+  //______________________________________________________
+
+  class Language {
+    String name;
+
+  }
+
+  association grammar Language -> Grammar [1];
+
+  association coco Language -> CoCo [*];
+
+  //______________________________________________________
+  // Grammar
+  //______________________________________________________
+
+  class Grammar {
+    String name;
+  }
+
+  association uses [*] Grammar -> Grammar [*];
+
+  //______________________________________________________
+  // GrammarFile
+  //______________________________________________________
+
+  class GrammarFile extends Artifact {}
+
+  association defines2 [1] GrammarFile -> Grammar [1]; //conficlt two assoc with name contains
+
+  //______________________________________________________
+  // CoCo
+  //______________________________________________________
+
+ /* class CoCo {
+    String name;
+  }
+
+  association implementedBy [*] CoCo -> JavaSourceFile [1..*];*/
+
+  //______________________________________________________
+  // Model
+  //______________________________________________________
+
+   class Model {
+  	String name;
+  }
+
+  association conformsTo [*] Model -> Language [*];
+  association  [*] Model -> (reliesOn)Model [*];   //FixMe i added
+  //______________________________________________________
+  // ModelFile
+  //______________________________________________________
+
+
+  // ______________________________________________________
+  // CDModelFile
+  // ______________________________________________________
+
+  class CDModelFile extends Artifact {}
+
+   association  [*] CDModelFile -> (defines)Model [1];
+
+  association  [*] CDModelFile -> (imports)CDModelFile [*];
+
+  association  [*] CDModelFile -> (reliesOn)CDModelFile [*]; //FixMe i added
+
+  // ______________________________________________________
+  // CDType
+  // ______________________________________________________
+
+  class CDType {}
+
+  association  [1] CDModelFile -> (definesType)CDType [*];
+
+  association  [*] CDType -> (reliesOnType)CDType [*];
+
+  // ______________________________________________________
+  // System
+  // ______________________________________________________
+
+  abstract class System {
+    String name;
+    String version;
+  }
+
+  composition  System -> (consistsOf)Artifact [*];
+
+  // ______________________________________________________
+  // Product
+  // ______________________________________________________
+
+  class Product extends System {}
+
+ // ______________________________________________________
+   // Tool
+   // ______________________________________________________
+
+   class Tool extends System {}   //41
+  // ______________________________________________________
+  // FreemarkerTemplate
+  // ______________________________________________________
+
+  class FreeMarkerTemplate extends Artifact {}
+
+  association   [*] FreeMarkerTemplate -> (reliesOnTemplate)FreeMarkerTemplate [*];
+
+  association  [*]FreeMarkerTemplate -> (reliesOnJavaArtifact )JavaArtifact [*];
+
+  association reliesOnTemplate    [*] JavaArtifact -> (reliesOnTemplate)FreeMarkerTemplate [*];
+
+  // ______________________________________________________
+  // Generator
+  // ______________________________________________________
+
+  class Generator extends Tool {}
+
+  composition  [1] Generator -> (templates)FreeMarkerTemplate [*];
+
+  association inputLanguage [*] Generator -> Language [*];
+
+  // ______________________________________________________
+  // Action
+  // ______________________________________________________
+/*
+  class Action {
+    Date start;
+    Date end;
+  }
+  association tool [1] Action -> (subaction) Action [*]; //i added
+
+  // ______________________________________________________
+  // ToolExecution
+  // ______________________________________________________
+
+
+//  association /creationDependency [*] Artifact -> Artifact [*];  //assoc was derived && define twice Field Artifact
+
+//  association execUse [*] Artifact -> Artifact [*];    //assoc was derived
+
+
+
+  // ______________________________________________________
+  // Event
+  // ______________________________________________________
+
+  class Event  extends Action{
+    Date timestamp;
+  }*/
+
+
+
+
+  class JavaArchive  extends Archive;
+
+
+}
