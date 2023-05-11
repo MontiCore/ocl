@@ -98,6 +98,9 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     double postSalary = Integer.parseInt(getAttribute(postThisObj, "salary"));
     Assertions.assertEquals(preSalary + 100, postSalary);
 
+    //check if the invariant hold
+    double postAge = Integer.parseInt(getAttribute(postThisObj, "age"));
+    Assertions.assertTrue(postAge >= 18);
     //check if the diff is correct (result = false)
     String result =
             diff.getOpDiffWitness()
