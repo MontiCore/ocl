@@ -71,7 +71,7 @@ public abstract class OCLDiffAbstractTest {
     if (diff.getUnSatCore() != null) {
       printOD(diff.getUnSatCore(), directory);
     }
-    diff.getOpDiffWitness()
+    diff.getDiffWitness()
             .forEach(
                     x -> {
                       printOD(x.getPostOD(), directory);

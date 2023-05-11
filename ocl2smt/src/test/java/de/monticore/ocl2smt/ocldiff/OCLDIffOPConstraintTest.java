@@ -89,9 +89,9 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     OCLOPDiffResult diff = OCLDiffGenerator.oclOPDiffV1(ast, oldOCL, newOCL, method, false);
 
     Assertions.assertNotNull(diff);
-    ASTODNamedObject preThisObj = getThisObj(diff.getOpDiffWitness().iterator().next().getPreOD());
+    ASTODNamedObject preThisObj = getThisObj(diff.getDiffWitness().iterator().next().getPreOD());
     ASTODNamedObject postThisObj =
-            getThisObj(diff.getOpDiffWitness().iterator().next().getPostOD());
+            getThisObj(diff.getDiffWitness().iterator().next().getPostOD());
 
     //check if the post-condition holds
     double preSalary = Integer.parseInt(getAttribute(preThisObj, "salary"));
@@ -103,7 +103,7 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     Assertions.assertTrue(postAge >= 18);
     //check if the diff is correct (result = false)
     String result =
-            diff.getOpDiffWitness()
+            diff.getDiffWitness()
                     .iterator()
                     .next()
                     .getPostOD()

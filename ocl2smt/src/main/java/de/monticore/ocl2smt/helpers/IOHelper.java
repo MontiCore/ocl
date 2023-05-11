@@ -60,7 +60,7 @@ public class IOHelper {
     if (diff.getUnSatCore() != null) {
       printOD(diff.getUnSatCore(), output);
     }
-    diff.getOpDiffWitness()
+    diff.getDiffWitness()
         .forEach(
             x -> {
               String dir = x.getMethod().getMethodName().getQName();

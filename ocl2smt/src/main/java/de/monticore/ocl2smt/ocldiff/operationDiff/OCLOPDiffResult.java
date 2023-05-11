@@ -27,7 +27,7 @@ public class OCLOPDiffResult {
     return unSatCore;
   }
 
-  public Set<OCLOPWitness> getOpDiffWitness() {
+  public Set<OCLOPWitness> getDiffWitness() {
     return opDiffWitness;
   }
 
