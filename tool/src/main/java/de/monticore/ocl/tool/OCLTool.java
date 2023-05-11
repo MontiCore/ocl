@@ -20,6 +20,9 @@ import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
 import de.monticore.types.check.IDerive;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.cli.*;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,8 +30,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.apache.commons.cli.*;
-import org.apache.commons.io.FilenameUtils;
 
 public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
   /*=================================================================*/
@@ -311,7 +312,7 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
         if (cmd.hasOption("odiff")) {
           if (cmd.hasOption("mn")) {
             methodName = cmd.getOptionValue("mn");
-            OCLDiffGenerator.oclOPDiff(cd, oclFiles, newOClFiles, methodName, partial, output);
+            OCLDiffGenerator.oclOPDiffV1(cd, oclFiles, newOClFiles, methodName, partial, output);
           } else {
             Log.error(
                 "The option --odiff need a Method name. this can be added with the option -mn");
