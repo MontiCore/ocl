@@ -1,7 +1,8 @@
 package de.monticore.ocl2smt.ocldiff;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl.ocl._ast.*;
+import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvariantDiff;
@@ -9,9 +10,10 @@ import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOperationDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
+
 import java.io.File;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Set;
 
 public class OCLDiffGenerator {
 
@@ -315,6 +317,6 @@ public class OCLDiffGenerator {
           boolean partial) {
 
     OCLOperationDiff operator = new OCLOperationDiff();
-    return operator.oclDiffV2(cd, oldOcl, newOcl, method, partial);
+    return operator.oclDiffV1(cd, oldOcl, newOcl, method, partial);
   }
 }

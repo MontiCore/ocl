@@ -100,7 +100,7 @@ public abstract class ExpressionAbstractTest {
             TraceUnSatCore.traceUnSatCore(solver));
   }
 
-  public static Context buildContext() {
+  public Context buildContext() {
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
     return new Context(cfg);
