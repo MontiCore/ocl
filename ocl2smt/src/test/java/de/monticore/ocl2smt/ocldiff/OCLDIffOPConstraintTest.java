@@ -86,14 +86,14 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
 
     ASTOCLMethodSignature method = getMethodSignature(newOCL, "Person.increaseSalary");
 
-    OCLOPDiffResult diff = OCLDiffGenerator.oclOPDiff(ast, oldOCL, newOCL, method, false);
+    OCLOPDiffResult diff = OCLDiffGenerator.oclOPDiffV1(ast, oldOCL, newOCL, method, false);
 
     Assertions.assertNotNull(diff);
     ASTODNamedObject preThisObj = getThisObj(diff.getOpDiffWitness().iterator().next().getPreOD());
     ASTODNamedObject postThisObj =
             getThisObj(diff.getOpDiffWitness().iterator().next().getPostOD());
 
-    //check if the post condition hold
+    //check if the post-condition holds
     double preSalary = Integer.parseInt(getAttribute(preThisObj, "salary"));
     double postSalary = Integer.parseInt(getAttribute(postThisObj, "salary"));
     Assertions.assertEquals(preSalary + 100, postSalary);
@@ -110,12 +110,6 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
 
     Assertions.assertEquals(result, "false");
 
-    //check the trace of the invariant
-    Assertions.assertNotNull(diff.getUnSatCore());
-   Assertions.assertTrue( checkLink("OfLegalAgeNew","OfLegalAgeOld", diff.getUnSatCore()));
-
-    //check the inv witness
-    Assertions.assertEquals(1,diff.getInvDiffWitness().size());
     printOPDiff(diff, "/OpConstraintDiff");
   }
 }

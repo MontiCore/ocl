@@ -77,13 +77,6 @@ public abstract class OCLDiffAbstractTest {
                       printOD(x.getPostOD(), directory);
                       printOD(x.getPreOD(), directory);
                     });
-    diff.getInvDiffWitness()
-            .forEach(
-                    x -> {
-                      String subdir = x.getPostOD().getObjectDiagram().getName().split("_")[1];
-                      printOD(x.getPostOD(), directory + "/" + subdir);
-                      printOD(x.getPreOD(), directory + "/" + subdir);
-                    });
   }
 
   public void printOPWitness(Set<OCLOPWitness> witness, String directory) {

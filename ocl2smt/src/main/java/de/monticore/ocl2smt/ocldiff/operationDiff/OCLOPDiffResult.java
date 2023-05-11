@@ -4,21 +4,19 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 
 import java.util.Set;
 
-/** this class save the result of a semdiff on OCL Operations-constraints. */
+/** this class saves the result of a semdiff on OCL Operations-constraints. */
 public class OCLOPDiffResult {
   /** contains specifications tracing between the two models */
   private final ASTODArtifact unSatCore;
 
-  /** contains set of operations witness from the diff witness */
+  /** contains a set of operation witness from the diff witness */
   private final Set<OCLOPWitness> opDiffWitness;
 
-  private final Set<OCLOPWitness> invDiffWitness;
 
   public OCLOPDiffResult(
-          ASTODArtifact unSatCore, Set<OCLOPWitness> opDiffWitness, Set<OCLOPWitness> invDiffWitness) {
+          ASTODArtifact unSatCore, Set<OCLOPWitness> opDiffWitness) {
     this.unSatCore = unSatCore;
     this.opDiffWitness = opDiffWitness;
-    this.invDiffWitness = invDiffWitness;
   }
 
   public void addDiffWitness(OCLOPWitness witness) {
@@ -33,7 +31,4 @@ public class OCLOPDiffResult {
     return opDiffWitness;
   }
 
-  public Set<OCLOPWitness> getInvDiffWitness() {
-    return invDiffWitness;
-  }
 }

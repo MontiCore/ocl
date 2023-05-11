@@ -34,8 +34,8 @@ public class OCLDiffGenerator {
   }
 
   /**
-   * compute the semantic difference ( of OCL-invariant) between a new ocl-Model and an old one. The
-   * result is a set of witness object diagram and specifications tracing.
+   * Compute the semantic difference (of OCL-invariant) between a new ocl-Model and an old one.
+   * The result is a set of witness object diagram and specifications tracing.
    *
    * @param cdFile the class diagram.
    * @param oldOCLFiles the old OCL-Model.
@@ -55,7 +55,7 @@ public class OCLDiffGenerator {
   }
 
   /**
-   * Computes the semantic difference ( of OCL-invariant) between a new CD/OCL-Model and an old one.
+   * Computes the semantic difference (of OCL-invariant) between a new CD/OCL-Model and an old one.
    * The result is a set of witness Object Diagrams and specifications tracing.
    *
    * @param oldCdFile the old class diagram.
@@ -89,7 +89,7 @@ public class OCLDiffGenerator {
    *
    * @param cdFile the class diagram.
    * @param oclFiles Set of OCl constraints.
-   * @param methodName method whose constraints must be analysed.
+   * @param methodName method whose constraints must be analyzed.
    * @param partial if partial == true, the Object Diagrams will be partial regarding the
    *     attributes.
    */
@@ -122,8 +122,9 @@ public class OCLDiffGenerator {
   }
 
   /**
-   * Computes the semantic difference(of an operation constraint) between a new OCL-Model and an old
-   * one. The result is a set of witness object diagrams and specifications tracing.
+   * Computes the semantic difference(of an operation constraint) between a new OCL-Model and an old one.
+   *  * All the preconditions of operation constraints of the new model must hold
+   * The result is a set of witness object diagrams and specifications tracing.
    *
    * @param cdFile the new class diagram.
    * @param newOclFiles the new OCl-Model.
@@ -132,7 +133,7 @@ public class OCLDiffGenerator {
    * @param partial if partial == true, the Object Diagrams will be partial regarding the
    *     attributes.
    */
-  public static void oclOPDiff(
+  public static void oclOPDiffV1(
       File cdFile,
       Set<File> oldOclFiles,
       Set<File> newOclFiles,
@@ -145,7 +146,36 @@ public class OCLDiffGenerator {
     Set<ASTOCLCompilationUnit> newOcl = IOHelper.parseOCl(cdFile, newOclFiles);
     ASTOCLMethodSignature method = IOHelper.getMethodSignature(newOcl, methodName);
     OCLOperationDiff operator = new OCLOperationDiff();
-    OCLOPDiffResult res = operator.oclDiff(cd, oldOcl, newOcl, method, partial);
+    OCLOPDiffResult res = operator.oclDiffV1(cd, oldOcl, newOcl, method, partial);
+    IOHelper.printOPDiff(res, output);
+  }
+
+  /**
+   * Computes the semantic difference(of an operation constraint) between a new OCL-Model and an old one.
+   * All the preconditions of operation constraints of the new model don't hold.
+   * The result is a set of witness object diagrams and specifications tracing.
+   *
+   * @param cdFile the new class diagram.
+   * @param newOclFiles the new OCl-Model.
+   * @param oldOclFiles the old OCL-Model.
+   * @param methodName the method for which the diff of the constraints has to be calculated.
+   * @param partial if partial == true, the Object Diagrams will be partial regarding the
+   *     attributes.
+   */
+  public static void oclOPDiffV2(
+          File cdFile,
+          Set<File> oldOclFiles,
+          Set<File> newOclFiles,
+          String methodName,
+          boolean partial,
+          Path output) {
+
+    ASTCDCompilationUnit cd = IOHelper.parseCD(cdFile);
+    Set<ASTOCLCompilationUnit> oldOcl = IOHelper.parseOCl(cdFile, oldOclFiles);
+    Set<ASTOCLCompilationUnit> newOcl = IOHelper.parseOCl(cdFile, newOclFiles);
+    ASTOCLMethodSignature method = IOHelper.getMethodSignature(newOcl, methodName);
+    OCLOperationDiff operator = new OCLOperationDiff();
+    OCLOPDiffResult res = operator.oclDiffV2(cd, oldOcl, newOcl, method, partial);
     IOHelper.printOPDiff(res, output);
   }
 
@@ -165,8 +195,8 @@ public class OCLDiffGenerator {
   }
 
   /**
-   * compute the semantic difference ( of OCL-invariant) between a new ocl-Model and an old one. The
-   * result is a set of witness object diagram and specifications tracing.
+   * Compute the semantic difference (of OCL-invariant) between a new ocl-Model and an old one.
+   * The result is a set of witness object diagram and specifications tracing.
    *
    * @param cd the class diagram.
    * @param oldOcl the old OCL-Model.
@@ -185,7 +215,7 @@ public class OCLDiffGenerator {
   }
 
   /**
-   * Computes the semantic difference ( of OCL-invariant) between a new CD/OCL-Model and an old one.
+   * Computes the semantic difference (of OCL-invariant) between a new CD/OCL-Model and an old one.
    * The result is a set of witness Object Diagrams and specifications tracing.
    *
    * @param oldCD the old class diagram.
@@ -211,7 +241,7 @@ public class OCLDiffGenerator {
    *
    * @param cd the class diagram.
    * @param ocl Set of OCl constraints.
-   * @param method method whose constraints must be analysed.
+   * @param method method whose constraints must be analyzed.
    * @param partial if partial == true, the Object Diagrams will be partial regarding the
    *     attributes.
    * @return the witness Object Diagram.
@@ -240,9 +270,10 @@ public class OCLDiffGenerator {
     return operator.oclWitness(cd, ocl, partial);
   }
 
-  /**
-   * Computes the semantic difference(of an operation constraint) between a new OCL-Model and an old
-   * one. The result is a set of witness object diagrams and specifications tracing.
+  /***
+   * Computes the semantic difference(of an operation constraint) between a new OCL-Model and an old one.
+   * All the preconditions of operation constraints of the new model don't hold.
+   * The result is a set of witness object diagrams and specifications tracing.
    *
    * @param cd the new class diagram.
    * @param newOcl the new OCl-Model.
@@ -252,7 +283,7 @@ public class OCLDiffGenerator {
    *     attributes.
    * @return the diff witness
    */
-  public static OCLOPDiffResult oclOPDiff(
+  public static OCLOPDiffResult oclOPDiffV2(
       ASTCDCompilationUnit cd,
       Set<ASTOCLCompilationUnit> oldOcl,
       Set<ASTOCLCompilationUnit> newOcl,
@@ -260,6 +291,30 @@ public class OCLDiffGenerator {
       boolean partial) {
 
     OCLOperationDiff operator = new OCLOperationDiff();
-    return operator.oclDiff(cd, oldOcl, newOcl, method, partial);
+    return operator.oclDiffV2(cd, oldOcl, newOcl, method, partial);
+  }
+
+  /***
+   * Computes the semantic difference(of an operation constraint) between a new OCL-Model and an old one.
+   * All the preconditions of operation constraints of the new model must hold.
+   * The result is a set of witness object diagrams and specifications tracing.
+   *
+   * @param cd the new class diagram.
+   * @param newOcl the new OCl-Model.
+   * @param oldOcl the old OCL-Model.
+   * @param method the method for which the diff of the constraints has to be calculated.
+   * @param partial if partial == true, the Object Diagrams will be partial regarding the
+   *     attributes.
+   * @return the diff witness
+   */
+  public static OCLOPDiffResult oclOPDiffV1(
+          ASTCDCompilationUnit cd,
+          Set<ASTOCLCompilationUnit> oldOcl,
+          Set<ASTOCLCompilationUnit> newOcl,
+          ASTOCLMethodSignature method,
+          boolean partial) {
+
+    OCLOperationDiff operator = new OCLOperationDiff();
+    return operator.oclDiffV2(cd, oldOcl, newOcl, method, partial);
   }
 }

@@ -81,12 +81,28 @@ public class OCLOperationDiff {
     }
     return res;
   }
-
-  public OCLOPDiffResult oclDiff(
+  public OCLOPDiffResult oclDiffV1(
+          ASTCDCompilationUnit ast,
+          Set<ASTOCLCompilationUnit> oldOcl,
+          Set<ASTOCLCompilationUnit> newOcl,
+          ASTOCLMethodSignature method,
+          boolean partial) {
+    return  oclDiffHelper(ast,oldOcl,newOcl,method,true,partial) ;
+  }
+  public OCLOPDiffResult oclDiffV2(
+          ASTCDCompilationUnit ast,
+          Set<ASTOCLCompilationUnit> oldOcl,
+          Set<ASTOCLCompilationUnit> newOcl,
+          ASTOCLMethodSignature method,
+          boolean partial) {
+    return  oclDiffHelper(ast,oldOcl,newOcl,method,false,partial) ;
+  }
+  public OCLOPDiffResult oclDiffHelper(
       ASTCDCompilationUnit ast,
       Set<ASTOCLCompilationUnit> oldOcl,
       Set<ASTOCLCompilationUnit> newOcl,
       ASTOCLMethodSignature method,
+          boolean preCondHolds,
       boolean partial) {
 
     // setup
@@ -107,12 +123,18 @@ public class OCLOperationDiff {
     List<OPConstraint> oldConstraints =
             opConst2smt(fullOcl2smt, getOperationsConstraints(method, oldOcl));
 
-    // get old ocl invariants
-    List<IdentifiableBoolExpr> oldInvariants = inv2smt(fullOcl2smt, getInvariantList(oldOcl));
 
-    // build the set of positive constraints from  new opConstraints and Op invariants;
+    // build the set of positive constraints from new opConstraints and new invariants;
     List<IdentifiableBoolExpr> posConstraints = new ArrayList<>();
-    newConstraints.forEach(op -> posConstraints.add(op.getOperationConstraint()));
+    newConstraints.forEach(op -> {
+      if (preCondHolds){
+        posConstraints.add(op.getPreCond());
+        posConstraints.add(op.getPostCond());
+      }else {
+        posConstraints.add(op.getPreCond().negate(ctx));
+      }
+
+    });
     posConstraints.addAll(newInvariants);
 
     List<IdentifiableBoolExpr> negativeConstraints = new ArrayList<>();
@@ -120,12 +142,12 @@ public class OCLOperationDiff {
     Solver solver;
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>(posConstraints);
 
-    // diff between new  on operations constraints
+    // diff between new on operation constraints
     for (OPConstraint oldConstraint : oldConstraints) {
       solverConstraints.add(oldConstraint.getPreCond());
       posConstraints.add(oldConstraint.getPreCond());
 
-      IdentifiableBoolExpr oldOpConstraint = oldConstraint.getOperationConstraint().negate(ctx);
+      IdentifiableBoolExpr oldOpConstraint = oldConstraint.getPostCond().negate(ctx);
       solverConstraints.add(oldOpConstraint);
       negativeConstraints.add(oldOpConstraint);
 
@@ -141,34 +163,11 @@ public class OCLOperationDiff {
       solverConstraints.remove(oldOpConstraint);
     }
 
-    // compute diff on invariants
-    Set<OCLOPWitness> invDiffWitness = new HashSet<>();
-    for (IdentifiableBoolExpr oldInv : oldInvariants) {
-
-      IdentifiableBoolExpr negInv = oldInv.negate(ctx);
-      solverConstraints.add(negInv);
-      negativeConstraints.add(negInv);
-
-      solver = fullOcl2smt.makeSolver(solverConstraints);
-
-      if (solver.check() == Status.SATISFIABLE) {
-
-        String invName = buildInvName(oldInv);
-        OCLOPWitness witness =
-                fullOcl2smt.buildOPOd(solver.getModel(), invName, method, null, partial);
-        invDiffWitness.add(witness);
-
-      } else {
-        trace.addAll(TraceUnSatCore.traceUnSatCore(solver));
-      }
-
-      solverConstraints.remove(negInv);
-    }
     ASTODArtifact unSatCore =
         TraceUnSatCore.buildUnSatOD(posConstraints, negativeConstraints, trace);
-    return new OCLOPDiffResult(unSatCore, opDiffWitness, invDiffWitness);
+    return new OCLOPDiffResult(unSatCore, opDiffWitness);
   }
-  // TODO: fix this  in case of many  constraints per operation
+
 
   private List<ASTOCLOperationConstraint> getOperationsConstraints(
       Set<ASTOCLCompilationUnit> oclSet) {

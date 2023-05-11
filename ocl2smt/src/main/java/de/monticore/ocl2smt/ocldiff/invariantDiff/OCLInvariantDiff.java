@@ -109,13 +109,12 @@ public class OCLInvariantDiff {
     // check if they exist a model for the list of positive Constraint
     Solver solver = ocl2SMTGenerator.makeSolver(solverConstraints);
     if (solver.check() != Status.SATISFIABLE) {
-      List<IdentifiableBoolExpr> list = solverConstraints;
-      list.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getAssociationsConstraints());
-      list.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getInheritanceConstraints());
+      solverConstraints.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getAssociationsConstraints());
+      solverConstraints.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getInheritanceConstraints());
 
       return TraceUnSatCore.buildUnSatOD(
-          list, new ArrayList<>(), TraceUnSatCore.traceUnSatCoreWitness(solver));
-      // Log.error("there are no Model for the List Of Positive Constraints");
+              solverConstraints, new ArrayList<>(), TraceUnSatCore.traceUnSatCoreWitness(solver));
+      // Log.error("there is no Model for the List Of Positive Constraints");
     }
 
     return ocl2SMTGenerator.buildOd(solver.getModel(), "Witness", partial).orElse(null);
@@ -130,7 +129,7 @@ public class OCLInvariantDiff {
     Set<ASTODArtifact> satOdList = new HashSet<>();
     List<ASTODLink> traceUnSat = new ArrayList<>();
 
-    // add one by one all Constraints to the Solver and check if  it can always produce a Model
+    // add one by one all Constraints to the Solver and check if it can always produce a Model
     for (IdentifiableBoolExpr negConstraint : negConstraintList) {
       posConstraintList.add(negConstraint);
       Solver solver = ocl2SMTGenerator.makeSolver(posConstraintList);

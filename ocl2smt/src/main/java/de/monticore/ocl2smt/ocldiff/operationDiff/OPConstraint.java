@@ -43,6 +43,9 @@ public class OPConstraint {
   public IdentifiableBoolExpr getPreCond() {
     return preCond;
   }
+  public IdentifiableBoolExpr getPostCond() {
+    return postCond;
+  }
 
   public IdentifiableBoolExpr getOperationConstraint() {
     return operationConstraint;
