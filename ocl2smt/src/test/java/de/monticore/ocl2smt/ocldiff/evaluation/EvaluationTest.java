@@ -2,19 +2,18 @@ package de.monticore.ocl2smt.ocldiff.evaluation;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.ocldiff.OCLDiffAbstractTest;
 import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 public class EvaluationTest extends OCLDiffAbstractTest {
   @BeforeEach
@@ -60,7 +59,7 @@ public class EvaluationTest extends OCLDiffAbstractTest {
           res = OCLDiffGenerator.oclDiff(ast.get(j), Set.of(ocl.get(i)), Set.of(ocl.get(j)), false);
 
           // print the results
-          printResult(res, "Evaluation/OCL_V" + i + "" + (j));
+          IOHelper.printInvDiffResult(res, Path.of(TARGET_DIR + "Evaluation/OCL_V" + i + "" + (j)));
 
           Log.info(
               "| duration: " + (double) (System.currentTimeMillis() - start) / 1000,
@@ -95,7 +94,8 @@ public class EvaluationTest extends OCLDiffAbstractTest {
                   ast.get(i), ast.get(j), Set.of(ocl.get(i)), Set.of(ocl.get(j)), false);
 
           // print the results
-          printResult(res, "Evaluation/Diff_V" + i + "" + (j));
+          IOHelper.printInvDiffResult(
+              res, Path.of(TARGET_DIR + "Evaluation/Diff_V" + i + "" + (j)));
 
           Log.info(
               "| duration: " + (double) (System.currentTimeMillis() - start) / 1000,
@@ -121,35 +121,37 @@ public class EvaluationTest extends OCLDiffAbstractTest {
 
     long start = System.currentTimeMillis();
 
-    Assertions.assertNotNull(getMethodSignature(Set.of(ocl.get(6)), "JavaSourceFile.compile"));
+    Assertions.assertNotNull(
+        IOHelper.getMethodSignature(Set.of(ocl.get(6)), "JavaSourceFile.compile"));
 
     res =
         OCLDiffGenerator.oclOPDiffV1(
             ast.get(6),
             Set.of(ocl.get(5)),
             Set.of(ocl.get(6)),
-            getMethodSignature(Set.of(ocl.get(6)), "JavaSourceFile.compile"),
+            IOHelper.getMethodSignature(Set.of(ocl.get(6)), "JavaSourceFile.compile"),
             false);
 
     // print the results
-    printOPDiff(res, "Evaluation/Op_V" + 5 + "" + (6));
+    IOHelper.printOPDiff(res, Path.of(TARGET_DIR + "Evaluation/Op_V" + 5 + "" + (6)));
 
     Log.info(
         "| duration: " + (double) (System.currentTimeMillis() - start) / 1000,
         "Diff( V" + 5 + " ,V" + (6) + ")");
 
-    Assertions.assertNotNull(getMethodSignature(Set.of(ocl.get(5)), "JavaSourceFile.compile"));
+    Assertions.assertNotNull(
+        IOHelper.getMethodSignature(Set.of(ocl.get(5)), "JavaSourceFile.compile"));
 
     res =
         OCLDiffGenerator.oclOPDiffV1(
             ast.get(5),
             Set.of(ocl.get(6)),
             Set.of(ocl.get(5)),
-            getMethodSignature(Set.of(ocl.get(5)), "JavaSourceFile.compile"),
+            IOHelper.getMethodSignature(Set.of(ocl.get(5)), "JavaSourceFile.compile"),
             false);
 
     // print the results
-    printOPDiff(res, "Evaluation/Op_V" + 6 + "" + (5));
+    IOHelper.printOPDiff(res, Path.of(TARGET_DIR + "Evaluation/Op_V" + 6 + "" + (5)));
 
     Log.info(
         "| duration: " + (double) (System.currentTimeMillis() - start) / 1000,

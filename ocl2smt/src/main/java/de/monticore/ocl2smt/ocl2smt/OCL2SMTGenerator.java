@@ -12,13 +12,12 @@ import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.SMTSet;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.SourcePosition;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class OCL2SMTGenerator {
   protected OCLExpressionConverter exprConv;
@@ -26,6 +25,11 @@ public class OCL2SMTGenerator {
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
     exprConv = new OCLExpressionConverter(ast, ctx);
+    this.ctx = ctx;
+  }
+
+  public OCL2SMTGenerator(CD2SMTGenerator cd2SMTGenerator, ASTCDCompilationUnit ast, Context ctx) {
+    exprConv = new OCLExpressionConverter(cd2SMTGenerator, ast, ctx);
     this.ctx = ctx;
   }
 

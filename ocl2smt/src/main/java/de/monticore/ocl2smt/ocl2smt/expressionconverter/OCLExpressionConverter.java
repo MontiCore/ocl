@@ -1,5 +1,7 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
+import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
+
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
@@ -25,20 +27,17 @@ import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 /** This class convert All OCL-Expressions except @Pre-Expressions in SMT */
 public class OCLExpressionConverter {
 
   protected final Context ctx;
-  protected final CD2SMTGenerator cd2smtGenerator;
+  protected CD2SMTGenerator cd2smtGenerator;
 
   protected Map<String, Expr<? extends Sort>> varNames;
 
@@ -57,6 +56,13 @@ public class OCLExpressionConverter {
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
     typeConverter = new TypeConverter(cd2smtGenerator);
     literalConverter = new LiteralConverter(ctx, typeConverter);
+  }
+
+  public OCLExpressionConverter(
+      CD2SMTGenerator cd2SMTGenerator, ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
+    this(astcdCompilationUnit, ctx);
+    this.cd2smtGenerator = cd2SMTGenerator;
+    cd2SMTGenerator.cd2smt(astcdCompilationUnit, ctx);
   }
 
   public OCLExpressionConverter(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {

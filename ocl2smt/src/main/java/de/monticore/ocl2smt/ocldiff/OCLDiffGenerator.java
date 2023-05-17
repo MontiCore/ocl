@@ -10,7 +10,6 @@ import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOperationDiff;
 import de.monticore.odbasis._ast.ASTODArtifact;
-
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Set;
@@ -36,8 +35,8 @@ public class OCLDiffGenerator {
   }
 
   /**
-   * Compute the semantic difference (of OCL-invariant) between a new ocl-Model and an old one.
-   * The result is a set of witness object diagram and specifications tracing.
+   * Compute the semantic difference (of OCL-invariant) between a new ocl-Model and an old one. The
+   * result is a set of witness object diagram and specifications tracing.
    *
    * @param cdFile the class diagram.
    * @param oldOCLFiles the old OCL-Model.
@@ -124,9 +123,9 @@ public class OCLDiffGenerator {
   }
 
   /**
-   * Computes the semantic difference(of an operation constraint) between a new OCL-Model and an old one.
-   *  * All the preconditions of operation constraints of the new model must hold
-   * The result is a set of witness object diagrams and specifications tracing.
+   * Computes the semantic difference(of an operation constraint) between a new OCL-Model and an old
+   * one. * All the preconditions of operation constraints of the new model must hold The result is
+   * a set of witness object diagrams and specifications tracing.
    *
    * @param cdFile the new class diagram.
    * @param newOclFiles the new OCl-Model.
@@ -153,9 +152,9 @@ public class OCLDiffGenerator {
   }
 
   /**
-   * Computes the semantic difference(of an operation constraint) between a new OCL-Model and an old one.
-   * All the preconditions of operation constraints of the new model don't hold.
-   * The result is a set of witness object diagrams and specifications tracing.
+   * Computes the semantic difference(of an operation constraint) between a new OCL-Model and an old
+   * one. All the preconditions of operation constraints of the new model don't hold. The result is
+   * a set of witness object diagrams and specifications tracing.
    *
    * @param cdFile the new class diagram.
    * @param newOclFiles the new OCl-Model.
@@ -165,12 +164,12 @@ public class OCLDiffGenerator {
    *     attributes.
    */
   public static void oclOPDiffV2(
-          File cdFile,
-          Set<File> oldOclFiles,
-          Set<File> newOclFiles,
-          String methodName,
-          boolean partial,
-          Path output) {
+      File cdFile,
+      Set<File> oldOclFiles,
+      Set<File> newOclFiles,
+      String methodName,
+      boolean partial,
+      Path output) {
 
     ASTCDCompilationUnit cd = IOHelper.parseCD(cdFile);
     Set<ASTOCLCompilationUnit> oldOcl = IOHelper.parseOCl(cdFile, oldOclFiles);
@@ -197,8 +196,8 @@ public class OCLDiffGenerator {
   }
 
   /**
-   * Compute the semantic difference (of OCL-invariant) between a new ocl-Model and an old one.
-   * The result is a set of witness object diagram and specifications tracing.
+   * Compute the semantic difference (of OCL-invariant) between a new ocl-Model and an old one. The
+   * result is a set of witness object diagram and specifications tracing.
    *
    * @param cd the class diagram.
    * @param oldOcl the old OCL-Model.
@@ -310,11 +309,11 @@ public class OCLDiffGenerator {
    * @return the diff witness
    */
   public static OCLOPDiffResult oclOPDiffV1(
-          ASTCDCompilationUnit cd,
-          Set<ASTOCLCompilationUnit> oldOcl,
-          Set<ASTOCLCompilationUnit> newOcl,
-          ASTOCLMethodSignature method,
-          boolean partial) {
+      ASTCDCompilationUnit cd,
+      Set<ASTOCLCompilationUnit> oldOcl,
+      Set<ASTOCLCompilationUnit> newOcl,
+      ASTOCLMethodSignature method,
+      boolean partial) {
 
     OCLOperationDiff operator = new OCLOperationDiff();
     return operator.oclDiffV1(cd, oldOcl, newOcl, method, partial);

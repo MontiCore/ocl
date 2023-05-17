@@ -14,7 +14,6 @@ import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.odbasis._ast.ASTODArtifact;
-
 import java.util.List;
 import java.util.Optional;
 
