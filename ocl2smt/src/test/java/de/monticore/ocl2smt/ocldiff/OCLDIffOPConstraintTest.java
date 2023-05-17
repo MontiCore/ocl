@@ -8,14 +8,13 @@ import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.odbasis._ast.ASTODNamedObject;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
   @BeforeEach
@@ -65,7 +64,7 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     Assertions.assertEquals("\"newCompany\"", getAttribute(postLinks.get(0), "name"));
     Assertions.assertEquals("1", getAttribute(postLinks.get(0), "employees"));
     int postAge = Integer.parseInt(getAttribute(preObj, "age"));
-   Assertions.assertTrue(postAge >= 18);
+    Assertions.assertTrue(postAge >= 18);
 
     // checkDiff
     Assertions.assertEquals(
@@ -90,26 +89,25 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
 
     Assertions.assertNotNull(diff);
     ASTODNamedObject preThisObj = getThisObj(diff.getDiffWitness().iterator().next().getPreOD());
-    ASTODNamedObject postThisObj =
-            getThisObj(diff.getDiffWitness().iterator().next().getPostOD());
+    ASTODNamedObject postThisObj = getThisObj(diff.getDiffWitness().iterator().next().getPostOD());
 
-    //check if the post-condition holds
+    // check if the post-condition holds
     double preSalary = Integer.parseInt(getAttribute(preThisObj, "salary"));
     double postSalary = Integer.parseInt(getAttribute(postThisObj, "salary"));
     Assertions.assertEquals(preSalary + 100, postSalary);
 
-    //check if the invariant hold
+    // check if the invariant hold
     double postAge = Integer.parseInt(getAttribute(postThisObj, "age"));
     Assertions.assertTrue(postAge >= 18);
-    //check if the diff is correct (result = false)
+    // check if the diff is correct (result = false)
     String result =
-            diff.getDiffWitness()
-                    .iterator()
-                    .next()
-                    .getPostOD()
-                    .getObjectDiagram()
-                    .getStereotype()
-                    .getValue("result");
+        diff.getDiffWitness()
+            .iterator()
+            .next()
+            .getPostOD()
+            .getObjectDiagram()
+            .getStereotype()
+            .getValue("result");
 
     Assertions.assertEquals(result, "false");
 

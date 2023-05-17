@@ -1,7 +1,6 @@
 package de.monticore.ocl2smt.ocldiff.operationDiff;
 
 import de.monticore.odbasis._ast.ASTODArtifact;
-
 import java.util.Set;
 
 /** this class saves the result of a semdiff on OCL Operations-constraints. */
@@ -12,9 +11,7 @@ public class OCLOPDiffResult {
   /** contains a set of operation witness from the diff witness */
   private final Set<OCLOPWitness> opDiffWitness;
 
-
-  public OCLOPDiffResult(
-          ASTODArtifact unSatCore, Set<OCLOPWitness> opDiffWitness) {
+  public OCLOPDiffResult(ASTODArtifact unSatCore, Set<OCLOPWitness> opDiffWitness) {
     this.unSatCore = unSatCore;
     this.opDiffWitness = opDiffWitness;
   }
@@ -30,5 +27,4 @@ public class OCLOPDiffResult {
   public Set<OCLOPWitness> getDiffWitness() {
     return opDiffWitness;
   }
-
 }
