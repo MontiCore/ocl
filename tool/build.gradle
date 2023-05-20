@@ -22,6 +22,7 @@ dependencies {
   implementation "de.monticore:monticore-runtime:$mc_version"
   implementation "de.monticore:monticore-grammar:$mc_version"
   implementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
+  implementation "de.monticore.lang:cd4analysis:$mc_version:cd2smt"
   testImplementation(project(':').sourceSets.test.output)
   testImplementation project(path: ':')
   testImplementation "org.assertj:assertj-core:$assertj_version"

@@ -220,8 +220,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
               cd2smtGenerator.getSort(
                   CDHelper.getASTCDType(result.getOclType().getName(), getCD())),
               ctx.mkBoolSort());
-      res =
-          new SMTSet(x -> (BoolExpr) ctx.mkApp(setFunc, x), result.getOclType(), literalConverter);
+      res = new SMTSet(x -> (BoolExpr) ctx.mkApp(setFunc, x), result.getOclType(), this);
       result.setValue(setFunc);
     } else {
 

@@ -5,8 +5,9 @@ import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.LiteralConverter;
+import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
 import de.se_rwth.commons.logging.Log;
+import java.util.Set;
 import java.util.function.Function;
 
 public class SMTSet {
@@ -14,16 +15,16 @@ public class SMTSet {
   private final OCLType type;
 
   private final Context ctx;
-  private final LiteralConverter literalConverter;
+  OCLExpressionConverter exprConv;
 
   public SMTSet(
       Function<Expr<? extends Sort>, BoolExpr> setFunction,
       OCLType type,
-      LiteralConverter literalConverter) {
+      OCLExpressionConverter exprConv) {
     this.setFunction = setFunction;
     this.type = type;
-    this.literalConverter = literalConverter;
-    this.ctx = literalConverter.getContext();
+    this.ctx = exprConv.getCd2smtGenerator().getContext();
+    this.exprConv = exprConv;
   }
 
   private SMTSet mkSetOperation(SMTSet rightSet, OPERATION op) {
@@ -45,7 +46,7 @@ public class SMTSet {
         Log.error("the Set Operation " + op + " is not implemented ");
         setFunction = s -> ctx.mkTrue();
     }
-    return new SMTSet(setFunction, this.type, literalConverter);
+    return new SMTSet(setFunction, this.type, exprConv);
   }
 
   public SMTSet mkSetUnion(SMTSet rightSet) {
@@ -78,20 +79,13 @@ public class SMTSet {
   }
 
   public BoolExpr containsAll(SMTSet set) {
-    Expr<? extends Sort> expr = literalConverter.declObj(set.getType(), "expr111");
-    return ctx.mkForall(
-        new Expr[] {expr},
-        ctx.mkImplies(set.contains(expr), this.contains(expr)),
-        0,
-        null,
-        null,
-        null,
-        null);
+    Expr<? extends Sort> expr = exprConv.declVariable(set.getType(), "expr111");
+    return exprConv.mkForall(Set.of(expr), ctx.mkImplies(set.contains(expr), this.contains(expr)));
   }
 
   public BoolExpr isEmpty(Context ctx) {
-    Expr<? extends Sort> expr = literalConverter.declObj(type, "expr11");
-    return ctx.mkForall(new Expr[] {expr}, this.notIn(expr), 0, null, null, null, null);
+    Expr<? extends Sort> expr = exprConv.declVariable(type, "expr11");
+    return exprConv.mkForall(Set.of(expr), this.notIn(expr));
   }
 
   public BoolExpr notIn(Expr<? extends Sort> expr) {
@@ -99,32 +93,19 @@ public class SMTSet {
   }
 
   public SMTSet collectAll(Function<Expr<? extends Sort>, SMTSet> function) {
-    Expr<? extends Sort> expr = literalConverter.declObj(type, "xollector");
+    Expr<? extends Sort> expr = exprConv.declVariable(type, "xollector");
     return new SMTSet(
         kii ->
-            ctx.mkExists(
-                new Expr[] {expr},
-                ctx.mkAnd(this.contains(expr), function.apply(expr).contains(kii)),
-                0,
-                null,
-                null,
-                null,
-                null),
+            exprConv.mkExists(
+                Set.of(expr), ctx.mkAnd(this.contains(expr), function.apply(expr).contains(kii))),
         function.apply(expr).type,
-        literalConverter);
+        exprConv);
   }
 
   public BoolExpr mkSetEq(SMTSet set2) {
 
-    Expr<? extends Sort> expr = literalConverter.declObj(this.getType(), "const");
-    return ctx.mkForall(
-        new Expr[] {expr},
-        ctx.mkEq(this.contains(expr), set2.contains(expr)),
-        0,
-        null,
-        null,
-        null,
-        null);
+    Expr<? extends Sort> expr = exprConv.declVariable(this.getType(), "const");
+    return exprConv.mkForall(Set.of(expr), ctx.mkEq(this.contains(expr), set2.contains(expr)));
   }
 
   enum OPERATION {

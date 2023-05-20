@@ -28,11 +28,6 @@ public class OCL2SMTGenerator {
     this.ctx = ctx;
   }
 
-  public OCL2SMTGenerator(CD2SMTGenerator cd2SMTGenerator, ASTCDCompilationUnit ast, Context ctx) {
-    exprConv = new OCLExpressionConverter(cd2SMTGenerator, ast, ctx);
-    this.ctx = ctx;
-  }
-
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
     exprConv = new OCLExpressionConverter(ast, ocl2SMTGenerator);
     this.ctx = ocl2SMTGenerator.ctx;

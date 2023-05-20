@@ -6,6 +6,10 @@ import static org.gradle.internal.impldep.org.testng.Assert.assertEquals;
 import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
+import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.helpers.IOHelper;
@@ -21,6 +25,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 public class OCLDiffTest extends OCLDiffAbstractTest {
@@ -32,9 +37,12 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     super.initMills();
   }
 
-  @Test
-  public void testOCLDiffOneCD() throws IOException {
-
+  @ParameterizedTest
+  @MethodSource("cd2smtStrategies")
+  public void testOCLDiffOneCD(
+      ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
+      throws IOException {
+    CD2SMTMill.init(cs, is, as);
     OCLInvDiffResult diff = computeDiffOneCD("Auction.cd", "old.ocl", "new.ocl");
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OCLDiffOneCD"));
     Assertions.assertEquals(4, diff.getDiffWitness().size());
@@ -47,8 +55,10 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     assertFalse(checkLink("obj_MaxIdent_7", "obj_No_Auction_Facebook", diff.getUnSatCore()));
   }
 
-  @Test
-  public void testOclDiff2CD_NoDiff() throws IOException {
+  @ParameterizedTest
+  @MethodSource("cd2smtStrategies")
+  public void testOclDiff2CD_NoDiff( ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as) throws IOException {
+    CD2SMTMill.init(cs, is, as);
     OCLInvDiffResult diff =
         computeDiff2CD(
             "2CDDiff/nodiff/old.cd",
@@ -63,8 +73,12 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     assertTrue(checkLink("obj_Pos3", "obj_Cardinality_left", diff.getUnSatCore()));
   }
 
-  @Test
-  public void testOclDiff2CD_diff() throws IOException {
+  @ParameterizedTest
+  @MethodSource("cd2smtStrategies")
+  public void testOclDiff2CD_diff(
+      ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
+      throws IOException {
+    CD2SMTMill.init(cs, is, as);
     OCLInvDiffResult diff =
         computeDiff2CD(
             "2CDDiff/diff/old.cd",
@@ -79,8 +93,12 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     assertTrue(checkLink("obj_Pos1", "obj_Cardinality_left", diff.getUnSatCore()));
   }
 
-  @Test
-  public void testOclDiff2CD_CDDiff() throws IOException {
+  @ParameterizedTest
+  @MethodSource("cd2smtStrategies")
+  public void testOclDiff2CD_CDDiff(
+      ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
+      throws IOException {
+    CD2SMTMill.init(cs, is, as);
     OCLInvDiffResult diff =
         computeDiff2CD(
             "2CDDiff/cddiff/old.cd",
@@ -92,8 +110,12 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     assertTrue(diff.getDiffWitness().size() >= 1);
   }
 
-  @Test
-  public void testOCLDiffPartial() throws IOException {
+  @ParameterizedTest
+  @MethodSource("cd2smtStrategies")
+  public void testOCLDiffPartial(
+      ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
+      throws IOException {
+    CD2SMTMill.init(cs, is, as);
     ASTCDCompilationUnit cdAST = parseCD("Partial/Partial.cd");
     Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();
     oclSet.add(parseOCl("Partial/Partial.cd", "Partial/partial.ocl"));

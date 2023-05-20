@@ -1,11 +1,16 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocl2smt;
 
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
+import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
+import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
 import java.io.IOException;
-import java.util.Date;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class TransitiveClosureTest extends ExpressionAbstractTest {
   @BeforeEach
@@ -13,12 +18,14 @@ public class TransitiveClosureTest extends ExpressionAbstractTest {
     super.initLogger();
     super.initMills();
     parse("/Transitive-closure/transitiveClosure.cd", "/Transitive-closure/transitiveClosure.ocl");
-    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
-    Date a;
   }
 
-  @Test
-  public void Test_SimpleTransitive_Closure() {
+  @ParameterizedTest
+  @MethodSource("cd2smtStrategies")
+  public void Test_SimpleTransitive_Closure(
+      ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as) {
+    CD2SMTMill.init(cs, is, as);
+    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
     testInv("SimpleTransitive_Closure", "transitive-closure");
   }
 

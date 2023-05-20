@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.tool;
 
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.io.FileReaderWriter;
 import de.monticore.io.paths.MCPath;
@@ -241,7 +242,7 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
           || cmd.hasOption("ow")) {
 
         CD4CodeMill.init();
-
+        CD2SMTMill.initDefault();
         // check if there are a class diagram
         if (!cmd.hasOption("cd")) {
           Log.error(

@@ -6,6 +6,7 @@ import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -51,18 +52,11 @@ public class OCLExpressionConverter {
     this.ctx = ctx;
     genConstraints = new HashSet<>();
     varNames = new HashMap<>();
-    cd2smtGenerator = new CD2SMTGenerator();
+    cd2smtGenerator = CD2SMTMill.cd2SMTGenerator();
 
     cd2smtGenerator.cd2smt(astcdCompilationUnit, ctx);
     typeConverter = new TypeConverter(cd2smtGenerator);
     literalConverter = new LiteralConverter(ctx, typeConverter);
-  }
-
-  public OCLExpressionConverter(
-      CD2SMTGenerator cd2SMTGenerator, ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
-    this(astcdCompilationUnit, ctx);
-    this.cd2smtGenerator = cd2SMTGenerator;
-    cd2SMTGenerator.cd2smt(astcdCompilationUnit, ctx);
   }
 
   public OCLExpressionConverter(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
@@ -472,8 +466,7 @@ public class OCLExpressionConverter {
   protected BoolExpr convertBoolOptionalOp(ASTFieldAccessExpression node, String methodName) {
     BoolExpr res = null;
     Pair<Expr<? extends Sort>, BoolExpr> link = convertFieldAccOptional(node);
-    BoolExpr isPresent =
-        ctx.mkExists(new Expr[] {link.getLeft()}, link.getRight(), 0, null, null, null, null);
+    BoolExpr isPresent = mkExists(Set.of(link.getLeft()), link.getRight());
     switch (methodName) {
       case "isPresent":
         res = isPresent;
@@ -527,14 +520,7 @@ public class OCLExpressionConverter {
     BoolExpr constraint = convertInDeclConstraints(var);
 
     BoolExpr result =
-        ctx.mkForall(
-            var.keySet().toArray(new Expr[0]),
-            ctx.mkImplies(constraint, convertBoolExpr(node.getExpression())),
-            1,
-            null,
-            null,
-            null,
-            null);
+        mkForall(var.keySet(), ctx.mkImplies(constraint, convertBoolExpr(node.getExpression())));
 
     // Delete Variables from "scope"
     closeScope(node.getInDeclarationList());
@@ -549,14 +535,7 @@ public class OCLExpressionConverter {
     BoolExpr constraint = convertInDeclConstraints(var);
 
     BoolExpr result =
-        ctx.mkExists(
-            var.keySet().toArray(new Expr[0]),
-            ctx.mkAnd(constraint, convertBoolExpr(node.getExpression())),
-            0,
-            null,
-            null,
-            null,
-            null);
+        mkExists(var.keySet(), ctx.mkAnd(constraint, convertBoolExpr(node.getExpression())));
 
     // Delete Variables from "scope"
     closeScope(node.getInDeclarationList());
@@ -664,7 +643,7 @@ public class OCLExpressionConverter {
         per ->
             OCLHelper.evaluateLink(association, obj, role, per, cd2smtGenerator, literalConverter);
 
-    return new SMTSet(auction_per_set, type2, literalConverter);
+    return new SMTSet(auction_per_set, type2, this);
   }
 
   protected SMTSet convertFieldAccessSetHelper(ASTExpression node, String name) {
@@ -686,7 +665,7 @@ public class OCLExpressionConverter {
                     OCLHelper.evaluateLink(
                         person_parent, obj1, name, obj2, cd2smtGenerator, literalConverter),
                 type2,
-                literalConverter);
+                this);
 
     return pSet.collectAll(function);
   }
@@ -831,17 +810,14 @@ public class OCLExpressionConverter {
     }
     assert sort != null;
     SMTSet set =
-        new SMTSet(
-            obj -> ctx.mkFalse(),
-            OCLType.buildOCLType(sort.getName().toString()),
-            literalConverter);
+        new SMTSet(obj -> ctx.mkFalse(), OCLType.buildOCLType(sort.getName().toString()), this);
     SMTSet set1 = set;
     if (!setItemValues.isEmpty()) {
       set =
           new SMTSet(
               obj -> ctx.mkOr(set1.contains(obj), addValuesToSetEnum(setItemValues, obj)),
               OCLType.buildOCLType(sort.getName().toString()),
-              literalConverter);
+              this);
     }
 
     for (Function<ArithExpr<? extends Sort>, BoolExpr> range : rangeFilters) {
@@ -851,7 +827,7 @@ public class OCLExpressionConverter {
           new SMTSet(
               obj -> ctx.mkOr(set2.contains(obj), range.apply((ArithExpr<? extends Sort>) obj)),
               OCLType.buildOCLType(sort.getName().toString()),
-              literalConverter);
+              this);
     }
     return set;
   }
@@ -924,7 +900,7 @@ public class OCLExpressionConverter {
                     null,
                     null),
             literalConverter.getType(expr1),
-            literalConverter);
+            this);
   }
 
   protected Function<BoolExpr, SMTSet> convertSetVarDeclLeft(ASTSetVariableDeclaration node) {
@@ -932,17 +908,9 @@ public class OCLExpressionConverter {
         declVariable(typeConverter.buildOCLType(node.getMCType()), node.getName());
     return bool ->
         new SMTSet(
-            obj ->
-                ctx.mkExists(
-                    new Expr[] {expr},
-                    ctx.mkAnd(ctx.mkEq(obj, expr), bool),
-                    0,
-                    null,
-                    null,
-                    null,
-                    null),
+            obj -> mkExists(Set.of(expr), ctx.mkAnd(ctx.mkEq(obj, expr), bool)),
             literalConverter.getType(expr),
-            literalConverter);
+            this);
   }
 
   protected BoolExpr convertSetVarDeclRight(ASTSetVariableDeclaration node) {
@@ -980,17 +948,9 @@ public class OCLExpressionConverter {
     SMTSet set = convertSet(node.getExpression());
     return bool ->
         new SMTSet(
-            obj ->
-                ctx.mkExists(
-                    new Expr[] {expr},
-                    ctx.mkAnd(ctx.mkEq(obj, expr), set.contains(expr), bool),
-                    0,
-                    null,
-                    null,
-                    null,
-                    null),
+            obj -> mkExists(Set.of(expr), ctx.mkAnd(ctx.mkEq(obj, expr), set.contains(expr), bool)),
             literalConverter.getType(expr),
-            literalConverter);
+            this);
   }
 
   // a.auction**
@@ -1026,7 +986,7 @@ public class OCLExpressionConverter {
 
     Function<Expr<? extends Sort>, BoolExpr> setFunc =
         obj -> (BoolExpr) trans_rel.apply(auction, obj);
-    return new SMTSet(setFunc, literalConverter.getType(auction), literalConverter);
+    return new SMTSet(setFunc, literalConverter.getType(auction), this);
   }
 
   private FuncDecl<BoolSort> buildReflexiveNewAssocFunc(OCLType type, String otherRole) {
@@ -1035,19 +995,14 @@ public class OCLExpressionConverter {
     Sort thisSort = typeConverter.getSort(type);
     FuncDecl<BoolSort> rel =
         ctx.mkFuncDecl("reflexive_relation", new Sort[] {thisSort, thisSort}, ctx.mkBoolSort());
-    Expr<? extends Sort> obj1 = ctx.mkConst("obj1", thisSort);
-    Expr<? extends Sort> obj2 = ctx.mkConst("obj2", thisSort);
+    Expr<? extends Sort> obj1 = declVariable(type, "obj1");
+    Expr<? extends Sort> obj2 = declVariable(type, "obj2");
     BoolExpr rel_is_assocFunc =
-        ctx.mkForall(
-            new Expr[] {obj1, obj2},
+        mkForall(
+            Set.of(obj1, obj2),
             ctx.mkEq(
                 rel.apply(obj1, obj2),
-                cd2smtGenerator.evaluateLink(association, objClass, objClass, obj1, obj2)),
-            0,
-            null,
-            null,
-            null,
-            null);
+                cd2smtGenerator.evaluateLink(association, objClass, objClass, obj1, obj2)));
     genConstraints.add(rel_is_assocFunc);
     return rel;
   }
@@ -1099,5 +1054,37 @@ public class OCLExpressionConverter {
 
   private void notFullyImplemented(ASTExpression node) {
     Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
+  }
+
+  public BoolExpr mkForall(Set<Expr<?>> vars, BoolExpr body) {
+
+    return ctx.mkForall(
+        vars.toArray(new Expr[0]),
+        ctx.mkImplies(filterObjects(vars), body),
+        0,
+        null,
+        null,
+        null,
+        null);
+  }
+
+  public BoolExpr filterObjects(Set<Expr<?>> vars) {
+    BoolExpr filter = ctx.mkTrue();
+    for (Expr<?> entry : vars) {
+
+      if (!TypeConverter.isPrimitiv(literalConverter.getType(entry).getName())) {
+        ASTCDType type =
+            CDHelper.getASTCDType(
+                literalConverter.getType(entry).getName(),
+                cd2smtGenerator.getClassDiagram().getCDDefinition());
+        filter = ctx.mkAnd(filter, cd2smtGenerator.filterObject(entry, type));
+      }
+    }
+    return filter;
+  }
+
+  public BoolExpr mkExists(Set<Expr<?>> vars, BoolExpr body) {
+    return ctx.mkExists(
+        vars.toArray(new Expr[0]), ctx.mkAnd(filterObjects(vars), body), 0, null, null, null, null);
   }
 }
