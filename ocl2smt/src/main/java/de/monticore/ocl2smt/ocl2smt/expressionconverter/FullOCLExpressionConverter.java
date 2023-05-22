@@ -98,7 +98,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   }
 
   @Override
-  protected Expr<? extends Sort> convertName(ASTNameExpression node) {
+  protected Expr<? extends Sort> convert(ASTNameExpression node) {
     boolean isPre = isPreStrategy();
     exitPre();
     Expr<? extends Sort> res = null;
@@ -139,7 +139,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   }
 
   @Override
-  protected Expr<? extends Sort> convertFieldAcc(ASTFieldAccessExpression node) {
+  protected Expr<? extends Sort> convert(ASTFieldAccessExpression node) {
     boolean isPre = isPreStrategy();
     exitPre();
     String attributeName = node.getName();

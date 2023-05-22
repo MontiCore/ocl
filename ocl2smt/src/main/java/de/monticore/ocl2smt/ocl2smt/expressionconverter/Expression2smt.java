@@ -16,6 +16,173 @@ public abstract class Expression2smt {
 
   protected Context ctx;
 
+  /**
+   * ++++++++++++++++++++++++++++++++++++++++++literal-expressions++++++++++++++++++++++++++++++++++++++++++++++++++++++
+   */
+  protected BoolExpr convert(ASTBooleanLiteral node) {
+    return ctx.mkBool(node.getValue());
+  }
+
+  protected SeqExpr<CharSort> convert(ASTStringLiteral node) {
+    return ctx.mkString(node.getValue());
+  }
+
+  protected IntNum convert(ASTNatLiteral node) {
+    return ctx.mkInt(node.getValue());
+  }
+
+  protected IntNum convert(ASTCharLiteral node) {
+    return ctx.mkInt(node.getValue());
+  }
+
+  protected FPNum convert(ASTBasicDoubleLiteral node) {
+    return ctx.mkFP(node.getValue(), ctx.mkFPSortDouble());
+  }
+
+  /**
+   * ++++++++++++++++++++++++++++++++++++++++++logical-expressions++++++++++++++++++++++++++++++++++++++++++++++++++++++
+   */
+  protected BoolExpr convert(ASTBooleanNotExpression node) {
+    return ctx.mkNot(convertBoolExpr(node.getExpression()));
+  }
+
+  protected BoolExpr convert(ASTLogicalNotExpression node) {
+    return ctx.mkNot(convertBoolExpr(node.getExpression()));
+  }
+
+  protected BoolExpr convert(ASTBooleanAndOpExpression node) {
+    return ctx.mkAnd(convertBoolExpr(node.getLeft()), convertBoolExpr(node.getRight()));
+  }
+
+  protected BoolExpr convert(ASTBooleanOrOpExpression node) {
+    return ctx.mkOr(convertBoolExpr(node.getLeft()), convertBoolExpr(node.getRight()));
+  }
+
+  protected BoolExpr convert(ASTEquivalentExpression node) {
+    return ctx.mkEq(convertExpr(node.getLeft()), convertExpr(node.getRight()));
+  }
+
+  protected BoolExpr convert(ASTImpliesExpression node) {
+    return ctx.mkImplies(convertBoolExpr(node.getLeft()), convertBoolExpr(node.getRight()));
+  }
+
+  /**
+   * ++++++++++++++++++++++++++++++++++++++++++comparison-expressions++++++++++++++++++++++++++++++++++++++++++++++++++++++
+   */
+  protected BoolExpr convert(ASTLessThanExpression node) {
+    return ctx.mkLt(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
+  }
+
+  protected BoolExpr convert(ASTLessEqualExpression node) {
+    return ctx.mkLe(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
+  }
+
+  protected BoolExpr convert(ASTGreaterThanExpression node) {
+    return ctx.mkGt(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
+  }
+
+  protected BoolExpr convert(ASTGreaterEqualExpression node) {
+    return ctx.mkGe(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
+  }
+
+  protected BoolExpr convert(ASTEqualsExpression node) {
+    return ctx.mkEq(convertExpr(node.getLeft()), convertExpr(node.getRight()));
+  }
+
+  protected BoolExpr convert(ASTNotEqualsExpression node) {
+    return ctx.mkNot(ctx.mkEq(convertExpr(node.getLeft()), convertExpr(node.getRight())));
+  }
+
+  /**
+   * ++++++++++++++++++++++++++++++++++++++++++arithmetic-expressions++++++++++++++++++++++++++++++++++++++++++++++++++++++
+   */
+  protected ArithExpr<? extends ArithSort> convert(ASTMinusPrefixExpression node) {
+    return ctx.mkMul(ctx.mkInt(-1), convertExprArith(node.getExpression()));
+  }
+
+  protected ArithExpr<? extends ArithSort> convert(ASTPlusPrefixExpression node) {
+    return convertExprArith(node.getExpression());
+  }
+
+  protected ArithExpr<? extends ArithSort> convert(ASTMultExpression node) {
+    return ctx.mkMul(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
+  }
+
+  protected ArithExpr<? extends ArithSort> convert(ASTDivideExpression node) {
+    return ctx.mkDiv(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
+  }
+
+  protected IntExpr convert(ASTModuloExpression node) {
+    return ctx.mkMod(
+        (IntExpr) convertExprArith(node.getLeft()), (IntExpr) convertExprArith(node.getRight()));
+  }
+
+  protected ArithExpr<? extends ArithSort> convertPlus(ASTPlusExpression node) {
+    return ctx.mkAdd(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
+  }
+
+  protected ArithExpr<ArithSort> convert(ASTMinusExpression node) {
+    return ctx.mkSub(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
+  }
+
+  /***
+   * ++++++++++++++++++++++++++++++++++++++++++method-call-expressions++++++++++++++++++++++++++++++++++++++++++++++++++
+   */
+  // String.replace(x,y)
+  protected SeqExpr<CharSort> convertStringMethodCall(ASTCallExpression node) {
+    SeqExpr<CharSort> res = null;
+    if (node.getDefiningSymbol().isPresent()) {
+      String name = node.getDefiningSymbol().get().getName();
+      if (node.getExpression() instanceof ASTFieldAccessExpression) {
+        SeqExpr<CharSort> arg1 = convertString(node.getArguments().getExpression(0));
+        SeqExpr<CharSort> arg2 = convertString(node.getArguments().getExpression(1));
+        SeqExpr<CharSort> str =
+            convertString(((ASTFieldAccessExpression) node.getExpression()).getExpression());
+        if ("replace".equals(name)) {
+          res = ctx.mkReplace(str, arg1, arg2);
+        }
+      }
+      return res;
+    }
+    notFullyImplemented(node);
+    return null;
+  }
+
+  /***
+   * convert the following methods call in smt and return a Bool-Expressions
+   * -String.startsWith(String)
+   * -String.endsWith(String)
+   * -String.contains(String)
+   * -Date.before(Date)
+   * -Date.after(Date)
+   */
+  protected BoolExpr convert(ASTCallExpression node) {
+    BoolExpr res = null;
+    if (node.getDefiningSymbol().isPresent()) {
+      String name = node.getDefiningSymbol().get().getName();
+      if (node.getExpression() instanceof ASTFieldAccessExpression) {
+        ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
+        if (TypeConverter.isString(caller)) {
+          res = convertBoolStringOp(caller, node.getArguments().getExpression(0), name);
+        } else if (TypeConverter.isDate(caller)) {
+          res = convertBoolDateOp(caller, node.getArguments().getExpression(0), name);
+        }
+      }
+      return res;
+    }
+    notFullyImplemented(node);
+    return null;
+  }
+
+  protected SeqExpr<CharSort> convertString(ASTExpression node) {
+    Optional<SeqExpr<CharSort>> result = convertStringOpt(node);
+    if (result.isEmpty()) {
+      notFullyImplemented(node);
+      assert false;
+    }
+    return result.get();
+  }
+
   public BoolExpr convertBoolExpr(ASTExpression node) {
     Optional<BoolExpr> result = convertBoolExprOpt(node);
     if (result.isEmpty()) {
@@ -25,49 +192,34 @@ public abstract class Expression2smt {
     return result.get();
   }
 
-  public Expr<? extends Sort> convertExpr(ASTExpression node) {
-    Expr<? extends Sort> res;
-    res = convertGenExprOpt(node).orElse(null);
-    if (res == null) {
-      res = convertBoolExprOpt(node).orElse(null);
-      if (res == null) {
-        res = convertExprArithOpt(node).orElse(null);
-        if (res == null) {
-          res = convertExprString(node);
-        }
-      }
-    }
-    return res;
-  }
-
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
     BoolExpr result;
     if (node instanceof ASTBooleanAndOpExpression) {
-      result = convertAndBool((ASTBooleanAndOpExpression) node);
+      result = convert((ASTBooleanAndOpExpression) node);
     } else if (node instanceof ASTBooleanOrOpExpression) {
-      result = convertORBool((ASTBooleanOrOpExpression) node);
+      result = convert((ASTBooleanOrOpExpression) node);
     } else if (node instanceof ASTBooleanNotExpression) {
-      result = convertNotBool((ASTBooleanNotExpression) node);
+      result = convert((ASTBooleanNotExpression) node);
     } else if (node instanceof ASTLogicalNotExpression) {
-      result = convertNotBool((ASTLogicalNotExpression) node);
+      result = convert((ASTLogicalNotExpression) node);
     } else if (node instanceof ASTLessEqualExpression) {
-      result = convertLEq((ASTLessEqualExpression) node);
+      result = convert((ASTLessEqualExpression) node);
     } else if (node instanceof ASTLessThanExpression) {
-      result = convertLThan((ASTLessThanExpression) node);
+      result = convert((ASTLessThanExpression) node);
     } else if (node instanceof ASTEqualsExpression) {
-      result = convertEq((ASTEqualsExpression) node);
+      result = convert((ASTEqualsExpression) node);
     } else if (node instanceof ASTNotEqualsExpression) {
-      result = convertNEq((ASTNotEqualsExpression) node);
+      result = convert((ASTNotEqualsExpression) node);
     } else if (node instanceof ASTGreaterEqualExpression) {
-      result = convertGEq((ASTGreaterEqualExpression) node);
+      result = convert((ASTGreaterEqualExpression) node);
     } else if (node instanceof ASTGreaterThanExpression) {
-      result = convertGT((ASTGreaterThanExpression) node);
+      result = convert((ASTGreaterThanExpression) node);
     } else if (node instanceof ASTImpliesExpression) {
-      result = convertImpl((ASTImpliesExpression) node);
+      result = convert((ASTImpliesExpression) node);
     } else if (node instanceof ASTCallExpression && methodReturnsBool((ASTCallExpression) node)) {
-      result = convertBoolMethodCall((ASTCallExpression) node);
+      result = convert((ASTCallExpression) node);
     } else if (node instanceof ASTEquivalentExpression) {
-      result = convertEquiv((ASTEquivalentExpression) node);
+      result = convert((ASTEquivalentExpression) node);
     } else {
       Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
       if (buf.isPresent() && buf.get() instanceof BoolExpr) {
@@ -80,22 +232,37 @@ public abstract class Expression2smt {
     return Optional.of(result);
   }
 
+  public Expr<? extends Sort> convertExpr(ASTExpression node) {
+    Expr<? extends Sort> res;
+    res = convertGenExprOpt(node).orElse(null);
+    if (res == null) {
+      res = convertBoolExprOpt(node).orElse(null);
+      if (res == null) {
+        res = convertExprArithOpt(node).orElse(null);
+        if (res == null) {
+          res = convertString(node);
+        }
+      }
+    }
+    return res;
+  }
+
   protected Optional<ArithExpr<? extends ArithSort>> convertExprArithOpt(ASTExpression node) {
     ArithExpr<? extends ArithSort> result;
     if (node instanceof ASTMinusPrefixExpression) {
-      result = convertMinPref((ASTMinusPrefixExpression) node);
+      result = convert((ASTMinusPrefixExpression) node);
     } else if (node instanceof ASTPlusPrefixExpression) {
-      result = convertPlusPref((ASTPlusPrefixExpression) node);
+      result = convert((ASTPlusPrefixExpression) node);
     } else if ((node instanceof ASTPlusExpression) && isAddition((ASTPlusExpression) node)) {
       result = convertPlus((ASTPlusExpression) node);
     } else if (node instanceof ASTMinusExpression) {
-      result = convertMinus((ASTMinusExpression) node);
+      result = convert((ASTMinusExpression) node);
     } else if (node instanceof ASTDivideExpression) {
-      result = convertDiv((ASTDivideExpression) node);
+      result = convert((ASTDivideExpression) node);
     } else if (node instanceof ASTMultExpression) {
-      result = convertMul((ASTMultExpression) node);
+      result = convert((ASTMultExpression) node);
     } else if (node instanceof ASTModuloExpression) {
-      result = convertMod((ASTModuloExpression) node);
+      result = convert((ASTModuloExpression) node);
     } else {
       Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
       if (buf.isPresent() && buf.get() instanceof ArithExpr) {
@@ -107,7 +274,7 @@ public abstract class Expression2smt {
     return Optional.of(result);
   }
 
-  protected Optional<SeqExpr<CharSort>> convertExprStringOpt(ASTExpression node) {
+  protected Optional<SeqExpr<CharSort>> convertStringOpt(ASTExpression node) {
     SeqExpr<CharSort> result;
 
     if ((node instanceof ASTPlusExpression && isStringConcat((ASTPlusExpression) node))) {
@@ -127,35 +294,6 @@ public abstract class Expression2smt {
     return Optional.of(result);
   }
 
-  protected SeqExpr<CharSort> convertExprString(ASTExpression node) {
-    //  Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
-    Optional<SeqExpr<CharSort>> result = convertExprStringOpt(node);
-    if (result.isEmpty()) {
-      notFullyImplemented(node);
-      assert false;
-    }
-    return result.get();
-  }
-
-  protected SeqExpr<CharSort> convertStringMethodCall(ASTCallExpression node) {
-    SeqExpr<CharSort> res = null;
-    if (node.getDefiningSymbol().isPresent()) {
-      String name = node.getDefiningSymbol().get().getName();
-      if (node.getExpression() instanceof ASTFieldAccessExpression) {
-        SeqExpr<CharSort> arg1 = convertExprString(node.getArguments().getExpression(0));
-        SeqExpr<CharSort> arg2 = convertExprString(node.getArguments().getExpression(1));
-        SeqExpr<CharSort> str =
-            convertExprString(((ASTFieldAccessExpression) node.getExpression()).getExpression());
-        if ("replace".equals(name)) {
-          res = ctx.mkReplace(str, arg1, arg2);
-        }
-      }
-      return res;
-    }
-    notFullyImplemented(node);
-    return null;
-  }
-
   protected ArithExpr<? extends ArithSort> convertExprArith(ASTExpression node) {
     Optional<ArithExpr<? extends ArithSort>> result = convertExprArithOpt(node);
     if (result.isEmpty()) {
@@ -170,15 +308,15 @@ public abstract class Expression2smt {
     if (node instanceof ASTLiteralExpression) {
       res = convert((ASTLiteralExpression) node);
     } else if (node instanceof ASTBracketExpression) {
-      res = convertBracket((ASTBracketExpression) node);
+      res = convert((ASTBracketExpression) node);
     } else if (node instanceof ASTNameExpression) {
-      res = convertName((ASTNameExpression) node);
+      res = convert((ASTNameExpression) node);
     } else if (node instanceof ASTFieldAccessExpression) {
-      res = convertFieldAcc((ASTFieldAccessExpression) node);
+      res = convert((ASTFieldAccessExpression) node);
     } else if (node instanceof ASTIfThenElseExpression) {
-      res = convertIfTEl((ASTIfThenElseExpression) node);
+      res = convert((ASTIfThenElseExpression) node);
     } else if (node instanceof ASTConditionalExpression) {
-      res = convertCond((ASTConditionalExpression) node);
+      res = convert((ASTConditionalExpression) node);
     } else {
       return Optional.empty();
     }
@@ -187,106 +325,10 @@ public abstract class Expression2smt {
 
   // -----------String--------------
   protected SeqExpr<CharSort> convertStringConcat(ASTPlusExpression node) {
-    return ctx.mkConcat(convertExprString(node.getLeft()), convertExprString(node.getRight()));
+    return ctx.mkConcat(convertString(node.getLeft()), convertString(node.getRight()));
   }
 
-  // ----------------------Arit--------------------
-  protected ArithExpr<? extends ArithSort> convertMinPref(ASTMinusPrefixExpression node) {
-    return ctx.mkMul(ctx.mkInt(-1), convertExprArith(node.getExpression()));
-  }
-
-  protected ArithExpr<? extends ArithSort> convertPlusPref(ASTPlusPrefixExpression node) {
-    return convertExprArith(node.getExpression());
-  }
-
-  protected ArithExpr<? extends ArithSort> convertMul(ASTMultExpression node) {
-    return ctx.mkMul(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
-  }
-
-  protected ArithExpr<? extends ArithSort> convertDiv(ASTDivideExpression node) {
-    return ctx.mkDiv(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
-  }
-
-  protected IntExpr convertMod(ASTModuloExpression node) {
-    return ctx.mkMod(
-        (IntExpr) convertExprArith(node.getLeft()), (IntExpr) convertExprArith(node.getRight()));
-  }
-
-  protected ArithExpr<? extends ArithSort> convertPlus(ASTPlusExpression node) {
-    return ctx.mkAdd(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
-  }
-
-  protected ArithExpr<ArithSort> convertMinus(ASTMinusExpression node) {
-    return ctx.mkSub(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
-  }
   // ---------------------------------------Logic---------------------------------
-
-  protected BoolExpr convertNotBool(ASTBooleanNotExpression node) {
-    return ctx.mkNot(convertBoolExpr(node.getExpression()));
-  }
-
-  protected BoolExpr convertNotBool(ASTLogicalNotExpression node) {
-    return ctx.mkNot(convertBoolExpr(node.getExpression()));
-  }
-
-  protected BoolExpr convertAndBool(ASTBooleanAndOpExpression node) {
-    return ctx.mkAnd(convertBoolExpr(node.getLeft()), convertBoolExpr(node.getRight()));
-  }
-
-  protected BoolExpr convertORBool(ASTBooleanOrOpExpression node) {
-    return ctx.mkOr(convertBoolExpr(node.getLeft()), convertBoolExpr(node.getRight()));
-  }
-
-  // --------------------------comparison----------------------------------------------
-  protected BoolExpr convertLThan(ASTLessThanExpression node) {
-    return ctx.mkLt(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
-  }
-
-  protected BoolExpr convertLEq(ASTLessEqualExpression node) {
-    return ctx.mkLe(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
-  }
-
-  protected BoolExpr convertGT(ASTGreaterThanExpression node) {
-    return ctx.mkGt(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
-  }
-
-  protected BoolExpr convertGEq(ASTGreaterEqualExpression node) {
-    return ctx.mkGe(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
-  }
-
-  protected BoolExpr convertEq(ASTEqualsExpression node) {
-    return ctx.mkEq(convertExpr(node.getLeft()), convertExpr(node.getRight()));
-  }
-
-  protected BoolExpr convertNEq(ASTNotEqualsExpression node) {
-    return ctx.mkNot(ctx.mkEq(convertExpr(node.getLeft()), convertExpr(node.getRight())));
-  }
-
-  protected BoolExpr convertEquiv(ASTEquivalentExpression node) {
-    return ctx.mkEq(convertExpr(node.getLeft()), convertExpr(node.getRight()));
-  }
-
-  protected BoolExpr convertBoolMethodCall(ASTCallExpression node) {
-    BoolExpr res = null;
-    if (node.getDefiningSymbol().isPresent()) {
-      String name = node.getDefiningSymbol().get().getName();
-      if (node.getExpression() instanceof ASTFieldAccessExpression) {
-        ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
-        if (TypeConverter.isString(caller)) {
-          res = convertBoolStringOp(caller, node.getArguments().getExpression(0), name);
-        } else if (TypeConverter.isDate(caller)) {
-          res = convertBoolDateOp(caller, node.getArguments().getExpression(0), name);
-        }
-      }
-      return res;
-    }
-    notFullyImplemented(node);
-    return null;
-  }
-
-  protected BoolExpr convertImpl(ASTImpliesExpression node) {
-    return ctx.mkImplies(convertBoolExpr(node.getLeft()), convertBoolExpr(node.getRight()));
-  }
 
   protected BoolExpr convertBoolDateOp(ASTExpression caller, ASTExpression arg, String methodName) {
     BoolExpr res = null;
@@ -308,8 +350,8 @@ public abstract class Expression2smt {
   protected BoolExpr convertBoolStringOp(
       ASTExpression caller, ASTExpression arg, String methodName) {
     BoolExpr res = null;
-    SeqExpr<CharSort> argument = convertExprString(arg);
-    SeqExpr<CharSort> str = convertExprString(caller);
+    SeqExpr<CharSort> argument = convertString(arg);
+    SeqExpr<CharSort> str = convertString(caller);
     switch (methodName) {
       case "contains":
         res = ctx.mkContains(str, argument);
@@ -324,17 +366,14 @@ public abstract class Expression2smt {
     return res;
   }
 
-  /*------------------------------------quantified expressions----------------------------------------------------------*/
-
-  /*----------------------------------control expressions----------------------------------------------------------*/
-  protected Expr<? extends Sort> convertIfTEl(ASTIfThenElseExpression node) {
+  protected Expr<? extends Sort> convert(ASTIfThenElseExpression node) {
     return ctx.mkITE(
         convertBoolExpr(node.getCondition()),
         convertExpr(node.getThenExpression()),
         convertExpr(node.getElseExpression()));
   }
 
-  protected Expr<? extends Sort> convertCond(ASTConditionalExpression node) {
+  protected Expr<? extends Sort> convert(ASTConditionalExpression node) {
     return ctx.mkITE(
         convertBoolExpr(node.getCondition()),
         convertExpr(node.getTrueExpression()),
@@ -342,13 +381,13 @@ public abstract class Expression2smt {
   }
 
   // -----------------------------------general----------------------------------------------------------------------*/
-  protected abstract Expr<? extends Sort> convertName(ASTNameExpression node);
+  protected abstract Expr<? extends Sort> convert(ASTNameExpression node);
 
-  protected Expr<? extends Sort> convertBracket(ASTBracketExpression node) {
+  protected Expr<? extends Sort> convert(ASTBracketExpression node) {
     return convertExpr(node.getExpression());
   }
 
-  protected abstract Expr<? extends Sort> convertFieldAcc(ASTFieldAccessExpression node);
+  protected abstract Expr<? extends Sort> convert(ASTFieldAccessExpression node);
 
   // a.auction**
 
@@ -393,15 +432,15 @@ public abstract class Expression2smt {
     ASTLiteral literal = node.getLiteral();
     Expr<? extends Sort> res = null;
     if (literal instanceof ASTBooleanLiteral) {
-      res = convertBool((ASTBooleanLiteral) literal);
+      res = convert((ASTBooleanLiteral) literal);
     } else if (literal instanceof ASTStringLiteral) {
-      res = convertString((ASTStringLiteral) literal);
+      res = convert((ASTStringLiteral) literal);
     } else if (literal instanceof ASTNatLiteral) {
-      return convertNat((ASTNatLiteral) literal);
+      return convert((ASTNatLiteral) literal);
     } else if (literal instanceof ASTBasicDoubleLiteral) {
-      res = convertDouble((ASTBasicDoubleLiteral) literal);
+      res = convert((ASTBasicDoubleLiteral) literal);
     } else if (literal instanceof ASTCharLiteral) {
-      res = convertChar((ASTCharLiteral) literal);
+      res = convert((ASTCharLiteral) literal);
     } else {
       Log.error(
           "the conversion of expression with the type "
@@ -409,25 +448,5 @@ public abstract class Expression2smt {
               + "in SMT is not totally implemented");
     }
     return res;
-  }
-
-  protected BoolExpr convertBool(ASTBooleanLiteral node) {
-    return ctx.mkBool(node.getValue());
-  }
-
-  protected SeqExpr<CharSort> convertString(ASTStringLiteral node) {
-    return ctx.mkString(node.getValue());
-  }
-
-  protected IntNum convertNat(ASTNatLiteral node) {
-    return ctx.mkInt(node.getValue());
-  }
-
-  protected IntNum convertChar(ASTCharLiteral node) {
-    return ctx.mkInt(node.getValue());
-  }
-
-  protected FPNum convertDouble(ASTBasicDoubleLiteral node) {
-    return ctx.mkFP(node.getValue(), ctx.mkFPSortDouble());
   }
 }
