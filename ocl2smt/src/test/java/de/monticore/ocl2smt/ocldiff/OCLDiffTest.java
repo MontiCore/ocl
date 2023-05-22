@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -57,7 +56,9 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
 
   @ParameterizedTest
   @MethodSource("cd2smtStrategies")
-  public void testOclDiff2CD_NoDiff( ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as) throws IOException {
+  public void testOclDiff2CD_NoDiff(
+      ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
+      throws IOException {
     CD2SMTMill.init(cs, is, as);
     OCLInvDiffResult diff =
         computeDiff2CD(

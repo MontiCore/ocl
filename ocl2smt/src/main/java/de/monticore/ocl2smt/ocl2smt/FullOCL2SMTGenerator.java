@@ -84,7 +84,7 @@ public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
         postConstr,
         ((FullOCLExpressionConverter) exprConv).getResult(),
         thisObj,
-        exprConv.getLiteralConverter().getType(thisObj),
+        exprConv.getType(thisObj),
         ctx);
   }
 

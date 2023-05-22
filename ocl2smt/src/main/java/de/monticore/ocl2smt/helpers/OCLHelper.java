@@ -12,7 +12,6 @@ import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.LiteralConverter;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.ocl2smt.trafo.BuildPreCDTrafo;
@@ -31,6 +30,7 @@ import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -74,13 +74,13 @@ public class OCLHelper {
       String otherRole,
       Expr<? extends Sort> otherObj,
       CD2SMTGenerator cd2SMTGenerator,
-      LiteralConverter lc) {
+      Function<Expr<?>, OCLType> types) {
 
     ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
-    OCLType oclType = lc.getType(obj);
+    OCLType oclType = types.apply(obj);
     ASTCDType type = CDHelper.getASTCDType(oclType.getName(), cd);
 
-    ASTCDType otherType = CDHelper.getASTCDType(lc.getType(otherObj).getName(), cd);
+    ASTCDType otherType = CDHelper.getASTCDType(types.apply(otherObj).getName(), cd);
 
     BoolExpr res;
     if (isLeftSide(CDHelper.getASTCDType(type.getName(), cd), otherRole, cd)) {

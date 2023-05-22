@@ -8,10 +8,10 @@ import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
 
 import com.microsoft.z3.Context;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.ocl.ocl.OCLMill;
 import de.se_rwth.commons.logging.Log;
-import de.se_rwth.commons.logging.LogStub;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -26,11 +26,12 @@ public abstract class OCL2SMTAbstractTest {
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();
+
+    CD2SMTMill.initDefault();
   }
 
   protected void initLogger() {
-    LogStub.init();
-    Log.enableFailQuick(false);
+    Log.init();
   }
 
   public Context buildContext() {
