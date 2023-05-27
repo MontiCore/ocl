@@ -16,7 +16,6 @@ import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -78,7 +77,7 @@ public abstract class ExpressionAbstractTest {
     Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
     org.junit.jupiter.api.Assertions.assertSame(Status.SATISFIABLE, solver.check());
     Optional<ASTODArtifact> od =
-            ocl2SMTGenerator.getCD2SMTGenerator().smt2od(solver.getModel(), false, invName);
+        ocl2SMTGenerator.getCD2SMTGenerator().smt2od(solver.getModel(), false, invName);
     org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
     IOHelper.printOD(od.get(), Path.of(RELATIVE_TARGET_PATH + directory));
   }
@@ -94,10 +93,10 @@ public abstract class ExpressionAbstractTest {
     Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
     org.junit.jupiter.api.Assertions.assertSame(Status.UNSATISFIABLE, solver.check());
     return TraceUnSatCore.buildUnSatOD(
-            new ArrayList<>(),
-            List.of(
-                    solverConstraints.get(0).negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),
-            TraceUnSatCore.traceUnSatCore(solver));
+        new ArrayList<>(),
+        List.of(
+            solverConstraints.get(0).negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),
+        TraceUnSatCore.traceUnSatCore(solver));
   }
 
   public Context buildContext() {

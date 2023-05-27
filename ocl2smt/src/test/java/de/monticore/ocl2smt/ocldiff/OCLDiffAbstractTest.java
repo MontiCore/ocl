@@ -26,9 +26,6 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-import org.apache.commons.io.FileUtils;
-import org.assertj.core.api.Assertions;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
@@ -38,6 +35,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.commons.io.FileUtils;
+import org.assertj.core.api.Assertions;
 
 public abstract class OCLDiffAbstractTest {
   protected static final String RELATIVE_MODEL_PATH =
@@ -72,11 +71,11 @@ public abstract class OCLDiffAbstractTest {
       printOD(diff.getUnSatCore(), directory);
     }
     diff.getDiffWitness()
-            .forEach(
-                    x -> {
-                      printOD(x.getPostOD(), directory);
-                      printOD(x.getPreOD(), directory);
-                    });
+        .forEach(
+            x -> {
+              printOD(x.getPostOD(), directory);
+              printOD(x.getPreOD(), directory);
+            });
   }
 
   public void printOPWitness(Set<OCLOPWitness> witness, String directory) {

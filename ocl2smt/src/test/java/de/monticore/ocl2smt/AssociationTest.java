@@ -2,12 +2,11 @@ package de.monticore.ocl2smt;
 
 import de.monticore.ocl2smt.ocl2smt.ExpressionAbstractTest;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
+import java.io.IOException;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.io.IOException;
-import java.util.Set;
 
 public class AssociationTest extends ExpressionAbstractTest {
 
