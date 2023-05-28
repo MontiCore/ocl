@@ -10,6 +10,7 @@ import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
+import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceStrategy;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.helpers.IOHelper;
@@ -17,15 +18,17 @@ import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODNamedObject;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Set;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OCLDiffTest extends OCLDiffAbstractTest {
   private final String TARGET_DIR = "target/generated-test/oclDiff/";
@@ -39,12 +42,12 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   @ParameterizedTest
   @MethodSource("cd2smtStrategies")
   public void testOCLDiffOneCD(
-      ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
+          ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as)
       throws IOException {
     CD2SMTMill.init(cs, is, as);
     OCLInvDiffResult diff = computeDiffOneCD("Auction.cd", "old.ocl", "new.ocl");
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OCLDiffOneCD"));
-    Assertions.assertEquals(4, diff.getDiffWitness().size());
+    assertEquals(4, diff.getDiffWitness().size());
 
     assertTrue(checkLink("obj_False", "obj_False", diff.getUnSatCore()));
     assertTrue(checkLink("obj_Min_Ident_1", "obj_Ident_Between_2_And_19", diff.getUnSatCore()));
@@ -57,15 +60,15 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   @ParameterizedTest
   @MethodSource("cd2smtStrategies")
   public void testOclDiff2CD_NoDiff(
-      ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
-      throws IOException {
+          ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
+          throws IOException {
     CD2SMTMill.init(cs, is, as);
     OCLInvDiffResult diff =
-        computeDiff2CD(
-            "2CDDiff/nodiff/old.cd",
-            "2CDDiff/nodiff/new.cd",
-            "2CDDiff/nodiff/old.ocl",
-            "2CDDiff/nodiff/new.ocl");
+            computeDiff2CD(
+                    "2CDDiff/nodiff/old.cd",
+                    "2CDDiff/nodiff/new.cd",
+                    "2CDDiff/nodiff/old.ocl",
+                    "2CDDiff/nodiff/new.ocl");
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiff2CD_NoDiff"));
     assertTrue(diff.getDiffWitness().isEmpty());
     assertEquals(countLinks(diff.getUnSatCore()), 3);
