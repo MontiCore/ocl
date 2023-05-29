@@ -109,8 +109,8 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   @ValueSource(strings = {"new", "old"})
   public void testMotivatingExample_Sat(String oclFile) throws IOException {
     ASTODArtifact diff =
-            computeWitness(
-                    "motivatingExample/BankManagementSystem.cd", "motivatingExample/" + oclFile + ".ocl");
+        computeWitness(
+            "motivatingExample/BankManagementSystem.cd", "motivatingExample/" + oclFile + ".ocl");
 
     assertNotEquals("UNSAT_CORE_OD", diff.getObjectDiagram().getName());
     printOD(diff, "MotivatingExample_" + oclFile);

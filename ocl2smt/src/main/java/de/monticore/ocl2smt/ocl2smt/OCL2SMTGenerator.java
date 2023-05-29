@@ -8,17 +8,20 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
-import de.monticore.ocl2smt.util.*;
+import de.monticore.ocl2smt.util.OCLType;
+import de.monticore.ocl2smt.util.SMTSet;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.SourcePosition;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class OCL2SMTGenerator {
   protected OCLExpressionConverter exprConv;
-  private final Context ctx;
+  protected final Context ctx;
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
     exprConv = new OCLExpressionConverter(ast, ctx);
@@ -65,8 +68,8 @@ public class OCL2SMTGenerator {
     return new ImmutablePair<>(expr, set.contains(expr));
   }
 
-  protected IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
-    exprConv.init();
+  public IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
+
     SourcePosition srcPos = invariant.get_SourcePositionStart();
 
     // convert parameter declaration  in context

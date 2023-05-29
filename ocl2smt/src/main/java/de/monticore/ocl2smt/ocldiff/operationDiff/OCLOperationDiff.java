@@ -1,6 +1,8 @@
 package de.monticore.ocl2smt.ocldiff.operationDiff;
 
-import com.microsoft.z3.*;
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Solver;
+import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
@@ -30,7 +32,6 @@ public class OCLOperationDiff {
     return oclWitnessHelper(ocl, fullOCL2SMTGenerator, method, partial);
   }
 
-  // TODO: take care of invariant
   public Set<OCLOPWitness> oclWitness(
       ASTCDCompilationUnit ast, Set<ASTOCLCompilationUnit> ocl, boolean partial) {
     ctx = buildContext();
@@ -49,22 +50,25 @@ public class OCLOperationDiff {
       FullOCL2SMTGenerator fullOCL2SMTGenerator,
       ASTOCLMethodSignature method,
       boolean partial) {
+    List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
+    List<IdentifiableBoolExpr> invConstraints =
+        inv2smt(fullOCL2SMTGenerator, getInvariantList(ocl));
 
-    List<OPConstraint> constraintList =
+    List<OPConstraint> opConstraints =
         opConst2smt(fullOCL2SMTGenerator, getOperationsConstraints(method, ocl));
 
     // add the opConstraints
-    List<IdentifiableBoolExpr> opConstraints =
-        constraintList.stream()
-            .map(OPConstraint::getOperationConstraint)
-            .collect(Collectors.toList());
+    opConstraints.forEach(op -> solverConstraints.add(op.getOperationConstraint()));
+
+    // add invariants
+    solverConstraints.addAll(invConstraints);
 
     Set<OCLOPWitness> res = new HashSet<>();
     Solver solver;
 
-    for (OPConstraint constraint : constraintList) {
-      opConstraints.add(constraint.getPreCond());
-      solver = fullOCL2SMTGenerator.makeSolver(opConstraints);
+    for (OPConstraint constraint : opConstraints) {
+      solverConstraints.add(constraint.getPreCond());
+      solver = fullOCL2SMTGenerator.makeSolver(solverConstraints);
       if (solver.check() == Status.SATISFIABLE) {
         res.add(
             fullOCL2SMTGenerator.buildOPOd(
@@ -72,68 +76,98 @@ public class OCLOperationDiff {
       } else {
         Log.info("the Preconditions XXXXXX is not Satisfiable", "");
       }
-      opConstraints.remove(constraint.getPreCond());
+      solverConstraints.remove(constraint.getPreCond());
     }
     return res;
   }
 
-  public OCLOPDiffResult oclDiff(
+  public OCLOPDiffResult oclDiffV1(
       ASTCDCompilationUnit ast,
       Set<ASTOCLCompilationUnit> oldOcl,
       Set<ASTOCLCompilationUnit> newOcl,
       ASTOCLMethodSignature method,
       boolean partial) {
+    return oclDiffHelper(ast, oldOcl, newOcl, method, true, partial);
+  }
+
+  public OCLOPDiffResult oclDiffV2(
+      ASTCDCompilationUnit ast,
+      Set<ASTOCLCompilationUnit> oldOcl,
+      Set<ASTOCLCompilationUnit> newOcl,
+      ASTOCLMethodSignature method,
+      boolean partial) {
+    return oclDiffHelper(ast, oldOcl, newOcl, method, false, partial);
+  }
+
+  public OCLOPDiffResult oclDiffHelper(
+      ASTCDCompilationUnit ast,
+      Set<ASTOCLCompilationUnit> oldOcl,
+      Set<ASTOCLCompilationUnit> newOcl,
+      ASTOCLMethodSignature method,
+      boolean preCondHolds,
+      boolean partial) {
 
     // setup
     ctx = buildContext();
-    Set<OCLOPWitness> diffWitness = new HashSet<>();
+    Set<OCLOPWitness> opDiffWitness = new HashSet<>();
     List<ASTODLink> trace = new ArrayList<>();
     OCLHelper.buildPreCD(ast);
-    FullOCL2SMTGenerator fullOCL2SMTGenerator = new FullOCL2SMTGenerator(ast, ctx);
+    FullOCL2SMTGenerator fullOcl2smt = new FullOCL2SMTGenerator(ast, ctx);
+
+    // get new invariants
+    List<IdentifiableBoolExpr> newInvariants = inv2smt(fullOcl2smt, getInvariantList(newOcl));
 
     // get new OCL constraints
     List<OPConstraint> newConstraints =
-        opConst2smt(fullOCL2SMTGenerator, getOperationsConstraints(method, newOcl));
+        opConst2smt(fullOcl2smt, getOperationsConstraints(method, newOcl));
 
     // get old ocl Constraints
     List<OPConstraint> oldConstraints =
-        opConst2smt(fullOCL2SMTGenerator, getOperationsConstraints(method, oldOcl));
+        opConst2smt(fullOcl2smt, getOperationsConstraints(method, oldOcl));
 
-    // transform  pre , post =====> pre implies post
-    List<IdentifiableBoolExpr> posConstraints =
-        newConstraints.stream()
-            .map(OPConstraint::getOperationConstraint)
-            .collect(Collectors.toList());
+    // build the set of positive constraints from new opConstraints and new invariants;
+    List<IdentifiableBoolExpr> posConstraints = new ArrayList<>();
+    newConstraints.forEach(
+        op -> {
+          if (preCondHolds) {
+            posConstraints.add(op.getPreCond());
+            posConstraints.add(op.getPostCond());
+          } else {
+            posConstraints.add(op.getPreCond().negate(ctx));
+          }
+        });
+    posConstraints.addAll(newInvariants);
 
     List<IdentifiableBoolExpr> negativeConstraints = new ArrayList<>();
+
     Solver solver;
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>(posConstraints);
 
+    // diff between new on operation constraints
     for (OPConstraint oldConstraint : oldConstraints) {
       solverConstraints.add(oldConstraint.getPreCond());
       posConstraints.add(oldConstraint.getPreCond());
 
-      IdentifiableBoolExpr oldOpConstraint = oldConstraint.getOperationConstraint().negate(ctx);
+      IdentifiableBoolExpr oldOpConstraint = oldConstraint.getPostCond().negate(ctx);
       solverConstraints.add(oldOpConstraint);
       negativeConstraints.add(oldOpConstraint);
 
-      solver = fullOCL2SMTGenerator.makeSolver(solverConstraints);
+      solver = fullOcl2smt.makeSolver(solverConstraints);
 
       if (solver.check() == Status.SATISFIABLE) {
-        diffWitness.add(
-            fullOCL2SMTGenerator.buildOPOd(
-                solver.getModel(), "Witness", method, oldConstraint, partial));
+        opDiffWitness.add(
+            fullOcl2smt.buildOPOd(solver.getModel(), "Witness", method, oldConstraint, partial));
       } else {
         trace.addAll(TraceUnSatCore.traceUnSatCore(solver));
       }
       posConstraints.remove(oldConstraint.getPreCond());
-      posConstraints.remove(oldOpConstraint);
+      solverConstraints.remove(oldOpConstraint);
     }
+
     ASTODArtifact unSatCore =
         TraceUnSatCore.buildUnSatOD(posConstraints, negativeConstraints, trace);
-    return new OCLOPDiffResult(unSatCore, diffWitness);
+    return new OCLOPDiffResult(unSatCore, opDiffWitness);
   }
-  // TODO: fix this  in case of many  constraints per operation
 
   private List<ASTOCLOperationConstraint> getOperationsConstraints(
       Set<ASTOCLCompilationUnit> oclSet) {
@@ -188,6 +222,17 @@ public class OCLOperationDiff {
     return res;
   }
 
+  public List<ASTOCLInvariant> getInvariantList(Set<ASTOCLCompilationUnit> oclSet) {
+    return oclSet.stream()
+        .map(ocl -> ocl.getOCLArtifact().getOCLConstraintList())
+        .collect(Collectors.toList())
+        .stream()
+        .flatMap(List::stream)
+        .filter(c -> c instanceof ASTOCLInvariant)
+        .map(c -> (ASTOCLInvariant) c)
+        .collect(Collectors.toList());
+  }
+
   public boolean containsKey(
       Map<ASTOCLMethodSignature, List<ASTOCLOperationConstraint>> map,
       ASTOCLMethodSignature method) {
@@ -195,11 +240,31 @@ public class OCLOperationDiff {
   }
 
   protected List<OPConstraint> opConst2smt(
-      FullOCL2SMTGenerator fullOCL2SMTGenerator,
-      List<ASTOCLOperationConstraint> operationConstraints) {
-    return operationConstraints.stream()
+      FullOCL2SMTGenerator fullOCL2SMTGenerator, List<ASTOCLOperationConstraint> opConstraints) {
+    return opConstraints.stream()
         .map(fullOCL2SMTGenerator::convertOpConst)
         .collect(Collectors.toList());
+  }
+
+  protected List<IdentifiableBoolExpr> inv2smt(
+      FullOCL2SMTGenerator fullOcl2smt, List<ASTOCLInvariant> invList) {
+    List<IdentifiableBoolExpr> res = new ArrayList<>();
+
+    for (ASTOCLInvariant inv : invList) {
+      IdentifiableBoolExpr postInv = fullOcl2smt.convertInv(inv);
+      IdentifiableBoolExpr preInv = fullOcl2smt.convertPreInv(inv);
+
+      res.add(
+          IdentifiableBoolExpr.buildIdentifiable(
+              ctx.mkAnd(preInv.getValue(), postInv.getValue()),
+              preInv.getSourcePosition(),
+              preInv.getInvariantName()));
+    }
+    return res;
+  }
+
+  public String buildInvName(IdentifiableBoolExpr constr) {
+    return constr.getInvariantName().orElse("NoInvName").split("_____NegInv")[0];
   }
 
   public Context buildContext() {

@@ -311,7 +311,7 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
         if (cmd.hasOption("odiff")) {
           if (cmd.hasOption("mn")) {
             methodName = cmd.getOptionValue("mn");
-            OCLDiffGenerator.oclOPDiff(cd, oclFiles, newOClFiles, methodName, partial, output);
+            OCLDiffGenerator.oclOPDiffV1(cd, oclFiles, newOClFiles, methodName, partial, output);
           } else {
             Log.error(
                 "The option --odiff need a Method name. this can be added with the option -mn");

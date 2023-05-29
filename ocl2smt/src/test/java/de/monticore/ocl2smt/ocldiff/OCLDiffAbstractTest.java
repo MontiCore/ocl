@@ -7,7 +7,10 @@ import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl.OCLMill;
-import de.monticore.ocl.ocl._ast.*;
+import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
+import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
+import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
@@ -27,7 +30,10 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.assertj.core.api.Assertions;
@@ -36,7 +42,7 @@ public abstract class OCLDiffAbstractTest {
   protected static final String RELATIVE_MODEL_PATH =
       "src/test/resources/de/monticore/ocl2smt/OCLDiff";
   protected static final String RELATIVE_TARGET_PATH =
-      "target/generated/sources/annotationProcessor/java/ocl2smttest";
+      "target/generated/sources/annotationProcessor/java/ocl2smttest/";
 
   protected void initMills() {
     OCLMill.reset();
@@ -158,7 +164,6 @@ public abstract class OCLDiffAbstractTest {
     oldOCL.add(parseOCl(cdName, oldOCLName));
     return OCLDiffGenerator.oclWitness(cd, oldOCL, false);
   }
-
 
   public boolean containsAttribute(ASTCDClass c, String attribute) {
     for (ASTCDAttribute attr : c.getCDAttributeList()) {

@@ -1,7 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocldiff.invariantDiff;
 
-import com.microsoft.z3.*;
+import com.microsoft.z3.Context;
+import com.microsoft.z3.Solver;
+import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
@@ -11,17 +13,11 @@ import de.monticore.cddiff.alloycddiff.CDSemantics;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
-import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
-import de.monticore.prettyprint.IndentPrinter;
 import de.se_rwth.commons.logging.Log;
-import java.nio.charset.Charset;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.apache.commons.io.FileUtils;
 
 public class OCLInvariantDiff {
   protected Context ctx;
@@ -112,13 +108,12 @@ public class OCLInvariantDiff {
     // check if they exist a model for the list of positive Constraint
     Solver solver = ocl2SMTGenerator.makeSolver(solverConstraints);
     if (solver.check() != Status.SATISFIABLE) {
-      List<IdentifiableBoolExpr> list = solverConstraints;
-      list.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getAssociationsConstraints());
-      list.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getInheritanceConstraints());
+      solverConstraints.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getAssociationsConstraints());
+      solverConstraints.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getInheritanceConstraints());
 
       return TraceUnSatCore.buildUnSatOD(
-          list, new ArrayList<>(), TraceUnSatCore.traceUnSatCoreWitness(solver));
-      // Log.error("there are no Model for the List Of Positive Constraints");
+          solverConstraints, new ArrayList<>(), TraceUnSatCore.traceUnSatCoreWitness(solver));
+      // Log.error("there is no Model for the List Of Positive Constraints");
     }
 
     return ocl2SMTGenerator.buildOd(solver.getModel(), "Witness", partial).orElse(null);
@@ -133,7 +128,7 @@ public class OCLInvariantDiff {
     Set<ASTODArtifact> satOdList = new HashSet<>();
     List<ASTODLink> traceUnSat = new ArrayList<>();
 
-    // add one by one all Constraints to the Solver and check if  it can always produce a Model
+    // add one by one all Constraints to the Solver and check if it can always produce a Model
     for (IdentifiableBoolExpr negConstraint : negConstraintList) {
       posConstraintList.add(negConstraint);
       Solver solver = ocl2SMTGenerator.makeSolver(posConstraintList);
