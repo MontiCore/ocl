@@ -17,12 +17,12 @@ import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.ME;
 
 public class AttrInheritanceTest extends ExpressionAbstractTest {
-  @BeforeEach
-  public void setup() throws IOException {
-    super.initLogger();
-    super.initMills();
-    parse("/inheritance/attributes/attributes.cd", "/inheritance/attributes/attributes.ocl");
-  }
+    @BeforeEach
+    public void setup() throws IOException {
+        super.initLogger();
+        super.initMills();
+        parse("/inheritance/attributes/attributes.cd", "/inheritance/attributes/attributes.ocl");
+    }
 
     @ParameterizedTest
     @MethodSource("cd2smtStrategies")

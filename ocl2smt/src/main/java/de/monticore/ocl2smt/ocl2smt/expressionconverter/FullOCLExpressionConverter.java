@@ -98,7 +98,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   }
 
   @Override
-  protected Expr<? extends Sort> convertName(ASTNameExpression node) {
+  protected Expr<? extends Sort> convert(ASTNameExpression node) {
     boolean isPre = isPreStrategy();
     exitPre();
     Expr<? extends Sort> res = null;
@@ -122,7 +122,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     }
     if (node.getName().equals("result")) {
       result.setValue(res);
-      result.setType(literalConverter.getType(res));
+      result.setType(getType(res));
     }
     return res;
   }
@@ -139,7 +139,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   }
 
   @Override
-  protected Expr<? extends Sort> convertFieldAcc(ASTFieldAccessExpression node) {
+  protected Expr<? extends Sort> convert(ASTFieldAccessExpression node) {
     boolean isPre = isPreStrategy();
     exitPre();
     String attributeName = node.getName();
@@ -162,8 +162,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
       attributeName = OCLHelper.mkPre(node.getName());
     }
     return Optional.ofNullable(
-        OCLHelper.getAttribute(
-            thisObj, literalConverter.getType(thisObj), attributeName, cd2smtGenerator));
+        OCLHelper.getAttribute(thisObj, getType(thisObj), attributeName, cd2smtGenerator));
   }
 
   /** this function is used to get a Linked object of the Context */
@@ -173,23 +172,20 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
       role = OCLHelper.mkPre(role);
     }
     // TODO::update to takeCare when the assoc is inherited
-    ASTCDAssociation association =
-        OCLHelper.getAssociation(literalConverter.getType(thisObj), role, getCD());
+    ASTCDAssociation association = OCLHelper.getAssociation(getType(thisObj), role, getCD());
     if (association == null) {
       return Optional.empty();
     }
 
     // declare the linked object
-    OCLType type2 =
-        OCLHelper.getOtherType(association, literalConverter.getType(thisObj), role, getCD());
+    OCLType type2 = OCLHelper.getOtherType(association, getType(thisObj), role, getCD());
 
     String name = mkObjName(node.getName(), isPre);
-    Expr<? extends Sort> expr = literalConverter.declObj(type2, name);
+    Expr<? extends Sort> expr = declObj(type2, name);
 
     // add association constraints to the general constraints
     genConstraints.add(
-        OCLHelper.evaluateLink(
-            association, thisObj, role, expr, cd2smtGenerator, literalConverter));
+        OCLHelper.evaluateLink(association, thisObj, role, expr, cd2smtGenerator, this::getType));
 
     return Optional.of(expr);
   }
@@ -227,8 +223,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
       if (isPre) {
         role = OCLHelper.mkPre(node.getName());
       }
-      if (Optional.ofNullable(
-              OCLHelper.getAssociation(literalConverter.getType(thisObj), role, getCD()))
+      if (Optional.ofNullable(OCLHelper.getAssociation(getType(thisObj), role, getCD()))
           .isPresent()) {
 
         res = convertSimpleFieldAccessSet(thisObj, role);
