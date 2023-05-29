@@ -124,7 +124,7 @@ public class EvaluationTest extends OCLDiffAbstractTest {
     Assertions.assertNotNull(getMethodSignature(Set.of(ocl.get(6)), "JavaSourceFile.compile"));
 
     res =
-        OCLDiffGenerator.oclOPDiff(
+        OCLDiffGenerator.oclOPDiffV1(
             ast.get(6),
             Set.of(ocl.get(5)),
             Set.of(ocl.get(6)),
@@ -141,7 +141,7 @@ public class EvaluationTest extends OCLDiffAbstractTest {
     Assertions.assertNotNull(getMethodSignature(Set.of(ocl.get(5)), "JavaSourceFile.compile"));
 
     res =
-        OCLDiffGenerator.oclOPDiff(
+        OCLDiffGenerator.oclOPDiffV1(
             ast.get(5),
             Set.of(ocl.get(6)),
             Set.of(ocl.get(5)),

@@ -39,6 +39,15 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     }
   }
 
+  @Override
+  public void reset() {
+    super.reset();
+    isPreStrategy = false;
+    isPreCond = false;
+    thisObj = null;
+    result = null;
+  }
+
   public void setThisObj(Expr<? extends Sort> thisObj) {
     this.thisObj = thisObj;
   }

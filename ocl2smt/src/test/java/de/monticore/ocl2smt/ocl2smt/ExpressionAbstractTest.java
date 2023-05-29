@@ -16,7 +16,6 @@ import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,7 +24,7 @@ import java.util.*;
 public abstract class ExpressionAbstractTest {
   protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
   protected static final String RELATIVE_TARGET_PATH =
-      "target/generated/sources/annotationProcessor/java/ocl2smttest";
+      "target/generated/sources/annotationProcessor/java/ocl2smttest/";
 
   protected static ASTOCLCompilationUnit oclAST;
   protected static ASTCDCompilationUnit cdAST;
@@ -78,29 +77,29 @@ public abstract class ExpressionAbstractTest {
     Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
     org.junit.jupiter.api.Assertions.assertSame(Status.SATISFIABLE, solver.check());
     Optional<ASTODArtifact> od =
-            ocl2SMTGenerator.getCD2SMTGenerator().smt2od(solver.getModel(), false, invName);
+        ocl2SMTGenerator.getCD2SMTGenerator().smt2od(solver.getModel(), false, invName);
     org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
-    IOHelper.printOD(od.get(), Path.of(directory));
+    IOHelper.printOD(od.get(), Path.of(RELATIVE_TARGET_PATH + directory));
   }
 
   public void testUnsatInv(Set<String> invNames, String directory) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
     invNames.forEach(name -> solverConstraints.add(getConstraint(name)));
 
-    IOHelper.printOD(checkUnSat(solverConstraints), Path.of(directory));
+    IOHelper.printOD(checkUnSat(solverConstraints), Path.of(RELATIVE_TARGET_PATH + directory));
   }
 
   public ASTODArtifact checkUnSat(List<IdentifiableBoolExpr> solverConstraints) {
     Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
     org.junit.jupiter.api.Assertions.assertSame(Status.UNSATISFIABLE, solver.check());
     return TraceUnSatCore.buildUnSatOD(
-            new ArrayList<>(),
-            List.of(
-                    solverConstraints.get(0).negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),
-            TraceUnSatCore.traceUnSatCore(solver));
+        new ArrayList<>(),
+        List.of(
+            solverConstraints.get(0).negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),
+        TraceUnSatCore.traceUnSatCore(solver));
   }
 
-  public static Context buildContext() {
+  public Context buildContext() {
     Map<String, String> cfg = new HashMap<>();
     cfg.put("model", "true");
     return new Context(cfg);

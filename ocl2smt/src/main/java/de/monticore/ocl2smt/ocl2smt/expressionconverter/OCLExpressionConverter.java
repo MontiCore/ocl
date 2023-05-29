@@ -74,7 +74,7 @@ public class OCLExpressionConverter {
     return varNames;
   }
 
-  public void init() {
+  public void reset() {
     literalConverter.reset();
     varNames.clear();
     genConstraints.clear();
@@ -93,7 +93,6 @@ public class OCLExpressionConverter {
   }
 
   public BoolExpr convertBoolExpr(ASTExpression node) {
-    //  Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
     Optional<BoolExpr> result = convertBoolExprOpt(node);
     if (result.isEmpty()) {
       notFullyImplemented(node);
@@ -104,7 +103,6 @@ public class OCLExpressionConverter {
 
   public Expr<? extends Sort> convertExpr(ASTExpression node) {
     Expr<? extends Sort> res;
-    //   Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
     res = convertGenExprOpt(node).orElse(null);
     if (res == null) {
       res = convertBoolExprOpt(node).orElse(null);
@@ -249,7 +247,6 @@ public class OCLExpressionConverter {
   }
 
   protected ArithExpr<? extends ArithSort> convertExprArith(ASTExpression node) {
-    // Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
     Optional<ArithExpr<? extends ArithSort>> result = convertExprArithOpt(node);
     if (result.isEmpty()) {
       notFullyImplemented(node);
@@ -722,7 +719,6 @@ public class OCLExpressionConverter {
   }
 
   public SMTSet convertSet(ASTExpression node) {
-    //  Log.info("I have got a " + node.getClass().getName(), this.getClass().getName());
     Optional<SMTSet> res = convertSetOpt(node);
     if (res.isPresent()) {
       return res.get();

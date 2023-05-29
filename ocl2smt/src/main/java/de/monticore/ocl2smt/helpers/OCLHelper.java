@@ -162,8 +162,11 @@ public class OCLHelper {
     ASTODArtifact postOD =
         de.monticore.cd2smt.Helper.ODHelper.buildOD(
             "post_" + od.getObjectDiagram().getName(), postOdElements);
-
-    return setStereotypes(new OCLOPWitness(method, preOD, postOD), model, opConstraint);
+    if (opConstraint == null) {
+      return new OCLOPWitness(method, preOD, postOD);
+    } else {
+      return setStereotypes(new OCLOPWitness(method, preOD, postOD), model, opConstraint);
+    }
   }
 
   private static OCLOPWitness setStereotypes(
