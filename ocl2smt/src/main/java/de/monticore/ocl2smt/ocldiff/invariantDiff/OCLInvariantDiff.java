@@ -7,6 +7,7 @@ import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cddiff.CDDiff;
 import de.monticore.cddiff.alloycddiff.CDSemantics;
@@ -67,7 +68,7 @@ public class OCLInvariantDiff {
     // list of old OCL Constraints
     List<IdentifiableBoolExpr> oldOCLConstraints = invariant2SMT(ocl2SMTGenerator, oldOCl);
 
-    CD2SMTGenerator cd2SMTGenerator = new CD2SMTGenerator();
+    CD2SMTGenerator cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
     cd2SMTGenerator.cd2smt(oldCD, ctx);
     List<IdentifiableBoolExpr> oldAssocConstr =
         new ArrayList<>(cd2SMTGenerator.getAssociationsConstraints());

@@ -2,6 +2,7 @@
 package de.monticore.ocl2smt.ocl2smt;
 
 import com.microsoft.z3.Status;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +16,7 @@ public class QuantifiedExpressionTest extends ExpressionAbstractTest {
     super.initLogger();
     super.initMills();
     parse("MinAuction.cd", "QuantifiedExpr.ocl");
+    CD2SMTMill.initDefault();
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 

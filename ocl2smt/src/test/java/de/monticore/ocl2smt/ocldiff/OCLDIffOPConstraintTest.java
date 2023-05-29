@@ -1,14 +1,17 @@
 package de.monticore.ocl2smt.ocldiff;
 
+import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cdbasis._ast.ASTCDClass;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
+import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.odbasis._ast.ASTODNamedObject;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +30,7 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
   public void TestBuildPreCD() throws IOException {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
     OCLHelper.buildPreCD(ast);
-    ASTCDClass company = getClass(ast, "Company");
+    ASTCDClass company = (ASTCDClass) CDHelper.getASTCDType("Company", ast.getCDDefinition());
     Assertions.assertTrue(containsAttribute(company, OCLHelper.mkPre("name")));
     Assertions.assertTrue(containsAttribute(company, OCLHelper.mkPre("employees")));
     Assertions.assertTrue(
@@ -69,8 +72,9 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     // checkDiff
     Assertions.assertEquals(
         "3", getAttribute(getObject(witness.getPostOD(), preLinks.get(0).getName()), "employees"));
-    printOD(witness.getPostOD(), "OPConstraintWitness");
-    printOD(witness.getPreOD(), "OPConstraintWitness");
+    Path of = Path.of(TARGET_DIR + "OPConstraintWitness");
+    IOHelper.printOD(witness.getPostOD(), of);
+    IOHelper.printOD(witness.getPreOD(), of);
   }
 
   @Test
@@ -83,7 +87,7 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
     oldOCL.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/old.ocl"));
 
-    ASTOCLMethodSignature method = getMethodSignature(newOCL, "Person.increaseSalary");
+    ASTOCLMethodSignature method = IOHelper.getMethodSignature(newOCL, "Person.increaseSalary");
 
     OCLOPDiffResult diff = OCLDiffGenerator.oclOPDiffV1(ast, oldOCL, newOCL, method, false);
 
@@ -111,6 +115,6 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
 
     Assertions.assertEquals(result, "false");
 
-    printOPDiff(diff, "/OpConstraintDiff");
+    IOHelper.printOPDiff(diff, Path.of(TARGET_DIR + "/OpConstraintDiff"));
   }
 }

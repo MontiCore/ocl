@@ -95,7 +95,7 @@ public class OCLHelper {
   public static boolean isLeftSide(ASTCDType astcdType, String otherRole, ASTCDDefinition cd) {
     List<ASTCDType> objTypes = new ArrayList<>();
     objTypes.add(astcdType);
-    CDHelper.getAllSuperType(astcdType, cd, objTypes);
+    objTypes.addAll(CDHelper.getSuperTypeAllDeep(astcdType, cd));
 
     ASTCDType leftType;
     ASTCDType rightType;

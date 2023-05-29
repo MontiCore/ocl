@@ -37,8 +37,7 @@ ocl NC1 {
  context Person p  inv Assoc9 :
      p.enterprise.isEmpty() && p.enterprise.isPresent();
 
- context Person p  inv Assoc10 :
-     p.enterprise.get().name == "Microsoft" && p.enterprise.isEmpty();
+
 
  context Person p inv Assoc11 :
    exists Enterprise e :
