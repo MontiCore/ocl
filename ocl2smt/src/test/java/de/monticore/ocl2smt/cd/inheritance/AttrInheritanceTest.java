@@ -24,13 +24,13 @@ public class AttrInheritanceTest extends ExpressionAbstractTest {
     parse("/inheritance/attributes/attributes.cd", "/inheritance/attributes/attributes.ocl");
   }
 
-  @ParameterizedTest
-  @MethodSource("cd2smtStrategies")
-  public void testAttributeInherAllHierarchies(
-          ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as) {
-    Assumptions.assumeFalse(cs == SS && is == ME);
-    CD2SMTMill.init(cs, is, as);
-    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
-    testInv("ALL", "/inheritance/attributes");
-  }
+    @ParameterizedTest
+    @MethodSource("cd2smtStrategies")
+    public void testAttributeInherAllHierarchies(
+            ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as) {
+        Assumptions.assumeFalse(cs == SS && is == ME);
+        CD2SMTMill.init(cs, is, as);
+        ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
+        testInv("ALL", "/inheritance/attributes");
+    }
 }

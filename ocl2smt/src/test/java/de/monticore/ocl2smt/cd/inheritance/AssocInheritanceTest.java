@@ -22,15 +22,15 @@ public class AssocInheritanceTest extends ExpressionAbstractTest {
     parse("/inheritance/associations/Association.cd", "/inheritance/associations/Association.ocl");
   }
 
-  @ParameterizedTest
-  @MethodSource("cd2smtStrategies")
-  public void testAssocInheritance(
-          ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as) {
-    CD2SMTMill.init(cs, is, as);
-    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
+    @ParameterizedTest
+    @MethodSource("cd2smtStrategies")
+    public void testAssocInheritance(
+            ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as) {
+        CD2SMTMill.init(cs, is, as);
+        ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
 
-    for (String inv : Set.of("Assoc1", "Assoc2")) {
-      testInv(inv, "/inheritance/associations");
+        for (String inv : Set.of("Assoc1", "Assoc2")) {
+            testInv(inv, "/inheritance/associations");
+        }
     }
-  }
 }
