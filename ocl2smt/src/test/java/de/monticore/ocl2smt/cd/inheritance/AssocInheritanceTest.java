@@ -15,12 +15,12 @@ import java.util.Set;
 
 public class AssocInheritanceTest extends ExpressionAbstractTest {
 
-  @BeforeEach
-  public void setup() throws IOException {
-    super.initLogger();
-    super.initMills();
-    parse("/inheritance/associations/Association.cd", "/inheritance/associations/Association.ocl");
-  }
+    @BeforeEach
+    public void setup() throws IOException {
+        super.initLogger();
+        super.initMills();
+        parse("/inheritance/associations/Association.cd", "/inheritance/associations/Association.ocl");
+    }
 
     @ParameterizedTest
     @MethodSource("cd2smtStrategies")

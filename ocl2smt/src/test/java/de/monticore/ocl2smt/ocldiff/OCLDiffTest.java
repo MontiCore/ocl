@@ -1,11 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocldiff;
 
-import static org.gradle.internal.impldep.org.junit.Assert.assertFalse;
-import static org.gradle.internal.impldep.org.testng.Assert.assertEquals;
-import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
@@ -28,7 +23,10 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.gradle.internal.impldep.org.junit.Assert.assertFalse;
+import static org.gradle.internal.impldep.org.testng.Assert.assertEquals;
+import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class OCLDiffTest extends OCLDiffAbstractTest {
   private final String TARGET_DIR = "target/generated-test/oclDiff/";
