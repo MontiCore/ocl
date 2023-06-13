@@ -11,9 +11,13 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class EvaluationTest extends OCLDiffAbstractTest {
   @BeforeEach
@@ -56,7 +60,14 @@ public class EvaluationTest extends OCLDiffAbstractTest {
 
           long start = System.currentTimeMillis();
 
-          res = OCLDiffGenerator.oclDiff(ast.get(j), Set.of(ocl.get(i)), Set.of(ocl.get(j)), false);
+          res =
+              OCLDiffGenerator.oclDiff(
+                  ast.get(j),
+                  Set.of(ocl.get(i)),
+                  Set.of(ocl.get(j)),
+                  new HashSet<>(),
+                  new HashSet<>(),
+                  false);
 
           // print the results
           IOHelper.printInvDiffResult(res, Path.of(TARGET_DIR + "Evaluation/OCL_V" + i + "" + (j)));
@@ -91,7 +102,13 @@ public class EvaluationTest extends OCLDiffAbstractTest {
 
           res =
               OCLDiffGenerator.oclDiff(
-                  ast.get(i), ast.get(j), Set.of(ocl.get(i)), Set.of(ocl.get(j)), false);
+                  ast.get(i),
+                  ast.get(j),
+                  Set.of(ocl.get(i)),
+                  Set.of(ocl.get(j)),
+                  new HashSet<>(),
+                  new HashSet<>(),
+                  false);
 
           // print the results
           IOHelper.printInvDiffResult(

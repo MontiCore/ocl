@@ -23,9 +23,9 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.gradle.internal.impldep.org.junit.Assert.assertFalse;
 import static org.gradle.internal.impldep.org.testng.Assert.assertEquals;
 import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class OCLDiffTest extends OCLDiffAbstractTest {
@@ -41,7 +41,7 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   @MethodSource("cd2smtStrategies")
   public void testOCLDiffOneCD(
           ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as)
-      throws IOException {
+          throws IOException {
     CD2SMTMill.init(cs, is, as);
     OCLInvDiffResult diff = computeDiffOneCD("Auction.cd", "old.ocl", "new.ocl");
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OCLDiffOneCD"));
@@ -57,16 +57,36 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
 
   @ParameterizedTest
   @MethodSource("cd2smtStrategies")
+  public void testOclDiffOneCDWithODs(
+          ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as)
+          throws IOException {
+    CD2SMTMill.init(cs, is, as);
+    OCLInvDiffResult diff =
+            computeDiffOneCD(
+                    "difWithOds/Auction.cd",
+                    "difWithOds/old.ocl",
+                    "difWithOds/new.ocl",
+                    "difWithOds/posExample.od",
+                    "difWithOds/negExample.od");
+    IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiffOneCDWithODs"));
+    assertEquals(1, diff.getDiffWitness().size());
+    assertEquals(
+            diff.getDiffWitness().iterator().next().getObjectDiagram().getName(), "EndAfterStart");
+    assertTrue(checkLink("obj_object_", "obj_Names_", diff.getUnSatCore()));
+  }
+
+  @ParameterizedTest
+  @MethodSource("cd2smtStrategies")
   public void testOclDiff2CD_NoDiff(
           ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
           throws IOException {
     CD2SMTMill.init(cs, is, as);
     OCLInvDiffResult diff =
             computeDiff2CD(
-                    "2CDDiff/nodiff/old.cd",
-                    "2CDDiff/nodiff/new.cd",
-                    "2CDDiff/nodiff/old.ocl",
-                    "2CDDiff/nodiff/new.ocl");
+            "2CDDiff/nodiff/old.cd",
+            "2CDDiff/nodiff/new.cd",
+            "2CDDiff/nodiff/old.ocl",
+            "2CDDiff/nodiff/new.ocl");
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiff2CD_NoDiff"));
     assertTrue(diff.getDiffWitness().isEmpty());
     assertEquals(countLinks(diff.getUnSatCore()), 3);
@@ -122,7 +142,8 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();
     oclSet.add(parseOCl("Partial/Partial.cd", "Partial/partial.ocl"));
 
-    ASTODArtifact od = OCLDiffGenerator.oclWitness(cdAST, oclSet, true);
+    ASTODArtifact od =
+        OCLDiffGenerator.oclWitness(cdAST, oclSet, new HashSet<>(), new HashSet<>(), true);
     IOHelper.printOD(od, Path.of(TARGET_DIR + "OCLDiffPartial"));
 
     for (ASTODElement element : od.getObjectDiagram().getODElementList()) {

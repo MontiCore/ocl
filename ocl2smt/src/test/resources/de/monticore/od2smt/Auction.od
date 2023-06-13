@@ -1,0 +1,19 @@
+objectdiagram AuctionOD {
+  person_0:Person {
+   int age  = 10 ;
+   String name  ="Naruto" ;
+   boolean isAdult = true;
+   Date  birthDate = "2023-01-05 15:30:00";
+   Country country = DE ;
+  };
+
+
+
+  auction_0:Auction {
+    String name = "GOLD140";
+  };
+
+  link auction_0(auction)--(person)person_0;
+
+
+}

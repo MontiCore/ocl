@@ -26,6 +26,8 @@ import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCompleter;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.util.SymbolTableUtil;
+import de.monticore.od4report.OD4ReportTool;
+import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
@@ -49,6 +51,11 @@ public class OCL_Loader {
     checkCDCoCos(cdAST);
 
     return cdAST;
+  }
+
+  public static ASTODArtifact loadAndCheckOD(File odFile) {
+    assert odFile.getName().endsWith(".od");
+    return new OD4ReportTool().parse(odFile.getAbsolutePath());
   }
 
   public static void setAssociationsRoles(ASTCDCompilationUnit ast) {

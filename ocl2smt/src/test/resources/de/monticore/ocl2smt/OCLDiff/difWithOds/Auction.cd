@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import java.lang.*;
+
+classdiagram Auction {
+  public class Auction {
+    Date startDate ;
+    Date endDate ;
+  }
+
+  class Person {
+    String name ;
+  }
+
+  association Auction  --  Person[*];
+
+}

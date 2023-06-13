@@ -1,0 +1,6 @@
+objectdiagram NegativeOD {
+  auction:Auction {
+   Date  startDate = "2023-01-05 15:30:00";
+   Date  endDate = "2023-01-04 15:30:00";
+  };
+}

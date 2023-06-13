@@ -17,6 +17,7 @@ import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,26 +25,32 @@ public class OCLInvariantDiff {
   protected Context ctx;
 
   public ASTODArtifact oclWitness(
-      ASTCDCompilationUnit cd, Set<ASTOCLCompilationUnit> ocl, boolean partial) {
-    resetContext();
-    return oclWitnessInternal(cd, ocl, partial);
+      ASTCDCompilationUnit cd,
+      Set<ASTOCLCompilationUnit> ocl,
+      Set<IdentifiableBoolExpr> additionalConstraints,
+      Context ctx,
+      boolean partial) {
+    this.ctx = ctx;
+    return oclWitnessInternal(cd, ocl, additionalConstraints, partial);
   }
 
   public OCLInvDiffResult oclDiff(
       ASTCDCompilationUnit cd,
       Set<ASTOCLCompilationUnit> oldOcl,
       Set<ASTOCLCompilationUnit> newOcl,
+      Set<IdentifiableBoolExpr> additionalConstraints,
+      Context ctx,
       boolean partial) {
-    resetContext();
+    this.ctx = ctx;
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
     // check if the Model is consistent
-    if (oclWitnessInternal(cd, newOcl, false) == null) {
+    if (oclWitnessInternal(cd, newOcl, new HashSet<>(additionalConstraints), false) == null) {
       Log.info("The Model PosCD + PosOCL is not Consistent", "[MODEl-INCONSISTENT]");
-    }
+    } // FIXME: 05.06.2023 is always true
 
     // add new ocl Constraint
     List<IdentifiableBoolExpr> newConstraints = invariant2SMT(ocl2SMTGenerator, newOcl);
-
+    newConstraints.addAll(additionalConstraints);
     // negate and add old ocl constraints
     List<IdentifiableBoolExpr> oldConstraints = invariant2SMT(ocl2SMTGenerator, oldOcl);
 
@@ -56,15 +63,17 @@ public class OCLInvariantDiff {
       ASTCDCompilationUnit newCD,
       Set<ASTOCLCompilationUnit> oldOCl,
       Set<ASTOCLCompilationUnit> newOCL,
+      Set<IdentifiableBoolExpr> additionalConstraints,
+      Context ctx,
       boolean partial) {
 
-    resetContext();
+    this.ctx = ctx;
     OCL2SMTGenerator ocl2SMTGenerator =
         new OCL2SMTGenerator(newCD, ctx); // Fixme: translate both classdiagram
 
     // list of new OCl Constraints
     List<IdentifiableBoolExpr> newOClConstraints = invariant2SMT(ocl2SMTGenerator, newOCL);
-
+    newOClConstraints.addAll(additionalConstraints);
     // list of old OCL Constraints
     List<IdentifiableBoolExpr> oldOCLConstraints = invariant2SMT(ocl2SMTGenerator, oldOCl);
 
@@ -100,12 +109,15 @@ public class OCLInvariantDiff {
   }
 
   private ASTODArtifact oclWitnessInternal(
-      ASTCDCompilationUnit cd, Set<ASTOCLCompilationUnit> in, boolean partial) {
+      ASTCDCompilationUnit cd,
+      Set<ASTOCLCompilationUnit> in,
+      Set<IdentifiableBoolExpr> additionalConstraints,
+      boolean partial) {
 
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
 
     List<IdentifiableBoolExpr> solverConstraints = invariant2SMT(ocl2SMTGenerator, in);
-
+    solverConstraints.addAll(additionalConstraints);
     // check if they exist a model for the list of positive Constraint
     Solver solver = ocl2SMTGenerator.makeSolver(solverConstraints);
     if (solver.check() != Status.SATISFIABLE) {
@@ -164,11 +176,5 @@ public class OCLInvariantDiff {
     return oclSet.stream()
         .flatMap(x -> ocl2SMTGenerator.inv2smt(x.getOCLArtifact()).stream())
         .collect(Collectors.toList());
-  }
-
-  public void resetContext() {
-    Map<String, String> cfg = new HashMap<>();
-    cfg.put("model", "true");
-    ctx = new Context(cfg);
   }
 }
