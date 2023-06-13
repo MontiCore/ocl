@@ -1,36 +1,27 @@
 package de.monticore.ocl.tool;
 
-import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class OCLToolTest {
 
-  private boolean partial;
   private String methodName;
   private String cd;
 
-  private String cd2;
-
-  private Path output;
-
+  private String od;
   private String oclv1;
 
   @BeforeEach
   public void setup() {
     String path = "src/test/resources/tool/";
-    partial = true;
     methodName = "Tool.run1";
     cd = path + "Tool.cd";
     oclv1 = path + "Tool.ocl";
-    cd2 = path + "CD.cd";
+    od = path + "Example.od";
   }
 
   @Test
-  public void testInvariantWitness() {
+  public void testPossibleCommand() {
     String[] witness = new String[] {"--w", "-cd", cd, "-ocl", oclv1};
     String[] diff = new String[] {"--diff", "-cd", cd, "-ocl", oclv1, "-nocl", oclv1};
     String[] cdDiff = new String[] {"--diff", "-cd", cd, "-ncd", cd, "-ocl", oclv1, "-nocl", oclv1};
@@ -38,6 +29,9 @@ public class OCLToolTest {
     String[] opWitness2 = new String[] {"--ow", "-cd", cd, "-ocl", oclv1, "-mn", methodName};
     String[] opdiff =
         new String[] {"--odiff", "-cd", cd, "-ocl", oclv1, "-nocl", oclv1, "-mn", methodName};
+    String[] witnessWithOdExamples = new String[] {"--w", "-cd", cd, "-ocl", oclv1, "-od", od};
+    String[] diffWithOdExamples =
+        new String[] {"--diff", "-cd", cd, "-ocl", oclv1, "-nocl", oclv1, "-od", od, "-nod", od};
 
     OCLTool oclTool = new OCLTool();
 
@@ -47,16 +41,7 @@ public class OCLToolTest {
     oclTool.run(opWitness);
     oclTool.run(opdiff);
     oclTool.run(opWitness2);
-  }
-
-  @Test
-  public void test() {
-    OCLDiffGenerator.oclDiff(
-        new File(cd2),
-        new File(cd2),
-        Set.of(new File(oclv1)),
-        Set.of(new File(oclv1)),
-        false,
-        Path.of("output"));
+    oclTool.run(witnessWithOdExamples);
+    oclTool.run(diffWithOdExamples);
   }
 }

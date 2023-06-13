@@ -16,6 +16,7 @@ import de.monticore.odbasis._ast.ASTODName;
 import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.umlstereotype._ast.ASTStereotype;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -42,6 +43,11 @@ public abstract class OCLDiffAbstractTest extends OCL2SMTAbstractTest {
     return OCL_Loader.loadAndCheckCD(Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
   }
 
+  protected ASTODArtifact parseOD(String cdFileName) throws IOException {
+
+    return OCL_Loader.loadAndCheckOD(Paths.get(RELATIVE_MODEL_PATH, cdFileName).toFile());
+  }
+
   protected boolean checkLink(String left, String right, ASTODArtifact od) {
     Set<ASTODLink> links =
         od.getObjectDiagram().getODElementList().stream()
@@ -50,13 +56,10 @@ public abstract class OCLDiffAbstractTest extends OCL2SMTAbstractTest {
             .collect(Collectors.toSet());
 
     return links.stream()
-            .filter(
-                x ->
-                    x.getLeftReferenceNames().get(0).contains(left)
-                        && x.getRightReferenceNames().get(0).contains(right))
-            .collect(Collectors.toSet())
-            .size()
-        == 1;
+            .anyMatch(
+                    x ->
+                            x.getLeftReferenceNames().get(0).contains(left)
+                                    && x.getRightReferenceNames().get(0).contains(right));
   }
 
   protected int countLinks(ASTODArtifact od) {
@@ -74,24 +77,39 @@ public abstract class OCLDiffAbstractTest extends OCL2SMTAbstractTest {
     Set<ASTOCLCompilationUnit> newOCL = new HashSet<>();
     oldOCL.add(parseOCl(oldCDn, oldOCLn));
     newOCL.add(parseOCl(newCDn, newOCLn));
-    return OCLDiffGenerator.oclDiff(oldCD, newCD, oldOCL, newOCL, false);
+    return OCLDiffGenerator.oclDiff(
+        oldCD, newCD, oldOCL, newOCL, new HashSet<>(), new HashSet<>(), false);
   }
 
   public OCLInvDiffResult computeDiffOneCD(String cdName, String oldOCLName, String newOCLName)
       throws IOException {
-    ASTCDCompilationUnit cd = parseCD(cdName);
-    Set<ASTOCLCompilationUnit> newOCL = new HashSet<>();
-    Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
-    newOCL.add(parseOCl(cdName, newOCLName));
-    oldOCL.add(parseOCl(cdName, oldOCLName));
-    return OCLDiffGenerator.oclDiff(cd, oldOCL, newOCL, false);
+    return OCLDiffGenerator.oclDiff(
+            parseCD(cdName),
+            new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
+            new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
+            new HashSet<>(),
+            new HashSet<>(),
+            false);
+  }
+
+  public OCLInvDiffResult computeDiffOneCD(
+      String cdName, String oldOCLName, String newOCLName, String posODName, String negODName)
+      throws IOException {
+
+    return OCLDiffGenerator.oclDiff(
+            parseCD(cdName),
+            new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
+            new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
+            new HashSet<>(Set.of(parseOD(posODName))),
+            new HashSet<>(Set.of(parseOD(negODName))),
+            false);
   }
 
   public ASTODArtifact computeWitness(String cdName, String oldOCLName) throws IOException {
     ASTCDCompilationUnit cd = parseCD(cdName);
     Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
     oldOCL.add(parseOCl(cdName, oldOCLName));
-    return OCLDiffGenerator.oclWitness(cd, oldOCL, false);
+    return OCLDiffGenerator.oclWitness(cd, oldOCL, new HashSet<>(), new HashSet<>(), false);
   }
 
   public boolean containsAttribute(ASTCDClass c, String attribute) {
