@@ -17,7 +17,6 @@ import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
