@@ -244,7 +244,7 @@ public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
             SymTypeExpressionFactory.createGenerics(
                 "java.util.Set", getScope(node.getEnclosingScope()));
       }
-      ((SymTypeOfGenerics) result).addArgument(leftType);
+      ((SymTypeOfGenerics) result).setArgument(0, leftType);
       getTypeCheckResult().setResult(result);
     } else {
       getTypeCheckResult().reset();
@@ -324,7 +324,7 @@ public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
     }
 
     if (!obscure) {
-      ((SymTypeOfGenerics) result).addArgument(innerResult);
+      ((SymTypeOfGenerics) result).setArgument(0, innerResult);
       getTypeCheckResult().setResult(result);
     } else {
       getTypeCheckResult().reset();
