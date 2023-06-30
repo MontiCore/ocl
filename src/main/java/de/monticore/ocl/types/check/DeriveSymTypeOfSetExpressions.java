@@ -26,6 +26,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @deprecated This class is no longer acceptable since we use <b>Type Check 3</b> to calculate the
+ *     type of expressions and literals related to OCL. Use {@link SetExpressionsTypeVisitor}
+ *     instead.
+ */
 public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
     implements SetExpressionsVisitor2, SetExpressionsHandler {
 
