@@ -18,6 +18,7 @@ import de.monticore.types.check.SymTypeExpressionFactory;
  *     type of expressions and literals related to OCL. Use {@link OptionalOperatorsTypeVisitor}
  *     instead.
  */
+@Deprecated(forRemoval = true)
 public class DeriveSymTypeOfOptionalOperators extends AbstractDeriveFromExpression
     implements OptionalOperatorsHandler {
 

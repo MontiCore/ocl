@@ -16,6 +16,10 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
   
   protected SymTypeRelations typeRelations;
   
+  public OptionalOperatorsTypeVisitor() {
+    this(new SymTypeRelations());
+  }
+  
   protected OptionalOperatorsTypeVisitor(SymTypeRelations typeRelations) {
     this.typeRelations = typeRelations;
   }

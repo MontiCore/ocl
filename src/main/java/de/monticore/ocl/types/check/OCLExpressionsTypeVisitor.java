@@ -27,8 +27,11 @@ import static de.monticore.types.check.SymTypeExpressionFactory.createPrimitive;
 public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     implements OCLExpressionsVisitor2 {
   
-  protected OCLExpressionsTraverser traverser;
   protected SymTypeRelations typeRelations;
+  
+  public OCLExpressionsTypeVisitor() {
+    this(new SymTypeRelations());
+  }
   
   protected OCLExpressionsTypeVisitor(SymTypeRelations typeRelations) {
     this.typeRelations = typeRelations;
