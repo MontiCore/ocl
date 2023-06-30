@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
-import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -32,11 +31,9 @@ public abstract class AbstractTest {
   }
 
   protected static final String RELATIVE_MODEL_PATH = "src/test/resources";
-
-  protected IOCLGlobalScope globalScope;
-
-  public static String[] getModels(String folderpath) {
-    File f = new File(RELATIVE_MODEL_PATH + folderpath);
+  
+  public static String[] getModels(String folderPath) {
+    File f = new File(RELATIVE_MODEL_PATH + folderPath);
     String[] filenames = f.list();
     assertThat(filenames).isNotNull();
     filenames = Arrays.stream(filenames).sorted().collect(Collectors.toList()).toArray(filenames);
