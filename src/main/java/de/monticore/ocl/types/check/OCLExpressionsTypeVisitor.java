@@ -7,9 +7,7 @@ package de.monticore.ocl.types.check;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.expressions.expressionsbasis._symboltable.IExpressionsBasisScope;
 import de.monticore.ocl.oclexpressions._ast.*;
-import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsHandler;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
 import de.monticore.ocl.util.LogHelper;
@@ -27,23 +25,13 @@ import static de.monticore.types.check.SymTypeExpressionFactory.createObscureTyp
 import static de.monticore.types.check.SymTypeExpressionFactory.createPrimitive;
 
 public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
-    implements OCLExpressionsVisitor2, OCLExpressionsHandler {
+    implements OCLExpressionsVisitor2 {
   
   protected OCLExpressionsTraverser traverser;
   protected SymTypeRelations typeRelations;
   
   protected OCLExpressionsTypeVisitor(SymTypeRelations typeRelations) {
     this.typeRelations = typeRelations;
-  }
-  
-  @Override
-  public OCLExpressionsTraverser getTraverser() {
-    return traverser;
-  }
-  
-  @Override
-  public void setTraverser(OCLExpressionsTraverser traverser) {
-    this.traverser = traverser;
   }
   
   protected SymTypeRelations getTypeRel() {
