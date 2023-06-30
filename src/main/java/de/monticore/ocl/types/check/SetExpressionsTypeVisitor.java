@@ -34,6 +34,10 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
   protected SetExpressionsTraverser traverser;
   protected SymTypeRelations typeRelations;
   
+  public SetExpressionsTypeVisitor() {
+    this(new SymTypeRelations());
+  }
+  
   protected SetExpressionsTypeVisitor(SymTypeRelations typeRelations) {
     this.typeRelations = typeRelations;
   }

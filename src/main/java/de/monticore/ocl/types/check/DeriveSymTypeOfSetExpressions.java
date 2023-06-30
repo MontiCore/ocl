@@ -31,6 +31,7 @@ import java.util.Set;
  *     type of expressions and literals related to OCL. Use {@link SetExpressionsTypeVisitor}
  *     instead.
  */
+@Deprecated(forRemoval = true)
 public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
     implements SetExpressionsVisitor2, SetExpressionsHandler {
 

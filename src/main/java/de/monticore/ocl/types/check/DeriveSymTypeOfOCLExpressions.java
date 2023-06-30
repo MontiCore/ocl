@@ -21,6 +21,7 @@ import java.util.Map;
  *     type of expressions and literals related to OCL. Use {@link OCLExpressionsTypeVisitor}
  *     instead.
  */
+@Deprecated(forRemoval = true)
 public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
     implements OCLExpressionsHandler {
   
