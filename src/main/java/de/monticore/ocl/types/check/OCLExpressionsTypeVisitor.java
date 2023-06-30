@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.oclexpressions._ast.*;
-import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
 import de.monticore.ocl.util.LogHelper;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
@@ -58,7 +57,8 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     else {
       result = createObscureType();
       LogHelper.error(expr, "0xA3082",
-          "The type of the expression of the OCLTypeCastExpression can't be cast to given type");
+          "The type of the expression can't be cast to the given type '" +
+              typeResult.getTypeInfo().getName() + "'"  + getType4Ast() + " " + tmpMap + " " + expr.getMCType().printType());
     }
     getType4Ast().setTypeOfExpression(expr, result);
   }

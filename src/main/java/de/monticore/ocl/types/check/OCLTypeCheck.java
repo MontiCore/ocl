@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import de.monticore.types.check.*;
 import de.se_rwth.commons.logging.Log;
 
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,9 +25,7 @@ public class OCLTypeCheck {
               "Map"));
   
   // TODO bessere Variante?
-  protected static TypeRelations typeRelations; // TODO initialize
-
-  protected OCLTypeCheck() {}
+  protected static TypeRelations typeRelations = new TypeRelations();
 
   /**
    * Test whether 2 types are compatible by using TypeCheck class and extending it by checking

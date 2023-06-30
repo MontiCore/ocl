@@ -75,6 +75,7 @@ public class OCLTraverserProvider {
   }
   
   public void setType4Ast(Type4Ast type4Ast) {
+    System.out.println("type4Ast: " + type4Ast);
     // Expressions
     derOCLExpressions.setType4Ast(type4Ast);
     derOptionalOperators.setType4Ast(type4Ast);

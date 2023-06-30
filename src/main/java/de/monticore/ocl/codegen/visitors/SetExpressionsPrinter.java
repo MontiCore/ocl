@@ -21,6 +21,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   protected static final String MISSING_IMPLEMENTATION_ERROR = "0xC4722 Implementation missing";
 
+  
   protected SetExpressionsTraverser traverser;
 
   protected IndentPrinter printer;
@@ -373,7 +374,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
   public void handle(ASTSetComprehensionItem node) {
     if (node.isPresentExpression()) {
       TypeCheckResult type = getDeriver().deriveType(node.getExpression());
-      if (type.isPresentResult() && OCLTypeCheck.isBoolean(type.getResult())) {
+      if (type.isPresentResult() && TypeCheck.isBoolean(type.getResult())) {
         getPrinter().print("if (");
         node.getExpression().accept(getTraverser());
         getPrinter().println(") {");
