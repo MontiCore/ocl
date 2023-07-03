@@ -11,7 +11,7 @@ import de.monticore.types3.Type4Ast;
 
 public class OCLTraverserProvider {
   
-  // TODO MSm add Bit Expressions
+  // TODO MSm add Bit Expressions after XIN created them
   
   // Expressions
   
@@ -35,6 +35,7 @@ public class OCLTraverserProvider {
   
   protected MCSimpleGenericTypesTypeVisitor synMCSimpleGenericTypes;
   
+  // TODO MSm suggestions for better name: OCLTypeTraverser(Populator) or use builder pattern
   public OCLTraverserProvider() {
     init();
   }
@@ -75,7 +76,7 @@ public class OCLTraverserProvider {
   }
   
   public void setType4Ast(Type4Ast type4Ast) {
-    System.out.println("type4Ast: " + type4Ast);
+    
     // Expressions
     derOCLExpressions.setType4Ast(type4Ast);
     derOptionalOperators.setType4Ast(type4Ast);

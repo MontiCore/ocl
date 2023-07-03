@@ -8,6 +8,7 @@ import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 
+// TODO MSm deprecate as soon as SymTypeExpressionsFactory has convenience methods for this.
 public class TypeUtil {
   protected static SymTypeExpression getIntSymType() {
     return SymTypeExpressionFactory.createPrimitive("int");

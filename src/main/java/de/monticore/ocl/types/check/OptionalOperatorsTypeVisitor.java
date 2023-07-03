@@ -3,11 +3,13 @@ package de.monticore.ocl.types.check;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.optionaloperators._ast.*;
 import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsVisitor2;
-import de.monticore.ocl.util.LogHelper;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types3.AbstractTypeVisitor;
 import de.monticore.types3.SymTypeRelations;
+import de.se_rwth.commons.logging.Log;
 
 import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
 
@@ -38,12 +40,15 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
       result = createObscureType();
     }
     else {
-      result = OCLTypeCheck.unwrapOptional(optionalResult);
+      result = unwrapOptional(optionalResult);
       
       // check compatibility of type of optional and expression
-      if (!result.isObscureType() && !OCLTypeCheck.compatible(result, exprResult)) {
-        LogHelper.error(expr, "0xA0330", "types of OptionalExpressionPrefix are not compatible!");
-        result = createObscureType(); // TODO MSm added
+      if (!result.isObscureType() && !getTypeRel().isCompatible(result, exprResult)) {
+        Log.error(String.format(
+                "0xFD201 The types '%s' and '%s' of OptionalExpressionPrefix are not compatible!",
+                result.printFullName(), exprResult.printFullName()), expr.get_SourcePositionStart(),
+            expr.get_SourcePositionEnd());
+        result = createObscureType();
       }
     }
     
@@ -97,10 +102,11 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
       result = createObscureType();
     }
     else {
-      if (OCLTypeCheck.unwrapOptional(leftResult).isObscureType()) {
-        LogHelper.error(expr, "0xA0331", "Couldn't determine type of Optional");
+      if (unwrapOptional(leftResult).isObscureType()) {
+        Log.error("0xFD202 Couldn't determine type of Optional.", expr.get_SourcePositionStart(),
+            expr.get_SourcePositionEnd());
       }
-      result = SymTypeExpressionFactory.createPrimitive("boolean");
+      result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     }
     getType4Ast().setTypeOfExpression(expr, result);
   }
@@ -116,10 +122,11 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
       result = createObscureType();
     }
     else {
-      if (OCLTypeCheck.unwrapOptional(leftResult).isObscureType()) {
-        LogHelper.error(expr, "0xA0331", "Couldn't determine type of Optional");
+      if (unwrapOptional(leftResult).isObscureType()) {
+        Log.error("0xFD203 Couldn't determine type of Optional.", expr.get_SourcePositionStart(),
+            expr.get_SourcePositionEnd());
       }
-      result = SymTypeExpressionFactory.createPrimitive("boolean");
+      result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     }
     getType4Ast().setTypeOfExpression(expr, result);
   }
@@ -129,8 +136,8 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
     var rightResult = getType4Ast().getPartialTypeOfExpr(right);
     
     // check that leftResult is of type Optional
-    if (!OCLTypeCheck.unwrapOptional(leftResult).isObscureType()) {
-      leftResult = OCLTypeCheck.unwrapOptional(leftResult);
+    if (!unwrapOptional(leftResult).isObscureType()) {
+      leftResult = unwrapOptional(leftResult);
       return calculateTypeCompareOptional(rightResult, leftResult);
     }
     else {
@@ -141,7 +148,7 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
   protected SymTypeExpression calculateTypeCompareOptional(SymTypeExpression rightResult,
       SymTypeExpression leftResult) {
     if (getTypeRel().isNumericType(rightResult) && getTypeRel().isNumericType(leftResult)) {
-      return SymTypeExpressionFactory.createPrimitive("boolean");
+      return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     }
     else {
       return SymTypeExpressionFactory.createObscureType();
@@ -153,8 +160,8 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
     var rightResult = getType4Ast().getPartialTypeOfExpr(right);
     
     // check that leftResult is of type Optional
-    if (!OCLTypeCheck.unwrapOptional(leftResult).isObscureType()) {
-      leftResult = OCLTypeCheck.unwrapOptional(leftResult);
+    if (!unwrapOptional(leftResult).isObscureType()) {
+      leftResult = unwrapOptional(leftResult);
       return calculateTypeLogicalOptional(rightResult, leftResult);
     }
     else {
@@ -167,18 +174,37 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
     // Option one: they are both numeric types
     if (getTypeRel().isNumericType(leftResult) && getTypeRel().isNumericType(rightResult)
         || getTypeRel().isBoolean(leftResult) && getTypeRel().isBoolean(rightResult)) {
-      return SymTypeExpressionFactory.createPrimitive("boolean");
+      return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     }
     // Option two: none of them is a primitive type, and they are either the same type or in a
     // super/ subtype relation
     if (!leftResult.isPrimitive() && !rightResult.isPrimitive()
         && (getTypeRel().isCompatible(leftResult, rightResult) ||
         getTypeRel().isCompatible(rightResult, leftResult))) {
-      return SymTypeExpressionFactory.createPrimitive("boolean");
+      return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     }
     else {
       // should never happen, no valid result
       return SymTypeExpressionFactory.createObscureType();
     }
   }
+  
+  // TODO MSm refactor before merge
+  protected SymTypeExpression unwrapOptional(SymTypeExpression optional) {
+    // check that argument is of type Optional
+    if (!optional.isGenericType() || !optional.getTypeInfo().getName().equals("Optional")) {
+      Log.error("function optionalCompatible requires an Optional SymType but was given " +
+          optional.print());
+      return SymTypeExpressionFactory.createObscureType();
+    }
+    else if (!((SymTypeOfGenerics) optional).getArgumentList().isEmpty()) {
+      // return type of optional
+      return ((SymTypeOfGenerics) optional).getArgument(0);
+    }
+    else {
+      return SymTypeExpressionFactory.createObscureType();
+    }
+  }
+  
+  // TODO MSm move setexpressions.types3.SetExpressionsTypeVisitor & OCLTrav in ocl.types3
 }

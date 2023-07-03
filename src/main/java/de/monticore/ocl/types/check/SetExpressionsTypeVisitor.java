@@ -9,24 +9,23 @@ import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
 import de.monticore.ocl.util.LogHelper;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types3.AbstractTypeVisitor;
 import de.monticore.types3.SymTypeRelations;
-import de.se_rwth.commons.logging.Log;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static de.monticore.ocl.types.check.OCLTypeCheck.compatible;
 import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
 
 public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     implements SetExpressionsVisitor2, SetExpressionsHandler {
   
-  // TODO MSm: better way to define them?
+  // TODO MSm: replace with better variant when provided by FDr
   protected final List<String> collections =
       Lists.newArrayList("List", "Set", "Collection", "java.util.List", "java.util.Set",
           "java.util.Collection");
@@ -76,9 +75,9 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     SymTypeExpression result;
     if (!elemResult.isObscureType() && !setResult.isObscureType() && setResult.isGenericType() &&
         collections.stream().anyMatch(c -> setResult.getTypeInfo().getName().equals(c)) &&
-        compatible(((SymTypeOfGenerics) setResult).getArgument(0), elemResult)) {
+        getTypeRel().isCompatible(((SymTypeOfGenerics) setResult).getArgument(0), elemResult)) {
       
-      result = SymTypeExpressionFactory.createPrimitive("boolean");
+      result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     }
     else {
       result = createObscureType();
@@ -125,14 +124,18 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
       var rightGeneric = (SymTypeOfGenerics) rightResult;
       
       if (collections.contains(leftGeneric.getTypeInfo().getName()) &&
-          getTypeRel().unbox(leftGeneric).equals(getTypeRel().unbox(rightGeneric))) {
+          collections.contains(rightGeneric.getTypeInfo()
+              .getName()) // TODO FDr refactoren wenn OCL LuB-Calculator vorhanden ist
+      ) {
         
-        if (compatible(leftGeneric.getArgument(0), rightGeneric.getArgument(0))) {
+        // TODO FDr result = LuB of left and right arguments
+        
+        if (getTypeRel().isCompatible(leftGeneric.getArgument(0), rightGeneric.getArgument(0))) {
           result = SymTypeExpressionFactory.createGenerics(leftGeneric.getTypeInfo(),
               leftGeneric.getArgument(0).deepClone());
         }
-        else if (compatible(rightGeneric.getArgument(0), leftGeneric.getArgument(0))) {
-          // TODO MSm: no effect
+        else if (getTypeRel().isCompatible(rightGeneric.getArgument(0), leftGeneric.getArgument(0))) {
+          // TODO MSm hinzufügen
           // TypeSymbol loader = new TypeSymbolSurrogate(right);
           // loader.setEnclosingScope(getScope(expr.getEnclosingScope()));
           result = SymTypeExpressionFactory.createPrimitive("boolean");
@@ -167,7 +170,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
       result = SymTypeExpressionFactory.createGenerics(typeResult.getTypeInfo());
     }
     else {
-      Log.error("0xA0298 could not calculate type at " + expr.get_SourcePositionStart());
+      LogHelper.error("0xFD213", "could not calculate type");
     }
     
     SymTypeExpression leftType = createObscureType();
@@ -178,7 +181,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
       traverser.add4ExpressionsBasis(nameVisitor);
       expr.getLeft().getExpression().accept(traverser);
       varNames = nameVisitor.getVarNames();
-      // TODO MSm: Type result wrong?
+      // TODO MSm: Type result wrong? / get... Methoden ersetzen, alle
       expr.getLeft().getExpression().accept(getTraverser());
       if (typeResult.isObscureType()) {
         result = createObscureType();
@@ -211,7 +214,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
         result = SymTypeExpressionFactory.createGenerics("java.util.Set",
             getAsBasicSymbolsScope(expr.getEnclosingScope()));
       }
-      if (result instanceof SymTypeOfGenerics) {
+      if (result.isGenericType()) {
         ((SymTypeOfGenerics) result).setArgument(0, leftType);
       }
       
@@ -223,7 +226,9 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     boolean obscure = false;
     SymTypeExpression result = null;
     SymTypeExpression innerResult = null;
-    var typeResult = getType4Ast().getPartialTypeOfTypeId(expr.getMCType());
+    SymTypeExpression typeResult = null;
+    // TODO Hilfsmethode setzen typeResult = getType4Ast().getPartialTypeOfExpr(expr.);
+    // TODO numeric promo auf ergebnis anwenden
     
     boolean correct = false;
     for (String s : collections) {
@@ -232,7 +237,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
       }
     }
     if (!correct) {
-      Log.error("0xA0298 there must be a type for collection at" + expr.get_SourcePositionStart());
+      LogHelper.error("0xFD214", "there must be a type for collection");
     }
     else {
       result = SymTypeExpressionFactory.createGenerics(typeResult.getTypeInfo());
@@ -255,8 +260,8 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
         else if (innerResult == null) {
           innerResult = typeResult;
         }
-        else if (!compatible(innerResult, typeResult)) {
-          LogHelper.error(expr, "0xA0333", "different types in SetEnumeration");
+        else if (!getTypeRel().isCompatible(innerResult, typeResult)) {
+          LogHelper.error(expr, "0xFD215", "different types in SetEnumeration");
         }
       }
       else {
@@ -268,8 +273,8 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
         else if (innerResult == null) {
           innerResult = typeResult;
         }
-        else if (!compatible(innerResult, typeResult)) {
-          LogHelper.error(expr, "0xA0335", "different types in SetEnumeration");
+        else if (!getTypeRel().isCompatible(innerResult, typeResult)) {
+          LogHelper.error(expr, "0xFD216", "different types in SetEnumeration");
         }
       }
     }
@@ -283,6 +288,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     getType4Ast().setTypeOfExpression(expr, result);
   }
   
+  // TODO ersetzen
   public void traverse(ASTSetValueRange expr) {
     var leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLowerBound());
     var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getUpperBound());
@@ -293,11 +299,19 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     }
     else {
       if (!getTypeRel().isIntegralType(leftResult) || !getTypeRel().isIntegralType(rightResult)) {
-        LogHelper.error(expr, "0xA0337",
+        LogHelper.error(expr, "0xFD217",
             "bounds in SetValueRange are not integral types, but have to be");
       }
       result = leftResult;
     }
     // TODO MSm: How? getType4Ast().setTypeOfTypeIdentifier(expr, result);
+  }
+  
+  // TODO MSm besseren Namen geben
+  // TODO
+  protected SymTypeExpression getType(ASTSetCollectionItem item) {
+    // TODO type dispatcher verwenden
+    // TODO LuB for SetValueRange oder NumericPromotion aus SymTypeRelations für Nummern, prüfen das isIntegralType (vor NumPromotion)
+    return null;
   }
 }
