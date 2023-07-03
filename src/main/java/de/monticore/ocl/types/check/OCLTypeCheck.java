@@ -11,7 +11,7 @@ import java.util.List;
 
 public class OCLTypeCheck {
   
-  // TODO MSm bessere Variante?
+  // TODO MSm better variant will be provided by FDr
   protected static final List<String> collections =
       Collections.unmodifiableList(
           Lists.newArrayList(
@@ -24,9 +24,9 @@ public class OCLTypeCheck {
               "Collection",
               "Map"));
   
-  // TODO bessere Variante?
+  // TODO MSm replace with a better variant when OCLSymTypeCompatibilityCalculator is available
   protected static TypeRelations typeRelations = new TypeRelations();
-
+  
   /**
    * Test whether 2 types are compatible by using TypeCheck class and extending it by checking
    * whether FullQualifiedNames are different.
@@ -34,7 +34,9 @@ public class OCLTypeCheck {
    * @param left expression that should be assigned a value
    * @param right expression that should be assigned to left
    * @return true iff right is compatible to left
+   * @deprecated replace with the future OCLSymTypeCompatibilityCalculator
    */
+  @Deprecated
   public static boolean compatible(SymTypeExpression left, SymTypeExpression right) {
     if (!left.isPrimitive() && right.isNullType()) {
       return true;
@@ -59,7 +61,11 @@ public class OCLTypeCheck {
 
     return comp;
   }
-
+  
+  /**
+   * @deprecated replace with the future OCLSymTypeCompatibilityCalculator
+   */
+  @Deprecated
   public static boolean isSubtypeOf(SymTypeExpression subType, SymTypeExpression superType) {
     // Object is superType of all other types
     if (superType.getTypeInfo().getName().equals("Object")) {
@@ -71,21 +77,11 @@ public class OCLTypeCheck {
       return typeRelations.isSubtypeOf(subType, superType);
     }
   }
-
-  public static boolean optionalCompatible(SymTypeExpression optional, SymTypeExpression right) {
-    // check that first argument is of Type Optional
-    if (!optional.isGenericType() || optional.print().equals("Optional")) {
-      Log.error("function optionalCompatible requires an Optional SymType but was given " +
-          optional.print());
-      return false;
-    }
-    else {
-      // check whether value in optional argument and second argument are compatible
-      SymTypeExpression leftUnwrapped = ((SymTypeOfGenerics) optional).getArgument(0);
-      return compatible(leftUnwrapped, right);
-    }
-  }
-
+  
+  /**
+   * @deprecated use the {@link OptionalOperatorsTypeVisitor#unwrapOptional(SymTypeExpression)} instead
+   */
+  @Deprecated
   public static SymTypeExpression unwrapOptional(SymTypeExpression optional) {
     // check that argument is of Type Optional
     if (!optional.isGenericType() || !optional.getTypeInfo().getName().equals("Optional")) {

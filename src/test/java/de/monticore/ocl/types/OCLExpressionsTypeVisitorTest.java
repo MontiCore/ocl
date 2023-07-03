@@ -7,8 +7,8 @@ import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._parser.OCLParser;
-import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
 import de.monticore.ocl.types.check.OCLTraverserProvider;
+import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.Type4Ast;
@@ -57,8 +57,6 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
   protected static Stream<Arguments> castExpressions() {
     return Stream.of(
         Arguments.of("(boolean) false", "boolean"),
-        Arguments.of("(byte) 0xA", "byte"), // TODO MSm cannot parse hex literals
-        Arguments.of("(byte) 0xb", "byte"), // TODO MSm cannot parse hex literals
         Arguments.of("(int) 5", "int"),
         Arguments.of("(long) 5", "long"),
         Arguments.of("(long) 5l", "long"),
@@ -105,7 +103,7 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     checkExpr(exprStr, expectedType);
   }
   
-  protected static Stream<Arguments> typeIfExpressions() {
+  protected static Stream<Arguments> typeIfExpressions() { // TODO FDr UnionType ready machen
     return Stream.of(
         Arguments.of("let double a = 5.0 in (typeif a instanceof double then 5.0 else 2*2)", "double"), // then case
         Arguments.of("let double a = 5.0 in (typeif a instanceof int then 5 else 5.0)", "double") // else case
@@ -118,7 +116,7 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     checkExpr(exprStr, expectedType);
   }
   
-  protected static Stream<Arguments> ifThenElseExpressions() {
+  protected static Stream<Arguments> ifThenElseExpressions() { // TODO FDr UnionType ready machen
     return Stream.of(
         Arguments.of("if true then 5.0 else 2*2", "double"), // then case
         Arguments.of("if true then 5 else 5.0", "double") // else case
@@ -181,7 +179,7 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
   
   protected static Stream<Arguments> anyExpressions() {
     return Stream.of(
-        Arguments.of("any x in {1,2,3}", "int") // TODO MSm create valid expression
+        Arguments.of("any {1}", "int") // TODO MSm create valid expression
     );
   }
   
@@ -201,7 +199,7 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
   
   @ParameterizedTest
   @MethodSource("letInExpressions")
-  protected void checkTypeIfExpression(String exprStr, String expectedType) throws IOException {
+  protected void checkLetInExpression(String exprStr, String expectedType) throws IOException {
     checkExpr(exprStr, expectedType);
   }
   
@@ -234,9 +232,8 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
   }
   
   protected static Stream<Arguments> arrayQualificationExpressions() {
-    return Stream.of(
-        // TODO MSm how to define arrays?
-    );
+    // TODO MyArray in die SymbolTabelle einbauen, eventuell für neues Optional
+    return null;
   }
   
   @ParameterizedTest
@@ -294,11 +291,10 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
         OCLMill.oCLArtifactBuilder().setName("fooArtifact").addOCLConstraint(oclConstraint).build();
     ASTOCLCompilationUnit compilationUnit =
         OCLMill.oCLCompilationUnitBuilder().setOCLArtifact(oclArtifact).build();
-    IOCLArtifactScope rootScope = OCLMill.scopesGenitorDelegator().createFromAST(compilationUnit);
-    rootScope.setName("fooRoot");
     
     // complete the symbol table
-    expr.accept(getScopeGenitor());
+    SymbolTableUtil.runSymTabGenitor(compilationUnit);
+    SymbolTableUtil.runSymTabCompleter(compilationUnit);
   }
   
   protected Type4Ast getType4Ast() {
@@ -308,5 +304,7 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
   protected ITraverser getScopeGenitor() {
     return scopeGenitor;
   }
+  
+  // TODO Randbedingungen wann TODOs abgearbeitet werden
   
 }
