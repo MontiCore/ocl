@@ -50,7 +50,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
       // if any inner obscure then error already logged
       result = createObscureType();
     }
-    else if (OCLTypeCheck.compatible(typeResult, exprResult)) {
+    else if (OCLTypeCheck.compatible(typeResult, exprResult)) { // TODO MSm support downcasts?
       // check whether typecast is possible
       result = typeResult;
     }
@@ -58,7 +58,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
       result = createObscureType();
       LogHelper.error(expr, "0xA3082",
           "The type of the expression can't be cast to the given type '" +
-              typeResult.getTypeInfo().getName() + "'"  + getType4Ast() + " " + tmpMap + " " + expr.getMCType().printType());
+              typeResult.getTypeInfo().getName());
     }
     getType4Ast().setTypeOfExpression(expr, result);
   }
