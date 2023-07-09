@@ -1,11 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocldiff;
 
-import static org.gradle.internal.impldep.org.testng.Assert.assertEquals;
-import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
@@ -18,14 +13,22 @@ import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODNamedObject;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
+
+import static org.gradle.internal.impldep.org.testng.Assert.assertEquals;
+import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class OCLDiffTest extends OCLDiffAbstractTest {
   private final String TARGET_DIR = "target/generated-test/oclDiff/";
@@ -54,15 +57,26 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     assertFalse(checkLink("obj_MaxIdent_7", "obj_No_Auction_Facebook", diff.getUnSatCore()));
   }
 
+  @Test
+  public void testOCLDiffOneCDFinite() throws IOException {
+    CD2SMTMill.init(
+            ClassStrategy.Strategy.FINITEDS,
+            InheritanceData.Strategy.ME,
+            AssociationStrategy.Strategy.DEFAULT);
+    OCLInvDiffResult diff = computeDiffOneCDFinite("Auction.cd", "old.ocl", "new.ocl", 10);
+    IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "finite/diffOneCD"));
+    Assertions.assertEquals(4, diff.getDiffWitness().size());
+  }
+
   @ParameterizedTest
   @MethodSource("cd2smtStrategies")
   public void testOclDiffOneCDWithODs(
-      ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as)
-      throws IOException {
+          ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as)
+          throws IOException {
     CD2SMTMill.init(cs, is, as);
     OCLInvDiffResult diff =
-        computeDiffOneCD(
-            "difWithOds/Auction.cd",
+            computeDiffOneCD(
+                    "difWithOds/Auction.cd",
             "difWithOds/old.ocl",
             "difWithOds/new.ocl",
             "difWithOds/posExample.od",

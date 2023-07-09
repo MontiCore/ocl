@@ -8,6 +8,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl2smt.helpers.IOHelper;
+import de.monticore.ocl2smt.ocldiff.invariantDiff.FiniteOCLInvariantDiff;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvariantDiff;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
@@ -17,6 +18,7 @@ import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.od2smt.OD2SMTGenerator;
 import de.monticore.od2smt.OD2SMTUtils;
 import de.monticore.odbasis._ast.ASTODArtifact;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
@@ -256,12 +258,12 @@ public class OCLDiffGenerator {
    * @return the diff witness
    */
   public static OCLInvDiffResult oclDiff(
-      ASTCDCompilationUnit cd,
-      Set<ASTOCLCompilationUnit> oldOcl,
-      Set<ASTOCLCompilationUnit> newOCL,
-      Set<ASTODArtifact> posOD,
-      Set<ASTODArtifact> negOD,
-      boolean partial) {
+          ASTCDCompilationUnit cd,
+          Set<ASTOCLCompilationUnit> oldOcl,
+          Set<ASTOCLCompilationUnit> newOCL,
+          Set<ASTODArtifact> posOD,
+          Set<ASTODArtifact> negOD,
+          boolean partial) {
 
     OCLInvariantDiff operator = new OCLInvariantDiff();
     Context ctx = buildContext();
@@ -269,6 +271,35 @@ public class OCLDiffGenerator {
     additionalConstraints.addAll(negativOd2smt(negOD, cd, ctx));
 
     return operator.oclDiff(cd, oldOcl, newOCL, additionalConstraints, ctx, partial);
+  }
+
+  /**
+   * Compute the semantic difference (of OCL-invariant) between a new ocl-Model and an old one. The
+   * result is a set of witness object diagram and specifications tracing.
+   *
+   * @param cd      the class diagram.
+   * @param oldOcl  the old OCL-Model.
+   * @param newOCL  the new OCl-Model.
+   * @param posOD   as set of positive example as object diagram (optional)
+   * @param negOD   as set of negative example as object diagram (optional)
+   * @param partial if partial == true, the Object diagram will be partial regarding the attributes.
+   * @return the diff witness
+   */
+  public static OCLInvDiffResult oclDiffFinite(
+          ASTCDCompilationUnit cd,
+          Set<ASTOCLCompilationUnit> oldOcl,
+          Set<ASTOCLCompilationUnit> newOCL,
+          Set<ASTODArtifact> posOD,
+          Set<ASTODArtifact> negOD,
+          long max,
+          boolean partial) {
+
+    FiniteOCLInvariantDiff operator = new FiniteOCLInvariantDiff();
+    Context ctx = buildContext();
+    Set<IdentifiableBoolExpr> additionalConstraints = od2constraints(posOD, cd, ctx);
+    additionalConstraints.addAll(negativOd2smt(negOD, cd, ctx));
+
+    return operator.oclDiffFinite(cd, oldOcl, newOCL, additionalConstraints, ctx, max, partial);
   }
 
   /**
