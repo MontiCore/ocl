@@ -656,10 +656,10 @@ public class OCLExpressionConverter extends Expression2smt {
     Expr<? extends Sort> expr =
         declVariable(typeConverter.buildOCLType(node.getMCType()), node.getName());
     return bool ->
-        new SMTSet(
-                obj -> mkExists(List.of(expr), ctx.mkAnd(ctx.mkEq(obj, expr), bool)),
-                getType(expr),
-                this);
+            new SMTSet(
+                    obj -> mkExists(List.of(expr), ctx.mkAnd(ctx.mkEq(obj, expr), bool)),
+                    getType(expr),
+                    this);
   }
 
   protected BoolExpr convertSetVarDeclRight(ASTSetVariableDeclaration node) {
@@ -696,11 +696,11 @@ public class OCLExpressionConverter extends Expression2smt {
     Expr<? extends Sort> expr = declareSetGenVar(node);
     SMTSet set = convertSet(node.getExpression());
     return bool ->
-        new SMTSet(
-                obj ->
-                        mkExists(List.of(expr), ctx.mkAnd(ctx.mkEq(obj, expr), set.contains(expr), bool)),
-                getType(expr),
-                this);
+            new SMTSet(
+                    obj ->
+                            mkExists(List.of(expr), ctx.mkAnd(ctx.mkEq(obj, expr), set.contains(expr), bool)),
+                    getType(expr),
+                    this);
   }
 
   // a.auction**
@@ -747,11 +747,11 @@ public class OCLExpressionConverter extends Expression2smt {
     Expr<? extends Sort> obj1 = declVariable(type, "obj1");
     Expr<? extends Sort> obj2 = declVariable(type, "obj2");
     BoolExpr rel_is_assocFunc =
-        mkForall(
-                List.of(obj1, obj2),
-                ctx.mkEq(
-                        rel.apply(obj1, obj2),
-                        cd2smtGenerator.evaluateLink(association, objClass, objClass, obj1, obj2)));
+            mkForall(
+                    List.of(obj1, obj2),
+                    ctx.mkEq(
+                            rel.apply(obj1, obj2),
+                            cd2smtGenerator.evaluateLink(association, objClass, objClass, obj1, obj2)));
     genConstraints.add(rel_is_assocFunc);
     return rel;
   }

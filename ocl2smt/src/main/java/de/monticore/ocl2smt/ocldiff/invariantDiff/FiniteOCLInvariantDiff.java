@@ -59,7 +59,7 @@ public class FiniteOCLInvariantDiff extends OCLInvariantDiff {
         boolean b =
                 cardinalities.anyMatch(
                         card -> {
-                            Log.info("Solving " + oldInvariant.getName(), this.getClass().getName());
+                            Log.info("Solving " + oldInvariant.getName() + "....", this.getClass().getName());
                             CD2SMTMill.init(
                                     ClassStrategy.Strategy.FINITEDS,
                                     InheritanceData.Strategy.ME,

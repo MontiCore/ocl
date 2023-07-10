@@ -8,16 +8,17 @@ import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.se_rwth.commons.logging.Log;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
 public class EvaluationTest extends OCLDiffAbstractTest {
   @BeforeEach
@@ -171,12 +172,50 @@ public class EvaluationTest extends OCLDiffAbstractTest {
     IOHelper.printOPDiff(res, Path.of(TARGET_DIR + "Evaluation/Op_V" + 6 + "" + (5)));
 
     Log.info(
-        "| duration: " + (double) (System.currentTimeMillis() - start) / 1000,
-        "Diff( V" + 6 + " ,V" + (5) + ")");
+            "| duration: " + (double) (System.currentTimeMillis() - start) / 1000,
+            "Diff( V" + 6 + " ,V" + (5) + ")");
 
     Log.info("\n \n \n", "");
     Log.info(
-        "------------------------------------------------------------------------------------",
-        "Evaluation");
+            "------------------------------------------------------------------------------------",
+            "Evaluation");
   }
+
+  @Test
+  public void evaluateDiffForFiniteStrategies() throws IOException {
+    long start = System.currentTimeMillis();
+    loadModels();
+    OCLInvDiffResult res =
+            /*  OCLDiffGenerator.oclDiff(
+                  ast.get(2),
+                  Set.of(ocl.get(2)),
+                  Set.of(ocl.get(3)),
+                  new HashSet<>(),
+                  new HashSet<>(),
+                  true);*/
+
+
+            OCLDiffGenerator.oclDiffFinite(
+                    ast.get(2),
+                    Set.of(ocl.get(2)),
+                    Set.of(ocl.get(3)),
+                    new HashSet<>(),
+                    new HashSet<>(),
+                    50,
+                    true);
+
+    // print the results
+    IOHelper.printInvDiffResult(
+            res, Path.of(TARGET_DIR + "finite/evaluation/Diff_V" + 2 + "" + (3)));
+
+    Log.info(
+            "| duration: " + (double) (System.currentTimeMillis() - start) / 1000 + "s",
+            "Diff( V" + 2 + " ,V" + (3) + ")");
+  }
+
+
 }
+
+
+
+

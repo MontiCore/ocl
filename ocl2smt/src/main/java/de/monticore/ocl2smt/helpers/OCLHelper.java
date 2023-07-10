@@ -230,20 +230,20 @@ public class OCLHelper {
             resList.add(expr);
           }
         }
-        List<ASTODNamedObject> resObjList =
-                resList.stream()
-                        .map(expr -> getObjectWithExpr(result.getOclType(), expr, od))
-                        .collect(Collectors.toList());
+          List<ASTODNamedObject> resObjList =
+                  resList.stream()
+                          .map(expr -> getObjectWithExpr(result.getOclType(), expr, od))
+                          .collect(Collectors.toList());
         resObjList.forEach(obj -> obj.setModifier(buildModifier("result", "true")));
       }
     }
   }
 
-  private static boolean isThis(
-          ASTODNamedObject obj, Model model, OCLType type, Expr<? extends Sort> thisObj) {
-    return obj.getName()
-            .equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true), type.getName()));
-  }
+    private static boolean isThis(
+            ASTODNamedObject obj, Model model, OCLType type, Expr<? extends Sort> thisObj) {
+        return obj.getName()
+                .equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true), type.getName()));
+    }
 
   private static boolean isPreLink(ASTODLink link) {
     return isPre(link.getODLinkLeftSide().getRole()) && isPre(link.getODLinkRightSide().getRole());
@@ -322,11 +322,11 @@ public class OCLHelper {
     return false;
   }
 
-  public static ASTODNamedObject getObjectWithExpr(
-          OCLType type, Expr<? extends Sort> expr, ASTODArtifact od) {
-    return OCLHelper.getObjectList(od).stream()
-            .filter(x -> x.getName().equals(SMTHelper.buildObjectName(expr, type.getName())))
-            .findFirst()
-            .orElse(null);
-  }
+    public static ASTODNamedObject getObjectWithExpr(
+            OCLType type, Expr<? extends Sort> expr, ASTODArtifact od) {
+        return OCLHelper.getObjectList(od).stream()
+                .filter(x -> x.getName().equals(SMTHelper.buildObjectName(expr, type.getName())))
+                .findFirst()
+                .orElse(null);
+    }
 }
