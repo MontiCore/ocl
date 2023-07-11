@@ -7,6 +7,7 @@ import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.ocl2smt.util.OCLMethodResult;
 import de.monticore.ocl2smt.util.OCLType;
+
 import java.util.Optional;
 
 /** this Class is saves data obtains after the conversion of an OCL Constraint in SMT */
@@ -36,8 +37,12 @@ public class OPConstraint {
 
     BoolExpr op = ctx.mkImplies(preCond.getValue(), postCond.getValue());
     operationConstraint =
-        IdentifiableBoolExpr.buildIdentifiable(
-            op, preCond.getSourcePosition(), Optional.of("pre ==> Post"));
+            IdentifiableBoolExpr.buildIdentifiable(
+                    op, preCond.getSourcePosition(), Optional.of("pre ==> Post"));
+  }
+
+  public OCLType getThisType() {
+    return ThisType;
   }
 
   public IdentifiableBoolExpr getPreCond() {
