@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+ocl ArtifactModel {
+
+context Artifact a inv Inv0:
+    a.name == ((a.nameExtension == "") ? a.simpleName :
+      a.simpleName + "." + a.nameExtension);
+
+  context Artifact a inv Inv1:
+    (a.isRoot <=> a.parent.isEmpty());
+}

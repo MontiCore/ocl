@@ -1,0 +1,153 @@
+package de.monticore.ocl2smt.OCLDiff.newEvaluation;
+
+import ArtifactModel.*;
+
+classdiagram JavaProject{
+
+    // ______________________________________________________
+    // Artifacts
+    // ______________________________________________________
+
+
+    //TODO nessesary?
+    association reliesOnJavaArtifact [*] JavaView -> JavaView [*] ;
+
+
+    // JavaPackage
+    //TODO handle Package  ->  JavaPackage oder so
+    //TODO extends ArtifactContainer ? (reasons for both)
+    class JavaPackage {
+        String name;
+
+        //TODO: abgeleitete Attribute
+        //String fullName;
+        //boolean isRoot;
+    }
+
+    association belongsTo  [*]  JavaView  <->  JavaPackage  [0..1] ;
+
+    //composition subJavaPackage
+    //   [0..1]  JavaPackage (parent)  ->  (child) JavaPackage  [*] ;
+
+
+    // JavaSourceFile
+    class JavaView extends ArtifactView{
+    }
+
+
+    class ExternalJavaSource extends Artifact{
+    }
+
+    association imports [*] JavaView -> Artifact [*] ;
+    association compiledTo [1] JavaView -> Artifact [*] ;
+
+
+
+
+    // ______________________________________________________
+    // ArtifactInternals
+    // ______________________________________________________
+
+    // JavaType
+    abstract class JavaType extends ArtifactInternal{
+
+        String name;
+        String fullName;
+        //TODO: abgeleitete Attribute
+        //boolean isInnerType;
+
+        //int loc; Now in LOC Metric
+    }
+
+    association defines [1] JavaView -> JavaType [*] ;
+    association mainType [1] JavaView -> JavaType [1] ;
+
+    //composition contains  [1]  JavaPackage  ->  JavaType  [*] ;
+
+    //TODO was composition
+    //association [0..1] JavaType(containingType) -> (innerType)JavaType [*] ;
+
+    association reliesOnJavaType [*] JavaType -> JavaType [*] ;
+
+    association methods [1] JavaType <-> JavaMethod [*];
+
+    association visibility [1] JavaType -> JavaVisibility [1];
+
+    association innerClasses [*] JavaType -> JavaClass [*];
+
+
+    // JavaClass
+    class JavaClass extends JavaType {
+        boolean isFinal;
+        boolean isStatic;
+        boolean isAbstract;
+        //TODO generics ?
+    }
+
+    association subclass [*] JavaClass -> JavaClass [0..1] ;
+
+    association interfaceImplementations [*] JavaClass -> JavaInterface [*] ;
+
+    association variables [1] JavaClass -> JavaVariable [*] ;
+
+    // JavaInterface
+    class JavaInterface extends JavaType {
+    }
+
+    association interfaces [*] JavaInterface -> JavaInterface [*] ; // Interface extensions
+
+
+    // Java Variable
+    class JavaVariable extends ArtifactInternal {
+        String name;
+        boolean isFinal;
+        boolean isStatic;
+        String type;
+        String defaultValue;
+    }
+
+    association visibility [1] JavaVariable -> JavaVisibility [1];
+
+
+    // JavaMethod
+    class JavaMethod extends ArtifactInternal {
+        String name;
+        boolean isFinal;
+        boolean isStatic;
+        //int loc; now in LOCMetric
+        //TODO generics ?
+        //TODO use Type ?
+        String returnType;
+    }
+
+    association visibility [1] JavaMethod -> JavaVisibility [1];
+
+
+    // JavaParameter
+    class JavaParameter{
+        String type;
+        String name;
+    }
+
+    association params [1] JavaMethod <-> JavaParameter [*];
+
+
+    // JavaVisibility
+    //TODO was enum
+    class JavaVisibility {
+        boolean isPublic;
+        boolean isPrivate;
+        boolean isProtected;
+        boolean isPackagePrivate;
+        String name;
+    }
+
+    // ______________________________________________________
+    // Metrics
+    // ______________________________________________________
+
+    class JavaLinesOfCodeMetric extends Metric {
+        int loc;
+    }
+
+}
