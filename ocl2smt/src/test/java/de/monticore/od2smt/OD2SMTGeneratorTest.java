@@ -1,7 +1,5 @@
 package de.monticore.od2smt;
 
-import static de.monticore.od2smt.OD2SMTUtils.getAttributeValue;
-
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.Helper.SMTHelper;
@@ -18,16 +16,19 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odbasis._ast.ASTODObject;
 import de.se_rwth.commons.logging.Log;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+
+import static de.monticore.od2smt.OD2SMTUtils.getAttributeValue;
 
 class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
   protected ASTODArtifact od;
@@ -48,7 +49,7 @@ class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
       ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as) {
     CD2SMTMill.init(cs, is, as);
     computeWitness();
-    ASTODNamedObject person_0 = (ASTODNamedObject) convertObject("person_0");
+    ASTODNamedObject person_0 = (ASTODNamedObject) convertObject("person_0", "Person");
 
     Assertions.assertEquals("10", getAttributeValue(person_0, "age"));
     Assertions.assertEquals("\"Naruto\"", getAttributeValue(person_0, "name"));
@@ -63,8 +64,8 @@ class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
       ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as) {
     CD2SMTMill.init(cs, is, as);
     computeWitness();
-    ASTODNamedObject person_0 = (ASTODNamedObject) convertObject("person_0");
-    ASTODNamedObject auction_0 = (ASTODNamedObject) convertObject("auction_0");
+    ASTODNamedObject person_0 = (ASTODNamedObject) convertObject("person_0", "Person");
+    ASTODNamedObject auction_0 = (ASTODNamedObject) convertObject("auction_0", "Auction");
     Assertions.assertTrue(checkLink(auction_0.getName(), person_0.getName(), witness));
   }
 
@@ -101,10 +102,10 @@ class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
     IOHelper.printOD(witness, Path.of("target/generated/od2smt"));
   }
 
-  public ASTODObject convertObject(String oldObjectName) {
+  public ASTODObject convertObject(String oldObjectName, String objType) {
     Expr<? extends Sort> oldObj =
-        od2SMTGenerator.getObject(OD2SMTUtils.getObject(oldObjectName, od));
-    String newObjName = SMTHelper.buildObjectName(model.evaluate(oldObj, true));
+            od2SMTGenerator.getObject(OD2SMTUtils.getObject(oldObjectName, od));
+    String newObjName = SMTHelper.buildObjectName(model.evaluate(oldObj, true), objType);
 
     return OD2SMTUtils.getObject(newObjName, witness);
   }
