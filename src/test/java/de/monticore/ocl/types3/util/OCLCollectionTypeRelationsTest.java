@@ -24,20 +24,7 @@ import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTy
 import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createMap;
 import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createOptional;
 import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createSet;
-import static de.monticore.types3.util.DefsTypesForTests._boxedListSymType;
-import static de.monticore.types3.util.DefsTypesForTests._boxedMapSymType;
-import static de.monticore.types3.util.DefsTypesForTests._boxedOptionalSymType;
-import static de.monticore.types3.util.DefsTypesForTests._boxedSetSymType;
-import static de.monticore.types3.util.DefsTypesForTests._intSymType;
-import static de.monticore.types3.util.DefsTypesForTests._personSymType;
-import static de.monticore.types3.util.DefsTypesForTests._unboxedListSymType;
-import static de.monticore.types3.util.DefsTypesForTests._unboxedMapSymType;
-import static de.monticore.types3.util.DefsTypesForTests._unboxedOptionalSymType;
-import static de.monticore.types3.util.DefsTypesForTests._unboxedSetSymType;
-import static de.monticore.types3.util.DefsTypesForTests._unboxedString;
-import static de.monticore.types3.util.DefsTypesForTests.inScope;
-import static de.monticore.types3.util.DefsTypesForTests.type;
-import static de.monticore.types3.util.DefsTypesForTests.typeVariable;
+import static de.monticore.types3.util.DefsTypesForTests.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -167,7 +154,7 @@ public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
   @Test
   public void flattenIdTest() {
     // do not change other types
-    testFlattenAsId(_intSymType);
+    testFlattenAsId(_graphSymType);
     testFlattenAsId(createCollection(_intSymType));
     testFlattenAsId(createList(_intSymType));
     testFlattenAsId(createSet(_intSymType));
@@ -177,13 +164,13 @@ public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
     testFlattenAsId(createOptional(createList(createList(_intSymType))));
   }
 
-  protected void testFlattenAsId(SymTypeExpression toNotFlatten) {
+  protected void testFlattenAsId(SymTypeOfGenerics toNotFlatten) {
     assertTrue(toNotFlatten.deepEquals(getRel().flatten(toNotFlatten)));
   }
 
   // Helper
 
-  protected OCLCollectionTypeRelations getRel() {
+  protected IOCLCollectionTypeRelations getRel() {
     return new OCLCollectionTypeRelations();
   }
 
