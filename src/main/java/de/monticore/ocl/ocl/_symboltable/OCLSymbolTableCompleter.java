@@ -13,6 +13,7 @@ import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
@@ -30,7 +31,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
   protected final List<ASTMCImportStatement> imports;
   protected final String packageDeclaration;
   protected OCLTraverser traverser;
-  OCLSynthesizer synthesizer;
+  ISynthesize synthesizer;
 
   public OCLSymbolTableCompleter(List<ASTMCImportStatement> imports, String packageDeclaration) {
     this.imports = imports;
@@ -47,7 +48,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
     this.traverser = traverser;
   }
 
-  public void setSynthesizer(OCLSynthesizer typesCalculator) {
+  public void setSynthesizer(ISynthesize typesCalculator) {
     if (typesCalculator != null) {
       this.synthesizer = typesCalculator;
     } else {

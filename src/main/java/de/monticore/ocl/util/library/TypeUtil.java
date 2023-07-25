@@ -5,6 +5,7 @@ import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 
@@ -41,6 +42,7 @@ public class TypeUtil {
             .setName(paramName)
             .setEnclosingScope(function.getSpannedScope())
             .setType(paramType)
+            .setAccessModifier(AccessModifier.ALL_INCLUSION)
             .build();
 
     // add parameter to method

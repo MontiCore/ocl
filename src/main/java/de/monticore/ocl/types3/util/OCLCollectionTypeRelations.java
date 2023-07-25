@@ -16,7 +16,8 @@ import java.util.Optional;
 /**
  * adds support for Collection
  */
-public class OCLCollectionTypeRelations extends MCCollectionTypeRelations {
+public class OCLCollectionTypeRelations extends MCCollectionTypeRelations
+implements IOCLCollectionTypeRelations{
 
   protected static final String LOG_NAME = "OCLCollectionTypeRelations";
 
@@ -29,7 +30,11 @@ public class OCLCollectionTypeRelations extends MCCollectionTypeRelations {
   }
 
   public boolean isCollection(SymTypeExpression type) {
-    return super.isCollection(type) || isOCLCollectionNoSubType(type);
+    return isList(type) ||
+        isSet(type) ||
+        isOptional(type) ||
+        isMap(type) ||
+        isOCLCollectionNoSubType(type);
   }
 
   /**
@@ -69,15 +74,6 @@ public class OCLCollectionTypeRelations extends MCCollectionTypeRelations {
       flattened = toFlatten;
     }
     return flattened;
-  }
-
-  public SymTypeExpression flatten(SymTypeExpression toFlatten) {
-    if (toFlatten.isGenericType()) {
-      return flatten((SymTypeOfGenerics) toFlatten);
-    }
-    else {
-      return toFlatten;
-    }
   }
 
   // Helper

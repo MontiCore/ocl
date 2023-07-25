@@ -8,13 +8,14 @@ import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
+import de.monticore.ocl.types3.IOCLSymTypeRelations;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.ocl.util.LogHelper;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types3.AbstractTypeVisitor;
-import de.monticore.types3.SymTypeRelations;
 
 import java.util.HashSet;
 import java.util.List;
@@ -31,13 +32,13 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
           "java.util.Collection");
   
   protected SetExpressionsTraverser traverser;
-  protected SymTypeRelations typeRelations;
+  protected IOCLSymTypeRelations typeRelations;
   
   public SetExpressionsTypeVisitor() {
-    this(new SymTypeRelations());
+    this(new OCLSymTypeRelations());
   }
   
-  protected SetExpressionsTypeVisitor(SymTypeRelations typeRelations) {
+  protected SetExpressionsTypeVisitor(IOCLSymTypeRelations typeRelations) {
     this.typeRelations = typeRelations;
   }
   
@@ -51,7 +52,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     this.traverser = traverser;
   }
   
-  protected SymTypeRelations getTypeRel() {
+  protected IOCLSymTypeRelations getTypeRel() {
     return typeRelations;
   }
   

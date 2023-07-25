@@ -7,13 +7,14 @@ package de.monticore.ocl.types.check;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeArray;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types3.AbstractTypeVisitor;
-import de.monticore.types3.SymTypeRelations;
+import de.monticore.types3.ISymTypeRelations;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
@@ -23,17 +24,21 @@ import static de.monticore.types.check.SymTypeExpressionFactory.createObscureTyp
 public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     implements OCLExpressionsVisitor2 {
   
-  protected SymTypeRelations typeRelations;
+  protected ISymTypeRelations typeRelations;
   
   public OCLExpressionsTypeVisitor() {
-    this(new SymTypeRelations());
+    this(new OCLSymTypeRelations());
   }
   
-  protected OCLExpressionsTypeVisitor(SymTypeRelations typeRelations) {
+  protected OCLExpressionsTypeVisitor(ISymTypeRelations typeRelations) {
     this.typeRelations = typeRelations;
   }
-  
-  protected SymTypeRelations getTypeRel() {
+
+  public void setSymTypeRelations(ISymTypeRelations symTypeRelations) {
+    this.typeRelations = symTypeRelations;
+  }
+
+  protected ISymTypeRelations getTypeRel() {
     return typeRelations;
   }
   
