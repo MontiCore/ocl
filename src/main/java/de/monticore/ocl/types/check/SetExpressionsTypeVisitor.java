@@ -1,91 +1,109 @@
 package de.monticore.ocl.types.check;
 
-import com.google.common.collect.Lists;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.ocl.ocl._visitor.NameExpressionsFromExpressionVisitor;
 import de.monticore.ocl.setexpressions.SetExpressionsMill;
-import de.monticore.ocl.setexpressions._ast.*;
-import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
-import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
+import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
+import de.monticore.ocl.setexpressions._ast.ASTIntersectionExpression;
+import de.monticore.ocl.setexpressions._ast.ASTSetAndExpression;
+import de.monticore.ocl.setexpressions._ast.ASTSetCollectionItem;
+import de.monticore.ocl.setexpressions._ast.ASTSetComprehension;
+import de.monticore.ocl.setexpressions._ast.ASTSetEnumeration;
+import de.monticore.ocl.setexpressions._ast.ASTSetInExpression;
+import de.monticore.ocl.setexpressions._ast.ASTSetMinusExpression;
+import de.monticore.ocl.setexpressions._ast.ASTSetNotInExpression;
+import de.monticore.ocl.setexpressions._ast.ASTSetOrExpression;
+import de.monticore.ocl.setexpressions._ast.ASTSetValueRange;
+import de.monticore.ocl.setexpressions._ast.ASTSetVariableDeclaration;
+import de.monticore.ocl.setexpressions._ast.ASTUnionExpression;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
 import de.monticore.ocl.types3.IOCLSymTypeRelations;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
-import de.monticore.ocl.util.LogHelper;
+import de.monticore.ocl.types3.util.OCLCollectionSymTypeFactory;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types3.AbstractTypeVisitor;
+import de.se_rwth.commons.logging.Log;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
+import static de.monticore.types.check.SymTypeExpressionFactory.createPrimitive;
 
 public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
-    implements SetExpressionsVisitor2, SetExpressionsHandler {
-  
-  // TODO MSm: replace with better variant when provided by FDr
-  protected final List<String> collections =
-      Lists.newArrayList("List", "Set", "Collection", "java.util.List", "java.util.Set",
-          "java.util.Collection");
-  
-  protected SetExpressionsTraverser traverser;
+    implements SetExpressionsVisitor2 {
+
   protected IOCLSymTypeRelations typeRelations;
-  
+
   public SetExpressionsTypeVisitor() {
     this(new OCLSymTypeRelations());
   }
-  
+
   protected SetExpressionsTypeVisitor(IOCLSymTypeRelations typeRelations) {
     this.typeRelations = typeRelations;
   }
-  
-  @Override
-  public SetExpressionsTraverser getTraverser() {
-    return traverser;
-  }
-  
-  @Override
-  public void setTraverser(SetExpressionsTraverser traverser) {
-    this.traverser = traverser;
-  }
-  
+
   protected IOCLSymTypeRelations getTypeRel() {
     return typeRelations;
   }
-  
+
   @Override
   public void endVisit(ASTSetInExpression expr) {
     var elemResult = getType4Ast().getPartialTypeOfExpr(expr.getElem());
     var setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
     calculateSetInExpression(expr, elemResult, setResult);
   }
-  
+
   @Override
   public void endVisit(ASTSetNotInExpression expr) {
     var elemResult = getType4Ast().getPartialTypeOfExpr(expr.getElem());
     var setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
     calculateSetInExpression(expr, elemResult, setResult);
   }
-  
-  protected void calculateSetInExpression(ASTExpression expr, SymTypeExpression elemResult,
+
+  protected void calculateSetInExpression(
+      ASTExpression expr,
+      SymTypeExpression elemResult,
       SymTypeExpression setResult) {
-    
     SymTypeExpression result;
-    if (!elemResult.isObscureType() && !setResult.isObscureType() && setResult.isGenericType() &&
-        collections.stream().anyMatch(c -> setResult.getTypeInfo().getName().equals(c)) &&
-        getTypeRel().isCompatible(((SymTypeOfGenerics) setResult).getArgument(0), elemResult)) {
-      
-      result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
+
+    if (elemResult.isObscureType() || setResult.isObscureType()) {
+      // error already logged
+      result = SymTypeExpressionFactory.createObscureType();
+    }
+    else if (getTypeRel().isOCLCollection(setResult)) {
+      SymTypeExpression setElemType = getTypeRel().getCollectionElementType(setResult);
+      // it does not make any sense to ask if it is in the set
+      // if it cannot be in the set
+      if (getTypeRel().isSubTypeOf(elemResult, setElemType) ||
+          getTypeRel().isSubTypeOf(setElemType, elemResult)) {
+        result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
+      }
+      else {
+        Log.error("0xFD541 tried to check whether a "
+                + elemResult.printFullName() + " is in the collection of "
+                + setElemType.printFullName() + ", which is impossible",
+            expr.get_SourcePositionStart(),
+            expr.get_SourcePositionEnd()
+        );
+        result = createObscureType();
+      }
     }
     else {
+      Log.error("0xFD542 tried to check whether a "
+              + elemResult.printFullName() + " is in "
+              + setResult.printFullName() + ", which is not a collection",
+          expr.get_SourcePositionStart(),
+          expr.get_SourcePositionEnd()
+      );
       result = createObscureType();
     }
     getType4Ast().setTypeOfExpression(expr, result);
   }
-  
+
   @Override
   public void endVisit(ASTUnionExpression expr) {
     // union of two sets -> both sets need to have the same type or their types need to be sub/super
@@ -94,7 +112,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getRight());
     calculateSetOperation(expr, leftResult, rightResult);
   }
-  
+
   @Override
   public void endVisit(ASTIntersectionExpression expr) {
     // union of two sets -> both sets need to have the same type or their types need to be sub/super
@@ -103,7 +121,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getRight());
     calculateSetOperation(expr, leftResult, rightResult);
   }
-  
+
   @Override
   public void endVisit(ASTSetMinusExpression expr) {
     // union of two sets -> both sets need to have the same type or their types need to be sub/super
@@ -112,207 +130,281 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getRight());
     calculateSetOperation(expr, leftResult, rightResult);
   }
-  
+
   public void calculateSetOperation(
-      ASTExpression expr, SymTypeExpression leftResult, SymTypeExpression rightResult) {
-    SymTypeExpression result = createObscureType();
-    
-    if (!leftResult.isObscureType() &&
-        !rightResult.isObscureType() &&
-        rightResult.isGenericType() &&
-        leftResult.isGenericType()) {
-      var leftGeneric = (SymTypeOfGenerics) leftResult;
-      var rightGeneric = (SymTypeOfGenerics) rightResult;
-      
-      if (collections.contains(leftGeneric.getTypeInfo().getName()) &&
-          collections.contains(rightGeneric.getTypeInfo()
-              .getName()) // TODO FDr refactoren wenn OCL LuB-Calculator vorhanden ist
-      ) {
-        
-        // TODO FDr result = LuB of left and right arguments
-        
-        if (getTypeRel().isCompatible(leftGeneric.getArgument(0), rightGeneric.getArgument(0))) {
-          result = SymTypeExpressionFactory.createGenerics(leftGeneric.getTypeInfo(),
-              leftGeneric.getArgument(0).deepClone());
-        }
-        else if (getTypeRel().isCompatible(rightGeneric.getArgument(0), leftGeneric.getArgument(0))) {
-          // TODO MSm hinzufügen
-          // TypeSymbol loader = new TypeSymbolSurrogate(right);
-          // loader.setEnclosingScope(getScope(expr.getEnclosingScope()));
-          result = SymTypeExpressionFactory.createPrimitive("boolean");
-        }
-      }
-    }
-    getType4Ast().setTypeOfExpression(expr, result);
-  }
-  
-  @Override
-  public void endVisit(ASTSetAndExpression expr) {
-    SymTypeExpression setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
-    getType4Ast().setTypeOfExpression(expr, setResult);
-  }
-  
-  @Override
-  public void endVisit(ASTSetOrExpression expr) {
-    SymTypeExpression setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
-    getType4Ast().setTypeOfExpression(expr, setResult);
-  }
-  
-  @Override
-  public void endVisit(ASTSetComprehension expr) {
-    SymTypeExpression result = null;
-    
-    var typeResult = getType4Ast().getPartialTypeOfTypeId(expr.getMCType());
-    
-    if (typeResult.isObscureType()) {
-      result = createObscureType();
-    }
-    else if (collections.stream().anyMatch(c -> typeResult.getTypeInfo().getName().equals(c))) {
-      result = SymTypeExpressionFactory.createGenerics(typeResult.getTypeInfo());
-    }
-    else {
-      LogHelper.error("0xFD213", "could not calculate type");
-    }
-    
-    SymTypeExpression leftType = createObscureType();
-    Set<String> varNames = new HashSet<>();
-    if (expr.getLeft().isPresentExpression()) {
-      SetExpressionsTraverser traverser = SetExpressionsMill.traverser();
-      NameExpressionsFromExpressionVisitor nameVisitor = new NameExpressionsFromExpressionVisitor();
-      traverser.add4ExpressionsBasis(nameVisitor);
-      expr.getLeft().getExpression().accept(traverser);
-      varNames = nameVisitor.getVarNames();
-      // TODO MSm: Type result wrong? / get... Methoden ersetzen, alle
-      expr.getLeft().getExpression().accept(getTraverser());
-      if (typeResult.isObscureType()) {
-        result = createObscureType();
-      }
-      else {
-        leftType = typeResult;
-      }
-    }
-    else if (expr.getLeft().isPresentGeneratorDeclaration()) {
-      leftType = expr.getLeft().getGeneratorDeclaration().getSymbol().getType();
-    }
-    else {
-      leftType = expr.getLeft().getSetVariableDeclaration().getSymbol().getType();
-    }
-    
-    if (!leftType.isObscureType()) {
-      // check that all varNames are initialized on the right side
-      while (!varNames.isEmpty()) {
-        for (ASTSetComprehensionItem item : expr.getSetComprehensionItemList()) {
-          if (item.isPresentGeneratorDeclaration()) {
-            varNames.remove(item.getGeneratorDeclaration().getName());
-          }
-          else if (item.isPresentSetVariableDeclaration()) {
-            varNames.remove(item.getSetVariableDeclaration().getName());
-          }
-        }
-      }
-      
-      if (result == null) {
-        result = SymTypeExpressionFactory.createGenerics("java.util.Set",
-            getAsBasicSymbolsScope(expr.getEnclosingScope()));
-      }
-      if (result.isGenericType()) {
-        ((SymTypeOfGenerics) result).setArgument(0, leftType);
-      }
-      
-      getType4Ast().setTypeOfExpression(expr, result);
-    }
-  }
-  
-  public void endVisit(ASTSetEnumeration expr) {
-    boolean obscure = false;
-    SymTypeExpression result = null;
-    SymTypeExpression innerResult = null;
-    SymTypeExpression typeResult = null;
-    // TODO Hilfsmethode setzen typeResult = getType4Ast().getPartialTypeOfExpr(expr.);
-    // TODO numeric promo auf ergebnis anwenden
-    
-    boolean correct = false;
-    for (String s : collections) {
-      if (typeResult.getTypeInfo().getName().equals(s)) {
-        correct = true;
-      }
-    }
-    if (!correct) {
-      LogHelper.error("0xFD214", "there must be a type for collection");
-    }
-    else {
-      result = SymTypeExpressionFactory.createGenerics(typeResult.getTypeInfo());
-    }
-    
-    if (result == null) {
-      result =
-          SymTypeExpressionFactory.createGenerics(
-              "java.util.Set", getAsBasicSymbolsScope(expr.getEnclosingScope()));
-    }
-    
-    // check type of elements in set
-    for (ASTSetCollectionItem item : expr.getSetCollectionItemList()) {
-      if (item instanceof ASTSetValueItem) {
-        // TODO MSm: type result wrong?
-        ((ASTSetValueItem) item).getExpression().accept(getTraverser());
-        if (typeResult.isObscureType()) {
-          obscure = true;
-        }
-        else if (innerResult == null) {
-          innerResult = typeResult;
-        }
-        else if (!getTypeRel().isCompatible(innerResult, typeResult)) {
-          LogHelper.error(expr, "0xFD215", "different types in SetEnumeration");
-        }
-      }
-      else {
-        // TODO MSm: item type result?
-        item.accept(getTraverser());
-        if (typeResult.isObscureType()) {
-          obscure = true;
-        }
-        else if (innerResult == null) {
-          innerResult = typeResult;
-        }
-        else if (!getTypeRel().isCompatible(innerResult, typeResult)) {
-          LogHelper.error(expr, "0xFD216", "different types in SetEnumeration");
-        }
-      }
-    }
-    
-    if (!obscure) {
-      ((SymTypeOfGenerics) result).setArgument(0, innerResult);
-    }
-    else {
-      result = SymTypeExpressionFactory.createObscureType();
-    }
-    getType4Ast().setTypeOfExpression(expr, result);
-  }
-  
-  // TODO ersetzen
-  public void traverse(ASTSetValueRange expr) {
-    var leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLowerBound());
-    var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getUpperBound());
-    
+      ASTExpression expr,
+      SymTypeExpression leftResult,
+      SymTypeExpression rightResult
+  ) {
     SymTypeExpression result;
+
     if (leftResult.isObscureType() || rightResult.isObscureType()) {
       result = createObscureType();
     }
-    else {
-      if (!getTypeRel().isIntegralType(leftResult) || !getTypeRel().isIntegralType(rightResult)) {
-        LogHelper.error(expr, "0xFD217",
-            "bounds in SetValueRange are not integral types, but have to be");
+    else if (getTypeRel().isOCLCollection(leftResult) &&
+        getTypeRel().isOCLCollection(rightResult)) {
+      Optional<SymTypeExpression> lub =
+          getTypeRel().leastUpperBound(leftResult, rightResult);
+      if (lub.isPresent()) {
+        result = lub.get();
       }
-      result = leftResult;
+      else {
+        Log.error("0xFD543 could not calculate a least upper bound of "
+                + leftResult.printFullName() + " and "
+                + rightResult.printFullName(),
+            expr.get_SourcePositionStart(),
+            expr.get_SourcePositionEnd()
+        );
+        result = createObscureType();
+      }
     }
-    // TODO MSm: How? getType4Ast().setTypeOfTypeIdentifier(expr, result);
+    else {
+      Log.error("0xFD544 expected two collection types, instead got "
+              + leftResult.printFullName() + " and "
+              + rightResult.printFullName(),
+          expr.get_SourcePositionStart(),
+          expr.get_SourcePositionEnd()
+      );
+      result = createObscureType();
+    }
+    getType4Ast().setTypeOfExpression(expr, result);
   }
-  
-  // TODO MSm besseren Namen geben
-  // TODO
-  protected SymTypeExpression getType(ASTSetCollectionItem item) {
-    // TODO type dispatcher verwenden
-    // TODO LuB for SetValueRange oder NumericPromotion aus SymTypeRelations für Nummern, prüfen das isIntegralType (vor NumPromotion)
-    return null;
+
+  @Override
+  public void endVisit(ASTSetAndExpression expr) {
+    SymTypeExpression setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
+    calculateLogicalSetExpression(expr, setResult);
   }
+
+  @Override
+  public void endVisit(ASTSetOrExpression expr) {
+    SymTypeExpression setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
+    calculateLogicalSetExpression(expr, setResult);
+  }
+
+  protected void calculateLogicalSetExpression(
+      ASTExpression expr,
+      SymTypeExpression setType
+  ) {
+    SymTypeExpression result;
+    if (setType.isObscureType()) {
+      result = createObscureType();
+    }
+    else if (getTypeRel().isOCLCollection(setType) &&
+        getTypeRel().isBoolean(getTypeRel().getCollectionElementType(setType))) {
+      result = createPrimitive(BasicSymbolsMill.BOOLEAN);
+    }
+    else {
+      Log.error("0xFD545 expected Collection of booleans, but got "
+              + setType.printFullName(),
+          expr.get_SourcePositionStart(),
+          expr.get_SourcePositionEnd()
+      );
+      result = createObscureType();
+    }
+    getType4Ast().setTypeOfExpression(expr, result);
+  }
+
+  @Override
+  public void endVisit(ASTSetVariableDeclaration varDecl) {
+    // can we check something?
+    if (!varDecl.isPresentMCType() || !varDecl.isPresentExpression()) {
+      return;
+    }
+    SymTypeExpression mCType =
+        getType4Ast().getPartialTypeOfTypeId(varDecl.getMCType());
+    SymTypeExpression exprType =
+        getType4Ast().getPartialTypeOfExpr(varDecl.getExpression());
+    ;
+    // error already logged?
+    if (mCType.isObscureType() || exprType.isObscureType()) {
+      return;
+    }
+    SymTypeExpression assigneeType;
+    if (varDecl.sizeDim() == 0) {
+      assigneeType = mCType;
+    }
+    else {
+      assigneeType =
+          SymTypeExpressionFactory.createTypeArray(mCType, varDecl.sizeDim());
+    }
+    if (!getTypeRel().isCompatible(assigneeType, exprType)) {
+      Log.error("0xFD547 cannot assign" + exprType.printFullName()
+              + " to " + assigneeType.printFullName(),
+          varDecl.get_SourcePositionStart(),
+          varDecl.get_SourcePositionEnd()
+      );
+    }
+  }
+
+  @Override
+  public void endVisit(ASTSetComprehension expr) {
+    boolean isObscure = false;
+    SymTypeExpression result;
+
+    // ASTSetVariableDeclaration and ASTGeneratorDeclaration
+    // have been checked already, the expressions are left
+    for (ASTExpression boolExpr : expr.getSetComprehensionItemList().stream()
+        .filter(SetExpressionsMill.typeDispatcher()::isASTExpression)
+        .map(SetExpressionsMill.typeDispatcher()::asASTExpression)
+        .collect(Collectors.toList())
+    ) {
+      SymTypeExpression boolExprType =
+          getType4Ast().getPartialTypeOfExpr(boolExpr);
+      if (boolExprType.isObscureType()) {
+        isObscure = true;
+      }
+      else if (!getTypeRel().isBoolean(boolExprType)) {
+        Log.error("0xFD554 filter expression in set comprehension "
+                + "need to be Boolean expressions, but got "
+                + boolExprType.printFullName(),
+            boolExpr.get_SourcePositionStart(),
+            boolExpr.get_SourcePositionEnd()
+        );
+        isObscure = true;
+      }
+    }
+
+    // now we try to find the type of the collection
+    if (!isObscure) {
+      SymTypeExpression elementType;
+      if (expr.getLeft().isPresentExpression()) {
+        elementType = getType4Ast().getPartialTypeOfExpr(expr.getLeft().getExpression());
+      }
+      else if (expr.getLeft().isPresentGeneratorDeclaration()) {
+        elementType = expr.getLeft().getGeneratorDeclaration().getSymbol().getType();
+      }
+      else {
+        elementType = expr.getLeft().getSetVariableDeclaration().getSymbol().getType();
+      }
+      if (!elementType.isObscureType()) {
+        if (expr.isSet()) {
+          result = OCLCollectionSymTypeFactory.createSet(elementType);
+        }
+        else {
+          result = OCLCollectionSymTypeFactory.createList(elementType);
+        }
+      }
+      else {
+        result = createObscureType();
+      }
+    }
+    else {
+      result = createObscureType();
+    }
+    getType4Ast().setTypeOfExpression(expr, result);
+  }
+
+  public void endVisit(ASTGeneratorDeclaration genDecl) {
+    SymTypeExpression exprType =
+        getType4Ast().getPartialTypeOfExpr(genDecl.getExpression());
+    if (exprType.isObscureType()) {
+      return;
+    }
+    if (!getTypeRel().isOCLCollection(exprType)) {
+      Log.error("0xFD548 expected a collection for generator declaration,"
+              + " but got " + exprType.printFullName(),
+          genDecl.getExpression().get_SourcePositionStart(),
+          genDecl.getExpression().get_SourcePositionEnd()
+      );
+      return;
+    }
+    SymTypeExpression elementType =
+        getTypeRel().getCollectionElementType(exprType);
+    if (genDecl.isPresentMCType()) {
+      SymTypeExpression mCType =
+          getType4Ast().getPartialTypeOfTypeId(genDecl.getMCType());
+      if (!mCType.isObscureType() &&
+          !getTypeRel().isCompatible(mCType, elementType)
+      ) {
+        Log.error("0xFD549 cannot assign elements of collection of type "
+                + exprType.printFullName() + " to " + mCType.printFullName(),
+            genDecl.get_SourcePositionStart(),
+            genDecl.get_SourcePositionEnd()
+        );
+      }
+    }
+  }
+
+  @Override
+  public void endVisit(ASTSetEnumeration expr) {
+    boolean isObscure = false;
+    SymTypeExpression result;
+
+    // get all expressions within the set enumeration
+    List<ASTExpression> containedExpressions = new ArrayList<>();
+    for (ASTSetCollectionItem cItem : expr.getSetCollectionItemList()) {
+      if (SetExpressionsMill.typeDispatcher().isASTSetValueItem(cItem)) {
+        containedExpressions.add(
+            SetExpressionsMill.typeDispatcher().asASTSetValueItem(cItem)
+                .getExpression()
+        );
+      }
+      else if (SetExpressionsMill.typeDispatcher().isASTSetValueRange(cItem)) {
+        ASTSetValueRange valueRange = SetExpressionsMill.typeDispatcher()
+            .asASTSetValueRange(cItem);
+        containedExpressions.add(valueRange.getLowerBound());
+        containedExpressions.add(valueRange.getUpperBound());
+      }
+      else {
+        Log.error("0xFD550 internal error: "
+                + "unexpected subtype of ASTSetCollectionItem",
+            expr.get_SourcePositionStart(),
+            expr.get_SourcePositionEnd()
+        );
+        isObscure = true;
+      }
+    }
+    // each contained type has to be numeric
+    List<SymTypeExpression> containedExprTypes = new ArrayList<>();
+    for (ASTExpression containedExpr : containedExpressions) {
+      SymTypeExpression containedExprType = type4Ast.getPartialTypeOfExpr(containedExpr);
+      if (containedExprType.isObscureType()) {
+        isObscure = true;
+      }
+      else if (!getTypeRel().isNumericType(containedExprType)) {
+        Log.error("0xFD551 expected numeric type in set enumeration, "
+                + "but got " + containedExprType.printFullName(),
+            containedExpr.get_SourcePositionStart(),
+            containedExpr.get_SourcePositionEnd()
+        );
+        isObscure = true;
+      }
+      containedExprTypes.add(containedExprType);
+    }
+    // numeric promotion of all contained expression types
+    if (!isObscure) {
+      SymTypeExpression promoted =
+          getTypeRel().numericPromotion(containedExprTypes);
+      if (expr.isSet()) {
+        result = OCLCollectionSymTypeFactory.createSet(promoted);
+      }
+      else {
+        result = OCLCollectionSymTypeFactory.createList(promoted);
+      }
+    }
+    else {
+      result = createObscureType();
+    }
+    getType4Ast().setTypeOfExpression(expr, result);
+  }
+
+  @Override
+  public void endVisit(ASTSetValueRange expr) {
+    var leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLowerBound());
+    var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getUpperBound());
+    if (!leftResult.isObscureType() && !rightResult.isObscureType()) {
+      if (!getTypeRel().isIntegralType(leftResult) ||
+          !getTypeRel().isIntegralType(rightResult)) {
+        Log.error("0xFD217 bounds in SetValueRange "
+                + "are not integral types, but have to be, got "
+                + leftResult.printFullName() + " and "
+                + rightResult.printFullName(),
+            expr.get_SourcePositionStart(),
+            expr.get_SourcePositionEnd()
+        );
+      }
+    }
+  }
+
 }

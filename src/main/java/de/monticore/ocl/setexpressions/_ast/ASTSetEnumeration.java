@@ -9,6 +9,18 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 public class ASTSetEnumeration extends ASTSetEnumerationTOP {
 
+  public boolean isSet() {
+    return getOpeningBracket().equals("{");
+  }
+
+  public boolean isList() {
+    return getOpeningBracket().equals("[");
+  }
+
+  /**
+   * @deprecated was only needed for typecheck1
+   */
+  @Deprecated
   public ASTMCType getMCType() {
     ASTMCQualifiedName qname;
     if (getOpeningBracket().equals("{")) {

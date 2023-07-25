@@ -9,6 +9,18 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 public class ASTSetComprehension extends ASTSetComprehensionTOP {
 
+  public boolean isSet() {
+    return getOpeningBracket().equals("{");
+  }
+
+  public boolean isList() {
+    return getOpeningBracket().equals("[");
+  }
+
+  /**
+   * @deprecated only useful for typecheck1 calculations
+   */
+  @Deprecated
   public ASTMCType getMCType() {
     ASTMCQualifiedName qname;
     if (getOpeningBracket().equals("{")) {
