@@ -2,11 +2,11 @@
 package de.monticore.ocl.codegen.visitors;
 
 import de.monticore.ocl.codegen.util.VariableNaming;
+import de.monticore.ocl.types3.IOCLSymTypeRelations;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
-import de.monticore.types.check.SymTypeOfGenerics;
-import de.monticore.types.check.SymTypePrimitive;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
@@ -39,6 +39,12 @@ public abstract class AbstractPrinter {
     return this.syntheziser;
   }
 
+  protected IOCLSymTypeRelations symTypeRelations = new OCLSymTypeRelations();
+
+  protected IOCLSymTypeRelations getTypeRel() {
+    return symTypeRelations;
+  }
+
   protected IndentPrinter printer;
 
   protected IndentPrinter getPrinter() {
@@ -52,16 +58,13 @@ public abstract class AbstractPrinter {
    *
    * @param type type to be printed
    * @return String of type, boxed
+   * @deprecated TC1 logic, needs to be replaced (more) with TC3
    */
-  protected static String boxType(TypeCheckResult type) {
+  protected String boxType(TypeCheckResult type) {
     if (!type.isPresentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR);
     }
-    if (type.getResult().isGenericType()) {
-      return SymTypeOfGenerics.box((SymTypeOfGenerics) type.getResult());
-    } else {
-      return SymTypePrimitive.box(type.getResult().printFullName());
-    }
+    return getTypeRel().normalize(getTypeRel().box(type.getResult())).printFullName();
   }
 
   /**

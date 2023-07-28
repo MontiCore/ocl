@@ -18,6 +18,7 @@ import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
 import de.monticore.types.mcsimplegenerictypes.types3.MCSimpleGenericTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
+import de.monticore.types3.util.FunctionRelations;
 import de.monticore.types3.util.NameExpressionTypeCalculator;
 import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
 
@@ -65,27 +66,23 @@ public class OCLTypeTraverserFactory {
 
   protected VisitorList constructVisitors() {
     VisitorList visitors = constructVisitorsDefault();
-    IOCLSymTypeRelations oclSymTypeRelations =
-        new OCLSymTypeRelations();
+    IOCLSymTypeRelations oclSymTypeRelations = new OCLSymTypeRelations();
     WithinTypeBasicSymbolsResolver withinTypeBasicSymbolsResolver =
         new OCLWithinTypeBasicSymbolsResolver();
     NameExpressionTypeCalculator nameExpressionTypeCalculator =
         new OCLNameExpressionTypeCalculator();
+    FunctionRelations functionRelations = new FunctionRelations(oclSymTypeRelations);
     visitors.derBitExpressions.setSymTypeRelations(oclSymTypeRelations);
     visitors.derCommonExpressions.setSymTypeRelations(oclSymTypeRelations);
-    visitors.derCommonExpressions.setWithinTypeBasicSymbolsResolver(
-        withinTypeBasicSymbolsResolver);
-    visitors.derCommonExpressions.setNameExpressionTypeCalculator(
-        nameExpressionTypeCalculator);
-    visitors.derExpressionBasis.setNameExpressionTypeCalculator(
-        nameExpressionTypeCalculator);
+    visitors.derCommonExpressions.setWithinTypeBasicSymbolsResolver(withinTypeBasicSymbolsResolver);
+    visitors.derCommonExpressions.setNameExpressionTypeCalculator(nameExpressionTypeCalculator);
+    visitors.derExpressionBasis.setNameExpressionTypeCalculator(nameExpressionTypeCalculator);
+    visitors.derCommonExpressions.setFunctionRelations(functionRelations);
     visitors.derOCLExpressions.setSymTypeRelations(oclSymTypeRelations);
     visitors.derOptionalOperators.setSymTypeRelations(oclSymTypeRelations);
     visitors.derOptionalOperators.setSymTypeRelations(oclSymTypeRelations);
-    visitors.synMCBasicTypes.setWithinTypeResolver(
-        withinTypeBasicSymbolsResolver);
-    visitors.synMCBasicTypes.setNameExpressionTypeCalculator(
-        nameExpressionTypeCalculator);
+    visitors.synMCBasicTypes.setWithinTypeResolver(withinTypeBasicSymbolsResolver);
+    visitors.synMCBasicTypes.setNameExpressionTypeCalculator(nameExpressionTypeCalculator);
     return visitors;
   }
 
@@ -105,9 +102,7 @@ public class OCLTypeTraverserFactory {
     traverser.add4MCSimpleGenericTypes(visitors.synMCSimpleGenericTypes);
   }
 
-  /**
-   * POD
-   */
+  /** POD */
   protected static class VisitorList {
 
     // Expressions

@@ -15,8 +15,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class AbstractTest {
+
+  @BeforeEach
+  protected void initLogger() {
+    LogStub.init();
+    Log.enableFailQuick(false);
+    Log.getFindings().clear();
+  }
 
   protected void initMills() {
     OCLMill.reset();
@@ -24,14 +32,8 @@ public abstract class AbstractTest {
     OCLMill.globalScope().clear();
   }
 
-  protected void initLogger() {
-    LogStub.init();
-    Log.enableFailQuick(false);
-    Log.getFindings().clear();
-  }
-
   protected static final String RELATIVE_MODEL_PATH = "src/test/resources";
-  
+
   public static String[] getModels(String folderPath) {
     File f = new File(RELATIVE_MODEL_PATH + folderPath);
     String[] filenames = f.list();

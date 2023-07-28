@@ -10,11 +10,11 @@ public class PreAndPostConditionsAreBooleanType implements OCLASTOCLOperationCon
 
   protected IDerive deriver;
   protected ITypeRelations typeRelations;
-  
+
   public PreAndPostConditionsAreBooleanType(IDerive deriver) {
     this(deriver, new TypeRelations());
   }
-  
+
   public PreAndPostConditionsAreBooleanType(IDerive deriver, ITypeRelations typeRelations) {
     this.deriver = deriver;
     this.typeRelations = typeRelations;

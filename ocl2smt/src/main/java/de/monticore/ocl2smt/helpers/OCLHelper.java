@@ -28,13 +28,12 @@ import de.monticore.types.mcbasictypes._prettyprint.MCBasicTypesFullPrettyPrinte
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class OCLHelper {
 
@@ -230,14 +229,19 @@ public class OCLHelper {
             resList.add(expr);
           }
         }
-        List<ASTODNamedObject> resObjList = resList.stream().map(expr -> getObjectWithExpr(result.getOclType(), expr, od)).collect(Collectors.toList());
+        List<ASTODNamedObject> resObjList =
+            resList.stream()
+                .map(expr -> getObjectWithExpr(result.getOclType(), expr, od))
+                .collect(Collectors.toList());
         resObjList.forEach(obj -> obj.setModifier(buildModifier("result", "true")));
       }
     }
   }
 
-  private static boolean isThis(ASTODNamedObject obj, Model model, OCLType type, Expr<? extends Sort> thisObj) {
-    return obj.getName().equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true), type.getName()));
+  private static boolean isThis(
+      ASTODNamedObject obj, Model model, OCLType type, Expr<? extends Sort> thisObj) {
+    return obj.getName()
+        .equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true), type.getName()));
   }
 
   private static boolean isPreLink(ASTODLink link) {
@@ -247,7 +251,7 @@ public class OCLHelper {
   private static Pair<ASTODNamedObject, ASTODNamedObject> splitPreObject(ASTODNamedObject object) {
     // split attributes
     List<ASTODAttribute> postAttributeList =
-            object.getODAttributeList().stream()
+        object.getODAttributeList().stream()
             .filter(a -> !isPre(a.getName()))
             .collect(Collectors.toList());
 
@@ -317,12 +321,11 @@ public class OCLHelper {
     return false;
   }
 
-  public static ASTODNamedObject getObjectWithExpr(OCLType type, Expr<? extends Sort> expr, ASTODArtifact od) {
+  public static ASTODNamedObject getObjectWithExpr(
+      OCLType type, Expr<? extends Sort> expr, ASTODArtifact od) {
     return OCLHelper.getObjectList(od).stream()
-            .filter(x -> x.getName().equals(SMTHelper.buildObjectName(expr, type.getName())))
-            .findFirst()
-            .orElse(null);
+        .filter(x -> x.getName().equals(SMTHelper.buildObjectName(expr, type.getName())))
+        .findFirst()
+        .orElse(null);
   }
-
-
 }

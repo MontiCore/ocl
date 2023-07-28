@@ -4,13 +4,13 @@ package de.monticore.ocl.types.check;
 import com.google.common.collect.Lists;
 import de.monticore.types.check.*;
 import de.se_rwth.commons.logging.Log;
-
-import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
 
+/** @deprecated replaced by TypeCheck3 SymTypeRelations */
+@Deprecated
 public class OCLTypeCheck {
-  
+
   // TODO MSm better variant will be provided by FDr
   protected static final List<String> collections =
       Collections.unmodifiableList(
@@ -23,10 +23,10 @@ public class OCLTypeCheck {
               "Set",
               "Collection",
               "Map"));
-  
+
   // TODO MSm replace with a better variant when OCLSymTypeCompatibilityCalculator is available
   protected static TypeRelations typeRelations = new TypeRelations();
-  
+
   /**
    * Test whether 2 types are compatible by using TypeCheck class and extending it by checking
    * whether FullQualifiedNames are different.
@@ -61,47 +61,49 @@ public class OCLTypeCheck {
 
     return comp;
   }
-  
-  /**
-   * @deprecated replace with the future OCLSymTypeCompatibilityCalculator
-   */
+
+  /** @deprecated replace with the future OCLSymTypeCompatibilityCalculator */
   @Deprecated
   public static boolean isSubtypeOf(SymTypeExpression subType, SymTypeExpression superType) {
     // Object is superType of all other types
     if (superType.getTypeInfo().getName().equals("Object")) {
       return true;
     }
-    
+
     // Otherwise use default TypeCheck method
     else {
       return typeRelations.isSubtypeOf(subType, superType);
     }
   }
-  
+
   /**
-   * @deprecated use the {@link OptionalOperatorsTypeVisitor#unwrapOptional(SymTypeExpression)} instead
+   * @deprecated use the {@link de.monticore.ocl.types3.util.IOCLCollectionTypeRelations} instead
    */
   @Deprecated
   public static SymTypeExpression unwrapOptional(SymTypeExpression optional) {
     // check that argument is of Type Optional
     if (!optional.isGenericType() || !optional.getTypeInfo().getName().equals("Optional")) {
-      Log.error("function optionalCompatible requires an Optional SymType but was given " +
-          optional.print());
+      Log.error(
+          "function optionalCompatible requires an Optional SymType but was given "
+              + optional.print());
       return SymTypeExpressionFactory.createObscureType();
-    }
-    else if (!((SymTypeOfGenerics) optional).getArgumentList().isEmpty()) {
+    } else if (!((SymTypeOfGenerics) optional).getArgumentList().isEmpty()) {
       // return type of optional
       return ((SymTypeOfGenerics) optional).getArgument(0);
-    }
-    else {
+    } else {
       return SymTypeExpressionFactory.createObscureType();
     }
   }
 
+  /**
+   * @deprecated use the {@link de.monticore.ocl.types3.util.IOCLCollectionTypeRelations} instead
+   */
+  @Deprecated
   public static SymTypeExpression unwrapSet(SymTypeExpression set) {
     // check that argument is of collection type
-    var invalid = collections.stream()
-        .noneMatch(c -> set.isGenericType() && set.getTypeInfo().getName().equals(c));
+    var invalid =
+        collections.stream()
+            .noneMatch(c -> set.isGenericType() && set.getTypeInfo().getName().equals(c));
     if (invalid) {
       // not a set, return type of object (maybe change later?)
       if (set.isObjectType()) {
@@ -109,7 +111,7 @@ public class OCLTypeCheck {
       }
       Log.error("function unwrapSet requires a Collection SymType but was given " + set.print());
     }
-    
+
     // get SymType used in Collection
     return ((SymTypeOfGenerics) set).getArgument(0);
   }

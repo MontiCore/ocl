@@ -8,7 +8,6 @@ import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
-import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.*;
 import de.se_rwth.commons.logging.Log;
@@ -21,7 +20,6 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   protected static final String MISSING_IMPLEMENTATION_ERROR = "0xC4722 Implementation missing";
 
-  
   protected SetExpressionsTraverser traverser;
 
   protected IndentPrinter printer;

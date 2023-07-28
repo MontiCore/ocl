@@ -23,11 +23,17 @@ dependencies {
   implementation "de.monticore:monticore-grammar:$mc_version"
   implementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
   implementation "de.monticore.lang:cd4analysis:$mc_version:cd2smt"
+
   testImplementation(project(':').sourceSets.test.output)
   testImplementation project(path: ':')
+
+  testImplementation ("de.monticore:monticore-grammar:$mc_version") {
+    capabilities {requireCapability("de.monticore:monticore-grammar-tests") }
+  }
   testImplementation "org.assertj:assertj-core:$assertj_version"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
+
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
 }
 

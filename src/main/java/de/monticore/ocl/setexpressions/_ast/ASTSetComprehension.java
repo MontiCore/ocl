@@ -17,9 +17,7 @@ public class ASTSetComprehension extends ASTSetComprehensionTOP {
     return getOpeningBracket().equals("[");
   }
 
-  /**
-   * @deprecated only useful for typecheck1 calculations
-   */
+  /** @deprecated only useful for typecheck1 calculations */
   @Deprecated
   public ASTMCType getMCType() {
     ASTMCQualifiedName qname;

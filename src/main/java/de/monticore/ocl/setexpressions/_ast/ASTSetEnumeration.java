@@ -17,9 +17,7 @@ public class ASTSetEnumeration extends ASTSetEnumerationTOP {
     return getOpeningBracket().equals("[");
   }
 
-  /**
-   * @deprecated was only needed for typecheck1
-   */
+  /** @deprecated was only needed for typecheck1 */
   @Deprecated
   public ASTMCType getMCType() {
     ASTMCQualifiedName qname;

@@ -4,23 +4,23 @@ package de.monticore.ocl.ocl._cocos;
 
 import de.monticore.ocl.oclexpressions._cocos.IterateExpressionVariableUsageIsCorrect;
 import de.monticore.ocl.setexpressions._cocos.SetComprehensionHasGenerator;
-import de.monticore.ocl.types.check.OCLDeriver;
-import de.monticore.ocl.types.check.OCLSynthesizer;
+import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLDeriver;
+import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLSynthesizer;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
 
 public class OCLCoCos {
 
   public static OCLCoCoChecker createChecker() {
-    return createChecker(new OCLDeriver(), new OCLSynthesizer());
+    return createChecker(new TypeCheck3AsOCLDeriver(), new TypeCheck3AsOCLSynthesizer());
   }
 
   public static OCLCoCoChecker createChecker(ISynthesize synthesizer) {
-    return createChecker(new OCLDeriver(), synthesizer);
+    return createChecker(new TypeCheck3AsOCLDeriver(), synthesizer);
   }
 
   public static OCLCoCoChecker createChecker(IDerive deriver) {
-    return createChecker(deriver, new OCLSynthesizer());
+    return createChecker(deriver, new TypeCheck3AsOCLSynthesizer());
   }
 
   public static OCLCoCoChecker createChecker(IDerive deriver, ISynthesize synthesizer) {

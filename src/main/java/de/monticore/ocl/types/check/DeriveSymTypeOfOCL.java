@@ -15,28 +15,28 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
  */
 @Deprecated(forRemoval = true)
 public class DeriveSymTypeOfOCL extends AbstractDeriveFromExpression implements OCLHandler {
-  
+
   protected OCLTraverser traverser;
-  
+
   public void traverse(ASTMCType node) {
     node.accept(getTraverser());
   }
-  
+
   @Override
   public void traverse(ASTOCLOperationConstraint node) {
     OCLHandler.super.traverse(node);
   }
-  
+
   @Override
   public void traverse(ASTOCLInvariant node) {
     OCLHandler.super.traverse(node);
   }
-  
+
   @Override
   public OCLTraverser getTraverser() {
     return traverser;
   }
-  
+
   public void setTraverser(OCLTraverser traverser) {
     this.traverser = traverser;
   }

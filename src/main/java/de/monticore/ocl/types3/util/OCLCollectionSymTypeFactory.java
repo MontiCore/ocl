@@ -10,5 +10,4 @@ public class OCLCollectionSymTypeFactory extends MCCollectionSymTypeFactory {
   public static SymTypeOfGenerics createOCLCollection(SymTypeExpression innerType) {
     return createCollectionType("Collection", "java.util.Collection", innerType);
   }
-
 }

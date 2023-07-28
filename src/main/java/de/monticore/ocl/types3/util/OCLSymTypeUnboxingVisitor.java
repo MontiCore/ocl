@@ -2,7 +2,6 @@
 package de.monticore.ocl.types3.util;
 
 import de.monticore.types3.util.SymTypeUnboxingVisitor;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,5 +13,4 @@ public class OCLSymTypeUnboxingVisitor extends SymTypeUnboxingVisitor {
     genericBoxMap.put("java.util.Collection", "Collection");
     return genericBoxMap;
   }
-
 }

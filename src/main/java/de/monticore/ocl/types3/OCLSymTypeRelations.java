@@ -8,11 +8,10 @@ import de.monticore.ocl.types3.util.OCLSymTypeBoxingVisitor;
 import de.monticore.ocl.types3.util.OCLSymTypeUnboxingVisitor;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
+import de.monticore.types3.util.FunctionRelations;
 import de.monticore.types3.util.SymTypeRelations;
 
-public class OCLSymTypeRelations
-    extends SymTypeRelations
-    implements IOCLSymTypeRelations {
+public class OCLSymTypeRelations extends SymTypeRelations implements IOCLSymTypeRelations {
 
   IOCLCollectionTypeRelations oclCollectionTypeRelations;
 
@@ -24,6 +23,7 @@ public class OCLSymTypeRelations
     this.unboxingVisitor = new OCLSymTypeUnboxingVisitor();
     this.superTypeCalculator = new OCLNominalSuperTypeCalculator(this);
     this.oclCollectionTypeRelations = new OCLCollectionTypeRelations();
+    this.functionRelationsDelegate = new FunctionRelations(this);
   }
 
   protected IOCLCollectionTypeRelations getOCLCollTypeRel() {
@@ -69,5 +69,4 @@ public class OCLSymTypeRelations
   public SymTypeOfGenerics flatten(SymTypeOfGenerics toFlatten) {
     return getOCLCollTypeRel().flatten(toFlatten);
   }
-
 }

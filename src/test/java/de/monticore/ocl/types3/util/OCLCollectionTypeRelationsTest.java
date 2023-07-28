@@ -1,6 +1,15 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types3.util;
 
+import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createList;
+import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createMap;
+import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createOptional;
+import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createSet;
+import static de.monticore.types3.util.DefsTypesForTests.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsGlobalScope;
@@ -13,21 +22,11 @@ import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types3.AbstractTypeTest;
 import de.monticore.types3.util.DefsTypesForTests;
 import de.se_rwth.commons.logging.Log;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
-import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createList;
-import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createMap;
-import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createOptional;
-import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createSet;
-import static de.monticore.types3.util.DefsTypesForTests.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
 
@@ -47,17 +46,16 @@ public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
   protected void setupCollectionType() {
     IBasicSymbolsGlobalScope gs = BasicSymbolsMill.globalScope();
     TypeVarSymbol uCVar = typeVariable("T");
-    _unboxedCollectionSymType = SymTypeExpressionFactory.createGenerics(
-        inScope(gs, type("Collection", List.of(), List.of(uCVar))),
-        SymTypeExpressionFactory.createTypeVariable(uCVar)
-    );
-    IBasicSymbolsScope javaUtilScope =
-        gs.resolveType("java.util.List").get().getEnclosingScope();
+    _unboxedCollectionSymType =
+        SymTypeExpressionFactory.createGenerics(
+            inScope(gs, type("Collection", List.of(), List.of(uCVar))),
+            SymTypeExpressionFactory.createTypeVariable(uCVar));
+    IBasicSymbolsScope javaUtilScope = gs.resolveType("java.util.List").get().getEnclosingScope();
     TypeVarSymbol bCVar = typeVariable("T");
-    _boxedCollectionSymType = SymTypeExpressionFactory.createGenerics(
-        inScope(javaUtilScope, type("Collection", List.of(), List.of(uCVar))),
-        SymTypeExpressionFactory.createTypeVariable(bCVar)
-    );
+    _boxedCollectionSymType =
+        SymTypeExpressionFactory.createGenerics(
+            inScope(javaUtilScope, type("Collection", List.of(), List.of(uCVar))),
+            SymTypeExpressionFactory.createTypeVariable(bCVar));
   }
 
   @Test
@@ -65,7 +63,6 @@ public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
     assertTrue(getRel().isOCLCollection(_unboxedCollectionSymType));
     assertTrue(getRel().isOCLCollection(_unboxedListSymType));
     assertTrue(getRel().isOCLCollection(_unboxedSetSymType));
-
   }
 
   @Test
@@ -84,9 +81,11 @@ public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
     assertFalse(getRel().isCollection(_intSymType));
     assertFalse(getRel().isCollection(_personSymType));
     assertFalse(getRel().isCollection(_unboxedString));
-    assertFalse(getRel().isCollection(SymTypeExpressionFactory.createGenerics(
-        "noList", BasicSymbolsMill.scope(), _intSymType
-    )));
+    assertFalse(
+        getRel()
+            .isCollection(
+                SymTypeExpressionFactory.createGenerics(
+                    "noList", BasicSymbolsMill.scope(), _intSymType)));
 
     // incorrect number of arguments
     _unboxedCollectionSymType.setArgumentList(Collections.emptyList());
@@ -101,9 +100,11 @@ public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
 
   @Test
   public void getCollectionElementTypeTest() {
-    assertSame(_unboxedCollectionSymType.getArgument(0),
+    assertSame(
+        _unboxedCollectionSymType.getArgument(0),
         getRel().getCollectionElementType(_unboxedCollectionSymType));
-    assertSame(_boxedCollectionSymType.getArgument(0),
+    assertSame(
+        _boxedCollectionSymType.getArgument(0),
         getRel().getCollectionElementType(_boxedCollectionSymType));
   }
 
@@ -131,24 +132,28 @@ public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
 
   protected void flattenTestUsingDefinition(SymTypeExpression innerType) {
     // Tests according to Modellierung mit UML 3.3.6
-    assertTrue(createSet(innerType)
-        .deepEquals(getRel().flatten(createSet(createSet(innerType)))));
-    assertTrue(createList(innerType)
-        .deepEquals(getRel().flatten(createSet(createList(innerType)))));
-    assertTrue(createCollection(innerType)
-        .deepEquals(getRel().flatten(createSet(createCollection(innerType)))));
-    assertTrue(createList(innerType)
-        .deepEquals(getRel().flatten(createList(createSet(innerType)))));
-    assertTrue(createList(innerType)
-        .deepEquals(getRel().flatten(createList(createList(innerType)))));
-    assertTrue(createList(innerType)
-        .deepEquals(getRel().flatten(createList(createCollection(innerType)))));
-    assertTrue(createCollection(innerType)
-        .deepEquals(getRel().flatten(createCollection(createSet(innerType)))));
-    assertTrue(createList(innerType)
-        .deepEquals(getRel().flatten(createCollection(createList(innerType)))));
-    assertTrue(createCollection(innerType)
-        .deepEquals(getRel().flatten(createCollection(createCollection(innerType)))));
+    assertTrue(createSet(innerType).deepEquals(getRel().flatten(createSet(createSet(innerType)))));
+    assertTrue(
+        createList(innerType).deepEquals(getRel().flatten(createSet(createList(innerType)))));
+    assertTrue(
+        createCollection(innerType)
+            .deepEquals(getRel().flatten(createSet(createCollection(innerType)))));
+    assertTrue(
+        createList(innerType).deepEquals(getRel().flatten(createList(createSet(innerType)))));
+    assertTrue(
+        createList(innerType).deepEquals(getRel().flatten(createList(createList(innerType)))));
+    assertTrue(
+        createList(innerType)
+            .deepEquals(getRel().flatten(createList(createCollection(innerType)))));
+    assertTrue(
+        createCollection(innerType)
+            .deepEquals(getRel().flatten(createCollection(createSet(innerType)))));
+    assertTrue(
+        createList(innerType)
+            .deepEquals(getRel().flatten(createCollection(createList(innerType)))));
+    assertTrue(
+        createCollection(innerType)
+            .deepEquals(getRel().flatten(createCollection(createCollection(innerType)))));
   }
 
   @Test
@@ -176,17 +181,17 @@ public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
 
   protected SymTypeOfGenerics createCollection(SymTypeExpression elementType) {
     IBasicSymbolsGlobalScope gs = BasicSymbolsMill.globalScope();
-    Optional<TypeSymbol> typeSymbolOpt = gs.resolveType("Collection")
-        .or(() -> gs.resolveType("java.util.Collection"));
+    Optional<TypeSymbol> typeSymbolOpt =
+        gs.resolveType("Collection").or(() -> gs.resolveType("java.util.Collection"));
     if (typeSymbolOpt.isPresent()) {
-      return SymTypeExpressionFactory.createGenerics(
-          typeSymbolOpt.get(), elementType);
-    }
-    else {
-      Log.error("0xFD327 could not find symbol \"Collection\" "
-          + "to create type Collection<" + elementType.printFullName() + ">");
+      return SymTypeExpressionFactory.createGenerics(typeSymbolOpt.get(), elementType);
+    } else {
+      Log.error(
+          "0xFD327 could not find symbol \"Collection\" "
+              + "to create type Collection<"
+              + elementType.printFullName()
+              + ">");
       return null;
     }
   }
-
 }
