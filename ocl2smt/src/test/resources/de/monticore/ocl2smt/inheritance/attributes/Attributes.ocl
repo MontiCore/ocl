@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package invariants;
-ocl NC1 {
+ocl Attributes {
 context BigBigCar bbc inv ALL:
      bbc.isBigBigCar == true &&
      bbc.isBigCarInterface == false &&

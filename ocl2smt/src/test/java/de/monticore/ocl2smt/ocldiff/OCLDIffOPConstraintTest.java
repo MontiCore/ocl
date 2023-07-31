@@ -10,14 +10,15 @@ import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.odbasis._ast.ASTODNamedObject;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
   @BeforeEach
@@ -28,7 +29,7 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
 
   @Test
   public void TestBuildPreCD() throws IOException {
-    ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
+    ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/PrePost.cd");
     OCLHelper.buildPreCD(ast);
     ASTCDClass company = (ASTCDClass) CDHelper.getASTCDType("Company", ast.getCDDefinition());
     Assertions.assertTrue(containsAttribute(company, OCLHelper.mkPre("name")));
@@ -40,10 +41,10 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
 
   @Test
   public void testOPConstraintWitness() throws IOException {
-    ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
+    ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/PrePost.cd");
 
     Set<ASTOCLCompilationUnit> posOCl = new HashSet<>();
-    posOCl.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/witness.ocl"));
+    posOCl.add(parseOCl("/post-pre-conditions/PrePost.cd", "/post-pre-conditions/Witness.ocl"));
 
     Set<OCLOPWitness> witnessList = OCLDiffGenerator.oclOPWitness(ast, posOCl, false);
     Assertions.assertEquals(witnessList.size(), 1);
@@ -79,13 +80,13 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
 
   @Test
   public void testOpConstraintDiff() throws IOException {
-    ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/pre-post.cd");
+    ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/PrePost.cd");
 
     Set<ASTOCLCompilationUnit> newOCL = new HashSet<>();
-    newOCL.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/new.ocl"));
+    newOCL.add(parseOCl("/post-pre-conditions/PrePost.cd", "/post-pre-conditions/New.ocl"));
 
     Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
-    oldOCL.add(parseOCl("/post-pre-conditions/pre-post.cd", "/post-pre-conditions/old.ocl"));
+    oldOCL.add(parseOCl("/post-pre-conditions/PrePost.cd", "/post-pre-conditions/Old.ocl"));
 
     ASTOCLMethodSignature method = IOHelper.getMethodSignature(newOCL, "Person.increaseSalary");
 

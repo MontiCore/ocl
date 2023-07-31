@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 
 
-classdiagram AttributesInheritance {
+classdiagram Attributes {
    class BigBigCar  extends BigCar {
       boolean isBigBigCar ;
    }

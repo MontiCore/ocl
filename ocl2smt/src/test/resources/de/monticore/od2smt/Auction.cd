@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 import java.util.Date ;
-classdiagram AuctionCD {
+classdiagram Auction {
   class Auction {
     String name ;
   }

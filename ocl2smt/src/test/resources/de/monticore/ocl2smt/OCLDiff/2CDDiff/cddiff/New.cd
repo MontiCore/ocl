@@ -1,8 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
-classdiagram OldCD {
+import java.lang.* ;
+classdiagram New {
 
   public class Auction {
-    int auctionIdent;
+    String auctionIdent;
   }
+
 
 }
