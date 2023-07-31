@@ -114,15 +114,15 @@ public class OCLInvariantDiff {
           Set<IdentifiableBoolExpr> additionalConstraints,
           boolean partial) {
 
-    OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
+      OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
 
-    List<IdentifiableBoolExpr> solverConstraints = invariant2SMT(ocl2SMTGenerator, in);
-    solverConstraints.addAll(additionalConstraints);
-    // check if they exist a model for the list of positive Constraint
-    Solver solver = ocl2SMTGenerator.makeSolver(solverConstraints);
-    if (solver.check() != Status.SATISFIABLE) {
-      solverConstraints.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getAssociationsConstraints());
-      solverConstraints.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getInheritanceConstraints());
+      List<IdentifiableBoolExpr> solverConstraints = invariant2SMT(ocl2SMTGenerator, in);
+      solverConstraints.addAll(additionalConstraints);
+      // check if they exist a model for the list of positive Constraint
+      Solver solver = ocl2SMTGenerator.makeSolver(solverConstraints);
+      if (solver.check() != Status.SATISFIABLE) {
+          solverConstraints.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getAssociationsConstraints());
+          solverConstraints.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getInheritanceConstraints());
 
       return TraceUnSatCore.buildUnSatOD(
           solverConstraints, new ArrayList<>(), TraceUnSatCore.traceUnSatCoreWitness(solver));

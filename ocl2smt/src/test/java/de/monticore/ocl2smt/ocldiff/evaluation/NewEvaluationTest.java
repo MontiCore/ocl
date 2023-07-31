@@ -18,7 +18,6 @@ public class NewEvaluationTest extends OCLDiffAbstractTest {
   public void setUp() throws IOException {
     super.initLogger();
     super.initMills();
-
   }
 
   @Test

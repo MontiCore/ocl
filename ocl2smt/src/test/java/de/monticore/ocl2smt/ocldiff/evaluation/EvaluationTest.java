@@ -186,14 +186,13 @@ public class EvaluationTest extends OCLDiffAbstractTest {
     long start = System.currentTimeMillis();
     loadModels();
     OCLInvDiffResult res =
-            /*  OCLDiffGenerator.oclDiff(
-                  ast.get(2),
-                  Set.of(ocl.get(2)),
-                  Set.of(ocl.get(3)),
-                  new HashSet<>(),
-                  new HashSet<>(),
-                  true);*/
-
+        /*  OCLDiffGenerator.oclDiff(
+        ast.get(2),
+        Set.of(ocl.get(2)),
+        Set.of(ocl.get(3)),
+        new HashSet<>(),
+        new HashSet<>(),
+        true);*/
 
             OCLDiffGenerator.oclDiffFinite(
                     ast.get(2),
@@ -212,10 +211,4 @@ public class EvaluationTest extends OCLDiffAbstractTest {
             "| duration: " + (double) (System.currentTimeMillis() - start) / 1000 + "s",
             "Diff( V" + 2 + " ,V" + (3) + ")");
   }
-
-
 }
-
-
-
-
