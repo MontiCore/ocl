@@ -78,6 +78,7 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     typeMapTraverser = new OCLTypeTraverserFactory().createTraverser(type4Ast);
 
     scopeGenitor = OCLMill.traverser();
+    assertNoFindings();
   }
 
   protected void setupValues() {
