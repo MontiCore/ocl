@@ -1,18 +1,19 @@
 package de.monticore.ocl2smt.ocl2smt;
 
 import com.microsoft.z3.Status;
-import java.io.IOException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.io.IOException;
 
 public class StringOperationsTest extends ExpressionAbstractTest {
   @BeforeEach
   public void setup() throws IOException {
     super.initLogger();
     super.initMills();
-    parse("MinAuction.cd", "String.ocl");
+    parse("MinAuction.cd", "StringInv.ocl");
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 

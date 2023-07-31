@@ -9,7 +9,7 @@
   // Artifact
   // ______________________________________________________
 
-ocl  ArtifactKindModel {
+ocl  ArtifactKindModelV1 {
 
   context Artifact a inv Inv0:
     a.name == ((a.nameExtension == "") ? a.simpleName :

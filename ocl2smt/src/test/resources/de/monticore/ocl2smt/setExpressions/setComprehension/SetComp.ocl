@@ -2,7 +2,7 @@
 
 package invariants;
 
-ocl Test01 {
+ocl SetComp {
     context Auction a  inv Test1 :
              exists Person p1 :
                 p1 isin  { p in a.person| p.age == 20 && p.name == "Naruto"};

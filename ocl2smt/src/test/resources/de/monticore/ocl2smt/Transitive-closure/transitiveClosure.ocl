@@ -1,8 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-package invariants;
 
-ocl Test01 {
+ocl transitiveClosure {
 
    inv SimpleTransitive_Closure:
       exists Auction a1,a2,a3: // exact three auction
