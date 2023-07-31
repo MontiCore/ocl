@@ -1,9 +1,9 @@
 /* (c) https://github.com/MontiCore/monticore */
-package docs;
+
 
 import java.lang.*;
 
-classdiagram Auction {
+classdiagram PrePost{
 
  class  Person {
    int  salary;

@@ -8,7 +8,7 @@
  *
  *
 */
-ocl  ArtifactKindModel {
+ocl  ArtifactKindModelV4 {
 
   context Artifact a inv Inv0:
     if   a.nameExtension == ""
