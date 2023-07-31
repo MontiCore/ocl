@@ -15,7 +15,7 @@ public class NewEvaluationTest extends OCLDiffAbstractTest {
   private ASTOCLCompilationUnit ocl;
 
   @BeforeEach
-  public void setUp() throws IOException {
+  public void setUp() {
     super.initLogger();
     super.initMills();
   }
@@ -27,10 +27,12 @@ public class NewEvaluationTest extends OCLDiffAbstractTest {
   }
 
   @Test
-  @Disabled
   public void testJavaProject() throws IOException {
-    ast = parseCD("newEvaluation/JavaProject.cd");
-    ocl = parseOCl("newEvaluation/JavaProject.cd", "newEvaluation/ArtifactModel.ocl");
+    // ast = parseCD("newEvaluation/JavaProject.cd");
+    ocl = parseOCl("newEvaluation/JavaProject.cd", "newEvaluation/JavaProject.ocl");
+    //   OCLInvDiffResult witness = OCLDiffGenerator.oclDiff(ast, Set.of(ocl),new HashSet<>(),new HashSet<>(),new HashSet<>(),true);
+    // OCLInvDiffResult witnessFinite = OCLDiffGenerator.oclDiffFinite(ast, Set.of(ocl),new HashSet<>(),new HashSet<>(),new HashSet<>(),1000,true);
+    // IOHelper.printInvDiffResult(witness, Path.of("target/generated-test/newEvaluation"));
   }
 
   @Test
