@@ -1,12 +1,101 @@
 package de.monticore.ocl2smt.OCLDiff.newEvaluation;
 
-import ArtifactModel.*;
+
 
 classdiagram JavaProject{
 
-    // ______________________________________________________
-    // Artifacts
-    // ______________________________________________________
+
+
+      // ______________________________________________________
+      // start- ArtifactModel
+      // ______________________________________________________
+
+      abstract class Artifact {
+          String simpleName;
+          String nameExtension;
+          Date modified;
+
+          String name;
+          String fullName;
+          boolean isRoot;
+      }
+
+      class FileArtifact extends Artifact {}
+
+      // TODO beide assocs waren abgeleitet
+      association refersTo [*] Artifact -> (refersTo )Artifact [*];
+
+      association produces [*] Artifact -> (produces)Artifact [*];
+
+      class Root {
+          boolean isExternal;
+          String fullName;
+          String name;
+      }
+
+      association root [*] Artifact -> Root [1];
+
+      association ancestors [1] Root -> Artifact [*];
+
+      association artifactRepresentation [1] Root -> Artifact [1];
+
+
+      //______________________________________________________
+      // ArtifactContainer
+      //______________________________________________________
+
+      abstract class ArtifactContainer extends Artifact {}
+
+      class Directory extends ArtifactContainer {}
+
+      class Archive extends ArtifactContainer {}
+
+      //TODO was : composition contains [0..1] ArtifactContainer (parent) -> Artifact [*];
+      //Breaks all kind of things (multiple instances of isContainsValid)
+      association contains [0..1] ArtifactContainer(parent) -> (contains)Artifact [*] ;
+
+
+      //______________________________________________________
+      // ArtifactView
+      //______________________________________________________
+
+      abstract class ArtifactView{
+        String name;
+      }
+
+      association views [1] Artifact <-> ArtifactView [*];
+
+
+      //______________________________________________________
+      // Internals
+      //______________________________________________________
+
+      abstract class ArtifactInternal{}
+
+      // assoc abgeleitet, wird durch Spezialisierungen von Interal beschrieben
+      association internals [1] ArtifactView <-> ArtifactInternal [*];
+
+
+      //______________________________________________________
+      // Metric
+      //______________________________________________________
+
+      abstract class Metric{}
+
+      association artifactMetric [*] Artifact <-> Metric [*];
+
+      association viewMetric [*] ArtifactView <-> Metric [*];
+
+      association internalMetric [*] ArtifactInternal <-> Metric [*];
+
+
+
+      //______________________________________________________
+      // End-Artifact-Model
+      //______________________________________________________
+
+
+
 
 
     //TODO nessesary?
@@ -106,7 +195,7 @@ classdiagram JavaProject{
         String defaultValue;
     }
 
-    association visibility [1] JavaVariable -> JavaVisibility [1];
+    association  [1] JavaVariable -> (visibility)JavaVisibility [1];
 
 
     // JavaMethod
@@ -120,7 +209,7 @@ classdiagram JavaProject{
         String returnType;
     }
 
-    association visibility [1] JavaMethod -> JavaVisibility [1];
+    association [1] JavaMethod -> (visibility)JavaVisibility [1];
 
 
     // JavaParameter
