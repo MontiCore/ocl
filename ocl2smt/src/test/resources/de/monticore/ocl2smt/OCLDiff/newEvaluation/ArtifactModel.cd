@@ -49,7 +49,8 @@ classdiagram ArtifactModel {
 
   //TODO was : composition contains [0..1] ArtifactContainer (parent) -> Artifact [*];
   //Breaks all kind of things (multiple instances of isContainsValid)
-  association contains [0..1] ArtifactContainer(parent) -> (contains)Artifact [*] ;
+  //[0..1] added in OCL.
+  association contains [*] ArtifactContainer(parent) -> (contains)Artifact [*] ;
 
 
   //______________________________________________________

@@ -59,40 +59,40 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
 
   @Test
   public void testOCLDiffOneCDFinite() throws IOException {
-      CD2SMTMill.init(
-              ClassStrategy.Strategy.FINITEDS,
-              InheritanceData.Strategy.ME,
-              AssociationStrategy.Strategy.DEFAULT);
+    CD2SMTMill.init(
+            ClassStrategy.Strategy.FINITEDS,
+            InheritanceData.Strategy.ME,
+            AssociationStrategy.Strategy.DEFAULT);
     OCLInvDiffResult diff = computeDiffOneCDFinite("MinAuction.cd", "Old.ocl", "new.ocl", 10);
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "finite/diffOneCD"));
     Assertions.assertEquals(4, diff.getDiffWitness().size());
   }
 
-    @ParameterizedTest
-    @MethodSource("cd2smtStrategies")
-    public void testOclDiffOneCDWithODs(
-            ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as)
-            throws IOException {
-        CD2SMTMill.init(cs, is, as);
-        OCLInvDiffResult diff =
-                computeDiffOneCD(
-                        "difWithOds/Auction.cd",
-                        "difWithOds/old.ocl",
-                        "difWithOds/new.ocl",
-                        "difWithOds/posExample.od",
-                        "difWithOds/negExample.od");
-        IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiffOneCDWithODs"));
-        assertEquals(1, diff.getDiffWitness().size());
+  @ParameterizedTest
+  @MethodSource("cd2smtStrategies")
+  public void testOclDiffOneCDWithODs(
+          ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as)
+          throws IOException {
+    CD2SMTMill.init(cs, is, as);
+    OCLInvDiffResult diff =
+            computeDiffOneCD(
+                    "difWithOds/Auction.cd",
+                    "difWithOds/old.ocl",
+                    "difWithOds/new.ocl",
+                    "difWithOds/posExample.od",
+                    "difWithOds/negExample.od");
+    IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiffOneCDWithODs"));
+    assertEquals(1, diff.getDiffWitness().size());
     assertEquals(
-        diff.getDiffWitness().iterator().next().getObjectDiagram().getName(), "EndAfterStart");
+            diff.getDiffWitness().iterator().next().getObjectDiagram().getName(), "EndAfterStart");
     assertTrue(checkLink("obj_object_", "obj_Names_", diff.getUnSatCore()));
   }
 
   @ParameterizedTest
   @MethodSource("cd2smtStrategies")
   public void testOclDiff2CD_NoDiff(
-      ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
-      throws IOException {
+          ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
+          throws IOException {
     CD2SMTMill.init(cs, is, as);
     OCLInvDiffResult diff =
             computeDiff2CD(

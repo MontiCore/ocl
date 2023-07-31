@@ -71,38 +71,38 @@ public abstract class OCLDiffAbstractTest extends OCL2SMTAbstractTest {
 
   public OCLInvDiffResult computeDiff2CD(
           String oldCDn, String newCDn, String oldOCLn, String newOCLn) throws IOException {
-    ASTCDCompilationUnit oldCD = parseCD(oldCDn);
-    ASTCDCompilationUnit newCD = parseCD(newCDn);
-    Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
-    Set<ASTOCLCompilationUnit> newOCL = new HashSet<>();
-    oldOCL.add(parseOCl(oldCDn, oldOCLn));
-    newOCL.add(parseOCl(newCDn, newOCLn));
-    return OCLDiffGenerator.oclDiff(
-            oldCD, newCD, oldOCL, newOCL, new HashSet<>(), new HashSet<>(), false);
+      ASTCDCompilationUnit oldCD = parseCD(oldCDn);
+      ASTCDCompilationUnit newCD = parseCD(newCDn);
+      Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
+      Set<ASTOCLCompilationUnit> newOCL = new HashSet<>();
+      oldOCL.add(parseOCl(oldCDn, oldOCLn));
+      newOCL.add(parseOCl(newCDn, newOCLn));
+      return OCLDiffGenerator.oclDiff(
+              oldCD, newCD, oldOCL, newOCL, new HashSet<>(), new HashSet<>(), false);
   }
 
-  public OCLInvDiffResult computeDiffOneCDFinite(
-          String cdName, String oldOCLName, String newOCLName, long max) throws IOException {
-    return OCLDiffGenerator.oclDiffFinite(
-            parseCD(cdName),
-            new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
-            new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
-            new HashSet<>(),
-            new HashSet<>(),
-            max,
-            false);
-  }
+    public OCLInvDiffResult computeDiffOneCDFinite(
+            String cdName, String oldOCLName, String newOCLName, long max) throws IOException {
+        return OCLDiffGenerator.oclDiffFinite(
+                parseCD(cdName),
+                new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
+                new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
+                new HashSet<>(),
+                new HashSet<>(),
+                max,
+                false);
+    }
 
-  public OCLInvDiffResult computeDiffOneCD(String cdName, String oldOCLName, String newOCLName)
-          throws IOException {
-    return OCLDiffGenerator.oclDiff(
-            parseCD(cdName),
-            new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
-            new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
-            new HashSet<>(),
-            new HashSet<>(),
-            false);
-  }
+    public OCLInvDiffResult computeDiffOneCD(String cdName, String oldOCLName, String newOCLName)
+            throws IOException {
+        return OCLDiffGenerator.oclDiff(
+                parseCD(cdName),
+                new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
+                new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
+                new HashSet<>(),
+                new HashSet<>(),
+                false);
+    }
 
   public OCLInvDiffResult computeDiffOneCD(
       String cdName, String oldOCLName, String newOCLName, String posODName, String negODName)

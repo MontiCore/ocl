@@ -254,7 +254,7 @@ public class OCLHelper {
     List<ASTODAttribute> postAttributeList =
             object.getODAttributeList().stream()
                     .filter(a -> !isPre(a.getName()))
-            .collect(Collectors.toList());
+                    .collect(Collectors.toList());
 
     List<ASTODAttribute> preObjAttributeList =
         object.getODAttributeList().stream()

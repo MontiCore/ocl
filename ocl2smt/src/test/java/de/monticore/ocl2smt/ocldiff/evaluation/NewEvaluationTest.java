@@ -2,12 +2,18 @@ package de.monticore.ocl2smt.ocldiff.evaluation;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.ocldiff.OCLDiffAbstractTest;
+import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
+import de.monticore.odbasis._ast.ASTODArtifact;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
 
 public class NewEvaluationTest extends OCLDiffAbstractTest {
   private ASTCDCompilationUnit ast;
@@ -28,11 +34,16 @@ public class NewEvaluationTest extends OCLDiffAbstractTest {
 
   @Test
   public void testJavaProject() throws IOException {
-    // ast = parseCD("newEvaluation/JavaProject.cd");
+    ast = parseCD("newEvaluation/JavaProject.cd");
     ocl = parseOCl("newEvaluation/JavaProject.cd", "newEvaluation/JavaProject.ocl");
-    //   OCLInvDiffResult witness = OCLDiffGenerator.oclDiff(ast, Set.of(ocl),new HashSet<>(),new HashSet<>(),new HashSet<>(),true);
-    // OCLInvDiffResult witnessFinite = OCLDiffGenerator.oclDiffFinite(ast, Set.of(ocl),new HashSet<>(),new HashSet<>(),new HashSet<>(),1000,true);
-    // IOHelper.printInvDiffResult(witness, Path.of("target/generated-test/newEvaluation"));
+    ASTODArtifact witness =
+            OCLDiffGenerator.oclWitnessFinite(
+                    ast, Set.of(ocl), new HashSet<>(), new HashSet<>(), 1000, false);
+   /* ASTODArtifact witness2 =
+            OCLDiffGenerator.oclWitness(
+                    ast, Set.of(ocl), new HashSet<>(), new HashSet<>(), false);*/
+
+    IOHelper.printOD(witness, Path.of("target/generated-test/newEvaluation"));
   }
 
   @Test

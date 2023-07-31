@@ -98,19 +98,17 @@ classdiagram JavaProject{
 
 
 
-    //TODO nessesary?
+
     association reliesOnJavaArtifact [*] JavaView -> JavaView [*] ;
 
 
-    // JavaPackage
-    //TODO handle Package  ->  JavaPackage oder so
-    //TODO extends ArtifactContainer ? (reasons for both)
+
     class JavaPackage {
         String name;
 
-        //TODO: abgeleitete Attribute
-        //String fullName;
-        //boolean isRoot;
+
+        String fullName;
+        boolean isRoot;
     }
 
     association belongsTo  [*]  JavaView  <->  JavaPackage  [0..1] ;

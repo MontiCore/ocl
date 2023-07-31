@@ -103,9 +103,9 @@ class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
   }
 
   public ASTODObject convertObject(String oldObjectName, String objType) {
-    Expr<? extends Sort> oldObj =
-            od2SMTGenerator.getObject(OD2SMTUtils.getObject(oldObjectName, od));
-    String newObjName = SMTHelper.buildObjectName(model.evaluate(oldObj, true), objType);
+      Expr<? extends Sort> oldObj =
+              od2SMTGenerator.getObject(OD2SMTUtils.getObject(oldObjectName, od));
+      String newObjName = SMTHelper.buildObjectName(model.evaluate(oldObj, true), objType);
 
     return OD2SMTUtils.getObject(newObjName, witness);
   }

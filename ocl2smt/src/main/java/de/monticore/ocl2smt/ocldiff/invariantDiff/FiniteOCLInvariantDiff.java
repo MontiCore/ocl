@@ -4,9 +4,6 @@ import com.microsoft.z3.Context;
 import de.monticore.cd2smt.CDTypeInitializer;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
-import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
-import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
-import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -20,9 +17,39 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy.Strategy.DEFAULT;
+import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.FINITEDS;
+import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.ME;
+
 public class FiniteOCLInvariantDiff extends OCLInvariantDiff {
 
-    public OCLInvDiffResult oclDiffFinite(
+    public ASTODArtifact oclWitness(
+            ASTCDCompilationUnit cd,
+            Set<ASTOCLCompilationUnit> ocl,
+            Set<IdentifiableBoolExpr> additionalConstraints,
+            Context ctx,
+            long max,
+            boolean partial) {
+        this.ctx = ctx;
+        Stream<Map<ASTCDType, Integer>> cardinalities = CDTypeInitializer.initialize(cd, max, true);
+        AtomicReference<ASTODArtifact> res = new AtomicReference<>();
+
+        cardinalities.anyMatch(
+                card -> {
+                    CD2SMTMill.init(FINITEDS, ME, DEFAULT, card);
+                    ASTODArtifact od = oclWitnessInternal(cd, ocl, additionalConstraints, partial);
+                    if (od != null) {
+                        res.set(od);
+                        return true;
+                    } else {
+                        return false;
+                    }
+                });
+
+        return res.get();
+    }
+
+    public OCLInvDiffResult oclDiff(
             ASTCDCompilationUnit cd,
             Set<ASTOCLCompilationUnit> oldOcl,
             Set<ASTOCLCompilationUnit> newOcl,
@@ -60,11 +87,7 @@ public class FiniteOCLInvariantDiff extends OCLInvariantDiff {
                 cardinalities.anyMatch(
                         card -> {
                             Log.info("Solving " + oldInvariant.getName() + "....", this.getClass().getName());
-                            CD2SMTMill.init(
-                                    ClassStrategy.Strategy.FINITEDS,
-                                    InheritanceData.Strategy.ME,
-                                    AssociationStrategy.Strategy.DEFAULT,
-                                    card);
+                            CD2SMTMill.init(FINITEDS, ME, DEFAULT, card);
 
                             OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
                             if (oclWitnessInternal(cd, newOCL, new HashSet<>(), false) == null) {
