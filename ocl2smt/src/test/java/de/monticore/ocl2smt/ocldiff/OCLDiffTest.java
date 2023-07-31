@@ -63,7 +63,7 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
               ClassStrategy.Strategy.FINITEDS,
               InheritanceData.Strategy.ME,
               AssociationStrategy.Strategy.DEFAULT);
-    OCLInvDiffResult diff = computeDiffOneCDFinite("Auction.cd", "old.ocl", "new.ocl", 10);
+    OCLInvDiffResult diff = computeDiffOneCDFinite("MinAuction.cd", "Old.ocl", "new.ocl", 10);
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "finite/diffOneCD"));
     Assertions.assertEquals(4, diff.getDiffWitness().size());
   }
