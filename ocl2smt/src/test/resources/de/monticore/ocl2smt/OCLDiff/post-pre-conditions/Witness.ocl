@@ -1,7 +1,7 @@
 
 /* (c) https://github.com/MontiCore/monticore */
 package docs;
-ocl Person {
+ocl Witness{
 
  context void Person.changeCompany(String n)
    pre : company.name == "oldCompany"  &&

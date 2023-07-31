@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package invariants;
 
-ocl posOCL {
+ocl New{
 inv Pos1 :
      forall Auction a :
             exists Person p :

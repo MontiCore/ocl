@@ -7,7 +7,7 @@
  * ll.132-134: Add operation constraint for JavaSourceFile.compile()
  *
 */
-ocl  ArtifactKindModel {
+ocl  ArtifactKindModelV5 {
 
   context Artifact a inv Inv0:
     if   a.nameExtension == ""

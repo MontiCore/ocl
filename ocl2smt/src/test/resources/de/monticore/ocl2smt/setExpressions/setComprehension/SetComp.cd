@@ -2,7 +2,7 @@
 
 import java.lang.*;
 
-classdiagram CDTest{
+classdiagram SetComp{
  class Auction {
    String  name ;
    int auctionIdent;
