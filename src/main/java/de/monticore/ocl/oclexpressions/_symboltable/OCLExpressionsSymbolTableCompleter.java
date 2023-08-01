@@ -8,9 +8,9 @@ import de.monticore.ocl.oclexpressions._ast.ASTTypeIfExpression;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsHandler;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
-import de.monticore.ocl.types.check.OCLDeriver;
-import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.ocl.types.check.OCLTypeCheck;
+import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLDeriver;
+import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLSynthesizer;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
 import de.monticore.types.check.IDerive;
@@ -18,6 +18,7 @@ import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import de.monticore.types3.ISymTypeRelations;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 
@@ -38,6 +39,8 @@ public class OCLExpressionsSymbolTableCompleter
 
   protected ISynthesize synthesizer;
 
+  protected ISymTypeRelations symTypeRelations;
+
   public void setDeriver(IDerive deriver) {
     if (deriver != null) {
       this.deriver = deriver;
@@ -54,12 +57,16 @@ public class OCLExpressionsSymbolTableCompleter
     }
   }
 
+  public void setSymTypeRelations(ISymTypeRelations symTypeRelations) {
+    this.symTypeRelations = symTypeRelations;
+  }
+
   public OCLExpressionsSymbolTableCompleter(
       List<ASTMCImportStatement> imports, String packageDeclaration) {
     this.imports = imports;
     this.packageDeclaration = packageDeclaration;
-    deriver = new OCLDeriver();
-    synthesizer = new OCLSynthesizer();
+    deriver = new TypeCheck3AsOCLDeriver();
+    synthesizer = new TypeCheck3AsOCLSynthesizer();
   }
 
   @Override
@@ -120,12 +127,12 @@ public class OCLExpressionsSymbolTableCompleter
         if (tcr_expr.isPresentResult()) {
           // if MCType present: check that type of expression and MCType are compatible
           if (typeResult.isPresentResult()
-              && !OCLTypeCheck.compatible(
+              && !symTypeRelations.isCompatible(
                   typeResult.getResult(), OCLTypeCheck.unwrapSet(tcr_expr.getResult()))) {
             Log.error(
                 String.format(
                     "The MCType (%s) and the expression type (%s) in Symbol (%s) are not compatible",
-                    ast.getMCType(),
+                    ast.getMCType().printType(),
                     OCLTypeCheck.unwrapSet(tcr_expr.getResult()),
                     symbol.getName()));
           }

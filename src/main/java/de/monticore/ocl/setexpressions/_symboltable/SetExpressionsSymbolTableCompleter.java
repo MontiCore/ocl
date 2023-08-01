@@ -132,7 +132,7 @@ public class SetExpressionsSymbolTableCompleter
       }
     } else {
       final TypeCheckResult typeResult = deriver.deriveType(ast.getExpression());
-      if (!typeResult.isPresentResult()) {
+      if (!typeResult.isPresentResult() || typeResult.getResult().isObscureType()) {
         Log.error(
             String.format("The type of the object (%s) could not be calculated", ast.getName()));
       } else if (typeResult.getResult().isPrimitive()) {

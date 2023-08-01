@@ -8,7 +8,6 @@ import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
-import de.monticore.ocl.types.check.OCLTypeCheck;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.*;
 import de.se_rwth.commons.logging.Log;
@@ -373,7 +372,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
   public void handle(ASTSetComprehensionItem node) {
     if (node.isPresentExpression()) {
       TypeCheckResult type = getDeriver().deriveType(node.getExpression());
-      if (type.isPresentResult() && OCLTypeCheck.isBoolean(type.getResult())) {
+      if (type.isPresentResult() && TypeCheck.isBoolean(type.getResult())) {
         getPrinter().print("if (");
         node.getExpression().accept(getTraverser());
         getPrinter().println(") {");

@@ -13,6 +13,12 @@ import de.monticore.types.check.AbstractDeriveFromExpression;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 
+/**
+ * @deprecated This class is no longer acceptable since we use <b>Type Check 3</b> to calculate the
+ *     type of expressions and literals related to OCL. Use {@link OptionalOperatorsTypeVisitor}
+ *     instead.
+ */
+@Deprecated(forRemoval = true)
 public class DeriveSymTypeOfOptionalOperators extends AbstractDeriveFromExpression
     implements OptionalOperatorsHandler {
 

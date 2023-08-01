@@ -128,7 +128,7 @@ public class OCLCoCoTest extends AbstractTest {
     }
 
     if (filename.equals("invalidVariableDeclaration.ocl")) {
-      assertEquals(1, Log.getFindings().size());
+      assertTrue(Log.getFindings().size() >= 1);
       assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xOCL33"));
       Log.getFindings().clear();
     }

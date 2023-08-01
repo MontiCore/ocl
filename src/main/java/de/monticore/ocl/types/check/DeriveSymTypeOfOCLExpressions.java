@@ -15,6 +15,12 @@ import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @deprecated This class is no longer acceptable since we use <b>Type Check 3</b> to calculate the
+ *     type of expressions and literals related to OCL. Use {@link OCLExpressionsTypeVisitor}
+ *     instead.
+ */
+@Deprecated(forRemoval = true)
 public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
     implements OCLExpressionsHandler {
 
@@ -151,7 +157,7 @@ public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
     }
 
     // the condition has to be boolean
-    if (!OCLTypeCheck.isBoolean(conditionResult)) {
+    if (!TypeCheck.isBoolean(conditionResult)) {
       typeCheckResult.reset();
       LogHelper.error(
           node, "0xA3041", "The type of the condition of the OCLIfThenElseExpr has to be boolean");
@@ -229,7 +235,7 @@ public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
           "0xA3211",
           "The type of the expression in the ForallExpression could not be calculated");
     }
-    if (!OCLTypeCheck.isBoolean(exprResult)) {
+    if (!TypeCheck.isBoolean(exprResult)) {
       typeCheckResult.reset();
       LogHelper.error(
           node, "0xA3212", "The type of the expression in the ForallExpression has to be boolean");
@@ -255,7 +261,7 @@ public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
           "0xA3211",
           "The type of the expression in the ExistsExpression could not be calculated");
     }
-    if (!OCLTypeCheck.isBoolean(exprResult)) {
+    if (!TypeCheck.isBoolean(exprResult)) {
       typeCheckResult.reset();
       LogHelper.error(
           node, "0xA3212", "The type of the expression in the ExistsExpression has to be boolean");
@@ -520,7 +526,7 @@ public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
       return;
     }
 
-    if (!OCLTypeCheck.isBoolean(leftResult)) {
+    if (!TypeCheck.isBoolean(leftResult)) {
       typeCheckResult.reset();
       Log.error("0xA3201 The type of the left expression of the " + astType + " has to be boolean");
       return;
@@ -540,7 +546,7 @@ public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
       return;
     }
 
-    if (!OCLTypeCheck.isBoolean(rightResult)) {
+    if (!TypeCheck.isBoolean(rightResult)) {
       typeCheckResult.reset();
       Log.error(
           "0xA3203 The type of the right expression of the " + astType + " has to be boolean");

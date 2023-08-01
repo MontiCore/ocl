@@ -31,6 +31,7 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -143,7 +144,7 @@ public class OCL_Loader {
   protected static void loadCDModel(ASTOCLCompilationUnit oclAST, ASTCDCompilationUnit cdAST) {
     String serialized =
         new CD4CodeSymbols2Json().serialize((ICD4CodeScope) cdAST.getEnclosingScope());
-    serialized = serialized.replaceAll("Optional", "java.util.Optional");
+  //  serialized = serialized.replaceAll("Optional", "java.util.Optional");
     Log.trace(serialized, OCL_Loader.class.getName());
     SymbolTableUtil.prepareMill();
     SymbolTableUtil.addCd4cSymbols();

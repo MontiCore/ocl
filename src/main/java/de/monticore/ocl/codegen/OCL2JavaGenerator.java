@@ -14,8 +14,8 @@ import de.monticore.ocl.codegen.visitors.SetExpressionsPrinter;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
-import de.monticore.ocl.types.check.OCLDeriver;
-import de.monticore.ocl.types.check.OCLSynthesizer;
+import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLDeriver;
+import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLSynthesizer;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
@@ -69,7 +69,7 @@ public class OCL2JavaGenerator {
   }
 
   protected OCL2JavaGenerator(IndentPrinter printer, VariableNaming naming) {
-    this(printer, naming, new OCLDeriver(), new OCLSynthesizer());
+    this(printer, naming, new TypeCheck3AsOCLDeriver(), new TypeCheck3AsOCLSynthesizer());
   }
 
   protected OCL2JavaGenerator(

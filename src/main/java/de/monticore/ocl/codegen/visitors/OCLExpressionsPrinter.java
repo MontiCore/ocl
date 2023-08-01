@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.codegen.visitors;
 
-import static de.monticore.types.check.SymTypePrimitive.box;
-
 import com.google.common.base.Preconditions;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.codegen.util.VariableNaming;
@@ -67,9 +65,11 @@ public class OCLExpressionsPrinter extends AbstractPrinter
   @Override
   public void handle(ASTTypeIfExpression node) {
     printExpressionBeginLambda(getDeriver().deriveType(node));
-    // returnType newName;
+    // TC1 -> TC3 hack
     TypeCheckResult type = this.getDeriver().deriveType(node);
-    if (!type.isPresentResult()) {
+    type.setResult(getTypeRel().normalize(getTypeRel().box(type.getResult())));
+    // returnType newName;
+    if (!type.isPresentResult() || type.getResult().isObscureType()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;
     } else {
@@ -158,8 +158,10 @@ public class OCLExpressionsPrinter extends AbstractPrinter
   @Override
   public void handle(ASTIfThenElseExpression node) {
     printExpressionBeginLambda(getDeriver().deriveType(node));
-    // expressionType newName;
+    // TC1 -> TC3 hack
     TypeCheckResult type = this.getDeriver().deriveType(node);
+    type.setResult(getTypeRel().normalize(getTypeRel().box(type.getResult())));
+    // expressionType newName;
     if (!type.isPresentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
     } else {
@@ -376,7 +378,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter
     }
     if (type.getResult().isPrimitive()) {
       getPrinter().print("((");
-      this.getPrinter().print(box(type.getResult().printFullName()));
+      this.getPrinter().print((type.getResult().printFullName()));
       getPrinter().print(") ");
       node.accept(getTraverser());
       getPrinter().print(")");

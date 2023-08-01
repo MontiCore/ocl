@@ -7,8 +7,11 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Collections;
 import java.util.List;
 
-public class OCLTypeCheck extends TypeCheck {
+/** @deprecated replaced by TypeCheck3 SymTypeRelations */
+@Deprecated
+public class OCLTypeCheck {
 
+  // TODO MSm better variant will be provided by FDr
   protected static final List<String> collections =
       Collections.unmodifiableList(
           Lists.newArrayList(
@@ -21,7 +24,8 @@ public class OCLTypeCheck extends TypeCheck {
               "Collection",
               "Map"));
 
-  protected OCLTypeCheck() {}
+  // TODO MSm replace with a better variant when OCLSymTypeCompatibilityCalculator is available
+  protected static TypeRelations typeRelations = new TypeRelations();
 
   /**
    * Test whether 2 types are compatible by using TypeCheck class and extending it by checking
@@ -30,13 +34,15 @@ public class OCLTypeCheck extends TypeCheck {
    * @param left expression that should be assigned a value
    * @param right expression that should be assigned to left
    * @return true iff right is compatible to left
+   * @deprecated replace with the future OCLSymTypeCompatibilityCalculator
    */
+  @Deprecated
   public static boolean compatible(SymTypeExpression left, SymTypeExpression right) {
     if (!left.isPrimitive() && right.isNullType()) {
       return true;
     }
     // check whether TypeCheck class deems types compatible
-    boolean comp = TypeCheck.compatible(left, right);
+    boolean comp = typeRelations.compatible(left, right);
 
     // check whether last Part of FullQualifiedName is equal
     String leftName = left.print();
@@ -56,6 +62,8 @@ public class OCLTypeCheck extends TypeCheck {
     return comp;
   }
 
+  /** @deprecated replace with the future OCLSymTypeCompatibilityCalculator */
+  @Deprecated
   public static boolean isSubtypeOf(SymTypeExpression subType, SymTypeExpression superType) {
     // Object is superType of all other types
     if (superType.getTypeInfo().getName().equals("Object")) {
@@ -63,61 +71,48 @@ public class OCLTypeCheck extends TypeCheck {
     }
 
     // Otherwise use default TypeCheck method
-    else return TypeCheck.isSubtypeOf(subType, superType);
-  }
-
-  public static boolean optionalCompatible(SymTypeExpression optional, SymTypeExpression right) {
-    // check that first argument is of Type Optional
-    if (!optional.isGenericType() || optional.print().equals("Optional")) {
-      Log.error(
-          "function optionalCompatible requires an Optional SymType "
-              + "but was given "
-              + optional.print());
-      return false;
+    else {
+      return typeRelations.isSubtypeOf(subType, superType);
     }
-
-    // check whether value in optional argument and second argument are compatible
-    SymTypeExpression leftUnwrapped = ((SymTypeOfGenerics) optional).getArgument(0);
-    return compatible(leftUnwrapped, right);
   }
 
+  /**
+   * @deprecated use the {@link de.monticore.ocl.types3.util.IOCLCollectionTypeRelations} instead
+   */
+  @Deprecated
   public static SymTypeExpression unwrapOptional(SymTypeExpression optional) {
     // check that argument is of Type Optional
     if (!optional.isGenericType() || !optional.getTypeInfo().getName().equals("Optional")) {
       Log.error(
-          "function optionalCompatible requires an Optional SymType "
-              + "but was given "
+          "function optionalCompatible requires an Optional SymType but was given "
               + optional.print());
       return SymTypeExpressionFactory.createObscureType();
-    }
-
-    // return type of optional
-    if (!((SymTypeOfGenerics) optional).getArgumentList().isEmpty()) {
+    } else if (!((SymTypeOfGenerics) optional).getArgumentList().isEmpty()) {
+      // return type of optional
       return ((SymTypeOfGenerics) optional).getArgument(0);
     } else {
       return SymTypeExpressionFactory.createObscureType();
     }
   }
 
+  /**
+   * @deprecated use the {@link de.monticore.ocl.types3.util.IOCLCollectionTypeRelations} instead
+   */
+  @Deprecated
   public static SymTypeExpression unwrapSet(SymTypeExpression set) {
     // check that argument is of collection type
-    boolean correct = false;
-    for (String s : collections) {
-      if (set.isGenericType() && set.getTypeInfo().getName().equals(s)) {
-        correct = true;
-      }
-    }
-    if (!correct) {
+    var invalid =
+        collections.stream()
+            .noneMatch(c -> set.isGenericType() && set.getTypeInfo().getName().equals(c));
+    if (invalid) {
       // not a set, return type of object (maybe change later?)
       if (set.isObjectType()) {
         return set;
       }
-      Log.error(
-          "function unwrapSet requires a Collection SymType " + "but was given " + set.print());
+      Log.error("function unwrapSet requires a Collection SymType but was given " + set.print());
     }
 
     // get SymType used in Collection
-    SymTypeExpression unwrapped = ((SymTypeOfGenerics) set).getArgument(0);
-    return unwrapped;
+    return ((SymTypeOfGenerics) set).getArgument(0);
   }
 }

@@ -4,21 +4,14 @@ package de.monticore.ocl.util;
 import de.monticore.class2mc.Class2MCResolver;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
-import de.monticore.ocl.ocl._symboltable.OCLDeSer;
-import de.monticore.ocl.ocl._symboltable.OCLScopesGenitorDelegator;
-import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCompleter;
-import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
+import de.monticore.ocl.ocl._symboltable.*;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
 import de.monticore.ocl.setexpressions._symboltable.SetExpressionsSymbolTableCompleter;
-import de.monticore.ocl.types.check.OCLDeriver;
-import de.monticore.ocl.types.check.OCLSynthesizer;
-import de.monticore.ocl.util.library.CollectionType;
-import de.monticore.ocl.util.library.GlobalQueries;
-import de.monticore.ocl.util.library.ListType;
-import de.monticore.ocl.util.library.OptionalType;
-import de.monticore.ocl.util.library.SetType;
+import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLDeriver;
+import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLSynthesizer;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.ocl.util.library.*;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbolDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolDeSer;
@@ -45,7 +38,7 @@ public class SymbolTableUtil {
     addOclpLibrary();
   }
 
-  protected static void addOclpLibrary() {
+  public static void addOclpLibrary() {
     CollectionType c = new CollectionType();
     ListType l = new ListType();
     SetType s = new SetType();
@@ -59,6 +52,7 @@ public class SymbolTableUtil {
     l.addMethodsAndFields();
     s.addMethodsAndFields();
     g.addMethodsAndFields();
+    o.addMethodsAndFields();
   }
 
   public static void runSymTabGenitor(ASTOCLCompilationUnit ast) {
@@ -73,15 +67,16 @@ public class SymbolTableUtil {
   public static void runSymTabCompleter(ASTOCLCompilationUnit ast) {
     OCLSymbolTableCompleter stCompleter =
         new OCLSymbolTableCompleter(ast.getMCImportStatementList(), ast.getPackage());
-    stCompleter.setSynthesizer(new OCLSynthesizer());
+    stCompleter.setSynthesizer(new TypeCheck3AsOCLSynthesizer());
     OCLExpressionsSymbolTableCompleter stCompleter2 =
         new OCLExpressionsSymbolTableCompleter(ast.getMCImportStatementList(), ast.getPackage());
-    stCompleter2.setDeriver(new OCLDeriver());
-    stCompleter2.setSynthesizer(new OCLSynthesizer());
+    stCompleter2.setDeriver(new TypeCheck3AsOCLDeriver());
+    stCompleter2.setSynthesizer(new TypeCheck3AsOCLSynthesizer());
+    stCompleter2.setSymTypeRelations(new OCLSymTypeRelations());
     SetExpressionsSymbolTableCompleter stCompleter3 =
         new SetExpressionsSymbolTableCompleter(ast.getMCImportStatementList(), ast.getPackage());
-    stCompleter3.setDeriver(new OCLDeriver());
-    stCompleter3.setSynthesizer(new OCLSynthesizer());
+    stCompleter3.setDeriver(new TypeCheck3AsOCLDeriver());
+    stCompleter3.setSynthesizer(new TypeCheck3AsOCLSynthesizer());
 
     OCLTraverser t = OCLMill.traverser();
     t.add4BasicSymbols(stCompleter);
