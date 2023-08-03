@@ -4,22 +4,14 @@ package de.monticore.ocl.util;
 import de.monticore.class2mc.Class2MCResolver;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
-import de.monticore.ocl.ocl._symboltable.OCLDeSer;
-import de.monticore.ocl.ocl._symboltable.OCLScopesGenitorDelegator;
-import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCompleter;
-import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
+import de.monticore.ocl.ocl._symboltable.*;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
 import de.monticore.ocl.setexpressions._symboltable.SetExpressionsSymbolTableCompleter;
 import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLDeriver;
 import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLSynthesizer;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
-import de.monticore.ocl.util.library.CollectionType;
-import de.monticore.ocl.util.library.GlobalQueries;
-import de.monticore.ocl.util.library.ListType;
-import de.monticore.ocl.util.library.OptionalType;
-import de.monticore.ocl.util.library.SetType;
+import de.monticore.ocl.util.library.*;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbolDeSer;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolDeSer;
@@ -60,6 +52,7 @@ public class SymbolTableUtil {
     l.addMethodsAndFields();
     s.addMethodsAndFields();
     g.addMethodsAndFields();
+    o.addMethodsAndFields();
   }
 
   public static void runSymTabGenitor(ASTOCLCompilationUnit ast) {
