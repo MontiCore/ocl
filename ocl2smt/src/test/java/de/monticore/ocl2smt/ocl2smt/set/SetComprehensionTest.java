@@ -23,12 +23,8 @@ public class SetComprehensionTest extends ExpressionAbstractTest {
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 
-  @ParameterizedTest
-  @ValueSource(
-      strings = {
-              "Test1", "Test3", "Test7", "Test8", "Test10", "Test12",
-              "Test13"
-      })
+    @ParameterizedTest
+    @ValueSource(strings = {"Test1", "Test3", "Test7", "Test8", "Test10", "Test12", "Test13"})
   public void testSetComprehensionSat(String value) {
     testInv(value, "setComprehension");
   }

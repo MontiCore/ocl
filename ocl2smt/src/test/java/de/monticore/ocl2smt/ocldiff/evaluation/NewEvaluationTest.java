@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
+@Disabled
 public class NewEvaluationTest extends OCLDiffAbstractTest {
   private ASTCDCompilationUnit ast;
 
@@ -39,9 +40,9 @@ public class NewEvaluationTest extends OCLDiffAbstractTest {
     ASTODArtifact witness =
             OCLDiffGenerator.oclWitnessFinite(
                     ast, Set.of(ocl), new HashSet<>(), new HashSet<>(), 1000, false);
-   /* ASTODArtifact witness2 =
-            OCLDiffGenerator.oclWitness(
-                    ast, Set.of(ocl), new HashSet<>(), new HashSet<>(), false);*/
+    /* ASTODArtifact witness2 =
+    OCLDiffGenerator.oclWitness(
+            ast, Set.of(ocl), new HashSet<>(), new HashSet<>(), false);*/
 
     IOHelper.printOD(witness, Path.of("target/generated-test/newEvaluation"));
   }

@@ -259,37 +259,37 @@ public class OCLExpressionConverter extends Expression2smt {
   }
 
   protected BoolExpr convertForAll(ASTForallExpression node) {
-    // declare Variable from scope
-    Map<Expr<? extends Sort>, Optional<ASTExpression>> var = openScope(node.getInDeclarationList());
+      // declare Variable from scope
+      Map<Expr<? extends Sort>, Optional<ASTExpression>> var = openScope(node.getInDeclarationList());
 
-    BoolExpr constraint = convertInDeclConstraints(var);
+      BoolExpr constraint = convertInDeclConstraints(var);
 
       BoolExpr result =
               mkForall(
                       new ArrayList<>(var.keySet()),
                       ctx.mkImplies(constraint, convertBoolExpr(node.getExpression())));
 
-    // Delete Variables from "scope"
-    closeScope(node.getInDeclarationList());
+      // Delete Variables from "scope"
+      closeScope(node.getInDeclarationList());
 
-    return result;
+      return result;
   }
 
   protected BoolExpr convertExist(ASTExistsExpression node) {
-    // declare Variable from scope
-    Map<Expr<? extends Sort>, Optional<ASTExpression>> var = openScope(node.getInDeclarationList());
+      // declare Variable from scope
+      Map<Expr<? extends Sort>, Optional<ASTExpression>> var = openScope(node.getInDeclarationList());
 
-    BoolExpr constraint = convertInDeclConstraints(var);
+      BoolExpr constraint = convertInDeclConstraints(var);
 
       BoolExpr result =
               mkExists(
                       new ArrayList<>(var.keySet()),
                       ctx.mkAnd(constraint, convertBoolExpr(node.getExpression())));
 
-    // Delete Variables from "scope"
-    closeScope(node.getInDeclarationList());
+      // Delete Variables from "scope"
+      closeScope(node.getInDeclarationList());
 
-    return result;
+      return result;
   }
 
   /*----------------------------------control expressions----------------------------------------------------------*/
@@ -653,8 +653,8 @@ public class OCLExpressionConverter extends Expression2smt {
   }
 
   protected Function<BoolExpr, SMTSet> convertSetVarDeclLeft(ASTSetVariableDeclaration node) {
-    Expr<? extends Sort> expr =
-        declVariable(typeConverter.buildOCLType(node.getMCType()), node.getName());
+      Expr<? extends Sort> expr =
+              declVariable(typeConverter.buildOCLType(node.getMCType()), node.getName());
       return bool ->
               new SMTSet(
                       obj -> mkExists(List.of(expr), ctx.mkAnd(ctx.mkEq(obj, expr), bool)),
@@ -693,8 +693,8 @@ public class OCLExpressionConverter extends Expression2smt {
   }
 
   protected Function<BoolExpr, SMTSet> convertGenDeclLeft(ASTGeneratorDeclaration node) {
-    Expr<? extends Sort> expr = declareSetGenVar(node);
-    SMTSet set = convertSet(node.getExpression());
+      Expr<? extends Sort> expr = declareSetGenVar(node);
+      SMTSet set = convertSet(node.getExpression());
       return bool ->
               new SMTSet(
                       obj ->
@@ -739,12 +739,12 @@ public class OCLExpressionConverter extends Expression2smt {
   }
 
   private FuncDecl<BoolSort> buildReflexiveNewAssocFunc(OCLType type, String otherRole) {
-    ASTCDType objClass = getASTCDType(type.getName(), getCD());
-    ASTCDAssociation association = CDHelper.getAssociation(objClass, otherRole, getCD());
-    Sort thisSort = typeConverter.getSort(type);
-    FuncDecl<BoolSort> rel =
-        ctx.mkFuncDecl("reflexive_relation", new Sort[] {thisSort, thisSort}, ctx.mkBoolSort());
-    Expr<? extends Sort> obj1 = declVariable(type, "obj1");
+      ASTCDType objClass = getASTCDType(type.getName(), getCD());
+      ASTCDAssociation association = CDHelper.getAssociation(objClass, otherRole, getCD());
+      Sort thisSort = typeConverter.getSort(type);
+      FuncDecl<BoolSort> rel =
+              ctx.mkFuncDecl("reflexive_relation", new Sort[]{thisSort, thisSort}, ctx.mkBoolSort());
+      Expr<? extends Sort> obj1 = declVariable(type, "obj1");
       Expr<? extends Sort> obj2 = declVariable(type, "obj2");
       BoolExpr rel_is_assocFunc =
               mkForall(
@@ -752,8 +752,8 @@ public class OCLExpressionConverter extends Expression2smt {
                       ctx.mkEq(
                               rel.apply(obj1, obj2),
                               cd2smtGenerator.evaluateLink(association, objClass, objClass, obj1, obj2)));
-    genConstraints.add(rel_is_assocFunc);
-    return rel;
+      genConstraints.add(rel_is_assocFunc);
+      return rel;
   }
 
   protected Expr<? extends Sort> createVarFromSymbol(ASTNameExpression node) {
@@ -821,7 +821,7 @@ public class OCLExpressionConverter extends Expression2smt {
    */
   public BoolExpr mkQuantifier(List<Expr<?>> vars, BoolExpr body, boolean isForall) {
 
-    // split expressions int non CDType(String , Bool..) and CDType Expression(Auction, Person...)
+      // split expressions int non CDType(String , Bool..) and CDType Expression(Auction, Person...)
       List<Expr<?>> cdTypeExprList =
               vars.stream()
                       .filter(var -> !TypeConverter.isPrimitiv(getType(var).getName()))
@@ -831,22 +831,22 @@ public class OCLExpressionConverter extends Expression2smt {
                       .filter(var -> TypeConverter.isPrimitiv(getType(var).getName()))
                       .collect(Collectors.toList());
 
-    // collect the CDType of the CDType Expressions
+      // collect the CDType of the CDType Expressions
       List<ASTCDType> types =
               cdTypeExprList.stream()
                       .map(var -> CDHelper.getASTCDType(getType(var).getName(), getCD()))
                       .collect(Collectors.toList());
       BoolExpr subRes = body;
-    if (cdTypeExprList.size() > 0) {
-      if (isForall) {
-        subRes = cd2smtGenerator.mkForall(types, cdTypeExprList, body);
+      if (cdTypeExprList.size() > 0) {
+          if (isForall) {
+              subRes = cd2smtGenerator.mkForall(types, cdTypeExprList, body);
 
-      } else {
-        subRes = cd2smtGenerator.mkExists(types, cdTypeExprList, body);
+          } else {
+              subRes = cd2smtGenerator.mkExists(types, cdTypeExprList, body);
+          }
       }
-    }
 
-    if (noncdTypeExprList.isEmpty()) {
+      if (noncdTypeExprList.isEmpty()) {
       return subRes;
     } else {
       if (isForall) {

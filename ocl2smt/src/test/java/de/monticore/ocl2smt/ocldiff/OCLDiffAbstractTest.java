@@ -104,15 +104,15 @@ public abstract class OCLDiffAbstractTest extends OCL2SMTAbstractTest {
                 false);
     }
 
-  public OCLInvDiffResult computeDiffOneCD(
-      String cdName, String oldOCLName, String newOCLName, String posODName, String negODName)
-      throws IOException {
+    public OCLInvDiffResult computeDiffOneCD(
+            String cdName, String oldOCLName, String newOCLName, String posODName, String negODName)
+            throws IOException {
 
-    return OCLDiffGenerator.oclDiff(
-        parseCD(cdName),
-        new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
-        new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
-        new HashSet<>(Set.of(parseOD(posODName))),
+        return OCLDiffGenerator.oclDiff(
+                parseCD(cdName),
+                new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
+                new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
+                new HashSet<>(Set.of(parseOD(posODName))),
         new HashSet<>(Set.of(parseOD(negODName))),
         false);
   }

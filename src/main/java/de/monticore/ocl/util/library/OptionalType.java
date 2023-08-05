@@ -20,11 +20,11 @@ public class OptionalType {
     typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
 
     optionalSymbol =
-        OCLMill.typeSymbolBuilder()
-                .setName("Optional")
-                .setEnclosingScope(OCLMill.globalScope())
-                .setSpannedScope(OCLMill.scope())
-                .build();
+            OCLMill.typeSymbolBuilder()
+                    .setName("Optional")
+                    .setEnclosingScope(OCLMill.globalScope())
+                    .setSpannedScope(OCLMill.scope())
+                    .build();
     optionalSymbol.getSpannedScope().setName("Optional");
     optionalSymbol.addTypeVarSymbol(typeVarSymbol);
 
@@ -36,7 +36,6 @@ public class OptionalType {
     addFunctionIsPresent();
     addFunctionGet();
     addFunctionIsEmpty();
-
   }
 
   protected void addFunctionGet() {

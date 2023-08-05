@@ -35,8 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class OCLHelper {
 
@@ -241,11 +239,11 @@ public class OCLHelper {
     }
   }
 
-  private static boolean isThis(
-          ASTODNamedObject obj, Model model, OCLType type, Expr<? extends Sort> thisObj) {
-    return obj.getName()
-            .equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true), type.getName()));
-  }
+    private static boolean isThis(
+            ASTODNamedObject obj, Model model, OCLType type, Expr<? extends Sort> thisObj) {
+        return obj.getName()
+                .equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true), type.getName()));
+    }
 
   private static boolean isPreLink(ASTODLink link) {
     return isPre(link.getODLinkLeftSide().getRole()) && isPre(link.getODLinkRightSide().getRole());
@@ -253,10 +251,10 @@ public class OCLHelper {
 
   private static Pair<ASTODNamedObject, ASTODNamedObject> splitPreObject(ASTODNamedObject object) {
     // split attributes
-    List<ASTODAttribute> postAttributeList =
-            object.getODAttributeList().stream()
-                    .filter(a -> !isPre(a.getName()))
-                    .collect(Collectors.toList());
+      List<ASTODAttribute> postAttributeList =
+              object.getODAttributeList().stream()
+                      .filter(a -> !isPre(a.getName()))
+                      .collect(Collectors.toList());
 
     List<ASTODAttribute> preObjAttributeList =
         object.getODAttributeList().stream()
@@ -324,11 +322,11 @@ public class OCLHelper {
     return false;
   }
 
-  public static ASTODNamedObject getObjectWithExpr(
-          OCLType type, Expr<? extends Sort> expr, ASTODArtifact od) {
-    return OCLHelper.getObjectList(od).stream()
-            .filter(x -> x.getName().equals(SMTHelper.buildObjectName(expr, type.getName())))
-            .findFirst()
-            .orElse(null);
-  }
+    public static ASTODNamedObject getObjectWithExpr(
+            OCLType type, Expr<? extends Sort> expr, ASTODArtifact od) {
+        return OCLHelper.getObjectList(od).stream()
+                .filter(x -> x.getName().equals(SMTHelper.buildObjectName(expr, type.getName())))
+                .findFirst()
+                .orElse(null);
+    }
 }

@@ -67,7 +67,7 @@ public class OCLScope extends OCLScopeTOP {
         thisFunctions, superFunctions, (fst, snd) -> fst.getName().equals(snd.getName()));
   }
 
- /* @Override
+  /* @Override
   public List<VariableSymbol> resolveVariableLocallyMany(
       boolean foundSymbols, String name, AccessModifier modifier, Predicate predicate) {
     // resolve methods by using overridden method

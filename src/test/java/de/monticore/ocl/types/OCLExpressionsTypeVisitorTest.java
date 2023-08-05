@@ -1,14 +1,5 @@
 package de.monticore.ocl.types;
 
-import static de.monticore.types3.util.DefsTypesForTests._booleanSymType;
-import static de.monticore.types3.util.DefsTypesForTests._intSymType;
-import static de.monticore.types3.util.DefsTypesForTests._personSymType;
-import static de.monticore.types3.util.DefsTypesForTests._studentSymType;
-import static de.monticore.types3.util.DefsTypesForTests.function;
-import static de.monticore.types3.util.DefsTypesForTests.inScope;
-import static de.monticore.types3.util.DefsTypesForTests.variable;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl.OCLMill;
@@ -16,11 +7,14 @@ import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._parser.OCLParser;
+import de.monticore.ocl.ocl._prettyprint.OCLFullPrettyPrinter;
+import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl.types3.OCLTypeTraverserFactory;
 import de.monticore.ocl.types3.IOCLSymTypeRelations;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.ocl.types3.util.OCLCollectionSymTypeFactory;
 import de.monticore.ocl.util.SymbolTableUtil;
+import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.types.check.SymTypeExpression;
@@ -31,17 +25,22 @@ import de.monticore.types3.util.DefsVariablesForTests;
 import de.monticore.visitor.ITraverser;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static de.monticore.types3.util.DefsTypesForTests.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OCLExpressionsTypeVisitorTest extends AbstractTest {
 
@@ -362,6 +361,31 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     checkExpr(exprStr, expectedType);
   }
 
+  public static boolean hasObjectType(ASTExpression node, Set<String> typeNames) {
+    SymTypeExpression type = deriveType(node);
+    return type.isObjectType() && typeNames.contains(type.getTypeInfo().getName());
+  }
+
+  public static SymTypeExpression deriveType(ASTExpression expression) {
+    // create traverser
+    Type4Ast type4Ast = new Type4Ast();
+    OCLTraverser typeMapTraverser = new OCLTypeTraverserFactory().createTraverser(type4Ast);
+    expression.accept(typeMapTraverser);
+
+    if (!type4Ast.hasTypeOfExpression(expression)) {
+      String expr = new OCLFullPrettyPrinter(new IndentPrinter()).prettyprint(expression);
+      Log.error("unable to derive the type of the Expression " + expr);
+      assert false;
+    }
+
+    return type4Ast.getTypeOfExpression(expression);
+  }
+
+  private static boolean hasGenericType(ASTExpression node, Set<String> typeNames) {
+    SymTypeExpression type = deriveType(node);
+    return (type.isGenericType() && typeNames.contains(type.getTypeInfo().getName()));
+  }
+
   protected void checkExpr(String exprStr, String expectedType) throws IOException {
     assertNoFindings();
     Optional<ASTExpression> astExpression = parser.parse_StringExpression(exprStr);
@@ -375,12 +399,12 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     assertNoFindings();
 
     assertTrue(
-        getType4Ast().hasTypeOfExpression(expr), "No type calculated for expression " + exprStr);
+            getType4Ast().hasTypeOfExpression(expr), "No type calculated for expression " + exprStr);
     SymTypeExpression type = getType4Ast().getTypeOfExpression(expr);
     SymTypeExpression typeNormalized = getTypeRel().normalize(type);
     assertNoFindings();
     Assertions.assertEquals(
-        expectedType, typeNormalized.printFullName(), "Wrong type for expression " + exprStr);
+            expectedType, typeNormalized.printFullName(), "Wrong type for expression " + exprStr);
   }
 
   protected void checkErrorExpr(String exprStr, String expectedError) throws IOException {

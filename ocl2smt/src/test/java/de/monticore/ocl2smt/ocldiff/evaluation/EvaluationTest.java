@@ -171,44 +171,44 @@ public class EvaluationTest extends OCLDiffAbstractTest {
     // print the results
     IOHelper.printOPDiff(res, Path.of(TARGET_DIR + "Evaluation/Op_V" + 6 + "" + (5)));
 
-    Log.info(
-            "| duration: " + (double) (System.currentTimeMillis() - start) / 1000,
-            "Diff( V" + 6 + " ,V" + (5) + ")");
+      Log.info(
+              "| duration: " + (double) (System.currentTimeMillis() - start) / 1000,
+              "Diff( V" + 6 + " ,V" + (5) + ")");
 
-    Log.info("\n \n \n", "");
-    Log.info(
-            "------------------------------------------------------------------------------------",
-            "Evaluation");
+      Log.info("\n \n \n", "");
+      Log.info(
+              "------------------------------------------------------------------------------------",
+              "Evaluation");
   }
 
   @Test
   public void evaluateDiffForFiniteStrategies() throws IOException {
     long start = System.currentTimeMillis();
-    loadModels();
-    OCLInvDiffResult res =
-        /*  OCLDiffGenerator.oclDiff(
-        ast.get(2),
-        Set.of(ocl.get(2)),
-        Set.of(ocl.get(3)),
-        new HashSet<>(),
-        new HashSet<>(),
-        true);*/
+      loadModels();
+      OCLInvDiffResult res =
+              OCLDiffGenerator.oclDiff(
+                      ast.get(2),
+                      Set.of(ocl.get(2)),
+                      Set.of(ocl.get(3)),
+                      new HashSet<>(),
+                      new HashSet<>(),
+                      true);
 
-            OCLDiffGenerator.oclDiffFinite(
-                    ast.get(2),
-                    Set.of(ocl.get(2)),
-                    Set.of(ocl.get(3)),
-                    new HashSet<>(),
-                    new HashSet<>(),
-                    50,
-                    true);
+    /*     OCLDiffGenerator.oclDiffFinite(
+    ast.get(2),
+    Set.of(ocl.get(2)),
+    Set.of(ocl.get(3)),
+    new HashSet<>(),
+    new HashSet<>(),
+    50,
+    true);*/
 
-    // print the results
-    IOHelper.printInvDiffResult(
-            res, Path.of(TARGET_DIR + "finite/evaluation/Diff_V" + 2 + "" + (3)));
+      // print the results
+      IOHelper.printInvDiffResult(
+              res, Path.of(TARGET_DIR + "finite/evaluation/Diff_V" + 2 + "" + (3)));
 
-    Log.info(
-            "| duration: " + (double) (System.currentTimeMillis() - start) / 1000 + "s",
-            "Diff( V" + 2 + " ,V" + (3) + ")");
+      Log.info(
+              "| duration: " + (double) (System.currentTimeMillis() - start) / 1000 + "s",
+              "Diff( V" + 2 + " ,V" + (3) + ")");
   }
 }

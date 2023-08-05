@@ -107,6 +107,6 @@ class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
               od2SMTGenerator.getObject(OD2SMTUtils.getObject(oldObjectName, od));
       String newObjName = SMTHelper.buildObjectName(model.evaluate(oldObj, true), objType);
 
-    return OD2SMTUtils.getObject(newObjName, witness);
+      return OD2SMTUtils.getObject(newObjName, witness);
   }
 }
