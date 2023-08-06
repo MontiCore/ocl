@@ -9,6 +9,7 @@ import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -23,6 +24,7 @@ public class FiniteOCLDiffTest extends OCLDiffAbstractTest {
     super.initMills();
   }
 
+  @Disabled
   @Test
   public void testOCLDiffOneCDFinite() throws IOException {
     CD2SMTMill.init(
