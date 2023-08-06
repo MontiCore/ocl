@@ -327,9 +327,9 @@ public class OCLDiffGenerator {
         additionalConstraints.addAll(negativOd2smt(negOD, cd, ctx));
 
         return operator.oclDiff(cd, oldOcl, newOCL, additionalConstraints, ctx, max, partial);
-  }
+    }
 
-  /**
+    /**
    * Computes the semantic difference (of OCL-invariant) between a new CD/OCL-Model and an old one.
    * The result is a set of witness Object Diagrams and specifications tracing.
    *

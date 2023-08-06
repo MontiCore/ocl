@@ -45,14 +45,14 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     CD2SMTMill.init(cs, is, as);
     OCLInvDiffResult diff = computeDiffOneCD("MinAuction.cd", "Old.ocl", "New.ocl");
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OCLDiffOneCD"));
-    assertEquals(4, diff.getDiffWitness().size());
+      assertEquals(4, diff.getDiffWitness().size());
 
-    assertTrue(checkLink("obj_False", "obj_False", diff.getUnSatCore()));
-    assertTrue(checkLink("obj_Min_Ident_1", "obj_Ident_Between_2_And_19", diff.getUnSatCore()));
-    assertTrue(checkLink("obj_MaxIdent_7", "obj_Ident_Between_2_And_19", diff.getUnSatCore()));
-    assertTrue(checkLink("obj_Auction_Names", "obj_No_Auction_Facebook", diff.getUnSatCore()));
-    assertTrue(checkLink("obj_MaxIdent_7", "obj_MaxIdent_9", diff.getUnSatCore()));
-    assertFalse(checkLink("obj_MaxIdent_7", "obj_No_Auction_Facebook", diff.getUnSatCore()));
+      assertTrue(checkLink("obj_False", "obj_False", diff.getUnSatCore()));
+      assertTrue(checkLink("obj_Min_Ident_1", "obj_Ident_Between_2_And_19", diff.getUnSatCore()));
+      assertTrue(checkLink("obj_MaxIdent_7", "obj_Ident_Between_2_And_19", diff.getUnSatCore()));
+      assertTrue(checkLink("obj_Auction_Names", "obj_No_Auction_Facebook", diff.getUnSatCore()));
+      assertTrue(checkLink("obj_MaxIdent_7", "obj_MaxIdent_9", diff.getUnSatCore()));
+      assertFalse(checkLink("obj_MaxIdent_7", "obj_No_Auction_Facebook", diff.getUnSatCore()));
   }
 
     @ParameterizedTest
@@ -73,7 +73,7 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
         assertEquals(
                 diff.getDiffWitness().iterator().next().getObjectDiagram().getName(), "EndAfterStart");
         assertTrue(checkLink("obj_object_", "obj_Names_", diff.getUnSatCore()));
-  }
+    }
 
     @ParameterizedTest
     @MethodSource("cd2smtStrategies")
@@ -90,46 +90,46 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
         IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiff2CD_NoDiff"));
         assertTrue(diff.getDiffWitness().isEmpty());
         assertEquals(countLinks(diff.getUnSatCore()), 3);
-    assertTrue(checkLink("obj_Pos1", "obj_Cardinality_right", diff.getUnSatCore()));
-    assertTrue(checkLink("obj_Pos2", "obj_Cardinality_right", diff.getUnSatCore()));
-    assertTrue(checkLink("obj_Pos3", "obj_Cardinality_left", diff.getUnSatCore()));
-  }
+        assertTrue(checkLink("obj_Pos1", "obj_Cardinality_right", diff.getUnSatCore()));
+        assertTrue(checkLink("obj_Pos2", "obj_Cardinality_right", diff.getUnSatCore()));
+        assertTrue(checkLink("obj_Pos3", "obj_Cardinality_left", diff.getUnSatCore()));
+    }
 
-  @ParameterizedTest
-  @MethodSource("cd2smtStrategies")
-  public void testOclDiff2CD_diff(
-      ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
-      throws IOException {
-    CD2SMTMill.init(cs, is, as);
-      OCLInvDiffResult diff =
-              computeDiff2CD(
-                      "2CDDiff/diff/Old.cd",
-                      "2CDDiff/diff/New.cd",
-                      "2CDDiff/diff/Old.ocl",
-                      "2CDDiff/diff/New.ocl");
-    IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiff2CD_diff"));
-    assertEquals(diff.getDiffWitness().size(), 1);
-    assertEquals(
-        diff.getDiffWitness().iterator().next().getObjectDiagram().getName(), "Cardinality_right");
-    assertEquals(countLinks(diff.getUnSatCore()), 1);
-    assertTrue(checkLink("obj_Pos1", "obj_Cardinality_left", diff.getUnSatCore()));
-  }
+    @ParameterizedTest
+    @MethodSource("cd2smtStrategies")
+    public void testOclDiff2CD_diff(
+            ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
+            throws IOException {
+        CD2SMTMill.init(cs, is, as);
+        OCLInvDiffResult diff =
+                computeDiff2CD(
+                        "2CDDiff/diff/Old.cd",
+                        "2CDDiff/diff/New.cd",
+                        "2CDDiff/diff/Old.ocl",
+                        "2CDDiff/diff/New.ocl");
+        IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiff2CD_diff"));
+        assertEquals(diff.getDiffWitness().size(), 1);
+        assertEquals(
+                diff.getDiffWitness().iterator().next().getObjectDiagram().getName(), "Cardinality_right");
+        assertEquals(countLinks(diff.getUnSatCore()), 1);
+        assertTrue(checkLink("obj_Pos1", "obj_Cardinality_left", diff.getUnSatCore()));
+    }
 
   @ParameterizedTest
   @MethodSource("cd2smtStrategies")
   public void testOclDiff2CD_CDDiff(
       ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
       throws IOException {
-    CD2SMTMill.init(cs, is, as);
+      CD2SMTMill.init(cs, is, as);
       OCLInvDiffResult diff =
               computeDiff2CD(
                       "2CDDiff/cddiff/Old.cd",
                       "2CDDiff/cddiff/New.cd",
                       "2CDDiff/cddiff/Old.ocl",
                       "2CDDiff/cddiff/New.ocl");
-    IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiff2CD_CDDiff"));
-    assertTrue(diff.getUnSatCore() == null);
-    assertTrue(diff.getDiffWitness().size() >= 1);
+      IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiff2CD_CDDiff"));
+      assertTrue(diff.getUnSatCore() == null);
+      assertTrue(diff.getDiffWitness().size() >= 1);
   }
 
   @ParameterizedTest

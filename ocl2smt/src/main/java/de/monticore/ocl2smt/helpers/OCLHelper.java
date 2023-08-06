@@ -230,11 +230,11 @@ public class OCLHelper {
             resList.add(expr);
           }
         }
-        List<ASTODNamedObject> resObjList =
-                resList.stream()
-                        .map(expr -> getObjectWithExpr(result.getOclType(), expr, od))
-                        .collect(Collectors.toList());
-        resObjList.forEach(obj -> obj.setModifier(buildModifier("result", "true")));
+          List<ASTODNamedObject> resObjList =
+                  resList.stream()
+                          .map(expr -> getObjectWithExpr(result.getOclType(), expr, od))
+                          .collect(Collectors.toList());
+          resObjList.forEach(obj -> obj.setModifier(buildModifier("result", "true")));
       }
     }
   }
@@ -245,26 +245,26 @@ public class OCLHelper {
                 .equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true), type.getName()));
     }
 
-  private static boolean isPreLink(ASTODLink link) {
-    return isPre(link.getODLinkLeftSide().getRole()) && isPre(link.getODLinkRightSide().getRole());
-  }
+    private static boolean isPreLink(ASTODLink link) {
+        return isPre(link.getODLinkLeftSide().getRole()) && isPre(link.getODLinkRightSide().getRole());
+    }
 
-  private static Pair<ASTODNamedObject, ASTODNamedObject> splitPreObject(ASTODNamedObject object) {
-    // split attributes
-      List<ASTODAttribute> postAttributeList =
-              object.getODAttributeList().stream()
-                      .filter(a -> !isPre(a.getName()))
-                      .collect(Collectors.toList());
+    private static Pair<ASTODNamedObject, ASTODNamedObject> splitPreObject(ASTODNamedObject object) {
+        // split attributes
+        List<ASTODAttribute> postAttributeList =
+                object.getODAttributeList().stream()
+                        .filter(a -> !isPre(a.getName()))
+                        .collect(Collectors.toList());
 
-    List<ASTODAttribute> preObjAttributeList =
-        object.getODAttributeList().stream()
-            .filter(a -> isPre(a.getName()))
-            .collect(Collectors.toList());
-    preObjAttributeList.forEach(a -> a.setName(removePre(a.getName())));
+        List<ASTODAttribute> preObjAttributeList =
+                object.getODAttributeList().stream()
+                        .filter(a -> isPre(a.getName()))
+                        .collect(Collectors.toList());
+        preObjAttributeList.forEach(a -> a.setName(removePre(a.getName())));
 
-    String type =
-        new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
-            .prettyprint(object.getMCObjectType());
+        String type =
+                new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
+                        .prettyprint(object.getMCObjectType());
     ASTODNamedObject preObj =
         de.monticore.cd2smt.Helper.ODHelper.buildObject(
             object.getName(), type, preObjAttributeList);
@@ -312,14 +312,14 @@ public class OCLHelper {
     List<ASTCDType> superclassList = CDHelper.getSuperTypeList(astCdType, cd);
 
     for (ASTCDType superType : superclassList) {
-      boolean res = containsAttribute(superType, attributeName, cd);
+        boolean res = containsAttribute(superType, attributeName, cd);
 
-      if (res) {
-        return true;
-      }
+        if (res) {
+            return true;
+        }
     }
 
-    return false;
+      return false;
   }
 
     public static ASTODNamedObject getObjectWithExpr(

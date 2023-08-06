@@ -113,9 +113,9 @@ public abstract class OCLDiffAbstractTest extends OCL2SMTAbstractTest {
                 new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
                 new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
                 new HashSet<>(Set.of(parseOD(posODName))),
-        new HashSet<>(Set.of(parseOD(negODName))),
-        false);
-  }
+                new HashSet<>(Set.of(parseOD(negODName))),
+                false);
+    }
 
   public ASTODArtifact computeWitness(String cdName, String oldOCLName) throws IOException {
     ASTCDCompilationUnit cd = parseCD(cdName);
