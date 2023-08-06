@@ -42,9 +42,9 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
   public void testOCLDiffOneCD(
       ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as)
       throws IOException {
-    CD2SMTMill.init(cs, is, as);
-    OCLInvDiffResult diff = computeDiffOneCD("MinAuction.cd", "Old.ocl", "New.ocl");
-    IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OCLDiffOneCD"));
+      CD2SMTMill.init(cs, is, as);
+      OCLInvDiffResult diff = computeDiffOneCD("MinAuction.cd", "Old.ocl", "New.ocl");
+      IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OCLDiffOneCD"));
       assertEquals(4, diff.getDiffWitness().size());
 
       assertTrue(checkLink("obj_False", "obj_False", diff.getUnSatCore()));
@@ -115,22 +115,22 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
         assertTrue(checkLink("obj_Pos1", "obj_Cardinality_left", diff.getUnSatCore()));
     }
 
-  @ParameterizedTest
-  @MethodSource("cd2smtStrategies")
-  public void testOclDiff2CD_CDDiff(
-      ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
-      throws IOException {
-      CD2SMTMill.init(cs, is, as);
-      OCLInvDiffResult diff =
-              computeDiff2CD(
-                      "2CDDiff/cddiff/Old.cd",
-                      "2CDDiff/cddiff/New.cd",
-                      "2CDDiff/cddiff/Old.ocl",
-                      "2CDDiff/cddiff/New.ocl");
-      IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiff2CD_CDDiff"));
-      assertTrue(diff.getUnSatCore() == null);
-      assertTrue(diff.getDiffWitness().size() >= 1);
-  }
+    @ParameterizedTest
+    @MethodSource("cd2smtStrategies")
+    public void testOclDiff2CD_CDDiff(
+            ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as)
+            throws IOException {
+        CD2SMTMill.init(cs, is, as);
+        OCLInvDiffResult diff =
+                computeDiff2CD(
+                        "2CDDiff/cddiff/Old.cd",
+                        "2CDDiff/cddiff/New.cd",
+                        "2CDDiff/cddiff/Old.ocl",
+                        "2CDDiff/cddiff/New.ocl");
+        IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiff2CD_CDDiff"));
+        assertTrue(diff.getUnSatCore() == null);
+        assertTrue(diff.getDiffWitness().size() >= 1);
+    }
 
   @ParameterizedTest
   @MethodSource("cd2smtStrategies")

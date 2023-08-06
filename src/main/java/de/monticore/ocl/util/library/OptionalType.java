@@ -19,13 +19,13 @@ public class OptionalType {
   public void addOptionalType() {
     typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
 
-    optionalSymbol =
-            OCLMill.typeSymbolBuilder()
-                    .setName("Optional")
-                    .setEnclosingScope(OCLMill.globalScope())
-                    .setSpannedScope(OCLMill.scope())
-                    .build();
-    optionalSymbol.getSpannedScope().setName("Optional");
+      optionalSymbol =
+              OCLMill.typeSymbolBuilder()
+                      .setName("Optional")
+                      .setEnclosingScope(OCLMill.globalScope())
+                      .setSpannedScope(OCLMill.scope())
+                      .build();
+      optionalSymbol.getSpannedScope().setName("Optional");
     optionalSymbol.addTypeVarSymbol(typeVarSymbol);
 
     OCLMill.globalScope().add(optionalSymbol);
@@ -57,11 +57,11 @@ public class OptionalType {
   }
 
   protected FunctionSymbol createMethod(String name) {
-    return OCLMill.functionSymbolBuilder()
-            .setName(name)
-            .setEnclosingScope(optionalSymbol.getSpannedScope())
-            .setSpannedScope(OCLMill.scope())
-            .setAccessModifier(BasicAccessModifier.PUBLIC)
-            .build();
+      return OCLMill.functionSymbolBuilder()
+              .setName(name)
+              .setEnclosingScope(optionalSymbol.getSpannedScope())
+              .setSpannedScope(OCLMill.scope())
+              .setAccessModifier(BasicAccessModifier.PUBLIC)
+              .build();
   }
 }

@@ -223,13 +223,13 @@ public class OCLHelper {
 
         obj.setModifier(buildModifier("result", "true"));
       } else if (result.isSetOfObject()) {
-        List<Expr<? extends Sort>> resList = new ArrayList<>();
-        FuncDecl<BoolSort> seFunc = result.getResultSet();
-        for (Expr<? extends Sort> expr : model.getSortUniverse(seFunc.getDomain()[0])) {
-          if (model.evaluate(seFunc.apply(expr), true).getBoolValue() == Z3_lbool.Z3_L_TRUE) {
-            resList.add(expr);
+          List<Expr<? extends Sort>> resList = new ArrayList<>();
+          FuncDecl<BoolSort> seFunc = result.getResultSet();
+          for (Expr<? extends Sort> expr : model.getSortUniverse(seFunc.getDomain()[0])) {
+              if (model.evaluate(seFunc.apply(expr), true).getBoolValue() == Z3_lbool.Z3_L_TRUE) {
+                  resList.add(expr);
+              }
           }
-        }
           List<ASTODNamedObject> resObjList =
                   resList.stream()
                           .map(expr -> getObjectWithExpr(result.getOclType(), expr, od))
@@ -265,14 +265,14 @@ public class OCLHelper {
         String type =
                 new MCBasicTypesFullPrettyPrinter(new IndentPrinter())
                         .prettyprint(object.getMCObjectType());
-    ASTODNamedObject preObj =
-        de.monticore.cd2smt.Helper.ODHelper.buildObject(
-            object.getName(), type, preObjAttributeList);
+        ASTODNamedObject preObj =
+                de.monticore.cd2smt.Helper.ODHelper.buildObject(
+                        object.getName(), type, preObjAttributeList);
 
-    ASTODNamedObject obj =
-        de.monticore.cd2smt.Helper.ODHelper.buildObject(object.getName(), type, postAttributeList);
-    return new ImmutablePair<>(preObj, obj);
-  }
+        ASTODNamedObject obj =
+                de.monticore.cd2smt.Helper.ODHelper.buildObject(object.getName(), type, postAttributeList);
+        return new ImmutablePair<>(preObj, obj);
+    }
 
   private static ASTODLink preLink2Link(ASTODLink preLink) {
     preLink.getODLinkLeftSide().setRole(removePre(preLink.getODLinkLeftSide().getRole()));
