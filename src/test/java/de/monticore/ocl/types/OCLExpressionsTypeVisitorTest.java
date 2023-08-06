@@ -1,5 +1,8 @@
 package de.monticore.ocl.types;
 
+import static de.monticore.types3.util.DefsTypesForTests.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl.OCLMill;
@@ -22,21 +25,17 @@ import de.monticore.types3.util.DefsVariablesForTests;
 import de.monticore.visitor.ITraverser;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static de.monticore.types3.util.DefsTypesForTests.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OCLExpressionsTypeVisitorTest extends AbstractTest {
 
@@ -370,12 +369,12 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     assertNoFindings();
 
     assertTrue(
-            getType4Ast().hasTypeOfExpression(expr), "No type calculated for expression " + exprStr);
+        getType4Ast().hasTypeOfExpression(expr), "No type calculated for expression " + exprStr);
     SymTypeExpression type = getType4Ast().getTypeOfExpression(expr);
     SymTypeExpression typeNormalized = getTypeRel().normalize(type);
     assertNoFindings();
     Assertions.assertEquals(
-            expectedType, typeNormalized.printFullName(), "Wrong type for expression " + exprStr);
+        expectedType, typeNormalized.printFullName(), "Wrong type for expression " + exprStr);
   }
 
   protected void checkErrorExpr(String exprStr, String expectedError) throws IOException {

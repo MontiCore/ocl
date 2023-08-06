@@ -5,7 +5,6 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;

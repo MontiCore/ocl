@@ -17,7 +17,6 @@ import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -109,10 +108,10 @@ public class OCLInvariantDiff {
   }
 
   protected ASTODArtifact oclWitnessInternal(
-          ASTCDCompilationUnit cd,
-          Set<ASTOCLCompilationUnit> in,
-          Set<IdentifiableBoolExpr> additionalConstraints,
-          boolean partial) {
+      ASTCDCompilationUnit cd,
+      Set<ASTOCLCompilationUnit> in,
+      Set<IdentifiableBoolExpr> additionalConstraints,
+      boolean partial) {
 
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
 
@@ -125,7 +124,7 @@ public class OCLInvariantDiff {
       solverConstraints.addAll(ocl2SMTGenerator.getCD2SMTGenerator().getInheritanceConstraints());
 
       return TraceUnSatCore.buildUnSatOD(
-              solverConstraints, new ArrayList<>(), TraceUnSatCore.traceUnSatCoreWitness(solver));
+          solverConstraints, new ArrayList<>(), TraceUnSatCore.traceUnSatCoreWitness(solver));
       // Log.error("there is no Model for the List Of Positive Constraints");
     }
 

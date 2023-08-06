@@ -1,5 +1,7 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
+import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
+
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
@@ -25,14 +27,11 @@ import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 /** This class convert All OCL-Expressions except @Pre-Expressions in SMT */
 public class OCLExpressionConverter extends Expression2smt {
@@ -265,9 +264,9 @@ public class OCLExpressionConverter extends Expression2smt {
     BoolExpr constraint = convertInDeclConstraints(var);
 
     BoolExpr result =
-            mkForall(
-                    new ArrayList<>(var.keySet()),
-                    ctx.mkImplies(constraint, convertBoolExpr(node.getExpression())));
+        mkForall(
+            new ArrayList<>(var.keySet()),
+            ctx.mkImplies(constraint, convertBoolExpr(node.getExpression())));
 
     // Delete Variables from "scope"
     closeScope(node.getInDeclarationList());
@@ -282,9 +281,9 @@ public class OCLExpressionConverter extends Expression2smt {
     BoolExpr constraint = convertInDeclConstraints(var);
 
     BoolExpr result =
-            mkExists(
-                    new ArrayList<>(var.keySet()),
-                    ctx.mkAnd(constraint, convertBoolExpr(node.getExpression())));
+        mkExists(
+            new ArrayList<>(var.keySet()),
+            ctx.mkAnd(constraint, convertBoolExpr(node.getExpression())));
 
     // Delete Variables from "scope"
     closeScope(node.getInDeclarationList());
@@ -654,12 +653,12 @@ public class OCLExpressionConverter extends Expression2smt {
 
   protected Function<BoolExpr, SMTSet> convertSetVarDeclLeft(ASTSetVariableDeclaration node) {
     Expr<? extends Sort> expr =
-            declVariable(typeConverter.buildOCLType(node.getMCType()), node.getName());
+        declVariable(typeConverter.buildOCLType(node.getMCType()), node.getName());
     return bool ->
-            new SMTSet(
-                    obj -> mkExists(List.of(expr), ctx.mkAnd(ctx.mkEq(obj, expr), bool)),
-                    getType(expr),
-                    this);
+        new SMTSet(
+            obj -> mkExists(List.of(expr), ctx.mkAnd(ctx.mkEq(obj, expr), bool)),
+            getType(expr),
+            this);
   }
 
   protected BoolExpr convertSetVarDeclRight(ASTSetVariableDeclaration node) {
@@ -696,11 +695,11 @@ public class OCLExpressionConverter extends Expression2smt {
     Expr<? extends Sort> expr = declareSetGenVar(node);
     SMTSet set = convertSet(node.getExpression());
     return bool ->
-            new SMTSet(
-                    obj ->
-                            mkExists(List.of(expr), ctx.mkAnd(ctx.mkEq(obj, expr), set.contains(expr), bool)),
-                    getType(expr),
-                    this);
+        new SMTSet(
+            obj ->
+                mkExists(List.of(expr), ctx.mkAnd(ctx.mkEq(obj, expr), set.contains(expr), bool)),
+            getType(expr),
+            this);
   }
 
   // a.auction**
@@ -743,15 +742,15 @@ public class OCLExpressionConverter extends Expression2smt {
     ASTCDAssociation association = CDHelper.getAssociation(objClass, otherRole, getCD());
     Sort thisSort = typeConverter.getSort(type);
     FuncDecl<BoolSort> rel =
-            ctx.mkFuncDecl("reflexive_relation", new Sort[]{thisSort, thisSort}, ctx.mkBoolSort());
+        ctx.mkFuncDecl("reflexive_relation", new Sort[] {thisSort, thisSort}, ctx.mkBoolSort());
     Expr<? extends Sort> obj1 = declVariable(type, "obj1");
     Expr<? extends Sort> obj2 = declVariable(type, "obj2");
     BoolExpr rel_is_assocFunc =
-            mkForall(
-                    List.of(obj1, obj2),
-                    ctx.mkEq(
-                            rel.apply(obj1, obj2),
-                            cd2smtGenerator.evaluateLink(association, objClass, objClass, obj1, obj2)));
+        mkForall(
+            List.of(obj1, obj2),
+            ctx.mkEq(
+                rel.apply(obj1, obj2),
+                cd2smtGenerator.evaluateLink(association, objClass, objClass, obj1, obj2)));
     genConstraints.add(rel_is_assocFunc);
     return rel;
   }
@@ -823,19 +822,19 @@ public class OCLExpressionConverter extends Expression2smt {
 
     // split expressions int non CDType(String , Bool..) and CDType Expression(Auction, Person...)
     List<Expr<?>> cdTypeExprList =
-            vars.stream()
-                    .filter(var -> !TypeConverter.isPrimitiv(getType(var).getName()))
-                    .collect(Collectors.toList());
+        vars.stream()
+            .filter(var -> !TypeConverter.isPrimitiv(getType(var).getName()))
+            .collect(Collectors.toList());
     List<Expr<?>> noncdTypeExprList =
-            vars.stream()
-                    .filter(var -> TypeConverter.isPrimitiv(getType(var).getName()))
-                    .collect(Collectors.toList());
+        vars.stream()
+            .filter(var -> TypeConverter.isPrimitiv(getType(var).getName()))
+            .collect(Collectors.toList());
 
     // collect the CDType of the CDType Expressions
     List<ASTCDType> types =
-            cdTypeExprList.stream()
-                    .map(var -> CDHelper.getASTCDType(getType(var).getName(), getCD()))
-                    .collect(Collectors.toList());
+        cdTypeExprList.stream()
+            .map(var -> CDHelper.getASTCDType(getType(var).getName(), getCD()))
+            .collect(Collectors.toList());
     BoolExpr subRes = body;
     if (cdTypeExprList.size() > 0) {
       if (isForall) {

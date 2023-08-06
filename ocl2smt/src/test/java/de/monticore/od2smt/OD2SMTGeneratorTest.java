@@ -1,5 +1,7 @@
 package de.monticore.od2smt;
 
+import static de.monticore.od2smt.OD2SMTUtils.getAttributeValue;
+
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.Helper.SMTHelper;
@@ -16,19 +18,16 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODNamedObject;
 import de.monticore.odbasis._ast.ASTODObject;
 import de.se_rwth.commons.logging.Log;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static de.monticore.od2smt.OD2SMTUtils.getAttributeValue;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
   protected ASTODArtifact od;
@@ -103,10 +102,10 @@ class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
   }
 
   public ASTODObject convertObject(String oldObjectName, String objType) {
-      Expr<? extends Sort> oldObj =
-              od2SMTGenerator.getObject(OD2SMTUtils.getObject(oldObjectName, od));
-      String newObjName = SMTHelper.buildObjectName(model.evaluate(oldObj, true), objType);
+    Expr<? extends Sort> oldObj =
+        od2SMTGenerator.getObject(OD2SMTUtils.getObject(oldObjectName, od));
+    String newObjName = SMTHelper.buildObjectName(model.evaluate(oldObj, true), objType);
 
-      return OD2SMTUtils.getObject(newObjName, witness);
+    return OD2SMTUtils.getObject(newObjName, witness);
   }
 }

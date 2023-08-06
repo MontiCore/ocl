@@ -7,7 +7,6 @@ import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.List;
 import java.util.function.Function;
 
@@ -96,11 +95,11 @@ public class SMTSet {
   public SMTSet collectAll(Function<Expr<? extends Sort>, SMTSet> function) {
     Expr<? extends Sort> expr = exprConv.declVariable(type, "xollector");
     return new SMTSet(
-            kii ->
-                    exprConv.mkExists(
-                            List.of(expr), ctx.mkAnd(this.contains(expr), function.apply(expr).contains(kii))),
-            function.apply(expr).type,
-            exprConv);
+        kii ->
+            exprConv.mkExists(
+                List.of(expr), ctx.mkAnd(this.contains(expr), function.apply(expr).contains(kii))),
+        function.apply(expr).type,
+        exprConv);
   }
 
   public BoolExpr mkSetEq(SMTSet set2) {
