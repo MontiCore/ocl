@@ -18,14 +18,14 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
+import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.SMTSet;
 import de.monticore.ocl2smt.util.TypeConverter;
 import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symboltable.ISymbol;
+import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.function.Function;
@@ -507,6 +507,7 @@ public class OCLExpressionConverter extends Expression2smt {
   }
 
   protected SMTSet convertSetComp(ASTSetComprehension node) {
+    String n = IOHelper.print(node);
     Set<String> setCompVarNames = openSetCompScope(node);
     Function<BoolExpr, SMTSet> setComp = convertSetCompLeftSide(node.getLeft(), setCompVarNames);
     BoolExpr filter = ctx.mkTrue();
@@ -647,13 +648,30 @@ public class OCLExpressionConverter extends Expression2smt {
             this);
   }
 
+  /***
+   * will be transformed to a function that take a bool expression and return
+   * and SMTSet because the filter of the function is  on the right side and
+   * this function just convert the left Side.
+   * *
+   * example: {int z = x*x|...}
+   * *
+   */
   protected Function<BoolExpr, SMTSet> convertSetVarDeclLeft(ASTSetVariableDeclaration node) {
-    Expr<? extends Sort> expr =
-        declVariable(typeConverter.buildOCLType(node.getMCType()), node.getName());
+    // declare the variable z
+    OCLType type = typeConverter.buildOCLType(node.getMCType());
+    Expr<? extends Sort> var = declVariable(type, node.getName());
+
+    // check if the initial value of the var  is present and convert it to a constraint
+    BoolExpr constr =
+        node.isPresentExpression()
+            ? ctx.mkEq(var, convertExpr(node.getExpression()))
+            : ctx.mkTrue();
+
+    // create the function bool ->SMTSet
     return bool ->
         new SMTSet(
-            obj -> mkExists(Set.of(expr), ctx.mkAnd(ctx.mkEq(obj, expr), bool)),
-            getType(expr),
+            obj -> mkExists(Set.of(var), ctx.mkAnd(ctx.mkEq(obj, var), constr, bool)),
+            getType(var),
             this);
   }
 
@@ -751,15 +769,9 @@ public class OCLExpressionConverter extends Expression2smt {
   }
 
   protected Expr<? extends Sort> createVarFromSymbol(ASTNameExpression node) {
-    Expr<? extends Sort> res = null;
-    Optional<ISymbol> symbol = node.getDefiningSymbol();
-    if (symbol.isPresent()) {
-      OCLType type = typeConverter.buildOCLType((VariableSymbol) symbol.get());
-      res = declVariable(type, node.getName());
-    } else {
-      Log.error(node.getClass().getName() + " Unrecognized Symbol " + node.getName());
-    }
-    return res;
+    SymTypeExpression typeExpr = TypeConverter.deriveType(node);
+    OCLType type = typeConverter.buildOCLType(typeExpr);
+    return declVariable(type, node.getName());
   }
 
   private boolean methodReturnsBool(ASTCallExpression node) {

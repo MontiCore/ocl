@@ -5,7 +5,6 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symboltable.IScopeSpanningSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -67,7 +66,7 @@ public class OCLScope extends OCLScopeTOP {
         thisFunctions, superFunctions, (fst, snd) -> fst.getName().equals(snd.getName()));
   }
 
- /* @Override
+  /* @Override
   public List<VariableSymbol> resolveVariableLocallyMany(
       boolean foundSymbols, String name, AccessModifier modifier, Predicate predicate) {
     // resolve methods by using overridden method
