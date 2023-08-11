@@ -27,11 +27,7 @@ public class SetComprehensionTest extends ExpressionAbstractTest {
   }
 
   @ParameterizedTest
-  @ValueSource(
-      strings = {
-        /*"Test2", "Test4", "Test5", "Test9",*/
-        "Test11"
-      })
+  @ValueSource(strings = {"Test2", "Test4", "Test5", "Test9", "Test11"})
   public void testSetComprehensionUnSat(String value) {
     testUnsatInv(Set.of(value), "setComprehension");
   }
