@@ -6,11 +6,9 @@ import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import java.io.IOException;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-@Disabled
 public class SetComprehensionTest extends ExpressionAbstractTest {
   @BeforeEach
   public void setup() throws IOException {

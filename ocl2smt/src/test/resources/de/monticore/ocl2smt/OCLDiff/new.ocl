@@ -41,15 +41,11 @@ ocl Test02 {
 
    inv Facebook_ident_is_1:
        forall Auction a:
-           if  a.name == "FaceBook1"
-           then a.auctionIdent == 1
-           else a.auctionIdent != 1;
+         (a.name == "FaceBook1") == (a.auctionIdent == 1);
 
 
     inv BMW_ident_is_4:
          forall Auction a:
-             if  a.name == "BMW4"
-             then a.auctionIdent == 4
-             else a.auctionIdent != 4;
+            (a.name == "BMW4")==(a.auctionIdent == 4);
 
 }

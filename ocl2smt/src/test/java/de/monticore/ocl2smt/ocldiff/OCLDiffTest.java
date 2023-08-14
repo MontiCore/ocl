@@ -63,10 +63,10 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
     OCLInvDiffResult diff =
         computeDiffOneCD(
             "difWithOds/Auction.cd",
-            "difWithOds/old.ocl",
-            "difWithOds/new.ocl",
-            "difWithOds/posExample.od",
-            "difWithOds/negExample.od");
+            "difWithOds/Old.ocl",
+            "difWithOds/New.ocl",
+            "difWithOds/PosExample.od",
+            "difWithOds/NegExample.od");
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiffOneCDWithODs"));
     assertEquals(1, diff.getDiffWitness().size());
     assertEquals(

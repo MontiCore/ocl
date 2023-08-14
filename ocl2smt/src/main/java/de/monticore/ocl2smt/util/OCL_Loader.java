@@ -87,7 +87,7 @@ public class OCL_Loader {
 
     createCDSymTab(cdAST);
     loadCDModel(oclAST, cdAST);
-    // checkOCLCoCos(oclAST);
+    checkOCLCoCos(oclAST);
     return oclAST;
   }
 
