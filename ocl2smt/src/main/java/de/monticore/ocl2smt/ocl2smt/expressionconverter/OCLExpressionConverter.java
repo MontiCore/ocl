@@ -1,5 +1,9 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
+import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
+import static de.monticore.ocl2smt.helpers.IOHelper.print;
+import static de.monticore.ocl2smt.helpers.IOHelper.printPosition;
+
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
@@ -9,16 +13,14 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.expressions.commonexpressions._ast.ASTBracketExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
+import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
+import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.util.OCLType;
@@ -28,16 +30,11 @@ import de.monticore.ocl2smt.visitors.SetGeneratorCollector;
 import de.monticore.ocl2smt.visitors.SetVariableCollector;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
-import static de.monticore.ocl2smt.helpers.IOHelper.print;
-import static de.monticore.ocl2smt.helpers.IOHelper.printPosition;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 /** This class convert All OCL-Expressions except @Pre-Expressions in SMT */
 public class OCLExpressionConverter extends Expression2smt {
@@ -67,6 +64,14 @@ public class OCLExpressionConverter extends Expression2smt {
     cd2smtGenerator = ocl2SMTGenerator.getCD2SMTGenerator();
     cd2smtGenerator.cd2smt(ast, ctx);
     typeConverter = new TypeConverter(cd2smtGenerator);
+  }
+
+  public Map<String, Expr<? extends Sort>> getVarNames() {
+    return varNames;
+  }
+
+  public Map<Expr<? extends Sort>, OCLType> getVarTypes() {
+    return varTypes;
   }
 
   public void reset() {
@@ -534,7 +539,6 @@ public class OCLExpressionConverter extends Expression2smt {
     for (String name : setCompVarNames) {
       varNames.remove(name);
     }
-    setCompVarNames.clear();
   }
 
   protected SMTSet convertSetEnum(ASTSetEnumeration node) {
@@ -784,15 +788,15 @@ public class OCLExpressionConverter extends Expression2smt {
     return false;
   }
 
-  /*private boolean methodReturnsString(ASTCallExpression node) {
+  /*  private boolean methodReturnsString(ASTCallExpression node) {
     if (node.getDefiningSymbol().isPresent()) {
       String name = node.getDefiningSymbol().get().getName();
       return (name.equals("replace"));
     }
     return false;
-  }*/
+  }
 
-  /*  private boolean isAddition(ASTPlusExpression node) {
+  private boolean isAddition(ASTPlusExpression node) {
     return (convertExpr(node.getLeft()).isInt() || convertExpr(node.getLeft()).isReal());
   }
 
