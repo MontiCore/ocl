@@ -1,7 +1,5 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
-import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
-
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
@@ -11,7 +9,10 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.expressions.commonexpressions._ast.*;
+import de.monticore.expressions.commonexpressions._ast.ASTBracketExpression;
+import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
+import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
+import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.ocl.ocl.OCLMill;
@@ -23,15 +24,20 @@ import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.SMTSet;
 import de.monticore.ocl2smt.util.TypeConverter;
-import de.monticore.ocl2smt.visitors.NameExpressionVisitor;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symboltable.ISymbol;
+import de.monticore.ocl2smt.visitors.SetGeneratorCollector;
+import de.monticore.ocl2smt.visitors.SetVariableCollector;
+import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+
+import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
+import static de.monticore.ocl2smt.helpers.IOHelper.print;
+import static de.monticore.ocl2smt.helpers.IOHelper.printPosition;
 
 /** This class convert All OCL-Expressions except @Pre-Expressions in SMT */
 public class OCLExpressionConverter extends Expression2smt {
@@ -61,14 +67,6 @@ public class OCLExpressionConverter extends Expression2smt {
     cd2smtGenerator = ocl2SMTGenerator.getCD2SMTGenerator();
     cd2smtGenerator.cd2smt(ast, ctx);
     typeConverter = new TypeConverter(cd2smtGenerator);
-  }
-
-  public Map<String, Expr<? extends Sort>> getVarNames() {
-    return varNames;
-  }
-
-  public Map<Expr<? extends Sort>, OCLType> getVarTypes() {
-    return varTypes;
   }
 
   public void reset() {
@@ -299,13 +297,6 @@ public class OCLExpressionConverter extends Expression2smt {
         convertExpr(node.getElseExpression()));
   }
 
-  protected Expr<? extends Sort> convert(ASTConditionalExpression node) {
-    return ctx.mkITE(
-        convertBoolExpr(node.getCondition()),
-        convertExpr(node.getTrueExpression()),
-        convertExpr(node.getFalseExpression()));
-  }
-
   protected Expr<? extends Sort> convertCall(ASTCallExpression node) {
     if (node.getExpression() instanceof ASTFieldAccessExpression) {
       ASTFieldAccessExpression node1 = (ASTFieldAccessExpression) node.getExpression();
@@ -332,10 +323,6 @@ public class OCLExpressionConverter extends Expression2smt {
       res = createVarFromSymbol(node);
     }
     return res;
-  }
-
-  protected Expr<? extends Sort> convert(ASTBracketExpression node) {
-    return convertExpr(node.getExpression());
   }
 
   protected Pair<Expr<? extends Sort>, BoolExpr> convertFieldAccessSetHelper(
@@ -580,7 +567,7 @@ public class OCLExpressionConverter extends Expression2smt {
     }
 
     for (Function<ArithExpr<? extends Sort>, BoolExpr> range : rangeFilters) {
-      // TODO:: fix the Warning
+
       SMTSet set2 = set;
       set =
           new SMTSet(
@@ -622,19 +609,51 @@ public class OCLExpressionConverter extends Expression2smt {
       res = convertSetCompExprLeft(node.getExpression(), declVars);
     } else {
       Log.error(
-          printPosition(node.get_SourcePositionStart())
-              + " Unable to convert the expression "
-              + print(node));
+              printPosition(node.get_SourcePositionStart())
+                      + " Unable to convert the expression "
+                      + print(node));
     }
     return res;
   }
 
+  /***
+   * convert the right side of a set comprehension(filters)  into a BoolExpr
+   */
+  protected BoolExpr convertSetCompRightSide(List<ASTSetComprehensionItem> filters) {
+    BoolExpr filter = ctx.mkTrue();
+    // example: x isin {2,3}
+    for (ASTSetComprehensionItem item : filters) {
+
+      if (item.isPresentGeneratorDeclaration()) {
+        SMTSet set = convertSet(item.getGeneratorDeclaration().getExpression());
+        BoolExpr subFilter = set.contains(varNames.get(item.getGeneratorDeclaration().getName()));
+        filter = ctx.mkAnd(filter, subFilter);
+      }
+
+      // example: x == y
+      if (item.isPresentExpression()) {
+        filter = ctx.mkAnd(filter, convertBoolExpr(item.getExpression()));
+      }
+
+      // example: int i = 10
+      if (item.isPresentSetVariableDeclaration()) {
+        ASTSetVariableDeclaration var = item.getSetVariableDeclaration();
+        if (var.isPresentExpression()) {
+          BoolExpr subFilter =
+                  ctx.mkEq(varNames.get(var.getName()), convertExpr(var.getExpression()));
+          filter = ctx.mkAnd(filter, subFilter);
+        }
+      }
+    }
+    return filter;
+  }
+
   protected Function<BoolExpr, SMTSet> convertSetCompExprLeft(
-      ASTExpression node, Set<String> declVars) {
+          ASTExpression node, Set<String> declVars) {
     Expr<? extends Sort> expr1 = convertExpr(node);
     // define a const  for the quantifier
     Expr<? extends Sort> expr2 = ctx.mkConst("var", expr1.getSort());
-    Set<Expr<? extends Sort>> vars = collectExpr(declVars);
+    List<Expr<? extends Sort>> vars = new ArrayList<>(collectExpr(declVars));
     vars.add(expr2);
 
     return bool ->
@@ -645,9 +664,9 @@ public class OCLExpressionConverter extends Expression2smt {
   }
 
   /***
-   * will be transformed to a function that take a bool expression and return
-   * and SMTSet because the filter of the function is  on the right side and
-   * this function just convert the left Side.
+   * will be transformed to a function that takes a bool expression and return
+   * and SMTSet because the filter of the function is on the right side, and
+   * this function just converts the left Side.
    * *
    * example: {int z = x*x|...}
    * *
@@ -655,9 +674,9 @@ public class OCLExpressionConverter extends Expression2smt {
   protected Function<BoolExpr, SMTSet> convertSetVarDeclLeft(
       ASTSetVariableDeclaration node, Set<String> declVars) {
     Expr<?> var = varNames.get(node.getName());
-    Set<Expr<?>> varSet = collectExpr(declVars);
+    List<Expr<?>> varList = new ArrayList<>(collectExpr(declVars));
 
-    // check if the initial value of the var  is present and convert it to a constraint
+    // check if the initial value of the var is present and convert it to a constraint
     BoolExpr constr =
         node.isPresentExpression()
             ? ctx.mkEq(var, convertExpr(node.getExpression()))
@@ -666,11 +685,9 @@ public class OCLExpressionConverter extends Expression2smt {
     // create the function bool ->SMTSet
     return bool ->
         new SMTSet(
-            obj -> mkExists(List.of(expr), ctx.mkAnd(ctx.mkEq(obj, expr), bool)),
-            getType(expr),
-            obj -> mkExists(varSet, ctx.mkAnd(ctx.mkEq(obj, var), constr, bool)),
-            getType(var),
-            this);
+                obj -> mkExists(varList, ctx.mkAnd(ctx.mkEq(obj, var), constr, bool)),
+                getType(var),
+                this);
   }
 
   private Set<Expr<?>> collectExpr(Set<String> exprSet) {
@@ -681,15 +698,14 @@ public class OCLExpressionConverter extends Expression2smt {
       ASTGeneratorDeclaration node, Set<String> declVars) {
 
     Expr<? extends Sort> expr = varNames.get(node.getName());
-    Set<Expr<?>> exprSet = collectExpr(declVars);
-    exprSet.add(expr);
+    List<Expr<?>> varList = new ArrayList<>(collectExpr(declVars));
 
     SMTSet set = convertSet(node.getExpression());
     return bool ->
         new SMTSet(
-            obj -> mkExists(exprSet, ctx.mkAnd(ctx.mkEq(obj, expr), set.contains(expr), bool)),
-            getType(expr),
-            this);
+                obj -> mkExists(varList, ctx.mkAnd(ctx.mkEq(obj, expr), set.contains(expr), bool)),
+                getType(expr),
+                this);
   }
 
   // a.auction**
@@ -768,21 +784,21 @@ public class OCLExpressionConverter extends Expression2smt {
     return false;
   }
 
-  private boolean methodReturnsString(ASTCallExpression node) {
+  /*private boolean methodReturnsString(ASTCallExpression node) {
     if (node.getDefiningSymbol().isPresent()) {
       String name = node.getDefiningSymbol().get().getName();
       return (name.equals("replace"));
     }
     return false;
-  }
+  }*/
 
-  private boolean isAddition(ASTPlusExpression node) {
+  /*  private boolean isAddition(ASTPlusExpression node) {
     return (convertExpr(node.getLeft()).isInt() || convertExpr(node.getLeft()).isReal());
   }
 
   private boolean isStringConcat(ASTPlusExpression node) {
     return convertExpr((node).getLeft()).getSort().getName().isStringSymbol();
-  }
+  }*/
 
   private void notFullyImplemented(ASTExpression node) {
     Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
