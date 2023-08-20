@@ -7,8 +7,8 @@ ocl Old {
     forall Account a:
       a.balance >= 0;
 
-  context Account.withdraw(double amount)
+ /* context Account.withdraw(double amount)
   pre: balance >= amount;
-  // post condition not (yet) specified
+  // post condition not (yet) specified*/
 
 }

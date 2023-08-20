@@ -10,18 +10,15 @@ import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.odbasis._ast.ASTODNamedObject;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-@Disabled
 public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
   @BeforeEach
   public void setUp() {

@@ -2,7 +2,9 @@
 
 package de.monticore.ocl.util;
 
+import de.monticore.expressions.bitexpressions._ast.ASTBinaryAndExpression;
 import de.monticore.expressions.bitexpressions._ast.ASTBinaryOrOpExpression;
+import de.monticore.expressions.bitexpressions._ast.ASTBinaryXorExpression;
 import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
@@ -121,6 +123,12 @@ public class SideEffectFreeExpressions {
       return true;
     }
     if (e instanceof ASTBinaryOrOpExpression) {
+      return true;
+    }
+    if (e instanceof ASTBinaryAndExpression) {
+      return true;
+    }
+    if (e instanceof ASTBinaryXorExpression) {
       return true;
     }
     return false;
