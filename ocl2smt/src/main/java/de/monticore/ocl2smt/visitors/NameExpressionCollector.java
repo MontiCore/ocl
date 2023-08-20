@@ -6,7 +6,7 @@ import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisito
 import java.util.HashSet;
 import java.util.Set;
 
-public class NameExpressionVisitor implements ExpressionsBasisVisitor2 {
+public class NameExpressionCollector implements ExpressionsBasisVisitor2 {
   Set<String> variableNameSet = new HashSet<>();
 
   @Override

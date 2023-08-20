@@ -8,6 +8,7 @@ import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
@@ -64,12 +65,22 @@ public class TypeConverter {
   }
 
   public OCLType buildOCLType(VariableSymbol symbol) {
-    //  Log.info("I tried to get a Type from the  VariableSymbol", "SymbolTable");
-    SymTypeExpression symTypeExpression = symbol.getType();
-    assert symTypeExpression != null
-        && (symTypeExpression.isObjectType() || symTypeExpression.isPrimitive());
-    String typename = symTypeExpression.getTypeInfo().getFullName();
-    return OCLType.buildOCLType(typename);
+    if (symbol.getType() == null) {
+      Log.error(
+          "Unable to derive type of Variable "
+              + symbol.getName()
+              + ", the variable type is empty ");
+    }
+    return buildOCLType(symbol.getType());
+  }
+
+  public OCLType buildOCLType(SymTypeExpression typeExpr) {
+    if (typeExpr.isObjectType() || typeExpr.isPrimitive()) {
+      String typename = typeExpr.getTypeInfo().getFullName();
+      return OCLType.buildOCLType(typename);
+    }
+    Log.error("Building OCLType not implement for the type " + typeExpr.printFullName());
+    return null;
   }
 
   public Sort getSort(OCLType type) {
@@ -134,18 +145,25 @@ public class TypeConverter {
     return hasObjectType(node, Set.of("String", "java.lang.String"));
   }
 
+  public static SymTypeExpression deriveType(ASTExpression node) {
+    Optional<SymTypeExpression> typeExpr =
+        Optional.ofNullable(new OCLDeriver().deriveType(node).getResult());
+    if (typeExpr.isEmpty()) {
+      Log.error("Unable to derive the type of the expression " + IOHelper.print(node));
+      assert false;
+    }
+
+    return typeExpr.get();
+  }
+
   public static boolean hasObjectType(ASTExpression node, Set<String> typeNames) {
-    SymTypeExpression symTypeExpression = new OCLDeriver().deriveType(node).getResult();
-    assert symTypeExpression != null;
-    return symTypeExpression.isObjectType()
-        && typeNames.contains(symTypeExpression.getTypeInfo().getName());
+    SymTypeExpression typeExpr = deriveType(node);
+    return typeExpr.isObjectType() && typeNames.contains(typeExpr.getTypeInfo().getName());
   }
 
   private static boolean hasGenericType(ASTExpression node, Set<String> typeNames) {
-    SymTypeExpression symTypeExpression = new OCLDeriver().deriveType(node).getResult();
-    assert symTypeExpression != null;
-    return (symTypeExpression.isGenericType()
-        && typeNames.contains(symTypeExpression.getTypeInfo().getName()));
+    SymTypeExpression typeExpr = deriveType(node);
+    return (typeExpr.isGenericType() && typeNames.contains(typeExpr.getTypeInfo().getName()));
   }
 
   public static boolean isPrimitiv(Sort sort) {

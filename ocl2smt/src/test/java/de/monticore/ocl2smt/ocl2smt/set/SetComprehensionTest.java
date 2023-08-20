@@ -3,15 +3,12 @@ package de.monticore.ocl2smt.ocl2smt.set;
 
 import de.monticore.ocl2smt.ocl2smt.ExpressionAbstractTest;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
+import java.io.IOException;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.io.IOException;
-import java.util.Set;
-
-@Disabled
 public class SetComprehensionTest extends ExpressionAbstractTest {
   @BeforeEach
   public void setup() throws IOException {
@@ -24,11 +21,7 @@ public class SetComprehensionTest extends ExpressionAbstractTest {
   }
 
   @ParameterizedTest
-  @ValueSource(
-      strings = {
-              "Test1", "Test3", "Test7", "Test8", "Test10", "Test12",
-              "Test13"
-      })
+  @ValueSource(strings = {"Test1", "Test3", "Test7", "Test8", "Test10", "Test12", "Test13"})
   public void testSetComprehensionSat(String value) {
     testInv(value, "setComprehension");
   }
