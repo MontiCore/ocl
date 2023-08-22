@@ -11,10 +11,12 @@ public class OCLNominalSuperTypeCalculator extends NominalSuperTypeCalculator {
   IOCLSymTypeRelations oclSymTypeRelations;
 
   public OCLNominalSuperTypeCalculator(IOCLSymTypeRelations symTypeRelations) {
+    super(symTypeRelations);
     this.oclSymTypeRelations = symTypeRelations;
   }
 
-  protected IOCLSymTypeRelations getOclSymTypeRel() {
+  @Override
+  protected IOCLSymTypeRelations getSymTypeRelations() {
     return oclSymTypeRelations;
   }
 
@@ -25,15 +27,15 @@ public class OCLNominalSuperTypeCalculator extends NominalSuperTypeCalculator {
     // given Set<A> with A < B, we calculate Collection<A> and Set<B>.
     // With Collection<A> AND Set<B>, we calculate Collection<B> in the next step
     List<SymTypeExpression> superTypes = super.getNominalSuperTypes(thisType);
-    if (getOclSymTypeRel().isOCLCollection(thisType)) {
-      SymTypeExpression elementType = getOclSymTypeRel().getCollectionElementType(thisType);
+    if (getSymTypeRelations().isOCLCollection(thisType)) {
+      SymTypeExpression elementType = getSymTypeRelations().getCollectionElementType(thisType);
       if (isSupported(elementType)) {
         List<SymTypeExpression> superElementTypes = getNominalSuperTypes(elementType);
         // simply go other all options
-        if (getOclSymTypeRel().isList(thisType)) {
+        if (getSymTypeRelations().isList(thisType)) {
           superElementTypes.forEach(
               et -> superTypes.add(OCLCollectionSymTypeFactory.createList(et)));
-        } else if (getOclSymTypeRel().isSet(thisType)) {
+        } else if (getSymTypeRelations().isSet(thisType)) {
           superElementTypes.forEach(
               et -> superTypes.add(OCLCollectionSymTypeFactory.createSet(et)));
         } else {
