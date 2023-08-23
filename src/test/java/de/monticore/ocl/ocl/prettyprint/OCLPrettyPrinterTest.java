@@ -39,5 +39,6 @@ public class OCLPrettyPrinterTest extends AbstractTest {
     final Optional<ASTOCLCompilationUnit> astPrint = parser.parse_StringOCLCompilationUnit(output);
     assertTrue(astPrint.isPresent());
     assertTrue(ast.get().deepEquals(astPrint.get()));
+    assertNoFindings();
   }
 }

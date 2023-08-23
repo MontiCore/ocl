@@ -113,8 +113,7 @@ public class OCLExpressionsSymbolTableCompleter
       typeResult.setResultAbsent();
       if (ast.isPresentMCType()) {
         typeResult = synthesizer.synthesizeType(ast.getMCType());
-        if (!typeResult.isPresentResult()
-            || typeResult.getResult().isObscureType()) {
+        if (!typeResult.isPresentResult() || typeResult.getResult().isObscureType()) {
           Log.error(
               String.format(
                   "The type (%s) of the object (%s) could not be calculated",

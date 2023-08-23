@@ -38,6 +38,7 @@ class OCLParserTest extends AbstractTest {
   public void shouldParseValidInput(String fileName) {
     assumeFalse(fileName.endsWith("validMethSigName.ocl"));
     this.parse(Paths.get(RELATIVE_MODEL_PATH, fileName).toString(), false);
+    assertNoFindings();
   }
 
   @ParameterizedTest
@@ -46,5 +47,6 @@ class OCLParserTest extends AbstractTest {
     this.parse(
         Paths.get(prefixValidModelsPath("/testinput/validGrammarModels/" + filename)).toString(),
         false);
+    assertNoFindings();
   }
 }

@@ -17,7 +17,8 @@ public class OptionalType {
   protected TypeVarSymbol typeVarSymbol;
 
   public void addOptionalType() {
-    typeVarSymbol = OCLMill.typeVarSymbolBuilder().setSpannedScope(OCLMill.scope()).setName("X").build();
+    typeVarSymbol =
+        OCLMill.typeVarSymbolBuilder().setSpannedScope(OCLMill.scope()).setName("X").build();
 
     optionalSymbol =
         OCLMill.typeSymbolBuilder()

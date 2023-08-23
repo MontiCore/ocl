@@ -11,7 +11,6 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.se_rwth.commons.logging.Log;
-import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
