@@ -110,6 +110,7 @@ public class OCLTypeCheck {
         return set;
       }
       Log.error("function unwrapSet requires a Collection SymType but was given " + set.print());
+      return SymTypeExpressionFactory.createObscureType();
     }
 
     // get SymType used in Collection
