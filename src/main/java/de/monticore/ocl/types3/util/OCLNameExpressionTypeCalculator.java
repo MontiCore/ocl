@@ -17,13 +17,13 @@ public class OCLNameExpressionTypeCalculator extends NameExpressionTypeCalculato
    * Predicate)}
    */
   @Override
-  public Optional<SymTypeExpression> typeOfNameAsExpr(
+  public Optional<SymTypeExpression> resolveNameAsExpr(
       IBasicSymbolsScope enclosingScope, String name) {
     // case "normal" expression
-    Optional<SymTypeExpression> type = super.typeOfNameAsExpr(enclosingScope, name);
+    Optional<SymTypeExpression> type = super.resolveNameAsExpr(enclosingScope, name);
     // case type id -> create Set of the same type
     if (type.isEmpty()) {
-      Optional<SymTypeExpression> typeId = super.typeOfNameAsTypeId(enclosingScope, name);
+      Optional<SymTypeExpression> typeId = super.resolveType(enclosingScope, name);
       if (typeId.isPresent()) {
         type = Optional.of(MCCollectionSymTypeFactory.createSet(typeId.get().deepClone()));
       }
