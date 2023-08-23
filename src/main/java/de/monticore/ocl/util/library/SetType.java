@@ -20,7 +20,7 @@ public class SetType {
 
   public void addSetType() {
     IOCLGlobalScope gs = OCLMill.globalScope();
-    typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
+    typeVarSymbol = OCLMill.typeVarSymbolBuilder().setSpannedScope(OCLMill.scope()).setName("X").build();
 
     SymTypeExpression collectionSuperType =
         SymTypeExpressionFactory.createGenerics(
