@@ -1,7 +1,7 @@
 package de.monticore.ocl2smt;
 
-import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.SS;
-import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.SSCOMB;
+import static de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy.Strategy.DEFAULT;
+import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.*;
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.ME;
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
 
@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -61,5 +62,13 @@ public class AssociationTest extends ExpressionAbstractTest {
       testUnsatInv(
           Set.of(inv), "association/sssss" + cs.name() + "_" + is.name() + "_" + as.name());
     }
+  }
+
+  @Test
+  public void testFieldAccess() {
+
+    CD2SMTMill.init(DS, ME, DEFAULT);
+    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
+    testInv("Assoc17", "association/test");
   }
 }

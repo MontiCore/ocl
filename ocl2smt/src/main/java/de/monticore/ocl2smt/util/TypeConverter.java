@@ -7,18 +7,19 @@ import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.ocl.ocl._visitor.OCLTraverser;
+import de.monticore.ocl.ocl.types3.OCLTypeTraverserFactory;
 import de.monticore.ocl2smt.helpers.IOHelper;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types3.Type4Ast;
 import de.se_rwth.commons.logging.Log;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class TypeConverter {
   public static Map<OCLType, Sort> typeMap;
@@ -133,7 +134,7 @@ public class TypeConverter {
     return hasGenericType(node, Set.of("Set", "java.util.set"));
   }
 
-  public static boolean isOptional(ASTExpression node) {
+  public static boolean hasOptionalType(ASTExpression node) {
     return hasGenericType(node, Set.of("Optional", "java.util.Optional"));
   }
 
@@ -145,15 +146,29 @@ public class TypeConverter {
     return hasObjectType(node, Set.of("String", "java.lang.String"));
   }
 
+  public static boolean isBoolean(SymTypeExpression type) {
+    return type.isPrimitive() && (type.print().equals("boolean") || type.print().equals("Boolean"));
+  }
+
   public static SymTypeExpression deriveType(ASTExpression node) {
-    Optional<SymTypeExpression> typeExpr =
+    Type4Ast type4Ast = new Type4Ast();
+    OCLTraverser typeMapTraverser = new OCLTypeTraverserFactory().createTraverser(type4Ast);
+    node.accept(typeMapTraverser);
+    SymTypeExpression typeExpr = type4Ast.getTypeOfExpression(node);
+    if (typeExpr == null) {
+      Log.error("Unable to derive the type of the expression " + IOHelper.print(node));
+      assert false;
+    }
+
+    return typeExpr;
+    /*  Optional<SymTypeExpression> typeExpr =
         Optional.ofNullable(new OCLDeriver().deriveType(node).getResult());
     if (typeExpr.isEmpty()) {
       Log.error("Unable to derive the type of the expression " + IOHelper.print(node));
       assert false;
     }
 
-    return typeExpr.get();
+    return typeExpr.get();*/
   }
 
   public static boolean hasObjectType(ASTExpression node, Set<String> typeNames) {
@@ -172,5 +187,17 @@ public class TypeConverter {
 
   public static boolean isPrimitiv(String typeName) {
     return typeMap.containsKey(OCLType.buildOCLType(typeName));
+  }
+
+  public static OCLType getInnerTypeOfGenericType(SymTypeExpression typeExpression) {
+    if (!typeExpression.isGenericType()) {
+      Log.error(
+          "cann not compute the innerType of a  the non generic type " + typeExpression.print());
+      return null;
+    }
+    TypeSymbol symbol = typeExpression.getTypeInfo();
+    TypeSymbolSurrogate s = (TypeSymbolSurrogate) symbol;
+    List<VariableSymbol> kk = symbol.getVariableList();
+    return null;
   }
 }

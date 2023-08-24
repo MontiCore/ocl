@@ -148,7 +148,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     }
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
     Pair<Expr<? extends Sort>, BoolExpr> res = convertFieldAccessSetHelper(obj, attributeName);
-    if (!TypeConverter.isOptional(node)) {
+    if (!TypeConverter.hasOptionalType(node)) {
       genConstraints.add(res.getRight());
     }
     return res.getLeft();
