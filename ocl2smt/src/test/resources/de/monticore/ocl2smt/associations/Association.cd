@@ -17,7 +17,7 @@ classdiagram Association{
   }
 
   association [1] Auction(auction)     --     (person)Person [1..*];
-  association [*] Person(person)      --     (parent)Person [1] ;
+  association [*] Person(person)      --     (parent)Parent [1] ;
   association [*] Person            --      Enterprise[0..1] ;
 
 

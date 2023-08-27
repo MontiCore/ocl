@@ -22,8 +22,7 @@ ocl NC1 {
             p1 == p2);
 
  context Person p1, Person p2 inv Assoc5:
-   true;
- //   p1.parent == p2.parent ;
+   p1.parent == p2.parent ;
 
 
  context Person p  inv Assoc6 :
@@ -59,28 +58,8 @@ ocl NC1 {
  context Enterprise e inv Assoc15 :
       e.person.isEmpty() && exists p in e.person :true;
 
- context Person p inv Assoc16:
-   p.parent != p ;
 
- context Enterprise e inv Assoc17:
-    e.person.isEmpty();
 
- context Person p inv Assoc130 :
-   // exists Enterprise e : p.enterprise.get() == e ;
-    exists Person p1 : p.parent == p1;
-
- context Person p1, Person p2  inv Assoc32 :
-    p1.enterprise.isPresent() &&
-    p2.enterprise.isPresent() &&
-    exists Enterprise e1,e2 : p1.enterprise.get() == e1 &&
-                              p2.enterprise.get() == e2 &&
-                              e1 != e2 ;
-
- context Person p inv Assoc33 :
-     p.enterprise.isPresent() &&
-     exists Enterprise e1,e2 : p.enterprise.get() == e1 &&
-                               p.enterprise.get() == e2 &&
-                               e1 != e2 ;
 
 
 }
