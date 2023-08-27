@@ -36,5 +36,7 @@ public class OCLSymbolTableTest extends AbstractTest {
     // when / then
     SymbolTableUtil.runSymTabGenitor(ast.get());
     SymbolTableUtil.runSymTabCompleter(ast.get());
+    // todo enable after fix regarding 0xF737F
+    // assertNoFindings();
   }
 }

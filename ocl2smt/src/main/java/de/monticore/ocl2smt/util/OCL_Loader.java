@@ -88,7 +88,7 @@ public class OCL_Loader {
     createCDSymTab(cdAST);
     loadCDModel(oclAST, cdAST);
     // TODO: 17.08.2023   activate cocos when fixed
-    // checkOCLCoCos(oclAST);
+    checkOCLCoCos(oclAST);
     return oclAST;
   }
 
@@ -109,8 +109,8 @@ public class OCL_Loader {
   protected static ICD4CodeArtifactScope createCDSymTab(ASTCDCompilationUnit ast) {
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     ICD4CodeArtifactScope as = CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-    as.addImports(new ImportStatement("java.lang", true));
-    as.addImports(new ImportStatement("java.util", true));
+    as.addImports(new ImportStatement("java.lang.String", true));
+    as.addImports(new ImportStatement("java.util.Date", true));
     CD4CodeSymbolTableCompleter c =
         new CD4CodeSymbolTableCompleter(
             ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
@@ -120,8 +120,8 @@ public class OCL_Loader {
 
   protected static IOCLArtifactScope createOCLSymTab(ASTOCLCompilationUnit ast) {
     IOCLArtifactScope as = OCLMill.scopesGenitorDelegator().createFromAST(ast);
-    as.addImports(new ImportStatement("java.lang", true));
-    as.addImports(new ImportStatement("java.util", true));
+    as.addImports(new ImportStatement("java.lang.String", true));
+    as.addImports(new ImportStatement("java.util.Date", true));
     OCLSymbolTableCompleter c =
         new OCLSymbolTableCompleter(
             ast.getMCImportStatementList(),

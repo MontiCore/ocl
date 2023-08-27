@@ -75,6 +75,7 @@ public class OCLScopesGenitorTest extends AbstractTest {
                     c.get_SourcePositionStart()));
           }
         });
+    assertNoFindings();
   }
 
   @ParameterizedTest
@@ -97,6 +98,7 @@ public class OCLScopesGenitorTest extends AbstractTest {
         "The scope at the tail of the scope stack "
             + "should match the manually added scope but does not. Thus, the genitor either removes too many scopes or "
             + "does not remove all added scopes.");
+    assertNoFindings();
   }
 
   /**
@@ -130,6 +132,7 @@ public class OCLScopesGenitorTest extends AbstractTest {
               ast.getEnclosingScope(),
               "The enclosing scope of the ast of the ocl invariant does not match the expected scope.");
         });
+    assertNoFindings();
   }
 
   /**
@@ -174,6 +177,7 @@ public class OCLScopesGenitorTest extends AbstractTest {
               ast.getEnclosingScope().getSubScopes().contains(ast.getSpannedScope()),
               "The enclosing scope of the ocl invariant does not contain the spanned scope as sub-scope.");
         });
+    assertNoFindings();
   }
 
   /**
@@ -231,6 +235,7 @@ public class OCLScopesGenitorTest extends AbstractTest {
               enclosingScope.getLocalOCLInvariantSymbols().contains(ast.getSymbol()),
               "The enclosing scope of the ocl invariant does not contain the spanning symbol as local symbol.");
         });
+    assertNoFindings();
   }
 
   /**

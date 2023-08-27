@@ -1,6 +1,7 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types3.util;
 
+import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
@@ -19,6 +20,7 @@ public class OCLWithinTypeBasicSymbolsResolver extends OOWithinTypeBasicSymbolsR
   public OCLWithinTypeBasicSymbolsResolver() {
     // default values
     this.collectionTypeRelations = new OCLCollectionTypeRelations();
+    this.symTypeRelations = new OCLSymTypeRelations();
   }
 
   protected OCLCollectionTypeRelations getCollTypeRel() {

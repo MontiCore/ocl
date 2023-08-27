@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.base.Preconditions;
 import de.monticore.io.paths.MCPath;
+import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.se_rwth.commons.logging.Log;
-import de.se_rwth.commons.logging.LogStub;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -30,7 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class OCL2JavaGeneratorTest {
+public class OCL2JavaGeneratorTest extends AbstractTest {
 
   protected static final String RELATIVE_MODEL_PATH = "src/test/resources";
 
@@ -41,12 +41,6 @@ public class OCL2JavaGeneratorTest {
   protected static final String PACKAGE = "invariants";
 
   protected static final String TEST_TARGET_PATH = "codegen/invariants";
-
-  private void initLogger() {
-    LogStub.init();
-    Log.enableFailQuick(false);
-    Log.getFindings().clear();
-  }
 
   @BeforeEach
   protected void init() {
@@ -83,6 +77,7 @@ public class OCL2JavaGeneratorTest {
 
     // Then
     compile(target);
+    assertNoFindings();
   }
 
   protected ASTOCLCompilationUnit loadASTWithSymbols(File input) throws IOException {
