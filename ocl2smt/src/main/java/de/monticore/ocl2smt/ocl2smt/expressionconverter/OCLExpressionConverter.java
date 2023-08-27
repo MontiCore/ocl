@@ -316,7 +316,6 @@ public class OCLExpressionConverter extends Expression2smt {
   /** convert a field access expression when the result produces a set */
   protected SMTSet convertFieldAccessSet(ASTFieldAccessExpression node) {
     SymTypeExpression elementType = TypeConverter.deriveType(node);
-    OCLType t = TypeConverter.getInnerTypeOfGenericType(elementType);
     return convertFieldAccessSetHelper(node.getExpression(), node.getName());
   }
 
