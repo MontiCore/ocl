@@ -10,8 +10,6 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl.types3.OCLTypeTraverserFactory;
 import de.monticore.ocl2smt.helpers.IOHelper;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbolSurrogate;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
@@ -161,14 +159,6 @@ public class TypeConverter {
     }
 
     return typeExpr;
-    /*  Optional<SymTypeExpression> typeExpr =
-        Optional.ofNullable(new OCLDeriver().deriveType(node).getResult());
-    if (typeExpr.isEmpty()) {
-      Log.error("Unable to derive the type of the expression " + IOHelper.print(node));
-      assert false;
-    }
-
-    return typeExpr.get();*/
   }
 
   public static boolean hasObjectType(ASTExpression node, Set<String> typeNames) {
@@ -187,17 +177,5 @@ public class TypeConverter {
 
   public static boolean isPrimitiv(String typeName) {
     return typeMap.containsKey(OCLType.buildOCLType(typeName));
-  }
-
-  public static OCLType getInnerTypeOfGenericType(SymTypeExpression typeExpression) {
-    if (!typeExpression.isGenericType()) {
-      Log.error(
-          "cann not compute the innerType of a  the non generic type " + typeExpression.print());
-      return null;
-    }
-    TypeSymbol symbol = typeExpression.getTypeInfo();
-    TypeSymbolSurrogate s = (TypeSymbolSurrogate) symbol;
-    List<VariableSymbol> kk = symbol.getVariableList();
-    return null;
   }
 }
