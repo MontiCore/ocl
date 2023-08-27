@@ -21,8 +21,8 @@ ocl NC1 {
         (exists Person p1 in a2.person, Person p2 in a2.person:
             p1 == p2);
 
- context Person p1, Person p2 inv Assoc5:
-   p1.parent == p2.parent ;
+  context Person p1, Person p2 inv Assoc5:
+    p1.parent == p2.parent ;
 
 
  context Person p  inv Assoc6 :

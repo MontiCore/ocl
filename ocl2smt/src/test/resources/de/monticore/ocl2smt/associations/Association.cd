@@ -6,6 +6,9 @@ classdiagram Association{
     int auctionIdent;
   }
 
+  class Parent {
+    int age;
+  }
 
   class Enterprise {
    String name ;

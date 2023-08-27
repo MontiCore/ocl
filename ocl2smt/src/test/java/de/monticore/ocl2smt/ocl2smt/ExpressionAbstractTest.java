@@ -66,7 +66,7 @@ public abstract class ExpressionAbstractTest extends OCL2SMTAbstractTest {
   public void testUnsatInv(Set<String> invNames, String directory) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
     invNames.forEach(name -> solverConstraints.add(getConstraint(name)));
-    System.out.println(solverConstraints.get(0).getValue()); // TODO: 24.08.23  remove
+
     IOHelper.printOD(checkUnSat(solverConstraints), Path.of(RELATIVE_TARGET_PATH + directory));
   }
 

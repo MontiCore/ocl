@@ -17,11 +17,7 @@ public class StringOperationsTest extends ExpressionAbstractTest {
   }
 
   @ParameterizedTest
-  @ValueSource(
-      strings = {
-          /*"String1", "String3", "String4", "String6", "String8"*/
-        "String10"
-      })
+  @ValueSource(strings = {"String1", "String3", "String4", "String6", "String8", "String10"})
   public void TestStringOperationsSAT(String value) {
     addConstraint(value);
     Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
