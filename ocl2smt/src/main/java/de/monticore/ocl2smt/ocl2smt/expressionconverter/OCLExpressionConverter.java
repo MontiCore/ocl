@@ -1,5 +1,10 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
+import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
+import static de.monticore.ocl2smt.helpers.IOHelper.print;
+import static de.monticore.ocl2smt.helpers.IOHelper.printPosition;
+// TODO: 24.08.23 make contant declaration unique
+
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
@@ -25,17 +30,11 @@ import de.monticore.ocl2smt.visitors.SetGeneratorCollector;
 import de.monticore.ocl2smt.visitors.SetVariableCollector;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
-import static de.monticore.ocl2smt.helpers.IOHelper.print;
-import static de.monticore.ocl2smt.helpers.IOHelper.printPosition;
-// TODO: 24.08.23 make contant declaration unique
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 /** This class convert All OCL-Expressions except @Pre-Expressions in SMT */
 public class OCLExpressionConverter extends Expression2smt {
@@ -752,7 +751,7 @@ public class OCLExpressionConverter extends Expression2smt {
     ASTCDAssociation association = CDHelper.getAssociation(objClass, otherRole, getCD());
     Sort thisSort = typeConverter.deriveSort(type);
     FuncDecl<BoolSort> rel =
-            ctx.mkFuncDecl("reflexive_relation", new Sort[]{thisSort, thisSort}, ctx.mkBoolSort());
+        ctx.mkFuncDecl("reflexive_relation", new Sort[] {thisSort, thisSort}, ctx.mkBoolSort());
     Expr<? extends Sort> obj1 = declVariable(type, "obj1");
     Expr<? extends Sort> obj2 = declVariable(type, "obj2");
     BoolExpr rel_is_assocFunc =
@@ -793,8 +792,8 @@ public class OCLExpressionConverter extends Expression2smt {
 
       if (!TypeConverter.hasSimpleType(getType(entry).getName())) {
         ASTCDType type =
-                CDHelper.getASTCDType(
-                        getType(entry).getName(), cd2smtGenerator.getClassDiagram().getCDDefinition());
+            CDHelper.getASTCDType(
+                getType(entry).getName(), cd2smtGenerator.getClassDiagram().getCDDefinition());
         filter = ctx.mkAnd(filter, cd2smtGenerator.filterObject(entry, type));
       }
     }

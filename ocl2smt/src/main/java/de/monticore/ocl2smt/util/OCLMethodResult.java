@@ -7,7 +7,6 @@ import com.microsoft.z3.Sort;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

@@ -17,7 +17,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types3.Type4Ast;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +43,7 @@ public class TypeConverter {
    */
   public static boolean hasSimpleType(ASTExpression node) {
     Set<String> primTypes =
-            typeMap.keySet().stream().map(OCLType::getName).collect(Collectors.toSet());
+        typeMap.keySet().stream().map(OCLType::getName).collect(Collectors.toSet());
     return hasType(node, primTypes);
   }
 

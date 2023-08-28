@@ -13,7 +13,6 @@ import de.monticore.ocl.oclexpressions._ast.ASTIfThenElseExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTImpliesExpression;
 import de.monticore.ocl2smt.util.TypeConverter;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Optional;
 
 public abstract class Expression2smt {
