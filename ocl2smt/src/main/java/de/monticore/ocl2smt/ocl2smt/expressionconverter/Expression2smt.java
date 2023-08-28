@@ -8,11 +8,13 @@ import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.literals.mccommonliterals._ast.*;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
-import de.monticore.ocl.oclexpressions._ast.*;
+import de.monticore.ocl.oclexpressions._ast.ASTEquivalentExpression;
+import de.monticore.ocl.oclexpressions._ast.ASTIfThenElseExpression;
+import de.monticore.ocl.oclexpressions._ast.ASTImpliesExpression;
 import de.monticore.ocl2smt.util.TypeConverter;
-import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
-import java.util.*;
+
+import java.util.Optional;
 
 public abstract class Expression2smt {
 
@@ -131,10 +133,10 @@ public abstract class Expression2smt {
    * ++++++++++++++++++++++++++++++++++++++++++method-call-expressions++++++++++++++++++++++++++++++++++++++++++++++++++
    */
 
-  /** convert method call that return an expression* */
+  /** convert method call that returns an expression* */
   protected Expr<? extends Sort> convertCallObject(ASTCallExpression node) {
     ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
-    if (TypeConverter.isString(caller)) {
+    if (TypeConverter.hasStringType(caller)) {
       return convertStringOpt(node).orElse(null);
     }
     return null;
@@ -152,9 +154,9 @@ public abstract class Expression2smt {
     BoolExpr res = null;
     ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
     String methodName = ((ASTFieldAccessExpression) node.getExpression()).getName();
-    if (TypeConverter.isString(caller)) {
+    if (TypeConverter.hasStringType(caller)) {
       res = convertBoolStringOp(caller, node.getArguments().getExpression(0), methodName);
-    } else if (TypeConverter.isDate(caller)) {
+    } else if (TypeConverter.hasDateType(caller)) {
       res = convertBoolDateOp(caller, node.getArguments().getExpression(0), methodName);
     }
 
@@ -199,7 +201,7 @@ public abstract class Expression2smt {
 
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
     BoolExpr result;
-    SymTypeExpression nodeType = TypeConverter.deriveType(node);
+
     if (node instanceof ASTBooleanAndOpExpression) {
       result = convert((ASTBooleanAndOpExpression) node);
     } else if (node instanceof ASTBooleanOrOpExpression) {
@@ -222,7 +224,7 @@ public abstract class Expression2smt {
       result = convert((ASTGreaterThanExpression) node);
     } else if (node instanceof ASTImpliesExpression) {
       result = convert((ASTImpliesExpression) node);
-    } else if (node instanceof ASTCallExpression && TypeConverter.isBoolean(nodeType)) {
+    } else if (node instanceof ASTCallExpression && TypeConverter.hasBooleanType(node)) {
       result = convertMethodCallBool((ASTCallExpression) node);
     } else if (node instanceof ASTEquivalentExpression) {
       result = convert((ASTEquivalentExpression) node);
@@ -285,7 +287,7 @@ public abstract class Expression2smt {
 
     if ((node instanceof ASTPlusExpression && isStringConcat((ASTPlusExpression) node))) {
       result = convertStringConcat((ASTPlusExpression) node);
-    } else if (node instanceof ASTCallExpression && TypeConverter.isString(node)) {
+    } else if (node instanceof ASTCallExpression && TypeConverter.hasStringType(node)) {
       result = convertCallerString((ASTCallExpression) node);
     } else {
       Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);

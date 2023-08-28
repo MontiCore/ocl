@@ -1,9 +1,5 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
-import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
-import static de.monticore.ocl2smt.helpers.IOHelper.print;
-import static de.monticore.ocl2smt.helpers.IOHelper.printPosition;
-
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
@@ -13,10 +9,7 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.expressions.commonexpressions._ast.ASTBracketExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTCallExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
+import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.ocl.ocl.OCLMill;
@@ -32,11 +25,16 @@ import de.monticore.ocl2smt.visitors.SetGeneratorCollector;
 import de.monticore.ocl2smt.visitors.SetVariableCollector;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+
+import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
+import static de.monticore.ocl2smt.helpers.IOHelper.print;
+import static de.monticore.ocl2smt.helpers.IOHelper.printPosition;
 // TODO: 24.08.23 make contant declaration unique
 
 /** This class convert All OCL-Expressions except @Pre-Expressions in SMT */
@@ -87,17 +85,28 @@ public class OCLExpressionConverter extends Expression2smt {
   }
 
   public Expr<? extends Sort> declVariable(OCLType type, String name) {
-    Expr<? extends Sort> res = declObj(type, name);
-    varNames.put(name, res);
-    return res;
+    Expr<? extends Sort> expr = ctx.mkConst(name, typeConverter.deriveSort(type));
+    varNames.put(name, expr);
+    varTypes.put(expr, type);
+    return expr;
   }
 
   @Override
   protected BoolExpr convert(ASTEqualsExpression node) {
-    if (TypeConverter.isSet(node.getRight()) && TypeConverter.isSet(node.getLeft())) {
+    // case comparison of sets
+    if (TypeConverter.hasSetType(node.getRight()) && TypeConverter.hasSetType(node.getLeft())) {
       return convertSet(node.getLeft()).mkSetEq(convertSet(node.getRight()));
     }
     return ctx.mkEq(convertExpr(node.getLeft()), convertExpr(node.getRight()));
+  }
+
+  @Override
+  protected BoolExpr convert(ASTNotEqualsExpression node) {
+    // case comparison of sets
+    if (TypeConverter.hasSetType(node.getRight()) && TypeConverter.hasSetType(node.getLeft())) {
+      return ctx.mkNot(convertSet(node.getLeft()).mkSetEq(convertSet(node.getRight())));
+    }
+    return ctx.mkNot(ctx.mkEq(convertExpr(node.getLeft()), convertExpr(node.getRight())));
   }
 
   protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
@@ -105,7 +114,7 @@ public class OCLExpressionConverter extends Expression2smt {
     if (result != null) {
       return Optional.of(result);
     }
-    SymTypeExpression nodeType = TypeConverter.deriveType(node);
+
     if (node instanceof ASTForallExpression) {
       result = convertForAll((ASTForallExpression) node);
     } else if (node instanceof ASTExistsExpression) {
@@ -114,7 +123,7 @@ public class OCLExpressionConverter extends Expression2smt {
       result = convertSetIn((ASTSetInExpression) node);
     } else if (node instanceof ASTSetNotInExpression) {
       result = convertSetNotIn((ASTSetNotInExpression) node);
-    } else if (node instanceof ASTCallExpression && TypeConverter.isBoolean(nodeType)) {
+    } else if (node instanceof ASTCallExpression && TypeConverter.hasBooleanType(node)) {
       result = convertMethodCallBool((ASTCallExpression) node);
     } else {
       Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
@@ -149,11 +158,11 @@ public class OCLExpressionConverter extends Expression2smt {
     if (node.getExpression() instanceof ASTFieldAccessExpression) {
       ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
       String methodName = ((ASTFieldAccessExpression) node.getExpression()).getName();
-      if (TypeConverter.isString(caller)) {
+      if (TypeConverter.hasStringType(caller)) {
         res = convertBoolStringOp(caller, node.getArguments().getExpression(0), methodName);
-      } else if (TypeConverter.isDate(caller)) {
+      } else if (TypeConverter.hasDateType(caller)) {
         res = convertBoolDateOp(caller, node.getArguments().getExpression(0), methodName);
-      } else if (TypeConverter.isSet(caller)) {
+      } else if (TypeConverter.hasSetType(caller)) {
         res = convertBoolSetOp(node, methodName);
       } else if (TypeConverter.hasOptionalType(caller)) {
         if (caller instanceof ASTFieldAccessExpression) {
@@ -301,7 +310,7 @@ public class OCLExpressionConverter extends Expression2smt {
     ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
 
     if (TypeConverter.hasOptionalType(caller) && methodName.equals("get")) {
-
+      // TODO: 28.08.2023  fixme
       Pair<Expr<? extends Sort>, BoolExpr> res =
           convertFieldAccOptional((ASTFieldAccessExpression) caller);
       genConstraints.add(res.getRight());
@@ -321,16 +330,16 @@ public class OCLExpressionConverter extends Expression2smt {
 
   protected SMTSet convertFieldAccessSetHelper(ASTExpression node, String name) {
 
-    // case we have a simple field access. e.g. node = p, name = auction
+    // case we have simple field access. e.g. node = p, name = auction
     if (!(node instanceof ASTFieldAccessExpression)) {
       Expr<? extends Sort> expr = convertExpr(node);
       return convertSimpleFieldAccessSet(expr, name);
     }
 
-    // case we have a nested field access. e.g. node = p.auction, name = person
+    // case we have nested field access. e.g. node = p.auction, name = person
     SMTSet leftSet = convertSet(node);
 
-    // convert compute the type of the element of the right Set
+    // computes the type of the element of the right Set
     OCLType type1 = leftSet.getType();
     ASTCDAssociation person_parent = OCLHelper.getAssociation(type1, name, getCD());
     OCLType rightSetElemType = OCLHelper.getOtherType(person_parent, type1, name, getCD());
@@ -403,8 +412,7 @@ public class OCLExpressionConverter extends Expression2smt {
     return new SMTSet(auction_per_set, type2, this);
   }
 
-  // ======================================End
-  // ASTFieldAccessExpression====================================================
+  // ======================================End ASTFieldAccessExpression============================
   protected void closeScope(List<ASTInDeclaration> inDeclarations) {
     for (ASTInDeclaration decl : inDeclarations) {
       for (ASTInDeclarationVariable var : decl.getInDeclarationVariableList()) {
@@ -485,7 +493,7 @@ public class OCLExpressionConverter extends Expression2smt {
    * @return the set of all variable of the set comprehension scope.
    */
   private Set<String> openSetCompScope(ASTSetComprehension node) {
-    // collect all variable in the set comp
+    // collect all variables in the set comp
     OCLTraverser traverser = OCLMill.traverser();
     SetVariableCollector varCollector = new SetVariableCollector();
     SetGeneratorCollector generatorCollector = new SetGeneratorCollector();
@@ -742,9 +750,9 @@ public class OCLExpressionConverter extends Expression2smt {
   private FuncDecl<BoolSort> buildReflexiveNewAssocFunc(OCLType type, String otherRole) {
     ASTCDType objClass = getASTCDType(type.getName(), getCD());
     ASTCDAssociation association = CDHelper.getAssociation(objClass, otherRole, getCD());
-    Sort thisSort = typeConverter.getSort(type);
+    Sort thisSort = typeConverter.deriveSort(type);
     FuncDecl<BoolSort> rel =
-        ctx.mkFuncDecl("reflexive_relation", new Sort[] {thisSort, thisSort}, ctx.mkBoolSort());
+            ctx.mkFuncDecl("reflexive_relation", new Sort[]{thisSort, thisSort}, ctx.mkBoolSort());
     Expr<? extends Sort> obj1 = declVariable(type, "obj1");
     Expr<? extends Sort> obj2 = declVariable(type, "obj2");
     BoolExpr rel_is_assocFunc =
@@ -762,22 +770,6 @@ public class OCLExpressionConverter extends Expression2smt {
     OCLType type = typeConverter.buildOCLType(typeExpr);
     return declVariable(type, node.getName());
   }
-
-  /*  private boolean methodReturnsString(ASTCallExpression node) {
-    if (node.getDefiningSymbol().isPresent()) {
-      String name = node.getDefiningSymbol().get().getName();
-      return (name.equals("replace"));
-    }
-    return false;
-  }
-
-  private boolean isAddition(ASTPlusExpression node) {
-    return (convertExpr(node.getLeft()).isInt() || convertExpr(node.getLeft()).isReal());
-  }
-
-  private boolean isStringConcat(ASTPlusExpression node) {
-    return convertExpr((node).getLeft()).getSort().getName().isStringSymbol();
-  }*/
 
   private void notFullyImplemented(ASTExpression node) {
     Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
@@ -799,20 +791,14 @@ public class OCLExpressionConverter extends Expression2smt {
     BoolExpr filter = ctx.mkTrue();
     for (Expr<?> entry : vars) {
 
-      if (!TypeConverter.isPrimitiv(getType(entry).getName())) {
+      if (!TypeConverter.hasSimpleType(getType(entry).getName())) {
         ASTCDType type =
-            CDHelper.getASTCDType(
-                getType(entry).getName(), cd2smtGenerator.getClassDiagram().getCDDefinition());
+                CDHelper.getASTCDType(
+                        getType(entry).getName(), cd2smtGenerator.getClassDiagram().getCDDefinition());
         filter = ctx.mkAnd(filter, cd2smtGenerator.filterObject(entry, type));
       }
     }
     return filter;
-  }
-
-  public Expr<? extends Sort> declObj(OCLType type, String name) {
-    Expr<? extends Sort> expr = ctx.mkConst(name, typeConverter.getSort(type));
-    varTypes.put(expr, type);
-    return expr;
   }
 
   public BoolExpr mkExists(Set<Expr<?>> vars, BoolExpr body) {
@@ -823,7 +809,7 @@ public class OCLExpressionConverter extends Expression2smt {
   public OCLType getType(Expr<? extends Sort> expr) {
     if (varTypes.containsKey(expr)) {
       return varTypes.get(expr);
-    } else if (TypeConverter.isPrimitiv(expr.getSort())) {
+    } else if (TypeConverter.hasSimpleType(expr.getSort())) {
       return OCLType.buildOCLType(expr.getSort().toString());
     }
     Log.error("Type not found for the Variable " + expr);

@@ -1,7 +1,5 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
-import static de.monticore.ocl2smt.helpers.OCLHelper.mkPre;
-
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -17,8 +15,11 @@ import de.monticore.ocl2smt.util.SMTSet;
 import de.monticore.ocl2smt.util.TypeConverter;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.se_rwth.commons.logging.Log;
-import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Optional;
+
+import static de.monticore.ocl2smt.helpers.OCLHelper.mkPre;
 
 /** This class convert All OCL-Expressions including @Pre-Expressions in SMT */
 public class FullOCLExpressionConverter extends OCLExpressionConverter {
@@ -181,7 +182,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     OCLType type2 = OCLHelper.getOtherType(association, getType(thisObj), role, getCD());
 
     String name = mkObjName(node.getName(), isPre);
-    Expr<? extends Sort> expr = declObj(type2, name);
+    Expr<? extends Sort> expr = declVariable(type2, name);
 
     // add association constraints to the general constraints
     genConstraints.add(
