@@ -13,6 +13,7 @@ import de.monticore.ocl.oclexpressions._ast.ASTIfThenElseExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTImpliesExpression;
 import de.monticore.ocl2smt.util.TypeConverter;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.Optional;
 
 public abstract class Expression2smt {
@@ -128,15 +129,17 @@ public abstract class Expression2smt {
     return ctx.mkSub(convertExprArith(node.getLeft()), convertExprArith(node.getRight()));
   }
 
-  /***
+  /*
    * ++++++++++++++++++++++++++++++++++++++++++method-call-expressions++++++++++++++++++++++++++++++++++++++++++++++++++
    */
 
   /** convert method call that returns an expression* */
   protected Expr<? extends Sort> convertCallObject(ASTCallExpression node) {
-    ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
-    if (TypeConverter.hasStringType(caller)) {
-      return convertStringOpt(node).orElse(null);
+    if (node.getExpression() instanceof ASTFieldAccessExpression) {
+      ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
+      if (TypeConverter.hasStringType(caller)) {
+        return convertStringOpt(node).orElse(null);
+      }
     }
     return null;
   }
@@ -151,14 +154,15 @@ public abstract class Expression2smt {
    */
   protected BoolExpr convertMethodCallBool(ASTCallExpression node) {
     BoolExpr res = null;
-    ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
-    String methodName = ((ASTFieldAccessExpression) node.getExpression()).getName();
-    if (TypeConverter.hasStringType(caller)) {
-      res = convertBoolStringOp(caller, node.getArguments().getExpression(0), methodName);
-    } else if (TypeConverter.hasDateType(caller)) {
-      res = convertBoolDateOp(caller, node.getArguments().getExpression(0), methodName);
+    if (node.getExpression() instanceof ASTFieldAccessExpression) {
+      ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
+      String methodName = ((ASTFieldAccessExpression) node.getExpression()).getName();
+      if (TypeConverter.hasStringType(caller)) {
+        res = convertBoolStringOp(caller, node.getArguments().getExpression(0), methodName);
+      } else if (TypeConverter.hasDateType(caller)) {
+        res = convertBoolDateOp(caller, node.getArguments().getExpression(0), methodName);
+      }
     }
-
     return res;
   }
   /***
@@ -166,17 +170,18 @@ public abstract class Expression2smt {
    * String.replace(x,y)
    */
   protected SeqExpr<CharSort> convertCallerString(ASTCallExpression node) {
-    ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
-    ASTArguments arguments = node.getArguments();
-    String methodName = ((ASTFieldAccessExpression) node.getExpression()).getName();
+    if (node.getExpression() instanceof ASTFieldAccessExpression) {
+      ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
+      ASTArguments arguments = node.getArguments();
+      String methodName = ((ASTFieldAccessExpression) node.getExpression()).getName();
 
-    SeqExpr<CharSort> str = convertString(caller);
-    if (methodName.equals("replace")) {
-      SeqExpr<CharSort> arg1 = convertString(arguments.getExpression(0));
-      SeqExpr<CharSort> arg2 = convertString(arguments.getExpression(1));
-      return ctx.mkReplace(str, arg1, arg2);
+      SeqExpr<CharSort> str = convertString(caller);
+      if (methodName.equals("replace")) {
+        SeqExpr<CharSort> arg1 = convertString(arguments.getExpression(0));
+        SeqExpr<CharSort> arg2 = convertString(arguments.getExpression(1));
+        return ctx.mkReplace(str, arg1, arg2);
+      }
     }
-
     return null;
   }
 
