@@ -23,6 +23,7 @@ import de.monticore.ocl.types3.util.OCLCollectionSymTypeFactory;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types3.Type4Ast;
@@ -341,7 +342,11 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
   }
 
   protected static Stream<Arguments> atPreQualificationExpressions() {
-    return Stream.of(Arguments.of("varboolean@pre", "boolean"), Arguments.of("varint@pre", "int"));
+    return Stream.of(
+        Arguments.of("varboolean@pre", "boolean"),
+        Arguments.of("varint@pre", "int"),
+        Arguments.of("varPerson@pre", "Person")
+    );
   }
 
   @ParameterizedTest
@@ -349,6 +354,21 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
   protected void checkAtPreQualificationExpression(String exprStr, String expectedType)
       throws IOException {
     checkExpr(exprStr, expectedType);
+  }
+
+  @Test
+  protected void complexAtPreTest1() throws IOException {
+    TypeSymbol person = BasicSymbolsMill.globalScope()
+        .resolveType("Person")
+        .get();
+    person.addFunctionSymbol(function("getAge", _intSymType));
+    person.addVariableSymbol(variable("age", _intSymType));
+    // todo enable test after type dispatcher fix
+    org.junit.jupiter.api.Assumptions.assumeFalse(true);
+    checkExpr("varPerson@pre.getAge()", "int");
+    checkExpr("(varPerson@pre).getAge()", "int");
+    checkExpr("varPerson@pre.age", "int");
+    checkExpr("(varPerson@pre).age", "int");
   }
 
   protected static Stream<Arguments> transitiveQualificationExpressions() {
