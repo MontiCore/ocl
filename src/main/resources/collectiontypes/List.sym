@@ -1,0 +1,561 @@
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "List",
+  "symbols": [
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+      "name": "List",
+      "spannedScope": {
+        "isShadowingScope": false,
+        "symbols": [
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol",
+            "name": "X"
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "add",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "List.X"
+                }
+              ]
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "o",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeVariable",
+                    "varName": "List.X"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "add",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "List.X"
+                }
+              ]
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "index",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypePrimitive",
+                    "primitiveName": "int"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "o",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeVariable",
+                    "varName": "List.X"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "prepend",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "List.X"
+                }
+              ]
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "o",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeVariable",
+                    "varName": "List.X"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "addAll",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "List.X"
+                }
+              ]
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "c",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfGenerics",
+                    "typeConstructorFullName": "Collection",
+                    "arguments": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "List.X"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "addAll",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "List.X"
+                }
+              ]
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "index",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypePrimitive",
+                    "primitiveName": "int"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "c",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfGenerics",
+                    "typeConstructorFullName": "Collection",
+                    "arguments": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "List.X"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "contains",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "boolean"
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "o",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeVariable",
+                    "varName": "List.X"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "containsAll",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "boolean"
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "c",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfGenerics",
+                    "typeConstructorFullName": "Collection",
+                    "arguments": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "List.X"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "get",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeVariable",
+              "varName": "List.X"
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "index",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypePrimitive",
+                    "primitiveName": "int"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "first",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeVariable",
+              "varName": "List.X"
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "last",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeVariable",
+              "varName": "List.X"
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "rest",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "List.X"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "indexOf",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "int"
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "o",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeVariable",
+                    "varName": "List.X"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "lastIndexOf",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "int"
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "o",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeVariable",
+                    "varName": "List.X"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "isEmpty",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "boolean"
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "count",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "int"
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "o",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeVariable",
+                    "varName": "List.X"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "remove",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "List.X"
+                }
+              ]
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "o",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeVariable",
+                    "varName": "List.X"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "removeAtIndex",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "List.X"
+                }
+              ]
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "index",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypePrimitive",
+                    "primitiveName": "int"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "removeAll",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "List.X"
+                }
+              ]
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "c",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfGenerics",
+                    "typeConstructorFullName": "Collection",
+                    "arguments": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "List.X"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "retainAll",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "List.X"
+                }
+              ]
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "c",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeOfGenerics",
+                    "typeConstructorFullName": "Collection",
+                    "arguments": [
+                      {
+                        "kind": "de.monticore.types.check.SymTypeVariable",
+                        "varName": "List.X"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "set",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "List.X"
+                }
+              ]
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "index",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypePrimitive",
+                    "primitiveName": "int"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "o",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypeVariable",
+                    "varName": "List.X"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "size",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "int"
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "subList",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "List.X"
+                }
+              ]
+            },
+            "spannedScope": {
+              "symbols": [
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "fromIndex",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypePrimitive",
+                    "primitiveName": "int"
+                  }
+                },
+                {
+                  "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+                  "name": "toIndex",
+                  "type": {
+                    "kind": "de.monticore.types.check.SymTypePrimitive",
+                    "primitiveName": "int"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "flatten",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "List",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "Y"
+                }
+              ]
+            }
+          },
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+            "name": "asSet",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "Set",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypeVariable",
+                  "varName": "List.X"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

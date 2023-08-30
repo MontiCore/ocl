@@ -1,0 +1,182 @@
+{
+  "generated-using": "www.MontiCore.de technology",
+  "name": "",
+  "symbols": [
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+      "name": "sum",
+      "type": {
+        "kind": "de.monticore.types.check.SymTypePrimitive",
+        "primitiveName": "int"
+      },
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+            "name": "c",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "Collection",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypePrimitive",
+                  "primitiveName": "int"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+      "name": "max",
+      "type": {
+        "kind": "de.monticore.types.check.SymTypePrimitive",
+        "primitiveName": "int"
+      },
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+            "name": "c",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "Collection",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypePrimitive",
+                  "primitiveName": "int"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+      "name": "min",
+      "type": {
+        "kind": "de.monticore.types.check.SymTypePrimitive",
+        "primitiveName": "int"
+      },
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+            "name": "c",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "Collection",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypePrimitive",
+                  "primitiveName": "int"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+      "name": "average",
+      "type": {
+        "kind": "de.monticore.types.check.SymTypePrimitive",
+        "primitiveName": "int"
+      },
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+            "name": "c",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "Collection",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypePrimitive",
+                  "primitiveName": "int"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+      "name": "sort",
+      "type": {
+        "kind": "de.monticore.types.check.SymTypeOfGenerics",
+        "typeConstructorFullName": "List",
+        "arguments": [
+          {
+            "kind": "de.monticore.types.check.SymTypePrimitive",
+            "primitiveName": "int"
+          }
+        ]
+      },
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+            "name": "c",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName": "Collection",
+              "arguments": [
+                {
+                  "kind": "de.monticore.types.check.SymTypePrimitive",
+                  "primitiveName": "int"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+      "name": "even",
+      "type": {
+        "kind": "de.monticore.types.check.SymTypePrimitive",
+        "primitiveName": "boolean"
+      },
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+            "name": "number",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "int"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+      "name": "odd",
+      "type": {
+        "kind": "de.monticore.types.check.SymTypePrimitive",
+        "primitiveName": "boolean"
+      },
+      "spannedScope": {
+        "symbols": [
+          {
+            "kind": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol",
+            "name": "number",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypePrimitive",
+              "primitiveName": "int"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

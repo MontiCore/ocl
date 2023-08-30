@@ -25,8 +25,7 @@ public class CollectionType {
             .setSpannedScope(OCLMill.scope())
             .build();
     collectionSymbol.getSpannedScope().setName("Collection");
-    typeVarSymbol =
-        OCLMill.typeVarSymbolBuilder().setSpannedScope(OCLMill.scope()).setName("X").build();
+    typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
     collectionSymbol.addTypeVarSymbol(typeVarSymbol);
 
     OCLMill.globalScope().add(collectionSymbol);
