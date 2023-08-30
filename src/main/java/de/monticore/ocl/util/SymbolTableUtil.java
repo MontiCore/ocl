@@ -39,6 +39,8 @@ public class SymbolTableUtil {
   }
 
   public static void addOclpLibrary() {
+    // todo replace after fix of
+    // https://git.rwth-aachen.de/monticore/monticore/-/issues/3508
     CollectionType c = new CollectionType();
     ListType l = new ListType();
     SetType s = new SetType();
@@ -53,6 +55,16 @@ public class SymbolTableUtil {
     s.addMethodsAndFields();
     g.addMethodsAndFields();
     o.addMethodsAndFields();
+    /*
+    IOCLGlobalScope gs = OCLMill.globalScope();
+    OCLSymbols2Json olcSym2json = new OCLSymbols2Json();
+    gs.addSubScope(olcSym2json.load(ClassLoader.getSystemResource("collectiontypes/List.sym")));
+    gs.addSubScope(olcSym2json.load(ClassLoader.getSystemResource("collectiontypes/Optional.sym")));
+    gs.addSubScope(olcSym2json.load(ClassLoader.getSystemResource("collectiontypes/Set.sym")));
+    gs.addSubScope(
+        olcSym2json.load(ClassLoader.getSystemResource("collectiontypes/Collection.sym")));
+    gs.addSubScope(olcSym2json.load(ClassLoader.getSystemResource("functions/GlobalQueries.sym")));
+     */
   }
 
   public static void runSymTabGenitor(ASTOCLCompilationUnit ast) {
