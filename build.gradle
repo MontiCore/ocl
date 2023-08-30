@@ -233,7 +233,6 @@ publishing {
   publications {
     mavenJava(MavenPublication) {
         from components.java
-        artifact symbolJar
     }
   }
   repositories.maven {
