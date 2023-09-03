@@ -31,7 +31,6 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;

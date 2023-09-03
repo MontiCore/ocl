@@ -7,13 +7,12 @@ import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
 import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
+import java.io.IOException;
+import java.nio.file.Path;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.nio.file.Path;
 
 public class FiniteOCLDiffTest extends OCLDiffAbstractTest {
   private final String TARGET_DIR = "target/generated-test/oclDiff/";
