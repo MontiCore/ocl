@@ -1,5 +1,9 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
+import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
+import static de.monticore.ocl2smt.helpers.IOHelper.print;
+import static de.monticore.ocl2smt.helpers.IOHelper.printPosition;
+
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
@@ -25,16 +29,11 @@ import de.monticore.ocl2smt.visitors.SetGeneratorCollector;
 import de.monticore.ocl2smt.visitors.SetVariableCollector;
 import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
-import static de.monticore.ocl2smt.helpers.IOHelper.print;
-import static de.monticore.ocl2smt.helpers.IOHelper.printPosition;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 /** This class convert All OCL-Expressions except @Pre-Expressions in SMT */
 public class OCLExpressionConverter extends Expression2smt {
@@ -313,7 +312,7 @@ public class OCLExpressionConverter extends Expression2smt {
       if (TypeConverter.hasOptionalType(caller) && methodName.equals("get")) {
         // TODO: 28.08.2023  fixme
         Pair<Expr<? extends Sort>, BoolExpr> res =
-                convertFieldAccOptional((ASTFieldAccessExpression) caller);
+            convertFieldAccOptional((ASTFieldAccessExpression) caller);
         genConstraints.add(res.getRight());
         return res.getLeft();
       }
