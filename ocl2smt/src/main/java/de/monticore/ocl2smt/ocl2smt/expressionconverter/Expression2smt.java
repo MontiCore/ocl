@@ -152,7 +152,7 @@ public abstract class Expression2smt {
    * -Date.before(Date)
    * -Date.after(Date)
    */
-  protected BoolExpr convertMethodCallBool(ASTCallExpression node) {
+  protected BoolExpr convertCallBool(ASTCallExpression node) {
     BoolExpr res = null;
     if (node.getExpression() instanceof ASTFieldAccessExpression) {
       ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
@@ -229,7 +229,7 @@ public abstract class Expression2smt {
     } else if (node instanceof ASTImpliesExpression) {
       result = convert((ASTImpliesExpression) node);
     } else if (node instanceof ASTCallExpression && TypeConverter.hasBooleanType(node)) {
-      result = convertMethodCallBool((ASTCallExpression) node);
+      result = convertCallBool((ASTCallExpression) node);
     } else if (node instanceof ASTEquivalentExpression) {
       result = convert((ASTEquivalentExpression) node);
     } else {

@@ -123,7 +123,7 @@ public class OCLExpressionConverter extends Expression2smt {
     } else if (node instanceof ASTSetNotInExpression) {
       result = convertSetNotIn((ASTSetNotInExpression) node);
     } else if (node instanceof ASTCallExpression && TypeConverter.hasBooleanType(node)) {
-      result = convertMethodCallBool((ASTCallExpression) node);
+        result = convertCallBool((ASTCallExpression) node);
     } else {
       Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
       if (buf.isPresent() && buf.get() instanceof BoolExpr) {
@@ -150,18 +150,18 @@ public class OCLExpressionConverter extends Expression2smt {
     return res;
   }
 
-  @Override
-  protected BoolExpr convertMethodCallBool(ASTCallExpression node) {
-    BoolExpr res = null;
+    @Override
+    protected BoolExpr convertCallBool(ASTCallExpression node) {
+        BoolExpr res = null;
 
-    if (node.getExpression() instanceof ASTFieldAccessExpression) {
-      ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
-      String methodName = ((ASTFieldAccessExpression) node.getExpression()).getName();
-      if (TypeConverter.hasStringType(caller)) {
-        res = convertBoolStringOp(caller, node.getArguments().getExpression(0), methodName);
-      } else if (TypeConverter.hasDateType(caller)) {
-        res = convertBoolDateOp(caller, node.getArguments().getExpression(0), methodName);
-      } else if (TypeConverter.hasSetType(caller)) {
+        if (node.getExpression() instanceof ASTFieldAccessExpression) {
+            ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
+            String methodName = ((ASTFieldAccessExpression) node.getExpression()).getName();
+            if (TypeConverter.hasStringType(caller)) {
+                res = convertBoolStringOp(caller, node.getArguments().getExpression(0), methodName);
+            } else if (TypeConverter.hasDateType(caller)) {
+                res = convertBoolDateOp(caller, node.getArguments().getExpression(0), methodName);
+            } else if (TypeConverter.hasSetType(caller)) {
         res = convertBoolSetOp(node, methodName);
       } else if (TypeConverter.hasOptionalType(caller)) {
         if (caller instanceof ASTFieldAccessExpression) {
@@ -312,8 +312,8 @@ public class OCLExpressionConverter extends Expression2smt {
 
       if (TypeConverter.hasOptionalType(caller) && methodName.equals("get")) {
         // TODO: 28.08.2023  fixme
-        Pair<Expr<? extends Sort>, BoolExpr> res =
-                convertFieldAccOptional((ASTFieldAccessExpression) caller);
+          Pair<Expr<? extends Sort>, BoolExpr> res =
+                  convertFieldAccOptional((ASTFieldAccessExpression) caller);
         genConstraints.add(res.getRight());
         return res.getLeft();
       }
