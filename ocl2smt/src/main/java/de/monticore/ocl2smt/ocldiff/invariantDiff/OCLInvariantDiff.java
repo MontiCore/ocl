@@ -107,7 +107,7 @@ public class OCLInvariantDiff {
     return oclDiffHelper(ocl2SMTGenerator, posConstraint, negConstraint, partial);
   }
 
-  private ASTODArtifact oclWitnessInternal(
+  protected ASTODArtifact oclWitnessInternal(
       ASTCDCompilationUnit cd,
       Set<ASTOCLCompilationUnit> in,
       Set<IdentifiableBoolExpr> additionalConstraints,

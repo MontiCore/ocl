@@ -45,10 +45,10 @@ public class SetType {
   public void addMethodsAndFields() {
     addFunctionAdd();
     addFunctionAddAll();
-    addFunctionContains();
-    addFunctionContainsAll();
+    //  addFunctionContains();
+    //   addFunctionContainsAll();
     addFunctionCount();
-    addFunctionIsEmpty();
+    //  addFunctionIsEmpty();
     addFunctionRemove();
     addFunctionRemoveAll();
     addFunctionRetainAll();

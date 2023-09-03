@@ -1,12 +1,6 @@
 package de.monticore.ocl.types;
 
-import static de.monticore.types3.util.DefsTypesForTests._booleanSymType;
-import static de.monticore.types3.util.DefsTypesForTests._intSymType;
-import static de.monticore.types3.util.DefsTypesForTests._personSymType;
-import static de.monticore.types3.util.DefsTypesForTests._studentSymType;
-import static de.monticore.types3.util.DefsTypesForTests.function;
-import static de.monticore.types3.util.DefsTypesForTests.inScope;
-import static de.monticore.types3.util.DefsTypesForTests.variable;
+import static de.monticore.types3.util.DefsTypesForTests.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;

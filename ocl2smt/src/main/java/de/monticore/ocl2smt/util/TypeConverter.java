@@ -10,6 +10,8 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl.types3.OCLTypeTraverserFactory;
 import de.monticore.ocl2smt.helpers.IOHelper;
+import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
