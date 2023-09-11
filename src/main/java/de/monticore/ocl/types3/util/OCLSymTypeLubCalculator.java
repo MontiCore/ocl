@@ -10,26 +10,18 @@ import java.util.stream.Collectors;
 
 public class OCLSymTypeLubCalculator extends SymTypeLubCalculator {
 
-  OCLSymTypeRelations oclSymTypeRelations;
-
-  public OCLSymTypeLubCalculator(OCLSymTypeRelations symTypeRelations) {
-    super(symTypeRelations);
-    this.oclSymTypeRelations = symTypeRelations;
-  }
-
-  @Override
-  protected OCLSymTypeRelations getSymTypeRelations() {
-    return oclSymTypeRelations;
+  public OCLSymTypeLubCalculator() {
+    OCLSymTypeRelations.init();
   }
 
   /** handles the OCL Collection types */
   @Override
   public Optional<SymTypeExpression> leastUpperBound(Collection<SymTypeExpression> types) {
     Optional<SymTypeExpression> lub;
-    if (types.stream().allMatch(t -> getSymTypeRelations().isOCLCollection(t))) {
+    if (types.stream().allMatch(OCLSymTypeRelations::isOCLCollection)) {
       Collection<SymTypeExpression> elementTypes =
           types.stream()
-              .map(c -> getSymTypeRelations().getCollectionElementType(c))
+              .map(OCLSymTypeRelations::getCollectionElementType)
               .collect(Collectors.toSet());
       // lub of element types
       Optional<SymTypeExpression> elementLub = leastUpperBound(elementTypes);
@@ -37,9 +29,9 @@ public class OCLSymTypeLubCalculator extends SymTypeLubCalculator {
         lub = Optional.empty();
       }
       // search for correct collection type
-      else if (types.stream().allMatch(c -> getSymTypeRelations().isList(c))) {
+      else if (types.stream().allMatch(OCLSymTypeRelations::isList)) {
         lub = Optional.of(OCLCollectionSymTypeFactory.createList(elementLub.get()));
-      } else if (types.stream().allMatch(c -> getSymTypeRelations().isSet(c))) {
+      } else if (types.stream().allMatch(OCLSymTypeRelations::isSet)) {
         lub = Optional.of(OCLCollectionSymTypeFactory.createSet(elementLub.get()));
       } else {
         lub = Optional.of(OCLCollectionSymTypeFactory.createOCLCollection(elementLub.get()));

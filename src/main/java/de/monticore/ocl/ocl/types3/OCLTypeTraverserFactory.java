@@ -10,8 +10,6 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.types.check.OCLExpressionsTypeVisitor;
 import de.monticore.ocl.types.check.OptionalOperatorsTypeVisitor;
 import de.monticore.ocl.types.check.SetExpressionsTypeVisitor;
-import de.monticore.ocl.types3.IOCLSymTypeRelations;
-import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.ocl.types3.util.OCLNameExpressionTypeCalculator;
 import de.monticore.ocl.types3.util.OCLWithinTypeBasicSymbolsResolver;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
@@ -66,21 +64,14 @@ public class OCLTypeTraverserFactory {
 
   protected VisitorList constructVisitors() {
     VisitorList visitors = constructVisitorsDefault();
-    IOCLSymTypeRelations oclSymTypeRelations = new OCLSymTypeRelations();
     WithinTypeBasicSymbolsResolver withinTypeBasicSymbolsResolver =
         new OCLWithinTypeBasicSymbolsResolver();
     NameExpressionTypeCalculator nameExpressionTypeCalculator =
         new OCLNameExpressionTypeCalculator();
-    FunctionRelations functionRelations = new FunctionRelations(oclSymTypeRelations);
-    visitors.derBitExpressions.setSymTypeRelations(oclSymTypeRelations);
-    visitors.derCommonExpressions.setSymTypeRelations(oclSymTypeRelations);
+    FunctionRelations functionRelations = new FunctionRelations();
     visitors.derCommonExpressions.setWithinTypeBasicSymbolsResolver(withinTypeBasicSymbolsResolver);
     visitors.derCommonExpressions.setNameExpressionTypeCalculator(nameExpressionTypeCalculator);
     visitors.derExpressionBasis.setNameExpressionTypeCalculator(nameExpressionTypeCalculator);
-    visitors.derCommonExpressions.setFunctionRelations(functionRelations);
-    visitors.derOCLExpressions.setSymTypeRelations(oclSymTypeRelations);
-    visitors.derOptionalOperators.setSymTypeRelations(oclSymTypeRelations);
-    visitors.derOptionalOperators.setSymTypeRelations(oclSymTypeRelations);
     visitors.synMCBasicTypes.setWithinTypeResolver(withinTypeBasicSymbolsResolver);
     visitors.synMCBasicTypes.setNameExpressionTypeCalculator(nameExpressionTypeCalculator);
     return visitors;

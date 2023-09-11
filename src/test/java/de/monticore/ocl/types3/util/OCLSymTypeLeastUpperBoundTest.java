@@ -20,7 +20,6 @@ import static de.monticore.types3.util.DefsTypesForTests.type;
 import static de.monticore.types3.util.DefsTypesForTests.typeVariable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import de.monticore.expressions.combineexpressionswithliterals._symboltable.ICombineExpressionsWithLiteralsScope;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
@@ -31,7 +30,6 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types3.AbstractTypeTest;
-import de.monticore.types3.ISymTypeRelations;
 import de.monticore.types3.util.DefsTypesForTests;
 import java.util.List;
 import java.util.Optional;
@@ -39,10 +37,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class OCLSymTypeLeastUpperBoundTest extends AbstractTypeTest {
-
-  protected ICombineExpressionsWithLiteralsScope scope;
-
-  ISymTypeRelations tr;
 
   SymTypeOfGenerics _unboxedCollectionSymType;
 
@@ -54,7 +48,7 @@ public class OCLSymTypeLeastUpperBoundTest extends AbstractTypeTest {
     OCLMill.init();
     DefsTypesForTests.setup();
     setupCollectionType();
-    tr = new OCLSymTypeRelations();
+    OCLSymTypeRelations.init();
   }
 
   protected void setupCollectionType() {
@@ -101,7 +95,7 @@ public class OCLSymTypeLeastUpperBoundTest extends AbstractTypeTest {
   }
 
   protected void checkLub(SymTypeExpression type, String expectedPrint) {
-    Optional<SymTypeExpression> lubOpt = tr.leastUpperBound(type);
+    Optional<SymTypeExpression> lubOpt = OCLSymTypeRelations.leastUpperBound(type);
     String printed = lubOpt.map(SymTypeExpression::printFullName).orElse("");
     assertNoFindings();
     assertEquals(expectedPrint, printed);

@@ -18,7 +18,7 @@ import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-import de.monticore.types3.ISymTypeRelations;
+import de.monticore.types3.util.SymTypeRelations;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 
@@ -39,8 +39,6 @@ public class OCLExpressionsSymbolTableCompleter
 
   protected ISynthesize synthesizer;
 
-  protected ISymTypeRelations symTypeRelations;
-
   public void setDeriver(IDerive deriver) {
     if (deriver != null) {
       this.deriver = deriver;
@@ -55,10 +53,6 @@ public class OCLExpressionsSymbolTableCompleter
     } else {
       Log.error("0xA3204 The synthesizer has to be set");
     }
-  }
-
-  public void setSymTypeRelations(ISymTypeRelations symTypeRelations) {
-    this.symTypeRelations = symTypeRelations;
   }
 
   public OCLExpressionsSymbolTableCompleter(
@@ -127,7 +121,7 @@ public class OCLExpressionsSymbolTableCompleter
         if (tcr_expr.isPresentResult()) {
           // if MCType present: check that type of expression and MCType are compatible
           if (typeResult.isPresentResult()
-              && !symTypeRelations.isCompatible(
+              && !SymTypeRelations.isCompatible(
                   typeResult.getResult(), OCLTypeCheck.unwrapSet(tcr_expr.getResult()))) {
             Log.error(
                 String.format(

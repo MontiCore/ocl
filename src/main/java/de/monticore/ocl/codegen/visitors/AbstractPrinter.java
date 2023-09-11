@@ -39,11 +39,6 @@ public abstract class AbstractPrinter {
     return this.syntheziser;
   }
 
-  protected IOCLSymTypeRelations symTypeRelations = new OCLSymTypeRelations();
-
-  protected IOCLSymTypeRelations getTypeRel() {
-    return symTypeRelations;
-  }
 
   protected IndentPrinter printer;
 
@@ -64,7 +59,7 @@ public abstract class AbstractPrinter {
     if (!type.isPresentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR);
     }
-    return getTypeRel().normalize(getTypeRel().box(type.getResult())).printFullName();
+    return OCLSymTypeRelations.normalize(OCLSymTypeRelations.box(type.getResult())).printFullName();
   }
 
   /**

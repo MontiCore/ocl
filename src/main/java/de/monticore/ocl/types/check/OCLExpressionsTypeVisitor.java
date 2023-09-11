@@ -4,13 +4,9 @@
 
 package de.monticore.ocl.types.check;
 
-import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
-import static de.monticore.types.check.SymTypeExpressionFactory.createUnion;
-
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
-import de.monticore.ocl.types3.IOCLSymTypeRelations;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeArray;
@@ -19,31 +15,21 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types3.AbstractTypeVisitor;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
+import static de.monticore.types.check.SymTypeExpressionFactory.createUnion;
+
 public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     implements OCLExpressionsVisitor2 {
 
-  // some parts are identical to CommenExpressionsTypeVisitor?...
-
-  protected IOCLSymTypeRelations typeRelations;
+  // some parts are identical to CommonExpressionsTypeVisitor?...
 
   public OCLExpressionsTypeVisitor() {
-    this(new OCLSymTypeRelations());
-  }
-
-  protected OCLExpressionsTypeVisitor(IOCLSymTypeRelations typeRelations) {
-    this.typeRelations = typeRelations;
-  }
-
-  public void setSymTypeRelations(IOCLSymTypeRelations symTypeRelations) {
-    this.typeRelations = symTypeRelations;
-  }
-
-  protected IOCLSymTypeRelations getTypeRel() {
-    return typeRelations;
+    OCLSymTypeRelations.init();
   }
 
   @Override
@@ -55,10 +41,10 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     if (typeResult.isObscureType() || exprResult.isObscureType()) {
       // if any inner obscure then error already logged
       result = createObscureType();
-    } else if (getTypeRel().isNumericType(typeResult) && getTypeRel().isNumericType(exprResult)) {
+    } else if (OCLSymTypeRelations.isNumericType(typeResult) && OCLSymTypeRelations.isNumericType(exprResult)) {
       // allow to cast numbers down, e.g., (int) 5.0 or (byte) 5
       result = typeResult;
-    } else if (getTypeRel().isSubTypeOf(exprResult, typeResult)) {
+    } else if (OCLSymTypeRelations.isSubTypeOf(exprResult, typeResult)) {
       // check whether typecast is possible
       result = typeResult;
     } else {
@@ -89,8 +75,8 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
         || elseResult.isObscureType()) {
       // if any inner obscure then error already logged
       result = createObscureType();
-    } else if (!getTypeRel().isSubTypeOf(typeResult, varResult)) {
-      if (getTypeRel().isSubTypeOf(varResult, typeResult)) {
+    } else if (!OCLSymTypeRelations.isSubTypeOf(typeResult, varResult)) {
+      if (OCLSymTypeRelations.isSubTypeOf(varResult, typeResult)) {
         Log.error(
             "0xFD290 checking whether '"
                 + expr.getName()
@@ -133,7 +119,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
         || elseResult.isObscureType()) {
       // if any inner obscure then error already logged
       result = createObscureType();
-    } else if (!getTypeRel().isBoolean(conditionResult)) {
+    } else if (!OCLSymTypeRelations.isBoolean(conditionResult)) {
       Log.error(
           "0xFD286 condition must be a Boolean expression, "
               + "but is of type "
@@ -181,7 +167,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     if (leftResult.isObscureType() || rightResult.isObscureType()) {
       // if any inner obscure then error already logged
       return createObscureType();
-    } else if (getTypeRel().isBoolean(leftResult) && getTypeRel().isBoolean(rightResult)) {
+    } else if (OCLSymTypeRelations.isBoolean(leftResult) && OCLSymTypeRelations.isBoolean(rightResult)) {
       return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     } else {
       // operator not applicable
@@ -204,7 +190,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     SymTypeExpression result;
     if (exprResult.isObscureType()) {
       result = createObscureType();
-    } else if (typeRelations.isBoolean(exprResult)) {
+    } else if (OCLSymTypeRelations.isBoolean(exprResult)) {
       result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     } else {
       Log.error(
@@ -226,7 +212,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     SymTypeExpression result;
     if (exprResult.isObscureType()) {
       result = createObscureType();
-    } else if (typeRelations.isBoolean(exprResult)) {
+    } else if (OCLSymTypeRelations.isBoolean(exprResult)) {
       result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     } else {
       result = createObscureType();
@@ -248,14 +234,14 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     SymTypeExpression result;
     if (exprResult.isObscureType()) {
       result = createObscureType();
-    } else if (!getTypeRel().isOCLCollection(exprResult)) {
+    } else if (!OCLSymTypeRelations.isOCLCollection(exprResult)) {
       Log.error(
           "0xFD292 expected a collection for 'any', but got " + exprResult.getTypeInfo(),
           expr.get_SourcePositionStart(),
           expr.get_SourcePositionEnd());
       result = createObscureType();
     } else {
-      result = getTypeRel().getCollectionElementType(exprResult);
+      result = OCLSymTypeRelations.getCollectionElementType(exprResult);
     }
     getType4Ast().setTypeOfExpression(expr, result);
   }
@@ -301,7 +287,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
           || inDelcResult.isObscureType()
           || valueResult.isObscureType()) {
         result = createObscureType();
-      } else if (!getTypeRel().isCompatible(initResult, valueResult)) {
+      } else if (!OCLSymTypeRelations.isCompatible(initResult, valueResult)) {
         Log.error(
             "0xFDC53 unable to assign the result of the expression ("
                 + valueResult.printFullName()
@@ -335,7 +321,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
             : Optional.empty();
     SymTypeExpression result;
 
-    if (expressionResult.isPresent() && !getTypeRel().isOCLCollection(expressionResult.get())) {
+    if (expressionResult.isPresent() && !OCLSymTypeRelations.isOCLCollection(expressionResult.get())) {
       Log.error(
           "0xFD297 expected collection after 'in', but got "
               + expressionResult.get().printFullName(),
@@ -344,9 +330,9 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
       result = createObscureType();
     } else if (expressionResult.isPresent()
         && typeResult.isPresent()
-        && !getTypeRel()
+        && !OCLSymTypeRelations
             .isCompatible(
-                typeResult.get(), getTypeRel().getCollectionElementType(expressionResult.get()))) {
+                typeResult.get(), OCLSymTypeRelations.getCollectionElementType(expressionResult.get()))) {
       Log.error(
           "0xFD298 cannot assign element of "
               + expressionResult.get().printFullName()
@@ -355,9 +341,9 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
           inDeclaration.get_SourcePositionStart(),
           inDeclaration.get_SourcePositionEnd());
       result = createObscureType();
-    } else if (!expressionResult.isPresent()
-        && (getTypeRel().isNumericType(typeResult.get())
-            || getTypeRel().isBoolean(typeResult.get()))) {
+    } else if (expressionResult.isEmpty()
+        && (OCLSymTypeRelations.isNumericType(typeResult.get())
+            || OCLSymTypeRelations.isBoolean(typeResult.get()))) {
       // this is technically not enough,
       // the correct check is whether the type is a domain class ->
       // if it is, one can get all instantiations
@@ -368,11 +354,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
           inDeclaration.getMCType().get_SourcePositionEnd());
       result = createObscureType();
     } else {
-      if (typeResult.isPresent()) {
-        result = typeResult.get();
-      } else {
-        result = getTypeRel().getCollectionElementType(expressionResult.get());
-      }
+      result = typeResult.orElseGet(() -> OCLSymTypeRelations.getCollectionElementType(expressionResult.get()));
     }
     return result;
   }
@@ -419,9 +401,9 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     SymTypeExpression result;
     SymTypeExpression currentArg = arguments.get(0);
     if (!toBeAccessed.isArrayType()
-        && !getTypeRel().isOCLCollection(toBeAccessed)
-        && !getTypeRel().isOptional(toBeAccessed)
-        && !getTypeRel().isMap(toBeAccessed)) {
+        && !OCLSymTypeRelations.isOCLCollection(toBeAccessed)
+        && !OCLSymTypeRelations.isOptional(toBeAccessed)
+        && !OCLSymTypeRelations.isMap(toBeAccessed)) {
       Log.error(
           "0xFD3D6 trying a qualified access on "
               + toBeAccessed.printFullName()
@@ -432,15 +414,15 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
       result = createObscureType();
     }
     // case qualified access based on order: List
-    else if (getTypeRel().isIntegralType(currentArg) && getTypeRel().isList(toBeAccessed)) {
+    else if (OCLSymTypeRelations.isIntegralType(currentArg) && OCLSymTypeRelations.isList(toBeAccessed)) {
       result =
           calculateArrayQualificationRec(
               expr,
-              getTypeRel().getCollectionElementType(toBeAccessed),
+              OCLSymTypeRelations.getCollectionElementType(toBeAccessed),
               arguments.subList(1, arguments.size()));
     }
     // case qualified access based on order: Array
-    else if (getTypeRel().isIntegralType(currentArg) && toBeAccessed.isArrayType()) {
+    else if (OCLSymTypeRelations.isIntegralType(currentArg) && toBeAccessed.isArrayType()) {
       result =
           calculateArrayQualificationRec(
               expr,
@@ -449,10 +431,10 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     }
     // case qualified access on OCLCollection
     // container.role[qualifier] == {elem.role[qualifier] | elem in container}
-    else if (getTypeRel().isOCLCollection(toBeAccessed) || getTypeRel().isOptional(toBeAccessed)) {
+    else if (OCLSymTypeRelations.isOCLCollection(toBeAccessed) || OCLSymTypeRelations.isOptional(toBeAccessed)) {
       SymTypeExpression preResultInnerType =
           calculateArrayQualificationRec(
-              expr, getTypeRel().getCollectionElementType(toBeAccessed), arguments.subList(0, 1));
+              expr, OCLSymTypeRelations.getCollectionElementType(toBeAccessed), arguments.subList(0, 1));
       // wrap in same kind of collection
       SymTypeOfGenerics wrappedPreResult = (SymTypeOfGenerics) toBeAccessed.deepClone();
       wrappedPreResult.setArgument(0, preResultInnerType);
@@ -462,12 +444,12 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
               expr, wrappedPreResult, arguments.subList(1, arguments.size()));
     }
     // case map access
-    else if (getTypeRel().isMap(toBeAccessed)) {
-      if (getTypeRel().isCompatible(getTypeRel().getMapKeyType(toBeAccessed), currentArg)) {
+    else if (OCLSymTypeRelations.isMap(toBeAccessed)) {
+      if (OCLSymTypeRelations.isCompatible(OCLSymTypeRelations.getMapKeyType(toBeAccessed), currentArg)) {
         result =
             calculateArrayQualificationRec(
                 expr,
-                getTypeRel().getCollectionElementType(toBeAccessed),
+                OCLSymTypeRelations.getCollectionElementType(toBeAccessed),
                 arguments.subList(1, arguments.size()));
       } else {
         Log.error(
