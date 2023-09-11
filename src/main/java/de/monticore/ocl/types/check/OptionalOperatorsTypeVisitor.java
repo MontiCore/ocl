@@ -1,19 +1,8 @@
 package de.monticore.ocl.types.check;
 
-import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
-
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.ocl.optionaloperators._ast.ASTOptionalEqualsExpression;
-import de.monticore.ocl.optionaloperators._ast.ASTOptionalExpressionPrefix;
-import de.monticore.ocl.optionaloperators._ast.ASTOptionalGreaterEqualExpression;
-import de.monticore.ocl.optionaloperators._ast.ASTOptionalGreaterThanExpression;
-import de.monticore.ocl.optionaloperators._ast.ASTOptionalLessEqualExpression;
-import de.monticore.ocl.optionaloperators._ast.ASTOptionalLessThanExpression;
-import de.monticore.ocl.optionaloperators._ast.ASTOptionalNotEqualsExpression;
-import de.monticore.ocl.optionaloperators._ast.ASTOptionalNotSimilarExpression;
-import de.monticore.ocl.optionaloperators._ast.ASTOptionalSimilarExpression;
+import de.monticore.ocl.optionaloperators._ast.*;
 import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsVisitor2;
-import de.monticore.ocl.types3.IOCLSymTypeRelations;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
@@ -21,25 +10,13 @@ import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types3.AbstractTypeVisitor;
 import de.se_rwth.commons.logging.Log;
 
+import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
+
 public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
     implements OptionalOperatorsVisitor2 {
 
-  protected IOCLSymTypeRelations typeRelations;
-
   public OptionalOperatorsTypeVisitor() {
-    this(new OCLSymTypeRelations());
-  }
-
-  protected OptionalOperatorsTypeVisitor(IOCLSymTypeRelations typeRelations) {
-    this.typeRelations = typeRelations;
-  }
-
-  public void setSymTypeRelations(IOCLSymTypeRelations typeRelations) {
-    this.typeRelations = typeRelations;
-  }
-
-  protected IOCLSymTypeRelations getTypeRel() {
-    return typeRelations;
+    OCLSymTypeRelations.init();
   }
 
   @Override
@@ -49,7 +26,7 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
     SymTypeExpression result;
     if (optionalResult.isObscureType() || exprResult.isObscureType()) {
       result = createObscureType();
-    } else if (!getTypeRel().isOptional(optionalResult)) {
+    } else if (!OCLSymTypeRelations.isOptional(optionalResult)) {
       Log.error(
           "0xFDB74 expected Optional at '?:' but got " + optionalResult.printFullName(),
           expr.getLeft().get_SourcePositionStart(),
@@ -58,8 +35,8 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
     }
     // check compatibility of type of optional and expression
     else {
-      SymTypeExpression elementType = getTypeRel().getCollectionElementType(optionalResult);
-      if (!getTypeRel().isCompatible(elementType, exprResult)) {
+      SymTypeExpression elementType = OCLSymTypeRelations.getCollectionElementType(optionalResult);
+      if (!OCLSymTypeRelations.isCompatible(elementType, exprResult)) {
         Log.error(
             String.format(
                 "0xFD201 The types '%s' and '%s' of OptionalExpressionPrefix are not compatible!",
@@ -108,14 +85,14 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
       return createObscureType();
     }
     // check that leftResult is of type Optional
-    else if (!getTypeRel().isOptional(leftResult)
-        || !getTypeRel().isNumericType(getTypeRel().getCollectionElementType(leftResult))) {
+    else if (!OCLSymTypeRelations.isOptional(leftResult)
+        || !OCLSymTypeRelations.isNumericType(OCLSymTypeRelations.getCollectionElementType(leftResult))) {
       Log.error(
           "0xFD209 expected Optional of a numeric type, but got " + leftResult.printFullName(),
           left.get_SourcePositionStart(),
           left.get_SourcePositionEnd());
       return createObscureType();
-    } else if (!getTypeRel().isNumericType(rightResult)) {
+    } else if (!OCLSymTypeRelations.isNumericType(rightResult)) {
       Log.error(
           "0xFD280 expected numeric type but got " + rightResult.printFullName(),
           right.get_SourcePositionStart(),
@@ -145,25 +122,25 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
 
     if (leftResult.isObscureType() || rightResult.isObscureType()) {
       return createObscureType();
-    } else if (!getTypeRel().isOptional(leftResult)) {
+    } else if (!OCLSymTypeRelations.isOptional(leftResult)) {
       Log.error(
           "0xFD283 expected Optional, but got " + leftResult.printFullName(),
           left.get_SourcePositionStart(),
           right.get_SourcePositionEnd());
       return createObscureType();
     } else {
-      SymTypeExpression elementType = getTypeRel().getCollectionElementType(leftResult);
+      SymTypeExpression elementType = OCLSymTypeRelations.getCollectionElementType(leftResult);
       // Option one: they are both numeric types
-      if (getTypeRel().isNumericType(elementType) && getTypeRel().isNumericType(rightResult)
-          || getTypeRel().isBoolean(elementType) && getTypeRel().isBoolean(rightResult)) {
+      if (OCLSymTypeRelations.isNumericType(elementType) && OCLSymTypeRelations.isNumericType(rightResult)
+          || OCLSymTypeRelations.isBoolean(elementType) && OCLSymTypeRelations.isBoolean(rightResult)) {
         return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
       }
       // Option two: none of them is a primitive type, and they are either the same type or in a
       // super/ subtype relation
       if (!leftResult.isPrimitive()
           && !rightResult.isPrimitive()
-          && (getTypeRel().isCompatible(elementType, rightResult)
-              || getTypeRel().isCompatible(rightResult, elementType))) {
+          && (OCLSymTypeRelations.isCompatible(elementType, rightResult)
+              || OCLSymTypeRelations.isCompatible(rightResult, elementType))) {
         return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
       } else {
         // should never happen, no valid result
@@ -202,7 +179,7 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
     if (leftType.isObscureType() || rightType.isObscureType()) {
       result = createObscureType();
     } else {
-      if (!getTypeRel().isOptional(leftType)) {
+      if (!OCLSymTypeRelations.isOptional(leftType)) {
         Log.error(
             "0xFD203 expected Optional but got " + leftType.printFullName(),
             expr.get_SourcePositionStart(),

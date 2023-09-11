@@ -1,23 +1,11 @@
 // (c) https://github.com/MontiCore/monticore
-package de.monticore.ocl.types3;
+package de.monticore.ocl.types3.util;
 
+import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.util.SymTypeCompatibilityCalculator;
 
 public class OCLSymTypeCompatibilityCalculator extends SymTypeCompatibilityCalculator {
-
-  protected IOCLSymTypeRelations oclSymTypeRelations;
-
-  public OCLSymTypeCompatibilityCalculator(IOCLSymTypeRelations symTypeRelations) {
-    super(symTypeRelations);
-    // default values
-    oclSymTypeRelations = symTypeRelations;
-  }
-
-  @Override
-  protected IOCLSymTypeRelations getSymTypeRelations() {
-    return this.oclSymTypeRelations;
-  }
 
   @Override
   protected boolean objectIsSubTypeOf(
@@ -30,18 +18,18 @@ public class OCLSymTypeCompatibilityCalculator extends SymTypeCompatibilityCalcu
     // s. Modelling with UML 3.3.7
     else if (
     // OCL collections
-    getSymTypeRelations().isOCLCollection(subType)
-        && getSymTypeRelations().isOCLCollection(superType)
+        OCLSymTypeRelations.isOCLCollection(subType)
+        && OCLSymTypeRelations.isOCLCollection(superType)
         &&
         // Set is-a Collection
-        (!getSymTypeRelations().isSet(superType) || getSymTypeRelations().isSet(subType))
+        (!OCLSymTypeRelations.isSet(superType) || OCLSymTypeRelations.isSet(subType))
         &&
         // List is-a Collection
-        (!getSymTypeRelations().isList(superType) || getSymTypeRelations().isList(subType))) {
+        (!OCLSymTypeRelations.isList(superType) || OCLSymTypeRelations.isList(subType))) {
       result =
           internal_isSubTypeOfPreNormalized(
-              getSymTypeRelations().getCollectionElementType(subType),
-              getSymTypeRelations().getCollectionElementType(superType),
+              OCLSymTypeRelations.getCollectionElementType(subType),
+              OCLSymTypeRelations.getCollectionElementType(superType),
               subTypeIsSoft);
     }
     // extension point

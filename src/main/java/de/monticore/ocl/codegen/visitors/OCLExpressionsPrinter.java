@@ -22,6 +22,7 @@ import de.monticore.ocl.oclexpressions._ast.ASTTypeIfExpression;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsHandler;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
@@ -41,6 +42,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter
     Preconditions.checkNotNull(naming);
     Preconditions.checkNotNull(deriver);
     Preconditions.checkNotNull(syntheziser);
+    OCLSymTypeRelations.init();
     this.printer = printer;
     this.naming = naming;
     this.deriver = deriver;
@@ -67,7 +69,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter
     printExpressionBeginLambda(getDeriver().deriveType(node));
     // TC1 -> TC3 hack
     TypeCheckResult type = this.getDeriver().deriveType(node);
-    type.setResult(getTypeRel().normalize(getTypeRel().box(type.getResult())));
+    type.setResult(OCLSymTypeRelations.normalize(OCLSymTypeRelations.box(type.getResult())));
     // returnType newName;
     if (!type.isPresentResult() || type.getResult().isObscureType()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
@@ -160,7 +162,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter
     printExpressionBeginLambda(getDeriver().deriveType(node));
     // TC1 -> TC3 hack
     TypeCheckResult type = this.getDeriver().deriveType(node);
-    type.setResult(getTypeRel().normalize(getTypeRel().box(type.getResult())));
+    type.setResult(OCLSymTypeRelations.normalize(OCLSymTypeRelations.box(type.getResult())));
     // expressionType newName;
     if (!type.isPresentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());

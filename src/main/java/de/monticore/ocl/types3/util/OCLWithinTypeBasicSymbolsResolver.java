@@ -10,6 +10,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory;
 import de.monticore.types3.util.OOWithinTypeBasicSymbolsResolver;
+
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -20,7 +21,7 @@ public class OCLWithinTypeBasicSymbolsResolver extends OOWithinTypeBasicSymbolsR
   public OCLWithinTypeBasicSymbolsResolver() {
     // default values
     this.collectionTypeRelations = new OCLCollectionTypeRelations();
-    this.symTypeRelations = new OCLSymTypeRelations();
+    OCLSymTypeRelations.init();
   }
 
   protected OCLCollectionTypeRelations getCollTypeRel() {

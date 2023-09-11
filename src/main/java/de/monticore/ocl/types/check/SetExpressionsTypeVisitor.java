@@ -20,7 +20,6 @@ import de.monticore.ocl.setexpressions._ast.ASTSetValueRange;
 import de.monticore.ocl.setexpressions._ast.ASTSetVariableDeclaration;
 import de.monticore.ocl.setexpressions._ast.ASTUnionExpression;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
-import de.monticore.ocl.types3.IOCLSymTypeRelations;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.ocl.types3.util.OCLCollectionSymTypeFactory;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
@@ -37,20 +36,10 @@ import java.util.stream.Collectors;
 public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     implements SetExpressionsVisitor2 {
 
-  protected IOCLSymTypeRelations typeRelations;
-
   public SetExpressionsTypeVisitor() {
-    this(new OCLSymTypeRelations());
+    OCLSymTypeRelations.init();
   }
-
-  protected SetExpressionsTypeVisitor(IOCLSymTypeRelations typeRelations) {
-    this.typeRelations = typeRelations;
-  }
-
-  protected IOCLSymTypeRelations getTypeRel() {
-    return typeRelations;
-  }
-
+  
   @Override
   public void endVisit(ASTSetInExpression expr) {
     var elemResult = getType4Ast().getPartialTypeOfExpr(expr.getElem());
@@ -72,12 +61,12 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     if (elemResult.isObscureType() || setResult.isObscureType()) {
       // error already logged
       result = SymTypeExpressionFactory.createObscureType();
-    } else if (getTypeRel().isOCLCollection(setResult)) {
-      SymTypeExpression setElemType = getTypeRel().getCollectionElementType(setResult);
+    } else if (OCLSymTypeRelations.isOCLCollection(setResult)) {
+      SymTypeExpression setElemType = OCLSymTypeRelations.getCollectionElementType(setResult);
       // it does not make any sense to ask if it is in the set
       // if it cannot be in the set
-      if (getTypeRel().isSubTypeOf(elemResult, setElemType)
-          || getTypeRel().isSubTypeOf(setElemType, elemResult)) {
+      if (OCLSymTypeRelations.isSubTypeOf(elemResult, setElemType)
+          || OCLSymTypeRelations.isSubTypeOf(setElemType, elemResult)) {
         result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
       } else {
         Log.error(
@@ -137,9 +126,9 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
 
     if (leftResult.isObscureType() || rightResult.isObscureType()) {
       result = createObscureType();
-    } else if (getTypeRel().isOCLCollection(leftResult)
-        && getTypeRel().isOCLCollection(rightResult)) {
-      Optional<SymTypeExpression> lub = getTypeRel().leastUpperBound(leftResult, rightResult);
+    } else if (OCLSymTypeRelations.isOCLCollection(leftResult)
+        && OCLSymTypeRelations.isOCLCollection(rightResult)) {
+      Optional<SymTypeExpression> lub = OCLSymTypeRelations.leastUpperBound(leftResult, rightResult);
       if (lub.isPresent()) {
         result = lub.get();
       } else {
@@ -181,8 +170,8 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     SymTypeExpression result;
     if (setType.isObscureType()) {
       result = createObscureType();
-    } else if (getTypeRel().isOCLCollection(setType)
-        && getTypeRel().isBoolean(getTypeRel().getCollectionElementType(setType))) {
+    } else if (OCLSymTypeRelations.isOCLCollection(setType)
+        && OCLSymTypeRelations.isBoolean(OCLSymTypeRelations.getCollectionElementType(setType))) {
       result = createPrimitive(BasicSymbolsMill.BOOLEAN);
     } else {
       Log.error(
@@ -212,7 +201,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     } else {
       assigneeType = SymTypeExpressionFactory.createTypeArray(mCType, varDecl.sizeDim());
     }
-    if (!getTypeRel().isCompatible(assigneeType, exprType)) {
+    if (!OCLSymTypeRelations.isCompatible(assigneeType, exprType)) {
       Log.error(
           "0xFD547 cannot assign"
               + exprType.printFullName()
@@ -238,7 +227,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
       SymTypeExpression boolExprType = getType4Ast().getPartialTypeOfExpr(boolExpr);
       if (boolExprType.isObscureType()) {
         isObscure = true;
-      } else if (!getTypeRel().isBoolean(boolExprType)) {
+      } else if (!OCLSymTypeRelations.isBoolean(boolExprType)) {
         Log.error(
             "0xFD554 filter expression in set comprehension "
                 + "need to be Boolean expressions, but got "
@@ -279,7 +268,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     if (exprType.isObscureType()) {
       return;
     }
-    if (!getTypeRel().isOCLCollection(exprType)) {
+    if (!OCLSymTypeRelations.isOCLCollection(exprType)) {
       Log.error(
           "0xFD548 expected a collection for generator declaration,"
               + " but got "
@@ -288,10 +277,10 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
           genDecl.getExpression().get_SourcePositionEnd());
       return;
     }
-    SymTypeExpression elementType = getTypeRel().getCollectionElementType(exprType);
+    SymTypeExpression elementType = OCLSymTypeRelations.getCollectionElementType(exprType);
     if (genDecl.isPresentMCType()) {
       SymTypeExpression mCType = getType4Ast().getPartialTypeOfTypeId(genDecl.getMCType());
-      if (!mCType.isObscureType() && !getTypeRel().isCompatible(mCType, elementType)) {
+      if (!mCType.isObscureType() && !OCLSymTypeRelations.isCompatible(mCType, elementType)) {
         Log.error(
             "0xFD549 cannot assign elements of collection of type "
                 + exprType.printFullName()
@@ -324,8 +313,8 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
             getType4Ast().getPartialTypeOfExpr(valueRange.getUpperBound());
         if (lowerRangeType.isObscureType() || upperRangeType.isObscureType()) {
           containedExprTypes.add(createObscureType());
-        } else if (!getTypeRel().isIntegralType(lowerRangeType)
-            || !getTypeRel().isIntegralType(lowerRangeType)) {
+        } else if (!OCLSymTypeRelations.isIntegralType(lowerRangeType)
+            || !OCLSymTypeRelations.isIntegralType(lowerRangeType)) {
           Log.error(
               "0xFD551 expected integral types in value range, "
                   + "but got "
@@ -366,7 +355,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     var leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLowerBound());
     var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getUpperBound());
     if (!leftResult.isObscureType() && !rightResult.isObscureType()) {
-      if (!getTypeRel().isIntegralType(leftResult) || !getTypeRel().isIntegralType(rightResult)) {
+      if (!OCLSymTypeRelations.isIntegralType(leftResult) || !OCLSymTypeRelations.isIntegralType(rightResult)) {
         Log.error(
             "0xFD217 bounds in SetValueRange "
                 + "are not integral types, but have to be, got "

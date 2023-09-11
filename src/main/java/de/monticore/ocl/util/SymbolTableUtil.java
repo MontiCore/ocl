@@ -84,7 +84,6 @@ public class SymbolTableUtil {
         new OCLExpressionsSymbolTableCompleter(ast.getMCImportStatementList(), ast.getPackage());
     stCompleter2.setDeriver(new TypeCheck3AsOCLDeriver());
     stCompleter2.setSynthesizer(new TypeCheck3AsOCLSynthesizer());
-    stCompleter2.setSymTypeRelations(new OCLSymTypeRelations());
     SetExpressionsSymbolTableCompleter stCompleter3 =
         new SetExpressionsSymbolTableCompleter(ast.getMCImportStatementList(), ast.getPackage());
     stCompleter3.setDeriver(new TypeCheck3AsOCLDeriver());
