@@ -148,7 +148,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     }
     Expr<? extends Sort> obj = convertExpr(node.getExpression());
     Pair<Expr<? extends Sort>, BoolExpr> res = convertFieldAccessSetHelper(obj, attributeName);
-    if (!TypeConverter.isOptional(node)) {
+    if (!TypeConverter.hasOptionalType(node)) {
       genConstraints.add(res.getRight());
     }
     return res.getLeft();
@@ -181,7 +181,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     OCLType type2 = OCLHelper.getOtherType(association, getType(thisObj), role, getCD());
 
     String name = mkObjName(node.getName(), isPre);
-    Expr<? extends Sort> expr = declObj(type2, name);
+    Expr<? extends Sort> expr = declVariable(type2, name);
 
     // add association constraints to the general constraints
     genConstraints.add(

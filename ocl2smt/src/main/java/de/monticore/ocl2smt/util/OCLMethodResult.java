@@ -37,7 +37,7 @@ public class OCLMethodResult {
 
       if (mcType.printType().startsWith("Set")) {
         String innerType = getSetElementType(mcType);
-        if (TypeConverter.isPrimitiv(innerType)) {
+        if (TypeConverter.hasSimpleType(innerType)) {
 
           oclType = OCLType.buildOCLType(innerType);
         } else if (!innerType.contains("<")) {
@@ -47,7 +47,7 @@ public class OCLMethodResult {
           Log.error("Method return Type " + type.printType() + " not Supported");
         }
         oclType = OCLType.buildOCLType(innerType);
-      } else if (TypeConverter.isPrimitiv(mcType.printType())) {
+      } else if (TypeConverter.hasSimpleType(mcType.printType())) {
         this.type = ResultType.PRIMITIVE;
         oclType = OCLType.buildOCLType(mcType.printType());
       } else if (!mcType.printType().contains("<")) {
@@ -63,7 +63,7 @@ public class OCLMethodResult {
   }
 
   public void setType(OCLType oclType) {
-    if (TypeConverter.isPrimitiv(oclType.getName())) {
+    if (TypeConverter.hasSimpleType(oclType.getName())) {
       this.type = ResultType.PRIMITIVE;
     } else {
       this.type = ResultType.OBJECT;

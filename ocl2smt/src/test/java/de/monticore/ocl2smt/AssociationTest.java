@@ -1,7 +1,6 @@
 package de.monticore.ocl2smt;
 
-import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.SS;
-import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.SSCOMB;
+import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.*;
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.ME;
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
 
