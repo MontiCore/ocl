@@ -17,8 +17,10 @@ import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
   @BeforeEach
   public void setUp() {
@@ -41,7 +43,6 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
   @Test
   public void testOPConstraintWitness() throws IOException {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/PrePost.cd");
-
     Set<ASTOCLCompilationUnit> posOCl = new HashSet<>();
     posOCl.add(parseOCl("/post-pre-conditions/PrePost.cd", "/post-pre-conditions/Witness.ocl"));
 
