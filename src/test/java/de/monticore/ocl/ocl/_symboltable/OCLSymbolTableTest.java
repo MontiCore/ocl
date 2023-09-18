@@ -7,12 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.util.SymbolTableUtil;
+import de.se_rwth.commons.logging.Finding;
+import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import de.se_rwth.commons.logging.Finding;
-import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -30,8 +29,7 @@ public class OCLSymbolTableTest extends AbstractTest {
   @MethodSource("getSymbolTableModels")
   public void shouldCreateSymTabForValidModels(String filename) throws IOException {
 
-    final Optional<ASTOCLCompilationUnit> ast =
-            parse(filename, false);
+    final Optional<ASTOCLCompilationUnit> ast = parse(filename, false);
     assertThat(ast).isPresent();
 
     SymbolTableUtil.prepareMill();
@@ -51,8 +49,7 @@ public class OCLSymbolTableTest extends AbstractTest {
   @MethodSource("getNoSymbolTableModels")
   public void shouldNotCreateSymTabForValidModels(String filename) throws IOException {
 
-    final Optional<ASTOCLCompilationUnit> ast =
-            parse(filename, false);
+    final Optional<ASTOCLCompilationUnit> ast = parse(filename, false);
     assertThat(ast).isPresent();
 
     SymbolTableUtil.prepareMill();
@@ -65,9 +62,9 @@ public class OCLSymbolTableTest extends AbstractTest {
     SymbolTableUtil.runSymTabCompleter(ast.get());
 
     assertFalse(
-            Log.getFindings().isEmpty(),
-            Log.getFindings().stream()
-                    .map(Finding::buildMsg)
-                    .collect(Collectors.joining(System.lineSeparator())));
+        Log.getFindings().isEmpty(),
+        Log.getFindings().stream()
+            .map(Finding::buildMsg)
+            .collect(Collectors.joining(System.lineSeparator())));
   }
 }

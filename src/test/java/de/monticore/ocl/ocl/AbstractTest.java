@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -48,16 +47,15 @@ public abstract class AbstractTest {
     return filenames;
   }
 
-
   public static String[] getModelsByFolder(String folderpath) {
 
     String modelDir = RELATIVE_MODEL_PATH + folderpath;
     File dirFile = new File(modelDir);
-    String[] extensions = new String[]{"ocl"};
+    String[] extensions = new String[] {"ocl"};
     List<File> models = (List<File>) FileUtils.listFiles(dirFile, extensions, true);
 
     String[] filenames = new String[models.size()];
-    for (int i=0; i< models.size(); i++) {
+    for (int i = 0; i < models.size(); i++) {
       filenames[i] = models.get(i).getPath();
     }
     assertThat(filenames).isNotNull();
@@ -65,7 +63,6 @@ public abstract class AbstractTest {
 
     return filenames;
   }
-
 
   public static String[] getModelsFromFile(String models_filename) {
     String filepath = RELATIVE_MODEL_PATH + "/sorting_results/" + models_filename;

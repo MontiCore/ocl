@@ -342,8 +342,7 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     return Stream.of(
         Arguments.of("varboolean@pre", "boolean"),
         Arguments.of("varint@pre", "int"),
-        Arguments.of("varPerson@pre", "Person")
-    );
+        Arguments.of("varPerson@pre", "Person"));
   }
 
   @ParameterizedTest
@@ -355,9 +354,7 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
 
   @Test
   protected void complexAtPreTest1() throws IOException {
-    TypeSymbol person = BasicSymbolsMill.globalScope()
-        .resolveType("Person")
-        .get();
+    TypeSymbol person = BasicSymbolsMill.globalScope().resolveType("Person").get();
     person.addFunctionSymbol(function("getAge", _intSymType));
     person.addVariableSymbol(variable("age", _intSymType));
     // todo enable test after type dispatcher fix

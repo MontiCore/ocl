@@ -30,7 +30,8 @@ public class TypeCheckTest extends AbstractTest {
 
     // given
     final Optional<ASTOCLCompilationUnit> ast =
-        parse(RELATIVE_MODEL_PATH + "/testinput/parsable/symtab/coco/not_javagen/" + filename, false);
+        parse(
+            RELATIVE_MODEL_PATH + "/testinput/parsable/symtab/coco/not_javagen/" + filename, false);
     assertThat(ast).isPresent();
 
     SymbolTableUtil.prepareMill();

@@ -12,8 +12,7 @@ import de.se_rwth.commons.logging.Log;
 public class VariableDeclarationOfCorrectType
     implements OCLExpressionsASTOCLVariableDeclarationCoCo {
 
-  public VariableDeclarationOfCorrectType(
-      IDerive iDerive, ISynthesize iSynthesize) {
+  public VariableDeclarationOfCorrectType(IDerive iDerive, ISynthesize iSynthesize) {
     setIDerive(iDerive);
     setISynthesize(iSynthesize);
     OCLSymTypeRelations.init();

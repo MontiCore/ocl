@@ -39,8 +39,7 @@ public class OCLCoCoTest extends AbstractTest {
     assumeFalse(filename.endsWith("validVariableName.ocl"));
 
     // given
-    final Optional<ASTOCLCompilationUnit> ast =
-            parse(filename, false);
+    final Optional<ASTOCLCompilationUnit> ast = parse(filename, false);
     assertTrue(ast.isPresent());
 
     SymbolTableUtil.prepareMill();
@@ -61,8 +60,7 @@ public class OCLCoCoTest extends AbstractTest {
   @MethodSource("getInvalidCocoModels")
   public void acceptsInvalidModels(String filename) {
 
-    final Optional<ASTOCLCompilationUnit> optAST =
-            parse(filename, false);
+    final Optional<ASTOCLCompilationUnit> optAST = parse(filename, false);
     assertTrue(optAST.isPresent());
     final ASTOCLCompilationUnit ast = optAST.get();
 
@@ -132,8 +130,7 @@ public class OCLCoCoTest extends AbstractTest {
       Log.getFindings().clear();
     }
 
-    assertFalse(
-            Log.getFindings().isEmpty());
+    assertFalse(Log.getFindings().isEmpty());
   }
 
   @ParameterizedTest
