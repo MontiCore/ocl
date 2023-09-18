@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.codegen;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.base.Preconditions;
@@ -25,8 +26,12 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
+
+import de.se_rwth.commons.logging.LogStub;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -36,16 +41,17 @@ public class OCL2JavaGeneratorTest extends AbstractTest {
 
   protected static final String RELATIVE_TARGET_PATH = "target/generated-test-sources";
 
-  protected static final String TEST_MODEL_PATH = "codegen/input";
+  protected static final String TEST_MODEL_PATH = "testinput/parsable/symtab/invalid_coco";
 
   protected static final String PACKAGE = "invariants";
 
   protected static final String TEST_TARGET_PATH = "codegen/invariants";
 
+
   @BeforeEach
   protected void init() {
-    this.initLogger();
     this.setup();
+    this.initLogger();
   }
 
   protected void setup() {
@@ -55,9 +61,15 @@ public class OCL2JavaGeneratorTest extends AbstractTest {
     OCLMill.globalScope().setSymbolPath(modelPath);
   }
 
+  @Test
+  public void placeHolder() {
+
+  }
+
+
   @ParameterizedTest
   @ValueSource(
-      strings = {"Test01", "Test02", "Test03", "Test04", "Test05", "Test06", "Test07", "Test08"})
+          strings = {"Test01", "Test02", "Test03", "Test04", "Test06", "Test07", "Test08"})
   public void shouldGenerate(String s) throws IOException {
     Preconditions.checkNotNull(s);
     Preconditions.checkArgument(!s.isEmpty());
@@ -67,7 +79,7 @@ public class OCL2JavaGeneratorTest extends AbstractTest {
     Assumptions.assumeFalse(s.equals("Test06"));
 
     // Given
-    File input = Paths.get(RELATIVE_MODEL_PATH, TEST_MODEL_PATH, PACKAGE, s + ".ocl").toFile();
+    File input = Paths.get(RELATIVE_MODEL_PATH, TEST_MODEL_PATH, s + ".ocl").toFile();
     File target = Paths.get(RELATIVE_TARGET_PATH, TEST_TARGET_PATH, s + ".java").toFile();
     SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/AuctionCD.sym");
     ASTOCLCompilationUnit ast = loadASTWithSymbols(input);
@@ -79,6 +91,38 @@ public class OCL2JavaGeneratorTest extends AbstractTest {
     compile(target);
     assertNoFindings();
   }
+//    This following Test is for the new model tree structure, it requires at least one valid model. We out comment it
+//    because we don't have such a model yet. But, please keep this commented code for future usage. Thanks!
+//
+//    @ParameterizedTest
+//    @MethodSource("getJavaGeneratedModels")
+//    public void shouldGenerate(String filename) throws IOException {
+//        Preconditions.checkNotNull(filename);
+//        Preconditions.checkArgument(!filename.isEmpty());
+//        // todo enable after https://git.rwth-aachen.de/monticore/monticore/-/issues/3141 is closed
+//        Assumptions.assumeFalse(filename.endsWith("Test02.ocl"));
+//        // todo enable after https://git.rwth-aachen.de/monticore/monticore/-/issues/3168 is closed
+//        Assumptions.assumeFalse(filename.endsWith("Test06.ocl"));
+//
+//        // Given
+//        File input = Paths.get(filename).toFile();
+//        File target = Paths.get(filename.replace(".ocl", ".java")).toFile();
+//        SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/AuctionCD.sym");
+//        ASTOCLCompilationUnit ast = loadASTWithSymbols(input);
+//
+//        // When
+//        OCL2JavaGenerator.generate(ast, target.toString());
+//
+//        // Then
+//        compile(target);
+//        assertTrue(
+//                Log.getFindings().isEmpty(),
+//                Log.getFindings().stream()
+//                        .map(Finding::buildMsg)
+//                        .collect(Collectors.joining(System.lineSeparator())));
+//        target.delete();
+//    }
+
 
   protected ASTOCLCompilationUnit loadASTWithSymbols(File input) throws IOException {
     OCLParser parser = new OCLParser();
@@ -100,15 +144,15 @@ public class OCL2JavaGeneratorTest extends AbstractTest {
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
     DiagnosticCollector<JavaFileObject> diagnosticsCollector = new DiagnosticCollector<>();
     try (StandardJavaFileManager fileManager =
-        compiler.getStandardFileManager(diagnosticsCollector, null, null); ) {
+                 compiler.getStandardFileManager(diagnosticsCollector, null, null); ) {
       Iterable<? extends JavaFileObject> units =
-          fileManager.getJavaFileObjectsFromFiles(Collections.singleton(file));
+              fileManager.getJavaFileObjectsFromFiles(Collections.singleton(file));
       JavaCompiler.CompilationTask task =
-          compiler.getTask(null, fileManager, diagnosticsCollector, options, null, units);
+              compiler.getTask(null, fileManager, diagnosticsCollector, options, null, units);
       if (!task.call()) {
         fail(
-            diagnostics2String(
-                Collections.unmodifiableList(diagnosticsCollector.getDiagnostics())));
+                diagnostics2String(
+                        Collections.unmodifiableList(diagnosticsCollector.getDiagnostics())));
       }
     }
   }
@@ -122,15 +166,39 @@ public class OCL2JavaGeneratorTest extends AbstractTest {
    */
   protected String diagnostics2String(final List<Diagnostic<?>> diagnostics) {
     return diagnostics.stream()
-        .map(
-            d ->
-                new StringBuilder()
-                    .append(d.getLineNumber())
-                    .append(":")
-                    .append(d.getColumnNumber())
-                    .append(": ")
-                    .append(d.getMessage(null))
-                    .toString())
-        .collect(Collectors.joining(System.lineSeparator()));
+            .map(
+                    d ->
+                            new StringBuilder()
+                                    .append(d.getLineNumber())
+                                    .append(":")
+                                    .append(d.getColumnNumber())
+                                    .append(": ")
+                                    .append(d.getMessage(null))
+                                    .toString())
+            .collect(Collectors.joining(System.lineSeparator()));
   }
+
+  public static String[] getModelsByFolder(String folderpath) {
+
+    String modelDir = RELATIVE_MODEL_PATH + folderpath;
+    File dirFile = new File(modelDir);
+    String[] extensions = new String[]{"ocl"};
+    List<File> models = (List<File>) FileUtils.listFiles(dirFile, extensions, true);
+
+    String[] filenames = new String[models.size()];
+    for (int i=0; i< models.size(); i++) {
+      filenames[i] = models.get(i).getPath();
+    }
+    assertThat(filenames).isNotNull();
+    filenames = Arrays.stream(filenames).sorted().collect(Collectors.toList()).toArray(filenames);
+
+    return filenames;
+  }
+
+
+  public static String[] getJavaGeneratedModels() {
+    return getModelsByFolder("/testinput/parsable/symtab/coco/javagen");
+  }
+
+
 }

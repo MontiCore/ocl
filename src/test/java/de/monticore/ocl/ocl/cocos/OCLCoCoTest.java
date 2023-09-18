@@ -1,8 +1,7 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl.cocos;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import de.monticore.ocl.ocl.AbstractTest;
@@ -25,11 +24,11 @@ public class OCLCoCoTest extends AbstractTest {
   }
 
   @ParameterizedTest
-  @MethodSource("getValidCoCoModels")
+  @MethodSource("getValidCocoModels")
   public void acceptsValidModels(String filename) {
     // todo ignoring test container1.ocl which fails due to
     // https://git.rwth-aachen.de/monticore/monticore/-/issues/3141
-    assumeFalse(filename.equals("container1.ocl"));
+    assumeFalse(filename.endsWith("container1.ocl"));
     // todo find the issue with these, s.
     // https://git.rwth-aachen.de/monticore/monticore/-/issues/3331
     assumeFalse(filename.endsWith("validConstructorName.ocl"));
@@ -41,7 +40,7 @@ public class OCLCoCoTest extends AbstractTest {
 
     // given
     final Optional<ASTOCLCompilationUnit> ast =
-        parse(prefixValidModelsPath("/testinput/cocos/valid/" + filename), false);
+            parse(filename, false);
     assertTrue(ast.isPresent());
 
     SymbolTableUtil.prepareMill();
@@ -59,11 +58,11 @@ public class OCLCoCoTest extends AbstractTest {
   }
 
   @ParameterizedTest
-  @MethodSource("getInvalidCoCoModels")
+  @MethodSource("getInvalidCocoModels")
   public void acceptsInvalidModels(String filename) {
 
     final Optional<ASTOCLCompilationUnit> optAST =
-        parse(prefixValidModelsPath("/testinput/cocos/invalid/" + filename), false);
+            parse(filename, false);
     assertTrue(optAST.isPresent());
     final ASTOCLCompilationUnit ast = optAST.get();
 
@@ -128,20 +127,21 @@ public class OCLCoCoTest extends AbstractTest {
     }
 
     if (filename.equals("invalidVariableDeclaration.ocl")) {
-      assertTrue(Log.getFindings().size() >= 1);
+      assertEquals(1, Log.getFindings().size());
       assertTrue(Log.getFindings().get(0).getMsg().startsWith("0xOCL33"));
       Log.getFindings().clear();
     }
 
-    assertNoFindings();
+    assertFalse(
+            Log.getFindings().isEmpty());
   }
 
   @ParameterizedTest
   @CsvSource({
-    "src/test/resources/testinput/oclplibrary/list.ocl",
-    "src/test/resources/testinput/oclplibrary/listAndSet.ocl",
-    "src/test/resources/testinput/oclplibrary/set.ocl",
-    "src/test/resources/testinput/oclplibrary/staticQueries.ocl"
+    "src/test/resources/testinput/parsable/symtab/coco/not_javagen/list_oclplibrary.ocl",
+    "src/test/resources/testinput/parsable/symtab/coco/not_javagen/listAndSet.ocl",
+    "src/test/resources/testinput/parsable/symtab/coco/not_javagen/set.ocl",
+    "src/test/resources/testinput/parsable/symtab/coco/not_javagen/staticQueries.ocl"
   })
   public void shouldAcceptOclpLibrary(final String oclFile) {
     // given

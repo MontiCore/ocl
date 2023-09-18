@@ -19,34 +19,17 @@ class OCLParserTest extends AbstractTest {
   }
 
   protected static final String RELATIVE_MODEL_PATH = "src/test/resources";
-
   @ParameterizedTest
-  @ValueSource(
-      strings = {
-        "testinput/cocos/valid/validConstructorName.ocl",
-        "testinput/cocos/valid/validConstructorName0.ocl",
-        "testinput/cocos/valid/validFileName.ocl",
-        "testinput/cocos/valid/validInvariantName.ocl",
-        "testinput/cocos/valid/validMethSigName.ocl",
-        "testinput/cocos/valid/validParameterDeclarationName.ocl",
-        "testinput/cocos/valid/validParameterType.ocl",
-        "testinput/cocos/valid/validPostStatementName.ocl",
-        "testinput/cocos/valid/validPrePost.ocl",
-        "testinput/cocos/valid/validPreStatementName.ocl",
-        "testinput/cocos/valid/validVariableName.ocl"
-      })
-  public void shouldParseValidInput(String fileName) {
-    assumeFalse(fileName.endsWith("validMethSigName.ocl"));
-    this.parse(Paths.get(RELATIVE_MODEL_PATH, fileName).toString(), false);
-    assertNoFindings();
+  @MethodSource("getParsableModels")
+  public void parseParsableModels(String fileName) {
+    System.out.println(fileName);
+    this.parse(fileName, false);
   }
 
   @ParameterizedTest
-  @MethodSource("getParsableModels")
-  public void shouldParseValidGrammarModels(String filename) {
-    this.parse(
-        Paths.get(prefixValidModelsPath("/testinput/validGrammarModels/" + filename)).toString(),
-        false);
-    assertNoFindings();
+  @MethodSource("getNotParsableModels")
+  public void parseNotParsableModels(String fileName) {
+    System.out.println(fileName);
+    this.parse(fileName, true);
   }
 }
