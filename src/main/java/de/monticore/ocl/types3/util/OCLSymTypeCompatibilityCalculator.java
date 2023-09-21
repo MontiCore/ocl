@@ -18,7 +18,7 @@ public class OCLSymTypeCompatibilityCalculator extends SymTypeCompatibilityCalcu
     // s. Modelling with UML 3.3.7
     else if (
     // OCL collections
-        OCLSymTypeRelations.isOCLCollection(subType)
+    OCLSymTypeRelations.isOCLCollection(subType)
         && OCLSymTypeRelations.isOCLCollection(superType)
         &&
         // Set is-a Collection

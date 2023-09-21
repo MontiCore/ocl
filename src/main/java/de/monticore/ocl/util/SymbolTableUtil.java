@@ -10,7 +10,6 @@ import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCom
 import de.monticore.ocl.setexpressions._symboltable.SetExpressionsSymbolTableCompleter;
 import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLDeriver;
 import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLSynthesizer;
-import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.ocl.util.library.*;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbolDeSer;

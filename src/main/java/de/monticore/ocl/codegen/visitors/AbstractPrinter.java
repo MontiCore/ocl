@@ -2,7 +2,6 @@
 package de.monticore.ocl.codegen.visitors;
 
 import de.monticore.ocl.codegen.util.VariableNaming;
-import de.monticore.ocl.types3.IOCLSymTypeRelations;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
@@ -38,7 +37,6 @@ public abstract class AbstractPrinter {
   protected ISynthesize getSynthesizer() {
     return this.syntheziser;
   }
-
 
   protected IndentPrinter printer;
 

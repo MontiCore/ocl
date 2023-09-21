@@ -39,7 +39,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
   public SetExpressionsTypeVisitor() {
     OCLSymTypeRelations.init();
   }
-  
+
   @Override
   public void endVisit(ASTSetInExpression expr) {
     var elemResult = getType4Ast().getPartialTypeOfExpr(expr.getElem());
@@ -128,7 +128,8 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
       result = createObscureType();
     } else if (OCLSymTypeRelations.isOCLCollection(leftResult)
         && OCLSymTypeRelations.isOCLCollection(rightResult)) {
-      Optional<SymTypeExpression> lub = OCLSymTypeRelations.leastUpperBound(leftResult, rightResult);
+      Optional<SymTypeExpression> lub =
+          OCLSymTypeRelations.leastUpperBound(leftResult, rightResult);
       if (lub.isPresent()) {
         result = lub.get();
       } else {
@@ -355,7 +356,8 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
     var leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLowerBound());
     var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getUpperBound());
     if (!leftResult.isObscureType() && !rightResult.isObscureType()) {
-      if (!OCLSymTypeRelations.isIntegralType(leftResult) || !OCLSymTypeRelations.isIntegralType(rightResult)) {
+      if (!OCLSymTypeRelations.isIntegralType(leftResult)
+          || !OCLSymTypeRelations.isIntegralType(rightResult)) {
         Log.error(
             "0xFD217 bounds in SetValueRange "
                 + "are not integral types, but have to be, got "

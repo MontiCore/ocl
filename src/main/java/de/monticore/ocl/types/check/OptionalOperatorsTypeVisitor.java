@@ -1,5 +1,7 @@
 package de.monticore.ocl.types.check;
 
+import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
+
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.optionaloperators._ast.*;
 import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsVisitor2;
@@ -9,8 +11,6 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types3.AbstractTypeVisitor;
 import de.se_rwth.commons.logging.Log;
-
-import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
 
 public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
     implements OptionalOperatorsVisitor2 {
@@ -86,7 +86,8 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
     }
     // check that leftResult is of type Optional
     else if (!OCLSymTypeRelations.isOptional(leftResult)
-        || !OCLSymTypeRelations.isNumericType(OCLSymTypeRelations.getCollectionElementType(leftResult))) {
+        || !OCLSymTypeRelations.isNumericType(
+            OCLSymTypeRelations.getCollectionElementType(leftResult))) {
       Log.error(
           "0xFD209 expected Optional of a numeric type, but got " + leftResult.printFullName(),
           left.get_SourcePositionStart(),
@@ -131,8 +132,10 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
     } else {
       SymTypeExpression elementType = OCLSymTypeRelations.getCollectionElementType(leftResult);
       // Option one: they are both numeric types
-      if (OCLSymTypeRelations.isNumericType(elementType) && OCLSymTypeRelations.isNumericType(rightResult)
-          || OCLSymTypeRelations.isBoolean(elementType) && OCLSymTypeRelations.isBoolean(rightResult)) {
+      if (OCLSymTypeRelations.isNumericType(elementType)
+              && OCLSymTypeRelations.isNumericType(rightResult)
+          || OCLSymTypeRelations.isBoolean(elementType)
+              && OCLSymTypeRelations.isBoolean(rightResult)) {
         return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
       }
       // Option two: none of them is a primitive type, and they are either the same type or in a
