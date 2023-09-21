@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package invariants;
 
-ocl Test08 {
+ocl typeIfString {
   inv(Object o):
     let
       int charCount = typeif o instanceof String

@@ -2,7 +2,6 @@
 package de.monticore.ocl.ocl.cocos;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -26,18 +25,6 @@ public class OCLCoCoTest extends AbstractTest {
   @ParameterizedTest
   @MethodSource("getValidCocoModels")
   public void acceptsValidModels(String filename) {
-    // todo ignoring test container1.ocl which fails due to
-    // https://git.rwth-aachen.de/monticore/monticore/-/issues/3141
-    assumeFalse(filename.endsWith("container1.ocl"));
-    // todo find the issue with these, s.
-    // https://git.rwth-aachen.de/monticore/monticore/-/issues/3331
-    assumeFalse(filename.endsWith("validConstructorName.ocl"));
-    assumeFalse(filename.endsWith("validMethSigName.ocl"));
-    assumeFalse(filename.endsWith("validParameterDeclarationName.ocl"));
-    assumeFalse(filename.endsWith("validParameterType.ocl"));
-    assumeFalse(filename.endsWith("validVariableDeclaration.ocl"));
-    assumeFalse(filename.endsWith("validVariableName.ocl"));
-
     // given
     final Optional<ASTOCLCompilationUnit> ast = parse(filename, false);
     assertTrue(ast.isPresent());

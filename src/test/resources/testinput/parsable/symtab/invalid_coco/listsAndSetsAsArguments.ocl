@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package invariants;
 
-ocl Test05 {
+ocl listsAndSetsAsArguments {
   inv(List<String> names):
     forall name in names:
       name.length() > 0;
@@ -22,28 +22,4 @@ ocl Test05 {
       Integer acc=0:
       acc = acc + number
     } > 5;
-
-
-  inv:
-    let
-      a = 2;
-      b = 3
-    in
-      a < b;
-
-  inv(Integer n, int a):
-    (Integer) n < a;
-
-  inv(int a, int b, int c):
-    (a + b) * c > 0;
-
-  inv:
-    ("abc" + "def").length() == 6;
-
-  inv:
-    ("a" + "b").length() > 0;
-
-  inv:
-    true &&
-    false;
 }

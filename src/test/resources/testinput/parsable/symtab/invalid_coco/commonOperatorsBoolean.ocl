@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package invariants;
 
-ocl Test03 {
+ocl commonOperatorsBoolean {
   inv(boolean a, boolean b):
     a || b &&
     a && b &&

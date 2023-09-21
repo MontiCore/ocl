@@ -1,10 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package invariants;
 
-ocl Test06 {
+ocl sizeAndLength {
   inv(Set<String> names):
     let
-      a = {};
+      Set<int> a = {};
       b = Set{n.length() | n in names, i = 0, n.length() > i}
     in
       a.size() < b.size();

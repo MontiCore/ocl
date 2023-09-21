@@ -38,7 +38,7 @@ public abstract class AbstractTest {
 
   protected static final String RELATIVE_MODEL_PATH = "src/test/resources";
 
-  public static String[] getModels(String folderPath) {
+  protected static String[] getModels(String folderPath) {
     File f = new File(RELATIVE_MODEL_PATH + folderPath);
     String[] filenames = f.list();
     assertThat(filenames).isNotNull();
@@ -47,7 +47,7 @@ public abstract class AbstractTest {
     return filenames;
   }
 
-  public static String[] getModelsByFolder(String folderpath) {
+  protected static String[] getModelsByFolder(String folderpath) {
 
     String modelDir = RELATIVE_MODEL_PATH + folderpath;
     File dirFile = new File(modelDir);
@@ -64,7 +64,7 @@ public abstract class AbstractTest {
     return filenames;
   }
 
-  public static String[] getModelsFromFile(String models_filename) {
+  protected static String[] getModelsFromFile(String models_filename) {
     String filepath = RELATIVE_MODEL_PATH + "/sorting_results/" + models_filename;
     List<String> filenames;
     try (Stream<String> lines = Files.lines(Paths.get(filepath))) {
@@ -83,35 +83,40 @@ public abstract class AbstractTest {
     return result;
   }
 
-  public static String[] getParsableModels() {
+  protected static String[] getParsableModels() {
     return getModelsByFolder("/testinput/parsable");
   }
 
-  public static String[] getNotParsableModels() {
+  protected static String[] getNotParsableModels() {
     return getModelsByFolder("/testinput/not_parsable");
   }
 
-  public static String[] getSymbolTableModels() {
+  protected static String[] getSymbolTableModels() {
     return getModelsByFolder("/testinput/parsable/symtab");
   }
 
-  public static String[] getNoSymbolTableModels() {
+  protected static String[] getNoSymbolTableModels() {
     return getModelsByFolder("/testinput/parsable/no_symtab");
   }
 
-  public static String[] getValidCocoModels() {
+  protected static String[] getValidCocoModels() {
     return getModelsByFolder("/testinput/parsable/symtab/coco");
   }
 
-  public static String[] getInvalidCocoModels() {
+  protected static String[] getInvalidCocoModels() {
     return getModelsByFolder("/testinput/parsable/symtab/invalid_coco");
   }
 
-  public static String prefixValidModelsPath(String fileName) {
+  protected static String[] getJavaGenModels() {
+    return getModelsByFolder("/testinput/parsable/symtab/coco/javagen");
+  }
+
+  protected static String prefixValidModelsPath(String fileName) {
     return RELATIVE_MODEL_PATH + fileName;
   }
 
-  public Optional<ASTOCLCompilationUnit> parse(String relativeFilePath, boolean expParserErrors) {
+  protected Optional<ASTOCLCompilationUnit> parse(
+      String relativeFilePath, boolean expParserErrors) {
     OCLParser parser = new OCLParser();
     Optional<ASTOCLCompilationUnit> optAst;
     try {

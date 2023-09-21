@@ -14,8 +14,6 @@ class OCLParserTest extends AbstractTest {
     super.initMills();
   }
 
-  protected static final String RELATIVE_MODEL_PATH = "src/test/resources";
-
   @ParameterizedTest
   @MethodSource("getParsableModels")
   public void parseParsableModels(String fileName) {
