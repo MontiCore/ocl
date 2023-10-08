@@ -5,68 +5,55 @@ import de.monticore.ocl.types3.util.IOCLCollectionTypeRelations;
 import de.monticore.ocl.types3.util.OCLCollectionTypeRelations;
 import de.monticore.ocl.types3.util.OCLNominalSuperTypeCalculator;
 import de.monticore.ocl.types3.util.OCLSymTypeBoxingVisitor;
+import de.monticore.ocl.types3.util.OCLSymTypeCompatibilityCalculator;
 import de.monticore.ocl.types3.util.OCLSymTypeUnboxingVisitor;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
-import de.monticore.types3.util.FunctionRelations;
-import de.monticore.types3.util.SymTypeRelations;
+import de.monticore.types3.SymTypeRelations;
 
-public class OCLSymTypeRelations extends SymTypeRelations implements IOCLSymTypeRelations {
+public class OCLSymTypeRelations extends SymTypeRelations {
 
-  IOCLCollectionTypeRelations oclCollectionTypeRelations;
+  protected static IOCLCollectionTypeRelations oclCollectionTypeRelations;
 
-  public OCLSymTypeRelations() {
+  public static void init() {
     // default values
-    super();
-    this.compatibilityDelegate = new OCLSymTypeCompatibilityCalculator(this);
-    this.boxingVisitor = new OCLSymTypeBoxingVisitor();
-    this.unboxingVisitor = new OCLSymTypeUnboxingVisitor();
-    this.superTypeCalculator = new OCLNominalSuperTypeCalculator(this);
-    this.oclCollectionTypeRelations = new OCLCollectionTypeRelations();
-    this.functionRelationsDelegate = new FunctionRelations(this);
+    SymTypeRelations.init();
+    compatibilityDelegate = new OCLSymTypeCompatibilityCalculator();
+    boxingVisitor = new OCLSymTypeBoxingVisitor();
+    unboxingVisitor = new OCLSymTypeUnboxingVisitor();
+    superTypeCalculator = new OCLNominalSuperTypeCalculator();
+    oclCollectionTypeRelations = new OCLCollectionTypeRelations();
   }
 
-  protected IOCLCollectionTypeRelations getOCLCollTypeRel() {
-    return oclCollectionTypeRelations;
+  public static boolean isSet(SymTypeExpression symTypeExpression) {
+    return oclCollectionTypeRelations.isSet(symTypeExpression);
   }
 
-  @Override
-  public boolean isList(SymTypeExpression symTypeExpression) {
-    return getOCLCollTypeRel().isList(symTypeExpression);
+  public static boolean isList(SymTypeExpression symTypeExpression) {
+    return oclCollectionTypeRelations.isList(symTypeExpression);
   }
 
-  @Override
-  public boolean isSet(SymTypeExpression symTypeExpression) {
-    return getOCLCollTypeRel().isSet(symTypeExpression);
+  public static boolean isOptional(SymTypeExpression symTypeExpression) {
+    return oclCollectionTypeRelations.isOptional(symTypeExpression);
   }
 
-  @Override
-  public boolean isOptional(SymTypeExpression symTypeExpression) {
-    return getOCLCollTypeRel().isOptional(symTypeExpression);
+  public static boolean isMap(SymTypeExpression symTypeExpression) {
+    return oclCollectionTypeRelations.isMap(symTypeExpression);
   }
 
-  @Override
-  public boolean isMap(SymTypeExpression symTypeExpression) {
-    return getOCLCollTypeRel().isMap(symTypeExpression);
+  public static SymTypeExpression getCollectionElementType(SymTypeExpression symTypeExpression) {
+    return oclCollectionTypeRelations.getCollectionElementType(symTypeExpression);
   }
 
-  @Override
-  public SymTypeExpression getCollectionElementType(SymTypeExpression symTypeExpression) {
-    return getOCLCollTypeRel().getCollectionElementType(symTypeExpression);
+  public static SymTypeExpression getMapKeyType(SymTypeExpression symTypeExpression) {
+    return oclCollectionTypeRelations.getMapKeyType(symTypeExpression);
   }
 
-  @Override
-  public SymTypeExpression getMapKeyType(SymTypeExpression symTypeExpression) {
-    return getOCLCollTypeRel().getMapKeyType(symTypeExpression);
+  public static boolean isOCLCollection(SymTypeExpression type) {
+    return oclCollectionTypeRelations.isOCLCollection(type);
   }
 
-  @Override
-  public boolean isOCLCollection(SymTypeExpression type) {
-    return getOCLCollTypeRel().isOCLCollection(type);
-  }
-
-  @Override
-  public SymTypeOfGenerics flatten(SymTypeOfGenerics toFlatten) {
-    return getOCLCollTypeRel().flatten(toFlatten);
+  public static SymTypeOfGenerics flatten(SymTypeOfGenerics toFlatten) {
+    return oclCollectionTypeRelations.flatten(toFlatten);
   }
 }

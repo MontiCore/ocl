@@ -1,0 +1,25 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl listsAndSetsAsArguments {
+  inv(List<String> names):
+    forall name in names:
+      name.length() > 0;
+
+  inv(List<String> names):
+    exists name in names:
+      name.length() > 0;
+
+  inv(List<String> names):
+    (any names).length() > 0;
+
+  inv(Set<String> names):
+    "name" isin names;
+
+  inv(Set<Integer> numbers):
+    iterate{
+      number in numbers;
+      Integer acc=0:
+      acc = acc + number
+    } > 5;
+}

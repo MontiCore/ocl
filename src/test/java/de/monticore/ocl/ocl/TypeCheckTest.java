@@ -24,13 +24,14 @@ public class TypeCheckTest extends AbstractTest {
 
   @Test
   public void testTypCheckForGenericMethodCalls() {
-    String filename = "list.ocl";
+    String filename = "list_typeinferringModels.ocl";
 
     Log.enableFailQuick(false);
 
     // given
     final Optional<ASTOCLCompilationUnit> ast =
-        parse(RELATIVE_MODEL_PATH + "/testinput" + "/typeInferringModels/" + filename, false);
+        parse(
+            RELATIVE_MODEL_PATH + "/testinput/parsable/symtab/coco/not_javagen/" + filename, false);
     assertThat(ast).isPresent();
 
     SymbolTableUtil.prepareMill();

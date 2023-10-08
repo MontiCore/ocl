@@ -1,15 +1,16 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.codegen;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import com.google.common.base.Preconditions;
-import de.monticore.io.paths.MCPath;
 import de.monticore.ocl.ocl.AbstractTest;
-import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.util.SymbolTableUtil;
+import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
@@ -25,10 +26,10 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
-import org.junit.jupiter.api.Assumptions;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class OCL2JavaGeneratorTest extends AbstractTest {
 
@@ -36,40 +37,33 @@ public class OCL2JavaGeneratorTest extends AbstractTest {
 
   protected static final String RELATIVE_TARGET_PATH = "target/generated-test-sources";
 
-  protected static final String TEST_MODEL_PATH = "codegen/input";
-
-  protected static final String PACKAGE = "invariants";
-
-  protected static final String TEST_TARGET_PATH = "codegen/invariants";
+  protected static final String TEST_TARGET_PATH = "codegen";
 
   @BeforeEach
   protected void init() {
-    this.initLogger();
     this.setup();
+    this.initLogger();
   }
 
   protected void setup() {
     SymbolTableUtil.prepareMill();
     SymbolTableUtil.addCd4cSymbols();
-    MCPath modelPath = new MCPath(Paths.get(RELATIVE_MODEL_PATH, TEST_MODEL_PATH).getParent());
-    OCLMill.globalScope().setSymbolPath(modelPath);
   }
 
   @ParameterizedTest
-  @ValueSource(
-      strings = {"Test01", "Test02", "Test03", "Test04", "Test05", "Test06", "Test07", "Test08"})
-  public void shouldGenerate(String s) throws IOException {
-    Preconditions.checkNotNull(s);
-    Preconditions.checkArgument(!s.isEmpty());
-    // todo enable after https://git.rwth-aachen.de/monticore/monticore/-/issues/3141 is closed
-    Assumptions.assumeFalse(s.equals("Test02"));
-    // todo enable after https://git.rwth-aachen.de/monticore/monticore/-/issues/3168 is closed
-    Assumptions.assumeFalse(s.equals("Test06"));
+  @MethodSource("getJavaGenModels")
+  public void shouldGenerate(String filename) throws IOException {
+    Preconditions.checkNotNull(filename);
+    Preconditions.checkArgument(!filename.isEmpty());
 
     // Given
-    File input = Paths.get(RELATIVE_MODEL_PATH, TEST_MODEL_PATH, PACKAGE, s + ".ocl").toFile();
-    File target = Paths.get(RELATIVE_TARGET_PATH, TEST_TARGET_PATH, s + ".java").toFile();
-    SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/AuctionCD.sym");
+    File input = Paths.get(filename).toFile();
+    File target =
+        Paths.get(
+                RELATIVE_TARGET_PATH,
+                TEST_TARGET_PATH,
+                Paths.get(filename).getFileName().toString().replace(".ocl", ".java"))
+            .toFile();
     ASTOCLCompilationUnit ast = loadASTWithSymbols(input);
 
     // When
@@ -77,7 +71,12 @@ public class OCL2JavaGeneratorTest extends AbstractTest {
 
     // Then
     compile(target);
-    assertNoFindings();
+    assertTrue(
+        Log.getFindings().isEmpty(),
+        Log.getFindings().stream()
+            .map(Finding::buildMsg)
+            .collect(Collectors.joining(System.lineSeparator())));
+    target.delete();
   }
 
   protected ASTOCLCompilationUnit loadASTWithSymbols(File input) throws IOException {
@@ -121,16 +120,39 @@ public class OCL2JavaGeneratorTest extends AbstractTest {
    * @return the compilation errors as String
    */
   protected String diagnostics2String(final List<Diagnostic<?>> diagnostics) {
-    return diagnostics.stream()
-        .map(
-            d ->
-                new StringBuilder()
-                    .append(d.getLineNumber())
-                    .append(":")
-                    .append(d.getColumnNumber())
-                    .append(": ")
-                    .append(d.getMessage(null))
-                    .toString())
-        .collect(Collectors.joining(System.lineSeparator()));
+    return "Java Diagnostics:"
+        + System.lineSeparator()
+        + diagnostics.stream()
+            .map(
+                d ->
+                    new StringBuilder()
+                        .append(d.getLineNumber())
+                        .append(":")
+                        .append(d.getColumnNumber())
+                        .append(": ")
+                        .append(d.getMessage(null))
+                        .toString())
+            .collect(Collectors.joining(System.lineSeparator()));
+  }
+
+  public static String[] getModelsByFolder(String folderpath) {
+
+    String modelDir = RELATIVE_MODEL_PATH + folderpath;
+    File dirFile = new File(modelDir);
+    String[] extensions = new String[] {"ocl"};
+    List<File> models = (List<File>) FileUtils.listFiles(dirFile, extensions, true);
+
+    String[] filenames = new String[models.size()];
+    for (int i = 0; i < models.size(); i++) {
+      filenames[i] = models.get(i).getPath();
+    }
+    assertThat(filenames).isNotNull();
+    filenames = Arrays.stream(filenames).sorted().collect(Collectors.toList()).toArray(filenames);
+
+    return filenames;
+  }
+
+  public static String[] getJavaGeneratedModels() {
+    return getModelsByFolder("/testinput/parsable/symtab/coco/javagen");
   }
 }

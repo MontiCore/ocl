@@ -10,7 +10,6 @@ import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCom
 import de.monticore.ocl.setexpressions._symboltable.SetExpressionsSymbolTableCompleter;
 import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLDeriver;
 import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLSynthesizer;
-import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.ocl.util.library.*;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbolDeSer;
@@ -39,6 +38,8 @@ public class SymbolTableUtil {
   }
 
   public static void addOclpLibrary() {
+    // todo replace after fix of
+    // https://git.rwth-aachen.de/monticore/monticore/-/issues/3508
     CollectionType c = new CollectionType();
     ListType l = new ListType();
     SetType s = new SetType();
@@ -53,6 +54,16 @@ public class SymbolTableUtil {
     s.addMethodsAndFields();
     g.addMethodsAndFields();
     o.addMethodsAndFields();
+    /*
+    IOCLGlobalScope gs = OCLMill.globalScope();
+    OCLSymbols2Json olcSym2json = new OCLSymbols2Json();
+    gs.addSubScope(olcSym2json.load(ClassLoader.getSystemResource("collectiontypes/List.sym")));
+    gs.addSubScope(olcSym2json.load(ClassLoader.getSystemResource("collectiontypes/Optional.sym")));
+    gs.addSubScope(olcSym2json.load(ClassLoader.getSystemResource("collectiontypes/Set.sym")));
+    gs.addSubScope(
+        olcSym2json.load(ClassLoader.getSystemResource("collectiontypes/Collection.sym")));
+    gs.addSubScope(olcSym2json.load(ClassLoader.getSystemResource("functions/GlobalQueries.sym")));
+     */
   }
 
   public static void runSymTabGenitor(ASTOCLCompilationUnit ast) {
@@ -72,7 +83,6 @@ public class SymbolTableUtil {
         new OCLExpressionsSymbolTableCompleter(ast.getMCImportStatementList(), ast.getPackage());
     stCompleter2.setDeriver(new TypeCheck3AsOCLDeriver());
     stCompleter2.setSynthesizer(new TypeCheck3AsOCLSynthesizer());
-    stCompleter2.setSymTypeRelations(new OCLSymTypeRelations());
     SetExpressionsSymbolTableCompleter stCompleter3 =
         new SetExpressionsSymbolTableCompleter(ast.getMCImportStatementList(), ast.getPackage());
     stCompleter3.setDeriver(new TypeCheck3AsOCLDeriver());

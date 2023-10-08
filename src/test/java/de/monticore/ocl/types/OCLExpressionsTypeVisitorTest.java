@@ -11,12 +11,12 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._parser.OCLParser;
 import de.monticore.ocl.ocl.types3.OCLTypeTraverserFactory;
-import de.monticore.ocl.types3.IOCLSymTypeRelations;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.ocl.types3.util.OCLCollectionSymTypeFactory;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
+import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types3.Type4Ast;
@@ -43,8 +43,6 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
   // Type Visitors using the map from the mill instead of the provided one
   protected Type4Ast type4Ast;
 
-  protected IOCLSymTypeRelations symTypeRelations;
-
   protected ITraverser typeMapTraverser;
 
   protected ITraverser scopeGenitor;
@@ -67,7 +65,7 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
 
     parser = OCLMill.parser();
     type4Ast = new Type4Ast();
-    symTypeRelations = new OCLSymTypeRelations();
+    OCLSymTypeRelations.init();
 
     typeMapTraverser = new OCLTypeTraverserFactory().createTraverser(type4Ast);
 
@@ -335,7 +333,10 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
   }
 
   protected static Stream<Arguments> atPreQualificationExpressions() {
-    return Stream.of(Arguments.of("varboolean@pre", "boolean"), Arguments.of("varint@pre", "int"));
+    return Stream.of(
+        Arguments.of("varboolean@pre", "boolean"),
+        Arguments.of("varint@pre", "int"),
+        Arguments.of("varPerson@pre", "Person"));
   }
 
   @ParameterizedTest
@@ -343,6 +344,19 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
   protected void checkAtPreQualificationExpression(String exprStr, String expectedType)
       throws IOException {
     checkExpr(exprStr, expectedType);
+  }
+
+  @Test
+  protected void complexAtPreTest1() throws IOException {
+    TypeSymbol person = BasicSymbolsMill.globalScope().resolveType("Person").get();
+    person.addFunctionSymbol(function("getAge", _intSymType));
+    person.addVariableSymbol(variable("age", _intSymType));
+    // todo enable test after type dispatcher fix
+    org.junit.jupiter.api.Assumptions.assumeFalse(true);
+    checkExpr("varPerson@pre.getAge()", "int");
+    checkExpr("(varPerson@pre).getAge()", "int");
+    checkExpr("varPerson@pre.age", "int");
+    checkExpr("(varPerson@pre).age", "int");
   }
 
   protected static Stream<Arguments> transitiveQualificationExpressions() {
@@ -371,7 +385,7 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     assertTrue(
         getType4Ast().hasTypeOfExpression(expr), "No type calculated for expression " + exprStr);
     SymTypeExpression type = getType4Ast().getTypeOfExpression(expr);
-    SymTypeExpression typeNormalized = getTypeRel().normalize(type);
+    SymTypeExpression typeNormalized = OCLSymTypeRelations.normalize(type);
     assertNoFindings();
     Assertions.assertEquals(
         expectedType, typeNormalized.printFullName(), "Wrong type for expression " + exprStr);
@@ -431,10 +445,6 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
 
   protected Type4Ast getType4Ast() {
     return type4Ast;
-  }
-
-  protected IOCLSymTypeRelations getTypeRel() {
-    return symTypeRelations;
   }
 
   protected ITraverser getScopeGenitor() {

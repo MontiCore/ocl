@@ -20,8 +20,7 @@ public class ListType {
 
   public void addListType() {
     IOCLGlobalScope gs = OCLMill.globalScope();
-    typeVarSymbol =
-        OCLMill.typeVarSymbolBuilder().setSpannedScope(OCLMill.scope()).setName("X").build();
+    typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
 
     SymTypeExpression collectionSuperType =
         SymTypeExpressionFactory.createGenerics(

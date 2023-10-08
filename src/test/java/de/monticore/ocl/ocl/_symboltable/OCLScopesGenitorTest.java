@@ -41,11 +41,10 @@ public class OCLScopesGenitorTest extends AbstractTest {
   }
 
   @ParameterizedTest
-  @MethodSource("getModelsWithValidSymTab")
+  @MethodSource("getSymbolTableModels")
   public void shouldSetEnclosingScopeOfOCLConstraint(String filename) throws IOException {
     // Given
-    String file = prefixValidModelsPath("/testinput/validGrammarModels/" + filename);
-    Optional<ASTOCLCompilationUnit> ast = OCLMill.parser().parse(file);
+    Optional<ASTOCLCompilationUnit> ast = OCLMill.parser().parse(filename);
     OCLScopesGenitorDelegator genitor = OCLMill.scopesGenitorDelegator();
 
     Preconditions.checkState(
@@ -53,13 +52,13 @@ public class OCLScopesGenitorTest extends AbstractTest {
         String.format(
             "There where errors parsing the input file `%s`. "
                 + "The log lists the following findings: %s",
-            file, Log.getFindings()));
+            filename, Log.getFindings()));
     Preconditions.checkState(
         ast.isPresent(),
         String.format(
             "The parser did not return an abstract syntax tree for input file '%s'. "
                 + "The log lists the following findings: %s",
-            file, Log.getFindings()));
+            filename, Log.getFindings()));
 
     // When
     genitor.createFromAST(ast.get());

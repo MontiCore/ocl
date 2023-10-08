@@ -35,6 +35,7 @@ buildDir = "$projectDir/target"
 
 def grammarDir = "$projectDir/src/main/grammars"
 def reportsDir = "$buildDir/generated-sources/monticore/sourcecode/reports"
+def symbolsDir = "$projectDir/src/main/resources"
 
 /* ============================================================ */
 /* ======================= Configuration ====================== */
@@ -46,6 +47,12 @@ sourceSets {
   }
   test {
     java.srcDirs += ["$buildDir/generated-test-sources/monticore/sourcecode"]
+  }
+  symbols {
+    resources {
+      srcDirs(symbolsDir)
+      include "**/*.sym"
+    }
   }
   grammars {
     resources {
@@ -210,7 +217,17 @@ shadowJar {
   }
 }
 
-jar.dependsOn(shadowJar)
+task symbolJar(type: Jar) {
+  from sourceSets.symbols.output
+  includeEmptyDirs = false
+  archiveBaseName = "ocl-library-symbols"
+}
+
+artifacts {
+  archives symbolJar
+}
+
+jar.dependsOn(symbolJar, shadowJar)
 
 publishing {
   publications {

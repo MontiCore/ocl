@@ -20,7 +20,7 @@ public class OCLWithinTypeBasicSymbolsResolver extends OOWithinTypeBasicSymbolsR
   public OCLWithinTypeBasicSymbolsResolver() {
     // default values
     this.collectionTypeRelations = new OCLCollectionTypeRelations();
-    this.symTypeRelations = new OCLSymTypeRelations();
+    OCLSymTypeRelations.init();
   }
 
   protected OCLCollectionTypeRelations getCollTypeRel() {
