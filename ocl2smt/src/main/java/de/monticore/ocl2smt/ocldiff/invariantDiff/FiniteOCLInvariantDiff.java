@@ -34,7 +34,7 @@ public class FiniteOCLInvariantDiff extends OCLInvariantDiff {
     Stream<Map<ASTCDType, Integer>> cardinalities = CDTypeInitializer.initialize(cd, max, true);
     AtomicReference<Optional<ASTODArtifact>> res = new AtomicReference<>();
 
-    // iterate over all all intantiation of the types universe
+    // iterate over all instantiation of the types universe
     boolean found =
         cardinalities.anyMatch(
             card -> {
