@@ -11,6 +11,8 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.cdbasis._visitor.CDBasisTraverser;
+import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
@@ -30,6 +32,7 @@ import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -327,5 +330,24 @@ public class OCLHelper {
         .filter(x -> x.getName().equals(SMTHelper.buildObjectName(expr, type.getName())))
         .findFirst()
         .orElse(null);
+  }
+
+  public static List<ASTOCLInvariant> collectInv(Set<ASTOCLCompilationUnit> ocl) {
+    return ocl.stream()
+        .map(ast -> ast.getOCLArtifact().getOCLConstraintList())
+        .flatMap(List::stream)
+        .filter(c -> c instanceof ASTOCLInvariant)
+        .map(c -> (ASTOCLInvariant) c)
+        .collect(Collectors.toList());
+  }
+
+  public List<ASTODLink> getLinks(ASTODArtifact od) {
+    List<ASTODLink> links = new ArrayList<>();
+    for (ASTODElement element : od.getObjectDiagram().getODElementList()) {
+      if (element instanceof ASTODLink) {
+        links.add((ASTODLink) element);
+      }
+    }
+    return links;
   }
 }
