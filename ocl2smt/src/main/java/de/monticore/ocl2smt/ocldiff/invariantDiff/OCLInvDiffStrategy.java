@@ -19,8 +19,9 @@ import java.util.stream.Collectors;
 
 public interface OCLInvDiffStrategy {
   /***
-   * compute a witness object diagram that is a legal instance of a cd and satisfies the ocl
-   * and the additional constraints.
+   * compute a witness object diagram that is a legal instance of a CD and satisfies OCL
+   * and additional constraints.
+   * @param timeout the timeout for the computation.
    */
   ASTODArtifact oclWitness(
       ASTCDCompilationUnit cd,
@@ -56,6 +57,10 @@ public interface OCLInvDiffStrategy {
     return oclDiff(cd, oldOcl, newOcl, addConstr, ctx, Integer.MAX_VALUE, partial);
   }
 
+  /***
+   * compute the diff between the new ocl constraints and the old ones
+   * @param timeout the time-out for the computation.
+   */
   default OCLInvDiffResult oclDiff(
       ASTCDCompilationUnit cd,
       Set<ASTOCLCompilationUnit> oldOcl,
@@ -72,11 +77,27 @@ public interface OCLInvDiffStrategy {
     invariantList.forEach(
         inv -> diffs.add(oclInvDiff(cd, newOcl, inv, addConstr, ctx, timeout, partial)));
 
-    return mergeDiff(diffs);
+    // merge different diff
+    List<ASTODLink> traces = new ArrayList<>();
+    Set<ASTODArtifact> witnesses = new HashSet<>();
+    ASTODArtifact unSatCore = null;
+
+    for (OCLInvDiffResult diff : diffs) {
+      if (diff.getUnSatCore() != null) {
+        traces.addAll(OCLHelper.getLinkList(diff.getUnSatCore()));
+        unSatCore = diff.getUnSatCore();
+      }
+      witnesses.addAll(diff.getDiffWitness());
+    }
+
+    if (unSatCore != null) {
+      unSatCore.getObjectDiagram().addAllODElements(traces);
+    }
+    return new OCLInvDiffResult(unSatCore, witnesses);
   }
 
   /***
-   * compute a diff between a single new ocl invariant and the old ones
+   * compute a diff between a single new ocl invariant and the old ones.
    * @param  timeout for the diff
    */
   OCLInvDiffResult oclInvDiff(
@@ -99,25 +120,6 @@ public interface OCLInvDiffStrategy {
       Context ctx,
       boolean partial) {
     return oclInvDiff(cd, newConstr, inv, addConstr, ctx, Integer.MAX_VALUE, partial);
-  }
-
-  default OCLInvDiffResult mergeDiff(
-      Set<OCLInvDiffResult> diffs) { // TODO: 20.08.23 remove form here
-    List<ASTODLink> traces = new ArrayList<>();
-    Set<ASTODArtifact> witnesses = new HashSet<>();
-    ASTODArtifact unSatCore = null;
-
-    for (OCLInvDiffResult diff : diffs) {
-      if (diff.getUnSatCore() != null) {
-        traces.addAll(OCLHelper.getLinkList(diff.getUnSatCore()));
-        unSatCore = diff.getUnSatCore();
-      }
-      witnesses.addAll(diff.getDiffWitness());
-    }
-    if (unSatCore != null) {
-      unSatCore.getObjectDiagram().addAllODElements(traces);
-    }
-    return new OCLInvDiffResult(unSatCore, witnesses);
   }
 
   default ASTODArtifact oclWitnessInternal(
@@ -143,7 +145,7 @@ public interface OCLInvDiffStrategy {
     return null;
   }
 
-  /*** compute the diff between two set of ocl invariants.*/
+  /*** compute the diff between two sets of ocl invariants.*/
   default OCLInvDiffResult computeDiff(
       OCL2SMTGenerator ocl2SMTGenerator,
       List<IdentifiableBoolExpr> posConstraintList,
