@@ -37,16 +37,17 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     var left = getType4Ast().getPartialTypeOfTypeId(expr.getMCType());
     var right = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
 
-    SymTypeExpression result = TypeVisitorLifting
-            .liftDefault((leftPar, rightPar) -> calculateTypeCastExpression(expr, leftPar, rightPar))
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) -> calculateTypeCastExpression(expr, leftPar, rightPar))
             .apply(left, right);
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
   protected SymTypeExpression calculateTypeCastExpression(
-          ASTTypeCastExpression expr, SymTypeExpression leftResult, SymTypeExpression rightResult) {
+      ASTTypeCastExpression expr, SymTypeExpression leftResult, SymTypeExpression rightResult) {
     if (OCLSymTypeRelations.isNumericType(leftResult)
-            && OCLSymTypeRelations.isNumericType(rightResult)) {
+        && OCLSymTypeRelations.isNumericType(rightResult)) {
       // allow to cast numbers down, e.g., (int) 5.0 or (byte) 5
       return leftResult;
     } else if (OCLSymTypeRelations.isSubTypeOf(rightResult, leftResult)) {
@@ -54,11 +55,11 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
       return leftResult;
     } else {
       Log.error(
-              String.format(
-                      "0xFD204 The expression of type '%s' " + "can't be cast to the given type '%s'.",
-                      rightResult.printFullName(), leftResult.printFullName()),
-              expr.get_SourcePositionStart(),
-              expr.get_SourcePositionEnd());
+          String.format(
+              "0xFD204 The expression of type '%s' " + "can't be cast to the given type '%s'.",
+              rightResult.printFullName(), leftResult.printFullName()),
+          expr.get_SourcePositionStart(),
+          expr.get_SourcePositionEnd());
       return createObscureType();
     }
   }
@@ -69,40 +70,40 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     SymTypeExpression varResult = expr.getNameSymbol().getType();
     SymTypeExpression typeResult = getType4Ast().getPartialTypeOfTypeId(expr.getMCType());
     SymTypeExpression thenResult =
-            getType4Ast().getPartialTypeOfExpr(expr.getThenExpression().getExpression());
+        getType4Ast().getPartialTypeOfExpr(expr.getThenExpression().getExpression());
     SymTypeExpression elseResult = getType4Ast().getPartialTypeOfExpr(expr.getElseExpression());
 
     SymTypeExpression result;
     if (typeResult.isObscureType()
-            || varResult.isObscureType()
-            || thenResult.isObscureType()
-            || elseResult.isObscureType()) {
+        || varResult.isObscureType()
+        || thenResult.isObscureType()
+        || elseResult.isObscureType()) {
       // if any inner obscure then error already logged
       result = createObscureType();
     } else if (!OCLSymTypeRelations.isSubTypeOf(typeResult, varResult)) {
       if (OCLSymTypeRelations.isSubTypeOf(varResult, typeResult)) {
         Log.error(
-                "0xFD290 checking whether '"
-                        + expr.getName()
-                        + "' of type "
-                        + varResult.printFullName()
-                        + " is of type "
-                        + typeResult.printFullName()
-                        + ", which is redundant"
-                        + ", since it is always true",
-                expr.get_SourcePositionStart(),
-                expr.get_SourcePositionEnd());
+            "0xFD290 checking whether '"
+                + expr.getName()
+                + "' of type "
+                + varResult.printFullName()
+                + " is of type "
+                + typeResult.printFullName()
+                + ", which is redundant"
+                + ", since it is always true",
+            expr.get_SourcePositionStart(),
+            expr.get_SourcePositionEnd());
       } else {
         Log.error(
-                "0xFD289 checking whether '"
-                        + expr.getName()
-                        + "' of type "
-                        + varResult.printFullName()
-                        + " is of type "
-                        + typeResult.printFullName()
-                        + ", which is impossible",
-                expr.get_SourcePositionStart(),
-                expr.get_SourcePositionEnd());
+            "0xFD289 checking whether '"
+                + expr.getName()
+                + "' of type "
+                + varResult.printFullName()
+                + " is of type "
+                + typeResult.printFullName()
+                + ", which is impossible",
+            expr.get_SourcePositionStart(),
+            expr.get_SourcePositionEnd());
       }
       result = createObscureType();
     } else {
@@ -110,7 +111,6 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     }
     getType4Ast().setTypeOfExpression(expr, result);
   }
-
 
   @Override
   public void endVisit(ASTIfThenElseExpression expr) {
@@ -154,9 +154,11 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     var left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
     var right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
 
-    SymTypeExpression result = TypeVisitorLifting
-            .liftDefault((leftPar, rightPar) -> calculateConditionalBooleanOperation(
-                    expr.getLeft(), expr.getRight(),leftPar, rightPar, "implies"))
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) ->
+                    calculateConditionalBooleanOperation(
+                        expr.getLeft(), expr.getRight(), leftPar, rightPar, "implies"))
             .apply(left, right);
     getType4Ast().setTypeOfExpression(expr, result);
   }
@@ -166,18 +168,23 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     var left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
     var right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
 
-    SymTypeExpression result = TypeVisitorLifting
-            .liftDefault((leftPar, rightPar) -> calculateConditionalBooleanOperation(
-                    expr.getLeft(), expr.getRight(),leftPar, rightPar, "equivalent"))
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) ->
+                    calculateConditionalBooleanOperation(
+                        expr.getLeft(), expr.getRight(), leftPar, rightPar, "equivalent"))
             .apply(left, right);
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
   protected SymTypeExpression calculateConditionalBooleanOperation(
-      ASTExpression left, ASTExpression right, SymTypeExpression leftResult, SymTypeExpression rightResult, String operator) {
+      ASTExpression left,
+      ASTExpression right,
+      SymTypeExpression leftResult,
+      SymTypeExpression rightResult,
+      String operator) {
 
-    if (OCLSymTypeRelations.isBoolean(leftResult)
-        && OCLSymTypeRelations.isBoolean(rightResult)) {
+    if (OCLSymTypeRelations.isBoolean(leftResult) && OCLSymTypeRelations.isBoolean(rightResult)) {
       return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     } else {
       // operator not applicable
@@ -342,8 +349,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     } else if (expressionResult.isPresent()
         && left.isPresent()
         && !OCLSymTypeRelations.isCompatible(
-            left.get(),
-            OCLSymTypeRelations.getCollectionElementType(expressionResult.get()))) {
+            left.get(), OCLSymTypeRelations.getCollectionElementType(expressionResult.get()))) {
       Log.error(
           "0xFD298 cannot assign element of "
               + expressionResult.get().printFullName()
