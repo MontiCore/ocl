@@ -26,12 +26,12 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
     var right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
 
     SymTypeExpression result = TypeVisitorLifting
-            .liftDefault((leftPar, rightPar) -> calculateCompatibleOptional(expr.getLeft(), expr.getRight(), leftPar, rightPar))
+            .liftDefault((leftPar, rightPar) -> calculateOptionalExpressionPrefix(expr.getLeft(), expr.getRight(), leftPar, rightPar))
             .apply(left, right);
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
-  protected SymTypeExpression calculateCompatibleOptional(
+  protected SymTypeExpression calculateOptionalExpressionPrefix(
           ASTExpression left, ASTExpression right, SymTypeExpression leftResult, SymTypeExpression rightResult) {
     if (!OCLSymTypeRelations.isOptional(leftResult)) {
       Log.error(

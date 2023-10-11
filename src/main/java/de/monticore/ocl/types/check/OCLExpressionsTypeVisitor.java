@@ -17,6 +17,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types3.AbstractTypeVisitor;
+import de.monticore.types3.util.TypeVisitorLifting;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.Optional;
@@ -33,30 +34,33 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTTypeCastExpression expr) {
-    SymTypeExpression typeResult = getType4Ast().getPartialTypeOfTypeId(expr.getMCType());
-    SymTypeExpression exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    var left = getType4Ast().getPartialTypeOfTypeId(expr.getMCType());
+    var right = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
 
-    SymTypeExpression result;
-    if (typeResult.isObscureType() || exprResult.isObscureType()) {
-      // if any inner obscure then error already logged
-      result = createObscureType();
-    } else if (OCLSymTypeRelations.isNumericType(typeResult)
-        && OCLSymTypeRelations.isNumericType(exprResult)) {
+    SymTypeExpression result = TypeVisitorLifting
+            .liftDefault((leftPar, rightPar) -> calculateTypeCastExpression(expr, leftPar, rightPar))
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
+  }
+
+  protected SymTypeExpression calculateTypeCastExpression(
+          ASTTypeCastExpression expr, SymTypeExpression leftResult, SymTypeExpression rightResult) {
+    if (OCLSymTypeRelations.isNumericType(leftResult)
+            && OCLSymTypeRelations.isNumericType(rightResult)) {
       // allow to cast numbers down, e.g., (int) 5.0 or (byte) 5
-      result = typeResult;
-    } else if (OCLSymTypeRelations.isSubTypeOf(exprResult, typeResult)) {
+      return leftResult;
+    } else if (OCLSymTypeRelations.isSubTypeOf(rightResult, leftResult)) {
       // check whether typecast is possible
-      result = typeResult;
+      return leftResult;
     } else {
       Log.error(
-          String.format(
-              "0xFD204 The expression of type '%s' " + "can't be cast to the given type '%s'.",
-              exprResult.printFullName(), typeResult.printFullName()),
-          expr.get_SourcePositionStart(),
-          expr.get_SourcePositionEnd());
-      result = createObscureType();
+              String.format(
+                      "0xFD204 The expression of type '%s' " + "can't be cast to the given type '%s'.",
+                      rightResult.printFullName(), leftResult.printFullName()),
+              expr.get_SourcePositionStart(),
+              expr.get_SourcePositionEnd());
+      return createObscureType();
     }
-    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
@@ -65,40 +69,40 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     SymTypeExpression varResult = expr.getNameSymbol().getType();
     SymTypeExpression typeResult = getType4Ast().getPartialTypeOfTypeId(expr.getMCType());
     SymTypeExpression thenResult =
-        getType4Ast().getPartialTypeOfExpr(expr.getThenExpression().getExpression());
+            getType4Ast().getPartialTypeOfExpr(expr.getThenExpression().getExpression());
     SymTypeExpression elseResult = getType4Ast().getPartialTypeOfExpr(expr.getElseExpression());
 
     SymTypeExpression result;
     if (typeResult.isObscureType()
-        || varResult.isObscureType()
-        || thenResult.isObscureType()
-        || elseResult.isObscureType()) {
+            || varResult.isObscureType()
+            || thenResult.isObscureType()
+            || elseResult.isObscureType()) {
       // if any inner obscure then error already logged
       result = createObscureType();
     } else if (!OCLSymTypeRelations.isSubTypeOf(typeResult, varResult)) {
       if (OCLSymTypeRelations.isSubTypeOf(varResult, typeResult)) {
         Log.error(
-            "0xFD290 checking whether '"
-                + expr.getName()
-                + "' of type "
-                + varResult.printFullName()
-                + " is of type "
-                + typeResult.printFullName()
-                + ", which is redundant"
-                + ", since it is always true",
-            expr.get_SourcePositionStart(),
-            expr.get_SourcePositionEnd());
+                "0xFD290 checking whether '"
+                        + expr.getName()
+                        + "' of type "
+                        + varResult.printFullName()
+                        + " is of type "
+                        + typeResult.printFullName()
+                        + ", which is redundant"
+                        + ", since it is always true",
+                expr.get_SourcePositionStart(),
+                expr.get_SourcePositionEnd());
       } else {
         Log.error(
-            "0xFD289 checking whether '"
-                + expr.getName()
-                + "' of type "
-                + varResult.printFullName()
-                + " is of type "
-                + typeResult.printFullName()
-                + ", which is impossible",
-            expr.get_SourcePositionStart(),
-            expr.get_SourcePositionEnd());
+                "0xFD289 checking whether '"
+                        + expr.getName()
+                        + "' of type "
+                        + varResult.printFullName()
+                        + " is of type "
+                        + typeResult.printFullName()
+                        + ", which is impossible",
+                expr.get_SourcePositionStart(),
+                expr.get_SourcePositionEnd());
       }
       result = createObscureType();
     } else {
@@ -106,6 +110,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     }
     getType4Ast().setTypeOfExpression(expr, result);
   }
+
 
   @Override
   public void endVisit(ASTIfThenElseExpression expr) {
@@ -146,28 +151,32 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTImpliesExpression expr) {
-    getType4Ast()
-        .setTypeOfExpression(
-            expr, calculateConditionalBooleanOperation(expr.getLeft(), expr.getRight(), "implies"));
+    var left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    var right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+
+    SymTypeExpression result = TypeVisitorLifting
+            .liftDefault((leftPar, rightPar) -> calculateConditionalBooleanOperation(
+                    expr.getLeft(), expr.getRight(),leftPar, rightPar, "implies"))
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTEquivalentExpression expr) {
-    getType4Ast()
-        .setTypeOfExpression(
-            expr,
-            calculateConditionalBooleanOperation(expr.getLeft(), expr.getRight(), "equivalent"));
+    var left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    var right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+
+    SymTypeExpression result = TypeVisitorLifting
+            .liftDefault((leftPar, rightPar) -> calculateConditionalBooleanOperation(
+                    expr.getLeft(), expr.getRight(),leftPar, rightPar, "equivalent"))
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   protected SymTypeExpression calculateConditionalBooleanOperation(
-      ASTExpression left, ASTExpression right, String operator) {
-    SymTypeExpression leftResult = getType4Ast().getPartialTypeOfExpr(left);
-    SymTypeExpression rightResult = getType4Ast().getPartialTypeOfExpr(right);
+      ASTExpression left, ASTExpression right, SymTypeExpression leftResult, SymTypeExpression rightResult, String operator) {
 
-    if (leftResult.isObscureType() || rightResult.isObscureType()) {
-      // if any inner obscure then error already logged
-      return createObscureType();
-    } else if (OCLSymTypeRelations.isBoolean(leftResult)
+    if (OCLSymTypeRelations.isBoolean(leftResult)
         && OCLSymTypeRelations.isBoolean(rightResult)) {
       return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     } else {
@@ -186,19 +195,19 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTForallExpression expr) {
-    SymTypeExpression exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
 
     SymTypeExpression result;
-    if (exprResult.isObscureType()) {
+    if (right.isObscureType()) {
       result = createObscureType();
-    } else if (OCLSymTypeRelations.isBoolean(exprResult)) {
+    } else if (OCLSymTypeRelations.isBoolean(right)) {
       result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     } else {
       Log.error(
           String.format(
               "0xFD208 The type of the expression "
                   + "in the ForallExpression is '%s' but has to be boolean.",
-              exprResult.printFullName()),
+              right.printFullName()),
           expr.getExpression().get_SourcePositionStart(),
           expr.getExpression().get_SourcePositionEnd());
       result = createObscureType();
@@ -208,12 +217,12 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTExistsExpression expr) {
-    SymTypeExpression exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
 
     SymTypeExpression result;
-    if (exprResult.isObscureType()) {
+    if (right.isObscureType()) {
       result = createObscureType();
-    } else if (OCLSymTypeRelations.isBoolean(exprResult)) {
+    } else if (OCLSymTypeRelations.isBoolean(right)) {
       result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     } else {
       result = createObscureType();
@@ -221,7 +230,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
       Log.error(
           String.format(
               "The type of the expression in the ExistsExpression is '%s' but has to be boolean.",
-              exprResult.printFullName()),
+              right.printFullName()),
           expr.get_SourcePositionStart(),
           expr.get_SourcePositionEnd());
     }
@@ -230,19 +239,19 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTAnyExpression expr) {
-    SymTypeExpression exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
 
     SymTypeExpression result;
-    if (exprResult.isObscureType()) {
+    if (right.isObscureType()) {
       result = createObscureType();
-    } else if (!OCLSymTypeRelations.isOCLCollection(exprResult)) {
+    } else if (!OCLSymTypeRelations.isOCLCollection(right)) {
       Log.error(
-          "0xFD292 expected a collection for 'any', but got " + exprResult.getTypeInfo(),
+          "0xFD292 expected a collection for 'any', but got " + right.getTypeInfo(),
           expr.get_SourcePositionStart(),
           expr.get_SourcePositionEnd());
       result = createObscureType();
     } else {
-      result = OCLSymTypeRelations.getCollectionElementType(exprResult);
+      result = OCLSymTypeRelations.getCollectionElementType(right);
     }
     getType4Ast().setTypeOfExpression(expr, result);
   }
@@ -254,13 +263,13 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
             .anyMatch(
                 decl -> getType4Ast().getPartialTypeOfExpr(decl.getExpression()).isObscureType());
 
-    SymTypeExpression exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
 
     SymTypeExpression result;
-    if (exprResult.isObscureType() || obscureDeclaration) {
+    if (right.isObscureType() || obscureDeclaration) {
       result = createObscureType();
     } else {
-      result = exprResult;
+      result = right;
     }
     getType4Ast().setTypeOfExpression(expr, result);
   }
@@ -312,7 +321,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
    * @return the type of the variable, Obscure on error
    */
   protected SymTypeExpression evaluateInDeclarationType(ASTInDeclaration inDeclaration) {
-    Optional<SymTypeExpression> typeResult =
+    Optional<SymTypeExpression> left =
         inDeclaration.isPresentMCType()
             ? Optional.of(getType4Ast().getPartialTypeOfTypeId(inDeclaration.getMCType()))
             : Optional.empty();
@@ -331,21 +340,21 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
           inDeclaration.getExpression().get_SourcePositionEnd());
       result = createObscureType();
     } else if (expressionResult.isPresent()
-        && typeResult.isPresent()
+        && left.isPresent()
         && !OCLSymTypeRelations.isCompatible(
-            typeResult.get(),
+            left.get(),
             OCLSymTypeRelations.getCollectionElementType(expressionResult.get()))) {
       Log.error(
           "0xFD298 cannot assign element of "
               + expressionResult.get().printFullName()
               + " to variable of type "
-              + typeResult.get().printFullName(),
+              + left.get().printFullName(),
           inDeclaration.get_SourcePositionStart(),
           inDeclaration.get_SourcePositionEnd());
       result = createObscureType();
     } else if (expressionResult.isEmpty()
-        && (OCLSymTypeRelations.isNumericType(typeResult.get())
-            || OCLSymTypeRelations.isBoolean(typeResult.get()))) {
+        && (OCLSymTypeRelations.isNumericType(left.get())
+            || OCLSymTypeRelations.isBoolean(left.get()))) {
       // this is technically not enough,
       // the correct check is whether the type is a domain class ->
       // if it is, one can get all instantiations
@@ -357,7 +366,7 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
       result = createObscureType();
     } else {
       result =
-          typeResult.orElseGet(
+          left.orElseGet(
               () -> OCLSymTypeRelations.getCollectionElementType(expressionResult.get()));
     }
     return result;
@@ -365,11 +374,11 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTInstanceOfExpression expr) {
-    SymTypeExpression exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
-    SymTypeExpression typeResult = getType4Ast().getPartialTypeOfTypeId(expr.getMCType());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfTypeId(expr.getMCType());
 
     SymTypeExpression result;
-    if (exprResult.isObscureType() || typeResult.isObscureType()) {
+    if (right.isObscureType() || left.isObscureType()) {
       result = createObscureType();
     } else {
       result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
@@ -380,16 +389,16 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
   @Override
   public void endVisit(ASTOCLArrayQualification expr) {
     SymTypeExpression result;
-    SymTypeExpression exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
     List<SymTypeExpression> argumentTypes =
         expr.getArgumentsList().stream()
             .map(getType4Ast()::getPartialTypeOfExpr)
             .collect(Collectors.toList());
-    if (exprResult.isObscureType()
+    if (right.isObscureType()
         || argumentTypes.stream().anyMatch(SymTypeExpression::isObscureType)) {
       result = createObscureType();
     } else {
-      result = calculateArrayQualificationRec(expr, exprResult, argumentTypes);
+      result = calculateArrayQualificationRec(expr, right, argumentTypes);
     }
     getType4Ast().setTypeOfExpression(expr, result);
   }
@@ -509,46 +518,46 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
   }
 
   protected SymTypeExpression evaluateGenericType(
-      ASTOCLArrayQualification expr, SymTypeOfGenerics exprResult) {
+      ASTOCLArrayQualification expr, SymTypeOfGenerics right) {
     SymTypeExpression result;
-    if (exprResult.getArgumentList().size() > 1
-        && !exprResult.getTypeConstructorFullName().equals("java.util.Map")) {
+    if (right.getArgumentList().size() > 1
+        && !right.getTypeConstructorFullName().equals("java.util.Map")) {
       result = createObscureType();
 
       Log.error(
           "0xFD211 Array qualifications can only be used with one type argument or a map.",
           expr.get_SourcePositionStart(),
           expr.get_SourcePositionEnd());
-    } else if (exprResult.getTypeConstructorFullName().equals("java.util.Map")) {
-      result = exprResult.getArgument(1);
+    } else if (right.getTypeConstructorFullName().equals("java.util.Map")) {
+      result = right.getArgument(1);
     } else {
-      result = exprResult.getArgument(0);
+      result = right.getArgument(0);
     }
     return result;
   }
 
   @Override
   public void endVisit(ASTOCLAtPreQualification expr) {
-    SymTypeExpression exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
 
     SymTypeExpression result;
-    if (exprResult.isObscureType()) {
+    if (right.isObscureType()) {
       result = createObscureType();
     } else {
-      result = exprResult;
+      result = right;
     }
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTOCLTransitiveQualification expr) {
-    SymTypeExpression exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
 
     SymTypeExpression result;
-    if (exprResult.isObscureType()) {
+    if (right.isObscureType()) {
       result = createObscureType();
     } else {
-      result = exprResult;
+      result = right;
     }
     getType4Ast().setTypeOfExpression(expr, result);
   }
