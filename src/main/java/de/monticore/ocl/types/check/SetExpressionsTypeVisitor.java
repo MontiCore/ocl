@@ -43,24 +43,24 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTSetInExpression expr) {
-    var left = getType4Ast().getPartialTypeOfExpr(expr.getElem());
-    var right = getType4Ast().getPartialTypeOfExpr(expr.getSet());
+    SymTypeExpression elemResult = getType4Ast().getPartialTypeOfExpr(expr.getElem());
+    SymTypeExpression setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
     SymTypeExpression result =
         TypeVisitorLifting.liftDefault(
-                (leftPar, rightPar) -> calculateSetInExpression(expr, leftPar, rightPar))
-            .apply(left, right);
+                (elemPar, setPar) -> calculateSetInExpression(expr, elemPar, setPar))
+            .apply(elemResult, setResult);
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTSetNotInExpression expr) {
-    var left = getType4Ast().getPartialTypeOfExpr(expr.getElem());
-    var right = getType4Ast().getPartialTypeOfExpr(expr.getSet());
+    SymTypeExpression elemResult = getType4Ast().getPartialTypeOfExpr(expr.getElem());
+    SymTypeExpression setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
 
     SymTypeExpression result =
         TypeVisitorLifting.liftDefault(
-                (leftPar, rightPar) -> calculateSetInExpression(expr, leftPar, rightPar))
-            .apply(left, right);
+                (elemPar, setPar) -> calculateSetInExpression(expr, elemPar, setPar))
+            .apply(elemResult, setResult);
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
@@ -104,8 +104,8 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
   public void endVisit(ASTUnionExpression expr) {
     // union of two sets -> both sets need to have the same type or their types need to be sub/super
     // types
-    var left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
     SymTypeExpression result =
         TypeVisitorLifting.liftDefault(
                 (leftPar, rightPar) -> calculateSetOperation(expr, leftPar, rightPar))
@@ -117,8 +117,8 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
   public void endVisit(ASTIntersectionExpression expr) {
     // union of two sets -> both sets need to have the same type or their types need to be sub/super
     // types
-    var left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
     SymTypeExpression result =
         TypeVisitorLifting.liftDefault(
                 (leftPar, rightPar) -> calculateSetOperation(expr, leftPar, rightPar))
@@ -130,8 +130,8 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
   public void endVisit(ASTSetMinusExpression expr) {
     // union of two sets -> both sets need to have the same type or their types need to be sub/super
     // types
-    var left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
     SymTypeExpression result =
         TypeVisitorLifting.liftDefault(
                 (leftPar, rightPar) -> calculateSetOperation(expr, leftPar, rightPar))
@@ -174,7 +174,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTSetAndExpression expr) {
-    var setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
+    SymTypeExpression setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
     SymTypeExpression result =
         TypeVisitorLifting.liftDefault((setPar) -> calculateLogicalSetExpression(expr, setPar))
             .apply(setResult);
@@ -183,7 +183,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTSetOrExpression expr) {
-    var setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
+    SymTypeExpression setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
     SymTypeExpression result =
         TypeVisitorLifting.liftDefault((setPar) -> calculateLogicalSetExpression(expr, setPar))
             .apply(setResult);
@@ -375,8 +375,8 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTSetValueRange expr) {
-    var leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLowerBound());
-    var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getUpperBound());
+    SymTypeExpression leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLowerBound());
+    SymTypeExpression rightResult = getType4Ast().getPartialTypeOfExpr(expr.getUpperBound());
     if (!leftResult.isObscureType() && !rightResult.isObscureType()) {
       if (!OCLSymTypeRelations.isIntegralType(leftResult)
           || !OCLSymTypeRelations.isIntegralType(rightResult)) {

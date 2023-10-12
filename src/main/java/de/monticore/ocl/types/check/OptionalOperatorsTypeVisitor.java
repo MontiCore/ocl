@@ -22,8 +22,8 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTOptionalExpressionPrefix expr) {
-    var left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
 
     SymTypeExpression result =
         TypeVisitorLifting.liftDefault(
@@ -205,8 +205,8 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
   @Override
   public void endVisit(ASTOptionalSimilarExpression expr) {
     // no compatibility check necessary, therefore only check for optional
-    var left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
 
     SymTypeExpression result =
         TypeVisitorLifting.liftDefault(
@@ -219,8 +219,8 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
   @Override
   public void endVisit(ASTOptionalNotSimilarExpression expr) {
     // no compatibility check necessary, therefore only check for optional
-    var left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
     SymTypeExpression result =
         TypeVisitorLifting.liftDefault(
                 (leftPar, rightPar) ->
