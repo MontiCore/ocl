@@ -34,8 +34,8 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTTypeCastExpression expr) {
-    var typeResult = getType4Ast().getPartialTypeOfTypeId(expr.getMCType());
-    var exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    SymTypeExpression typeResult = getType4Ast().getPartialTypeOfTypeId(expr.getMCType());
+    SymTypeExpression exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
 
     SymTypeExpression result =
         TypeVisitorLifting.liftForNonNormalized(
@@ -151,8 +151,8 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTImpliesExpression expr) {
-    var left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
 
     SymTypeExpression result =
         TypeVisitorLifting.liftDefault(
@@ -165,8 +165,8 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTEquivalentExpression expr) {
-    var left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
 
     SymTypeExpression result =
         TypeVisitorLifting.liftDefault(
