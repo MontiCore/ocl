@@ -26,6 +26,7 @@ import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types3.AbstractTypeVisitor;
+import de.monticore.types3.util.TypeVisitorLifting;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,26 +43,32 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTSetInExpression expr) {
-    var elemResult = getType4Ast().getPartialTypeOfExpr(expr.getElem());
-    var setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
-    calculateSetInExpression(expr, elemResult, setResult);
+    SymTypeExpression elemResult = getType4Ast().getPartialTypeOfExpr(expr.getElem());
+    SymTypeExpression setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (elemPar, setPar) -> calculateSetInExpression(expr, elemPar, setPar))
+            .apply(elemResult, setResult);
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTSetNotInExpression expr) {
-    var elemResult = getType4Ast().getPartialTypeOfExpr(expr.getElem());
-    var setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
-    calculateSetInExpression(expr, elemResult, setResult);
+    SymTypeExpression elemResult = getType4Ast().getPartialTypeOfExpr(expr.getElem());
+    SymTypeExpression setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
+
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (elemPar, setPar) -> calculateSetInExpression(expr, elemPar, setPar))
+            .apply(elemResult, setResult);
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
-  protected void calculateSetInExpression(
+  protected SymTypeExpression calculateSetInExpression(
       ASTExpression expr, SymTypeExpression elemResult, SymTypeExpression setResult) {
     SymTypeExpression result;
 
-    if (elemResult.isObscureType() || setResult.isObscureType()) {
-      // error already logged
-      result = SymTypeExpressionFactory.createObscureType();
-    } else if (OCLSymTypeRelations.isOCLCollection(setResult)) {
+    if (OCLSymTypeRelations.isOCLCollection(setResult)) {
       SymTypeExpression setElemType = OCLSymTypeRelations.getCollectionElementType(setResult);
       // it does not make any sense to ask if it is in the set
       // if it cannot be in the set
@@ -90,43 +97,53 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
           expr.get_SourcePositionEnd());
       result = createObscureType();
     }
-    getType4Ast().setTypeOfExpression(expr, result);
+    return result;
   }
 
   @Override
   public void endVisit(ASTUnionExpression expr) {
     // union of two sets -> both sets need to have the same type or their types need to be sub/super
     // types
-    var leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getRight());
-    calculateSetOperation(expr, leftResult, rightResult);
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) -> calculateSetOperation(expr, leftPar, rightPar))
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTIntersectionExpression expr) {
     // union of two sets -> both sets need to have the same type or their types need to be sub/super
     // types
-    var leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getRight());
-    calculateSetOperation(expr, leftResult, rightResult);
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) -> calculateSetOperation(expr, leftPar, rightPar))
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTSetMinusExpression expr) {
     // union of two sets -> both sets need to have the same type or their types need to be sub/super
     // types
-    var leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getRight());
-    calculateSetOperation(expr, leftResult, rightResult);
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) -> calculateSetOperation(expr, leftPar, rightPar))
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
-  public void calculateSetOperation(
+  public SymTypeExpression calculateSetOperation(
       ASTExpression expr, SymTypeExpression leftResult, SymTypeExpression rightResult) {
     SymTypeExpression result;
 
-    if (leftResult.isObscureType() || rightResult.isObscureType()) {
-      result = createObscureType();
-    } else if (OCLSymTypeRelations.isOCLCollection(leftResult)
+    if (OCLSymTypeRelations.isOCLCollection(leftResult)
         && OCLSymTypeRelations.isOCLCollection(rightResult)) {
       Optional<SymTypeExpression> lub =
           OCLSymTypeRelations.leastUpperBound(leftResult, rightResult);
@@ -152,26 +169,31 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
           expr.get_SourcePositionEnd());
       result = createObscureType();
     }
-    getType4Ast().setTypeOfExpression(expr, result);
+    return result;
   }
 
   @Override
   public void endVisit(ASTSetAndExpression expr) {
     SymTypeExpression setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
-    calculateLogicalSetExpression(expr, setResult);
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault((setPar) -> calculateLogicalSetExpression(expr, setPar))
+            .apply(setResult);
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTSetOrExpression expr) {
     SymTypeExpression setResult = getType4Ast().getPartialTypeOfExpr(expr.getSet());
-    calculateLogicalSetExpression(expr, setResult);
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault((setPar) -> calculateLogicalSetExpression(expr, setPar))
+            .apply(setResult);
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
-  protected void calculateLogicalSetExpression(ASTExpression expr, SymTypeExpression setType) {
+  protected SymTypeExpression calculateLogicalSetExpression(
+      ASTExpression expr, SymTypeExpression setType) {
     SymTypeExpression result;
-    if (setType.isObscureType()) {
-      result = createObscureType();
-    } else if (OCLSymTypeRelations.isOCLCollection(setType)
+    if (OCLSymTypeRelations.isOCLCollection(setType)
         && OCLSymTypeRelations.isBoolean(OCLSymTypeRelations.getCollectionElementType(setType))) {
       result = createPrimitive(BasicSymbolsMill.BOOLEAN);
     } else {
@@ -181,7 +203,7 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
           expr.get_SourcePositionEnd());
       result = createObscureType();
     }
-    getType4Ast().setTypeOfExpression(expr, result);
+    return result;
   }
 
   @Override
@@ -353,8 +375,8 @@ public class SetExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTSetValueRange expr) {
-    var leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLowerBound());
-    var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getUpperBound());
+    SymTypeExpression leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLowerBound());
+    SymTypeExpression rightResult = getType4Ast().getPartialTypeOfExpr(expr.getUpperBound());
     if (!leftResult.isObscureType() && !rightResult.isObscureType()) {
       if (!OCLSymTypeRelations.isIntegralType(leftResult)
           || !OCLSymTypeRelations.isIntegralType(rightResult)) {

@@ -17,6 +17,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types3.AbstractTypeVisitor;
+import de.monticore.types3.util.TypeVisitorLifting;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.Optional;
@@ -36,27 +37,31 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
     SymTypeExpression typeResult = getType4Ast().getPartialTypeOfTypeId(expr.getMCType());
     SymTypeExpression exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
 
-    SymTypeExpression result;
-    if (typeResult.isObscureType() || exprResult.isObscureType()) {
-      // if any inner obscure then error already logged
-      result = createObscureType();
-    } else if (OCLSymTypeRelations.isNumericType(typeResult)
-        && OCLSymTypeRelations.isNumericType(exprResult)) {
+    SymTypeExpression result =
+        TypeVisitorLifting.liftForNonNormalized(
+                TypeVisitorLifting.liftForObscure(
+                    (leftPar, rightPar) -> calculateTypeCastExpression(expr, leftPar, rightPar)))
+            .apply(typeResult, exprResult);
+    getType4Ast().setTypeOfExpression(expr, result);
+  }
+
+  protected SymTypeExpression calculateTypeCastExpression(
+      ASTTypeCastExpression expr, SymTypeExpression typeId, SymTypeExpression exprType) {
+    if (OCLSymTypeRelations.isNumericType(typeId) && OCLSymTypeRelations.isNumericType(exprType)) {
       // allow to cast numbers down, e.g., (int) 5.0 or (byte) 5
-      result = typeResult;
-    } else if (OCLSymTypeRelations.isSubTypeOf(exprResult, typeResult)) {
+      return typeId;
+    } else if (OCLSymTypeRelations.isSubTypeOf(exprType, typeId)) {
       // check whether typecast is possible
-      result = typeResult;
+      return typeId;
     } else {
       Log.error(
           String.format(
               "0xFD204 The expression of type '%s' " + "can't be cast to the given type '%s'.",
-              exprResult.printFullName(), typeResult.printFullName()),
+              exprType.printFullName(), typeId.printFullName()),
           expr.get_SourcePositionStart(),
           expr.get_SourcePositionEnd());
-      result = createObscureType();
+      return createObscureType();
     }
-    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
@@ -146,29 +151,40 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTImpliesExpression expr) {
-    getType4Ast()
-        .setTypeOfExpression(
-            expr, calculateConditionalBooleanOperation(expr.getLeft(), expr.getRight(), "implies"));
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) ->
+                    calculateConditionalBooleanOperation(
+                        expr.getLeft(), expr.getRight(), leftPar, rightPar, "implies"))
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTEquivalentExpression expr) {
-    getType4Ast()
-        .setTypeOfExpression(
-            expr,
-            calculateConditionalBooleanOperation(expr.getLeft(), expr.getRight(), "equivalent"));
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) ->
+                    calculateConditionalBooleanOperation(
+                        expr.getLeft(), expr.getRight(), leftPar, rightPar, "equivalent"))
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   protected SymTypeExpression calculateConditionalBooleanOperation(
-      ASTExpression left, ASTExpression right, String operator) {
-    SymTypeExpression leftResult = getType4Ast().getPartialTypeOfExpr(left);
-    SymTypeExpression rightResult = getType4Ast().getPartialTypeOfExpr(right);
+      ASTExpression left,
+      ASTExpression right,
+      SymTypeExpression leftResult,
+      SymTypeExpression rightResult,
+      String operator) {
 
-    if (leftResult.isObscureType() || rightResult.isObscureType()) {
-      // if any inner obscure then error already logged
-      return createObscureType();
-    } else if (OCLSymTypeRelations.isBoolean(leftResult)
-        && OCLSymTypeRelations.isBoolean(rightResult)) {
+    if (OCLSymTypeRelations.isBoolean(leftResult) && OCLSymTypeRelations.isBoolean(rightResult)) {
       return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     } else {
       // operator not applicable
@@ -186,46 +202,45 @@ public class OCLExpressionsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTForallExpression expr) {
-    SymTypeExpression exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
-
-    SymTypeExpression result;
-    if (exprResult.isObscureType()) {
-      result = createObscureType();
-    } else if (OCLSymTypeRelations.isBoolean(exprResult)) {
-      result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
-    } else {
-      Log.error(
-          String.format(
-              "0xFD208 The type of the expression "
-                  + "in the ForallExpression is '%s' but has to be boolean.",
-              exprResult.printFullName()),
-          expr.getExpression().get_SourcePositionStart(),
-          expr.getExpression().get_SourcePositionEnd());
-      result = createObscureType();
-    }
+    SymTypeExpression innerType = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (innerPar) ->
+                    calculateQuantificationExpression(
+                        expr.getExpression(), "ForAllExpression", innerPar))
+            .apply(innerType);
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTExistsExpression expr) {
-    SymTypeExpression exprResult = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    SymTypeExpression innerType = getType4Ast().getPartialTypeOfExpr(expr.getExpression());
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (innerPar) ->
+                    calculateQuantificationExpression(
+                        expr.getExpression(), "ExistsExpression", innerPar))
+            .apply(innerType);
+    getType4Ast().setTypeOfExpression(expr, result);
+  }
 
+  protected SymTypeExpression calculateQuantificationExpression(
+      ASTExpression innerExpr, String exprName, SymTypeExpression innerType) {
     SymTypeExpression result;
-    if (exprResult.isObscureType()) {
-      result = createObscureType();
-    } else if (OCLSymTypeRelations.isBoolean(exprResult)) {
+    if (OCLSymTypeRelations.isBoolean(innerType)) {
       result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     } else {
-      result = createObscureType();
-
       Log.error(
-          String.format(
-              "The type of the expression in the ExistsExpression is '%s' but has to be boolean.",
-              exprResult.printFullName()),
-          expr.get_SourcePositionStart(),
-          expr.get_SourcePositionEnd());
+          "0xFD208 The type of the expression in the "
+              + exprName
+              + " is "
+              + innerType.printFullName()
+              + " but has to be boolean.",
+          innerExpr.get_SourcePositionStart(),
+          innerExpr.get_SourcePositionEnd());
+      result = createObscureType();
     }
-    getType4Ast().setTypeOfExpression(expr, result);
+    return result;
   }
 
   @Override

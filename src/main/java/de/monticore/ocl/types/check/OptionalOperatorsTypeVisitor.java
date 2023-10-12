@@ -10,6 +10,7 @@ import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types3.AbstractTypeVisitor;
+import de.monticore.types3.util.TypeVisitorLifting;
 import de.se_rwth.commons.logging.Log;
 
 public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
@@ -21,71 +22,105 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTOptionalExpressionPrefix expr) {
-    var optionalResult = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var exprResult = getType4Ast().getPartialTypeOfExpr(expr.getRight());
-    SymTypeExpression result;
-    if (optionalResult.isObscureType() || exprResult.isObscureType()) {
-      result = createObscureType();
-    } else if (!OCLSymTypeRelations.isOptional(optionalResult)) {
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) ->
+                    calculateOptionalExpressionPrefix(
+                        expr.getLeft(), expr.getRight(), leftPar, rightPar))
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
+  }
+
+  protected SymTypeExpression calculateOptionalExpressionPrefix(
+      ASTExpression left,
+      ASTExpression right,
+      SymTypeExpression leftResult,
+      SymTypeExpression rightResult) {
+    if (!OCLSymTypeRelations.isOptional(leftResult)) {
       Log.error(
-          "0xFDB74 expected Optional at '?:' but got " + optionalResult.printFullName(),
-          expr.getLeft().get_SourcePositionStart(),
-          expr.getLeft().get_SourcePositionEnd());
-      result = createObscureType();
+          "0xFDB74 expected Optional at '?:' but got " + leftResult.printFullName(),
+          left.get_SourcePositionStart(),
+          left.get_SourcePositionEnd());
+      return createObscureType();
     }
     // check compatibility of type of optional and expression
     else {
-      SymTypeExpression elementType = OCLSymTypeRelations.getCollectionElementType(optionalResult);
-      if (!OCLSymTypeRelations.isCompatible(elementType, exprResult)) {
+      SymTypeExpression elementType = OCLSymTypeRelations.getCollectionElementType(leftResult);
+      if (!OCLSymTypeRelations.isCompatible(elementType, rightResult)) {
         Log.error(
             String.format(
                 "0xFD201 The types '%s' and '%s' of OptionalExpressionPrefix are not compatible!",
-                optionalResult.printFullName(), exprResult.printFullName()),
-            expr.get_SourcePositionStart(),
-            expr.get_SourcePositionEnd());
-        result = createObscureType();
+                leftResult.printFullName(), rightResult.printFullName()),
+            right.get_SourcePositionStart(),
+            right.get_SourcePositionEnd());
+        return createObscureType();
       } else {
-        result = elementType;
+        return elementType;
       }
     }
-
-    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTOptionalLessEqualExpression expr) {
-    var result = calculateTypeCompareOptional(expr.getRight(), expr.getLeft());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) ->
+                    calculateTypeCompareOptional(
+                        expr.getLeft(), expr.getRight(), leftPar, rightPar))
+            .apply(left, right);
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTOptionalGreaterEqualExpression expr) {
-    var result = calculateTypeCompareOptional(expr.getRight(), expr.getLeft());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) ->
+                    calculateTypeCompareOptional(
+                        expr.getLeft(), expr.getRight(), leftPar, rightPar))
+            .apply(left, right);
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTOptionalLessThanExpression expr) {
-    var result = calculateTypeCompareOptional(expr.getRight(), expr.getLeft());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) ->
+                    calculateTypeCompareOptional(
+                        expr.getLeft(), expr.getRight(), leftPar, rightPar))
+            .apply(left, right);
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTOptionalGreaterThanExpression expr) {
-    var result = calculateTypeCompareOptional(expr.getRight(), expr.getLeft());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) ->
+                    calculateTypeCompareOptional(
+                        expr.getLeft(), expr.getRight(), leftPar, rightPar))
+            .apply(left, right);
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
   protected SymTypeExpression calculateTypeCompareOptional(
-      ASTExpression right, ASTExpression left) {
-    var leftResult = getType4Ast().getPartialTypeOfExpr(left);
-    var rightResult = getType4Ast().getPartialTypeOfExpr(right);
-
-    if (leftResult.isObscureType() || rightResult.isObscureType()) {
-      return createObscureType();
-    }
-    // check that leftResult is of type Optional
-    else if (!OCLSymTypeRelations.isOptional(leftResult)
+      ASTExpression left,
+      ASTExpression right,
+      SymTypeExpression leftResult,
+      SymTypeExpression rightResult) {
+    if (!OCLSymTypeRelations.isOptional(leftResult)
         || !OCLSymTypeRelations.isNumericType(
             OCLSymTypeRelations.getCollectionElementType(leftResult))) {
       Log.error(
@@ -106,92 +141,107 @@ public class OptionalOperatorsTypeVisitor extends AbstractTypeVisitor
 
   @Override
   public void endVisit(ASTOptionalEqualsExpression expr) {
-    var result = calculateTypeLogicalOptional(expr.getLeft(), expr.getRight());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) ->
+                    calculateTypeLogicalOptional(
+                        expr.getLeft(), expr.getRight(), leftPar, rightPar))
+            .apply(left, right);
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTOptionalNotEqualsExpression expr) {
-    var result = calculateTypeLogicalOptional(expr.getLeft(), expr.getRight());
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) ->
+                    calculateTypeLogicalOptional(
+                        expr.getLeft(), expr.getRight(), leftPar, rightPar))
+            .apply(left, right);
     getType4Ast().setTypeOfExpression(expr, result);
   }
 
   protected SymTypeExpression calculateTypeLogicalOptional(
-      ASTExpression left, ASTExpression right) {
-    var leftResult = getType4Ast().getPartialTypeOfExpr(left);
-    var rightResult = getType4Ast().getPartialTypeOfExpr(right);
+      ASTExpression left,
+      ASTExpression right,
+      SymTypeExpression leftResult,
+      SymTypeExpression rightResult) {
 
-    if (leftResult.isObscureType() || rightResult.isObscureType()) {
-      return createObscureType();
-    } else if (!OCLSymTypeRelations.isOptional(leftResult)) {
+    SymTypeExpression elementType = OCLSymTypeRelations.getCollectionElementType(leftResult);
+    // Option one: they are both numeric types
+    if (OCLSymTypeRelations.isNumericType(elementType)
+            && OCLSymTypeRelations.isNumericType(rightResult)
+        || OCLSymTypeRelations.isBoolean(elementType)
+            && OCLSymTypeRelations.isBoolean(rightResult)) {
+      return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
+    }
+    // Option two: none of them is a primitive type, and they are either the same type or in a
+    // super/ subtype relation
+    if (!leftResult.isPrimitive()
+        && !rightResult.isPrimitive()
+        && (OCLSymTypeRelations.isCompatible(elementType, rightResult)
+            || OCLSymTypeRelations.isCompatible(rightResult, elementType))) {
+      return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
+    } else {
+      // should never happen, no valid result
       Log.error(
-          "0xFD283 expected Optional, but got " + leftResult.printFullName(),
+          "0xFD285 types "
+              + elementType.printFullName()
+              + " and "
+              + rightResult.printFullName()
+              + " are not comparable",
           left.get_SourcePositionStart(),
           right.get_SourcePositionEnd());
-      return createObscureType();
-    } else {
-      SymTypeExpression elementType = OCLSymTypeRelations.getCollectionElementType(leftResult);
-      // Option one: they are both numeric types
-      if (OCLSymTypeRelations.isNumericType(elementType)
-              && OCLSymTypeRelations.isNumericType(rightResult)
-          || OCLSymTypeRelations.isBoolean(elementType)
-              && OCLSymTypeRelations.isBoolean(rightResult)) {
-        return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
-      }
-      // Option two: none of them is a primitive type, and they are either the same type or in a
-      // super/ subtype relation
-      if (!leftResult.isPrimitive()
-          && !rightResult.isPrimitive()
-          && (OCLSymTypeRelations.isCompatible(elementType, rightResult)
-              || OCLSymTypeRelations.isCompatible(rightResult, elementType))) {
-        return SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
-      } else {
-        // should never happen, no valid result
-        Log.error(
-            "0xFD285 types "
-                + elementType.printFullName()
-                + " and "
-                + rightResult.printFullName()
-                + " are not comparable",
-            left.get_SourcePositionStart(),
-            right.get_SourcePositionEnd());
-        return SymTypeExpressionFactory.createObscureType();
-      }
+      return SymTypeExpressionFactory.createObscureType();
     }
   }
 
   @Override
   public void endVisit(ASTOptionalSimilarExpression expr) {
     // no compatibility check necessary, therefore only check for optional
-    var leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getRight());
-    calculateOptionalSimilarityExpression(expr, leftResult, rightResult);
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) ->
+                    calculateOptionalSimilarityExpression(expr, leftPar, rightPar))
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
   @Override
   public void endVisit(ASTOptionalNotSimilarExpression expr) {
     // no compatibility check necessary, therefore only check for optional
-    var leftResult = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
-    var rightResult = getType4Ast().getPartialTypeOfExpr(expr.getRight());
-    calculateOptionalSimilarityExpression(expr, leftResult, rightResult);
+    SymTypeExpression left = getType4Ast().getPartialTypeOfExpr(expr.getLeft());
+    SymTypeExpression right = getType4Ast().getPartialTypeOfExpr(expr.getRight());
+    SymTypeExpression result =
+        TypeVisitorLifting.liftDefault(
+                (leftPar, rightPar) ->
+                    calculateOptionalSimilarityExpression(expr, leftPar, rightPar))
+            .apply(left, right);
+    getType4Ast().setTypeOfExpression(expr, result);
   }
 
-  protected void calculateOptionalSimilarityExpression(
+  protected SymTypeExpression calculateOptionalSimilarityExpression(
       ASTExpression expr, SymTypeExpression leftType, SymTypeExpression rightType) {
     SymTypeExpression result;
-    if (leftType.isObscureType() || rightType.isObscureType()) {
+
+    if (!OCLSymTypeRelations.isOptional(leftType)) {
+      Log.error(
+          "0xFD203 expected Optional but got " + leftType.printFullName(),
+          expr.get_SourcePositionStart(),
+          expr.get_SourcePositionEnd());
       result = createObscureType();
     } else {
-      if (!OCLSymTypeRelations.isOptional(leftType)) {
-        Log.error(
-            "0xFD203 expected Optional but got " + leftType.printFullName(),
-            expr.get_SourcePositionStart(),
-            expr.get_SourcePositionEnd());
-        result = createObscureType();
-      } else {
-        result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
-      }
+      result = SymTypeExpressionFactory.createPrimitive(BasicSymbolsMill.BOOLEAN);
     }
-    getType4Ast().setTypeOfExpression(expr, result);
+    return result;
   }
 }
