@@ -157,23 +157,19 @@ Deploy Docker:
 
 trigger-montifun-main:
   rules:
-    - if: $CI_PIPELINE_SOURCE != "pipeline"
+    - if: '$CI_COMMIT_REF_NAME == "master" && $CI_PIPELINE_SOURCE != "pipeline"'
   stage: trigger_languages
   trigger:
     project: monticore/languages/montifun
     branch: main
-  only:
-    - master
 
 trigger-montifun-dev:
   rules:
-    - if: $CI_PIPELINE_SOURCE != "pipeline"
+    - if: '$CI_COMMIT_REF_NAME == "develop" && $CI_PIPELINE_SOURCE != "pipeline"'
   stage: trigger_languages
   trigger:
     project: monticore/languages/montifun
     branch: dev
-  only:
-    - develop
 
 
 # Mirrors this repository's `develop` and `master` branch to GitHub.
