@@ -156,6 +156,8 @@ Deploy Docker:
     - docker image push $CI_REGISTRY_IMAGE/ocl:latest
 
 trigger-montifun-main:
+  rules:
+    - if: $CI_PIPELINE_SOURCE != "pipeline"
   stage: trigger_languages
   trigger:
     project: monticore/languages/montifun
@@ -164,6 +166,8 @@ trigger-montifun-main:
     - master
 
 trigger-montifun-dev:
+  rules:
+    - if: $CI_PIPELINE_SOURCE != "pipeline"
   stage: trigger_languages
   trigger:
     project: monticore/languages/montifun
