@@ -85,7 +85,7 @@ public class OCL2SMTGenerator {
 
     Optional<String> name =
         invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
-
+    exprConv.reset();
     return IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name);
   }
 

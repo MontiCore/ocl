@@ -7,7 +7,7 @@ import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
 import de.se_rwth.commons.logging.Log;
-import java.util.Set;
+import java.util.List;
 import java.util.function.Function;
 
 public class SMTSet {
@@ -80,12 +80,12 @@ public class SMTSet {
 
   public BoolExpr containsAll(SMTSet set) {
     Expr<? extends Sort> expr = exprConv.declVariable(set.getType(), "expr111");
-    return exprConv.mkForall(Set.of(expr), ctx.mkImplies(set.contains(expr), this.contains(expr)));
+    return exprConv.mkForall(List.of(expr), ctx.mkImplies(set.contains(expr), this.contains(expr)));
   }
 
   public BoolExpr isEmpty(Context ctx) {
     Expr<? extends Sort> expr = exprConv.declVariable(type, "expr11");
-    return exprConv.mkForall(Set.of(expr), this.notIn(expr));
+    return exprConv.mkForall(List.of(expr), this.notIn(expr));
   }
 
   public BoolExpr notIn(Expr<? extends Sort> expr) {
@@ -97,7 +97,7 @@ public class SMTSet {
     return new SMTSet(
         kii ->
             exprConv.mkExists(
-                Set.of(expr), ctx.mkAnd(this.contains(expr), function.apply(expr).contains(kii))),
+                List.of(expr), ctx.mkAnd(this.contains(expr), function.apply(expr).contains(kii))),
         function.apply(expr).type,
         exprConv);
   }
@@ -105,7 +105,7 @@ public class SMTSet {
   public BoolExpr mkSetEq(SMTSet set2) {
 
     Expr<? extends Sort> expr = exprConv.declVariable(this.getType(), "const");
-    return exprConv.mkForall(Set.of(expr), ctx.mkEq(this.contains(expr), set2.contains(expr)));
+    return exprConv.mkForall(List.of(expr), ctx.mkEq(this.contains(expr), set2.contains(expr)));
   }
 
   enum OPERATION {

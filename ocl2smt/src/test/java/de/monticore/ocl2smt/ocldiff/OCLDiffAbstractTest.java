@@ -80,6 +80,18 @@ public abstract class OCLDiffAbstractTest extends OCL2SMTAbstractTest {
         oldCD, newCD, oldOCL, newOCL, new HashSet<>(), new HashSet<>(), false);
   }
 
+  public OCLInvDiffResult computeDiffOneCDFinite(
+      String cdName, String oldOCLName, String newOCLName, long max) throws IOException {
+    return OCLDiffGenerator.oclDiffFinite(
+        parseCD(cdName),
+        new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
+        new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
+        new HashSet<>(),
+        new HashSet<>(),
+        max,
+        false);
+  }
+
   public OCLInvDiffResult computeDiffOneCD(String cdName, String oldOCLName, String newOCLName)
       throws IOException {
     return OCLDiffGenerator.oclDiff(

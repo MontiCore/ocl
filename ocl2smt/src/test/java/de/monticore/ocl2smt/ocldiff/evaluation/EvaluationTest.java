@@ -20,15 +20,14 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class EvaluationTest extends OCLDiffAbstractTest {
+  private List<ASTCDCompilationUnit> ast;
+  private List<ASTOCLCompilationUnit> ocl;
+
   @BeforeEach
   public void setUp() {
     super.initLogger();
     super.initMills();
   }
-
-  private List<ASTCDCompilationUnit> ast;
-
-  private List<ASTOCLCompilationUnit> ocl;
 
   // private List<String> changes;
 
