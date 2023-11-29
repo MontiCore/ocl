@@ -2,7 +2,6 @@ package de.monticore.ocl2smt.ocldiff.invariantDiff;
 
 import static de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy.Strategy.DEFAULT;
 import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.FINITEDS;
-import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.FINITESS;
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.ME;
 
 import com.microsoft.z3.Context;
@@ -16,64 +15,69 @@ import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FiniteOCLInvariantDiff extends OCLInvariantDiff {
+public class FiniteOCLInvariantDiff implements OCLInvDiffStrategy {
+  private final long max;
 
+  public FiniteOCLInvariantDiff(long max) {
+    this.max = max;
+  }
+
+  @Override
   public ASTODArtifact oclWitness(
       ASTCDCompilationUnit cd,
       Set<ASTOCLCompilationUnit> ocl,
       Set<IdentifiableBoolExpr> addConstrs,
       Context ctx,
-      long max,
+      int timeout,
       boolean partial) {
-    this.ctx = ctx;
     Stream<Map<ASTCDType, Integer>> cardinalities = CDTypeInitializer.initialize(cd, max, true);
     AtomicReference<Optional<ASTODArtifact>> res = new AtomicReference<>();
+    AtomicInteger counter = new AtomicInteger(0);
 
-    // iterate over all instantiation of the types universe
     boolean found =
         cardinalities.anyMatch(
             card -> {
+              Log.info("checking witness..." + counter, this.getClass().getSimpleName());
               CD2SMTMill.init(FINITEDS, ME, DEFAULT, card);
-              res.set(Optional.ofNullable(oclWitnessInternal(cd, ocl, addConstrs, partial)));
+              // TODO:04.09.2023  make strategy choice flexible
+
+              ASTODArtifact witness =
+                  oclWitnessInternal(cd, ocl, addConstrs, ctx, timeout, partial);
+
+              counter.incrementAndGet();
+              res.set(Optional.ofNullable(witness));
               return res.get().isPresent();
             });
+
+    if (found) {
+      Log.info(": Witness found", this.getClass().getSimpleName());
+    } else {
+      Log.info(": Witness not found", this.getClass().getSimpleName());
+    }
 
     return res.get().get();
   }
 
-  public OCLInvDiffResult oclDiff(
-      ASTCDCompilationUnit cd,
-      Set<ASTOCLCompilationUnit> oldOcl,
-      Set<ASTOCLCompilationUnit> newOcl,
-      Set<IdentifiableBoolExpr> addConstr,
-      Context ctx,
-      long max,
-      boolean partial) {
-    this.ctx = ctx;
-
-    // collect invariants
-    List<ASTOCLInvariant> invariantList = collectInv(oldOcl);
-
-    // compute diff witness for each invariant
-    Set<ASTODArtifact> witnesses = new HashSet<>();
-    invariantList.forEach(
-        inv -> oclInvDiff(cd, newOcl, addConstr, inv, max, partial).map(witnesses::add));
-
-    return new OCLInvDiffResult(null, witnesses);
-  }
-
-  public Optional<ASTODArtifact> oclInvDiff(
+  @Override
+  public OCLInvDiffResult oclInvDiff(
       ASTCDCompilationUnit cd,
       Set<ASTOCLCompilationUnit> newConstr,
-      Set<IdentifiableBoolExpr> addConstr,
       ASTOCLInvariant inv,
-      long max,
+      Set<IdentifiableBoolExpr> addConstr,
+      Context ctx,
+      int timeout,
       boolean partial) {
+
+    AtomicInteger counter = new AtomicInteger(0);
+    String invName = inv.isPresentName() ? inv.getName() : "";
 
     Stream<Map<ASTCDType, Integer>> cardinalities = CDTypeInitializer.initialize(cd, max, true);
     AtomicReference<OCLInvDiffResult> res = new AtomicReference<>();
@@ -81,12 +85,14 @@ public class FiniteOCLInvariantDiff extends OCLInvariantDiff {
     boolean found =
         cardinalities.anyMatch(
             card -> {
-              Log.info("checking " + inv.getName() + "....", this.getClass().getName());
+              Log.info(
+                  ": checking invariant " + invName + "..." + counter,
+                  this.getClass().getSimpleName());
 
-              CD2SMTMill.init(FINITESS, ME, DEFAULT, card);
+              CD2SMTMill.init(FINITEDS, ME, DEFAULT, card);
               OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
 
-              if (checkConsistency(cd, newConstr, addConstr, partial)) {
+              if (checkConsistency(cd, newConstr, addConstr, ctx, timeout, partial)) {
 
                 List<IdentifiableBoolExpr> posConstraints =
                     invariant2SMT(ocl2SMTGenerator, newConstr);
@@ -95,34 +101,13 @@ public class FiniteOCLInvariantDiff extends OCLInvariantDiff {
                 List<IdentifiableBoolExpr> oldConstr = List.of(ocl2SMTGenerator.convertInv(inv));
                 List<IdentifiableBoolExpr> negInvariant = negateId(oldConstr, ctx);
 
-                res.set(oclDiffHelper(ocl2SMTGenerator, posConstraints, negInvariant, false));
+                res.set(
+                    computeDiff(ocl2SMTGenerator, posConstraints, negInvariant, timeout, false));
               }
-              Log.println("done");
+              counter.getAndIncrement();
               return res.get() != null && !res.get().getDiffWitness().isEmpty();
             });
 
-    return Optional.empty();
-  }
-
-  private boolean checkConsistency(
-      ASTCDCompilationUnit cd,
-      Set<ASTOCLCompilationUnit> newOCL,
-      Set<IdentifiableBoolExpr> addConstr,
-      boolean partial) {
-    if (oclWitnessInternal(cd, newOCL, addConstr, partial) == null) {
-      Log.info("The Model is Inconsistent with The OCl Constraints", this.getClass().getName());
-      return false;
-    }
-
-    return true;
-  }
-
-  List<ASTOCLInvariant> collectInv(Set<ASTOCLCompilationUnit> ocl) {
-    return ocl.stream()
-        .map(ast -> ast.getOCLArtifact().getOCLConstraintList())
-        .flatMap(List::stream)
-        .filter(c -> c instanceof ASTOCLInvariant)
-        .map(c -> (ASTOCLInvariant) c)
-        .collect(Collectors.toList());
+    return res.get();
   }
 }

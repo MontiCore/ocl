@@ -1,5 +1,6 @@
 package de.monticore.ocl2smt.ocldiff.invariantDiff;
 
+import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import java.util.Set;
 
@@ -22,5 +23,13 @@ public class OCLInvDiffResult {
 
   public Set<ASTODArtifact> getDiffWitness() {
     return diffWitness;
+  }
+
+  public boolean isPresentTrace() {
+    return unSatCore != null && !OCLHelper.getLinkList(unSatCore).isEmpty();
+  }
+
+  public boolean isPresentWitness() {
+    return !diffWitness.isEmpty();
   }
 }
