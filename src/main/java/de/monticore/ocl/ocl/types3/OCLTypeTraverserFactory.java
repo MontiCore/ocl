@@ -3,13 +3,15 @@ package de.monticore.ocl.ocl.types3;
 
 import de.monticore.expressions.bitexpressions.types3.BitExpressionsTypeVisitor;
 import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeVisitor;
+import de.monticore.expressions.commonexpressions.types3.OCLCommonExpressionsTypeVisitor;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeVisitor;
+import de.monticore.expressions.uglyexpressions.types3.UglyExpressionsTypeVisitor;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
-import de.monticore.ocl.types.check.OCLExpressionsTypeVisitor;
-import de.monticore.ocl.types.check.OptionalOperatorsTypeVisitor;
-import de.monticore.ocl.types.check.SetExpressionsTypeVisitor;
+import de.monticore.ocl.oclexpressions.types3.OCLExpressionsTypeVisitor;
+import de.monticore.ocl.optionaloperators.types3.OptionalOperatorsTypeVisitor;
+import de.monticore.ocl.setexpressions.types3.SetExpressionsTypeVisitor;
 import de.monticore.ocl.types3.util.OCLNameExpressionTypeCalculator;
 import de.monticore.ocl.types3.util.OCLWithinTypeBasicSymbolsResolver;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
@@ -39,6 +41,7 @@ public class OCLTypeTraverserFactory {
     visitors.derOCLExpressions.setType4Ast(type4Ast);
     visitors.derOptionalOperators.setType4Ast(type4Ast);
     visitors.derSetExpressions.setType4Ast(type4Ast);
+    visitors.derUglyExpressions.setType4Ast(type4Ast);
     // MCTypes
     visitors.synMCBasicTypes.setType4Ast(type4Ast);
     visitors.synMCCollectionTypes.setType4Ast(type4Ast);
@@ -49,12 +52,13 @@ public class OCLTypeTraverserFactory {
     VisitorList visitors = new VisitorList();
     // Expressions
     visitors.derBitExpressions = new BitExpressionsTypeVisitor();
-    visitors.derCommonExpressions = new CommonExpressionsTypeVisitor();
+    visitors.derCommonExpressions = new OCLCommonExpressionsTypeVisitor();
     visitors.derExpressionBasis = new ExpressionBasisTypeVisitor();
     visitors.derMCCommonLiterals = new MCCommonLiteralsTypeVisitor();
     visitors.derOCLExpressions = new OCLExpressionsTypeVisitor();
     visitors.derOptionalOperators = new OptionalOperatorsTypeVisitor();
     visitors.derSetExpressions = new SetExpressionsTypeVisitor();
+    visitors.derUglyExpressions = new UglyExpressionsTypeVisitor();
     // MCTypes
     visitors.synMCBasicTypes = new MCBasicTypesTypeVisitor();
     visitors.synMCCollectionTypes = new MCCollectionTypesTypeVisitor();
@@ -87,6 +91,7 @@ public class OCLTypeTraverserFactory {
     traverser.add4OCLExpressions(visitors.derOCLExpressions);
     traverser.add4OptionalOperators(visitors.derOptionalOperators);
     traverser.add4SetExpressions(visitors.derSetExpressions);
+    traverser.add4UglyExpressions(visitors.derUglyExpressions);
     // MCTypes
     traverser.add4MCBasicTypes(visitors.synMCBasicTypes);
     traverser.add4MCCollectionTypes(visitors.synMCCollectionTypes);
@@ -111,6 +116,8 @@ public class OCLTypeTraverserFactory {
     public OptionalOperatorsTypeVisitor derOptionalOperators;
 
     public SetExpressionsTypeVisitor derSetExpressions;
+
+    public UglyExpressionsTypeVisitor derUglyExpressions;
 
     // MCTypes
 

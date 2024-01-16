@@ -10,9 +10,11 @@ import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTrav
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.codegen.util.VariableNaming;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
@@ -164,6 +166,65 @@ public class CommonExpressionsPrinter extends AbstractPrinter
     this.getPrinter().print(".equals(");
     node.getRight().accept(getTraverser());
     this.getPrinter().print(")");
+  }
+
+  @Override
+  public void handle(ASTArrayAccessExpression node) {
+    Log.errorIfNull(node);
+    TypeCheckResult exprTypeRes = getDeriver().deriveType(node.getExpression());
+    if (!exprTypeRes.isPresentResult()) {
+      // error should be logged already
+      getPrinter().print("NO_TYPE_DERIVED_ARRAY_ACCESS_EXPRESSION");
+    } else {
+      SymTypeExpression exprType = exprTypeRes.getResult();
+      getPrinter().print("(");
+      node.getExpression().accept(getTraverser());
+      getPrinter().print(")");
+      printArrayAccess(exprType, node, 0);
+    }
+  }
+
+  protected void printArrayAccess(
+      SymTypeExpression exprType, ASTArrayAccessExpression node, int depth) {
+    // Expression before the access has already been printed
+    if (exprType.isArrayType()) {
+      getPrinter().print("[");
+      node.getIndexExpression().accept(getTraverser());
+      getPrinter().print("]");
+    } else if (OCLSymTypeRelations.isList(exprType) || OCLSymTypeRelations.isMap(exprType)) {
+      getPrinter().print(".get(");
+      node.getIndexExpression().accept(getTraverser());
+      getPrinter().print(")");
+    } else if (OCLSymTypeRelations.isOptional(exprType)) {
+      getPrinter().print(".map(");
+      getPrinter().print(getNaming().getName(node) + "_optVar" + depth);
+      getPrinter().print(" ->");
+      getPrinter().println();
+      getPrinter().indent();
+      getPrinter().print(getNaming().getName(node) + "_optVar" + depth);
+      printArrayAccess(OCLSymTypeRelations.getCollectionElementType(exprType), node, depth + 1);
+      getPrinter().println();
+      getPrinter().unindent();
+      getPrinter().print(")");
+    }
+    // can only be set or collection
+    else if (OCLSymTypeRelations.isOCLCollection(exprType)) {
+      getPrinter().print(".stream().map(");
+      getPrinter().print(getNaming().getName(node) + "_setVar" + depth);
+      getPrinter().print(" ->");
+      getPrinter().println();
+      getPrinter().indent();
+      getPrinter().print(getNaming().getName(node) + "_setVar" + depth);
+      printArrayAccess(OCLSymTypeRelations.getCollectionElementType(exprType), node, depth + 1);
+      getPrinter().println();
+      getPrinter().unindent();
+      getPrinter().print(")");
+      getPrinter()
+          .print(".collect(java.util.stream.Collectors.toCollection(java.util.HashSet::new))");
+    } else {
+      // error already logged
+      getPrinter().print("NO_VALID_TYPE_DERIVED_ARRAY_ACCESS_EXPRESSION");
+    }
   }
 
   @Override

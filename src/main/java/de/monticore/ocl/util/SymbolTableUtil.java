@@ -6,8 +6,8 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._symboltable.*;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
-import de.monticore.ocl.oclexpressions._symboltable.OCLExpressionsSymbolTableCompleter;
-import de.monticore.ocl.setexpressions._symboltable.SetExpressionsSymbolTableCompleter;
+import de.monticore.ocl.oclexpressions.symboltable.OCLExpressionsSymbolTableCompleter;
+import de.monticore.ocl.setexpressions.symboltable.SetExpressionsSymbolTableCompleter;
 import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLDeriver;
 import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLSynthesizer;
 import de.monticore.ocl.util.library.*;
@@ -79,12 +79,10 @@ public class SymbolTableUtil {
     OCLSymbolTableCompleter stCompleter =
         new OCLSymbolTableCompleter(ast.getMCImportStatementList(), ast.getPackage());
     stCompleter.setSynthesizer(new TypeCheck3AsOCLSynthesizer());
-    OCLExpressionsSymbolTableCompleter stCompleter2 =
-        new OCLExpressionsSymbolTableCompleter(ast.getMCImportStatementList(), ast.getPackage());
+    OCLExpressionsSymbolTableCompleter stCompleter2 = new OCLExpressionsSymbolTableCompleter();
     stCompleter2.setDeriver(new TypeCheck3AsOCLDeriver());
     stCompleter2.setSynthesizer(new TypeCheck3AsOCLSynthesizer());
-    SetExpressionsSymbolTableCompleter stCompleter3 =
-        new SetExpressionsSymbolTableCompleter(ast.getMCImportStatementList(), ast.getPackage());
+    SetExpressionsSymbolTableCompleter stCompleter3 = new SetExpressionsSymbolTableCompleter();
     stCompleter3.setDeriver(new TypeCheck3AsOCLDeriver());
     stCompleter3.setSynthesizer(new TypeCheck3AsOCLSynthesizer());
 

@@ -13,11 +13,9 @@ import de.monticore.ocl.oclexpressions._ast.ASTIfThenElseExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTImpliesExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclarationVariable;
-import de.monticore.ocl.oclexpressions._ast.ASTInstanceOfExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTIterateExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTLetinExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
-import de.monticore.ocl.oclexpressions._ast.ASTTypeCastExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTTypeIfExpression;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsHandler;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
@@ -281,15 +279,6 @@ public class OCLExpressionsPrinter extends AbstractPrinter
   }
 
   @Override
-  public void handle(ASTTypeCastExpression node) {
-    this.getPrinter().print("((");
-    getPrinter().print(boxType(getSynthesizer().synthesizeType(node.getMCType())));
-    this.getPrinter().print(") ");
-    node.getExpression().accept(getTraverser());
-    this.getPrinter().print(")");
-  }
-
-  @Override
   public void handle(ASTEquivalentExpression node) {
     printAsBoxedType(node.getLeft());
     this.getPrinter().print(".equals(");
@@ -348,15 +337,6 @@ public class OCLExpressionsPrinter extends AbstractPrinter
       node.getExpression().accept(this.getTraverser());
     }
     this.getPrinter().println(";");
-  }
-
-  @Override
-  public void handle(ASTInstanceOfExpression node) {
-    this.getPrinter().print("(");
-    node.getExpression().accept(this.getTraverser());
-    this.getPrinter().print(" instanceof ");
-    getPrinter().print(boxType(getSynthesizer().synthesizeType(node.getMCType())));
-    this.getPrinter().print(")");
   }
 
   @Override

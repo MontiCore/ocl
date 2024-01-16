@@ -9,6 +9,8 @@ import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
+import de.monticore.expressions.uglyexpressions._ast.ASTInstanceofExpression;
+import de.monticore.expressions.uglyexpressions._ast.ASTTypeCastExpression;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
 
@@ -44,10 +46,10 @@ public class SideEffectFreeExpressions {
     if (e instanceof ASTIterateExpression) {
       return true;
     }
-    if (e instanceof ASTInstanceOfExpression) {
+    if (e instanceof ASTInstanceofExpression) {
       return true;
     }
-    if (e instanceof ASTOCLArrayQualification) {
+    if (e instanceof ASTArrayAccessExpression) {
       return true;
     }
     if (e instanceof ASTOCLTransitiveQualification) {

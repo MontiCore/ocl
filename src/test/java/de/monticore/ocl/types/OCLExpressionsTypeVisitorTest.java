@@ -264,10 +264,7 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
   }
 
   protected static Stream<Arguments> instanceofExpressions() {
-    return Stream.of(
-        Arguments.of("true instanceof boolean", "boolean"),
-        Arguments.of("null instanceof boolean", "boolean"),
-        Arguments.of("null instanceof int", "boolean"));
+    return Stream.of(Arguments.of("true instanceof boolean", "boolean"));
   }
 
   @ParameterizedTest

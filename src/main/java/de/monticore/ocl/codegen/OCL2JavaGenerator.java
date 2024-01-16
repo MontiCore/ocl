@@ -11,6 +11,7 @@ import de.monticore.ocl.codegen.visitors.OCLExpressionsPrinter;
 import de.monticore.ocl.codegen.visitors.OCLPrinter;
 import de.monticore.ocl.codegen.visitors.OptionalOperatorsPrinter;
 import de.monticore.ocl.codegen.visitors.SetExpressionsPrinter;
+import de.monticore.ocl.codegen.visitors.UglyExpressionsPrinter;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
@@ -101,6 +102,10 @@ public class OCL2JavaGenerator {
         new OptionalOperatorsPrinter(printer, naming, deriver, syntheziser);
     this.traverser.setOptionalOperatorsHandler(optExprPrinter);
     this.traverser.add4OptionalOperators(optExprPrinter);
+    UglyExpressionsPrinter uglyExprPrinter =
+        new UglyExpressionsPrinter(printer, naming, deriver, syntheziser);
+    this.traverser.setUglyExpressionsHandler(uglyExprPrinter);
+    this.traverser.add4UglyExpressions(uglyExprPrinter);
 
     // Types
     MCSimpleGenericTypesPrettyPrinter simpleGenericTypes =

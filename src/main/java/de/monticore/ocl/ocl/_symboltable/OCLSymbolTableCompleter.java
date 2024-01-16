@@ -67,7 +67,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
     ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
     ast.getMCType().accept(getTraverser());
     final TypeCheckResult typeResult = synthesizer.synthesizeType(ast.getMCType());
-    if (!typeResult.isPresentResult()) {
+    if (!typeResult.isPresentResult() || typeResult.getResult().isObscureType()) {
       Log.error(
           String.format(
               "The type (%s) of the object (%s) could not be calculated",
@@ -93,7 +93,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
           ASTMCType type = cd.getMCType();
           type.setEnclosingScope(cd.getEnclosingScope());
           final TypeCheckResult typeResult = synthesizer.synthesizeType(type);
-          if (!typeResult.isPresentResult()) {
+          if (!typeResult.isPresentResult() || typeResult.getResult().isObscureType()) {
             Log.error(String.format("The type (%s) could not be calculated", type));
           } else {
             // create VariableSymbols for "this" and "super"
