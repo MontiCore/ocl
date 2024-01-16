@@ -6,16 +6,18 @@ package de.monticore.ocl;
 
 import de.monticore.UMLStereotype;
 import de.monticore.ocl.expressions.*;
-import de.monticore.expressions.BitExpressions;
+import de.monticore.expressions.*;
 import de.monticore.types.*;
 import de.monticore.literals.*;
 
 grammar OCL extends UMLStereotype,
                     MCSimpleGenericTypes,
+                    CommonExpressions,
                     SetExpressions,
                     OCLExpressions,
                     OptionalOperators,
-                    BitExpressions
+                    BitExpressions,
+                    UglyExpressions
 {
   /**
    *  ASTOCLCompilationUnit represents the entire content of an OCL model

@@ -37,7 +37,7 @@ ocl SetComp {
             a1.auctionIdent isin Set{ int y |int x in Set{4..8, 19},  (y == x*x), y < 20 } ;
 
    context Auction a inv Test8:
-      a.auctionIdent isin {int z = x*x |int x in Set{5,3..19} };
+      a.auctionIdent isin {x*x |int x in Set{5,3..19} };
 
 
     context Auction a inv Test9 :
@@ -54,14 +54,14 @@ ocl SetComp {
        p1 != p2 ;
 
    context Auction a inv Test11:
-         a.auctionIdent isin { int z = x*x |int x in Set{5,3} }
+         a.auctionIdent isin {x*x |int x in Set{5,3} }
          && a.auctionIdent notin Set{25,9};
 
 
     inv Test12:
        exists Auction a1 , a2:
-            a1.auctionIdent isin { int z = x*y | int y = 2, int x in Set{5,3} }&&
-            a2.auctionIdent isin { int z = x*y | int y = 2, int x in Set{5,3} } &&
+            a1.auctionIdent isin {x*y | int y = 2, int x in Set{5,3} }&&
+            a2.auctionIdent isin {x*y | int y = 2, int x in Set{5,3} } &&
             a1.auctionIdent  != a2.auctionIdent ;
 
 
