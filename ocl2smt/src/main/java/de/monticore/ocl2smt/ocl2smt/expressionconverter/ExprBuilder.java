@@ -2,55 +2,73 @@ package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
 import de.monticore.literals.mccommonliterals._ast.*;
 
-public abstract class ExprBuilder<Expr> {
-
-  protected Expr expr;
+public abstract class ExprBuilder {
+  
   protected ExpressionKind kind;
+  
+  protected abstract  <T> T expr();
 
-  abstract ExprBuilder<Expr> mkBool(ASTBooleanLiteral node);
+  abstract ExprBuilder  mkBool(ASTBooleanLiteral node);
 
-  abstract ExprBuilder<Expr> mkString(ASTStringLiteral node);
+  abstract ExprBuilder mkString(ASTStringLiteral node);
 
-  abstract ExprBuilder<Expr> mkInt(ASTNatLiteral node);
+  abstract ExprBuilder mkInt(ASTNatLiteral node);
 
-  abstract ExprBuilder<Expr> mkChar(ASTCharLiteral node);
+  abstract ExprBuilder mkChar(ASTCharLiteral node);
 
-  abstract ExprBuilder<Expr> mkDouble(ASTBasicDoubleLiteral node);
+  abstract ExprBuilder mkDouble(ASTBasicDoubleLiteral node);
 
-  abstract ExprBuilder<Expr> mkNot(ExprBuilder<Expr> node);
+  abstract ExprBuilder mkNot(ExprBuilder node);
 
-  abstract ExprBuilder<Expr> mkAnd(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkAnd(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkOr(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkOr(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkEq(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkEq(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkImplies(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkImplies(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkNeq(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkNeq(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkLt(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkLt(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkLeq(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkLeq(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkGt(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkGt(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkGe(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkGe(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkSub(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkSub(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkPlus(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkPlus(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkMul(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkMul(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkDiv(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkDiv(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkMod(ExprBuilder<Expr> leftNode, ExprBuilder<Expr> rightNode);
+  abstract ExprBuilder mkMod(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder<Expr> mkPlusPrefix(ExprBuilder<Expr> leftNode);
+  abstract ExprBuilder mkPlusPrefix(ExprBuilder leftNode);
 
-  abstract ExprBuilder<Expr> mkMinusPrefix(ExprBuilder<Expr> leftNode);
+  abstract ExprBuilder mkMinusPrefix(ExprBuilder leftNode);
 
-  abstract ExprBuilder<Expr> mkIte(
-      ExprBuilder<Expr> cond, ExprBuilder<Expr> expr1, ExprBuilder<Expr> expr2);
+  abstract ExprBuilder mkIte(
+      ExprBuilder cond, ExprBuilder expr1, ExprBuilder expr2);
+
+ boolean isArithExpr(){
+   return kind == ExpressionKind.INTEGER || kind == ExpressionKind.DOUBLE ;
+ }
+
+
+  public boolean isString() {
+   return kind == ExpressionKind.STRING ;
+  }
+
+  boolean isPresent(){
+   return  expr() !=null ;
+  }
+
+  boolean isBool(){
+   return  kind == ExpressionKind.BOOL;
+  }
 }
