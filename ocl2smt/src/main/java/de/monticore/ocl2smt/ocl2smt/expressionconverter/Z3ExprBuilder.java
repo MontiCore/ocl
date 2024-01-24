@@ -7,7 +7,12 @@ import de.se_rwth.commons.logging.Log;
 public class Z3ExprBuilder   extends ExprBuilder{
   private Expr<?>  expr = null;
   private ExpressionKind kind;
-  private Context ctx;
+  private MCContext ctx;
+
+  public Z3ExprBuilder(MCContext ctx){
+   this.kind = ExpressionKind.NULL ;
+   this.ctx = ctx ;
+  }
 
   @Override
   protected <T> T expr() {
@@ -185,7 +190,11 @@ public class Z3ExprBuilder   extends ExprBuilder{
     } else if (leftNode.kind == ExpressionKind.DOUBLE || rightNode.kind == ExpressionKind.DOUBLE) {
       this.expr = ctx.mkFPAdd(ctx.mkFPRNA(), leftNode. expr(), rightNode. expr());
       this.kind = ExpressionKind.DOUBLE;
-    } else {
+    }  else if (leftNode.kind == ExpressionKind.STRING || rightNode.kind == ExpressionKind.STRING) {
+    this.expr = ctx.mkConcat(leftNode. expr(), rightNode. expr());
+    this.kind = ExpressionKind.STRING;
+  }
+    else {
       Log.error("mkPlus(..,..) is only implemented for Int or real expressions left and right");
     }
     return this;
@@ -263,7 +272,52 @@ public class Z3ExprBuilder   extends ExprBuilder{
       Log.error("mkIte(..,..) is only implemented for Int or real expressions left and right");
     }
     this.expr = ctx.mkITE(cond. expr(), expr1. expr(), expr1. expr());
-    this.kind = ExpressionKind.ANY;
+    this.kind = ExpressionKind.NULL;
     return this;
   }
+
+  @Override
+  ExprBuilder mkReplace(ExprBuilder s, ExprBuilder src, ExprBuilder dst) {
+    Z3ExprBuilder res = new Z3ExprBuilder() ;
+    if (!s.isString() || !src.isString() || !dst.isString()) {
+      Log.error("mkIte(..,..) parameter must all be strings");
+    }
+   res.expr =  ctx.mkReplace(s.expr(),src.expr(),dst.expr());
+   res.kind = ExpressionKind.STRING ;
+   return res ;
+  }
+
+  @Override
+  ExprBuilder mkContains(ExprBuilder s1, ExprBuilder s2) {
+    Z3ExprBuilder res = new Z3ExprBuilder() ;
+    if (!s1.isString() || !s2.isString()) {
+      Log.error("mkContains(..,..) parameter must all be strings");
+    }
+    res.expr =  ctx.mkConcat(s1.expr(),s2.expr());
+    res.kind = ExpressionKind.STRING ;
+    return res ;
+  }
+
+  @Override
+  ExprBuilder mkPrefixOf(ExprBuilder s1, ExprBuilder s2) {
+    Z3ExprBuilder res = new Z3ExprBuilder() ;
+    if (!s1.isString() || !s2.isString()) {
+      Log.error("mkPrefixOf(..,..) parameter must all be strings");
+    }
+    res.expr =  ctx.mkPrefixOf(s1.expr(),s2.expr());
+    res.kind = ExpressionKind.STRING ;
+    return res ;
+  }
+
+  @Override
+  ExprBuilder mkSuffixOf( ExprBuilder s1, ExprBuilder s2) {
+    Z3ExprBuilder res = new Z3ExprBuilder() ;
+    if (!s1.isString() || !s2.isString()) {
+      Log.error("mkSuffixOf(..,..) parameter must all be strings");
+    }
+    res.expr =  ctx.mkSuffixOf(s1.expr(),s2.expr());
+    res.kind =ExpressionKind.STRING ;
+    return res ;
+  }
+
 }

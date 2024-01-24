@@ -7,5 +7,5 @@ public enum ExpressionKind {
   BOOL,
   STRING,
   CHAR,
-  ANY,
+  NULL,
 }

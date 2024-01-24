@@ -23,11 +23,11 @@ public abstract class Expression2smt {
     /**
      * convert method call that returns an expression*
      */
-    protected Expr<? extends Sort> convertCallObject(ASTCallExpression node) {
+    protected ExprBuilder convertCallObject(ASTCallExpression node) {
         if (node.getExpression() instanceof ASTFieldAccessExpression) {
             ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
             if (TypeConverter.hasStringType(caller)) {
-                return convertStringOpt(node).orElse(null);
+                    return convertCallerString(node);
             }
         }
         return null;
@@ -41,8 +41,8 @@ public abstract class Expression2smt {
      * -Date.before(Date)
      * -Date.after(Date)
      */
-    protected BoolExpr convertCallBool(ASTCallExpression node) {
-        BoolExpr res = null;
+    protected ExprBuilder convertCallBool(ASTCallExpression node) {
+        ExprBuilder res = null;
         if (node.getExpression() instanceof ASTFieldAccessExpression) {
             ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
             String methodName = ((ASTFieldAccessExpression) node.getExpression()).getName();
@@ -59,52 +59,49 @@ public abstract class Expression2smt {
      * convert method call when the caller is a string and the method return an object
      * String.replace(x,y)
      */
-    protected SeqExpr<CharSort> convertCallerString(ASTCallExpression node) {
+    protected ExprBuilder convertCallerString(ASTCallExpression node) {
         if (node.getExpression() instanceof ASTFieldAccessExpression) {
             ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
             ASTArguments arguments = node.getArguments();
             String methodName = ((ASTFieldAccessExpression) node.getExpression()).getName();
 
-            SeqExpr<CharSort> str = convertString(caller);
+            ExprBuilder str = convertExpr(caller);
             if (methodName.equals("replace")) {
-                SeqExpr<CharSort> arg1 = convertString(arguments.getExpression(0));
-                SeqExpr<CharSort> arg2 = convertString(arguments.getExpression(1));
-                return ctx.mkReplace(str, arg1, arg2);
+                ExprBuilder arg1 = convertExpr(arguments.getExpression(0));
+                ExprBuilder arg2 = convertExpr(arguments.getExpression(1));
+                return ExprMill.exprBuilder().mkReplace( str, arg1, arg2);
             }
         }
         return null;
     }
 
-    protected SeqExpr<CharSort> convertString(ASTExpression node) {
-        Optional<SeqExpr<CharSort>> result = convertStringOpt(node);
-        if (result.isEmpty()) {
-            notFullyImplemented(node);
-            assert false;
+
+
+
+
+
+
+    public ExprBuilder convertExpr(ASTExpression node) {
+        ExprBuilder result = null;
+        if (node instanceof ASTBooleanLiteral) {
+            result = ExprMill.exprBuilder().mkBool((ASTBooleanLiteral) node);
+        } else if (node instanceof ASTStringLiteral) {
+            result = ExprMill.exprBuilder().mkString((ASTStringLiteral) node);
+        } else if (node instanceof ASTNatLiteral) {
+            result = ExprMill.exprBuilder().mkInt((ASTNatLiteral) node);
+        } else if (node instanceof ASTBasicDoubleLiteral) {
+            result = ExprMill.exprBuilder().mkDouble((ASTBasicDoubleLiteral) node);
+        } else if (node instanceof ASTCharLiteral) {
+            result = ExprMill.exprBuilder().mkChar((ASTCharLiteral) node);
         }
-        return result.get();
-    }
-
-    public ExprBuilder convertBoolExpr(ASTExpression node) {
-        ExprBuilder result = convertExpr(node);
-        if (result.isPresent() && result.isBool()) {
-            return result;
-        }
-        notFullyImplemented(node);
-        assert false;
-        return  null ;
-    }
-
-    protected Optional<ExprBuilder> convertBoolExprOpt(ASTExpression node) {
-        ExprBuilder result;
-
-        if (node instanceof ASTBooleanAndOpExpression) {
+        else if (node instanceof ASTBooleanAndOpExpression) {
             ExprBuilder left = convertExpr(((ASTBooleanAndOpExpression) node).getLeft());
             ExprBuilder right = convertExpr(((ASTBooleanAndOpExpression) node).getRight());
             result = ExprMill.exprBuilder().mkAnd(left, right);
         } else if (node instanceof ASTBooleanOrOpExpression) {
             ExprBuilder left = convertExpr(((ASTBooleanOrOpExpression) node).getLeft());
             ExprBuilder right = convertExpr(((ASTBooleanOrOpExpression) node).getRight());
-            result = ExprMill.exprBuilder().mkAnd(left, right);
+            result = ExprMill.exprBuilder().mkOr(left, right);
         } else if (node instanceof ASTBooleanNotExpression) {
             result = ExprMill.exprBuilder().mkNot(convertExpr(node));
         } else if (node instanceof ASTLogicalNotExpression) {
@@ -143,42 +140,14 @@ public abstract class Expression2smt {
             ExprBuilder left = convertExpr(((ASTEquivalentExpression) node).getLeft());
             ExprBuilder right = convertExpr(((ASTEquivalentExpression) node).getRight());
             result = ExprMill.exprBuilder().mkEq(left, right);
-        } else {
-            Optional<ExprBuilder> buf = convertGenExprOpt(node);
-            if (buf.isPresent() && buf.get().kind == ExpressionKind.BOOL) {
-                result = buf.get();
-            } else {
-                return Optional.empty();
-            }
         }
-
-        return Optional.ofNullable(result);
-    }
-
-    public ExprBuilder convertExpr(ASTExpression node) {
-        ExprBuilder res;
-        res = convertGenExprOpt(node).orElse(null);
-        if (res == null) {
-            res = convertBoolExprOpt(node).orElse(null);
-            if (res == null) {
-                res = convertExprArithOpt(node).orElse(null);
-                if (res == null) {
-                    res = convertString(node);
-                }
-            }
-        }
-        return res;
-    }
-
-    protected Optional<ExprBuilder> convertExprArithOpt(ASTExpression node) {
-        ExprBuilder result;
-        if (node instanceof ASTMinusPrefixExpression) {
+       else if (node instanceof ASTMinusPrefixExpression) {
             ExprBuilder subExpr = convertExpr(((ASTMinusPrefixExpression) node).getExpression());
             result = ExprMill.exprBuilder().mkMinusPrefix(subExpr);
         } else if (node instanceof ASTPlusPrefixExpression) {
             ExprBuilder subExpr = convertExpr(((ASTPlusPrefixExpression) node).getExpression());
             result = ExprMill.exprBuilder().mkPlusPrefix(subExpr);
-        } else if ((node instanceof ASTPlusExpression) && isAddition((ASTPlusExpression) node)) {
+        } else if ((node instanceof ASTPlusExpression)) {
             ExprBuilder left = convertExpr(((ASTPlusExpression) node).getLeft());
             ExprBuilder right = convertExpr(((ASTPlusExpression) node).getRight());
             result = ExprMill.exprBuilder().mkPlus(left, right);
@@ -197,112 +166,78 @@ public abstract class Expression2smt {
         } else if (node instanceof ASTModuloExpression) {
             ExprBuilder left = convertExpr(((ASTModuloExpression) node).getLeft());
             ExprBuilder right = convertExpr(((ASTModuloExpression) node).getRight());
-            result = ExprMill.exprBuilder().mkAnd(left, right);
-        } else {
-            Optional<ExprBuilder> buf = convertGenExprOpt(node);
-            if (buf.isPresent() && buf.get().isArithExpr()) {
-                result = buf.get();
-            } else {
-                return Optional.empty();
-            }
+            result = ExprMill.exprBuilder().mkMod(left, right);
         }
-        return Optional.ofNullable(result);
-    }
-
-    protected Optional<SeqExpr<CharSort>> convertStringOpt(ASTExpression node) {
-        SeqExpr<CharSort> result;
-
-        if ((node instanceof ASTPlusExpression && isStringConcat((ASTPlusExpression) node))) {
-            result = convertStringConcat((ASTPlusExpression) node);
-        } else if (node instanceof ASTCallExpression && TypeConverter.hasStringType(node)) {
-            result = convertCallerString((ASTCallExpression) node);
-        } else {
-            Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
-            if (buf.isPresent() && buf.get().getSort().getName().isStringSymbol()) {
-                result = (SeqExpr<CharSort>) buf.get();
-            } else {
-                return Optional.empty();
-            }
-        }
-        return Optional.of(result);
-    }
-
-    protected ArithExpr<? extends ArithSort> convertExprArith(ASTExpression node) {
-        Optional<ArithExpr<? extends ArithSort>> result = convertExprArithOpt(node);
-        if (result.isEmpty()) {
-            notFullyImplemented(node);
-            assert false;
-        }
-        return result.get();
-    }
-
-    protected Optional<ExprBuilder> convertGenExprOpt(ASTExpression node) {
-        ExprBuilder res;
-        if (node instanceof ASTLiteralExpression) {
-            res = convert((ASTLiteralExpression) node);
-        } else if (node instanceof ASTBracketExpression) {
-            res = convert((ASTBracketExpression) node);
+       else if (node instanceof ASTBracketExpression) {
+            result  = convertExpr(((ASTBracketExpression) node).getExpression())  ;
         } else if (node instanceof ASTNameExpression) {
-            res = convert((ASTNameExpression) node);
+            result = convert((ASTNameExpression) node);
         } else if (node instanceof ASTFieldAccessExpression) {
-            res = convert((ASTFieldAccessExpression) node);
+            result = convert((ASTFieldAccessExpression) node);
         } else if (node instanceof ASTIfThenElseExpression) {
             ExprBuilder cond = convertExpr(((ASTIfThenElseExpression) node).getCondition());
             ExprBuilder expr1 = convertExpr(((ASTIfThenElseExpression) node).getThenExpression());
             ExprBuilder expr2 = convertExpr(((ASTIfThenElseExpression) node).getElseExpression());
-            res = ExprMill.exprBuilder().mkIte(cond, expr1, expr2);
+            result = ExprMill.exprBuilder().mkIte(cond, expr1, expr2);
 
 
         } else if (node instanceof ASTConditionalExpression) {
             ExprBuilder cond = convertExpr(((ASTConditionalExpression) node).getCondition());
             ExprBuilder expr1 = convertExpr(((ASTConditionalExpression) node).getTrueExpression());
             ExprBuilder expr2 = convertExpr(((ASTConditionalExpression) node).getFalseExpression());
-            res = ExprMill.exprBuilder().mkIte(cond, expr1, expr2);
+            result = ExprMill.exprBuilder().mkIte(cond, expr1, expr2);
         } else if (node instanceof ASTCallExpression) {
-            res = convertCallObject((ASTCallExpression) node);
-        } else {
-            return Optional.empty();
+            result = convertCallObject((ASTCallExpression) node);
         }
-        return Optional.of(res);
+      else if (node instanceof ASTCallExpression && TypeConverter.hasStringType(node)) {
+            result = convertCallerString((ASTCallExpression) node);
+        } else {
+          notFullyImplemented(node);
+        }
+        return result;
+
     }
 
-    // -----------String--------------
-    protected SeqExpr<CharSort> convertStringConcat(ASTPlusExpression node) {
-        return ctx.mkConcat(convertString(node.getLeft()), convertString(node.getRight()));
-    }
+
+
+
+
+
+
+
 
     // ---------------------------------------Logic---------------------------------
 
-    protected BoolExpr convertBoolDateOp(ASTExpression caller, ASTExpression arg, String methodName) {
-        BoolExpr res = null;
+    protected ExprBuilder convertBoolDateOp(ASTExpression caller, ASTExpression arg, String methodName) {
+        ExprBuilder res = null;
 
-        ArithExpr<? extends ArithSort> argument = convertExprArith(arg);
-        ArithExpr<? extends ArithSort> date = convertExprArith(caller);
+        ExprBuilder argument = convertExpr(arg);
+        ExprBuilder date = convertExpr(caller);
         switch (methodName) {
             case "before":
-                res = ctx.mkLt(date, argument);
+                res = ExprMill.exprBuilder().mkLt(date, argument);
                 break;
 
             case "after":
-                res = ctx.mkGt(date, argument);
+                res = ExprMill.exprBuilder().mkGt(date, argument);
                 break;
         }
         return res;
     }
 
-    protected BoolExpr convertBoolStringOp(ASTExpression caller, ASTExpression arg, String methodName) {
-        BoolExpr res = null;
-        SeqExpr<CharSort> argument = convertString(arg);
-        SeqExpr<CharSort> str = convertString(caller);
+    protected ExprBuilder convertBoolStringOp(ASTExpression caller, ASTExpression arg, String methodName) {
+        ExprBuilder res = null;
+        ExprBuilder argument = convertExpr(arg);
+        ExprBuilder str = convertExpr(caller);
         switch (methodName) {
             case "contains":
-                res = ctx.mkContains(str, argument);
+                res = ExprMill.exprBuilder().mkContains(str, argument);
                 break;
             case "endsWith":
-                res = ctx.mkSuffixOf(argument, str);
+                res = ExprMill.exprBuilder().mkSuffixOf(argument, str);
                 break;
             case "startsWith":
-                res = ctx.mkPrefixOf(argument, str);
+                res = ExprMill.exprBuilder().mkPrefixOf(argument, str);
                 break;
         }
         return res;
@@ -312,40 +247,12 @@ public abstract class Expression2smt {
     // -----------------------------------general----------------------------------------------------------------------*/
     protected abstract ExprBuilder convert(ASTNameExpression node);
 
-    protected ExprBuilder convert(ASTBracketExpression node) {
-        return convertExpr(node.getExpression());
-    }
 
     protected abstract ExprBuilder convert(ASTFieldAccessExpression node);
 
-    private boolean isAddition(ASTPlusExpression node) {
-        return (convertExpr(node.getLeft()).isArithExpr() || convertExpr(node.getLeft()).isArithExpr());
-    }
-
-    private boolean isStringConcat(ASTPlusExpression node) {
-        return convertExpr((node).getLeft()).isString();
-    }
 
     private void notFullyImplemented(ASTExpression node) {
         Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
     }
 
-    public ExprBuilder convert(ASTLiteralExpression node) {
-        ASTLiteral literal = node.getLiteral();
-        ExprBuilder res = null;
-        if (literal instanceof ASTBooleanLiteral) {
-            res = ExprMill.exprBuilder().mkBool((ASTBooleanLiteral) literal);
-        } else if (literal instanceof ASTStringLiteral) {
-            res = ExprMill.exprBuilder().mkString((ASTStringLiteral) literal);
-        } else if (literal instanceof ASTNatLiteral) {
-            res = ExprMill.exprBuilder().mkInt((ASTNatLiteral) literal);
-        } else if (literal instanceof ASTBasicDoubleLiteral) {
-            res = ExprMill.exprBuilder().mkDouble((ASTBasicDoubleLiteral) literal);
-        } else if (literal instanceof ASTCharLiteral) {
-            res = ExprMill.exprBuilder().mkChar((ASTCharLiteral) literal);
-        } else {
-            Log.error("the conversion of expression with the type " + node.getClass().getName() + "in SMT is not totally implemented");
-        }
-        return res;
-    }
 }

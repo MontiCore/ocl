@@ -52,8 +52,13 @@ public abstract class ExprBuilder {
 
   abstract ExprBuilder mkMinusPrefix(ExprBuilder leftNode);
 
-  abstract ExprBuilder mkIte(
-      ExprBuilder cond, ExprBuilder expr1, ExprBuilder expr2);
+  abstract ExprBuilder mkIte(ExprBuilder cond, ExprBuilder expr1, ExprBuilder expr2);
+
+  abstract ExprBuilder mkReplace(ExprBuilder s,ExprBuilder s1,ExprBuilder s2);
+  abstract ExprBuilder mkContains(ExprBuilder s1,ExprBuilder s2);
+  abstract ExprBuilder mkPrefixOf(ExprBuilder s1,ExprBuilder s2);
+  abstract ExprBuilder mkSuffixOf(ExprBuilder s1,ExprBuilder s2);
+
 
  boolean isArithExpr(){
    return kind == ExpressionKind.INTEGER || kind == ExpressionKind.DOUBLE ;
