@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt.ocl2smt.expressionconverter;
+package de.monticore.ocl2smt.ocl2smt.expr;
 
 import de.monticore.literals.mccommonliterals._ast.*;
 
@@ -8,15 +8,15 @@ public abstract class ExprBuilder {
   
   protected abstract  <T> T expr();
 
-  abstract ExprBuilder  mkBool(ASTBooleanLiteral node);
+  abstract ExprBuilder  mkBool(boolean node);
 
-  abstract ExprBuilder mkString(ASTStringLiteral node);
+  abstract ExprBuilder mkString(String node);
 
-  abstract ExprBuilder mkInt(ASTNatLiteral node);
+  abstract ExprBuilder mkInt(int node);
 
-  abstract ExprBuilder mkChar(ASTCharLiteral node);
+  abstract ExprBuilder mkChar(char node);
 
-  abstract ExprBuilder mkDouble(ASTBasicDoubleLiteral node);
+  abstract ExprBuilder mkDouble(double node);
 
   abstract ExprBuilder mkNot(ExprBuilder node);
 

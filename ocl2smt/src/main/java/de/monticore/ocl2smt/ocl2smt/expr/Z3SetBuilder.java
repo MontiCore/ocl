@@ -1,33 +1,31 @@
 /* (c) https://github.com/MontiCore/monticore */
-package de.monticore.ocl2smt.util;
+package de.monticore.ocl2smt.ocl2smt.expr;
 
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
+import de.monticore.ocl2smt.util.OCLType;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.function.Function;
 
-public class SMTSet {
+public class Z3SetBuilder extends  Z3ExprBuilder{
   private final Function<Expr<? extends Sort>, BoolExpr> setFunction;
   private final OCLType type;
 
-  private final Context ctx;
   OCLExpressionConverter exprConv;
 
-  public SMTSet(
-      Function<Expr<? extends Sort>, BoolExpr> setFunction,
-      OCLType type,
-      OCLExpressionConverter exprConv) {
-    this.setFunction = setFunction;
+  public Z3SetBuilder(Function<Expr<? extends Sort>, BoolExpr> setFunction, OCLType type, OCLExpressionConverter exprConv) {
+      super(exprConv.getCd2smtGenerator().getContext());
+      this.setFunction = setFunction;
     this.type = type;
-    this.ctx = exprConv.getCd2smtGenerator().getContext();
+
     this.exprConv = exprConv;
   }
 
-  private SMTSet mkSetOperation(SMTSet rightSet, OPERATION op) {
+  private Z3SetBuilder mkSetOperation(Z3SetBuilder rightSet, OPERATION op) {
     if (!rightSet.type.equals(this.type)) {
       Log.error("set intersection of Set from different Type not implemented");
     }
@@ -46,18 +44,18 @@ public class SMTSet {
         Log.error("the Set Operation " + op + " is not implemented ");
         setFunction = s -> ctx.mkTrue();
     }
-    return new SMTSet(setFunction, this.type, exprConv);
+    return new Z3SetBuilder(setFunction, this.type, exprConv);
   }
 
-  public SMTSet mkSetUnion(SMTSet rightSet) {
+  public Z3SetBuilder mkSetUnion(Z3SetBuilder rightSet) {
     return mkSetOperation(rightSet, OPERATION.UNION);
   }
 
-  public SMTSet mkSetIntersect(SMTSet rightSet) {
+  public Z3SetBuilder mkSetIntersect(Z3SetBuilder rightSet) {
     return mkSetOperation(rightSet, OPERATION.INTERSECTION);
   }
 
-  public SMTSet mkSetMinus(SMTSet rightSet) {
+  public Z3SetBuilder mkSetMinus(Z3SetBuilder rightSet) {
     return mkSetOperation(rightSet, OPERATION.MINUS);
   }
 
@@ -78,7 +76,7 @@ public class SMTSet {
     return setFunction.apply(expr);
   }
 
-  public BoolExpr containsAll(SMTSet set) {
+  public BoolExpr containsAll(Z3SetBuilder set) {
     Expr<? extends Sort> expr = exprConv.declVariable(set.getType(), "expr111");
     return exprConv.mkForall(List.of(expr), ctx.mkImplies(set.contains(expr), this.contains(expr)));
   }
@@ -92,20 +90,30 @@ public class SMTSet {
     return ctx.mkNot(contains(expr));
   }
 
-  public SMTSet collectAll(Function<Expr<? extends Sort>, SMTSet> function) {
+  public Z3SetBuilder collectAll(Function<Expr<? extends Sort>, Z3SetBuilder> function) {
     Expr<? extends Sort> expr = exprConv.declVariable(type, "xollector");
-    return new SMTSet(
+    return new Z3SetBuilder(
         kii ->
             exprConv.mkExists(
                 List.of(expr), ctx.mkAnd(this.contains(expr), function.apply(expr).contains(kii))),
         function.apply(expr).type,
         exprConv);
   }
-
-  public BoolExpr mkSetEq(SMTSet set2) {
+   @Override
+  public ExprBuilder mkEq(ExprBuilder set1,ExprBuilder set2) {
 
     Expr<? extends Sort> expr = exprConv.declVariable(this.getType(), "const");
-    return exprConv.mkForall(List.of(expr), ctx.mkEq(this.contains(expr), set2.contains(expr)));
+    this.expr =  exprConv.mkForall(List.of(expr), ctx.mkEq(this.contains(expr), ((Z3SetBuilder)set2).contains(expr)));
+    this.kind = ExpressionKind.BOOL ;
+    return  this ;
+  }
+
+  @Override
+  public ExprBuilder mkNeq(ExprBuilder set1,ExprBuilder set2) {
+    Expr<? extends Sort> expr = exprConv.declVariable(this.getType(), "const");
+    this.expr = ctx.mkNot(exprConv.mkForall(List.of(expr), ctx.mkEq(this.contains(expr), ((Z3SetBuilder)set2).contains(expr))));
+    this.kind = ExpressionKind.BOOL ;
+    return  this ;
   }
 
   enum OPERATION {

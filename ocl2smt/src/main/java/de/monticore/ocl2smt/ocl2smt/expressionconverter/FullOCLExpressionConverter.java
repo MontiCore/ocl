@@ -13,7 +13,7 @@ import de.monticore.ocl.oclexpressions._ast.ASTOCLAtPreQualification;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.util.OCLMethodResult;
 import de.monticore.ocl2smt.util.OCLType;
-import de.monticore.ocl2smt.util.SMTSet;
+import de.monticore.ocl2smt.ocl2smt.expr.Z3SetBuilder;
 import de.monticore.ocl2smt.util.TypeConverter;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.se_rwth.commons.logging.Log;
@@ -128,7 +128,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   }
 
   @Override
-  protected SMTSet convertFieldAccessSet(ASTFieldAccessExpression node) {
+  protected Z3SetBuilder convertFieldAccessSet(ASTFieldAccessExpression node) {
     boolean isPre = isPreStrategy();
     exitPre();
     String name = node.getName();
@@ -191,8 +191,8 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   }
 
   @Override
-  public SMTSet convertSet(ASTExpression node) {
-    Optional<SMTSet> res = convertSetOpt(node);
+  public Z3SetBuilder convertSet(ASTExpression node) {
+    Optional<Z3SetBuilder> res = convertSetOpt(node);
     if (res.isPresent()) {
       return res.get();
     } else {
@@ -204,8 +204,8 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     return null;
   }
 
-  protected SMTSet convertNameSet(ASTNameExpression node) {
-    SMTSet res = null;
+  protected Z3SetBuilder convertNameSet(ASTNameExpression node) {
+    Z3SetBuilder res = null;
     boolean isPre = isPreStrategy();
     String role = node.getName();
     exitPre();
@@ -216,7 +216,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
               cd2smtGenerator.getSort(
                   CDHelper.getASTCDType(result.getOclType().getName(), getCD())),
               ctx.mkBoolSort());
-      res = new SMTSet(x -> (BoolExpr) ctx.mkApp(setFunc, x), result.getOclType(), this);
+      res = new Z3SetBuilder(x -> (BoolExpr) ctx.mkApp(setFunc, x), result.getOclType(), this);
       result.setValue(setFunc);
     } else {
 

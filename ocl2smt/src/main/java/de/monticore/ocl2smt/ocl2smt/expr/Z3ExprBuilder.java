@@ -1,15 +1,15 @@
-package de.monticore.ocl2smt.ocl2smt.expressionconverter;
+package de.monticore.ocl2smt.ocl2smt.expr;
 
 import com.microsoft.z3.*;
 import de.monticore.literals.mccommonliterals._ast.*;
 import de.se_rwth.commons.logging.Log;
 
 public class Z3ExprBuilder   extends ExprBuilder{
-  private Expr<?>  expr = null;
-  private ExpressionKind kind;
-  private MCContext ctx;
+  protected Expr<?>  expr = null;
+  protected ExpressionKind kind;
+  protected Context ctx;
 
-  public Z3ExprBuilder(MCContext ctx){
+  public Z3ExprBuilder(Context ctx){
    this.kind = ExpressionKind.NULL ;
    this.ctx = ctx ;
   }
@@ -25,36 +25,36 @@ public class Z3ExprBuilder   extends ExprBuilder{
   }
 
   @Override
-  public ExprBuilder mkBool(ASTBooleanLiteral node) {
-    this.expr = ctx.mkBool(node.getValue());
+  public ExprBuilder mkBool(boolean node) {
+    this.expr = ctx.mkBool(node);
     this.kind = ExpressionKind.BOOL;
     return this;
   }
 
   @Override
-  public ExprBuilder   mkString(ASTStringLiteral node) {
-    this.expr = ctx.mkString(node.getValue());
+  public ExprBuilder   mkString(String node) {
+    this.expr = ctx.mkString(node);
     this.kind = ExpressionKind.STRING;
     return this;
   }
 
   @Override
-  public ExprBuilder   mkInt(ASTNatLiteral node) {
-    this.expr = ctx.mkInt(node.getValue());
+  public ExprBuilder   mkInt(int node) {
+    this.expr = ctx.mkInt(node);
     this.kind = ExpressionKind.INTEGER;
     return this;
   }
 
   @Override
-  public ExprBuilder   mkChar(ASTCharLiteral node) {
-    this.expr = ctx.mkInt(node.getValue());
+  public ExprBuilder   mkChar(char node) {
+    this.expr = ctx.mkInt(node);
     this.kind = ExpressionKind.CHAR;
     return this;
   }
 
   @Override
-  public ExprBuilder   mkDouble(ASTBasicDoubleLiteral node) {
-    this.expr = ctx.mkFP(node.getValue(), ctx.mkFPSortDouble());
+  public ExprBuilder   mkDouble(double node) {
+    this.expr = ctx.mkFP(node, ctx.mkFPSortDouble());
     this.kind = ExpressionKind.DOUBLE;
     return this;
   }
@@ -278,7 +278,7 @@ public class Z3ExprBuilder   extends ExprBuilder{
 
   @Override
   ExprBuilder mkReplace(ExprBuilder s, ExprBuilder src, ExprBuilder dst) {
-    Z3ExprBuilder res = new Z3ExprBuilder() ;
+    Z3ExprBuilder res = new Z3ExprBuilder(ctx) ;
     if (!s.isString() || !src.isString() || !dst.isString()) {
       Log.error("mkIte(..,..) parameter must all be strings");
     }
@@ -289,7 +289,7 @@ public class Z3ExprBuilder   extends ExprBuilder{
 
   @Override
   ExprBuilder mkContains(ExprBuilder s1, ExprBuilder s2) {
-    Z3ExprBuilder res = new Z3ExprBuilder() ;
+    Z3ExprBuilder res = new Z3ExprBuilder(ctx) ;
     if (!s1.isString() || !s2.isString()) {
       Log.error("mkContains(..,..) parameter must all be strings");
     }
@@ -300,24 +300,24 @@ public class Z3ExprBuilder   extends ExprBuilder{
 
   @Override
   ExprBuilder mkPrefixOf(ExprBuilder s1, ExprBuilder s2) {
-    Z3ExprBuilder res = new Z3ExprBuilder() ;
+
     if (!s1.isString() || !s2.isString()) {
       Log.error("mkPrefixOf(..,..) parameter must all be strings");
     }
-    res.expr =  ctx.mkPrefixOf(s1.expr(),s2.expr());
-    res.kind = ExpressionKind.STRING ;
-    return res ;
+    expr =  ctx.mkPrefixOf(s1.expr(),s2.expr());
+    kind = ExpressionKind.STRING ;
+    return this ;
   }
 
   @Override
   ExprBuilder mkSuffixOf( ExprBuilder s1, ExprBuilder s2) {
-    Z3ExprBuilder res = new Z3ExprBuilder() ;
+
     if (!s1.isString() || !s2.isString()) {
       Log.error("mkSuffixOf(..,..) parameter must all be strings");
     }
-    res.expr =  ctx.mkSuffixOf(s1.expr(),s2.expr());
-    res.kind =ExpressionKind.STRING ;
-    return res ;
+    expr =  ctx.mkSuffixOf(s1.expr(),s2.expr());
+    kind =ExpressionKind.STRING ;
+    return this;
   }
 
 }

@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt.ocl2smt.expressionconverter;
+package de.monticore.ocl2smt.ocl2smt.expr;
 
 public enum ExpressionKind {
   INTEGER,
@@ -8,4 +8,5 @@ public enum ExpressionKind {
   STRING,
   CHAR,
   NULL,
+  UNINTERPRETED,
 }

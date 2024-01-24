@@ -9,7 +9,7 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
 import de.monticore.ocl2smt.util.OCLType;
-import de.monticore.ocl2smt.util.SMTSet;
+import de.monticore.ocl2smt.ocl2smt.expr.Z3SetBuilder;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.SourcePosition;
 import java.util.ArrayList;
@@ -64,7 +64,7 @@ public class OCL2SMTGenerator {
     Expr<? extends Sort> expr =
         exprConv.declVariable(
             exprConv.typeConverter.buildOCLType(node.getSymbol()), node.getName());
-    SMTSet set = exprConv.convertSet(node.getExpression());
+    Z3SetBuilder set = exprConv.convertSet(node.getExpression());
     return new ImmutablePair<>(expr, set.contains(expr));
   }
 
