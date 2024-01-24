@@ -84,52 +84,6 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     inScope(gs, variable("intArray3", SymTypeExpressionFactory.createTypeArray(_intSymType, 3)));
   }
 
-  protected static Stream<Arguments> castExpressions() {
-    return Stream.of(
-        Arguments.of("(boolean) false", "boolean"),
-        Arguments.of("(int) 5", "int"),
-        Arguments.of("(long) 5", "long"),
-        Arguments.of("(long) 5l", "long"),
-        Arguments.of("(long) 5L", "long"),
-        Arguments.of("(double) 5.0", "double"));
-  }
-
-  // TODO cannot downcast
-  @ParameterizedTest
-  @MethodSource("castExpressions")
-  protected void checkCast(String exprStr, String expectedType) throws IOException {
-    checkExpr(exprStr, expectedType);
-  }
-
-  protected static Stream<Arguments> downcastExpressions() {
-    return Stream.of(
-        Arguments.of("(byte) 5", "byte"),
-        Arguments.of("(short) 5", "short"),
-        Arguments.of("(char) 5", "char"),
-        Arguments.of("(int) 5.0", "int"),
-        Arguments.of("(float) 5.0", "float"));
-  }
-
-  @ParameterizedTest
-  @MethodSource("downcastExpressions")
-  protected void checkDowncast(String exprStr, String expectedType) throws IOException {
-    checkExpr(exprStr, expectedType);
-  }
-
-  protected static Stream<Arguments> upcastExpressions() {
-    return Stream.of(
-        Arguments.of("(float) 5", "float"),
-        Arguments.of("(long) 5", "long"),
-        Arguments.of("(double) 5", "double"),
-        Arguments.of("(double) 5.0f", "double"));
-  }
-
-  @ParameterizedTest
-  @MethodSource("upcastExpressions")
-  protected void checkUpcast(String exprStr, String expectedType) throws IOException {
-    checkExpr(exprStr, expectedType);
-  }
-
   protected static Stream<Arguments> typeIfExpressions() { // TODO FDr UnionType ready machen
     return Stream.of(
         Arguments.of("typeif vardouble instanceof double then 5.0 else 2*2", "double"),
@@ -261,16 +215,6 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     checkExpr("iterate { Person p; int totalAge = 0 : totalAge = totalAge+p.getAge()}", "int");
     checkExpr(
         "iterate { Person p in Person; int totalAge = 0 : totalAge = totalAge+p.getAge()}", "int");
-  }
-
-  protected static Stream<Arguments> instanceofExpressions() {
-    return Stream.of(Arguments.of("true instanceof boolean", "boolean"));
-  }
-
-  @ParameterizedTest
-  @MethodSource("instanceofExpressions")
-  protected void checkInstanceofExpression(String exprStr, String expectedType) throws IOException {
-    checkExpr(exprStr, expectedType);
   }
 
   protected static Stream<Arguments> arrayQualificationExpressions() {

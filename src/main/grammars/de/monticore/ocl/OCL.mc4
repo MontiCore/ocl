@@ -12,12 +12,10 @@ import de.monticore.literals.*;
 
 grammar OCL extends UMLStereotype,
                     MCSimpleGenericTypes,
-                    CommonExpressions,
                     SetExpressions,
                     OCLExpressions,
                     OptionalOperators,
-                    BitExpressions,
-                    UglyExpressions
+                    BitExpressions
 {
   /**
    *  ASTOCLCompilationUnit represents the entire content of an OCL model

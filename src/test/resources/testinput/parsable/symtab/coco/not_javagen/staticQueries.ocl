@@ -2,8 +2,8 @@
 ocl list {
   inv:
     let
-      Set<int> ca = Set{(int) 1, (int) 2, (int) 3};
-      Set<long> cb = Set{(long) 1, (long) 2, (long) 3}
+      Set<int> ca = Set{1, 2, 3};
+      Set<long> cb = Set{1l, 2l, 3l}
     in
       sum(ca) == 6 &&
       max(ca) == 3 &&
