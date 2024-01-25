@@ -14,7 +14,6 @@ import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.expr.ExprBuilder;
 import de.monticore.ocl2smt.ocl2smt.expr.ExprMill;
 import de.monticore.ocl2smt.ocl2smt.expr.ExpressionKind;
-import de.monticore.ocl2smt.ocl2smt.expr.Z3SetBuilder;
 import de.monticore.ocl2smt.util.OCLMethodResult;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.TypeConverter;
@@ -24,7 +23,7 @@ import java.util.Optional;
 import org.apache.commons.lang3.tuple.Pair;
 
 /** This class convert All OCL-Expressions including @Pre-Expressions in SMT */
-public class FullOCLExpressionConverter extends OCLExpressionConverter {
+public class FullOCLExpressionConverter extends OCLExprConverter {
   private boolean isPreStrategy = false;
   private boolean isPreCond = false;
 
@@ -129,7 +128,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   }
 
   @Override
-  protected Z3SetBuilder convertFieldAccessSet(ASTFieldAccessExpression node) {
+  protected ExprBuilder convertFieldAccessSet(ASTFieldAccessExpression node) {
     boolean isPre = isPreStrategy();
     exitPre();
     String name = node.getName();
@@ -195,9 +194,8 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     return Optional.of(expr);
   }
 
-  @Override
-  public Z3SetBuilder convertSet(ASTExpression node) {
-    Optional<Z3SetBuilder> res = convertSetOpt(node);
+  public ExprBuilder convertSet(ASTExpression node) {
+    /* Optional<ExprBuilder> res = convertSetOpt(node);
     if (res.isPresent()) {
       return res.get();
     } else {
@@ -206,11 +204,13 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
       }
       Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
     }
+    return null; */
+    // todo fixme
     return null;
   }
 
-  protected Z3SetBuilder convertNameSet(ASTNameExpression node) {
-    Z3SetBuilder res = null;
+  protected ExprBuilder convertNameSet(ASTNameExpression node) {
+    ExprBuilder res = null;
     boolean isPre = isPreStrategy();
     String role = node.getName();
     exitPre();
@@ -222,10 +222,11 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
                   CDHelper.getASTCDType(result.getOclType().getName(), getCD())),
               ctx.mkBoolSort());
       res =
-          new Z3SetBuilder(
-              x -> ExprMill.exprBuilder(ctx).mkBool((BoolExpr) ctx.mkApp(setFunc, x.expr())),
-              result.getOclType(),
-              this);
+          ExprMill.exprBuilder(ctx)
+              .mkSet(
+                  x -> ExprMill.exprBuilder(ctx).mkBool((BoolExpr) ctx.mkApp(setFunc, x.expr())),
+                  result.getOclType(),
+                  this);
       result.setValue(setFunc);
     } else {
 

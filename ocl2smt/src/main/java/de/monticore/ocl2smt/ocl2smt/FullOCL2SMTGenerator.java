@@ -11,7 +11,7 @@ import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.expr.ExprBuilder;
 import de.monticore.ocl2smt.ocl2smt.expr.ExprMill;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.FullOCLExpressionConverter;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
+import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExprConverter;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.ocl2smt.util.OCLType;
@@ -28,7 +28,7 @@ public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
 
   // TODO:: fix   OCLOperationSignature = OCLMethodSignature | OCLConstructorSignature
   private ExprBuilder openOpScope(
-      ASTOCLOperationSignature node, OCLExpressionConverter opConverter) {
+      ASTOCLOperationSignature node, OCLExprConverter opConverter) {
     ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
 
     // set the type of the method result

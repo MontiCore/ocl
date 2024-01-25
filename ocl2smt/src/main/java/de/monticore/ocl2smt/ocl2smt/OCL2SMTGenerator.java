@@ -9,8 +9,7 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
 import de.monticore.ocl2smt.ocl2smt.expr.ExprBuilder;
 import de.monticore.ocl2smt.ocl2smt.expr.ExprMill;
-import de.monticore.ocl2smt.ocl2smt.expr.Z3SetBuilder;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
+import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExprConverter;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.SourcePosition;
@@ -23,16 +22,16 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class OCL2SMTGenerator {
-  protected OCLExpressionConverter exprConv;
+  protected OCLExprConverter exprConv;
   protected final Context ctx;
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
-    exprConv = new OCLExpressionConverter(ast, ctx);
+    exprConv = new OCLExprConverter(ast, ctx);
     this.ctx = ctx;
   }
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
-    exprConv = new OCLExpressionConverter(ast, ocl2SMTGenerator);
+    exprConv = new OCLExprConverter(ast, ocl2SMTGenerator);
     this.ctx = ocl2SMTGenerator.ctx;
   }
 
@@ -67,7 +66,7 @@ public class OCL2SMTGenerator {
     ExprBuilder expr =
         exprConv.declVariable(
             exprConv.typeConverter.buildOCLType(node.getSymbol()), node.getName());
-    Z3SetBuilder set = exprConv.convertSet(node.getExpression());
+    ExprBuilder set = exprConv.convertExpr(node.getExpression());
     return new ImmutablePair<>(expr, set.contains(expr));
   }
 

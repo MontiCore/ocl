@@ -4,7 +4,6 @@ import com.microsoft.z3.BoolSort;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Sort;
-import de.monticore.ocl2smt.ocl2smt.expr.ExprBuilder;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
