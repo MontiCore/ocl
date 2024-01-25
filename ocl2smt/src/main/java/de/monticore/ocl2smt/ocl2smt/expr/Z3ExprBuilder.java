@@ -219,7 +219,9 @@ public class Z3ExprBuilder extends ExprBuilder {
       this.expr = ctx.mkFPAdd(ctx.mkFPRNA(), leftNode.expr(), rightNode.expr());
       this.kind = ExpressionKind.DOUBLE;
     } else if (leftNode.kind == ExpressionKind.STRING || rightNode.kind == ExpressionKind.STRING) {
-      this.expr = ctx.mkConcat(leftNode.expr(), rightNode.expr());
+      Expr<SeqSort<Sort>> left = leftNode.expr();
+      Expr<SeqSort<Sort>> right = rightNode.expr();
+      this.expr = ctx.mkConcat(left, right);
       this.kind = ExpressionKind.STRING;
     } else {
       Log.error("mkPlus(..,..) is only implemented for Int or real expressions left and right");
@@ -319,7 +321,7 @@ public class Z3ExprBuilder extends ExprBuilder {
     if (!s1.isString() || !s2.isString()) {
       Log.error("mkContains(..,..) parameter must all be strings");
     }
-    expr = ctx.mkConcat(s1.expr(), s2.expr());
+    expr = ctx.mkContains(s1.expr(), s2.expr());
     kind = ExpressionKind.STRING;
     return this;
   }
