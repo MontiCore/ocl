@@ -70,30 +70,31 @@ public abstract class Expression2smt {
     }
     return null;
   }
-  private  ExprBuilder convert(ASTLiteral node){
-      ExprBuilder result = null;
-      if (node instanceof ASTBooleanLiteral) {
-          result = ExprMill.exprBuilder(ctx).mkBool(((ASTBooleanLiteral) node).getValue());
-      } else if (node instanceof ASTStringLiteral) {
-          result = ExprMill.exprBuilder(ctx).mkString(((ASTStringLiteral) node).getValue());
-      } else if (node instanceof ASTNatLiteral) {
-          result = ExprMill.exprBuilder(ctx).mkInt(((ASTNatLiteral) node).getValue());
-      } else if (node instanceof ASTBasicDoubleLiteral) {
-          result = ExprMill.exprBuilder(ctx).mkDouble(((ASTBasicDoubleLiteral) node).getValue());
-      } else if (node instanceof ASTCharLiteral) {
-          result = ExprMill.exprBuilder(ctx).mkChar(((ASTCharLiteral) node).getValue());
-      } else{
-        result =  ExprMill.exprBuilder(ctx);
-      }
 
-      return  result;
+  private ExprBuilder convert(ASTLiteral node) {
+    ExprBuilder result = null;
+    if (node instanceof ASTBooleanLiteral) {
+      result = ExprMill.exprBuilder(ctx).mkBool(((ASTBooleanLiteral) node).getValue());
+    } else if (node instanceof ASTStringLiteral) {
+      result = ExprMill.exprBuilder(ctx).mkString(((ASTStringLiteral) node).getValue());
+    } else if (node instanceof ASTNatLiteral) {
+      result = ExprMill.exprBuilder(ctx).mkInt(((ASTNatLiteral) node).getValue());
+    } else if (node instanceof ASTBasicDoubleLiteral) {
+      result = ExprMill.exprBuilder(ctx).mkDouble(((ASTBasicDoubleLiteral) node).getValue());
+    } else if (node instanceof ASTCharLiteral) {
+      result = ExprMill.exprBuilder(ctx).mkChar(((ASTCharLiteral) node).getValue());
+    } else {
+      result = ExprMill.exprBuilder(ctx);
+    }
+
+    return result;
   }
+
   public ExprBuilder convertExpr(ASTExpression node) {
     ExprBuilder result = null;
-    if (node instanceof ASTLiteralExpression){
-        result = convert(((ASTLiteralExpression) node).getLiteral());
-    }
-else if (node instanceof ASTBooleanAndOpExpression) {
+    if (node instanceof ASTLiteralExpression) {
+      result = convert(((ASTLiteralExpression) node).getLiteral());
+    } else if (node instanceof ASTBooleanAndOpExpression) {
       ExprBuilder left = convertExpr(((ASTBooleanAndOpExpression) node).getLeft());
       ExprBuilder right = convertExpr(((ASTBooleanAndOpExpression) node).getRight());
       result = ExprMill.exprBuilder(ctx).mkAnd(left, right);
@@ -104,7 +105,9 @@ else if (node instanceof ASTBooleanAndOpExpression) {
     } else if (node instanceof ASTBooleanNotExpression) {
       result = ExprMill.exprBuilder(ctx).mkNot(convertExpr(node));
     } else if (node instanceof ASTLogicalNotExpression) {
-      result = ExprMill.exprBuilder(ctx).mkNot(convertExpr(((ASTLogicalNotExpression) node).getExpression()));
+      result =
+          ExprMill.exprBuilder(ctx)
+              .mkNot(convertExpr(((ASTLogicalNotExpression) node).getExpression()));
     } else if (node instanceof ASTLessEqualExpression) {
       ExprBuilder left = convertExpr(((ASTLessEqualExpression) node).getLeft());
       ExprBuilder right = convertExpr(((ASTLessEqualExpression) node).getRight());
@@ -189,7 +192,14 @@ else if (node instanceof ASTBooleanAndOpExpression) {
     } else {
       notFullyImplemented(node);
     }
-    return result;
+
+    if (result != null && !result.isNull()) {
+      return result;
+
+    } else {
+      Log.error("Problem"); // todo fixme
+      return null;
+    }
   }
 
   // ---------------------------------------Logic---------------------------------

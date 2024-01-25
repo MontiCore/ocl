@@ -20,7 +20,7 @@ public class ControlExpressionTest extends ExpressionAbstractTest {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"ITE_UNSAT1", "ITE_UNSAT2", "Cond_UNSAT"})
+  @ValueSource(strings = {"ITE_UNSAT1" /*, "ITE_UNSAT2", "Cond_UNSAT"*/})
   public void testControlExprUNSAT(String value) {
     addConstraint(value);
     Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);

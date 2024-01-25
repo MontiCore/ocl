@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -82,7 +83,7 @@ public class OCL2SMTGenerator {
 
     // add general invConstraints
     for (ExprBuilder constr : exprConv.getGenConstraints()) {
-      inv = ExprMill.exprBuilder(ctx).mkAnd(inv, constr.expr());
+      inv = ExprMill.exprBuilder(ctx).mkAnd(inv, constr);
     }
 
     Optional<String> name =
@@ -110,8 +111,11 @@ public class OCL2SMTGenerator {
           ExprMill.exprBuilder(ctx)
               .mkBool(
                   ctx.mkForall(
-                      vars.toArray(new Expr[0]),
-                      (BoolExpr) ExprMill.exprBuilder(ctx).mkImplies(varConstraint2, bool).expr(),
+                      vars.stream()
+                          .map(e -> (Expr<?>) e.expr())
+                          .collect(Collectors.toList())
+                          .toArray(new Expr[0]),
+                      ExprMill.exprBuilder(ctx).mkImplies(varConstraint2, bool).expr(),
                       0,
                       null,
                       null,

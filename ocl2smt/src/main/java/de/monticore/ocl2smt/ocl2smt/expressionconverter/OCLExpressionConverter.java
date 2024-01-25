@@ -320,21 +320,25 @@ public class OCLExpressionConverter extends Expression2smt {
 
   protected Pair<ExprBuilder, ExprBuilder> convertFieldAccessSetHelper(
       ExprBuilder obj, String name) {
-    ExprBuilder res = ExprMill.exprBuilder(ctx);
-    /* OCLType type = getType(obj);
+
+    OCLType type = getType(obj);
     ASTCDDefinition cd = cd2smtGenerator.getClassDiagram().getCDDefinition();
-    Pair<ExprBuilder, ExprBuilder> res;
+    Pair<ExprBuilder, ExprBuilder> res = null;
     ASTCDType astcdType = getASTCDType(type.getName(), cd);
 
     if (OCLHelper.containsAttribute(astcdType, name, cd)) { // case obj.attribute
       res =
           new ImmutablePair<>(
-              OCLHelper.getAttribute(obj.expr(), type, name, cd2smtGenerator), ctx.mkTrue());
+              ExprMill.exprBuilder(ctx)
+                  .mkExpr(
+                      ExpressionKind.UNINTERPRETED,
+                      OCLHelper.getAttribute(obj.expr(), type, name, cd2smtGenerator)),
+              ExprMill.exprBuilder(ctx).mkBool(true));
     } else { // case obj.link
       res = convertFieldAccessAssocHelper(obj, name);
-    }*/
+    }
 
-    return new ImmutablePair<>(null, null);
+    return res;
   }
 
   private Pair<ExprBuilder, ExprBuilder> convertFieldAccessAssocHelper(

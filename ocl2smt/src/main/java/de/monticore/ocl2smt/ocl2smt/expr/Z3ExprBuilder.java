@@ -7,7 +7,6 @@ import de.se_rwth.commons.logging.Log;
 public class Z3ExprBuilder extends ExprBuilder {
   protected Expr<?> expr = null;
 
-
   protected Sort sort;
 
   public Z3ExprBuilder(Context ctx) {
@@ -41,6 +40,13 @@ public class Z3ExprBuilder extends ExprBuilder {
   public ExprBuilder mkBool(BoolExpr node) {
     this.expr = node;
     kind = ExpressionKind.BOOL;
+    return this;
+  }
+
+  @Override
+  public <Expr> ExprBuilder mkExpr(ExpressionKind kind, Expr expr) {
+    this.expr = (com.microsoft.z3.Expr<?>) expr;
+    this.kind = kind;
     return this;
   }
 
@@ -288,8 +294,8 @@ public class Z3ExprBuilder extends ExprBuilder {
     if (cond.kind != ExpressionKind.BOOL) {
       Log.error("mkIte(..,..) is only implemented for Int or real expressions left and right");
     }
-    this.expr = ctx.mkITE(cond.expr(), expr1.expr(), expr1.expr());
-    this.kind = ExpressionKind.NULL;
+    this.expr = ctx.mkITE(cond.expr(), expr1.expr(), expr2.expr());
+    this.kind = ExpressionKind.BOOL;
     return this;
   }
 

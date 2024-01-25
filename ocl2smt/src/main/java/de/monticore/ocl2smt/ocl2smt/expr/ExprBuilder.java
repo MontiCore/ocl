@@ -5,16 +5,25 @@ import com.microsoft.z3.Context;
 import de.monticore.literals.mccommonliterals._ast.*;
 
 public abstract class ExprBuilder {
-    protected Context ctx;
+  protected Context ctx;
   protected ExpressionKind kind;
 
   public abstract <Expr> Expr expr();
 
   public abstract <Sort> Sort sort();
 
+  @Override
+  public String toString() {
+    return expr().toString();
+  }
+
   public abstract ExprBuilder mkBool(boolean node);
 
   public abstract ExprBuilder mkBool(BoolExpr node); // todo : remove later
+
+  public abstract <Expr> ExprBuilder mkExpr(ExpressionKind kind, Expr expr); // todo : remove later
+
+  public abstract <SORT> ExprBuilder mkExpr(String name, SORT type);
 
   public abstract ExprBuilder mkString(String node);
 
@@ -23,8 +32,6 @@ public abstract class ExprBuilder {
   public abstract ExprBuilder mkChar(char node);
 
   public abstract ExprBuilder mkDouble(double node);
-
-  public abstract <SORT> ExprBuilder mkExpr(String name, SORT type);
 
   public abstract ExprBuilder mkNot(ExprBuilder node);
 
@@ -98,5 +105,9 @@ public abstract class ExprBuilder {
     return kind != ExpressionKind.NULL
         && kind != ExpressionKind.UNINTERPRETED
         && kind != ExpressionKind.SET;
+  }
+
+  public boolean isNull() {
+    return kind == ExpressionKind.NULL;
   }
 }
