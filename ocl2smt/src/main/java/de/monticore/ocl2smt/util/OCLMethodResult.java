@@ -4,6 +4,7 @@ import com.microsoft.z3.BoolSort;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.FuncDecl;
 import com.microsoft.z3.Sort;
+import de.monticore.ocl2smt.ocl2smt.expr.ExprBuilder;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
@@ -14,14 +15,14 @@ public class OCLMethodResult {
   private ResultType type;
 
   private OCLType oclType;
-  private Expr<? extends Sort> res;
+  private ExprBuilder res;
   private FuncDecl<BoolSort> resSet;
 
   public void setValue(FuncDecl<BoolSort> resSet) {
     this.resSet = resSet;
   }
 
-  public void setValue(Expr<? extends Sort> res) {
+  public void setValue(ExprBuilder res) {
     this.res = res;
   }
 
@@ -92,7 +93,7 @@ public class OCLMethodResult {
   }
 
   public Expr<? extends Sort> getResultExpr() {
-    return res;
+    return res.expr();
   }
 
   public FuncDecl<BoolSort> getResultSet() {

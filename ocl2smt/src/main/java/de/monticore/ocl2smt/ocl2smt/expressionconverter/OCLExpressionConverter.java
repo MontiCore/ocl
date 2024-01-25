@@ -22,10 +22,8 @@ import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
-import de.monticore.ocl2smt.ocl2smt.expr.ExprBuilder;
-import de.monticore.ocl2smt.ocl2smt.expr.Expression2smt;
+import de.monticore.ocl2smt.ocl2smt.expr.*;
 import de.monticore.ocl2smt.util.OCLType;
-import de.monticore.ocl2smt.ocl2smt.expr.Z3SetBuilder;
 import de.monticore.ocl2smt.util.TypeConverter;
 import de.monticore.ocl2smt.visitors.SetGeneratorCollector;
 import de.monticore.ocl2smt.visitors.SetVariableCollector;
@@ -42,10 +40,10 @@ public class OCLExpressionConverter extends Expression2smt {
 
   protected CD2SMTGenerator cd2smtGenerator;
 
-  protected Map<String, Expr<? extends Sort>> varNames;
-  protected Map<Expr<? extends Sort>, OCLType> varTypes;
+  protected Map<String, ExprBuilder> varNames;
+  protected Map<ExprBuilder, OCLType> varTypes;
 
-  protected Set<BoolExpr> genConstraints;
+  protected Set<ExprBuilder> genConstraints;
 
   public TypeConverter typeConverter;
 
@@ -80,27 +78,24 @@ public class OCLExpressionConverter extends Expression2smt {
     return cd2smtGenerator;
   }
 
-  public Set<BoolExpr> getGenConstraints() {
+  public Set<ExprBuilder> getGenConstraints() {
     return genConstraints;
   }
 
-  public Expr<? extends Sort> declVariable(OCLType type, String name) {
-    Expr<? extends Sort> expr = ctx.mkConst(name, typeConverter.deriveSort(type));
+  public ExprBuilder declVariable(OCLType type, String name) {
+    ExprBuilder expr = ExprMill.exprBuilder(ctx).mkExpr(name, typeConverter.deriveSort(type));
     varNames.put(name, expr);
     varTypes.put(expr, type);
     return expr;
   }
 
-
-
-
-
-  protected Optional<BoolExpr> convertBoolExprOpt(ASTExpression node) {
-    BoolExpr result = super.convertBoolExprOpt(node).orElse(null);
-    if (result != null) {
-      return Optional.of(result);
+  @Override
+  public ExprBuilder convertExpr(ASTExpression node) {
+    ExprBuilder result = null;
+    SymTypeExpression typeExpression = TypeConverter.deriveType(node);
+    if ((node instanceof ASTCallExpression) && typeExpression.isObjectType()) {
+      result = convertCallObject((ASTCallExpression) node);
     }
-
     if (node instanceof ASTForallExpression) {
       result = convertForAll((ASTForallExpression) node);
     } else if (node instanceof ASTExistsExpression) {
@@ -111,35 +106,17 @@ public class OCLExpressionConverter extends Expression2smt {
       result = convertSetNotIn((ASTSetNotInExpression) node);
     } else if (node instanceof ASTCallExpression && TypeConverter.hasBooleanType(node)) {
       result = convertCallBool((ASTCallExpression) node);
-    } else {
-      Optional<Expr<? extends Sort>> buf = convertGenExprOpt(node);
-      if (buf.isPresent() && buf.get() instanceof BoolExpr) {
-        result = (BoolExpr) buf.get();
-      } else {
-        return Optional.empty();
-      }
+    }
+    if (result != null && result.getKind() != ExpressionKind.NULL) {
+      return result;
     }
 
-    return Optional.of(result);
-  }
-
-  protected Optional<Expr<? extends Sort>> convertGenExprOpt(ASTExpression node) {
-
-    Optional<Expr<?>> res = Optional.ofNullable(super.convertGenExprOpt(node).orElse(null));
-    if (res.isPresent()) {
-      return res;
-    }
-
-    SymTypeExpression typeExpression = TypeConverter.deriveType(node);
-    if ((node instanceof ASTCallExpression) && typeExpression.isObjectType()) {
-      res = Optional.ofNullable(convertCallObject((ASTCallExpression) node));
-    }
-    return res;
+    return super.convertExpr(node);
   }
 
   @Override
-  protected BoolExpr convertCallBool(ASTCallExpression node) {
-    BoolExpr res = null;
+  protected ExprBuilder convertCallBool(ASTCallExpression node) {
+    ExprBuilder res = null;
 
     if (node.getExpression() instanceof ASTFieldAccessExpression) {
       ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
@@ -160,15 +137,15 @@ public class OCLExpressionConverter extends Expression2smt {
     return res;
   }
 
-  protected BoolExpr convertBoolSetOp(ASTCallExpression node, String methodName) {
-    BoolExpr res = null;
+  protected ExprBuilder convertBoolSetOp(ASTCallExpression node, String methodName) {
+    ExprBuilder res = null;
     ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
     Z3SetBuilder set = convertSet(caller);
     ASTExpression arg;
     switch (methodName) {
       case "contains":
         arg = node.getArguments().getExpression(0);
-        Expr<? extends Sort> argument = convertExpr(arg);
+        ExprBuilder argument = convertExpr(arg);
         res = set.contains(argument);
         break;
       case "containsAll":
@@ -186,27 +163,27 @@ public class OCLExpressionConverter extends Expression2smt {
     return res;
   }
 
-  protected BoolExpr convertBoolOptionalOp(ASTFieldAccessExpression node, String methodName) {
-    BoolExpr res = null;
-    Pair<Expr<? extends Sort>, BoolExpr> link = convertFieldAccOptional(node);
-    BoolExpr isPresent = mkExists(List.of(link.getLeft()), link.getRight());
+  protected ExprBuilder convertBoolOptionalOp(ASTFieldAccessExpression node, String methodName) {
+    ExprBuilder res = null;
+    Pair<ExprBuilder, ExprBuilder> link = convertFieldAccOptional(node);
+    ExprBuilder isPresent = mkExists(List.of(link.getLeft()), link.getRight());
     switch (methodName) {
       case "isPresent":
         res = isPresent;
         break;
       case "isEmpty":
-        res = ctx.mkNot(isPresent);
+        res = ExprMill.exprBuilder(ctx).mkNot(isPresent);
         break;
     }
     return res;
   }
 
   /*------------------------------------quantified expressions----------------------------------------------------------*/
-  private Map<Expr<? extends Sort>, Optional<ASTExpression>> openScope(
+  private Map<ExprBuilder, Optional<ASTExpression>> openScope(
       List<ASTInDeclaration> inDeclarations) {
-    Map<Expr<? extends Sort>, Optional<ASTExpression>> variableList = new HashMap<>();
+    Map<ExprBuilder, Optional<ASTExpression>> variableList = new HashMap<>();
     for (ASTInDeclaration decl : inDeclarations) {
-      List<Expr<? extends Sort>> temp = convertInDecl(decl);
+      List<ExprBuilder> temp = convertInDecl(decl);
       if (decl.isPresentExpression()) {
         temp.forEach(t -> variableList.put(t, Optional.of(decl.getExpression())));
       } else {
@@ -216,36 +193,35 @@ public class OCLExpressionConverter extends Expression2smt {
     return variableList;
   }
 
-  protected BoolExpr convertInDeclConstraints(
-      Map<Expr<? extends Sort>, Optional<ASTExpression>> var) {
+  protected ExprBuilder convertInDeclConstraints(Map<ExprBuilder, Optional<ASTExpression>> var) {
     // get all the InPart in InDeclarations
-    Map<Expr<? extends Sort>, ASTExpression> inParts = new HashMap<>();
+    Map<ExprBuilder, ASTExpression> inParts = new HashMap<>();
     var.forEach((key, value) -> value.ifPresent(s -> inParts.put(key, s)));
 
-    List<BoolExpr> constraintList = new ArrayList<>();
+    List<ExprBuilder> constraintList = new ArrayList<>();
 
-    for (Map.Entry<Expr<? extends Sort>, ASTExpression> expr : inParts.entrySet()) {
+    for (Map.Entry<ExprBuilder, ASTExpression> expr : inParts.entrySet()) {
       Z3SetBuilder mySet = convertSet(expr.getValue());
       constraintList.add(mySet.contains(expr.getKey()));
     }
-    BoolExpr result = ctx.mkTrue();
+    ExprBuilder result = ExprMill.exprBuilder(ctx).mkBool(true);
 
-    for (BoolExpr constr : constraintList) {
-      result = ctx.mkAnd(result, constr);
+    for (ExprBuilder constr : constraintList) {
+      result = ExprMill.exprBuilder(ctx).mkAnd(result, constr);
     }
     return result;
   }
 
-  protected BoolExpr convertForAll(ASTForallExpression node) {
+  protected ExprBuilder convertForAll(ASTForallExpression node) {
     // declare Variable from scope
-    Map<Expr<? extends Sort>, Optional<ASTExpression>> var = openScope(node.getInDeclarationList());
+    Map<ExprBuilder, Optional<ASTExpression>> var = openScope(node.getInDeclarationList());
 
-    BoolExpr constraint = convertInDeclConstraints(var);
+    ExprBuilder constraint = convertInDeclConstraints(var);
 
-    BoolExpr result =
+    ExprBuilder result =
         mkForall(
             new ArrayList<>(var.keySet()),
-            ctx.mkImplies(constraint, convertBoolExpr(node.getExpression())));
+            ExprMill.exprBuilder(ctx).mkImplies(constraint, convertExpr(node.getExpression())));
 
     // Delete Variables from "scope"
     closeScope(node.getInDeclarationList());
@@ -253,35 +229,27 @@ public class OCLExpressionConverter extends Expression2smt {
     return result;
   }
 
-  protected BoolExpr convertExist(ASTExistsExpression node) {
+  protected ExprBuilder convertExist(ASTExistsExpression node) {
     // declare Variable from scope
-    Map<Expr<? extends Sort>, Optional<ASTExpression>> var = openScope(node.getInDeclarationList());
+    Map<ExprBuilder, Optional<ASTExpression>> var = openScope(node.getInDeclarationList());
 
-    BoolExpr constraint = convertInDeclConstraints(var);
+    ExprBuilder constraint = convertInDeclConstraints(var);
 
-    BoolExpr result =
+    ExprBuilder result =
         mkExists(
             new ArrayList<>(var.keySet()),
-            ctx.mkAnd(constraint, convertBoolExpr(node.getExpression())));
+            ExprMill.exprBuilder(ctx).mkAnd(constraint, convertExpr(node.getExpression())));
 
     // Delete Variables from "scope"
     closeScope(node.getInDeclarationList());
 
     return result;
-  }
-
-  /*----------------------------------control expressions----------------------------------------------------------*/
-  protected Expr<? extends Sort> convert(ASTIfThenElseExpression node) {
-    return ctx.mkITE(
-        convertBoolExpr(node.getCondition()),
-        convertExpr(node.getThenExpression()),
-        convertExpr(node.getElseExpression()));
   }
 
   // -----------------------------------general----------------------------------------------------------------------*/
   @Override
-  protected Expr<? extends Sort> convert(ASTNameExpression node) {
-    Expr<? extends Sort> res;
+  protected ExprBuilder convert(ASTNameExpression node) {
+    ExprBuilder res;
     if (varNames.containsKey(node.getName())) {
       res = varNames.get(node.getName());
     } else {
@@ -291,8 +259,8 @@ public class OCLExpressionConverter extends Expression2smt {
   }
 
   @Override
-  protected Expr<? extends Sort> convertCallObject(ASTCallExpression node) {
-    Expr<?> expr = super.convertCallObject(node);
+  protected ExprBuilder convertCallObject(ASTCallExpression node) {
+    ExprBuilder expr = super.convertCallObject(node);
     if (expr != null) {
       return expr;
     }
@@ -303,7 +271,7 @@ public class OCLExpressionConverter extends Expression2smt {
 
       if (TypeConverter.hasOptionalType(caller) && methodName.equals("get")) {
         // TODO: 28.08.2023  fixme
-        Pair<Expr<? extends Sort>, BoolExpr> res =
+        Pair<ExprBuilder, ExprBuilder> res =
             convertFieldAccOptional((ASTFieldAccessExpression) caller);
         genConstraints.add(res.getRight());
         return res.getLeft();
@@ -323,8 +291,8 @@ public class OCLExpressionConverter extends Expression2smt {
   protected Z3SetBuilder convertFieldAccessSetHelper(ASTExpression node, String name) {
 
     // case we have simple field access. e.g. node = p, name = auction
-    if (!(node instanceof ASTFieldAccessExpression)) {
-      Expr<? extends Sort> expr = convertExpr(node);
+    /*  if (!(node instanceof ASTFieldAccessExpression)) {
+      ExprBuilder expr = convertExpr(node);
       return convertSimpleFieldAccessSet(expr, name);
     }
 
@@ -336,70 +304,80 @@ public class OCLExpressionConverter extends Expression2smt {
     ASTCDAssociation person_parent = OCLHelper.getAssociation(type1, name, getCD());
     OCLType rightSetElemType = OCLHelper.getOtherType(person_parent, type1, name, getCD());
 
-    Function<Expr<? extends Sort>, Z3SetBuilder> function =
+    Function<ExprBuilder, Z3SetBuilder> function =
         obj1 ->
             new Z3SetBuilder(
                 obj2 ->
                     OCLHelper.evaluateLink(
-                        person_parent, obj1, name, obj2, cd2smtGenerator, this::getType),
+                        person_parent, obj1.expr(), name, obj2.expr(), cd2smtGenerator, this::getType),
                 rightSetElemType,
                 this);
 
-    return leftSet.collectAll(function);
+    return leftSet.collectAll(function);*/
+
+    return null;
   }
 
-  protected Pair<Expr<? extends Sort>, BoolExpr> convertFieldAccessSetHelper(
-      Expr<? extends Sort> obj, String name) {
-    OCLType type = getType(obj);
+  protected Pair<ExprBuilder, ExprBuilder> convertFieldAccessSetHelper(
+      ExprBuilder obj, String name) {
+    ExprBuilder res = ExprMill.exprBuilder(ctx);
+    /* OCLType type = getType(obj);
     ASTCDDefinition cd = cd2smtGenerator.getClassDiagram().getCDDefinition();
-    Pair<Expr<? extends Sort>, BoolExpr> res;
-    ASTCDType astcdType = CDHelper.getASTCDType(type.getName(), cd);
+    Pair<ExprBuilder, ExprBuilder> res;
+    ASTCDType astcdType = getASTCDType(type.getName(), cd);
+
     if (OCLHelper.containsAttribute(astcdType, name, cd)) { // case obj.attribute
       res =
           new ImmutablePair<>(
-              OCLHelper.getAttribute(obj, type, name, cd2smtGenerator), ctx.mkTrue());
+              OCLHelper.getAttribute(obj.expr(), type, name, cd2smtGenerator), ctx.mkTrue());
     } else { // case obj.link
       res = convertFieldAccessAssocHelper(obj, name);
-    }
+    }*/
 
-    return res;
+    return new ImmutablePair<>(null, null);
   }
 
-  private Pair<Expr<? extends Sort>, BoolExpr> convertFieldAccessAssocHelper(
-      Expr<? extends Sort> obj, String role) {
+  private Pair<ExprBuilder, ExprBuilder> convertFieldAccessAssocHelper(
+      ExprBuilder obj, String role) {
     OCLType type = getType(obj);
     ASTCDAssociation association = OCLHelper.getAssociation(type, role, getCD());
 
     OCLType type2 = OCLHelper.getOtherType(association, type, role, getCD());
-    String resName = obj.getSExpr() + SMTHelper.fCharToLowerCase(type2.getName());
-    Expr<? extends Sort> link = declVariable(type2, resName);
-    BoolExpr linkConstraint =
-        OCLHelper.evaluateLink(association, obj, role, link, cd2smtGenerator, this::getType);
+    String resName = obj.expr().toString() + SMTHelper.fCharToLowerCase(type2.getName());
+    ExprBuilder link = declVariable(type2, resName);
+    ExprBuilder linkConstraint =
+        ExprMill.exprBuilder(ctx)
+            .mkBool(
+                OCLHelper.evaluateLink(
+                    association, obj, role, link, cd2smtGenerator, this::getType));
     return new ImmutablePair<>(link, linkConstraint);
   }
 
-  protected Expr<? extends Sort> convert(ASTFieldAccessExpression node) {
-    Expr<? extends Sort> obj = convertExpr(node.getExpression());
-    Pair<Expr<? extends Sort>, BoolExpr> res = convertFieldAccessSetHelper(obj, node.getName());
+  protected ExprBuilder convert(ASTFieldAccessExpression node) {
+    ExprBuilder obj = convertExpr(node.getExpression());
+    Pair<ExprBuilder, ExprBuilder> res = convertFieldAccessSetHelper(obj, node.getName());
     if (!TypeConverter.hasOptionalType(node)) {
       genConstraints.add(res.getRight());
     }
     return res.getLeft();
   }
 
-  protected Pair<Expr<? extends Sort>, BoolExpr> convertFieldAccOptional(
-      ASTFieldAccessExpression node) {
-    Expr<? extends Sort> obj = convertExpr(node.getExpression());
+  protected Pair<ExprBuilder, ExprBuilder> convertFieldAccOptional(ASTFieldAccessExpression node) {
+    ExprBuilder obj = convertExpr(node.getExpression());
     return convertFieldAccessSetHelper(obj, node.getName());
   }
 
-  protected Z3SetBuilder convertSimpleFieldAccessSet(Expr<? extends Sort> obj, String role) {
+  protected Z3SetBuilder convertSimpleFieldAccessSet(ExprBuilder obj, String role) {
     OCLType type1 = getType(obj);
     ASTCDAssociation association = OCLHelper.getAssociation(type1, role, getCD());
     OCLType type2 = OCLHelper.getOtherType(association, type1, role, getCD());
 
-    Function<Expr<? extends Sort>, BoolExpr> auction_per_set =
-        per -> OCLHelper.evaluateLink(association, obj, role, per, cd2smtGenerator, this::getType);
+    Function<ExprBuilder, ExprBuilder> auction_per_set =
+        per ->
+            ExprMill.exprBuilder(ctx)
+                .mkBool(
+                    OCLHelper.evaluateLink(
+                        association, obj, role, per, cd2smtGenerator, this::getType));
 
     return new Z3SetBuilder(auction_per_set, type2, this);
   }
@@ -414,8 +392,8 @@ public class OCLExpressionConverter extends Expression2smt {
     }
   }
 
-  protected List<Expr<? extends Sort>> convertInDecl(ASTInDeclaration node) {
-    List<Expr<? extends Sort>> result = new ArrayList<>();
+  protected List<ExprBuilder> convertInDecl(ASTInDeclaration node) {
+    List<ExprBuilder> result = new ArrayList<>();
     for (ASTInDeclarationVariable var : node.getInDeclarationVariableList()) {
       if (node.isPresentMCType()) {
         result.add(declVariable(typeConverter.buildOCLType(node.getMCType()), var.getName()));
@@ -427,12 +405,13 @@ public class OCLExpressionConverter extends Expression2smt {
   }
 
   // ---------------------------------------Set-Expressions----------------------------------------------------------------
-  protected BoolExpr convertSetIn(ASTSetInExpression node) {
+  protected ExprBuilder convertSetIn(ASTSetInExpression node) {
     return convertSet(node.getSet()).contains(convertExpr(node.getElem()));
   }
 
-  protected BoolExpr convertSetNotIn(ASTSetNotInExpression node) {
-    return ctx.mkNot(convertSet(node.getSet()).contains(convertExpr(node.getElem())));
+  protected ExprBuilder convertSetNotIn(ASTSetNotInExpression node) {
+    return ExprMill.exprBuilder(ctx)
+        .mkNot(convertSet(node.getSet()).contains(convertExpr(node.getElem())));
   }
 
   public Z3SetBuilder convertSet(ASTExpression node) {
@@ -519,8 +498,9 @@ public class OCLExpressionConverter extends Expression2smt {
   protected Z3SetBuilder convertSetComp(ASTSetComprehension node) {
     Set<String> setCompVarNames = openSetCompScope(node);
 
-    Function<BoolExpr, Z3SetBuilder> setComp = convertSetCompLeftSide(node.getLeft(), setCompVarNames);
-    BoolExpr filter = convertSetCompRightSide(node.getSetComprehensionItemList());
+    Function<ExprBuilder, Z3SetBuilder> setComp =
+        convertSetCompLeftSide(node.getLeft(), setCompVarNames);
+    ExprBuilder filter = convertSetCompRightSide(node.getSetComprehensionItemList());
 
     closeSetCompScope(setCompVarNames);
     return setComp.apply(filter);
@@ -533,70 +513,83 @@ public class OCLExpressionConverter extends Expression2smt {
     setCompVarNames.clear();
   }
 
+  /***
+   * convert set enum to smt {1,}
+   * @param node
+   * @return
+   */
   protected Z3SetBuilder convertSetEnum(ASTSetEnumeration node) {
-    Sort sort = null;
-    List<Expr<? extends Sort>> setItemValues = new ArrayList<>();
-    List<Function<ArithExpr<? extends Sort>, BoolExpr>> rangeFilters = new ArrayList<>();
+    ExpressionKind kind = null;
+    List<ExprBuilder> setItemValues = new ArrayList<>();
+    List<Function<ExprBuilder, ExprBuilder>> rangeFilters = new ArrayList<>();
 
     for (ASTSetCollectionItem item : node.getSetCollectionItemList()) {
 
       if (item instanceof ASTSetValueItem) {
         setItemValues.add(convertExpr(((ASTSetValueItem) item).getExpression()));
-        sort = setItemValues.get(0).getSort();
+        kind = setItemValues.get(0).getKind();
       } else if (item instanceof ASTSetValueRange) {
-        Pair<Function<ArithExpr<? extends Sort>, BoolExpr>, Sort> range =
+        Pair<Function<ExprBuilder, ExprBuilder>, ExpressionKind> range =
             convertSetValRang((ASTSetValueRange) item);
         rangeFilters.add(range.getLeft());
-        sort = range.getRight();
+        kind = range.getRight();
       }
     }
-    assert sort != null;
+    assert kind != null;
     Z3SetBuilder set =
-        new Z3SetBuilder(obj -> ctx.mkFalse(), OCLType.buildOCLType(sort.getName().toString()), this);
+        new Z3SetBuilder(
+            obj -> ExprMill.exprBuilder(ctx).mkBool(false), OCLType.buildOCLType(kind), this);
     Z3SetBuilder set1 = set;
     if (!setItemValues.isEmpty()) {
       set =
           new Z3SetBuilder(
-              obj -> ctx.mkOr(set1.contains(obj), addValuesToSetEnum(setItemValues, obj)),
-              OCLType.buildOCLType(sort.getName().toString()),
+              obj ->
+                  ExprMill.exprBuilder(ctx)
+                      .mkOr(set1.contains(obj), addValuesToSetEnum(setItemValues, obj)),
+              OCLType.buildOCLType(kind),
               this);
     }
 
-    for (Function<ArithExpr<? extends Sort>, BoolExpr> range : rangeFilters) {
+    for (Function<ExprBuilder, ExprBuilder> range : rangeFilters) {
 
       Z3SetBuilder set2 = set;
       set =
           new Z3SetBuilder(
-              obj -> ctx.mkOr(set2.contains(obj), range.apply((ArithExpr<? extends Sort>) obj)),
-              OCLType.buildOCLType(sort.getName().toString()),
+              obj -> ExprMill.exprBuilder(ctx).mkOr(set2.contains(obj), range.apply(obj)),
+              OCLType.buildOCLType(kind),
               this);
     }
     return set;
   }
 
-  private Pair<Function<ArithExpr<? extends Sort>, BoolExpr>, Sort> convertSetValRang(
+  private Pair<Function<ExprBuilder, ExprBuilder>, ExpressionKind> convertSetValRang(
       ASTSetValueRange node) {
-    ArithExpr<? extends Sort> expr1 = convertExprArith(node.getUpperBound());
-    ArithExpr<? extends Sort> expr2 = convertExprArith(node.getLowerBound());
-    ArithExpr<? extends Sort> low =
-        (ArithExpr<? extends Sort>) ctx.mkITE(ctx.mkLt(expr1, expr2), expr1, expr2);
-    ArithExpr<? extends Sort> up =
-        (ArithExpr<? extends Sort>) ctx.mkITE(ctx.mkLt(expr1, expr2), expr2, expr1);
+    ExprBuilder expr1 = convertExpr(node.getUpperBound());
+    ExprBuilder expr2 = convertExpr(node.getLowerBound());
+    ExprBuilder low =
+        ExprMill.exprBuilder(ctx).mkIte(ExprMill.exprBuilder(ctx).mkLt(expr1, expr2), expr1, expr2);
+    ExprBuilder up =
+        ExprMill.exprBuilder(ctx).mkIte(ExprMill.exprBuilder(ctx).mkLt(expr1, expr2), expr2, expr1);
     return new ImmutablePair<>(
-        obj -> ctx.mkAnd(ctx.mkLe(low, obj), ctx.mkLe(obj, up)), low.getSort());
+        obj ->
+            ExprMill.exprBuilder(ctx)
+                .mkAnd(
+                    ExprMill.exprBuilder(ctx).mkLeq(low, obj),
+                    ExprMill.exprBuilder(ctx).mkLeq(obj, up)),
+        low.getKind());
   }
 
-  BoolExpr addValuesToSetEnum(List<Expr<? extends Sort>> elements, Expr<? extends Sort> value) {
-    BoolExpr res = ctx.mkFalse();
-    for (Expr<? extends Sort> setElem : elements) {
-      res = ctx.mkOr(res, ctx.mkEq(value, setElem));
+  ExprBuilder addValuesToSetEnum(List<ExprBuilder> elements, ExprBuilder value) {
+    ExprBuilder res = ExprMill.exprBuilder(ctx).mkBool(false);
+    for (ExprBuilder setElem : elements) {
+      res = ExprMill.exprBuilder(ctx).mkOr(res, ExprMill.exprBuilder(ctx).mkEq(value, setElem));
     }
     return res;
   }
 
-  protected Function<BoolExpr, Z3SetBuilder> convertSetCompLeftSide(
+  protected Function<ExprBuilder, Z3SetBuilder> convertSetCompLeftSide(
       ASTSetComprehensionItem node, Set<String> declVars) {
-    Function<BoolExpr, Z3SetBuilder> res = null;
+    Function<ExprBuilder, Z3SetBuilder> res = null;
     if (node.isPresentGeneratorDeclaration()) {
       res = convertGenDeclLeft(node.getGeneratorDeclaration(), declVars);
     } else if (node.isPresentSetVariableDeclaration()) {
@@ -615,46 +608,55 @@ public class OCLExpressionConverter extends Expression2smt {
   /***
    * convert the right side of a set comprehension(filters)  into a BoolExpr
    */
-  protected BoolExpr convertSetCompRightSide(List<ASTSetComprehensionItem> filters) {
-    BoolExpr filter = ctx.mkTrue();
+  protected ExprBuilder convertSetCompRightSide(List<ASTSetComprehensionItem> filters) {
+    ExprBuilder filter = ExprMill.exprBuilder(ctx).mkBool(true);
     // example: x isin {2,3}
     for (ASTSetComprehensionItem item : filters) {
 
       if (item.isPresentGeneratorDeclaration()) {
         Z3SetBuilder set = convertSet(item.getGeneratorDeclaration().getExpression());
-        BoolExpr subFilter = set.contains(varNames.get(item.getGeneratorDeclaration().getName()));
-        filter = ctx.mkAnd(filter, subFilter);
+        ExprBuilder subFilter =
+            set.contains(varNames.get(item.getGeneratorDeclaration().getName()));
+        filter = ExprMill.exprBuilder(ctx).mkAnd(filter, subFilter);
       }
 
       // example: x == y
       if (item.isPresentExpression()) {
-        filter = ctx.mkAnd(filter, convertBoolExpr(item.getExpression()));
+        filter = ExprMill.exprBuilder(ctx).mkAnd(filter, convertExpr(item.getExpression()));
       }
 
       // example: int i = 10
       if (item.isPresentSetVariableDeclaration()) {
         ASTSetVariableDeclaration var = item.getSetVariableDeclaration();
         if (var.isPresentExpression()) {
-          BoolExpr subFilter =
-              ctx.mkEq(varNames.get(var.getName()), convertExpr(var.getExpression()));
-          filter = ctx.mkAnd(filter, subFilter);
+          ExprBuilder subFilter =
+              ExprMill.exprBuilder(ctx)
+                  .mkEq(varNames.get(var.getName()), convertExpr(var.getExpression()));
+          filter = ExprMill.exprBuilder(ctx).mkAnd(filter, subFilter);
         }
       }
     }
     return filter;
   }
 
-  protected Function<BoolExpr, Z3SetBuilder> convertSetCompExprLeft(
+  protected Function<ExprBuilder, Z3SetBuilder> convertSetCompExprLeft(
       ASTExpression node, Set<String> declVars) {
-    Expr<? extends Sort> expr1 = convertExpr(node);
+    ExprBuilder expr1 = convertExpr(node);
     // define a const  for the quantifier
-    Expr<? extends Sort> expr2 = ctx.mkConst("var", expr1.getSort());
-    List<Expr<? extends Sort>> vars = new ArrayList<>(collectExpr(declVars));
+    ExprBuilder expr2 = ExprMill.exprBuilder(ctx).mkExpr("var", expr1.sort());
+    List<ExprBuilder> vars = new ArrayList<>(collectExpr(declVars));
     vars.add(expr2);
 
     return bool ->
         new Z3SetBuilder(
-            obj -> mkExists(vars, ctx.mkAnd(ctx.mkEq(obj, expr2), ctx.mkEq(expr2, expr1), bool)),
+            obj ->
+                mkExists(
+                    vars,
+                    ExprMill.exprBuilder(ctx)
+                        .mkAnd(
+                            ExprMill.exprBuilder(ctx).mkEq(obj, expr2),
+                            ExprMill.exprBuilder(ctx)
+                                .mkAnd(ExprMill.exprBuilder(ctx).mkEq(expr2, expr1), bool))),
             getType(expr1),
             this);
   }
@@ -667,39 +669,51 @@ public class OCLExpressionConverter extends Expression2smt {
    * example: {int z = x*x|...}
    * *
    */
-  protected Function<BoolExpr, Z3SetBuilder> convertSetVarDeclLeft(
+  protected Function<ExprBuilder, Z3SetBuilder> convertSetVarDeclLeft(
       ASTSetVariableDeclaration node, Set<String> declVars) {
-    Expr<?> var = varNames.get(node.getName());
-    List<Expr<?>> varList = new ArrayList<>(collectExpr(declVars));
+    ExprBuilder var = varNames.get(node.getName());
+    List<ExprBuilder> varList = new ArrayList<>(collectExpr(declVars));
 
     // check if the initial value of the var is present and convert it to a constraint
-    BoolExpr constr =
+    ExprBuilder constr =
         node.isPresentExpression()
-            ? ctx.mkEq(var, convertExpr(node.getExpression()))
-            : ctx.mkTrue();
+            ? ExprMill.exprBuilder(ctx).mkEq(var, convertExpr(node.getExpression()))
+            : ExprMill.exprBuilder(ctx).mkBool(true);
 
     // create the function bool ->SMTSet
     return bool ->
         new Z3SetBuilder(
-            obj -> mkExists(varList, ctx.mkAnd(ctx.mkEq(obj, var), constr, bool)),
+            obj ->
+                mkExists(
+                    varList,
+                    ExprMill.exprBuilder(ctx)
+                        .mkAnd(
+                            ExprMill.exprBuilder(ctx).mkEq(obj, var),
+                            ExprMill.exprBuilder(ctx).mkAnd(constr, bool))),
             getType(var),
             this);
   }
 
-  private Set<Expr<?>> collectExpr(Set<String> exprSet) {
+  private Set<ExprBuilder> collectExpr(Set<String> exprSet) {
     return exprSet.stream().map(expr -> varNames.get(expr)).collect(Collectors.toSet());
   }
 
-  protected Function<BoolExpr, Z3SetBuilder> convertGenDeclLeft(
+  protected Function<ExprBuilder, Z3SetBuilder> convertGenDeclLeft(
       ASTGeneratorDeclaration node, Set<String> declVars) {
 
-    Expr<? extends Sort> expr = varNames.get(node.getName());
-    List<Expr<?>> varList = new ArrayList<>(collectExpr(declVars));
+    ExprBuilder expr = varNames.get(node.getName());
+    List<ExprBuilder> varList = new ArrayList<>(collectExpr(declVars));
 
     Z3SetBuilder set = convertSet(node.getExpression());
     return bool ->
         new Z3SetBuilder(
-            obj -> mkExists(varList, ctx.mkAnd(ctx.mkEq(obj, expr), set.contains(expr), bool)),
+            obj ->
+                mkExists(
+                    varList,
+                    ExprMill.exprBuilder(ctx)
+                        .mkAnd(
+                            ExprMill.exprBuilder(ctx).mkEq(obj, expr),
+                            ExprMill.exprBuilder(ctx).mkAnd(set.contains(expr), bool))),
             getType(expr),
             this);
   }
@@ -729,13 +743,15 @@ public class OCLExpressionConverter extends Expression2smt {
       return convertSet(node);
     }
 
-    Expr<? extends Sort> auction = convertExpr(fieldAcc.getExpression());
+    ExprBuilder auction = convertExpr(fieldAcc.getExpression());
 
     FuncDecl<BoolSort> rel = buildReflexiveNewAssocFunc(getType(auction), fieldAcc.getName());
     FuncDecl<BoolSort> trans_rel = TransitiveClosure.mkTransitiveClosure(ctx, rel);
 
-    Function<Expr<? extends Sort>, BoolExpr> setFunc =
-        obj -> (BoolExpr) trans_rel.apply(auction, obj);
+    Function<ExprBuilder, ExprBuilder> setFunc =
+        obj ->
+            ExprMill.exprBuilder(ctx)
+                .mkBool((BoolExpr) trans_rel.apply(auction.expr(), obj.expr()));
     return new Z3SetBuilder(setFunc, getType(auction), this);
   }
 
@@ -745,19 +761,25 @@ public class OCLExpressionConverter extends Expression2smt {
     Sort thisSort = typeConverter.deriveSort(type);
     FuncDecl<BoolSort> rel =
         ctx.mkFuncDecl("reflexive_relation", new Sort[] {thisSort, thisSort}, ctx.mkBoolSort());
-    Expr<? extends Sort> obj1 = declVariable(type, "obj1");
-    Expr<? extends Sort> obj2 = declVariable(type, "obj2");
-    BoolExpr rel_is_assocFunc =
+    ExprBuilder obj1 = declVariable(type, "obj1");
+    ExprBuilder obj2 = declVariable(type, "obj2");
+    ExprBuilder rel_is_assocFunc =
         mkForall(
             List.of(obj1, obj2),
-            ctx.mkEq(
-                rel.apply(obj1, obj2),
-                cd2smtGenerator.evaluateLink(association, objClass, objClass, obj1, obj2)));
+            ExprMill.exprBuilder(ctx)
+                .mkEq(
+                    ExprMill.exprBuilder(ctx)
+                        .mkBool((BoolExpr) rel.apply(obj1.expr(), obj2.expr())),
+                    ExprMill.exprBuilder(ctx)
+                        .mkBool(
+                            (BoolExpr)
+                                cd2smtGenerator.evaluateLink(
+                                    association, objClass, objClass, obj1.expr(), obj2.expr()))));
     genConstraints.add(rel_is_assocFunc);
     return rel;
   }
 
-  protected Expr<? extends Sort> createVarFromSymbol(ASTNameExpression node) {
+  protected ExprBuilder createVarFromSymbol(ASTNameExpression node) {
     SymTypeExpression typeExpr = TypeConverter.deriveType(node);
     OCLType type = typeConverter.buildOCLType(typeExpr);
     return declVariable(type, node.getName());
@@ -767,12 +789,12 @@ public class OCLExpressionConverter extends Expression2smt {
     Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
   }
 
-  public BoolExpr mkForall(List<Expr<? extends Sort>> vars, BoolExpr body) {
-    return mkQuantifier(vars, body, true);
+  public ExprBuilder mkForall(List<ExprBuilder> vars, ExprBuilder body) {
+    return ExprMill.exprBuilder(ctx).mkBool(mkQuantifier(vars, body, true));
   }
 
-  public BoolExpr mkExists(List<Expr<?>> vars, BoolExpr body) {
-    return mkQuantifier(vars, body, false);
+  public ExprBuilder mkExists(List<ExprBuilder> vars, ExprBuilder body) {
+    return ExprMill.exprBuilder(ctx).mkBool(mkQuantifier(vars, body, false));
   }
 
   /***
@@ -781,30 +803,38 @@ public class OCLExpressionConverter extends Expression2smt {
    * according to the actual Strategy.
    * But quantification of Expressions with primitive types (Bool, Int,..) must be perform directly.
    */
-  public BoolExpr mkQuantifier(List<Expr<?>> vars, BoolExpr body, boolean isForall) {
+  public BoolExpr mkQuantifier(List<ExprBuilder> vars, ExprBuilder body, boolean isForall) {
 
     // split expressions int non CDType(String , Bool..) and CDType Expression(Auction, Person...)
-    List<Expr<?>> cdTypeExprList =
-        vars.stream()
-            .filter(var -> !TypeConverter.hasSimpleType(getType(var).getName()))
-            .collect(Collectors.toList());
+    List<ExprBuilder> cdTypeExprList =
+        vars.stream().filter(ExprBuilder::isUnInterpreted).collect(Collectors.toList());
     List<Expr<?>> noncdTypeExprList =
         vars.stream()
-            .filter(var -> TypeConverter.hasSimpleType(getType(var).getName()))
+            .filter(ExprBuilder::hasNativeType)
+            .map(e -> (Expr<?>) e.expr())
             .collect(Collectors.toList());
 
     // collect the CDType of the CDType Expressions
     List<ASTCDType> types =
         cdTypeExprList.stream()
-            .map(var -> CDHelper.getASTCDType(getType(var).getName(), getCD()))
+            .map(var -> getASTCDType(getType(var).getName(), getCD()))
             .collect(Collectors.toList());
-    BoolExpr subRes = body;
+    BoolExpr subRes = body.expr();
+
     if (cdTypeExprList.size() > 0) {
       if (isForall) {
-        subRes = cd2smtGenerator.mkForall(types, cdTypeExprList, body);
-
+        subRes =
+            cd2smtGenerator.mkForall(
+                types,
+                cdTypeExprList.stream().map(e -> (Expr<?>) e.expr()).collect(Collectors.toList()),
+                body.expr());
+        // todo: refactoring
       } else {
-        subRes = cd2smtGenerator.mkExists(types, cdTypeExprList, body);
+        subRes =
+            cd2smtGenerator.mkExists(
+                types,
+                cdTypeExprList.stream().map(e -> (Expr<?>) e.expr()).collect(Collectors.toList()),
+                body.expr());
       }
     }
 
@@ -819,17 +849,17 @@ public class OCLExpressionConverter extends Expression2smt {
     }
   }
 
-  public Expr<? extends Sort> declObj(OCLType type, String name) {
-    Expr<? extends Sort> expr = ctx.mkConst(name, typeConverter.deriveSort(type));
+  public ExprBuilder declObj(OCLType type, String name) {
+    ExprBuilder expr = ExprMill.exprBuilder(ctx).mkExpr(name, typeConverter.deriveSort(type));
     varTypes.put(expr, type);
     return expr;
   }
 
-  public OCLType getType(Expr<? extends Sort> expr) {
+  public OCLType getType(ExprBuilder expr) {
     if (varTypes.containsKey(expr)) {
       return varTypes.get(expr);
-    } else if (TypeConverter.hasSimpleType(expr.getSort())) {
-      return OCLType.buildOCLType(expr.getSort().toString());
+    } else if (expr.hasNativeType()) {
+      return OCLType.buildOCLType(expr.getKind());
     }
     Log.error("Type not found for the Variable " + expr);
     return null;

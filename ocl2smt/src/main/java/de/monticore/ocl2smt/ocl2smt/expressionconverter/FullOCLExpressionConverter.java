@@ -11,9 +11,12 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLAtPreQualification;
 import de.monticore.ocl2smt.helpers.OCLHelper;
+import de.monticore.ocl2smt.ocl2smt.expr.ExprBuilder;
+import de.monticore.ocl2smt.ocl2smt.expr.ExprMill;
+import de.monticore.ocl2smt.ocl2smt.expr.ExpressionKind;
+import de.monticore.ocl2smt.ocl2smt.expr.Z3SetBuilder;
 import de.monticore.ocl2smt.util.OCLMethodResult;
 import de.monticore.ocl2smt.util.OCLType;
-import de.monticore.ocl2smt.ocl2smt.expr.Z3SetBuilder;
 import de.monticore.ocl2smt.util.TypeConverter;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.se_rwth.commons.logging.Log;
@@ -25,7 +28,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   private boolean isPreStrategy = false;
   private boolean isPreCond = false;
 
-  private Expr<? extends Sort> thisObj;
+  private ExprBuilder thisObj;
 
   private OCLMethodResult result;
 
@@ -48,7 +51,7 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     result = null;
   }
 
-  public void setThisObj(Expr<? extends Sort> thisObj) {
+  public void setThisObj(ExprBuilder thisObj) {
     this.thisObj = thisObj;
   }
 
@@ -80,38 +83,36 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   }
 
   @Override
-  protected Optional<Expr<? extends Sort>> convertGenExprOpt(ASTExpression node) {
-    Optional<Expr<? extends Sort>> res = super.convertGenExprOpt(node);
-    if (res.isPresent()) {
+  public ExprBuilder convertExpr(ASTExpression node) {
+    ExprBuilder res = super.convertExpr(node);
+    if (res.getKind() != ExpressionKind.NULL) {
       return res;
     } else if (node instanceof ASTOCLAtPreQualification) {
-      res = Optional.ofNullable(convertAt((ASTOCLAtPreQualification) node));
-    } else {
-      res = Optional.empty();
+      res = convertAt((ASTOCLAtPreQualification) node);
     }
     return res;
   }
 
-  protected Expr<? extends Sort> convertAt(ASTOCLAtPreQualification node) {
+  protected ExprBuilder convertAt(ASTOCLAtPreQualification node) {
     enterPre();
     return convertExpr(node.getExpression());
   }
 
   @Override
-  protected Expr<? extends Sort> convert(ASTNameExpression node) {
+  protected ExprBuilder convert(ASTNameExpression node) {
     boolean isPre = isPreStrategy();
     exitPre();
-    Expr<? extends Sort> res = null;
+    ExprBuilder res = null;
 
     if (varNames.containsKey(node.getName())) {
       res = varNames.get(node.getName());
     }
     if (thisObj != null) {
-      Optional<Expr<? extends Sort>> attr = getContextAttribute(node, isPre);
+      Optional<ExprBuilder> attr = getContextAttribute(node, isPre);
       if (attr.isPresent()) {
         res = attr.get();
       }
-      Optional<Expr<? extends Sort>> obj = getContextLink(node, isPre);
+      Optional<ExprBuilder> obj = getContextLink(node, isPre);
       if (obj.isPresent()) {
         res = obj.get();
       }
@@ -139,34 +140,35 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
   }
 
   @Override
-  protected Expr<? extends Sort> convert(ASTFieldAccessExpression node) {
+  protected ExprBuilder convert(ASTFieldAccessExpression node) {
     boolean isPre = isPreStrategy();
     exitPre();
     String attributeName = node.getName();
     if (isPre) {
       attributeName = OCLHelper.mkPre(attributeName);
     }
-    Expr<? extends Sort> obj = convertExpr(node.getExpression());
-    Pair<Expr<? extends Sort>, BoolExpr> res = convertFieldAccessSetHelper(obj, attributeName);
+    ExprBuilder obj = convertExpr(node.getExpression());
+    Pair<ExprBuilder, ExprBuilder> res = convertFieldAccessSetHelper(obj, attributeName);
     if (!TypeConverter.hasOptionalType(node)) {
       genConstraints.add(res.getRight());
     }
     return res.getLeft();
   }
 
-  private Optional<Expr<? extends Sort>> getContextAttribute(
-      ASTNameExpression node, boolean isPre) {
-    // TODO::update to takeCare when the attribute is inherited
-    String attributeName = node.getName();
-    if (isPre) {
-      attributeName = OCLHelper.mkPre(node.getName());
-    }
-    return Optional.ofNullable(
-        OCLHelper.getAttribute(thisObj, getType(thisObj), attributeName, cd2smtGenerator));
+  private Optional<ExprBuilder> getContextAttribute(ASTNameExpression node, boolean isPre) {
+    /*  // TODO::update to takeCare when the attribute is inherited
+     String attributeName = node.getName();
+     if (isPre) {
+       attributeName = OCLHelper.mkPre(node.getName());
+     }
+     return Optional.ofNullable(
+         OCLHelper.getAttribute(thisObj.expr(), getType(thisObj), attributeName, cd2smtGenerator));/*
+    */
+    return Optional.empty();
   }
 
   /** this function is used to get a Linked object of the Context */
-  private Optional<Expr<? extends Sort>> getContextLink(ASTNameExpression node, boolean isPre) {
+  private Optional<ExprBuilder> getContextLink(ASTNameExpression node, boolean isPre) {
     String role = node.getName();
     if (isPre) {
       role = OCLHelper.mkPre(role);
@@ -181,11 +183,14 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
     OCLType type2 = OCLHelper.getOtherType(association, getType(thisObj), role, getCD());
 
     String name = mkObjName(node.getName(), isPre);
-    Expr<? extends Sort> expr = declVariable(type2, name);
+    ExprBuilder expr = declVariable(type2, name);
 
     // add association constraints to the general constraints
     genConstraints.add(
-        OCLHelper.evaluateLink(association, thisObj, role, expr, cd2smtGenerator, this::getType));
+        ExprMill.exprBuilder(ctx)
+            .mkBool(
+                OCLHelper.evaluateLink(
+                    association, thisObj, role, expr, cd2smtGenerator, this::getType)));
 
     return Optional.of(expr);
   }
@@ -216,7 +221,11 @@ public class FullOCLExpressionConverter extends OCLExpressionConverter {
               cd2smtGenerator.getSort(
                   CDHelper.getASTCDType(result.getOclType().getName(), getCD())),
               ctx.mkBoolSort());
-      res = new Z3SetBuilder(x -> (BoolExpr) ctx.mkApp(setFunc, x), result.getOclType(), this);
+      res =
+          new Z3SetBuilder(
+              x -> ExprMill.exprBuilder(ctx).mkBool((BoolExpr) ctx.mkApp(setFunc, x.expr())),
+              result.getOclType(),
+              this);
       result.setValue(setFunc);
     } else {
 

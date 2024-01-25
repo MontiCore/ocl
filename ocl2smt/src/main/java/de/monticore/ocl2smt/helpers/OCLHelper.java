@@ -14,6 +14,7 @@ import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
+import de.monticore.ocl2smt.ocl2smt.expr.ExprBuilder;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.ocl2smt.trafo.BuildPreCDTrafo;
@@ -73,11 +74,11 @@ public class OCLHelper {
 
   public static BoolExpr evaluateLink(
       ASTCDAssociation association,
-      Expr<? extends Sort> obj,
+      ExprBuilder obj,
       String otherRole,
-      Expr<? extends Sort> otherObj,
+      ExprBuilder otherObj,
       CD2SMTGenerator cd2SMTGenerator,
-      Function<Expr<?>, OCLType> types) {
+      Function<ExprBuilder, OCLType> types) {
 
     ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
     OCLType oclType = types.apply(obj);
@@ -87,9 +88,9 @@ public class OCLHelper {
 
     BoolExpr res;
     if (isLeftSide(CDHelper.getASTCDType(type.getName(), cd), otherRole, cd)) {
-      res = cd2SMTGenerator.evaluateLink(association, type, otherType, obj, otherObj);
+      res = cd2SMTGenerator.evaluateLink(association, type, otherType, obj.expr(), otherObj.expr());
     } else {
-      res = cd2SMTGenerator.evaluateLink(association, otherType, type, otherObj, obj);
+      res = cd2SMTGenerator.evaluateLink(association, otherType, type, otherObj.expr(), obj.expr());
     }
 
     return res;

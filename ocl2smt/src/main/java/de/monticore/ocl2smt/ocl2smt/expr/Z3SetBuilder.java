@@ -1,25 +1,25 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocl2smt.expr;
 
-import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
-import com.microsoft.z3.Expr;
-import com.microsoft.z3.Sort;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
 import de.monticore.ocl2smt.util.OCLType;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.function.Function;
 
-public class Z3SetBuilder extends  Z3ExprBuilder{
-  private final Function<Expr<? extends Sort>, BoolExpr> setFunction;
+public class Z3SetBuilder extends Z3ExprBuilder {
+  private final Function<ExprBuilder, ExprBuilder> setFunction;
   private final OCLType type;
 
   OCLExpressionConverter exprConv;
 
-  public Z3SetBuilder(Function<Expr<? extends Sort>, BoolExpr> setFunction, OCLType type, OCLExpressionConverter exprConv) {
-      super(exprConv.getCd2smtGenerator().getContext());
-      this.setFunction = setFunction;
+  public Z3SetBuilder(
+      Function<ExprBuilder, ExprBuilder> setFunction,
+      OCLType type,
+      OCLExpressionConverter exprConv) {
+    super(exprConv.getCd2smtGenerator().getContext());
+    this.setFunction = setFunction;
     this.type = type;
 
     this.exprConv = exprConv;
@@ -29,20 +29,23 @@ public class Z3SetBuilder extends  Z3ExprBuilder{
     if (!rightSet.type.equals(this.type)) {
       Log.error("set intersection of Set from different Type not implemented");
     }
-    Function<Expr<? extends Sort>, BoolExpr> setFunction;
+    Function<ExprBuilder, ExprBuilder> setFunction;
     switch (op) {
       case UNION:
-        setFunction = obj -> ctx.mkOr(this.contains(obj), rightSet.contains(obj));
+        setFunction =
+            obj -> ExprMill.exprBuilder(ctx).mkOr(this.contains(obj), rightSet.contains(obj));
         break;
       case INTERSECTION:
-        setFunction = obj -> ctx.mkAnd(this.contains(obj), rightSet.contains(obj));
+        setFunction =
+            obj -> ExprMill.exprBuilder(ctx).mkAnd(this.contains(obj), rightSet.contains(obj));
         break;
       case MINUS:
-        setFunction = obj -> ctx.mkAnd(this.contains(obj), rightSet.notIn(obj));
+        setFunction =
+            obj -> ExprMill.exprBuilder(ctx).mkAnd(this.contains(obj), rightSet.notIn(obj));
         break;
       default:
         Log.error("the Set Operation " + op + " is not implemented ");
-        setFunction = s -> ctx.mkTrue();
+        setFunction = s -> ExprMill.exprBuilder(ctx).mkBool(true);
     }
     return new Z3SetBuilder(setFunction, this.type, exprConv);
   }
@@ -63,7 +66,7 @@ public class Z3SetBuilder extends  Z3ExprBuilder{
     return type;
   }
 
-  public BoolExpr contains(Expr<? extends Sort> expr) {
+  public ExprBuilder contains(ExprBuilder expr) {
     /*  if (!literalConverter.getType(expr).equals(type)) {
       Log.error(
           "the obj "
@@ -76,44 +79,64 @@ public class Z3SetBuilder extends  Z3ExprBuilder{
     return setFunction.apply(expr);
   }
 
-  public BoolExpr containsAll(Z3SetBuilder set) {
-    Expr<? extends Sort> expr = exprConv.declVariable(set.getType(), "expr111");
-    return exprConv.mkForall(List.of(expr), ctx.mkImplies(set.contains(expr), this.contains(expr)));
+  public ExprBuilder containsAll(Z3SetBuilder set) {
+    ExprBuilder expr = exprConv.declVariable(set.getType(), "expr111");
+    return exprConv.mkForall(
+        List.of(expr),
+        ExprMill.exprBuilder(ctx).mkImplies(set.contains(expr), this.contains(expr)));
   }
 
-  public BoolExpr isEmpty(Context ctx) {
-    Expr<? extends Sort> expr = exprConv.declVariable(type, "expr11");
+  public ExprBuilder isEmpty(Context ctx) {
+    ExprBuilder expr = exprConv.declVariable(type, "expr11");
     return exprConv.mkForall(List.of(expr), this.notIn(expr));
   }
 
-  public BoolExpr notIn(Expr<? extends Sort> expr) {
-    return ctx.mkNot(contains(expr));
+  public ExprBuilder notIn(ExprBuilder expr) {
+    return ExprMill.exprBuilder(ctx).mkNot(contains(expr));
   }
 
-  public Z3SetBuilder collectAll(Function<Expr<? extends Sort>, Z3SetBuilder> function) {
-    Expr<? extends Sort> expr = exprConv.declVariable(type, "xollector");
+  public Z3SetBuilder collectAll(Function<ExprBuilder, Z3SetBuilder> function) {
+    ExprBuilder expr = exprConv.declVariable(type, "xollector");
     return new Z3SetBuilder(
         kii ->
-            exprConv.mkExists(
-                List.of(expr), ctx.mkAnd(this.contains(expr), function.apply(expr).contains(kii))),
+            exprConv
+                .mkExists(
+                    List.of(expr),
+                    ExprMill.exprBuilder(ctx)
+                        .mkAnd(this.contains(expr), function.apply(expr).contains(kii)))
+                .expr(),
         function.apply(expr).type,
         exprConv);
   }
-   @Override
-  public ExprBuilder mkEq(ExprBuilder set1,ExprBuilder set2) {
 
-    Expr<? extends Sort> expr = exprConv.declVariable(this.getType(), "const");
-    this.expr =  exprConv.mkForall(List.of(expr), ctx.mkEq(this.contains(expr), ((Z3SetBuilder)set2).contains(expr)));
-    this.kind = ExpressionKind.BOOL ;
-    return  this ;
+  @Override
+  public ExprBuilder mkEq(ExprBuilder set1, ExprBuilder set2) {
+
+    ExprBuilder expr = exprConv.declVariable(this.getType(), "const");
+    this.expr =
+        exprConv
+            .mkForall(
+                List.of(expr),
+                ExprMill.exprBuilder(ctx)
+                    .mkEq(this.contains(expr), ((Z3SetBuilder) set2).contains(expr)))
+            .expr();
+    this.kind = ExpressionKind.BOOL;
+    return this;
   }
 
   @Override
-  public ExprBuilder mkNeq(ExprBuilder set1,ExprBuilder set2) {
-    Expr<? extends Sort> expr = exprConv.declVariable(this.getType(), "const");
-    this.expr = ctx.mkNot(exprConv.mkForall(List.of(expr), ctx.mkEq(this.contains(expr), ((Z3SetBuilder)set2).contains(expr))));
-    this.kind = ExpressionKind.BOOL ;
-    return  this ;
+  public ExprBuilder mkNeq(ExprBuilder set1, ExprBuilder set2) {
+    ExprBuilder expr = exprConv.declVariable(this.getType(), "const");
+    this.expr =
+        ctx.mkNot(
+            exprConv
+                .mkForall(
+                    List.of(expr),
+                    ExprMill.exprBuilder(ctx)
+                        .mkEq(this.contains(expr), ((Z3SetBuilder) set2).contains(expr)))
+                .expr());
+    this.kind = ExpressionKind.BOOL;
+    return this;
   }
 
   enum OPERATION {

@@ -130,7 +130,7 @@ public class OD2SMTGenerator implements IOD2SMTGenerator {
 
     } else if (CDHelper.isPrimitiveType(attr.getMCType())) {
       ASTExpression value = ((ASTODSimpleAttributeValue) attr.getODValue()).getExpression();
-      res = exprConv.convertExpr(value);
+      res = exprConv.convertExpr(value).expr();
       ;
     } else if (CDHelper.isEnumType(cd.getCDDefinition(), attr.getMCType().printType())) {
       res = convertEnumValue((ASTODName) attr.getODValue(), attr.getMCType());

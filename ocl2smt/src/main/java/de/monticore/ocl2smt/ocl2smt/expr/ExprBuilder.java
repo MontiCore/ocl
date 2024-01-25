@@ -1,79 +1,102 @@
 package de.monticore.ocl2smt.ocl2smt.expr;
 
+import com.microsoft.z3.BoolExpr;
+import com.microsoft.z3.Context;
 import de.monticore.literals.mccommonliterals._ast.*;
 
 public abstract class ExprBuilder {
-  
+    protected Context ctx;
   protected ExpressionKind kind;
-  
-  protected abstract  <T> T expr();
 
-  abstract ExprBuilder  mkBool(boolean node);
+  public abstract <Expr> Expr expr();
 
-  abstract ExprBuilder mkString(String node);
+  public abstract <Sort> Sort sort();
 
-  abstract ExprBuilder mkInt(int node);
+  public abstract ExprBuilder mkBool(boolean node);
 
-  abstract ExprBuilder mkChar(char node);
+  public abstract ExprBuilder mkBool(BoolExpr node); // todo : remove later
 
-  abstract ExprBuilder mkDouble(double node);
+  public abstract ExprBuilder mkString(String node);
 
-  abstract ExprBuilder mkNot(ExprBuilder node);
+  public abstract ExprBuilder mkInt(int node);
 
-  abstract ExprBuilder mkAnd(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract ExprBuilder mkChar(char node);
 
-  abstract ExprBuilder mkOr(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract ExprBuilder mkDouble(double node);
 
-  abstract ExprBuilder mkEq(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract <SORT> ExprBuilder mkExpr(String name, SORT type);
 
-  abstract ExprBuilder mkImplies(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract ExprBuilder mkNot(ExprBuilder node);
 
-  abstract ExprBuilder mkNeq(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract ExprBuilder mkAnd(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder mkLt(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract ExprBuilder mkOr(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder mkLeq(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract ExprBuilder mkEq(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder mkGt(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract ExprBuilder mkImplies(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder mkGe(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract ExprBuilder mkNeq(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder mkSub(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract ExprBuilder mkLt(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder mkPlus(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract ExprBuilder mkLeq(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder mkMul(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract ExprBuilder mkGt(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder mkDiv(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract ExprBuilder mkGe(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder mkMod(ExprBuilder leftNode, ExprBuilder rightNode);
+  public abstract ExprBuilder mkSub(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder mkPlusPrefix(ExprBuilder leftNode);
+  public abstract ExprBuilder mkPlus(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder mkMinusPrefix(ExprBuilder leftNode);
+  public abstract ExprBuilder mkMul(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder mkIte(ExprBuilder cond, ExprBuilder expr1, ExprBuilder expr2);
+  public abstract ExprBuilder mkDiv(ExprBuilder leftNode, ExprBuilder rightNode);
 
-  abstract ExprBuilder mkReplace(ExprBuilder s,ExprBuilder s1,ExprBuilder s2);
-  abstract ExprBuilder mkContains(ExprBuilder s1,ExprBuilder s2);
-  abstract ExprBuilder mkPrefixOf(ExprBuilder s1,ExprBuilder s2);
-  abstract ExprBuilder mkSuffixOf(ExprBuilder s1,ExprBuilder s2);
+  public abstract ExprBuilder mkMod(ExprBuilder leftNode, ExprBuilder rightNode);
 
+  public abstract ExprBuilder mkPlusPrefix(ExprBuilder leftNode);
 
- boolean isArithExpr(){
-   return kind == ExpressionKind.INTEGER || kind == ExpressionKind.DOUBLE ;
- }
+  public abstract ExprBuilder mkMinusPrefix(ExprBuilder leftNode);
 
+  public abstract ExprBuilder mkIte(ExprBuilder cond, ExprBuilder expr1, ExprBuilder expr2);
+
+  public abstract ExprBuilder mkReplace(ExprBuilder s, ExprBuilder s1, ExprBuilder s2);
+
+  public abstract ExprBuilder mkContains(ExprBuilder s1, ExprBuilder s2);
+
+  public abstract ExprBuilder mkPrefixOf(ExprBuilder s1, ExprBuilder s2);
+
+  public abstract ExprBuilder mkSuffixOf(ExprBuilder s1, ExprBuilder s2);
+
+  boolean isArithExpr() {
+    return kind == ExpressionKind.INTEGER || kind == ExpressionKind.DOUBLE;
+  }
 
   public boolean isString() {
-   return kind == ExpressionKind.STRING ;
+    return kind == ExpressionKind.STRING;
   }
 
-  boolean isPresent(){
-   return  expr() !=null ;
+  public boolean isUnInterpreted() {
+    return kind == ExpressionKind.UNINTERPRETED;
   }
 
-  boolean isBool(){
-   return  kind == ExpressionKind.BOOL;
+  boolean isPresent() {
+    return expr() != null;
+  }
+
+  boolean isBool() {
+    return kind == ExpressionKind.BOOL;
+  }
+
+  public ExpressionKind getKind() {
+    return kind;
+  }
+
+  public boolean hasNativeType() {
+    return kind != ExpressionKind.NULL
+        && kind != ExpressionKind.UNINTERPRETED
+        && kind != ExpressionKind.SET;
   }
 }

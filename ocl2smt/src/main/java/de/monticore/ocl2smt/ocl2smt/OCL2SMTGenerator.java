@@ -7,9 +7,11 @@ import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
+import de.monticore.ocl2smt.ocl2smt.expr.ExprBuilder;
+import de.monticore.ocl2smt.ocl2smt.expr.ExprMill;
+import de.monticore.ocl2smt.ocl2smt.expr.Z3SetBuilder;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
 import de.monticore.ocl2smt.util.OCLType;
-import de.monticore.ocl2smt.ocl2smt.expr.Z3SetBuilder;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.SourcePosition;
 import java.util.ArrayList;
@@ -55,13 +57,13 @@ public class OCL2SMTGenerator {
     return constraints;
   }
 
-  protected Expr<? extends Sort> convertCtxParDec(ASTOCLParamDeclaration node) {
+  protected ExprBuilder convertCtxParDec(ASTOCLParamDeclaration node) {
     OCLType oclType = exprConv.typeConverter.buildOCLType(node.getMCType());
     return exprConv.declVariable(oclType, node.getName());
   }
 
-  protected Pair<Expr<? extends Sort>, BoolExpr> convertGenDec(ASTGeneratorDeclaration node) {
-    Expr<? extends Sort> expr =
+  protected Pair<ExprBuilder, ExprBuilder> convertGenDec(ASTGeneratorDeclaration node) {
+    ExprBuilder expr =
         exprConv.declVariable(
             exprConv.typeConverter.buildOCLType(node.getSymbol()), node.getName());
     Z3SetBuilder set = exprConv.convertSet(node.getExpression());
@@ -73,46 +75,48 @@ public class OCL2SMTGenerator {
     SourcePosition srcPos = invariant.get_SourcePositionStart();
 
     // convert parameter declaration  in context
-    Function<BoolExpr, BoolExpr> invCtx = openInvScope(invariant);
+    Function<ExprBuilder, ExprBuilder> invCtx = openInvScope(invariant);
 
     // convert the inv body
-    BoolExpr inv = invCtx.apply(exprConv.convertBoolExpr(invariant.getExpression()));
+    ExprBuilder inv = invCtx.apply(exprConv.convertExpr(invariant.getExpression()));
 
     // add general invConstraints
-    for (BoolExpr constr : exprConv.getGenConstraints()) {
-      inv = ctx.mkAnd(inv, constr);
+    for (ExprBuilder constr : exprConv.getGenConstraints()) {
+      inv = ExprMill.exprBuilder(ctx).mkAnd(inv, constr.expr());
     }
 
     Optional<String> name =
         invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
     exprConv.reset();
-    return IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name);
+    return IdentifiableBoolExpr.buildIdentifiable(inv.expr(), srcPos, name);
   }
 
-  protected Function<BoolExpr, BoolExpr> openInvScope(ASTOCLInvariant invariant) {
-    List<Expr<? extends Sort>> vars = new ArrayList<>();
-    BoolExpr varConstraint = ctx.mkTrue();
+  protected Function<ExprBuilder, ExprBuilder> openInvScope(ASTOCLInvariant invariant) {
+    List<ExprBuilder> vars = new ArrayList<>();
+    ExprBuilder varConstraint = ExprMill.exprBuilder(ctx).mkBool(true);
     for (ASTOCLContextDefinition invCtx : invariant.getOCLContextDefinitionList()) {
       if (invCtx.isPresentOCLParamDeclaration()) {
         vars.add(convertCtxParDec(invCtx.getOCLParamDeclaration()));
       }
       if (invCtx.isPresentGeneratorDeclaration()) {
-        Pair<Expr<? extends Sort>, BoolExpr> res = convertGenDec(invCtx.getGeneratorDeclaration());
-        varConstraint = ctx.mkAnd(varConstraint, res.getRight());
+        Pair<ExprBuilder, ExprBuilder> res = convertGenDec(invCtx.getGeneratorDeclaration());
+        varConstraint = ExprMill.exprBuilder(ctx).mkAnd(varConstraint, res.getRight());
         vars.add(res.getLeft());
       }
     }
-    BoolExpr varConstraint2 = varConstraint;
+    ExprBuilder varConstraint2 = varConstraint;
     if (vars.size() > 0) {
       return bool ->
-          ctx.mkForall(
-              vars.toArray(new Expr[0]),
-              ctx.mkImplies(varConstraint2, bool),
-              0,
-              null,
-              null,
-              null,
-              null);
+          ExprMill.exprBuilder(ctx)
+              .mkBool(
+                  ctx.mkForall(
+                      vars.toArray(new Expr[0]),
+                      (BoolExpr) ExprMill.exprBuilder(ctx).mkImplies(varConstraint2, bool).expr(),
+                      0,
+                      null,
+                      null,
+                      null,
+                      null));
     }
     return bool -> bool;
   }
