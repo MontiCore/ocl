@@ -1,6 +1,7 @@
 package de.monticore.ocl2smt.ocl2smt.expr;
 
 import com.microsoft.z3.*;
+import com.microsoft.z3.enumerations.Z3_sort_kind;
 import de.monticore.literals.mccommonliterals._ast.*;
 import de.se_rwth.commons.logging.Log;
 
@@ -47,6 +48,7 @@ public class Z3ExprBuilder extends ExprBuilder {
   public <Expr> ExprBuilder mkExpr(ExpressionKind kind, Expr expr) {
     this.expr = (com.microsoft.z3.Expr<?>) expr;
     this.kind = kind;
+    this.sort = ((com.microsoft.z3.Expr<?>) expr).getSort();
     return this;
   }
 
@@ -82,12 +84,13 @@ public class Z3ExprBuilder extends ExprBuilder {
   public <SORT> ExprBuilder mkExpr(String name, SORT sort) {
     this.expr = ctx.mkConst(name, (Sort) sort);
     this.kind = ExpressionKind.UNINTERPRETED;
+    this.sort = (Sort) sort;
     return this;
   }
 
   @Override
   public ExprBuilder mkNot(ExprBuilder node) {
-    if (node.kind != ExpressionKind.BOOL) {
+    if (!node.isBool()) {
       Log.error("mkNot() is only implemented for BoolExpression");
     }
 
@@ -125,7 +128,7 @@ public class Z3ExprBuilder extends ExprBuilder {
 
   @Override
   public ExprBuilder mkImplies(ExprBuilder leftNode, ExprBuilder rightNode) {
-    if (leftNode.kind != ExpressionKind.BOOL || rightNode.kind != ExpressionKind.BOOL) {
+    if (!leftNode.isBool() || !rightNode.isBool()) {
       Log.error("mkImplies(..,..) is only implemented for BoolExpressions left and right");
     }
     this.kind = ExpressionKind.BOOL;
@@ -291,7 +294,7 @@ public class Z3ExprBuilder extends ExprBuilder {
 
   @Override
   public ExprBuilder mkIte(ExprBuilder cond, ExprBuilder expr1, ExprBuilder expr2) {
-    if (cond.kind != ExpressionKind.BOOL) {
+    if (!cond.isBool()) {
       Log.error("mkIte(..,..) is only implemented for Int or real expressions left and right");
     }
     this.expr = ctx.mkITE(cond.expr(), expr1.expr(), expr2.expr());
@@ -341,5 +344,11 @@ public class Z3ExprBuilder extends ExprBuilder {
     expr = ctx.mkSuffixOf(s1.expr(), s2.expr());
     kind = ExpressionKind.STRING;
     return this;
+  }
+
+  @Override
+  public boolean isBool() {
+    return (kind == ExpressionKind.BOOL)
+        || this.sort != null && this.sort.getSortKind() == Z3_sort_kind.Z3_BOOL_SORT;
   }
 }

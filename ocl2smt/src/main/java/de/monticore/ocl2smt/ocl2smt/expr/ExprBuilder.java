@@ -93,7 +93,7 @@ public abstract class ExprBuilder {
     return expr() != null;
   }
 
-  boolean isBool() {
+  public boolean isBool() {
     return kind == ExpressionKind.BOOL;
   }
 

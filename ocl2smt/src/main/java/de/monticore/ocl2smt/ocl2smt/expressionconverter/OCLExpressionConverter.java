@@ -810,53 +810,59 @@ public class OCLExpressionConverter extends Expression2smt {
   public BoolExpr mkQuantifier(List<ExprBuilder> vars, ExprBuilder body, boolean isForall) {
 
     // split expressions int non CDType(String , Bool..) and CDType Expression(Auction, Person...)
-    List<ExprBuilder> cdTypeExprList =
-        vars.stream().filter(ExprBuilder::isUnInterpreted).collect(Collectors.toList());
-    List<Expr<?>> noncdTypeExprList =
-        vars.stream()
-            .filter(ExprBuilder::hasNativeType)
-            .map(e -> (Expr<?>) e.expr())
-            .collect(Collectors.toList());
+    List<ExprBuilder> unInterpretedObj =
+        vars.stream().filter(e -> e.isUnInterpreted() && !e.isBool()).collect(Collectors.toList());
+
+    List<ExprBuilder> uninterpretedBool =
+        vars.stream().filter(e -> e.isUnInterpreted() && e.isBool()).collect(Collectors.toList());
 
     // collect the CDType of the CDType Expressions
     List<ASTCDType> types =
-        cdTypeExprList.stream()
+        unInterpretedObj.stream()
             .map(var -> getASTCDType(getType(var).getName(), getCD()))
             .collect(Collectors.toList());
     BoolExpr subRes = body.expr();
 
-    if (cdTypeExprList.size() > 0) {
+    if (!unInterpretedObj.isEmpty()) {
       if (isForall) {
         subRes =
             cd2smtGenerator.mkForall(
                 types,
-                cdTypeExprList.stream().map(e -> (Expr<?>) e.expr()).collect(Collectors.toList()),
+                unInterpretedObj.stream().map(e -> (Expr<?>) e.expr()).collect(Collectors.toList()),
                 body.expr());
-        // todo: refactoring
+        // todo: refactoring this method
       } else {
         subRes =
             cd2smtGenerator.mkExists(
                 types,
-                cdTypeExprList.stream().map(e -> (Expr<?>) e.expr()).collect(Collectors.toList()),
+                unInterpretedObj.stream().map(e -> (Expr<?>) e.expr()).collect(Collectors.toList()),
                 body.expr());
       }
     }
 
-    if (noncdTypeExprList.isEmpty()) {
+    if (uninterpretedBool.isEmpty()) {
       return subRes;
     } else {
       if (isForall) {
-        return ctx.mkForall(vars.toArray(new Expr[0]), subRes, 0, null, null, null, null);
+        return ctx.mkForall(
+            uninterpretedBool.stream().map(e -> (Expr<?>) e.expr()).toArray(Expr[]::new),
+            subRes,
+            0,
+            null,
+            null,
+            null,
+            null);
       } else {
-        return ctx.mkExists(vars.toArray(new Expr[0]), subRes, 0, null, null, null, null);
+        return ctx.mkExists(
+            uninterpretedBool.stream().map(e -> (Expr<?>) e.expr()).toArray(Expr[]::new),
+            subRes,
+            0,
+            null,
+            null,
+            null,
+            null);
       }
     }
-  }
-
-  public ExprBuilder declObj(OCLType type, String name) {
-    ExprBuilder expr = ExprMill.exprBuilder(ctx).mkExpr(name, typeConverter.deriveSort(type));
-    varTypes.put(expr, type);
-    return expr;
   }
 
   public OCLType getType(ExprBuilder expr) {
