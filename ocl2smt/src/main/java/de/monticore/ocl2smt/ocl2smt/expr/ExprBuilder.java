@@ -4,6 +4,36 @@ import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
 import de.monticore.literals.mccommonliterals._ast.*;
 
+/**
+ * (alle interfaces in eigenes package)
+ *
+ * interface: ExprFactory<T extends ExprAdapter>
+ *   * public T mkAnd(T fst, T snd)
+ *    ... und andere funktionen, so wie der z3 context
+ *
+ * interface: CDExprFactory<T extends ExprAdapter> implements ExprFactory<T extends ExprAdapter>
+ *   * public T getAttribute(T obj, FieldSymbol attribute) // nutzt cd2smt
+ *   ... und andere funktionen, spezifisch für CDs (... nutzt cd2smt)
+ *
+ * ??interface: OCLExprFactory<T extends ExprAdapter> implements CDExprFactory<T extends ExprAdapter>
+ *   * public T mkOCLSet(...)
+ *   ... und andere funktionen, spezifisch für OCLs (????? )
+
+ *
+ *   interface: ExprAdapter<T>
+ *   * T getExpr()
+ *   * getExprKind()
+ *   NICHTS mit z3!!
+ *
+ *
+ *
+ *   und dann konkrete Z3 Klassen:
+ *   public class Z3ExprAdapter extends ExprAdapter<Expression> // Expression = die normale von z3
+ *     * hat einen konstruktor, wo eine Z3Expression reingeht (+type), und Z3ExprFactory kann den aufrufen
+ * // vllt macht ein "Z3SetExprAdapter extends Z3ExprAdapter" Sinn.... vllt??
+ *
+ *   public class Z3ExprFactory extends ExprFactory<Z3ExprAdapter> // bekommt den context als konstruktor parameter
+ */
 public abstract class ExprBuilder {
   protected Context ctx;
   protected ExpressionKind kind;
