@@ -8,8 +8,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLOperationSignature;
 import de.monticore.ocl2smt.helpers.OCLHelper;
-import de.monticore.ocl2smt.ocl2smt.expr.ExprBuilder;
-import de.monticore.ocl2smt.ocl2smt.expr.ExprMill;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.FullOCLExpressionConverter;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExprConverter;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
@@ -19,44 +18,43 @@ import de.monticore.odbasis._ast.ASTODArtifact;
 import java.util.List;
 import java.util.Optional;
 
-public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
+public class FullOCL2SMTGenerator<T extends ExprAdapter<?>> extends OCL2SMTGenerator<T> {
 
   public FullOCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
     super(ast, ctx);
-    exprConv = new FullOCLExpressionConverter(ast, ctx);
+    exprConv = new FullOCLExpressionConverter<>(ast, ctx);
   }
 
   // TODO:: fix   OCLOperationSignature = OCLMethodSignature | OCLConstructorSignature
-  private ExprBuilder openOpScope(
-      ASTOCLOperationSignature node, OCLExprConverter opConverter) {
+  private T openOpScope(ASTOCLOperationSignature node, OCLExprConverter<T> opConverter) {
     ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
 
     // set the type of the method result
-    ((FullOCLExpressionConverter) exprConv).setResultType(method.getMCReturnType());
+    ((FullOCLExpressionConverter<T>) exprConv).setResultType(method.getMCReturnType());
 
     OCLType type = OCLType.buildOCLType(method.getMethodName().getParts(0));
     // declare the object to which the method will be applied
-    return opConverter.declVariable(type, type.getName() + "__This");
+    return opConverter.mkConst(type.getName() + "__This", type);
   }
 
-  private ExprBuilder convertPreCond(ASTOCLOperationConstraint node) {
-    ((FullOCLExpressionConverter) exprConv).enterPreCond();
+  private T convertPreCond(ASTOCLOperationConstraint node) {
+    ((FullOCLExpressionConverter<T>) exprConv).enterPreCond();
 
     // TODO:fix if many pre conditions
-    ExprBuilder pre = exprConv.convertExpr(node.getPreCondition(0));
-    for (ExprBuilder constr : exprConv.getGenConstraints()) {
-      pre = ExprMill.exprBuilder(ctx).mkAnd(pre, constr);
+    T pre = exprConv.convertExpr(node.getPreCondition(0));
+    for (T constr : exprConv.getGenConstraints()) {
+      pre = exprConv.factory.mkAnd(pre, constr);
     }
 
-    ((FullOCLExpressionConverter) exprConv).exitPreCond();
+    ((FullOCLExpressionConverter<T>) exprConv).exitPreCond();
     return pre;
   }
 
-  private ExprBuilder convertPostCond(ASTOCLOperationConstraint node) {
+  private T convertPostCond(ASTOCLOperationConstraint node) {
     // TODO : fix if many Post conditions
-    ExprBuilder post = exprConv.convertExpr(node.getPostCondition(0));
-    for (ExprBuilder constr : exprConv.getGenConstraints()) {
-      post = ExprMill.exprBuilder(ctx).mkAnd(post, constr);
+    T post = exprConv.convertExpr(node.getPostCondition(0));
+    for (T constr : exprConv.getGenConstraints()) {
+      post = exprConv.factory.mkAnd(post, constr);
     }
 
     return post;
@@ -66,35 +64,39 @@ public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
 
     exprConv.reset();
 
-    ExprBuilder thisObj = openOpScope(node.getOCLOperationSignature(), exprConv);
-    ((FullOCLExpressionConverter) exprConv).setThisObj(thisObj);
+    T thisObj = openOpScope(node.getOCLOperationSignature(), exprConv);
+    ((FullOCLExpressionConverter<T>) exprConv).setThisObj(thisObj);
 
     // convert pre and post conditions
-    ExprBuilder pre = convertPreCond(node);
-    ExprBuilder post = convertPostCond(node);
+    T pre = convertPreCond(node);
+    T post = convertPostCond(node);
 
     IdentifiableBoolExpr preConstr =
         IdentifiableBoolExpr.buildIdentifiable(
-            pre.expr(), node.getPreCondition(0).get_SourcePositionStart(), Optional.of("pre"));
+            (BoolExpr) pre.getExpr(),
+            node.getPreCondition(0).get_SourcePositionStart(),
+            Optional.of("pre"));
 
     IdentifiableBoolExpr postConstr =
         IdentifiableBoolExpr.buildIdentifiable(
-            post.expr(), node.getPostCondition(0).get_SourcePositionStart(), Optional.of("post"));
+            (BoolExpr) post,
+            node.getPostCondition(0).get_SourcePositionStart(),
+            Optional.of("post"));
 
     return new OPConstraint(
         preConstr,
         postConstr,
-        ((FullOCLExpressionConverter) exprConv).getResult(),
-        thisObj.expr(),
+        ((FullOCLExpressionConverter<T>) exprConv).getResult(),
+        (BoolExpr) thisObj,
         exprConv.getType(thisObj),
         ctx);
   }
 
   public IdentifiableBoolExpr convertPreInv(ASTOCLInvariant invariant) {
     exprConv.reset();
-    ((FullOCLExpressionConverter) exprConv).enterPreCond();
+    ((FullOCLExpressionConverter<T>) exprConv).enterPreCond();
     IdentifiableBoolExpr res = super.convertInv(invariant);
-    ((FullOCLExpressionConverter) exprConv).exitPreCond();
+    ((FullOCLExpressionConverter<T>) exprConv).exitPreCond();
     return res;
   }
 

@@ -8,7 +8,7 @@ public class Z3SetExprAdapter extends Z3ExprAdapter {
 
   Function<Z3ExprAdapter, Z3ExprAdapter> function;
   OCLType type;
-  OCLExprConverter exprConv;
+  OCLExprConverter<Z3ExprAdapter> exprConv;
 
   public void setFunction(Function<Z3ExprAdapter, Z3ExprAdapter> function) {
     this.function = function;
@@ -18,12 +18,12 @@ public class Z3SetExprAdapter extends Z3ExprAdapter {
     this.type = type;
   }
 
-  public void setExprConverter(OCLExprConverter exprConv) {
+  public void setExprConverter(OCLExprConverter<Z3ExprAdapter> exprConv) {
     this.exprConv = exprConv;
   }
 
   public Z3ExprAdapter collectAll(Function<Z3ExprAdapter, Z3ExprAdapter> function) {
-    Z3ExprAdapter expr = exprConv.declVariable(type, "xollector");
+    Z3ExprAdapter expr = exprConv.mkConst("xollector", type);
     /*  return mkSet(
     kii ->
             exprConv

@@ -14,7 +14,6 @@ import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
-import de.monticore.ocl2smt.ocl2smt.expr.ExprBuilder;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.ocl2smt.trafo.BuildPreCDTrafo;
@@ -34,7 +33,6 @@ import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -72,7 +70,7 @@ public class OCLHelper {
         .collect(Collectors.toList());
   }
 
-  public static BoolExpr evaluateLink(
+  /* public static BoolExpr evaluateLink(
       ASTCDAssociation association,
       ExprBuilder obj,
       String otherRole,
@@ -94,7 +92,7 @@ public class OCLHelper {
     }
 
     return res;
-  }
+  }*/
 
   public static boolean isLeftSide(ASTCDType astcdType, String otherRole, ASTCDDefinition cd) {
     List<ASTCDType> objTypes = new ArrayList<>();
@@ -218,10 +216,14 @@ public class OCLHelper {
     } else {
 
       if (result.isPrimitive()) {
-        String res = model.evaluate(result.getResultExpr(), true).getSExpr();
+        String res =
+            model
+                .evaluate((Expr<? extends Sort>) result.getResultExpr().getExpr(), true)
+                .getSExpr();
         od.getObjectDiagram().setStereotype(buildStereotype("result", res));
       } else if (result.isObject()) {
-        Expr<? extends Sort> resultExpr = model.evaluate(result.getResultExpr(), true);
+        Expr<? extends Sort> resultExpr =
+            model.evaluate((Expr<? extends Sort>) result.getResultExpr().getExpr(), true);
         ASTODNamedObject obj = getObjectWithExpr(result.getOclType(), resultExpr, od);
 
         obj.setModifier(buildModifier("result", "true"));

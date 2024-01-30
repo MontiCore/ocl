@@ -10,6 +10,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3ExprAdapter;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
@@ -130,7 +131,7 @@ public interface OCLInvDiffStrategy {
       int timeout,
       boolean partial) {
 
-    OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
+    OCL2SMTGenerator<Z3ExprAdapter> ocl2SMTGenerator = new OCL2SMTGenerator<>(cd, ctx);
 
     List<IdentifiableBoolExpr> solverConstraints = invariant2SMT(ocl2SMTGenerator, in);
     solverConstraints.addAll(additionalConstraints);
@@ -183,7 +184,7 @@ public interface OCLInvDiffStrategy {
   }
 
   default List<IdentifiableBoolExpr> invariant2SMT(
-      OCL2SMTGenerator ocl2SMTGenerator, Set<ASTOCLCompilationUnit> oclSet) {
+      OCL2SMTGenerator<Z3ExprAdapter> ocl2SMTGenerator, Set<ASTOCLCompilationUnit> oclSet) {
     return oclSet.stream()
         .flatMap(x -> ocl2SMTGenerator.inv2smt(x.getOCLArtifact()).stream())
         .collect(Collectors.toList());

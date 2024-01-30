@@ -1,18 +1,10 @@
 package de.monticore.ocl2smt.ocl2smt.expressionconverter;
 
-import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
-import static de.monticore.ocl2smt.helpers.IOHelper.print;
-import static de.monticore.ocl2smt.helpers.IOHelper.printPosition;
-
 import com.microsoft.z3.*;
-import de.monticore.cd2smt.Helper.CDHelper;
-import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
-import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
@@ -20,15 +12,11 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
-import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.ocl2smt.expr.*;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3CDExprFactory;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.T;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3ExprFactory;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3OCLExprFactory;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory.CDExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory.ExprFactory;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.oclExprFactory.OCLExprFactory;
 import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.ocl2smt.util.TypeConverter;
 import de.monticore.ocl2smt.visitors.SetGeneratorCollector;
@@ -43,42 +31,33 @@ import org.apache.commons.lang3.tuple.Pair;
 
 /** This class convert All OCL-Expressions except @Pre-Expressions in SMT */
 public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConverter<T> {
-  
-  Z3CDExprFactory cdExprFactory  ;
-  
-  Z3OCLExprFactory oclExprFactory;
-  CD2SMTGenerator cd2SMTGenerator ;
-  
-  protected Set<T> genConstraints;
-
+  CDExprFactory<T> cdExprFactory;
+  OCLExprFactory<T> oclFtory;
+  CD2SMTGenerator cd2SMTGenerator;
   public TypeConverter typeConverter;
 
+  protected Map<String, T> varNames;
+  protected Map<T, OCLType> varTypes;
+  protected Set<T> genConstraints;
+
   public OCLExprConverter(ASTCDCompilationUnit astcdCompilationUnit, Context ctx) {
-      super((ExprFactory<T>) new Z3ExprFactory(ctx));
+    super(null);
 
-      genConstraints = new HashSet<>();
-   
-     cd2SMTGenerator =CD2SMTMill.cd2SMTGenerator();
-
+    cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
 
     cd2SMTGenerator.cd2smt(astcdCompilationUnit, ctx);
-    typeConverter = new TypeConverter(cd2SMTGenerator);
-    cdExprFactory = new Z3CDExprFactory(cd2SMTGenerator);
+    // typeConverter = new TypeConverter(cd2SMTGenerator);
+    // cdExprFactory = new Z3CDExprFactory(cd2SMTGenerator);
 
   }
 
   public OCLExprConverter(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
-      super((ExprFactory<T>) new Z3ExprFactory(ocl2SMTGenerator.getCtx()));
+    super(null);
 
-      cd2SMTGenerator = ocl2SMTGenerator.getCD2SMTGenerator();
+    cd2SMTGenerator = ocl2SMTGenerator.getCD2SMTGenerator();
     cd2SMTGenerator.cd2smt(ast, ocl2SMTGenerator.getCtx());
     typeConverter = new TypeConverter(cd2SMTGenerator);
-    cdExprFactory = new Z3CDExprFactory(cd2SMTGenerator);
-  }
-
-  public void reset() {
-    varNames.clear();
-    genConstraints.clear();
+    //  cdExprFactory = new Z3CDExprFactory(cd2SMTGenerator);
   }
 
   public ASTCDDefinition getCD() {
@@ -89,197 +68,57 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
     return genConstraints;
   }
 
-
-
-  @Override
-  protected T convertMethodCall(ASTCallExpression node) {
-    T res = null;
-
-    if (node.getExpression() instanceof ASTFieldAccessExpression) {
-      String methodName = ((ASTFieldAccessExpression) node.getExpression()).getName();
-
-      Pair<T, T> link = convertFieldAccOptional((ASTFieldAccessExpression) node.getExpression());
-      T isPresent = mkExists(List.of(link.getLeft()), link.getRight());
-      
-      switch (methodName) {
-        case "isPresent":
-          res = isPresent;
-          break;
-        case "isEmpty":
-          res = factory.mkNot(isPresent);
-          break;
-      }
-    }
-    // TODO: 24.08.23 handle the case of nested call
-    return res;
+  public T mkConst(String name, OCLType oclType) {
+    return oclFtory.mkConst(name, oclType);
   }
-
-
 
   /*------------------------------------quantified expressions----------------------------------------------------------*/
-  private Map<T, Optional<ASTExpression>> openScope(
-      List<ASTInDeclaration> inDeclarations) {
-    Map<T, Optional<ASTExpression>> variableList = new HashMap<>();
+  private Pair<List<T>, T> openScope(List<ASTInDeclaration> inDeclarations) {
+    List<T> variableList = new ArrayList<>();
+    T constraint = factory.mkBool(true);
+
     for (ASTInDeclaration decl : inDeclarations) {
-      List<T> temp = convertInDecl(decl);
-      if (decl.isPresentExpression()) {
-        temp.forEach(t -> variableList.put(t, Optional.of(decl.getExpression())));
-      } else {
-        temp.forEach(t -> variableList.put(t, Optional.empty()));
+      for (ASTInDeclarationVariable varDecl : decl.getInDeclarationVariableList()) {
+
+        OCLType type;
+        if (decl.isPresentMCType()) {
+          type = typeConverter.buildOCLType(decl.getMCType()); // todo delete one ?
+        } else {
+          type = typeConverter.buildOCLType(varDecl.getSymbol());
+        }
+
+        T var = mkConst(varDecl.getName(), type);
+
+        if (decl.isPresentExpression()) {
+          T mySet = convertExpr(decl.getExpression());
+          factory.mkAnd(factory.mkContains(mySet, var), constraint);
+        }
       }
     }
-    return variableList;
+
+    return new ImmutablePair<>(variableList, constraint);
   }
 
-  protected T convertInDeclConstraints(
-      Map<T, Optional<ASTExpression>> var) {
-    // get all the InPart in InDeclarations
-    Map<T, ASTExpression> inParts = new HashMap<>();
-    var.forEach((key, value) -> value.ifPresent(s -> inParts.put(key, s)));
+  protected T convertForAll(ASTForallExpression node) {
+    Pair<List<T>, T> quanParams = openScope(node.getInDeclarationList());
 
-    List<T> constraintList = new ArrayList<>();
+    T body = factory.mkImplies(quanParams.getRight(), convertExpr(node.getExpression()));
+    T result = factory.mkForall(quanParams.getLeft(), body);
 
-    for (Map.Entry<T, ASTExpression> expr : inParts.entrySet()) {
-      T mySet = convertExpr(expr.getValue());
-      constraintList.add(factory.mkContains(mySet,expr.getKey()));
-    }
-    T result = factory.mkBool(true);
-
-    for (T constr : constraintList) {
-      result = factory.mkAnd(result, constr);
-    }
+    closeScope(node.getInDeclarationList());
     return result;
   }
 
+  protected T convertExist(ASTExistsExpression node) {
+    Pair<List<T>, T> quanParams = openScope(node.getInDeclarationList());
 
+    T body = factory.mkAnd(quanParams.getRight(), convertExpr(node.getExpression()));
+    T result = factory.mkExists(quanParams.getLeft(), body);
 
-  // -----------------------------------general----------------------------------------------------------------------*/
-  @Override
-  protected T convert(ASTNameExpression node) {
-    T res;
-    if (varNames.containsKey(node.getName())) {
-      res = varNames.get(node.getName());
-    } else {
-      res = createVarFromSymbol(node);
-    }
-    return res;
+    closeScope(node.getInDeclarationList());
+    return result;
   }
 
-
-
-  // ========================================ASTFieldAccessExpressions===================================================
-
-  /** convert a field access expression when the result produces a set */
-  protected T convertFieldAccessSet(ASTFieldAccessExpression node) {
-    SymTypeExpression elementType = TypeConverter.deriveType(node);
-    return convertFieldAccessSetHelper(node.getExpression(), node.getName());
-  }
-
-  protected T convertFieldAccessSetHelper(ASTExpression node, String name) {
-
-    // case we have simple field access. e.g. node = p, name = auction
-    if (!(node instanceof ASTFieldAccessExpression)) {
-      T expr = convertExpr(node);
-      return convertSimpleFieldAccessSet(expr, name);
-    }
-
-    // case we have nested field access. e.g. node = p.auction, name = person
-    T leftSet = convertExpr(node);
-
-    // computes the type of the element of the right Set
-    OCLType type1 = leftSet.type;
-    ASTCDAssociation person_parent = OCLHelper.getAssociation(type1, name, getCD());
-    OCLType rightSetElemType = OCLHelper.getOtherType(person_parent, type1, name, getCD());
-
-    Function<T, T> function =
-        obj1 ->
-            new T(
-                obj2 ->
-                    OCLHelper.evaluateLink(
-                        person_parent,
-                        obj1.expr(),
-                        name,
-                        obj2.expr(),
-                        cd2smtGenerator,
-                        this::getType),
-                rightSetElemType,
-                this);
-
-    return leftSet.collectAll(function);
-
-    return null;
-  }
-
-  protected Pair<T, T> convertFieldAccessSetHelper(
-      T obj, String name) {
-
-    OCLType type = getType(obj);
-    ASTCDDefinition cd = cd2smtGenerator.getClassDiagram().getCDDefinition();
-    Pair<T, T> res = null;
-    ASTCDType astcdType = getASTCDType(type.getName(), cd);
-
-    if (OCLHelper.containsAttribute(astcdType, name, cd)) { // case obj.attribute
-      res =
-          new ImmutablePair<>(
-              factory
-                  .mkExpr(
-                      ExpressionKind.UNINTERPRETED,
-                      OCLHelper.getAttribute(obj.expr(), type, name, cd2smtGenerator)),
-              factory.mkBool(true));
-    } else { // case obj.link
-      res = convertFieldAccessAssocHelper(obj, name);
-    }
-
-    return res;
-  }
-
-  private Pair<T, T> convertFieldAccessAssocHelper(
-      T obj, String role) {
-    OCLType type = getType(obj);
-    ASTCDAssociation association = OCLHelper.getAssociation(type, role, getCD());
-
-    OCLType type2 = OCLHelper.getOtherType(association, type, role, getCD());
-    String resName = obj.expr().toString() + SMTHelper.fCharToLowerCase(type2.getName());
-    T link = declVariable(type2, resName);
-    T linkConstraint =
-        factory
-            .mkBool(
-                OCLHelper.evaluateLink(
-                    association, obj, role, link, cd2smtGenerator, this::getType));
-    return new ImmutablePair<>(link, linkConstraint);
-  }
-
-  protected T convert(ASTFieldAccessExpression node) {
-    T obj = convertExpr(node.getExpression());
-    Pair<T, T> res = convertFieldAccessSetHelper(obj, node.getName());
-    if (!TypeConverter.hasOptionalType(node)) {
-      genConstraints.add(res.getRight());
-    }
-    return res.getLeft();
-  }
-
-  protected Pair<T, T> convertFieldAccOptional(
-      ASTFieldAccessExpression node) {
-    T obj = convertExpr(node.getExpression());
-    return convertFieldAccessSetHelper(obj, node.getName());
-  }
-
-  protected T convertSimpleFieldAccessSet(T obj, String role) {
-    OCLType type1 = getType(obj);
-    ASTCDAssociation association = OCLHelper.getAssociation(type1, role, getCD());
-    OCLType type2 = OCLHelper.getOtherType(association, type1, role, getCD());
-
-    Function<T, T> auction_per_set =
-        per ->
-            factory
-                .mkBool(
-                    OCLHelper.evaluateLink(
-                        association, obj, role, per, cd2smtGenerator, this::getType));
-
-    return factory.mkSet(auction_per_set, type2, this);
-  }
-
-  // ======================================End ASTFieldAccessExpression============================
   protected void closeScope(List<ASTInDeclaration> inDeclarations) {
     for (ASTInDeclaration decl : inDeclarations) {
       for (ASTInDeclarationVariable var : decl.getInDeclarationVariableList()) {
@@ -289,26 +128,19 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
     }
   }
 
-  protected List<T> convertInDecl(ASTInDeclaration node) {
-    List<T> result = new ArrayList<>();
-    for (ASTInDeclarationVariable var : node.getInDeclarationVariableList()) {
-      if (node.isPresentMCType()) {
-        result.add(declVariable(typeConverter.buildOCLType(node.getMCType()), var.getName()));
-      } else {
-        result.add(declVariable(typeConverter.buildOCLType(var.getSymbol()), var.getName()));
-      }
+  @Override
+  protected T convert(ASTNameExpression node) {
+    if (varNames.containsKey(node.getName())) {
+      return varNames.get(node.getName());
+    } else {
+      return createVarFromSymbol(node);
     }
-    return result;
   }
 
-  // ---------------------------------------Set-Expressions----------------------------------------------------------------
-  protected T convertSetIn(ASTSetInExpression node) {
-    return convertExpr(node.getSet()).contains(convertExpr(node.getElem()));
-  }
-
-  protected T convertSetNotIn(ASTSetNotInExpression node) {
-    return factory
-        .mkNot(convertExpr(node.getSet()).contains(convertExpr(node.getElem())));
+  @Override
+  protected T convert(ASTFieldAccessExpression node) {
+    T obj = convertExpr(node.getExpression());
+    return cdExprFactory.getLinkedObjects(obj, node.getName());
   }
 
   @Override
@@ -324,47 +156,40 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
     } else if (node instanceof ASTExistsExpression) {
       result = convertExist((ASTExistsExpression) node);
     } else if (node instanceof ASTSetInExpression) {
-      result = convertSetIn((ASTSetInExpression) node);
+      T set1 = convertExpr(((ASTSetInExpression) node).getSet());
+      T set2 = convertExpr(((ASTSetInExpression) node).getElem());
+      result = factory.mkContains(set1, set2);
     } else if (node instanceof ASTSetNotInExpression) {
-      result = convertSetNotIn((ASTSetNotInExpression) node);
+      T set1 = convertExpr(((ASTSetNotInExpression) node).getSet());
+      T set2 = convertExpr(((ASTSetNotInExpression) node).getElem());
+      result = factory.mkNot(factory.mkContains(set1, set2));
     } else if (node instanceof ASTCallExpression && TypeConverter.hasBooleanType(node)) {
       result = this.convertMethodCall((ASTCallExpression) node);
-    }
-
-    if (node instanceof ASTFieldAccessExpression) {
-      result = convertFieldAccessSet((ASTFieldAccessExpression) node);
     } else if (node instanceof ASTOCLTransitiveQualification) {
       result = convertTransClo((ASTOCLTransitiveQualification) node);
     } else if (node instanceof ASTUnionExpression) {
-      result = convertSetUnion((ASTUnionExpression) node);
+      T set1 = convertExpr(((ASTUnionExpression) node).getLeft());
+      T set2 = convertExpr(((ASTUnionExpression) node).getRight());
+      result = factory.mkSetUnion(set1, set2);
     } else if (node instanceof ASTIntersectionExpression) {
-      result = convertSetInter((ASTIntersectionExpression) node);
+      T set1 = convertExpr(((ASTIntersectionExpression) node).getLeft());
+      T set2 = convertExpr(((ASTIntersectionExpression) node).getRight());
+      result = factory.mkSetIntersect(set1, set2);
     } else if (node instanceof ASTSetMinusExpression) {
-      result = convertSetMinus((ASTSetMinusExpression) node);
-
+      T set1 = convertExpr(((ASTSetMinusExpression) node).getLeft());
+      T set2 = convertExpr(((ASTSetMinusExpression) node).getRight());
+      result = factory.mkSetMinus(set1, set2);
     } else if (node instanceof ASTSetComprehension) {
       result = convertSetComp((ASTSetComprehension) node);
     } else if (node instanceof ASTSetEnumeration) {
       result = convertSetEnum((ASTSetEnumeration) node);
     }
 
-    if (result != null && result.getKind() != ExpressionKind.NULL) {
+    if (result != null) {
       return result;
     }
 
     return super.convertExpr(node);
-  }
-
-  protected T convertSetUnion(ASTUnionExpression node) {
-    return convertExpr(node.getLeft()).mkSetUnion(convertExpr(node.getRight()));
-  }
-
-  protected T convertSetMinus(ASTSetMinusExpression node) {
-    return convertExpr(node.getLeft()).mkSetMinus(convertExpr(node.getRight()));
-  }
-
-  protected T convertSetInter(ASTIntersectionExpression node) {
-    return convertExpr(node.getLeft()).mkSetIntersect(convertExpr(node.getRight()));
   }
 
   /***
@@ -372,6 +197,7 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
    * @return the set of all variable of the set comprehension scope.
    */
   private Set<String> openSetCompScope(ASTSetComprehension node) {
+
     // collect all variables in the set comp
     OCLTraverser traverser = OCLMill.traverser();
     SetVariableCollector varCollector = new SetVariableCollector();
@@ -383,7 +209,7 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
     // convert set variables to Expr: int x  = 10
     for (ASTSetVariableDeclaration var : varCollector.getAllVariables()) {
       OCLType varType = typeConverter.buildOCLType(var.getMCType());
-      declVariable(varType, var.getName());
+      oclFtory.mkConst(var.getName(), varType);
     }
 
     // convert variable by generator-declaration : int x in {1,2}
@@ -394,7 +220,7 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
       } else {
         type = typeConverter.buildOCLType(gen.getSymbol());
       }
-      declVariable(type, gen.getName());
+      oclFtory.mkConst(gen.getName(), type);
     }
 
     Set<String> setCompScopeVar = new HashSet<>(varCollector.getAllVariableNames());
@@ -406,8 +232,7 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
   protected T convertSetComp(ASTSetComprehension node) {
     Set<String> setCompVarNames = openSetCompScope(node);
 
-    Function<T, T> setComp =
-        convertSetCompLeftSide(node.getLeft(), setCompVarNames);
+    Function<T, T> setComp = convertSetCompLeftSide(node.getLeft(), setCompVarNames);
     T filter = convertSetCompRightSide(node.getSetComprehensionItemList());
 
     closeSetCompScope(setCompVarNames);
@@ -421,13 +246,9 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
     setCompVarNames.clear();
   }
 
-  /***
-   * convert set enum to smt {1,}
-   * @param node
-   * @return
-   */
   protected T convertSetEnum(ASTSetEnumeration node) {
     ExpressionKind kind = null;
+
     List<T> setItemValues = new ArrayList<>();
     List<Function<T, T>> rangeFilters = new ArrayList<>();
 
@@ -435,60 +256,40 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
 
       if (item instanceof ASTSetValueItem) {
         setItemValues.add(convertExpr(((ASTSetValueItem) item).getExpression()));
-        kind = setItemValues.get(0).getKind();
+        kind = setItemValues.get(0).getExprKind();
       } else if (item instanceof ASTSetValueRange) {
-        Pair<Function<T, T>, ExpressionKind> range =
-            convertSetValRang((ASTSetValueRange) item);
+        Pair<Function<T, T>, ExpressionKind> range = convertSetValRang((ASTSetValueRange) item);
         rangeFilters.add(range.getLeft());
         kind = range.getRight();
       }
     }
+
     assert kind != null;
-    T set =
-        factory
-            .mkSet(
-                obj -> factory.mkBool(false), OCLType.buildOCLType(kind), this);
+    T set = factory.mkSet(obj -> factory.mkBool(false), OCLType.buildOCLType(kind), this);
     T set1 = set;
     if (!setItemValues.isEmpty()) {
-      set =
-          factory
-              .mkSet(
-                  obj ->
-                      factory
-                          .mkOr(factory.mkContains(set1,obj), addValuesToSetEnum(setItemValues, obj)),
-                  OCLType.buildOCLType(kind),
-                  this);
+
+      Function<T, T> setFunc =
+          obj ->
+              factory.mkOr(factory.mkContains(set1, obj), addValuesToSetEnum(setItemValues, obj));
+      set = factory.mkSet(setFunc, OCLType.buildOCLType(kind), this);
     }
 
     for (Function<T, T> range : rangeFilters) {
-
       T set2 = set;
-      set =
-          factory
-              .mkSet(
-                  obj -> factory.mkOr(factory.mkContains(set2,obj), range.apply(obj)),
-                  OCLType.buildOCLType(kind),
-                  this);
+      Function<T, T> setFunc = obj -> factory.mkOr(factory.mkContains(set2, obj), range.apply(obj));
+      set = factory.mkSet(setFunc, OCLType.buildOCLType(kind), this);
     }
     return set;
   }
 
-  private Pair<Function<T, T>, ExpressionKind> convertSetValRang(
-      ASTSetValueRange node) {
+  private Pair<Function<T, T>, ExpressionKind> convertSetValRang(ASTSetValueRange node) {
     T expr1 = convertExpr(node.getUpperBound());
     T expr2 = convertExpr(node.getLowerBound());
-    T low =
-        factory.mkIte(factory.mkLt(expr1, expr2), expr1, expr2);
-    T up =
-        factory
-            .mkIte(factory.mkLt(expr1, expr2), expr2, expr1);
+    T low = factory.mkIte(factory.mkLt(expr1, expr2), expr1, expr2);
+    T up = factory.mkIte(factory.mkLt(expr1, expr2), expr2, expr1);
     return new ImmutablePair<>(
-        obj ->
-            factory
-                .mkAnd(
-                    factory.mkLeq(low, obj),
-                    factory.mkLeq(obj, up)),
-        low.getKind());
+        obj -> factory.mkAnd(factory.mkLeq(low, obj), factory.mkLeq(obj, up)), low.getExprKind());
   }
 
   T addValuesToSetEnum(List<T> elements, T value) {
@@ -499,143 +300,77 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
     return res;
   }
 
-  protected Function<T, T> convertSetCompLeftSide(
-      ASTSetComprehensionItem node, Set<String> declVars) {
-    Function<T, T> res = null;
-    if (node.isPresentGeneratorDeclaration()) {
-      res = convertGenDeclLeft(node.getGeneratorDeclaration(), declVars);
-    } else if (node.isPresentSetVariableDeclaration()) {
-      res = convertSetVarDeclLeft(node.getSetVariableDeclaration(), declVars);
-    } else if (node.isPresentExpression()) {
-      res = convertSetCompExprLeft(node.getExpression(), declVars);
-    } else {
-      Log.error(
-          printPosition(node.get_SourcePositionStart())
-              + " Unable to convert the expression "
-              + print(node));
-    }
-    return res;
-  }
-
   /***
    * convert the right side of a set comprehension(filters)  into a BoolExpr
    */
   protected T convertSetCompRightSide(List<ASTSetComprehensionItem> filters) {
     T filter = factory.mkBool(true);
+
     // example: x isin {2,3}
     for (ASTSetComprehensionItem item : filters) {
-
+      T subFilter = factory.mkBool(true);
       if (item.isPresentGeneratorDeclaration()) {
         T set = convertExpr(item.getGeneratorDeclaration().getExpression());
-        T subFilter =
-            set.contains(varNames.get(item.getGeneratorDeclaration().getName()));
-        filter = factory.mkAnd(filter, subFilter);
+        String exprName = item.getGeneratorDeclaration().getName();
+        subFilter = factory.mkContains(set, varNames.get(exprName));
       }
 
       // example: x == y
       if (item.isPresentExpression()) {
-        filter = factory.mkAnd(filter, convertExpr(item.getExpression()));
+        subFilter = convertExpr(item.getExpression());
       }
 
       // example: int i = 10
       if (item.isPresentSetVariableDeclaration()) {
         ASTSetVariableDeclaration var = item.getSetVariableDeclaration();
         if (var.isPresentExpression()) {
-          T subFilter =
-              factory
-                  .mkEq(varNames.get(var.getName()), convertExpr(var.getExpression()));
-          filter = factory.mkAnd(filter, subFilter);
+          subFilter = factory.mkEq(varNames.get(var.getName()), convertExpr(var.getExpression()));
         }
       }
+      filter = factory.mkAnd(filter, subFilter);
     }
     return filter;
   }
 
-  protected Function<T, T> convertSetCompExprLeft(
-      ASTExpression node, Set<String> declVars) {
-    T expr1 = convertExpr(node);
-    // define a const  for the quantifier
-    T expr2 = factory.mkExpr("var", expr1.sort());
-    List<T> vars = new ArrayList<>(collectExpr(declVars));
-    vars.add(expr2);
+  protected Function<T, T> convertSetCompLeftSide(
+      ASTSetComprehensionItem node, Set<String> declVars) {
+    List<T> vars = declVars.stream().map(expr -> varNames.get(expr)).collect(Collectors.toList());
+    T filter;
+    T expr;
+
+    if (node.isPresentGeneratorDeclaration()) {
+      expr = varNames.get(node.getGeneratorDeclaration().getName());
+      T set = convertExpr(node.getExpression());
+      filter = factory.mkContains(set, expr);
+    } else if (node.isPresentSetVariableDeclaration()) {
+      expr = varNames.get(node.getSetVariableDeclaration().getName());
+
+      if (node.isPresentExpression()) {
+        filter = factory.mkEq(expr, convertExpr(node.getExpression()));
+      } else {
+        filter = factory.mkBool(true);
+      }
+    } else { // expression is present
+
+      expr = convertExpr(node.getExpression());
+
+      T expr2 = oclFtory.mkConst("var", getType(expr));
+      filter = factory.mkEq(expr2, expr);
+      vars.add(expr2);
+    }
 
     return bool ->
-        factory
-            .mkSet(
-                obj ->
-                  factory.mkExists(
-                        vars,
-                        factory
-                            .mkAnd(
-                                factory.mkEq(obj, expr2),
-                                factory
-                                    .mkAnd(factory.mkEq(expr2, expr1), bool))),
-                getType(expr1),
-                this);
-  }
-
-  /***
-   * will be transformed to a function that takes a bool expression and return
-   * and SMTSet because the filter of the function is on the right side, and
-   * this function just converts the left Side.
-   * *
-   * example: {int z = x*x|...}
-   * *
-   */
-  protected Function<T, T> convertSetVarDeclLeft(
-      ASTSetVariableDeclaration node, Set<String> declVars) {
-    T var = varNames.get(node.getName());
-    List<T> varList = new ArrayList<>(collectExpr(declVars));
-
-    // check if the initial value of the var is present and convert it to a constraint
-    T constr =
-        node.isPresentExpression()
-            ? factory.mkEq(var, convertExpr(node.getExpression()))
-            : factory.mkBool(true);
-
-    // create the function bool ->SMTSet
-    return bool ->
-        factory
-            .mkSet(
-                obj ->
-                   factory.mkExists(
-                        varList,
-                        factory
-                            .mkAnd(
-                                factory.mkEq(obj, var),
-                                factory.mkAnd(constr, bool))),
-                getType(var),
-                this);
-  }
-
-  private Set<T> collectExpr(Set<String> exprSet) {
-    return exprSet.stream().map(expr -> varNames.get(expr)).collect(Collectors.toSet());
-  }
-
-  protected Function<T, T> convertGenDeclLeft(
-      ASTGeneratorDeclaration node, Set<String> declVars) {
-
-    T expr = varNames.get(node.getName());
-    List<T> varList = new ArrayList<>(collectExpr(declVars));
-
-    T set = convertExpr(node.getExpression());
-    return bool ->
-        factory
-            .mkSet(
-                obj ->
-                    mkExists(
-                        varList,
-                        factory
-                            .mkAnd(
-                                factory.mkEq(obj, expr),
-                                factory.mkAnd(factory.mkContains( set,expr), bool))),
-                getType(expr),
-                this);
+        factory.mkSet(
+            obj ->
+                factory.mkExists(
+                    vars, factory.mkAnd(factory.mkEq(obj, expr), factory.mkAnd(filter, bool))),
+            getType(expr),
+            this);
   }
 
   // a.auction**
   protected T convertTransClo(ASTOCLTransitiveQualification node) {
-
+    /*
     ASTFieldAccessExpression fieldAcc = null;
     if (node.getExpression() instanceof ASTFieldAccessExpression) {
       fieldAcc = (ASTFieldAccessExpression) node.getExpression();
@@ -646,13 +381,7 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
         fieldAcc =
             (ASTFieldAccessExpression)
                 ((ASTFieldAccessExpression) callExpression.getExpression()).getExpression();
-      } else {
-        notFullyImplemented(node);
-        assert false;
       }
-    } else {
-      notFullyImplemented(node);
-      assert false;
     }
     if (!node.isTransitive()) {
       return convertExpr(node);
@@ -663,15 +392,13 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
     FuncDecl<BoolSort> rel = buildReflexiveNewAssocFunc(getType(auction), fieldAcc.getName());
     FuncDecl<BoolSort> trans_rel = TransitiveClosure.mkTransitiveClosure(ctx, rel);
 
-    Function<T, T> setFunc =
-        obj ->
-            factory
-                .mkBool((BoolExpr) trans_rel.apply(auction, obj));
-    return factory.mkSet(setFunc, getType(auction), this);
+    Function<T, T> setFunc = obj -> factory.mkBool((BoolExpr) trans_rel.apply(auction, obj));
+    return factory.mkSet(setFunc, getType(auction), this);*/
+    return null;
   }
 
   private FuncDecl<BoolSort> buildReflexiveNewAssocFunc(OCLType type, String otherRole) {
-    ASTCDType objClass = getASTCDType(type.getName(), getCD());
+    /* ASTCDType objClass = getASTCDType(type.getName(), getCD());
     ASTCDAssociation association = CDHelper.getAssociation(objClass, otherRole, getCD());
     Sort thisSort = typeConverter.deriveSort(type);
     FuncDecl<BoolSort> rel =
@@ -679,29 +406,16 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
     T obj1 = declVariable(type, "obj1");
     T obj2 = declVariable(type, "obj2");
     T rel_is_assocFunc =
-       factory.mkForall(
+        factory.mkForall(
             List.of(obj1, obj2),
-            factory
-                .mkEq(
-                    factory
-                        .mkBool((BoolExpr) rel.apply(obj1.expr(), obj2.expr())),
-                    factory
-                        .mkBool(
-                            cd2smtGenerator.evaluateLink(
-                                association, objClass, objClass, obj1.expr(), obj2.expr()))));
-    genConstraints.add(rel_is_assocFunc);
-    return rel;
+            factory.mkEq(
+                factory.mkBool((BoolExpr) rel.apply(obj1.expr(), obj2.expr())),
+                factory.mkBool(
+                    cd2smtGenerator.evaluateLink(
+                        association, objClass, objClass, obj1.expr(), obj2.expr()))));
+    genConstraints.add(rel_is_assocFunc);*/
+    return null;
   }
-
-  protected T createVarFromSymbol(ASTNameExpression node) {
-    SymTypeExpression typeExpr = TypeConverter.deriveType(node);
-    OCLType type = typeConverter.buildOCLType(typeExpr);
-    return declVariable(type, node.getName());
-  }
-
- 
-
-
 
   /***
    *Helper function to build a quantified formulas.
@@ -709,14 +423,91 @@ public class OCLExprConverter<T extends ExprAdapter<?>> extends BasicExprConvert
    * according to the actual Strategy.
    * But quantification of Expressions with primitive types (Bool, Int,..) must be perform directly.
    */
-  
+
   public OCLType getType(T expr) {
     if (varTypes.containsKey(expr)) {
       return varTypes.get(expr);
-    } else if (expr.hasNativeType()) {
-      return OCLType.buildOCLType(expr.getKind());
+    } else if (isNativeKind(expr.getExprKind())) {
+      return OCLType.buildOCLType(expr.getExprKind());
     }
     Log.error("Type not found for the Variable " + expr);
     return null;
+  }
+
+  protected T createVarFromSymbol(ASTNameExpression node) {
+    SymTypeExpression typeExpr = TypeConverter.deriveType(node);
+    OCLType type = typeConverter.buildOCLType(typeExpr);
+    return oclFtory.mkConst(node.getName(), type);
+  }
+
+  public void reset() {
+    varNames.clear();
+    genConstraints.clear();
+  }
+
+  protected boolean isNativeKind(ExpressionKind kind) {
+    return kind == ExpressionKind.BOOL
+        || kind == ExpressionKind.DOUBLE
+        || kind == ExpressionKind.STRING
+        || kind == ExpressionKind.CHAR;
+  }
+
+  public T mkQuantifier(List<T> vars, T body, boolean isForall) {
+
+    // split expressions int non CDZ3ExprAdapterype(String , Bool..) and CDType Expression(Auction,
+    // Person...)
+    List<T> unInterpretedObj =
+        vars.stream()
+            .filter(
+                e ->
+                    (e.getExprKind() == ExpressionKind.UNINTERPRETED
+                        && !(e.getExprKind() == ExpressionKind.BOOL)))
+            .collect(Collectors.toList());
+
+    List<T> uninterpretedBool =
+        vars.stream()
+            .filter(
+                e ->
+                    (e.getExprKind() == ExpressionKind.UNINTERPRETED
+                        && (e.getExprKind() == ExpressionKind.BOOL)))
+            .collect(Collectors.toList());
+
+    // collect the CDType of the CDType Expressions
+    /* List<ASTCDType> types =
+    unInterpretedObj.stream()
+            .map(var -> getASTCDType( getType(var).getName(), getCD()))
+            .collect(Collectors.toList());*/
+    T subRes = body;
+
+    if (!unInterpretedObj.isEmpty()) {
+      if (isForall) {
+        subRes = cdExprFactory.mkForall(unInterpretedObj, body);
+        // todo: refactoring this method
+      } else {
+        subRes = cdExprFactory.mkExists(unInterpretedObj, body);
+      }
+    }
+
+    if (uninterpretedBool.isEmpty()) {
+      return subRes;
+    } else {
+      if (isForall) {
+        return factory.mkForall(uninterpretedBool, subRes);
+      } else {
+        return factory.mkExists(uninterpretedBool, subRes);
+      }
+    }
+  }
+
+  public T mkForall(List<T> expr, T z3ExprAdapter) {
+    return mkQuantifier(expr, z3ExprAdapter, true);
+  }
+
+  public T mkExists(List<T> expr, T z3ExprAdapter) {
+    return mkQuantifier(expr, z3ExprAdapter, false);
+  }
+
+  public CD2SMTGenerator getCd2smtGenerator() {
+    return cd2SMTGenerator;
   }
 }

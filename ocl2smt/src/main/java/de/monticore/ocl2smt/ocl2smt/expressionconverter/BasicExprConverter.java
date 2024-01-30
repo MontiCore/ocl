@@ -17,7 +17,7 @@ import de.se_rwth.commons.logging.Log;
 
 public abstract class BasicExprConverter<T extends ExprAdapter<?>> {
 
-  protected ExprFactory<T> factory;
+  public ExprFactory<T> factory;
 
   public BasicExprConverter(ExprFactory<T> factory) {
     this.factory = factory;
@@ -62,7 +62,6 @@ public abstract class BasicExprConverter<T extends ExprAdapter<?>> {
 
         case "isEmpty":
           res = factory.mkIsEmpty(callerExpr);
-
           break;
       }
     }

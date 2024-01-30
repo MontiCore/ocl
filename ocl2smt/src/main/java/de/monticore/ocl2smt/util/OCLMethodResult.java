@@ -1,27 +1,26 @@
 package de.monticore.ocl2smt.util;
 
 import com.microsoft.z3.BoolSort;
-import com.microsoft.z3.Expr;
 import com.microsoft.z3.FuncDecl;
-import com.microsoft.z3.Sort;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class OCLMethodResult {
+public class OCLMethodResult<T extends ExprAdapter<?>> {
   private ResultType type;
 
   private OCLType oclType;
-  private ExprBuilder res;
+  private T res;
   private FuncDecl<BoolSort> resSet;
 
   public void setValue(FuncDecl<BoolSort> resSet) {
     this.resSet = resSet;
   }
 
-  public void setValue(ExprBuilder res) {
+  public void setValue(T res) {
     this.res = res;
   }
 
@@ -91,8 +90,8 @@ public class OCLMethodResult {
     return type == ResultType.OBJECT;
   }
 
-  public Expr<? extends Sort> getResultExpr() {
-    return res.expr();
+  public T getResultExpr() {
+    return res;
   }
 
   public FuncDecl<BoolSort> getResultSet() {

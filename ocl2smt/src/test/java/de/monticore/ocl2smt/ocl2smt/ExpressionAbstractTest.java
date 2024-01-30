@@ -9,6 +9,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl2smt.OCL2SMTAbstractTest;
 import de.monticore.ocl2smt.helpers.IOHelper;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3ExprAdapter;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -25,7 +26,7 @@ public abstract class ExpressionAbstractTest extends OCL2SMTAbstractTest {
   protected static ASTOCLCompilationUnit oclAST;
   protected static ASTCDCompilationUnit cdAST;
   protected static Solver solver;
-  protected static OCL2SMTGenerator ocl2SMTGenerator;
+  protected static OCL2SMTGenerator<Z3ExprAdapter> ocl2SMTGenerator;
 
   protected void parse(String cdFileName, String oclFileName) throws IOException {
     oclAST =

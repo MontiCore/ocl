@@ -3,7 +3,6 @@ package de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExprConverter;
 import de.monticore.ocl2smt.util.OCLType;
-
 import java.util.List;
 import java.util.function.Function;
 
@@ -62,8 +61,7 @@ public interface ExprFactory<T extends ExprAdapter<?>> {
 
   T mkSuffixOf(T s1, T s2);
 
-  public abstract T mkSet(
-      Function<T, T> setFunction, OCLType type, OCLExprConverter exprConv);
+  public abstract T mkSet(Function<T, T> setFunction, OCLType type, OCLExprConverter exprConv);
 
   T containsAll(T set1, T set2);
 
@@ -75,7 +73,7 @@ public interface ExprFactory<T extends ExprAdapter<?>> {
 
   T mkSetMinus(T set1, T set);
 
-     public T mkForall(List<T> vars, T body);
+  T mkForall(List<T> uninterpretedBool, T subRes);
 
-     public T mkExists(List<T> vars, T body) ;
+  T mkExists(List<T> uninterpretedBool, T subRes);
 }

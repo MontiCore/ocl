@@ -1,33 +1,22 @@
 package de.monticore.ocl2smt.ocl2smt.expr2smt;
 
 import com.microsoft.z3.*;
-import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.ocl.oclexpressions._ast.ASTExistsExpression;
-import de.monticore.ocl.oclexpressions._ast.ASTForallExpression;
 import de.monticore.ocl2smt.ocl2smt.expr.ExpressionKind;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory.ExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExprConverter;
 import de.monticore.ocl2smt.util.OCLType;
 import de.se_rwth.commons.logging.Log;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static de.monticore.cd2smt.Helper.CDHelper.getASTCDType;
 
 public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter> {
   Context ctx;
 
-    public Z3ExprFactory(Context context) {
-      this.ctx = context ;
-    }
+  public Z3ExprFactory(Context context) {
+    this.ctx = context;
+  }
 
-    @Override
+  @Override
   public Z3ExprAdapter mkBool(boolean node) {
     Z3ExprAdapter expr = new Z3ExprAdapter();
     expr.setExpr(ctx.mkBool(node));
@@ -372,9 +361,7 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter> {
 
   @Override
   public Z3ExprAdapter mkSet(
-      Function<Z3ExprAdapter, Z3ExprAdapter> setFunction,
-      OCLType type,
-      OCLExprConverter exprConv) {
+      Function<Z3ExprAdapter, Z3ExprAdapter> setFunction, OCLType type, OCLExprConverter exprConv) {
     Z3SetExprAdapter expr = new Z3SetExprAdapter();
 
     expr.setFunction(setFunction);
@@ -392,24 +379,18 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter> {
     Z3SetExprAdapter set1 = (Z3SetExprAdapter) exp1;
     Z3SetExprAdapter set2 = (Z3SetExprAdapter) exp2;
 
-    Z3ExprAdapter expr = set1.exprConv.declVariable(set1.type, "expr111");
-    res.setExpr(
-        set1.exprConv.mkForall(
-            List.of(expr), mkImplies(mkContains(set1, expr), mkContains(set2, expr))));
-    res.setKind(ExpressionKind.BOOL);
-    return res;
+    Z3ExprAdapter expr = set1.exprConv.mkConst("expr111", set1.type);
+    return set1.exprConv.mkForall(
+        List.of(expr), mkImplies(mkContains(set1, expr), mkContains(set2, expr)));
   }
 
   @Override
   public Z3ExprAdapter mkIsEmpty(Z3ExprAdapter expr) {
-    Z3ExprAdapter res = new Z3ExprAdapter();
 
     Z3SetExprAdapter set = ((Z3SetExprAdapter) expr);
-    Z3ExprAdapter con = set.exprConv.declVariable(set.type, "expr11");
+    Z3ExprAdapter con = set.exprConv.mkConst("expr11", set.type);
 
-    res.setExpr(set.exprConv.mkForall(List.of(expr), mkNot(mkContains(set, con))));
-    res.setKind(ExpressionKind.BOOL);
-    return res;
+    return set.exprConv.mkForall(List.of(expr), mkNot(mkContains(set, con)));
   }
 
   @Override
@@ -441,92 +422,30 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter> {
   }
 
   @Override
-  public Z3ExprAdapter mkForall(List<Z3ExprAdapter> vars, Z3ExprAdapter body) {
-    return mkQuantifier(vars,body,true);
+  public Z3ExprAdapter mkForall(List<Z3ExprAdapter> uninterpretedBool, Z3ExprAdapter subRes) {
+    return null;
   }
 
   @Override
-  public Z3ExprAdapter mkExists(List<Z3ExprAdapter> vars, Z3ExprAdapter body) {
-    return mkQuantifier(vars,body,false);
-  }
-
-
-
-  public Z3ExprAdapter mkQuantifier(List<Z3ExprAdapter> vars, Z3ExprAdapter body, boolean isForall) {
-
-    // split expressions int non CDZ3ExprAdapterype(String , Bool..) and CDType Expression(Auction, Person...)
-    List<Z3ExprAdapter> unInterpretedObj =
-            vars.stream().filter(e -> e.isUnInterpreted() && !e.isBool()).collect(Collectors.toList());
-
-    List<Z3ExprAdapter> uninterpretedBool =
-            vars.stream().filter(e -> e.isUnInterpreted() && e.isBool()).collect(Collectors.toList());
-
-    // collect the CDType of the CDType Expressions
-    List<ASTCDType> types =
-            unInterpretedObj.stream()
-                    .map(var -> getASTCDType(getType(var).getName(), getCD()))
-                    .collect(Collectors.toList());
-    BoolExpr subRes = body.expr();
-
-    if (!unInterpretedObj.isEmpty()) {
-      if (isForall) {
-        subRes =
-                cd2smtGenerator.mkForall(
-                        types,
-                        unInterpretedObj.stream().map(e -> (Expr<?>) e.expr()).collect(Collectors.toList()),
-                        body.expr());
-        // todo: refactoring this method
-      } else {
-        subRes =
-                cd2smtGenerator.mkExists(
-                        types,
-                        unInterpretedObj.stream().map(e -> (Expr<?>) e.expr()).collect(Collectors.toList()),
-                        body.expr());
-      }
-    }
-
-    if (uninterpretedBool.isEmpty()) {
-      return subRes;
-    } else {
-      if (isForall) {
-        return ctx.mkForall(
-                uninterpretedBool.stream().map(e -> (Expr<?>) e.expr()).toArray(Expr[]::new),
-                subRes,
-                0,
-                null,
-                null,
-                null,
-                null);
-      } else {
-        return ctx.mkExists(
-                uninterpretedBool.stream().map(e -> (Expr<?>) e.expr()).toArray(Expr[]::new),
-                subRes,
-                0,
-                null,
-                null,
-                null,
-                null);
-      }
-    }
+  public Z3ExprAdapter mkExists(List<Z3ExprAdapter> uninterpretedBool, Z3ExprAdapter subRes) {
+    return null;
   }
 
   @Override
   public Z3ExprAdapter mkEq(Z3ExprAdapter left, Z3ExprAdapter right) {
     Z3ExprAdapter expr = new Z3ExprAdapter();
-    if (!left.isSet() && !right.isBool()) {
+
+    if (!left.isSet() && !right.isSet()) {
       expr.setKind(ExpressionKind.BOOL);
       expr.setExpr(ctx.mkEq(left.getExpr(), right.getExpr()));
       return expr;
     }
 
     Z3SetExprAdapter leftSet = (Z3SetExprAdapter) left;
-    expr = leftSet.exprConv.declVariable(leftSet.type, "const");
-    expr.setExpr(
-        leftSet.exprConv.mkForall(
-            List.of(expr), mkEq(mkContains(left, expr), mkContains(right, expr))));
+    expr = leftSet.exprConv.mkConst("const", leftSet.type);
 
-    expr.setKind(ExpressionKind.BOOL);
-    return expr;
+    return leftSet.exprConv.mkForall(
+        List.of(expr), mkEq(mkContains(left, expr), mkContains(right, expr)));
   }
 
   @Override
