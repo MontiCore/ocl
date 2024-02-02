@@ -220,14 +220,15 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
         case "isEmpty":
           return eFactory.mkIsEmpty(callerExpr);
       }
-      ;
     }
     Log.error("Conversion of ASTMethodeCall  not fully implemented");
     return null;
   }
 
   public EXPR mkConst(String name, TypeAdapter<TYPE> type) {
-    return eFactory.mkConst(name, type);
+    EXPR expr = eFactory.mkConst(name, type);
+    varNames.put(name, expr);
+    return expr;
   }
 
   /*------------------------------------quantified expressions----------------------------------------------------------*/
@@ -252,7 +253,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
   }
 
   private Pair<List<EXPR>, EXPR> openScope(List<ASTInDeclaration> inDeclarations) {
-    List<EXPR> variableList = new ArrayList<>();
+    List<EXPR> paramList = new ArrayList<>();
     EXPR constraint = eFactory.mkBool(true);
 
     for (ASTInDeclaration decl : inDeclarations) {
@@ -266,7 +267,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
         }
 
         EXPR var = mkConst(varDecl.getName(), type);
-
+        paramList.add(var);
         if (decl.isPresentExpression()) {
           EXPR mySet = convertExpr(decl.getExpression());
           eFactory.mkAnd(eFactory.mkContains(mySet, var), constraint);
@@ -274,7 +275,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
       }
     }
 
-    return new ImmutablePair<>(variableList, constraint);
+    return new ImmutablePair<>(paramList, constraint);
   }
 
   protected void closeScope(List<ASTInDeclaration> inDeclarations) {
@@ -293,7 +294,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
 
       SymTypeExpression typeExpr = tFactory.deriveType(node);
       TypeAdapter<TYPE> type = tFactory.adapt(typeExpr);
-      return eFactory.mkConst(node.getName(), type);
+      return mkConst(node.getName(), type);
     }
   }
 
@@ -329,7 +330,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
     // convert set variables to Expr: int x  = 10
     for (ASTSetVariableDeclaration var : varCollector.getAllVariables()) {
       TypeAdapter<TYPE> varType = tFactory.adapt(var.getMCType());
-      eFactory.mkConst(var.getName(), varType);
+      mkConst(var.getName(), varType);
     }
 
     // convert variable by generator-declaration : int x in {1,2}
@@ -340,7 +341,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
       } else {
         type = tFactory.adapt(gen.getSymbol().getType());
       }
-      eFactory.mkConst(gen.getName(), type);
+      mkConst(gen.getName(), type);
     }
 
     Set<String> setCompScopeVar = new HashSet<>(varCollector.getAllVariableNames());
@@ -440,11 +441,11 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
 
       expr = convertExpr(node.getExpression());
 
-      EXPR expr2 = eFactory.mkConst("var", expr.getExprType());
+      EXPR expr2 = mkConst("var", expr.getExprType());
       filter = eFactory.mkEq(expr2, expr);
       vars.add(expr2);
     }
-    EXPR setElem = eFactory.mkConst("elem", expr.getExprType());
+    EXPR setElem = mkConst("elem", expr.getExprType());
     return bool ->
         eFactory.mkSet(
             obj ->

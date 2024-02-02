@@ -33,14 +33,15 @@ public class Z3CDExprFactory implements CDExprFactory<Z3ExprAdapter, Sort> {
   public Z3ExprAdapter mkExists(List<Z3ExprAdapter> params, Z3ExprAdapter body) {
     // quantified boolean variable
     List<Z3ExprAdapter> boolExprList = filterExpr(params, Set.of(ExpressionKind.BOOL));
-    BoolExpr subRes = mkExists(revertAdaptation(boolExprList), (BoolExpr) body.getExpr());
+    BoolExpr res = mkExists(revertAdaptation(boolExprList), (BoolExpr) body.getExpr());
 
     // quantify CDType variable with
     List<Z3ExprAdapter> objList = filterExpr(params, Set.of(ExpressionKind.OO));
-    List<ASTCDType> types = collectCDType(params);
-    List<Expr<?>> vars = revertAdaptation(objList);
-
-    BoolExpr res = cd2SMTGenerator.mkExists(types, vars, subRes);
+    if (!objList.isEmpty()) {
+      List<ASTCDType> types = collectCDType(objList);
+      List<Expr<?>> vars = revertAdaptation(objList);
+      res = cd2SMTGenerator.mkExists(types, vars, res);
+    }
     return new Z3ExprAdapter(res, tFactory.mkBoolType());
   }
 
@@ -48,14 +49,15 @@ public class Z3CDExprFactory implements CDExprFactory<Z3ExprAdapter, Sort> {
   public Z3ExprAdapter mkForall(List<Z3ExprAdapter> params, Z3ExprAdapter body) {
     // quantified boolean variable
     List<Z3ExprAdapter> boolExprList = filterExpr(params, Set.of(ExpressionKind.BOOL));
-    BoolExpr subRes = mkForAll(revertAdaptation(boolExprList), (BoolExpr) body.getExpr());
+    BoolExpr res = mkForAll(revertAdaptation(boolExprList), (BoolExpr) body.getExpr());
 
     // quantify CDType variable with
     List<Z3ExprAdapter> objList = filterExpr(params, Set.of(ExpressionKind.OO));
-    List<ASTCDType> types = collectCDType(params);
-    List<Expr<?>> vars = revertAdaptation(objList);
-
-    BoolExpr res = cd2SMTGenerator.mkForall(types, vars, subRes);
+    if (!objList.isEmpty()) {
+      List<ASTCDType> types = collectCDType(objList);
+      List<Expr<?>> vars = revertAdaptation(objList);
+      res = cd2SMTGenerator.mkForall(types, vars, res);
+    }
     return new Z3ExprAdapter(res, tFactory.mkBoolType());
   }
 
