@@ -12,7 +12,7 @@ import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3TypeAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3TypeAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;

@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt.ocl2smt.expr2smt;
+package de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3;
 
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
@@ -172,30 +172,25 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter, Sort> {
 
   @Override
   public Z3ExprAdapter mkPlus(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
-    checkArith("mkPlus", leftNode);
-    checkArith("mkPlus", rightNode);
 
     Expr<?> expr;
     Z3TypeAdapter type;
     if (leftNode.isIntExpr() || rightNode.isIntExpr()) {
       expr = ctx.mkAdd((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr());
       type = tFactory.mkInType();
-    } else {
+    } else if (leftNode.isDoubleExpr() &&rightNode.isDoubleExpr()){
       expr = ctx.mkFPAdd(ctx.mkFPRNA(), (FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr());
       type = tFactory.mkDoubleType();
+    }else {
+      Expr<SeqSort<CharSort>> left = (Expr<SeqSort<CharSort>>) leftNode.getExpr();
+      Expr<SeqSort<CharSort>> right = (Expr<SeqSort<CharSort>>) rightNode.getExpr();
+      expr = ctx.mkConcat(left, right);
+      type = tFactory.mkStringType();
     }
     return new Z3ExprAdapter(expr, type);
   }
 
-  @Override
-  public Z3ExprAdapter mkConcat(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
-    checkString("mkSub", leftNode);
-    checkString("mkSub", rightNode);
 
-    Expr<SeqSort<CharSort>> left = (Expr<SeqSort<CharSort>>) leftNode.getExpr();
-    Expr<SeqSort<CharSort>> right = (Expr<SeqSort<CharSort>>) rightNode.getExpr();
-    return new Z3ExprAdapter(ctx.mkConcat(left, right), tFactory.mkStringType());
-  }
 
   @Override
   public Z3ExprAdapter mkMul(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {

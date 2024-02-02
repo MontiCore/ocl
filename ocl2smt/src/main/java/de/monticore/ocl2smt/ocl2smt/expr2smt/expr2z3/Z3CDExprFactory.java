@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt.ocl2smt.expr2smt;
+package de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3;
 
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
@@ -10,6 +10,7 @@ import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.ExpressionKind;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory.CDExprFactory;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;

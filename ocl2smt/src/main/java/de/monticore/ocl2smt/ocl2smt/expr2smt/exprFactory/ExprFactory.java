@@ -39,8 +39,6 @@ public interface ExprFactory<E extends ExprAdapter<?, T>, T> {
 
   E mkPlus(E expr1, E expr);
 
-  E mkConcat(E leftNode, E rightNode);
-
   E mkMul(E expr1, E expr);
 
   E mkDiv(E expr1, E expr);

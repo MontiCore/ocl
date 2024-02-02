@@ -210,9 +210,9 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
         case "contains":
           return eFactory.mkContains(callerExpr, arg1);
         case "endsWith":
-          return eFactory.mkSuffixOf(callerExpr, arg1);
+          return eFactory.mkSuffixOf(arg1,callerExpr);
         case "startsWith":
-          return eFactory.mkPrefixOf(callerExpr, arg1);
+          return eFactory.mkPrefixOf(arg1,callerExpr);
         case "replace":
           return eFactory.mkReplace(callerExpr, arg1, convertExpr(args.getExpression(1)));
         case "containsAll":

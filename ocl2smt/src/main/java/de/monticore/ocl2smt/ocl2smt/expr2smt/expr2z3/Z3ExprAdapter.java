@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt.ocl2smt.expr2smt;
+package de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3;
 
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;

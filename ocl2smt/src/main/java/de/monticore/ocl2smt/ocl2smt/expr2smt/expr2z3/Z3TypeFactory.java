@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt.ocl2smt.expr2smt;
+package de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3;
 
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Sort;
@@ -10,6 +10,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl.types3.OCLTypeTraverserFactory;
 import de.monticore.ocl2smt.helpers.IOHelper;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.ExpressionKind;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeFactorry.TypeFactory;
 import de.monticore.types.check.SymTypeExpression;

@@ -2,8 +2,8 @@ package de.monticore.ocl2smt.util;
 
 import com.microsoft.z3.BoolSort;
 import com.microsoft.z3.FuncDecl;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3ExprAdapter;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3TypeAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3TypeAdapter;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import java.util.regex.Matcher;

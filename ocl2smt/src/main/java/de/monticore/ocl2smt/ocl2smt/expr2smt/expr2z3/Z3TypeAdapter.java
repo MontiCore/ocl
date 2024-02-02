@@ -1,7 +1,8 @@
-package de.monticore.ocl2smt.ocl2smt.expr2smt;
+package de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3;
 
 import com.microsoft.z3.Sort;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.ExpressionKind;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 
 public class Z3TypeAdapter implements TypeAdapter<Sort> {

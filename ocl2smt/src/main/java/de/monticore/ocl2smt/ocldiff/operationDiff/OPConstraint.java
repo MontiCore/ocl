@@ -3,8 +3,8 @@ package de.monticore.ocl2smt.ocldiff.operationDiff;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3ExprAdapter;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3TypeAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3TypeAdapter;
 import de.monticore.ocl2smt.util.OCLMethodResult;
 
 /** this Class is saves data obtains after the conversion of an OCL Constraint in SMT */

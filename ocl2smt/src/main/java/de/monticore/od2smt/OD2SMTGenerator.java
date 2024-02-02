@@ -18,7 +18,7 @@ import de.monticore.cdinterfaceandenum._ast.ASTCDEnumConstant;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.literals.mccommonliterals._ast.ASTStringLiteral;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3ExprAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.oclExpr2smt.OCLExprConverter;
 import de.monticore.odbasis._ast.*;
 import de.monticore.odlink._ast.ASTODLink;
