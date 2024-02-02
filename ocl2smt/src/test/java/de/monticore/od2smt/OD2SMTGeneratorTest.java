@@ -92,8 +92,7 @@ class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
     model = solver.getModel();
 
     // build od
-    Optional<ASTODArtifact> newOd =
-        od2SMTGenerator.cd2SMTGenerator.smt2od(model, false, "Auction");
+    Optional<ASTODArtifact> newOd = od2SMTGenerator.cd2SMTGenerator.smt2od(model, false, "Auction");
     Assertions.assertTrue(newOd.isPresent());
     witness = newOd.get();
 

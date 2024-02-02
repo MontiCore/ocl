@@ -4,9 +4,7 @@ import com.microsoft.z3.*;
 import com.microsoft.z3.enumerations.Z3_lbool;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
-import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -30,7 +28,6 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
-import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -39,24 +36,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class OCLHelper {
-/*
-  public static ASTCDAssociation getAssociation(
-      ExprTypeAdapter type, String otherRole, ASTCDDefinition cd) {
-    return CDHelper.getAssociation(CDHelper.getASTCDType(type.getName(), cd), otherRole, cd);
-  }
-
-  public static ExprTypeAdapter getOtherType(
-      ASTCDAssociation association, ExprTypeAdapter type, String otherRole, ASTCDDefinition cd) {
-    ExprTypeAdapter type1 =
-        ExprTypeAdapter.buildOCLType(association.getLeftQualifiedName().getQName());
-    ExprTypeAdapter type2 =
-        ExprTypeAdapter.buildOCLType(association.getRightQualifiedName().getQName());
-    if (isLeftSide(CDHelper.getASTCDType(type.getName(), cd), otherRole, cd)) {
-      return type2;
-    } else {
-      return type1;
-    }
-  }*/
 
   public static List<ASTODNamedObject> getObjectList(ASTODArtifact od) {
     return od.getObjectDiagram().getODElementList().stream()
@@ -72,72 +51,6 @@ public class OCLHelper {
         .map(x -> (ASTODLink) x)
         .collect(Collectors.toList());
   }
-
-  /* public static BoolExpr evaluateLink(
-      ASTCDAssociation association,
-      ExprBuilder obj,
-      String otherRole,
-      ExprBuilder otherObj,
-      CD2SMTGenerator cd2SMTGenerator,
-      Function<ExprBuilder, OCLType> types) {
-
-    ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
-    OCLType oclType = types.apply(obj);
-    ASTCDType type = CDHelper.getASTCDType(oclType.getName(), cd);
-
-    ASTCDType otherType = CDHelper.getASTCDType(types.apply(otherObj).getName(), cd);
-
-    BoolExpr res;
-    if (isLeftSide(CDHelper.getASTCDType(type.getName(), cd), otherRole, cd)) {
-      res = cd2SMTGenerator.evaluateLink(association, type, otherType, obj.expr(), otherObj.expr());
-    } else {
-      res = cd2SMTGenerator.evaluateLink(association, otherType, type, otherObj.expr(), obj.expr());
-    }
-
-    return res;
-  }*/
-
-  public static boolean isLeftSide(ASTCDType astcdType, String otherRole, ASTCDDefinition cd) {
-    List<ASTCDType> objTypes = new ArrayList<>();
-    objTypes.add(astcdType);
-    objTypes.addAll(CDHelper.getSuperTypeAllDeep(astcdType, cd));
-
-    ASTCDType leftType;
-    ASTCDType rightType;
-    String leftRole;
-    String rightRole;
-
-    for (ASTCDAssociation association : cd.getCDAssociationsList()) {
-      leftType = CDHelper.getASTCDType(association.getLeftQualifiedName().getQName(), cd);
-      rightType = CDHelper.getASTCDType(association.getRightQualifiedName().getQName(), cd);
-      leftRole = association.getLeft().getCDRole().getName();
-      rightRole = association.getRight().getCDRole().getName();
-
-      if (objTypes.contains(leftType) && otherRole.equals(rightRole)) {
-        return true;
-      } else if (objTypes.contains(rightType) && otherRole.equals(leftRole)) {
-        return false;
-      }
-    }
-    Log.error(
-        "Association with the other-role "
-            + otherRole
-            + " not found for the ASTCDType"
-            + astcdType.getName());
-    return false;
-  }
-/*
-  public static Expr<? extends Sort> getAttribute(
-      Expr<? extends Sort> obj,
-      TypeAdapter<?> type,
-      String attributeName,
-      CD2SMTGenerator cd2SMTGenerator) {
-
-    return cd2SMTGenerator.getAttribute(
-        CDHelper.getASTCDType(type.getName(), cd2SMTGenerator.getClassDiagram().getCDDefinition()),
-        attributeName,
-        obj);
-  }*/
 
   public static OCLOPWitness splitPreOD(
       ASTOCLMethodSignature method, ASTODArtifact od, Model model, OPConstraint opConstraint) {
@@ -331,7 +244,7 @@ public class OCLHelper {
   }
 
   public static ASTODNamedObject getObjectWithExpr(
-          Z3TypeAdapter type, Expr<? extends Sort> expr, ASTODArtifact od) {
+      Z3TypeAdapter type, Expr<? extends Sort> expr, ASTODArtifact od) {
     return OCLHelper.getObjectList(od).stream()
         .filter(x -> x.getName().equals(SMTHelper.buildObjectName(expr, type.getName())))
         .findFirst()

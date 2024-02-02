@@ -12,8 +12,6 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3ExprAdapter;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3TypeFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory.CDExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory.ExprFactory;
@@ -34,7 +32,6 @@ import org.apache.commons.lang3.tuple.Pair;
 /** This class convert All OCL-Expressions except @Pre-Expressions in SMT */
 public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
   protected Map<String, EXPR> varNames;
-  protected Set<EXPR> genConstraints;
   protected ExprFactory<EXPR, TYPE> eFactory;
   protected CDExprFactory<EXPR, TYPE> cdFactory;
   protected TypeFactory<TYPE> tFactory;
@@ -48,7 +45,6 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
     this.tFactory = typeFactory;
     this.cdFactory = cdFactory;
 
-    genConstraints = new HashSet<>();
     varNames = new HashMap<>();
   }
 
@@ -230,10 +226,6 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
     return null;
   }
 
-  public Set<EXPR> getGenConstraints() {
-    return genConstraints;
-  }
-
   public EXPR mkConst(String name, TypeAdapter<TYPE> type) {
     return eFactory.mkConst(name, type);
   }
@@ -243,7 +235,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
     Pair<List<EXPR>, EXPR> quanParams = openScope(node.getInDeclarationList());
 
     EXPR body = eFactory.mkImplies(quanParams.getRight(), convertExpr(node.getExpression()));
-    EXPR result = eFactory.mkForall(quanParams.getLeft(), body);
+    EXPR result = cdFactory.mkForall(quanParams.getLeft(), body);
 
     closeScope(node.getInDeclarationList());
     return result;
@@ -253,7 +245,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
     Pair<List<EXPR>, EXPR> quanParams = openScope(node.getInDeclarationList());
 
     EXPR body = eFactory.mkAnd(quanParams.getRight(), convertExpr(node.getExpression()));
-    EXPR result = eFactory.mkExists(quanParams.getLeft(), body);
+    EXPR result = cdFactory.mkExists(quanParams.getLeft(), body);
 
     closeScope(node.getInDeclarationList());
     return result;
@@ -456,7 +448,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
     return bool ->
         eFactory.mkSet(
             obj ->
-                eFactory.mkExists(
+                cdFactory.mkExists(
                     vars, eFactory.mkAnd(eFactory.mkEq(obj, expr), eFactory.mkAnd(filter, bool))),
             setElem);
   }
@@ -519,47 +511,5 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
 
   public void reset() {
     varNames.clear();
-    genConstraints.clear();
-  }
-
-  public EXPR mkQuantifier(List<EXPR> vars, EXPR body, boolean isForall) {
-
-    // split expressions int non CDZ3ExprAdapterype(String , Bool..) and CDType Expression(Auction,
-    // Person...)
-    List<EXPR> unInterpretedObj =
-        vars.stream()
-            .filter(e -> (e.getExprType().isObject() && !(e.getExprType().isBool())))
-            .collect(Collectors.toList());
-
-    List<EXPR> uninterpretedBool =
-        vars.stream()
-            .filter(e -> (e.getExprType().isObject() && (e.getExprType().isBool())))
-            .collect(Collectors.toList());
-
-    // collect the CDType of the CDType Expressions
-    /* List<ASTCDType> types =
-    unInterpretedObj.stream()
-            .map(var -> getASTCDType( getType(var).getName(), getCD()))
-            .collect(Collectors.toList());*/
-    EXPR subRes = body;
-
-    if (!unInterpretedObj.isEmpty()) {
-      if (isForall) {
-        subRes = eFactory.mkForall(unInterpretedObj, body);
-        // todo: refactoring this method
-      } else {
-        subRes = eFactory.mkExists(unInterpretedObj, body);
-      }
-    }
-
-    if (uninterpretedBool.isEmpty()) {
-      return subRes;
-    } else {
-      if (isForall) {
-        return eFactory.mkForall(uninterpretedBool, subRes);
-      } else {
-        return eFactory.mkExists(uninterpretedBool, subRes);
-      }
-    }
   }
 }

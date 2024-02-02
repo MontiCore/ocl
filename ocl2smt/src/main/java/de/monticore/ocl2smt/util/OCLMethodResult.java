@@ -4,13 +4,12 @@ import com.microsoft.z3.BoolSort;
 import com.microsoft.z3.FuncDecl;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3TypeAdapter;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3TypeFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class OCLMethodResult{
+public class OCLMethodResult {
   private ResultType type;
 
   private Z3TypeAdapter exprType;
@@ -63,7 +62,7 @@ public class OCLMethodResult{
   }
 
   public void setType(Z3TypeAdapter type) {
-      if (type.isNative()) {
+    if (type.isNative()) {
       this.type = ResultType.PRIMITIVE;
     } else {
       this.type = ResultType.OBJECT;

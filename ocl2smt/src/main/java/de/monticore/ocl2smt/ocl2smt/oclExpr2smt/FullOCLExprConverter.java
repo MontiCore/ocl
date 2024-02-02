@@ -21,10 +21,10 @@ public class FullOCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE>
   private OCLMethodResult result;
 
   public FullOCLExprConverter(
-
       ExprFactory<EXPR, TYPE> factory,
-      CDExprFactory<EXPR, TYPE> cdFactory,      TypeFactory<TYPE> typeFactory) {
-    super(factory, cdFactory,typeFactory);
+      CDExprFactory<EXPR, TYPE> cdFactory,
+      TypeFactory<TYPE> typeFactory) {
+    super(factory, cdFactory, typeFactory);
   }
 
   public void enterPre() {

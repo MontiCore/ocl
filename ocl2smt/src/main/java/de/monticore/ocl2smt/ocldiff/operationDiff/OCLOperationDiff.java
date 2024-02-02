@@ -6,7 +6,6 @@ import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
-import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.FullOCL2SMTGenerator;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.odbasis._ast.ASTODArtifact;
@@ -26,7 +25,7 @@ public class OCLOperationDiff {
       boolean partial) {
 
     ctx = buildContext();
-  //todo fixme  OCLHelper.buildPreCD(ast);
+    // todo fixme  OCLHelper.buildPreCD(ast);
     FullOCL2SMTGenerator fullOCL2SMTGenerator = new FullOCL2SMTGenerator(ast, ctx);
 
     return oclWitnessHelper(ocl, fullOCL2SMTGenerator, method, partial);
@@ -35,7 +34,7 @@ public class OCLOperationDiff {
   public Set<OCLOPWitness> oclWitness(
       ASTCDCompilationUnit ast, Set<ASTOCLCompilationUnit> ocl, boolean partial) {
     ctx = buildContext();
-    //todo fixm OCLHelper.buildPreCD(ast);
+    // todo fixm OCLHelper.buildPreCD(ast);
     FullOCL2SMTGenerator fullOCL2SMTGenerator = new FullOCL2SMTGenerator(ast, ctx);
     Set<OCLOPWitness> res = new HashSet<>();
 
@@ -111,7 +110,7 @@ public class OCLOperationDiff {
     ctx = buildContext();
     Set<OCLOPWitness> opDiffWitness = new HashSet<>();
     List<ASTODLink> trace = new ArrayList<>();
-    //todo fixm  OCLHelper.buildPreCD(ast);
+    // todo fixm  OCLHelper.buildPreCD(ast);
     FullOCL2SMTGenerator fullOcl2smt = new FullOCL2SMTGenerator(ast, ctx);
 
     // get new invariants

@@ -2,7 +2,6 @@ package de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory;
 
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
-import java.util.List;
 import java.util.function.Function;
 
 public interface ExprFactory<E extends ExprAdapter<?, T>, T> {
@@ -71,10 +70,6 @@ public interface ExprFactory<E extends ExprAdapter<?, T>, T> {
   E mkSetIntersect(E set1, E set);
 
   E mkSetMinus(E set1, E set);
-
-  E mkForall(List<E> uninterpretedBool, E subRes);
-
-  E mkExists(List<E> uninterpretedBool, E subRes);
 
   E mkContains(E callerExpr, E arg1);
 

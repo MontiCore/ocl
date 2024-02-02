@@ -1,13 +1,11 @@
 package de.monticore.ocl2smt.ocldiff.operationDiff;
 
-import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3TypeAdapter;
 import de.monticore.ocl2smt.util.OCLMethodResult;
-import java.util.Optional;
 
 /** this Class is saves data obtains after the conversion of an OCL Constraint in SMT */
 public class OPConstraint {
@@ -32,7 +30,6 @@ public class OPConstraint {
 
     this.ThisType = thisObj.getExprType();
     this.thisObj = thisObj;
-
 
     operationConstraint = opConstraint;
   }

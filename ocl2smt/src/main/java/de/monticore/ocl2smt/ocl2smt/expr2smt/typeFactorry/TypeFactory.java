@@ -27,5 +27,4 @@ public interface TypeFactory<T> {
   TypeAdapter<T> mkDoubleType();
 
   SymTypeExpression deriveType(ASTNameExpression node);
-
 }

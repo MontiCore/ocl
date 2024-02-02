@@ -23,10 +23,6 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>, Sort> {
     this.type = type;
   }
 
-  boolean isArithExpr() {
-    return type.isInt() || type.isDouble();
-  }
-
   public boolean isStringExpr() {
     return type.isString();
   }
@@ -47,16 +43,12 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>, Sort> {
     return type.isInt();
   }
 
-  public boolean isCharExpr() {
-    return type.isChar();
-  }
-
   public boolean isDoubleExpr() {
     return type.isChar();
   }
 
   @Override
   public String toString() {
-    return getExprType().getName();
+    return expr.toString();
   }
 }

@@ -9,7 +9,6 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl2smt.OCL2SMTAbstractTest;
 import de.monticore.ocl2smt.helpers.IOHelper;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3ExprAdapter;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.odbasis._ast.ASTODArtifact;

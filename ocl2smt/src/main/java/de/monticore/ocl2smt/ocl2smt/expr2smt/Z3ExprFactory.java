@@ -2,29 +2,33 @@ package de.monticore.ocl2smt.ocl2smt.expr2smt;
 
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory.CDExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory.ExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.function.Function;
 
-public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter, Sort>, CDExprFactory<Z3ExprAdapter,Sort> {
+public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter, Sort> {
   private final Context ctx;
   private final Z3TypeFactory tFactory;
+
+  private final Z3CDExprFactory cdFactory;
   private final CD2SMTGenerator cd2SMTGenerator;
 
-  private final String wrongParam = "Method %s get parameter with wrong type '%s' expected was %s";
+  private final String wrongParam =
+      "Method %s(...) get parameter with wrong type '%s' expected was %s";
 
-  public Z3ExprFactory(CD2SMTGenerator cd2SMTGenerator) {
+  public Z3ExprFactory(
+      Z3CDExprFactory cdFactory, Z3TypeFactory factory, CD2SMTGenerator cd2SMTGenerator) {
     this.ctx = cd2SMTGenerator.getContext();
     this.cd2SMTGenerator = cd2SMTGenerator;
-    this.tFactory = new Z3TypeFactory(cd2SMTGenerator);
+    this.tFactory = factory;
+    this.cdFactory = cdFactory;
   }
 
   @Override
   public Z3ExprAdapter mkBool(boolean node) {
-    return new Z3ExprAdapter(ctx.mkBool(true), tFactory.mkBoolType());
+    return new Z3ExprAdapter(ctx.mkBool(node), tFactory.mkBoolType());
   }
 
   @Override
@@ -131,7 +135,7 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter, Sort>, CDExprFa
 
     Z3ExprAdapter leftElement = ((Z3SetExprAdapter) left).getElement();
     Z3ExprAdapter body = mkEq(mkContains(leftElement, right), mkContains(right, right));
-    return mkForall(List.of(leftElement), body);
+    return cdFactory.mkForall(List.of(leftElement), body);
   }
 
   @Override
@@ -317,7 +321,7 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter, Sort>, CDExprFa
     Z3SetExprAdapter set2 = (Z3SetExprAdapter) exp2;
     Z3ExprAdapter expr = set1.getElement();
     Z3ExprAdapter body = mkImplies(mkContains(set2, expr), mkContains(set1, expr));
-    return mkForall(List.of(expr), body);
+    return cdFactory.mkForall(List.of(expr), body);
   }
 
   @Override
@@ -326,7 +330,7 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter, Sort>, CDExprFa
 
     Z3SetExprAdapter set = ((Z3SetExprAdapter) expr);
     Z3ExprAdapter con = set.getElement();
-    return mkForall(List.of(expr), mkNot(mkContains(set, con)));
+    return cdFactory.mkForall(List.of(expr), mkNot(mkContains(set, con)));
   }
 
   @Override
@@ -366,16 +370,6 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter, Sort>, CDExprFa
   }
 
   @Override
-  public Z3ExprAdapter mkForall(List<Z3ExprAdapter> uninterpretedBool, Z3ExprAdapter subRes) {
-    return null;
-  }
-
-  @Override
-  public Z3ExprAdapter mkExists(List<Z3ExprAdapter> uninterpretedBool, Z3ExprAdapter subRes) {
-    return null;
-  }
-
-  @Override
   public Z3ExprAdapter mkContains(Z3ExprAdapter expr1, Z3ExprAdapter arg1) {
     if (expr1.isStringExpr()) {
       Expr<SeqSort<Sort>> str1 = (Expr<SeqSort<Sort>>) expr1.getExpr();
@@ -391,21 +385,9 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter, Sort>, CDExprFa
     return new Z3ExprAdapter(ctx.mkConst(name, type.getType()), (Z3TypeAdapter) type);
   }
 
-
-
   @Override
   public Z3ExprAdapter mkNeq(Z3ExprAdapter left, Z3ExprAdapter right) {
     return mkNot(mkEq(left, right));
-  }
-
-  @Override
-  public Z3ExprAdapter getLink(Z3ExprAdapter obj, String link) {
-    return null;
-  }
-
-  @Override
-  public Z3ExprAdapter getLinkedObjects(Z3ExprAdapter obj, String role) {
-    return null;
   }
 
   private void checkBool(String method, Z3ExprAdapter node) {

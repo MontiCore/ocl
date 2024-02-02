@@ -37,7 +37,7 @@ public class OD2SMTGenerator implements IOD2SMTGenerator {
   protected ASTCDCompilationUnit cd;
   protected ASTODArtifact od;
   protected Context ctx;
-  protected OCLExprConverter<Z3ExprAdapter,Sort> exprConv; // TODO: update to Expression2SMT
+  protected OCLExprConverter<Z3ExprAdapter, Sort> exprConv; // TODO: update to Expression2SMT
 
   protected Map<ASTODObject, Expr<?>> objectsMap = new HashMap<>();
   protected Map<ASTODObject, Set<IdentifiableBoolExpr>> objectConstraint = new HashMap<>();
@@ -53,8 +53,8 @@ public class OD2SMTGenerator implements IOD2SMTGenerator {
     }
 
     // init the expression converter
-  //  exprConv = new OCLExprConverter<>(cd, ctx);  todo fixme
-  //  cd2SMTGenerator = exprConv.getCd2smtGenerator();
+    //  exprConv = new OCLExprConverter<>(cd, ctx);  todo fixme
+    //  cd2SMTGenerator = exprConv.getCd2smtGenerator();
     this.ctx = ctx;
     this.cd = cd;
     this.od = od;

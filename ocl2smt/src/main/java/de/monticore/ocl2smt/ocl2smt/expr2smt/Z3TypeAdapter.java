@@ -1,6 +1,7 @@
 package de.monticore.ocl2smt.ocl2smt.expr2smt;
 
 import com.microsoft.z3.Sort;
+import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 
 public class Z3TypeAdapter implements TypeAdapter<Sort> {
@@ -10,10 +11,25 @@ public class Z3TypeAdapter implements TypeAdapter<Sort> {
 
   private final ExpressionKind kind;
 
+  private final ASTCDType astcdType;
+
   Z3TypeAdapter(String name, Sort sort, ExpressionKind kind) {
     this.name = name;
     this.sort = sort;
     this.kind = kind;
+    this.astcdType = null;
+  }
+
+  Z3TypeAdapter(ASTCDType astcdType, Sort sort, ExpressionKind kind) {
+    this.astcdType = astcdType;
+    this.name = astcdType.getName();
+    this.sort = sort;
+    this.kind = kind;
+  }
+
+  @Override
+  public ExpressionKind getKind() {
+    return kind;
   }
 
   @Override
@@ -68,11 +84,15 @@ public class Z3TypeAdapter implements TypeAdapter<Sort> {
 
   @Override
   public boolean isNative() {
-    return isBool()||isChar()||isDouble()||isInt()||isString();
+    return isBool() || isChar() || isDouble() || isInt() || isString();
   }
 
   @Override
   public String toString() {
     return name;
+  }
+
+  public ASTCDType getCDType() {
+    return astcdType;
   }
 }

@@ -2,6 +2,7 @@ package de.monticore.ocl2smt.ocl2smt.expr2smt;
 
 import com.microsoft.z3.Context;
 import com.microsoft.z3.Sort;
+import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
@@ -17,6 +18,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types3.Type4Ast;
 import de.se_rwth.commons.logging.Log;
+import java.util.Optional;
 
 public class Z3TypeFactory implements TypeFactory<Sort> {
   private final Context ctx;
@@ -55,75 +57,94 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
 
   @Override
   public Z3TypeAdapter adapt(ASTCDType cdType) {
-    return null;
+    return new Z3TypeAdapter(cdType, cd2SMTGenerator.getSort(cdType), ExpressionKind.OO);
   }
 
   @Override
   public Z3TypeAdapter adapt(ASTMCType mcType) {
-    Z3TypeAdapter res;
+    Optional<Z3TypeAdapter> res = Optional.empty();
 
+    // case primitive type
     if (mcType instanceof ASTMCPrimitiveType) {
       ASTMCPrimitiveType primType = (ASTMCPrimitiveType) mcType;
       if (primType.isBoolean()) {
-        res = mkBoolType();
+        res = Optional.ofNullable(mkBoolType());
       } else if (primType.isDouble()) {
-        res = mkDoubleType();
+        res = Optional.ofNullable(mkDoubleType());
       } else if (primType.isInt()) {
-        res = mkInType();
+        res = Optional.ofNullable(mkInType());
       } else if (primType.isChar()) {
-        res = mkCharTYpe();
+        res = Optional.ofNullable(mkCharTYpe());
       } else if (primType.isByte()) {
-        res = mkInType();
+        res = Optional.ofNullable(mkInType());
       } else if (primType.isFloat()) {
-        res = mkDoubleType();
+        res = Optional.ofNullable(mkDoubleType());
       } else if (primType.isLong()) {
-        return mkInType();
+        res = Optional.ofNullable(mkInType());
       } else {
-        return mkInType();
+        res = Optional.ofNullable(mkInType());
       }
 
+      // case qualified type
     } else if (mcType instanceof ASTMCQualifiedType) {
-      res = adaptQName(mcType.printType());
-    } else {
-      res = null;
-      Log.error("type conversion ist only implemented for  primitives types and Qualified types");
+      res = Optional.ofNullable(adaptQName(mcType.printType()).orElse(null));
     }
-    return res;
+
+    // case CDType
+    if (res.isEmpty()) {
+      Optional<ASTCDType> astcdType = resolveCDType(mcType.printType());
+      res = astcdType.map(this::adapt);
+    }
+
+    if (res.isEmpty()) {
+      Log.error("Cannot resolve the type " + mcType.printType());
+      assert false;
+    }
+
+    return res.get();
   }
 
   @Override
   public TypeAdapter<Sort> adapt(SymTypeExpression typeSymbol) {
-    if (typeSymbol.isObjectType() || typeSymbol.isPrimitive()) {
-      String typename = typeSymbol.getTypeInfo().getFullName();
-      return adaptQName(typename);
+    // case primitive type
+    Optional<Z3TypeAdapter> res = adaptQName(typeSymbol.printFullName());
+
+    // case CEType
+    if (res.isEmpty()) {
+      Optional<ASTCDType> astcdType = resolveCDType(typeSymbol.print());
+      res = astcdType.map(this::adapt);
     }
-    Log.error("Building OCLType not implement for the type " + typeSymbol.printFullName());
-    return null;
+
+    if (res.isEmpty()) {
+      Log.error("Cannot resolve the type " + typeSymbol.printFullName());
+      assert false;
+    }
+    return res.get();
   }
 
-  private Z3TypeAdapter adaptQName(String qName) {
+  private Optional<Z3TypeAdapter> adaptQName(String qName) {
     switch (qName) {
       case "Boolean":
       case "boolean":
       case "java.lang.Boolean":
-        return mkBoolType();
+        return Optional.ofNullable(mkBoolType());
       case "Double":
       case "double":
       case "Real":
       case "java.lang.Double":
-        return mkDoubleType();
+        return Optional.ofNullable(mkDoubleType());
       case "Integer":
       case "Date":
       case "int":
       case "Int":
       case "java.lang.Integer":
       case "java.util.Date":
-        return mkInType();
+        return Optional.ofNullable(mkInType());
       case "String":
       case "java.lang.String":
-        return mkStringType();
+        return Optional.ofNullable(mkStringType());
     }
-    return null;
+    return Optional.empty();
   }
 
   public static SymTypeExpression deriveType(ASTExpression node) {
@@ -145,5 +166,10 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
   @Override
   public SymTypeExpression deriveType(ASTNameExpression node) {
     return deriveType((ASTExpression) node);
+  }
+
+  private Optional<ASTCDType> resolveCDType(String name) {
+    return Optional.ofNullable(
+        CDHelper.getASTCDType(name, cd2SMTGenerator.getClassDiagram().getCDDefinition()));
   }
 }
