@@ -26,7 +26,7 @@ public abstract class ExpressionAbstractTest extends OCL2SMTAbstractTest {
   protected static ASTOCLCompilationUnit oclAST;
   protected static ASTCDCompilationUnit cdAST;
   protected static Solver solver;
-  protected static OCL2SMTGenerator<Z3ExprAdapter> ocl2SMTGenerator;
+  protected static OCL2SMTGenerator ocl2SMTGenerator;
 
   protected void parse(String cdFileName, String oclFileName) throws IOException {
     oclAST =

@@ -1,22 +1,31 @@
-package de.monticore.ocl2smt.ocl2smt.expressionconverter;
+package de.monticore.ocl2smt.ocl2smt.oclExpr2smt;
 
-import com.microsoft.z3.*;
-import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLAtPreQualification;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory.CDExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory.ExprFactory;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.typeFactorry.TypeFactory;
 import de.monticore.ocl2smt.util.OCLMethodResult;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 
 /** This class convert All OCL-Expressions including @Pre-Expressions in SMT */
-public class FullOCLExpressionConverter<T extends ExprAdapter<?>> extends OCLExprConverter<T> {
+public class FullOCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE>
+    extends OCLExprConverter<EXPR, TYPE> {
   private boolean isPreStrategy = false;
   private boolean isPreCond = false;
 
-  private T thisObj;
+  private EXPR thisObj;
 
   private OCLMethodResult result;
+
+  public FullOCLExprConverter(
+
+      ExprFactory<EXPR, TYPE> factory,
+      CDExprFactory<EXPR, TYPE> cdFactory,      TypeFactory<TYPE> typeFactory) {
+    super(factory, cdFactory,typeFactory);
+  }
 
   public void enterPre() {
     isPreStrategy = true;
@@ -37,7 +46,7 @@ public class FullOCLExpressionConverter<T extends ExprAdapter<?>> extends OCLExp
     result = null;
   }
 
-  public void setThisObj(T thisObj) {
+  public void setThisObj(EXPR thisObj) {
     this.thisObj = thisObj;
   }
 
@@ -64,13 +73,9 @@ public class FullOCLExpressionConverter<T extends ExprAdapter<?>> extends OCLExp
     return isPreStrategy;
   }
 
-  public FullOCLExpressionConverter(ASTCDCompilationUnit ast, Context ctx) {
-    super(ast, ctx);
-  }
-
   @Override
-  public T convertExpr(ASTExpression node) {
-    T result = null;
+  public EXPR convertExpr(ASTExpression node) {
+    EXPR result = null;
 
     if (node instanceof ASTOCLAtPreQualification) {
       result = convertAt((ASTOCLAtPreQualification) node);
@@ -82,13 +87,13 @@ public class FullOCLExpressionConverter<T extends ExprAdapter<?>> extends OCLExp
     return result;
   }
 
-  protected T convertAt(ASTOCLAtPreQualification node) {
+  protected EXPR convertAt(ASTOCLAtPreQualification node) {
     enterPre();
     return convertExpr(node.getExpression());
   }
 
   @Override
-  protected T convert(ASTNameExpression node) {
+  protected EXPR convert(ASTNameExpression node) {
     /*   boolean isPre = isPreStrategy();
     exitPre();
     T res = null;
@@ -185,7 +190,7 @@ public class FullOCLExpressionConverter<T extends ExprAdapter<?>> extends OCLExp
     return Optional.of(expr);
   }*/
 
-  public T convertSet(ASTExpression node) {
+  public EXPR convertSet(ASTExpression node) {
     /* Optional<T> res = convertSetOpt(node);
     if (res.isPresent()) {
       return res.get();
@@ -200,7 +205,7 @@ public class FullOCLExpressionConverter<T extends ExprAdapter<?>> extends OCLExp
     return null;
   }
 
-  protected T convertNameSet(ASTNameExpression node) {
+  protected EXPR convertNameSet(ASTNameExpression node) {
     return null;
   }
   /*  T res = null;

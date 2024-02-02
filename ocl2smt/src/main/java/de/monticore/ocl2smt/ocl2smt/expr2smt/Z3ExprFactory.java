@@ -1,424 +1,368 @@
 package de.monticore.ocl2smt.ocl2smt.expr2smt;
 
 import com.microsoft.z3.*;
-import de.monticore.ocl2smt.ocl2smt.expr.ExpressionKind;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory.CDExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory.ExprFactory;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExprConverter;
-import de.monticore.ocl2smt.util.OCLType;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.function.Function;
 
-public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter> {
-  Context ctx;
+public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter, Sort>, CDExprFactory<Z3ExprAdapter,Sort> {
+  private final Context ctx;
+  private final Z3TypeFactory tFactory;
+  private final CD2SMTGenerator cd2SMTGenerator;
 
-  public Z3ExprFactory(Context context) {
-    this.ctx = context;
+  private final String wrongParam = "Method %s get parameter with wrong type '%s' expected was %s";
+
+  public Z3ExprFactory(CD2SMTGenerator cd2SMTGenerator) {
+    this.ctx = cd2SMTGenerator.getContext();
+    this.cd2SMTGenerator = cd2SMTGenerator;
+    this.tFactory = new Z3TypeFactory(cd2SMTGenerator);
   }
 
   @Override
   public Z3ExprAdapter mkBool(boolean node) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
-    expr.setExpr(ctx.mkBool(node));
-    expr.setKind(ExpressionKind.BOOL);
-    return expr;
+    return new Z3ExprAdapter(ctx.mkBool(true), tFactory.mkBoolType());
   }
 
   @Override
   public Z3ExprAdapter mkString(String node) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
-    expr.setExpr(ctx.mkString(node));
-    expr.setKind(ExpressionKind.STRING);
-    return expr;
+    return new Z3ExprAdapter(ctx.mkString(node), tFactory.mkStringType());
   }
 
   @Override
   public Z3ExprAdapter mkInt(int node) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
-    expr.setExpr(ctx.mkInt(node));
-    expr.setKind(ExpressionKind.INTEGER);
-    return expr;
+    return new Z3ExprAdapter(ctx.mkInt(node), tFactory.mkInType());
   }
 
   @Override
   public Z3ExprAdapter mkChar(char node) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
-    expr.setExpr(ctx.mkInt(node));
-    expr.setKind(ExpressionKind.CHAR);
-    return expr;
+    return new Z3ExprAdapter(ctx.mkInt(node), tFactory.mkCharTYpe());
   }
 
   @Override
   public Z3ExprAdapter mkDouble(double node) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
-    expr.setExpr(ctx.mkFP(node, ctx.mkFPSortDouble()));
-    expr.setKind(ExpressionKind.DOUBLE);
-    return expr;
+    return new Z3ExprAdapter(ctx.mkFP(node, ctx.mkFPSortDouble()), tFactory.mkDoubleType());
   }
 
   @Override
   public Z3ExprAdapter mkNot(Z3ExprAdapter node) {
-    if (!node.isBool()) {
-      Log.error("mkNot() is only implemented for BoolExpression");
-    }
-
-    Z3ExprAdapter res = new Z3ExprAdapter();
-    res.setExpr(ctx.mkNot((BoolExpr) node.getExpr()));
-    res.setKind(ExpressionKind.BOOL);
-    return res;
+    checkBool("mkNot", node);
+    return new Z3ExprAdapter(ctx.mkNot((BoolExpr) node.getExpr()), tFactory.mkBoolType());
   }
 
   @Override
   public Z3ExprAdapter mkAnd(Z3ExprAdapter left, Z3ExprAdapter right) {
-    if (!left.isBool() || !right.isBool()) {
-      Log.error("mkAnd(..,..) is only implemented for Bool Expressions left and right");
-    }
-
-    Z3ExprAdapter expr = new Z3ExprAdapter();
-    expr.setKind(ExpressionKind.BOOL);
-    expr.setExpr(ctx.mkAnd((BoolExpr) left.getExpr(), (BoolExpr) right.getExpr()));
-    return expr;
+    checkBool("mkAnd", left);
+    checkBool("mkAnd", right);
+    return new Z3ExprAdapter(
+        ctx.mkAnd((BoolExpr) left.getExpr(), (BoolExpr) right.getExpr()), tFactory.mkBoolType());
   }
 
   @Override
   public Z3ExprAdapter mkOr(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
-    if (!leftNode.isBool() || !rightNode.isBool()) {
-      Log.error("mkOr(..,..) is only implemented for BoolExpressions left and right");
-    }
+    checkBool("mkOr", leftNode);
+    checkBool("mkOr", rightNode);
 
-    Z3ExprAdapter expr = new Z3ExprAdapter();
-    expr.setKind(ExpressionKind.BOOL);
-    expr.setExpr(ctx.mkOr((BoolExpr) leftNode.getExpr(), (BoolExpr) rightNode.getExpr()));
-    return expr;
+    BoolExpr left = (BoolExpr) leftNode.getExpr();
+    BoolExpr right = (BoolExpr) rightNode.getExpr();
+    return new Z3ExprAdapter(ctx.mkOr(left, right), tFactory.mkBoolType());
   }
 
   @Override
   public Z3ExprAdapter mkImplies(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
-    if (!leftNode.isBool() || !rightNode.isBool()) {
-      Log.error("mkImplies(..,..) is only implemented for BoolExpressions left and right");
-    }
+    checkBool("mkImplies", leftNode);
+    checkBool("mkImplies", rightNode);
 
-    Z3ExprAdapter expr = new Z3ExprAdapter();
-    expr.setKind(ExpressionKind.BOOL);
-    expr.setExpr(ctx.mkImplies((BoolExpr) leftNode.getExpr(), (BoolExpr) rightNode.getExpr()));
-    return expr;
+    BoolExpr left = (BoolExpr) leftNode.getExpr();
+    BoolExpr right = (BoolExpr) rightNode.getExpr();
+    return new Z3ExprAdapter(ctx.mkImplies(left, right), tFactory.mkBoolType());
   }
 
   @Override
   public Z3ExprAdapter mkLt(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
+    checkArith("mkLt", leftNode);
+    checkArith("mkLt", rightNode);
 
-    if (leftNode.kind == ExpressionKind.INTEGER || rightNode.kind == ExpressionKind.INTEGER) {
-      expr.setExpr(ctx.mkLt((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr()));
-    } else if (leftNode.kind == ExpressionKind.DOUBLE || rightNode.kind == ExpressionKind.DOUBLE) {
-      expr.setExpr(ctx.mkFPLt((FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr()));
+    Expr<?> value;
+    if (leftNode.isIntExpr() && rightNode.isIntExpr()) {
+      value = ctx.mkLt((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr());
     } else {
-      Log.error("mkLt(..,..) is only implemented for Int or real expressions left and right");
+      value = ctx.mkFPLt((FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr());
     }
-    expr.setKind(ExpressionKind.BOOL);
-    return expr;
+    return new Z3ExprAdapter(value, tFactory.mkBoolType());
   }
 
   @Override
   public Z3ExprAdapter mkLeq(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
+    checkArith("mkLeq", leftNode);
+    checkArith("mkLeq", rightNode);
 
-    if (leftNode.kind == ExpressionKind.INTEGER || rightNode.kind == ExpressionKind.INTEGER) {
-      expr.setExpr(ctx.mkLe((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr()));
-    } else if (leftNode.kind == ExpressionKind.DOUBLE || rightNode.kind == ExpressionKind.DOUBLE) {
-      expr.setExpr(ctx.mkFPLEq((FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr()));
+    Expr<?> expr;
+    if (leftNode.isIntExpr() && rightNode.isIntExpr()) {
+      expr = ctx.mkLe((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr());
     } else {
-      Log.error("mkLeq(..,..) is only implemented for Int or real expressions left and right");
+      expr = ctx.mkFPLEq((FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr());
     }
-    expr.setKind(ExpressionKind.BOOL);
-    return expr;
+    return new Z3ExprAdapter(expr, tFactory.mkBoolType());
   }
 
   @Override
   public Z3ExprAdapter mkGt(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
+    checkArith("mkGt", leftNode);
+    checkArith("mkGt", rightNode);
 
-    if (leftNode.kind == ExpressionKind.INTEGER || rightNode.kind == ExpressionKind.INTEGER) {
-      expr.setExpr(ctx.mkGt((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr()));
-    } else if (leftNode.kind == ExpressionKind.DOUBLE || rightNode.kind == ExpressionKind.DOUBLE) {
-
-      expr.setExpr(ctx.mkFPGt((FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr()));
+    Expr<?> expr;
+    if (leftNode.isIntExpr() && rightNode.isIntExpr()) {
+      expr = ctx.mkGt((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr());
     } else {
-      Log.error("mkGt(..,..) is only implemented for Int or real expressions left and right");
+      expr = ctx.mkFPGt((FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr());
     }
-    expr.setKind(ExpressionKind.BOOL);
-    return expr;
+    return new Z3ExprAdapter(expr, tFactory.mkBoolType());
+  }
+
+  @Override
+  public Z3ExprAdapter mkEq(Z3ExprAdapter left, Z3ExprAdapter right) {
+    if (!left.isSetExpr() && !right.isSetExpr()) {
+      return new Z3ExprAdapter(ctx.mkEq(left.getExpr(), right.getExpr()), tFactory.mkBoolType());
+    }
+
+    Z3ExprAdapter leftElement = ((Z3SetExprAdapter) left).getElement();
+    Z3ExprAdapter body = mkEq(mkContains(leftElement, right), mkContains(right, right));
+    return mkForall(List.of(leftElement), body);
   }
 
   @Override
   public Z3ExprAdapter mkGe(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
+    checkArith("mkGe", leftNode);
+    checkArith("mkGe", rightNode);
 
-    if (leftNode.kind == ExpressionKind.INTEGER || rightNode.kind == ExpressionKind.INTEGER) {
-      expr.setExpr(ctx.mkGe((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr()));
-    } else if (leftNode.kind == ExpressionKind.DOUBLE || rightNode.kind == ExpressionKind.DOUBLE) {
-      expr.setExpr(ctx.mkFPGEq((FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr()));
+    Expr<?> expr;
+    if (leftNode.isIntExpr() || rightNode.isIntExpr()) {
+      expr = ctx.mkGe((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr());
     } else {
-      Log.error("mkGe(..,..) is only implemented for Int or real expressions left and right");
+      expr = ctx.mkFPGEq((FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr());
     }
-    expr.setKind(ExpressionKind.BOOL);
-    return expr;
+    return new Z3ExprAdapter(expr, tFactory.mkBoolType());
   }
 
   @Override
   public Z3ExprAdapter mkSub(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
+    checkArith("mkSub", leftNode);
+    checkArith("mkSub", rightNode);
 
-    if (leftNode.kind == ExpressionKind.INTEGER || rightNode.kind == ExpressionKind.INTEGER) {
-      expr.setExpr(
-          ctx.mkSub((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr()));
-      expr.setKind(ExpressionKind.INTEGER);
-    } else if (leftNode.kind == ExpressionKind.DOUBLE || rightNode.kind == ExpressionKind.DOUBLE) {
-      expr.setExpr(
-          ctx.mkFPSub(ctx.mkFPRNA(), (FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr()));
-      expr.setKind(ExpressionKind.DOUBLE);
+    Expr<?> expr;
+    Z3TypeAdapter type;
+    if (leftNode.isIntExpr() || rightNode.isDoubleExpr()) {
+      expr = ctx.mkSub((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr());
+      type = tFactory.mkInType();
     } else {
-      Log.error("mkSub(..,..) is only implemented for Int or real expressions left and right");
+      expr = ctx.mkFPSub(ctx.mkFPRNA(), (FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr());
+      type = tFactory.mkDoubleType();
     }
 
-    return expr;
+    return new Z3ExprAdapter(expr, type);
   }
 
   @Override
   public Z3ExprAdapter mkPlus(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
+    checkArith("mkPlus", leftNode);
+    checkArith("mkPlus", rightNode);
 
-    if (leftNode.kind == ExpressionKind.INTEGER || rightNode.kind == ExpressionKind.INTEGER) {
-      expr.setExpr(
-          ctx.mkAdd((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr()));
-      expr.setKind(ExpressionKind.INTEGER);
-    } else if (leftNode.kind == ExpressionKind.DOUBLE || rightNode.kind == ExpressionKind.DOUBLE) {
-      expr.setExpr(
-          ctx.mkFPAdd(ctx.mkFPRNA(), (FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr()));
-      expr.setKind(ExpressionKind.DOUBLE);
-    } else if (leftNode.kind == ExpressionKind.STRING || rightNode.kind == ExpressionKind.STRING) {
-
-      expr.setExpr(
-          ctx.mkConcat(
-              (Expr<SeqSort<Sort>>) leftNode.getExpr(), (Expr<SeqSort<Sort>>) rightNode.getExpr()));
-      expr.setKind(ExpressionKind.STRING);
+    Expr<?> expr;
+    Z3TypeAdapter type;
+    if (leftNode.isIntExpr() || rightNode.isIntExpr()) {
+      expr = ctx.mkAdd((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr());
+      type = tFactory.mkInType();
     } else {
-      Log.error("mkPlus(..,..) is only implemented for Int or real expressions left and right");
+      expr = ctx.mkFPAdd(ctx.mkFPRNA(), (FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr());
+      type = tFactory.mkDoubleType();
     }
-    return expr;
+    return new Z3ExprAdapter(expr, type);
+  }
+
+  @Override
+  public Z3ExprAdapter mkConcat(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
+    checkString("mkSub", leftNode);
+    checkString("mkSub", rightNode);
+
+    Expr<SeqSort<CharSort>> left = (Expr<SeqSort<CharSort>>) leftNode.getExpr();
+    Expr<SeqSort<CharSort>> right = (Expr<SeqSort<CharSort>>) rightNode.getExpr();
+    return new Z3ExprAdapter(ctx.mkConcat(left, right), tFactory.mkStringType());
   }
 
   @Override
   public Z3ExprAdapter mkMul(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
+    checkArith("mkSub", leftNode);
+    checkArith("mkSub", rightNode);
 
-    if (leftNode.kind == ExpressionKind.INTEGER || rightNode.kind == ExpressionKind.INTEGER) {
-      expr.setExpr(
-          ctx.mkMul((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr()));
-      expr.setKind(ExpressionKind.INTEGER);
-    } else if (leftNode.kind == ExpressionKind.DOUBLE || rightNode.kind == ExpressionKind.DOUBLE) {
-      expr.setExpr(
-          ctx.mkFPMul(ctx.mkFPRNA(), (FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr()));
-      expr.setKind(ExpressionKind.DOUBLE);
+    Expr<?> expr;
+    Z3TypeAdapter type;
+    if (leftNode.isIntExpr() || rightNode.isIntExpr()) {
+      expr = ctx.mkMul((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr());
+      type = tFactory.mkInType();
     } else {
-      Log.error("mkMul(..,..) is only implemented for Int or real expressions left and right");
+      expr = ctx.mkFPMul(ctx.mkFPRNA(), (FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr());
+      type = tFactory.mkDoubleType();
     }
-    return expr;
+    return new Z3ExprAdapter(expr, type);
   }
 
   @Override
   public Z3ExprAdapter mkDiv(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
+    checkArith("mkSub", leftNode);
+    checkArith("mkSub", rightNode);
 
-    if (leftNode.kind == ExpressionKind.INTEGER || rightNode.kind == ExpressionKind.INTEGER) {
-      expr.setExpr(
-          ctx.mkDiv((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr()));
-      expr.setKind(ExpressionKind.INTEGER);
-    } else if (leftNode.kind == ExpressionKind.DOUBLE || rightNode.kind == ExpressionKind.DOUBLE) {
-      expr.setExpr(
-          ctx.mkFPDiv(ctx.mkFPRNA(), (FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr()));
-      expr.setKind(ExpressionKind.DOUBLE);
+    Expr<?> expr;
+    Z3TypeAdapter type;
+    if (leftNode.isIntExpr() || rightNode.isIntExpr()) {
+      expr = ctx.mkDiv((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr());
+      type = tFactory.mkInType();
     } else {
-      Log.error("mkDiv(..,..) is only implemented for Int or real expressions left and right");
+      expr = ctx.mkFPDiv(ctx.mkFPRNA(), (FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr());
+      type = tFactory.mkDoubleType();
     }
-    return expr;
+    return new Z3ExprAdapter(expr, type);
   }
 
   @Override
   public Z3ExprAdapter mkMod(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
+    checkInt("mkSub", leftNode);
+    checkArith("mkSub", rightNode);
 
-    if (leftNode.kind == ExpressionKind.INTEGER || rightNode.kind == ExpressionKind.INTEGER) {
-      expr.setExpr(ctx.mkMod((IntExpr) leftNode.getExpr(), (IntExpr) rightNode.getExpr()));
-    } else {
-      Log.error("mkMod(..,..) is only implemented for Int or real expressions left and right");
-    }
-    expr.setKind(ExpressionKind.BOOL);
-    return expr;
+    Expr<?> expr = ctx.mkMod((IntExpr) leftNode.getExpr(), (IntExpr) rightNode.getExpr());
+    Z3TypeAdapter type = tFactory.mkInType();
+    return new Z3ExprAdapter(expr, type);
   }
 
   @Override
   public Z3ExprAdapter mkPlusPrefix(Z3ExprAdapter node) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
-
-    if (node.kind != ExpressionKind.INTEGER && node.kind != ExpressionKind.DOUBLE) {
-      Log.error(
-          "mkPlusPrefix(..,..) is only implemented for Int or real expressions left and right");
-    }
-    expr.setExpr(node.getExpr());
-    expr.setKind(node.kind);
-    return expr;
+    return node;
   }
 
   @Override
   public Z3ExprAdapter mkMinusPrefix(Z3ExprAdapter node) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
+    checkArith("mkMinusPrefix", node);
 
-    if (node.kind == ExpressionKind.INTEGER) {
-      expr.setExpr(ctx.mkMul(ctx.mkInt(-1), (ArithExpr<?>) node.getExpr()));
-      expr.setKind(ExpressionKind.INTEGER);
-    } else if (node.kind == ExpressionKind.DOUBLE) {
-      expr.setExpr(
-          ctx.mkFPMul(ctx.mkFPRNA(), ctx.mkFP(-1, ctx.mkFPSortDouble()), (FPExpr) node.getExpr()));
-      expr.setKind(ExpressionKind.DOUBLE);
+    Expr<?> expr;
+    Z3TypeAdapter type;
+    if (node.isIntExpr()) {
+      expr = ctx.mkMul(ctx.mkInt(-1), (ArithExpr<?>) node.getExpr());
+      type = tFactory.mkInType();
     } else {
-      Log.error(
-          "mkMinusPrefix(..,..) is only implemented for Int or real expressions left and right");
+      expr =
+          ctx.mkFPMul(ctx.mkFPRNA(), ctx.mkFP(-1, ctx.mkFPSortDouble()), (FPExpr) node.getExpr());
+      type = tFactory.mkDoubleType();
     }
-    return expr;
+    return new Z3ExprAdapter(expr, type);
   }
 
   @Override
   public Z3ExprAdapter mkIte(Z3ExprAdapter cond, Z3ExprAdapter expr1, Z3ExprAdapter expr2) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
+    checkBool("mkIte", cond);
 
-    if (!cond.isBool()) {
-      Log.error("mkIte(..,..) is only implemented for Int or real expressions left and right");
-    }
-    expr.setExpr(ctx.mkITE((BoolExpr) cond.getExpr(), expr1.getExpr(), expr2.getExpr()));
-    expr.setKind(ExpressionKind.BOOL);
-    return expr;
+    Expr<?> expr = ctx.mkITE((BoolExpr) cond.getExpr(), expr1.getExpr(), expr2.getExpr());
+    return new Z3ExprAdapter(expr, tFactory.mkBoolType());
   }
 
   @Override
   public Z3ExprAdapter mkReplace(Z3ExprAdapter s, Z3ExprAdapter src, Z3ExprAdapter dst) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
+    checkString("mkReplace", s);
+    checkString("mkReplace", src);
+    checkString("mkReplace", dst);
 
-    if (!s.isString() || !src.isString() || !dst.isString()) {
-      Log.error("mkIte(..,..) parameter must all be strings");
-    }
-    expr.setExpr(
+    Expr<?> expr =
         ctx.mkReplace(
             (Expr<SeqSort<Sort>>) s.getExpr(),
             (Expr<SeqSort<Sort>>) src.getExpr(),
-            (Expr<SeqSort<Sort>>) dst.getExpr()));
-    expr.setKind(ExpressionKind.STRING);
-    return expr;
-  }
+            (Expr<SeqSort<Sort>>) dst.getExpr());
 
-  @Override
-  public Z3ExprAdapter mkContains(Z3ExprAdapter s1, Z3ExprAdapter s2) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
-
-    if (!s1.isString() || !s2.isString()) {
-      Log.error("mkContains(..,..) parameter must all be strings");
-    }
-    Expr<SeqSort<Sort>> expr1 = (Expr<SeqSort<Sort>>) s1.getExpr();
-    Expr<SeqSort<Sort>> expr2 = (Expr<SeqSort<Sort>>) s2.getExpr();
-
-    expr.setExpr(ctx.mkContains(expr1, expr2));
-    expr.setKind(ExpressionKind.STRING);
-    return expr;
+    return new Z3ExprAdapter(expr, tFactory.mkStringType());
   }
 
   @Override
   public Z3ExprAdapter mkPrefixOf(Z3ExprAdapter s1, Z3ExprAdapter s2) {
-    if (!s1.isString() || !s2.isString()) {
-      Log.error("mkPrefixOf(..,..) parameter must all be strings");
-    }
+    checkString("mkPrefixOf", s1);
+    checkString("mkPrefixOf", s2);
 
-    Z3ExprAdapter expr = new Z3ExprAdapter();
     Expr<SeqSort<Sort>> expr1 = (Expr<SeqSort<Sort>>) s1.getExpr();
     Expr<SeqSort<Sort>> expr2 = (Expr<SeqSort<Sort>>) s2.getExpr();
-    expr.setExpr(ctx.mkPrefixOf(expr1, expr2));
-    expr.setKind(ExpressionKind.STRING);
-    return expr;
+    return new Z3ExprAdapter(ctx.mkPrefixOf(expr1, expr2), tFactory.mkStringType());
   }
 
   @Override
   public Z3ExprAdapter mkSuffixOf(Z3ExprAdapter s1, Z3ExprAdapter s2) {
-    if (!s1.isString() || !s2.isString()) {
-      Log.error("mkSuffixOf(..,..) parameter must all be strings");
-    }
+    checkString("mkSuffixOf", s1);
+    checkString("mkSuffixOf", s2);
 
-    Z3ExprAdapter expr = new Z3ExprAdapter();
     Expr<SeqSort<Sort>> expr1 = (Expr<SeqSort<Sort>>) s1.getExpr();
     Expr<SeqSort<Sort>> expr2 = (Expr<SeqSort<Sort>>) s2.getExpr();
-    expr.setExpr(ctx.mkSuffixOf(expr1, expr2));
-    expr.setKind(ExpressionKind.STRING);
-    return expr;
+    return new Z3ExprAdapter(ctx.mkSuffixOf(expr1, expr2), tFactory.mkStringType());
   }
 
   @Override
   public Z3ExprAdapter mkSet(
-      Function<Z3ExprAdapter, Z3ExprAdapter> setFunction, OCLType type, OCLExprConverter exprConv) {
-    Z3SetExprAdapter expr = new Z3SetExprAdapter();
-
-    expr.setFunction(setFunction);
-    expr.setType(type);
-
-    expr.setExprConverter(exprConv);
-    expr.setKind(ExpressionKind.SET);
-    return expr;
+      Function<Z3ExprAdapter, Z3ExprAdapter> setFunction, Z3ExprAdapter expr) {
+    return new Z3SetExprAdapter(setFunction, expr);
   }
 
   @Override
   public Z3ExprAdapter containsAll(Z3ExprAdapter exp1, Z3ExprAdapter exp2) {
-    Z3ExprAdapter res = new Z3ExprAdapter();
-    // todo check
+    checkSet("containsAll", exp1);
+    checkSet("containsAll", exp1);
+
     Z3SetExprAdapter set1 = (Z3SetExprAdapter) exp1;
     Z3SetExprAdapter set2 = (Z3SetExprAdapter) exp2;
-
-    Z3ExprAdapter expr = set1.exprConv.mkConst("expr111", set1.type);
-    return set1.exprConv.mkForall(
-        List.of(expr), mkImplies(mkContains(set1, expr), mkContains(set2, expr)));
+    Z3ExprAdapter expr = set1.getElement();
+    Z3ExprAdapter body = mkImplies(mkContains(set2, expr), mkContains(set1, expr));
+    return mkForall(List.of(expr), body);
   }
 
   @Override
   public Z3ExprAdapter mkIsEmpty(Z3ExprAdapter expr) {
+    checkSet("mkIsEmpty", expr);
 
     Z3SetExprAdapter set = ((Z3SetExprAdapter) expr);
-    Z3ExprAdapter con = set.exprConv.mkConst("expr11", set.type);
-
-    return set.exprConv.mkForall(List.of(expr), mkNot(mkContains(set, con)));
+    Z3ExprAdapter con = set.getElement();
+    return mkForall(List.of(expr), mkNot(mkContains(set, con)));
   }
 
   @Override
   public Z3ExprAdapter mkSetUnion(Z3ExprAdapter expr1, Z3ExprAdapter expr2) {
-    // todoe check types
+    checkSet("mkSetUnion", expr1);
+    checkSet("mkSetUnion", expr2);
+
     Z3SetExprAdapter set1 = (Z3SetExprAdapter) expr1;
     Z3SetExprAdapter set2 = (Z3SetExprAdapter) expr2;
     Function<Z3ExprAdapter, Z3ExprAdapter> setFunction =
         obj -> mkOr(mkContains(set1, obj), mkContains(set2, obj));
-    return mkSet(setFunction, set1.type, set1.exprConv);
+    return mkSet(setFunction, set1.getElement());
   }
 
   @Override
   public Z3ExprAdapter mkSetIntersect(Z3ExprAdapter expr1, Z3ExprAdapter expr2) {
+    checkSet("mkSetIntersect", expr1);
+    checkSet("mkSetIntersect", expr2);
+
     Z3SetExprAdapter set1 = (Z3SetExprAdapter) expr1;
     Z3SetExprAdapter set2 = (Z3SetExprAdapter) expr2;
     Function<Z3ExprAdapter, Z3ExprAdapter> setFunction =
         obj -> mkAnd(mkContains(set1, obj), mkContains(set2, obj));
-    return mkSet(setFunction, set1.type, set1.exprConv);
+    return mkSet(setFunction, set1.getElement());
   }
 
   @Override
   public Z3ExprAdapter mkSetMinus(Z3ExprAdapter expr1, Z3ExprAdapter expr2) {
+    checkSet("mkSetMinus", expr1);
+    checkSet("mkSetMinus", expr2);
+
     Z3SetExprAdapter set1 = (Z3SetExprAdapter) expr1;
     Z3SetExprAdapter set2 = (Z3SetExprAdapter) expr2;
     Function<Z3ExprAdapter, Z3ExprAdapter> setFunction =
         obj -> mkOr(mkContains(set1, obj), mkContains(set2, obj));
-    return mkSet(setFunction, set1.type, set2.exprConv);
+    return mkSet(setFunction, set1.getElement());
   }
 
   @Override
@@ -432,24 +376,65 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter> {
   }
 
   @Override
-  public Z3ExprAdapter mkEq(Z3ExprAdapter left, Z3ExprAdapter right) {
-    Z3ExprAdapter expr = new Z3ExprAdapter();
-
-    if (!left.isSet() && !right.isSet()) {
-      expr.setKind(ExpressionKind.BOOL);
-      expr.setExpr(ctx.mkEq(left.getExpr(), right.getExpr()));
-      return expr;
+  public Z3ExprAdapter mkContains(Z3ExprAdapter expr1, Z3ExprAdapter arg1) {
+    if (expr1.isStringExpr()) {
+      Expr<SeqSort<Sort>> str1 = (Expr<SeqSort<Sort>>) expr1.getExpr();
+      Expr<SeqSort<Sort>> str2 = (Expr<SeqSort<Sort>>) arg1.getExpr();
+      return new Z3ExprAdapter(ctx.mkContains(str1, str2), tFactory.mkBoolType());
     }
-
-    Z3SetExprAdapter leftSet = (Z3SetExprAdapter) left;
-    expr = leftSet.exprConv.mkConst("const", leftSet.type);
-
-    return leftSet.exprConv.mkForall(
-        List.of(expr), mkEq(mkContains(left, expr), mkContains(right, expr)));
+    checkSet("mkContains", expr1);
+    return ((Z3SetExprAdapter) expr1).isIn(arg1);
   }
+
+  @Override
+  public Z3ExprAdapter mkConst(String name, TypeAdapter<Sort> type) {
+    return new Z3ExprAdapter(ctx.mkConst(name, type.getType()), (Z3TypeAdapter) type);
+  }
+
+
 
   @Override
   public Z3ExprAdapter mkNeq(Z3ExprAdapter left, Z3ExprAdapter right) {
     return mkNot(mkEq(left, right));
+  }
+
+  @Override
+  public Z3ExprAdapter getLink(Z3ExprAdapter obj, String link) {
+    return null;
+  }
+
+  @Override
+  public Z3ExprAdapter getLinkedObjects(Z3ExprAdapter obj, String role) {
+    return null;
+  }
+
+  private void checkBool(String method, Z3ExprAdapter node) {
+    if (!node.isBoolExpr()) {
+      Log.error(String.format(wrongParam, method, node.getExprType().getName(), "bool"));
+    }
+  }
+
+  private void checkArith(String method, Z3ExprAdapter node) {
+    if (!node.isIntExpr() && !node.isDoubleExpr()) {
+      Log.error(String.format(wrongParam, method, node.getExprType(), "int or double"));
+    }
+  }
+
+  private void checkString(String method, Z3ExprAdapter node) {
+    if (!node.isStringExpr()) {
+      Log.error(String.format(wrongParam, method, node.getExprType(), "String"));
+    }
+  }
+
+  private void checkInt(String method, Z3ExprAdapter node) {
+    if (!node.isIntExpr()) {
+      Log.error(String.format(wrongParam, method, node.getExprType(), "int"));
+    }
+  }
+
+  private void checkSet(String method, Z3ExprAdapter node) {
+    if (!node.isSetExpr()) {
+      Log.error(String.format(wrongParam, method, node.getExprType(), "bool"));
+    }
   }
 }

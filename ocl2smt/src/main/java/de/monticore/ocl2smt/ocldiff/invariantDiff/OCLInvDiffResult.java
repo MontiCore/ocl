@@ -26,7 +26,7 @@ public class OCLInvDiffResult {
   }
 
   public boolean isPresentTrace() {
-    return unSatCore != null && !OCLHelper.getLinkList(unSatCore).isEmpty();
+    return true ; // todo fixme unSatCore != null && !OCLHelper.getLinkList(unSatCore).isEmpty();
   }
 
   public boolean isPresentWitness() {

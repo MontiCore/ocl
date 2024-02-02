@@ -1,12 +1,12 @@
 package de.monticore.ocl2smt.ocl2smt.expr2smt;
 
 import com.microsoft.z3.Expr;
-import de.monticore.ocl2smt.ocl2smt.expr.ExpressionKind;
+import com.microsoft.z3.Sort;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
 
-public class Z3ExprAdapter implements ExprAdapter<Expr<?>> {
-  protected Expr<?> expr;
-  protected ExpressionKind kind;
+public class Z3ExprAdapter implements ExprAdapter<Expr<?>, Sort> {
+  private final Expr<?> expr;
+  protected final Z3TypeAdapter type;
 
   @Override
   public Expr<?> getExpr() {
@@ -14,35 +14,49 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>> {
   }
 
   @Override
-  public ExpressionKind getExprKind() {
-    return kind;
+  public Z3TypeAdapter getExprType() {
+    return type;
   }
 
-  public void setExpr(Expr<?> expr) {
+  public Z3ExprAdapter(Expr<?> expr, Z3TypeAdapter type) {
     this.expr = expr;
-  }
-
-  public void setKind(ExpressionKind kind) {
-    this.kind = kind;
+    this.type = type;
   }
 
   boolean isArithExpr() {
-    return kind == ExpressionKind.INTEGER || kind == ExpressionKind.DOUBLE;
+    return type.isInt() || type.isDouble();
   }
 
-  public boolean isString() {
-    return kind == ExpressionKind.STRING;
+  public boolean isStringExpr() {
+    return type.isString();
   }
 
-  public boolean isUnInterpreted() {
-    return kind == ExpressionKind.UNINTERPRETED;
+  public boolean isObjExpr() {
+    return type.isObject();
   }
 
-  public boolean isBool() {
-    return kind == ExpressionKind.BOOL;
+  public boolean isBoolExpr() {
+    return type.isBool();
   }
 
-  public boolean isSet() {
-    return kind == ExpressionKind.SET;
+  public boolean isSetExpr() {
+    return type.isSet();
+  }
+
+  public boolean isIntExpr() {
+    return type.isInt();
+  }
+
+  public boolean isCharExpr() {
+    return type.isChar();
+  }
+
+  public boolean isDoubleExpr() {
+    return type.isChar();
+  }
+
+  @Override
+  public String toString() {
+    return getExprType().getName();
   }
 }

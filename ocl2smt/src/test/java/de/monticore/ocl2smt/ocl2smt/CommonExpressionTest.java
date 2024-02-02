@@ -17,7 +17,7 @@ public class CommonExpressionTest extends ExpressionAbstractTest {
     super.initLogger();
     super.initMills();
     parse("MinAuction.cd", "CommonExpr.ocl");
-    ocl2SMTGenerator = new OCL2SMTGenerator<>(cdAST, buildContext());
+    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
     ocl2SMTGenerator.inv2smt(oclAST.getOCLArtifact()).forEach(b -> res.add(b.getValue()));
   }
 

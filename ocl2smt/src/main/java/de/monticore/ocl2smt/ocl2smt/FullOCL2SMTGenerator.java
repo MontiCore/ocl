@@ -2,59 +2,69 @@ package de.monticore.ocl2smt.ocl2smt;
 
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLOperationSignature;
 import de.monticore.ocl2smt.helpers.OCLHelper;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.FullOCLExpressionConverter;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExprConverter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3ExprAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3ExprFactory;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3TypeFactory;
+import de.monticore.ocl2smt.ocl2smt.oclExpr2smt.FullOCLExprConverter;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
-import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import java.util.List;
 import java.util.Optional;
 
-public class FullOCL2SMTGenerator<T extends ExprAdapter<?>> extends OCL2SMTGenerator<T> {
+public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
+  private FullOCLExprConverter<Z3ExprAdapter, Sort> fullConv;
 
   public FullOCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
     super(ast, ctx);
-    exprConv = new FullOCLExpressionConverter<>(ast, ctx);
+    CD2SMTGenerator cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
+    cd2SMTGenerator.cd2smt(ast, ctx);
+
+    eFactory = new Z3ExprFactory(cd2SMTGenerator);
+    tFactory = new Z3TypeFactory(cd2SMTGenerator);
+    exprConv = new FullOCLExprConverter<>(eFactory, (Z3ExprFactory) eFactory, tFactory);
+    fullConv = (FullOCLExprConverter<Z3ExprAdapter, Sort>) exprConv;
   }
 
   // TODO:: fix   OCLOperationSignature = OCLMethodSignature | OCLConstructorSignature
-  private T openOpScope(ASTOCLOperationSignature node, OCLExprConverter<T> opConverter) {
+  private Z3ExprAdapter openOpScope(ASTOCLOperationSignature node) {
     ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
 
     // set the type of the method result
-    ((FullOCLExpressionConverter<T>) exprConv).setResultType(method.getMCReturnType());
+    ((FullOCLExprConverter<Z3ExprAdapter, Sort>) exprConv).setResultType(method.getMCReturnType());
 
-    OCLType type = OCLType.buildOCLType(method.getMethodName().getParts(0));
+    //  Z3ExprAdapter type = tFactory.adapt(method.getMethodName().getParts(0));
     // declare the object to which the method will be applied
-    return opConverter.mkConst(type.getName() + "__This", type);
+    // return eFactory.mkConst(type + "__This", (Z3TypeAdapter)type);
+    return null;
   }
 
-  private T convertPreCond(ASTOCLOperationConstraint node) {
-    ((FullOCLExpressionConverter<T>) exprConv).enterPreCond();
+  private Z3ExprAdapter convertPreCond(ASTOCLOperationConstraint node) {
+    fullConv.enterPreCond();
 
     // TODO:fix if many pre conditions
-    T pre = exprConv.convertExpr(node.getPreCondition(0));
-    for (T constr : exprConv.getGenConstraints()) {
-      pre = exprConv.factory.mkAnd(pre, constr);
+    Z3ExprAdapter pre = exprConv.convertExpr(node.getPreCondition(0));
+    for (Z3ExprAdapter constr : exprConv.getGenConstraints()) {
+      pre = eFactory.mkAnd(pre, constr);
     }
 
-    ((FullOCLExpressionConverter<T>) exprConv).exitPreCond();
+    fullConv.exitPreCond();
     return pre;
   }
 
-  private T convertPostCond(ASTOCLOperationConstraint node) {
+  private Z3ExprAdapter convertPostCond(ASTOCLOperationConstraint node) {
     // TODO : fix if many Post conditions
-    T post = exprConv.convertExpr(node.getPostCondition(0));
-    for (T constr : exprConv.getGenConstraints()) {
-      post = exprConv.factory.mkAnd(post, constr);
+    Z3ExprAdapter post = exprConv.convertExpr(node.getPostCondition(0));
+    for (Z3ExprAdapter constr : exprConv.getGenConstraints()) {
+      post = eFactory.mkAnd(post, constr);
     }
 
     return post;
@@ -64,12 +74,12 @@ public class FullOCL2SMTGenerator<T extends ExprAdapter<?>> extends OCL2SMTGener
 
     exprConv.reset();
 
-    T thisObj = openOpScope(node.getOCLOperationSignature(), exprConv);
-    ((FullOCLExpressionConverter<T>) exprConv).setThisObj(thisObj);
+    Z3ExprAdapter thisObj = openOpScope(node.getOCLOperationSignature());
+    fullConv.setThisObj(thisObj);
 
     // convert pre and post conditions
-    T pre = convertPreCond(node);
-    T post = convertPostCond(node);
+    Z3ExprAdapter pre = convertPreCond(node);
+    Z3ExprAdapter post = convertPostCond(node);
 
     IdentifiableBoolExpr preConstr =
         IdentifiableBoolExpr.buildIdentifiable(
@@ -79,29 +89,27 @@ public class FullOCL2SMTGenerator<T extends ExprAdapter<?>> extends OCL2SMTGener
 
     IdentifiableBoolExpr postConstr =
         IdentifiableBoolExpr.buildIdentifiable(
-            (BoolExpr) post,
+            (BoolExpr) post.getExpr(),
             node.getPostCondition(0).get_SourcePositionStart(),
             Optional.of("post"));
 
-    return new OPConstraint(
-        preConstr,
-        postConstr,
-        ((FullOCLExpressionConverter<T>) exprConv).getResult(),
-        (BoolExpr) thisObj,
-        exprConv.getType(thisObj),
-        ctx);
+    Z3ExprAdapter op = eFactory.mkImplies(pre, post);
+   IdentifiableBoolExpr opConstraint =
+            IdentifiableBoolExpr.buildIdentifiable((BoolExpr) op.getExpr(), node.get_SourcePositionStart(), Optional.of("pre ==> Post"));
+
+    return new OPConstraint(preConstr, postConstr,opConstraint ,fullConv.getResult(), thisObj);
   }
 
   public IdentifiableBoolExpr convertPreInv(ASTOCLInvariant invariant) {
     exprConv.reset();
-    ((FullOCLExpressionConverter<T>) exprConv).enterPreCond();
+    fullConv.enterPreCond();
     IdentifiableBoolExpr res = super.convertInv(invariant);
-    ((FullOCLExpressionConverter<T>) exprConv).exitPreCond();
+    fullConv.exitPreCond();
     return res;
   }
 
   public Optional<ASTODArtifact> buildOd(Model model, String ODName, boolean partial) {
-    return exprConv.getCd2smtGenerator().smt2od(model, partial, ODName);
+    return cd2SMTGenerator.smt2od(model, partial, ODName);
   }
 
   public OCLOPWitness buildOPOd(
@@ -112,10 +120,11 @@ public class FullOCL2SMTGenerator<T extends ExprAdapter<?>> extends OCL2SMTGener
       boolean partial) {
     Optional<ASTODArtifact> od = buildOd(model, odName, partial);
     assert od.isPresent();
-    return OCLHelper.splitPreOD(method, od.get(), model, opConstraint);
+  return null ;   // return OCLHelper.splitPreOD(method, od.get(), model, opConstraint); todo fixme
   }
 
   public Solver makeSolver(List<IdentifiableBoolExpr> constraints) {
-    return exprConv.getCd2smtGenerator().makeSolver(constraints);
+   // return exprConv.getCd2smtGenerator().makeSolver(constraints);
+    return  null ; //todo fixme
   }
 }

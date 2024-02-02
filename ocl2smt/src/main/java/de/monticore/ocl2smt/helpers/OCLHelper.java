@@ -14,11 +14,12 @@ import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3TypeAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.ocl2smt.trafo.BuildPreCDTrafo;
 import de.monticore.ocl2smt.util.OCLMethodResult;
-import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
@@ -38,22 +39,24 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class OCLHelper {
-
+/*
   public static ASTCDAssociation getAssociation(
-      OCLType type, String otherRole, ASTCDDefinition cd) {
+      ExprTypeAdapter type, String otherRole, ASTCDDefinition cd) {
     return CDHelper.getAssociation(CDHelper.getASTCDType(type.getName(), cd), otherRole, cd);
   }
 
-  public static OCLType getOtherType(
-      ASTCDAssociation association, OCLType type, String otherRole, ASTCDDefinition cd) {
-    OCLType type1 = OCLType.buildOCLType(association.getLeftQualifiedName().getQName());
-    OCLType type2 = OCLType.buildOCLType(association.getRightQualifiedName().getQName());
+  public static ExprTypeAdapter getOtherType(
+      ASTCDAssociation association, ExprTypeAdapter type, String otherRole, ASTCDDefinition cd) {
+    ExprTypeAdapter type1 =
+        ExprTypeAdapter.buildOCLType(association.getLeftQualifiedName().getQName());
+    ExprTypeAdapter type2 =
+        ExprTypeAdapter.buildOCLType(association.getRightQualifiedName().getQName());
     if (isLeftSide(CDHelper.getASTCDType(type.getName(), cd), otherRole, cd)) {
       return type2;
     } else {
       return type1;
     }
-  }
+  }*/
 
   public static List<ASTODNamedObject> getObjectList(ASTODArtifact od) {
     return od.getObjectDiagram().getODElementList().stream()
@@ -123,10 +126,10 @@ public class OCLHelper {
             + astcdType.getName());
     return false;
   }
-
+/*
   public static Expr<? extends Sort> getAttribute(
       Expr<? extends Sort> obj,
-      OCLType type,
+      TypeAdapter<?> type,
       String attributeName,
       CD2SMTGenerator cd2SMTGenerator) {
 
@@ -134,7 +137,7 @@ public class OCLHelper {
         CDHelper.getASTCDType(type.getName(), cd2SMTGenerator.getClassDiagram().getCDDefinition()),
         attributeName,
         obj);
-  }
+  }*/
 
   public static OCLOPWitness splitPreOD(
       ASTOCLMethodSignature method, ASTODArtifact od, Model model, OPConstraint opConstraint) {
@@ -245,7 +248,7 @@ public class OCLHelper {
   }
 
   private static boolean isThis(
-      ASTODNamedObject obj, Model model, OCLType type, Expr<? extends Sort> thisObj) {
+      ASTODNamedObject obj, Model model, TypeAdapter<?> type, Expr<? extends Sort> thisObj) {
     return obj.getName()
         .equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true), type.getName()));
   }
@@ -328,7 +331,7 @@ public class OCLHelper {
   }
 
   public static ASTODNamedObject getObjectWithExpr(
-      OCLType type, Expr<? extends Sort> expr, ASTODArtifact od) {
+          Z3TypeAdapter type, Expr<? extends Sort> expr, ASTODArtifact od) {
     return OCLHelper.getObjectList(od).stream()
         .filter(x -> x.getName().equals(SMTHelper.buildObjectName(expr, type.getName())))
         .findFirst()

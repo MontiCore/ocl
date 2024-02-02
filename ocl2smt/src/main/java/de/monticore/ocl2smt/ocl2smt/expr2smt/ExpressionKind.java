@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt.ocl2smt.expr;
+package de.monticore.ocl2smt.ocl2smt.expr2smt;
 
 public enum ExpressionKind {
   INTEGER,
@@ -7,5 +7,5 @@ public enum ExpressionKind {
   BOOL,
   STRING,
   CHAR,
-  UNINTERPRETED,
+  OO,
 }

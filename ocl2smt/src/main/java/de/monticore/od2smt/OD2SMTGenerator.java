@@ -19,7 +19,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.literals.mccommonliterals._ast.ASTStringLiteral;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.Z3ExprAdapter;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExprConverter;
+import de.monticore.ocl2smt.ocl2smt.oclExpr2smt.OCLExprConverter;
 import de.monticore.odbasis._ast.*;
 import de.monticore.odlink._ast.ASTODLink;
 import de.monticore.odvalidity.OD2CDMatcher;
@@ -37,7 +37,7 @@ public class OD2SMTGenerator implements IOD2SMTGenerator {
   protected ASTCDCompilationUnit cd;
   protected ASTODArtifact od;
   protected Context ctx;
-  protected OCLExprConverter<Z3ExprAdapter> exprConv; // TODO: update to Expression2SMT
+  protected OCLExprConverter<Z3ExprAdapter,Sort> exprConv; // TODO: update to Expression2SMT
 
   protected Map<ASTODObject, Expr<?>> objectsMap = new HashMap<>();
   protected Map<ASTODObject, Set<IdentifiableBoolExpr>> objectConstraint = new HashMap<>();
@@ -53,8 +53,8 @@ public class OD2SMTGenerator implements IOD2SMTGenerator {
     }
 
     // init the expression converter
-    exprConv = new OCLExprConverter<>(cd, ctx);
-    cd2SMTGenerator = exprConv.getCd2smtGenerator();
+  //  exprConv = new OCLExprConverter<>(cd, ctx);  todo fixme
+  //  cd2SMTGenerator = exprConv.getCd2smtGenerator();
     this.ctx = ctx;
     this.cd = cd;
     this.od = od;

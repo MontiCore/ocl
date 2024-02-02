@@ -26,7 +26,7 @@ public class OCLOperationDiff {
       boolean partial) {
 
     ctx = buildContext();
-    OCLHelper.buildPreCD(ast);
+  //todo fixme  OCLHelper.buildPreCD(ast);
     FullOCL2SMTGenerator fullOCL2SMTGenerator = new FullOCL2SMTGenerator(ast, ctx);
 
     return oclWitnessHelper(ocl, fullOCL2SMTGenerator, method, partial);
@@ -35,7 +35,7 @@ public class OCLOperationDiff {
   public Set<OCLOPWitness> oclWitness(
       ASTCDCompilationUnit ast, Set<ASTOCLCompilationUnit> ocl, boolean partial) {
     ctx = buildContext();
-    OCLHelper.buildPreCD(ast);
+    //todo fixm OCLHelper.buildPreCD(ast);
     FullOCL2SMTGenerator fullOCL2SMTGenerator = new FullOCL2SMTGenerator(ast, ctx);
     Set<OCLOPWitness> res = new HashSet<>();
 
@@ -111,7 +111,7 @@ public class OCLOperationDiff {
     ctx = buildContext();
     Set<OCLOPWitness> opDiffWitness = new HashSet<>();
     List<ASTODLink> trace = new ArrayList<>();
-    OCLHelper.buildPreCD(ast);
+    //todo fixm  OCLHelper.buildPreCD(ast);
     FullOCL2SMTGenerator fullOcl2smt = new FullOCL2SMTGenerator(ast, ctx);
 
     // get new invariants

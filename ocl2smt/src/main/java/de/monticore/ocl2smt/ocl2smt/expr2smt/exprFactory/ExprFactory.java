@@ -1,79 +1,82 @@
 package de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory;
 
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExprConverter;
-import de.monticore.ocl2smt.util.OCLType;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import java.util.List;
 import java.util.function.Function;
 
-public interface ExprFactory<T extends ExprAdapter<?>> {
-  T mkBool(boolean expr);
+public interface ExprFactory<E extends ExprAdapter<?, T>, T> {
+  E mkBool(boolean expr);
 
-  T mkString(String expr);
+  E mkString(String expr);
 
-  T mkInt(int expr);
+  E mkInt(int expr);
 
-  T mkChar(char expr);
+  E mkChar(char expr);
 
-  T mkDouble(double expr);
+  E mkDouble(double expr);
 
-  T mkNot(T expr);
+  E mkNot(E expr);
 
-  T mkAnd(T expr1, T expr);
+  E mkAnd(E expr1, E expr);
 
-  T mkOr(T expr1, T expr);
+  E mkOr(E expr1, E expr);
 
-  T mkEq(T expr1, T expr);
+  E mkEq(E expr1, E expr);
 
-  T mkImplies(T expr1, T expr);
+  E mkImplies(E expr1, E expr);
 
-  T mkNeq(T expr1, T expr);
+  E mkNeq(E expr1, E expr);
 
-  T mkLt(T expr1, T expr);
+  E mkLt(E expr1, E expr);
 
-  T mkLeq(T expr1, T expr);
+  E mkLeq(E expr1, E expr);
 
-  T mkGt(T expr1, T expr);
+  E mkGt(E expr1, E expr);
 
-  T mkGe(T expr1, T expr);
+  E mkGe(E expr1, E expr);
 
-  T mkSub(T expr1, T expr);
+  E mkSub(E expr1, E expr);
 
-  T mkPlus(T expr1, T expr);
+  E mkPlus(E expr1, E expr);
 
-  T mkMul(T expr1, T expr);
+  E mkConcat(E leftNode, E rightNode);
 
-  T mkDiv(T expr1, T expr);
+  E mkMul(E expr1, E expr);
 
-  T mkMod(T expr1, T expr);
+  E mkDiv(E expr1, E expr);
 
-  T mkPlusPrefix(T expr1);
+  E mkMod(E expr1, E expr);
 
-  T mkMinusPrefix(T expr1);
+  E mkPlusPrefix(E expr1);
 
-  T mkIte(T cond, T expr1, T expr2);
+  E mkMinusPrefix(E expr1);
 
-  T mkReplace(T s, T s1, T s2);
+  E mkIte(E cond, E expr1, E expr2);
 
-  T mkContains(T s1, T s2);
+  E mkReplace(E s, E s1, E s2);
 
-  T mkPrefixOf(T s1, T s2);
+  E mkPrefixOf(E s1, E s2);
 
-  T mkSuffixOf(T s1, T s2);
+  E mkSuffixOf(E s1, E s2);
 
-  public abstract T mkSet(Function<T, T> setFunction, OCLType type, OCLExprConverter exprConv);
+  E mkSet(Function<E, E> setFunction, E element);
 
-  T containsAll(T set1, T set2);
+  E containsAll(E set1, E set2);
 
-  T mkIsEmpty(T set);
+  E mkIsEmpty(E set);
 
-  T mkSetUnion(T set1, T set);
+  E mkSetUnion(E set1, E set);
 
-  T mkSetIntersect(T set1, T set);
+  E mkSetIntersect(E set1, E set);
 
-  T mkSetMinus(T set1, T set);
+  E mkSetMinus(E set1, E set);
 
-  T mkForall(List<T> uninterpretedBool, T subRes);
+  E mkForall(List<E> uninterpretedBool, E subRes);
 
-  T mkExists(List<T> uninterpretedBool, T subRes);
+  E mkExists(List<E> uninterpretedBool, E subRes);
+
+  E mkContains(E callerExpr, E arg1);
+
+  E mkConst(String name, TypeAdapter<T> type);
 }

@@ -1,9 +1,9 @@
 package de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter;
 
-import de.monticore.ocl2smt.ocl2smt.expr.ExpressionKind;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 
-public interface ExprAdapter<T> {
-  T getExpr();
+public interface ExprAdapter<E, T> {
+  E getExpr();
 
-  ExpressionKind getExprKind();
+  TypeAdapter<T> getExprType();
 }
