@@ -68,7 +68,7 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>, Sort> {
   }
 
   public boolean isDoubleExpr() {
-    return type.isChar();
+    return type.isDouble();
   }
 
   @Override
