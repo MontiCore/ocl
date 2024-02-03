@@ -23,7 +23,7 @@ public interface TypeAdapter<T> {
 
   String getName();
 
-  T getType();
+  T getSort();
 
   boolean isNative();
 }

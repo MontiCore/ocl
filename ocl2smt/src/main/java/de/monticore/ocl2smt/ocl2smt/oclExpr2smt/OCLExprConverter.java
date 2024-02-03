@@ -148,7 +148,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
     } else if (node instanceof ASTSetInExpression) {
       EXPR set1 = convertExpr(((ASTSetInExpression) node).getSet());
       EXPR set2 = convertExpr(((ASTSetInExpression) node).getElem());
-      result = eFactory.mkSetMinus(set1, set2);
+      result = eFactory.mkContains(set1, set2);
     } else if (node instanceof ASTSetNotInExpression) {
       EXPR set1 = convertExpr(((ASTSetNotInExpression) node).getSet());
       EXPR set2 = convertExpr(((ASTSetNotInExpression) node).getElem());
@@ -210,9 +210,9 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
         case "contains":
           return eFactory.mkContains(callerExpr, arg1);
         case "endsWith":
-          return eFactory.mkSuffixOf(arg1,callerExpr);
+          return eFactory.mkSuffixOf(arg1, callerExpr);
         case "startsWith":
-          return eFactory.mkPrefixOf(arg1,callerExpr);
+          return eFactory.mkPrefixOf(arg1, callerExpr);
         case "replace":
           return eFactory.mkReplace(callerExpr, arg1, convertExpr(args.getExpression(1)));
         case "containsAll":
@@ -259,18 +259,16 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
     for (ASTInDeclaration decl : inDeclarations) {
       for (ASTInDeclarationVariable varDecl : decl.getInDeclarationVariableList()) {
 
-        TypeAdapter<TYPE> type;
-        if (decl.isPresentMCType()) {
-          type = tFactory.adapt(decl.getMCType());
-        } else {
-          type = tFactory.adapt(varDecl.getSymbol().getType());
-        }
+        TypeAdapter<TYPE> type =
+            decl.isPresentMCType()
+                ? tFactory.adapt(decl.getMCType())
+                : tFactory.adapt(varDecl.getSymbol().getType());
 
         EXPR var = mkConst(varDecl.getName(), type);
         paramList.add(var);
         if (decl.isPresentExpression()) {
           EXPR mySet = convertExpr(decl.getExpression());
-          eFactory.mkAnd(eFactory.mkContains(mySet, var), constraint);
+          constraint = eFactory.mkAnd(eFactory.mkContains(mySet, var), constraint);
         }
       }
     }
@@ -379,6 +377,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
             obj -> eFactory.mkAnd(eFactory.mkLeq(low, obj), eFactory.mkLeq(obj, up));
         Function<EXPR, EXPR> finalFunc = setFunc;
         setFunc = obj -> eFactory.mkOr(finalFunc.apply(obj), func.apply(obj));
+        type = expr1.getExprType();
       }
     }
     EXPR setElem = mkConst("elem", type);
@@ -427,7 +426,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
 
     if (node.isPresentGeneratorDeclaration()) {
       expr = varNames.get(node.getGeneratorDeclaration().getName());
-      EXPR set = convertExpr(node.getExpression());
+      EXPR set = convertExpr(node.getGeneratorDeclaration().getExpression());
       filter = eFactory.mkContains(set, expr);
     } else if (node.isPresentSetVariableDeclaration()) {
       expr = varNames.get(node.getSetVariableDeclaration().getName());
@@ -439,11 +438,11 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
       }
     } else { // expression is present
 
-      expr = convertExpr(node.getExpression());
+      EXPR temp = convertExpr(node.getExpression());
 
-      EXPR expr2 = mkConst("var", expr.getExprType());
-      filter = eFactory.mkEq(expr2, expr);
-      vars.add(expr2);
+      expr = mkConst("var", temp.getExprType());
+      filter = eFactory.mkEq(expr, temp);
+      vars.add(expr);
     }
     EXPR setElem = mkConst("elem", expr.getExprType());
     return bool ->

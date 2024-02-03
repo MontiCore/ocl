@@ -52,7 +52,7 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
 
   @Override
   public TypeAdapter<Sort> mkSetType(Sort elementType) {
-    String name = "<" + elementType + ">";
+    String name = "set<" + elementType + ">";
     return new Z3TypeAdapter(name, elementType, ExpressionKind.SET);
   }
 
@@ -112,7 +112,9 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
 
     // case CEType
     if (res.isEmpty()) {
-      Optional<ASTCDType> astcdType = resolveCDType(typeSymbol.print());
+      String[] parts = typeSymbol.print().split("\\.");
+      String typeName = parts[parts.length - 1];
+      Optional<ASTCDType> astcdType = resolveCDType(typeName);
       res = astcdType.map(this::adapt);
     }
 

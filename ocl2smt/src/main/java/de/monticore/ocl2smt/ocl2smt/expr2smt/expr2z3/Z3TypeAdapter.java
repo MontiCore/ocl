@@ -79,7 +79,7 @@ public class Z3TypeAdapter implements TypeAdapter<Sort> {
   }
 
   @Override
-  public Sort getType() {
+  public Sort getSort() {
     return sort;
   }
 

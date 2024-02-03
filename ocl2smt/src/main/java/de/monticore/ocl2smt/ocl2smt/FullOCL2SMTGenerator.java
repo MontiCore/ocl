@@ -26,8 +26,8 @@ public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
     CD2SMTGenerator cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
     cd2SMTGenerator.cd2smt(ast, ctx);
 
-    eFactory = new Z3ExprFactory(cdFactory, tFactory, cd2SMTGenerator);
-    exprConv = new FullOCLExprConverter<>(eFactory, cdFactory, tFactory);
+    eFactory = new Z3ExprFactory(tFactory, cd2SMTGenerator);
+    exprConv = new FullOCLExprConverter<>(eFactory, eFactory, tFactory);
     fullConv = (FullOCLExprConverter<Z3ExprAdapter, Sort>) exprConv;
   }
 

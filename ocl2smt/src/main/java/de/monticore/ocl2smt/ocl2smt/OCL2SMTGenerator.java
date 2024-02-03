@@ -8,11 +8,9 @@ import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3CDExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3TypeFactory;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory.ExprFactory;
 import de.monticore.ocl2smt.ocl2smt.oclExpr2smt.OCLExprConverter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.SourcePosition;
@@ -25,9 +23,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class OCL2SMTGenerator {
   protected OCLExprConverter<Z3ExprAdapter, Sort> exprConv;
-  protected ExprFactory<Z3ExprAdapter, Sort> eFactory;
+  protected Z3ExprFactory eFactory;
   protected Z3TypeFactory tFactory;
-  protected Z3CDExprFactory cdFactory;
   protected CD2SMTGenerator cd2SMTGenerator;
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
@@ -35,16 +32,14 @@ public class OCL2SMTGenerator {
     cd2SMTGenerator.cd2smt(ast, ctx);
 
     tFactory = new Z3TypeFactory(cd2SMTGenerator);
-    eFactory = new Z3ExprFactory(cdFactory, tFactory, cd2SMTGenerator);
-    cdFactory = new Z3CDExprFactory(tFactory, cd2SMTGenerator);
-    exprConv = new OCLExprConverter<>(eFactory, cdFactory, tFactory);
+    eFactory = new Z3ExprFactory(tFactory, cd2SMTGenerator);
+    exprConv = new OCLExprConverter<>(eFactory, eFactory, tFactory);
   }
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
     tFactory = new Z3TypeFactory(ocl2SMTGenerator.getCD2SMTGenerator());
-    eFactory = new Z3ExprFactory(cdFactory, tFactory, ocl2SMTGenerator.getCD2SMTGenerator());
-    cdFactory = new Z3CDExprFactory(tFactory, cd2SMTGenerator);
-    exprConv = new OCLExprConverter<>(eFactory, cdFactory, tFactory);
+    eFactory = new Z3ExprFactory(tFactory, ocl2SMTGenerator.getCD2SMTGenerator());
+    exprConv = new OCLExprConverter<>(eFactory, eFactory, tFactory);
   }
 
   public CD2SMTGenerator getCD2SMTGenerator() {
@@ -91,7 +86,7 @@ public class OCL2SMTGenerator {
         invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
     exprConv.reset();
     return IdentifiableBoolExpr.buildIdentifiable(
-        (BoolExpr) inv.getExpr(), srcPos, name); // todo fix (BoolExpr)
+        (BoolExpr) inv.getExpr(), srcPos, name); // todo fix (BoolExpr) add simplify()
   }
 
   protected Function<Z3ExprAdapter, Z3ExprAdapter> openInvScope(ASTOCLInvariant invariant) {
@@ -109,7 +104,7 @@ public class OCL2SMTGenerator {
     }
     Z3ExprAdapter varConstraint2 = varConstraint;
     if (!vars.isEmpty()) {
-      return bool -> cdFactory.mkForall(vars, eFactory.mkImplies(varConstraint2, bool));
+      return bool -> eFactory.mkForall(vars, eFactory.mkImplies(varConstraint2, bool));
     }
     return bool -> bool;
   }
