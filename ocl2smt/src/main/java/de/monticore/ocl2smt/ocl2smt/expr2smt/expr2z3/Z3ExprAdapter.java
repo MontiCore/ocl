@@ -9,7 +9,6 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>, Sort> {
   private final Expr<?> expr;
   protected final Z3TypeAdapter type;
   private Function<Z3ExprAdapter, Z3ExprAdapter> wrapper = null;
-
   private Z3ExprAdapter genConstraint = null;
 
   @Override
