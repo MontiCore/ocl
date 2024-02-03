@@ -6,6 +6,8 @@ import java.util.List;
 public interface CDExprFactory<E extends ExprAdapter<?, T>, T> {
   E getLink(E obj, String link);
 
+  E getTransitiveLink(E obj, String link);
+
   E mkForall(List<E> uninterpretedBool, E subRes);
 
   E mkExists(List<E> uninterpretedBool, E subRes);

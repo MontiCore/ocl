@@ -8,7 +8,6 @@ import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.ExpressionKind;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory.CDExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory.ExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
@@ -16,7 +15,6 @@ import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -58,6 +56,17 @@ public class Z3ExprFactory
   @Override
   public Z3ExprAdapter mkDouble(double node) {
     return new Z3ExprAdapter(ctx.mkFP(node, ctx.mkFPSortDouble()), tFactory.mkDoubleType());
+  }
+
+  @Override
+  public Z3ExprAdapter mkSet(
+      Function<Z3ExprAdapter, Z3ExprAdapter> setFunction, Z3ExprAdapter expr) {
+    return new Z3SetExprAdapter(setFunction, expr);
+  }
+
+  @Override
+  public Z3ExprAdapter mkConst(String name, TypeAdapter<Sort> type) {
+    return new Z3ExprAdapter(ctx.mkConst(name, type.getSort()), (Z3TypeAdapter) type);
   }
 
   @Override
@@ -338,12 +347,6 @@ public class Z3ExprFactory
   }
 
   @Override
-  public Z3ExprAdapter mkSet(
-      Function<Z3ExprAdapter, Z3ExprAdapter> setFunction, Z3ExprAdapter expr) {
-    return new Z3SetExprAdapter(setFunction, expr);
-  }
-
-  @Override
   public Z3ExprAdapter containsAll(Z3ExprAdapter exp1, Z3ExprAdapter exp2) {
     checkSet("containsAll", exp1);
     checkSet("containsAll", exp1);
@@ -375,7 +378,8 @@ public class Z3ExprFactory
     Z3SetExprAdapter set2 = (Z3SetExprAdapter) expr2;
     Function<Z3ExprAdapter, Z3ExprAdapter> setFunction =
         obj -> mkOr(mkContains(set1, obj), mkContains(set2, obj));
-    return mkSet(setFunction, set1.getElement());
+    Z3ExprAdapter res = mkSet(setFunction, set1.getElement());
+    return wrap(res, expr1, expr2);
   }
 
   @Override
@@ -387,7 +391,8 @@ public class Z3ExprFactory
     Z3SetExprAdapter set2 = (Z3SetExprAdapter) expr2;
     Function<Z3ExprAdapter, Z3ExprAdapter> setFunction =
         obj -> mkAnd(mkContains(set1, obj), mkContains(set2, obj));
-    return mkSet(setFunction, set1.getElement());
+    Z3ExprAdapter res = mkSet(setFunction, set1.getElement());
+    return wrap(res, expr1, expr2);
   }
 
   @Override
@@ -399,23 +404,23 @@ public class Z3ExprFactory
     Z3SetExprAdapter set2 = (Z3SetExprAdapter) expr2;
     Function<Z3ExprAdapter, Z3ExprAdapter> setFunction =
         obj -> mkAnd(mkContains(set1, obj), mkNot(mkContains(set2, obj)));
-    return mkSet(setFunction, set1.getElement());
+    Z3ExprAdapter res = mkSet(setFunction, set1.getElement());
+    return wrap(res, expr1, expr2);
   }
 
   @Override
   public Z3ExprAdapter mkContains(Z3ExprAdapter expr1, Z3ExprAdapter arg1) {
+    Z3ExprAdapter res;
     if (expr1.isStringExpr()) {
       Expr<SeqSort<Sort>> str1 = (Expr<SeqSort<Sort>>) expr1.getExpr();
       Expr<SeqSort<Sort>> str2 = (Expr<SeqSort<Sort>>) arg1.getExpr();
-      return new Z3ExprAdapter(ctx.mkContains(str1, str2), tFactory.mkBoolType());
+      res = new Z3ExprAdapter(ctx.mkContains(str1, str2), tFactory.mkBoolType());
+    } else {
+      checkSet("mkContains", expr1);
+      res = ((Z3SetExprAdapter) expr1).isIn(arg1);
     }
-    checkSet("mkContains", expr1);
-    return ((Z3SetExprAdapter) expr1).isIn(arg1);
-  }
 
-  @Override
-  public Z3ExprAdapter mkConst(String name, TypeAdapter<Sort> type) {
-    return new Z3ExprAdapter(ctx.mkConst(name, type.getSort()), (Z3TypeAdapter) type);
+    return wrap(res, expr1, arg1);
   }
 
   @Override
@@ -433,15 +438,16 @@ public class Z3ExprFactory
     }
 
     // quantified primitive variable
-    BoolExpr res = mkExists(revertAdaptation(primParams), (BoolExpr) body.getExpr());
+    BoolExpr expr = mkExists(revertAdaptation(primParams), (BoolExpr) body.getExpr());
 
     // quantify CDType variable with
     if (!objParams.isEmpty()) {
       List<ASTCDType> types = collectCDType(objParams);
       List<Expr<?>> vars = revertAdaptation(objParams);
-      res = cd2SMTGenerator.mkExists(types, vars, res);
+      expr = cd2SMTGenerator.mkExists(types, vars, expr);
     }
-    return new Z3ExprAdapter(res, tFactory.mkBoolType());
+    Z3ExprAdapter res = new Z3ExprAdapter(expr, tFactory.mkBoolType());
+    return wrap(res, body);
   }
 
   @Override
@@ -453,37 +459,74 @@ public class Z3ExprFactory
     }
 
     // quantified primitive variable
-    BoolExpr res = mkForAll(revertAdaptation(primParams), (BoolExpr) body.getExpr());
+    BoolExpr expr = mkForAll(revertAdaptation(primParams), (BoolExpr) body.getExpr());
 
     // quantify CDType variable with
     if (!objParams.isEmpty()) {
       List<ASTCDType> types = collectCDType(objParams);
       List<Expr<?>> vars = revertAdaptation(objParams);
-      res = cd2SMTGenerator.mkForall(types, vars, res);
+      expr = cd2SMTGenerator.mkForall(types, vars, expr);
     }
-    return new Z3ExprAdapter(res, tFactory.mkBoolType());
+    Z3ExprAdapter res = new Z3ExprAdapter(expr, tFactory.mkBoolType());
+    return wrap(res, body);
   }
 
   @Override
   public Z3ExprAdapter getLink(Z3ExprAdapter obj, String link) {
     checkPreCond(obj);
     ASTCDType astcdType = obj.getExprType().getCDType();
-
+    Z3ExprAdapter res;
     // case attribute
     Optional<ASTCDAttribute> attribute = resolveAttribute(astcdType, link);
     if (attribute.isPresent()) {
       Expr<?> expr = cd2SMTGenerator.getAttribute(astcdType, link, obj.getExpr());
       Z3TypeAdapter typeAdapter = tFactory.adapt(attribute.get().getMCType());
-      return new Z3ExprAdapter(expr, typeAdapter);
+      res = new Z3ExprAdapter(expr, typeAdapter);
+      return wrap(res, obj);
     }
 
     // case Link
     Optional<ASTCDAssociation> association = resolveAssociation(astcdType, link);
     if (association.isPresent()) {
-      return getAssocLink(association.get(), obj, link);
+      res = getAssocLink(association.get(), obj, link);
+      return wrap(res);
     }
     Log.error("Cannot resolve role or attribute " + link + " for the type " + astcdType.getName());
     return null;
+  }
+
+  @Override
+  public Z3ExprAdapter getTransitiveLink(Z3ExprAdapter obj, String role) {
+    ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
+    ASTCDType astcdType = obj.getExprType().getCDType();
+    Sort sort = obj.getExprType().getSort();
+    ASTCDAssociation association = CDHelper.getAssociation(astcdType, role, cd);
+
+    FuncDecl<BoolSort> rel =
+        ctx.mkFuncDecl("reflexive_relation", new Sort[] {sort, sort}, ctx.mkBoolSort());
+    Z3ExprAdapter obj1 = mkConst("obj1", obj.getExprType());
+    Z3ExprAdapter obj2 = mkConst("obj2", obj1.getExprType());
+
+    BoolExpr constr =
+        cd2SMTGenerator.evaluateLink(
+            association, astcdType, astcdType, obj1.getExpr(), obj2.getExpr());
+    Z3ExprAdapter assocConstraint = new Z3ExprAdapter(constr, tFactory.mkBoolType());
+
+    Expr<?> definition = rel.apply(obj1.getExpr(), obj2.getExpr());
+    Z3ExprAdapter funcDef = new Z3ExprAdapter(definition, obj.getExprType());
+    Z3ExprAdapter rel_is_assocFunc = mkForall(List.of(obj1, obj2), mkEq(funcDef, assocConstraint));
+
+    FuncDecl<BoolSort> trans_rel = TransitiveClosure.mkTransitiveClosure(ctx, rel);
+
+    Function<Z3ExprAdapter, Z3ExprAdapter> setFunc =
+        expr ->
+            new Z3ExprAdapter(
+                trans_rel.apply(obj.getExpr(), expr.getExpr()), tFactory.mkBoolType());
+
+    Z3ExprAdapter res = mkSet(setFunc, obj1);
+    res.addGenConstraint(rel_is_assocFunc);
+
+    return wrap(res, obj);
   }
 
   public static void checkPreCond(Z3ExprAdapter obj) {
@@ -506,12 +549,6 @@ public class Z3ExprFactory
       return body;
     }
     return ctx.mkExists(quanParams.toArray(Expr[]::new), body, 0, null, null, null, null);
-  }
-
-  public List<Z3ExprAdapter> filterExpr(List<Z3ExprAdapter> exprList, Set<ExpressionKind> filter) {
-    return exprList.stream()
-        .filter(e -> filter.contains(e.getExprType().getKind()))
-        .collect(Collectors.toList());
   }
 
   public List<Expr<?>> revertAdaptation(List<Z3ExprAdapter> exprList) {
@@ -649,14 +686,25 @@ public class Z3ExprFactory
 
   private Z3ExprAdapter wrap(Z3ExprAdapter parent, Z3ExprAdapter... children) {
     Function<Z3ExprAdapter, Z3ExprAdapter> wrapper = expr -> expr;
+    Z3ExprAdapter genConstraint = mkBool(true);
 
     for (Z3ExprAdapter child : children) {
       if (child.isPresentWrapper()) {
         Function<Z3ExprAdapter, Z3ExprAdapter> finalWrapper = wrapper;
         wrapper = bool -> mkAnd(finalWrapper.apply(bool), child.getWrapper().apply(bool));
       }
+
+      if (child.isPresentGenConstr()) {
+        genConstraint = mkAnd(genConstraint, child.getGenConstraint());
+      }
     }
 
-    return parent.isBoolExpr() ? wrapper.apply(parent) : parent;
+    if (parent.isPresentGenConstr()) {
+      genConstraint = mkAnd(genConstraint, parent.getGenConstraint());
+    }
+
+    Z3ExprAdapter res = parent.isBoolExpr() ? wrapper.apply(parent) : parent;
+    res.addGenConstraint(genConstraint);
+    return res;
   }
 }

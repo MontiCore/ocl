@@ -455,51 +455,20 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
 
   // a.auction**
   protected EXPR convertTransClo(ASTOCLTransitiveQualification node) {
-    /*
-    ASTFieldAccessExpression fieldAcc = null;
+
+    ASTFieldAccessExpression fieldAcc;
     if (node.getExpression() instanceof ASTFieldAccessExpression) {
       fieldAcc = (ASTFieldAccessExpression) node.getExpression();
-    } else if (node.getExpression() instanceof ASTCallExpression) {
-      ASTCallExpression callExpression = (ASTCallExpression) node.getExpression();
-      if (TypeConverter.hasOptionalType(
-          ((ASTFieldAccessExpression) callExpression.getExpression()).getExpression())) {
-        fieldAcc =
-            (ASTFieldAccessExpression)
-                ((ASTFieldAccessExpression) callExpression.getExpression()).getExpression();
-      }
+    } else {
+      Log.error("conversion of transitive closure not completed yet");
+      assert false;
+      fieldAcc = null;
     }
     if (!node.isTransitive()) {
       return convertExpr(node);
     }
-
-    T auction = convertExpr(fieldAcc.getExpression());
-
-    FuncDecl<BoolSort> rel = buildReflexiveNewAssocFunc(getType(auction), fieldAcc.getName());
-    FuncDecl<BoolSort> trans_rel = TransitiveClosure.mkTransitiveClosure(ctx, rel);
-
-    Function<T, T> setFunc = obj -> eFactory.mkBool((BoolExpr) trans_rel.apply(auction, obj));
-    return eFactory.mkSet(setFunc, getType(auction), this);*/
-    return null;
-  }
-
-  private FuncDecl<BoolSort> buildReflexiveNewAssocFunc(TypeAdapter<TYPE> type, String otherRole) {
-    /* ASTCDType objClass = getASTCDType(type.getName(), getCD());
-    ASTCDAssociation association = CDHelper.getAssociation(objClass, otherRole, getCD());
-    Sort thisSort = typeConverter.deriveSort(type);
-    FuncDecl<BoolSort> rel =
-        ctx.mkFuncDecl("reflexive_relation", new Sort[] {thisSort, thisSort}, ctx.mkBoolSort());
-    T obj1 = declVariable(type, "obj1");
-    T obj2 = declVariable(type, "obj2");
-    T rel_is_assocFunc =
-        eFactory.mkForall(
-            List.of(obj1, obj2),
-            eFactory.mkEq(
-                eFactory.mkBool((BoolExpr) rel.apply(obj1.expr(), obj2.expr())),
-                eFactory.mkBool(
-                    cd2smtGenerator.evaluateLink(
-                        association, objClass, objClass, obj1.expr(), obj2.expr()))));
-    genConstraints.add(rel_is_assocFunc);*/
-    return null;
+    EXPR obj = convertExpr(fieldAcc.getExpression());
+    return cdFactory.getTransitiveLink(obj, fieldAcc.getName());
   }
 
   /***
