@@ -8,6 +8,7 @@ import de.monticore.ast.ASTNode;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -19,6 +20,8 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.literals.mccommonliterals._ast.ASTStringLiteral;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprFactory;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3TypeFactory;
 import de.monticore.ocl2smt.ocl2smt.oclExpr2smt.OCLExprConverter;
 import de.monticore.odbasis._ast.*;
 import de.monticore.odlink._ast.ASTODLink;
@@ -51,10 +54,13 @@ public class OD2SMTGenerator implements IOD2SMTGenerator {
               + " don't Match to the Class Diagram "
               + cd.get_SourcePositionStart().getFileName().orElse(cd.getCDDefinition().getName()));
     }
-
     // init the expression converter
-    //  exprConv = new OCLExprConverter<>(cd, ctx);  todo fixme
-    //  cd2SMTGenerator = exprConv.getCd2smtGenerator();
+    cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
+    cd2SMTGenerator.cd2smt(cd, ctx);
+    Z3TypeFactory tFactory = new Z3TypeFactory(cd2SMTGenerator);
+    Z3ExprFactory exprFactory = new Z3ExprFactory(tFactory, cd2SMTGenerator);
+    exprConv = new OCLExprConverter<>(exprFactory, exprFactory, tFactory);
+
     this.ctx = ctx;
     this.cd = cd;
     this.od = od;
