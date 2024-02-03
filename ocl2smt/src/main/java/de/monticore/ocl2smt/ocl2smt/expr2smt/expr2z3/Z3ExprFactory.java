@@ -1,6 +1,10 @@
 package de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3;
 
+import static de.monticore.cd2smt.Helper.CDHelper.getLeftType;
+import static de.monticore.cd2smt.Helper.CDHelper.getRightType;
+
 import com.microsoft.z3.*;
+import de.monticore.cd._symboltable.CDSymbolTables;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdassociation._ast.ASTCDAssociation;
@@ -339,7 +343,7 @@ public class Z3ExprFactory
 
     Expr<SeqSort<Sort>> expr1 = (Expr<SeqSort<Sort>>) s1.getExpr();
     Expr<SeqSort<Sort>> expr2 = (Expr<SeqSort<Sort>>) s2.getExpr();
-    Z3ExprAdapter res = new Z3ExprAdapter(ctx.mkPrefixOf(expr1, expr2), tFactory.mkStringType());
+    Z3ExprAdapter res = new Z3ExprAdapter(ctx.mkPrefixOf(expr1, expr2), tFactory.mkBoolType());
     return wrap(res, s1, s2);
   }
 
@@ -350,7 +354,7 @@ public class Z3ExprFactory
 
     Expr<SeqSort<Sort>> expr1 = (Expr<SeqSort<Sort>>) s1.getExpr();
     Expr<SeqSort<Sort>> expr2 = (Expr<SeqSort<Sort>>) s2.getExpr();
-    Z3ExprAdapter res = new Z3ExprAdapter(ctx.mkSuffixOf(expr1, expr2), tFactory.mkStringType());
+    Z3ExprAdapter res = new Z3ExprAdapter(ctx.mkSuffixOf(expr1, expr2), tFactory.mkBoolType());
     return wrap(res, s1, s2);
   }
 
@@ -483,22 +487,26 @@ public class Z3ExprFactory
   public Z3ExprAdapter getLink(Z3ExprAdapter obj, String link) {
     checkPreCond(obj);
     ASTCDType astcdType = obj.getExprType().getCDType();
+    ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
     Z3ExprAdapter res;
+
+    // case association Link
+    Optional<ASTCDAssociation> association = resolveAssociation(astcdType, link);
+    if (association.isPresent()) {
+      res = getAssocLink(association.get(), obj, link);
+      return wrap(res);
+    }
+
     // case attribute
     Optional<ASTCDAttribute> attribute = resolveAttribute(astcdType, link);
     if (attribute.isPresent()) {
+
       Expr<?> expr = cd2SMTGenerator.getAttribute(astcdType, link, obj.getExpr());
       Z3TypeAdapter typeAdapter = tFactory.adapt(attribute.get().getMCType());
       res = new Z3ExprAdapter(expr, typeAdapter);
       return wrap(res, obj);
     }
 
-    // case Link
-    Optional<ASTCDAssociation> association = resolveAssociation(astcdType, link);
-    if (association.isPresent()) {
-      res = getAssocLink(association.get(), obj, link);
-      return wrap(res);
-    }
     Log.error("Cannot resolve role or attribute " + link + " for the type " + astcdType.getName());
     return null;
   }
@@ -583,7 +591,7 @@ public class Z3ExprFactory
   }
 
   public Optional<ASTCDAttribute> resolveAttribute(ASTCDType astcdType, String attrName) {
-    for (ASTCDAttribute attr : astcdType.getCDAttributeList()) {
+    for (ASTCDAttribute attr : CDSymbolTables.getAttributesInHierarchy(astcdType)) {
       if (attr.getName().equals(attrName)) {
         return Optional.of(attr);
       }
@@ -591,41 +599,32 @@ public class Z3ExprFactory
     return Optional.empty();
   }
 
-  public ASTCDType getOtherType(ASTCDAssociation association, ASTCDType type) {
-    ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
-    ASTCDType left = CDHelper.getLeftType(association, cd);
-
-    ASTCDType right = CDHelper.getRightType(association, cd);
-    return type.equals(right) ? left : right;
-  }
-
-  public Z3ExprAdapter getAssocLink(
-      ASTCDAssociation association, Z3ExprAdapter obj, String otherRole) {
+  public Z3ExprAdapter getAssocLink(ASTCDAssociation assoc, Z3ExprAdapter obj, String role) {
 
     ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
     ASTCDType type = obj.getExprType().getCDType();
-    ASTCDType otherType = getOtherType(association, obj.getExprType().getCDType());
-
+    ASTCDType otherType =
+        isLeftSide(type, role, cd) ? getRightType(assoc, cd) : getLeftType(assoc, cd);
     Z3ExprAdapter otherObj = mkConst("tempVariable", tFactory.adapt(otherType));
 
     Function<Z3ExprAdapter, Z3ExprAdapter> link;
     ASTCDCardinality cardinality;
 
-    if (isLeftSide(obj.getExprType().getCDType(), otherRole, cd)) {
-      cardinality = association.getRight().getCDCardinality();
+    if (isLeftSide(obj.getExprType().getCDType(), role, cd)) {
+      cardinality = assoc.getRight().getCDCardinality();
       link =
           expr ->
               new Z3ExprAdapter(
                   cd2SMTGenerator.evaluateLink(
-                      association, type, otherType, obj.getExpr(), expr.getExpr()),
+                      assoc, type, otherType, obj.getExpr(), expr.getExpr()),
                   tFactory.mkBoolType());
     } else {
-      cardinality = association.getLeft().getCDCardinality();
+      cardinality = assoc.getLeft().getCDCardinality();
       link =
           expr ->
               new Z3ExprAdapter(
                   cd2SMTGenerator.evaluateLink(
-                      association, otherType, type, expr.getExpr(), obj.getExpr()),
+                      assoc, otherType, type, expr.getExpr(), obj.getExpr()),
                   tFactory.mkBoolType());
     }
 
@@ -634,9 +633,6 @@ public class Z3ExprFactory
       otherObj.setWrapper(bool -> mkExists(List.of(otherObj), mkAnd(bool, link.apply(otherObj))));
       res = otherObj;
     } else if (cardinality.isOpt()) {
-      // otherObj.setWrapper(bool -> mkExists(List.of(otherObj), mkAnd(bool,
-      // link.apply(otherObj))));
-      // todo complete
       res = mkOptional(link, otherObj);
     } else {
       res = mkSet(link, otherObj);
