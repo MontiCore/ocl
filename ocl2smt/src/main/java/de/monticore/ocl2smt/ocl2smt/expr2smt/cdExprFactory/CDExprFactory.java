@@ -8,6 +8,8 @@ public interface CDExprFactory<E extends ExprAdapter<?, T>, T> {
 
   E getTransitiveLink(E obj, String link);
 
+  E unwrapOptional(E opt);
+
   E mkForall(List<E> uninterpretedBool, E subRes);
 
   E mkExists(List<E> uninterpretedBool, E subRes);

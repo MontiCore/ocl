@@ -7,6 +7,10 @@ public interface TypeAdapter<T> {
 
   ExpressionKind getKind();
 
+  String getName();
+
+  T getSort();
+
   boolean isInt();
 
   boolean isDouble();
@@ -21,9 +25,7 @@ public interface TypeAdapter<T> {
 
   boolean isObject();
 
-  String getName();
-
-  T getSort();
-
   boolean isNative();
+
+  boolean isOptional();
 }

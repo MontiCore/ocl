@@ -1,6 +1,5 @@
 package de.monticore.ocl2smt.ocl2smt.oclExpr2smt;
 
-import com.microsoft.z3.*;
 import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTArguments;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
@@ -200,25 +199,29 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
       String methodName = ((ASTFieldAccessExpression) node.getExpression()).getName();
       ASTArguments args = node.getArguments();
 
-      EXPR arg1 = convertExpr(args.getExpression(0));
       EXPR callerExpr = convertExpr(caller);
       switch (methodName) {
         case "before":
-          return eFactory.mkLt(callerExpr, arg1);
+          return eFactory.mkLt(callerExpr, convertExpr(args.getExpression(0)));
         case "after":
-          return eFactory.mkGt(callerExpr, arg1);
+          return eFactory.mkGt(callerExpr, convertExpr(args.getExpression(0)));
         case "contains":
-          return eFactory.mkContains(callerExpr, arg1);
+          return eFactory.mkContains(callerExpr, convertExpr(args.getExpression(0)));
         case "endsWith":
-          return eFactory.mkSuffixOf(arg1, callerExpr);
+          return eFactory.mkSuffixOf(convertExpr(args.getExpression(0)), callerExpr);
         case "startsWith":
-          return eFactory.mkPrefixOf(arg1, callerExpr);
+          return eFactory.mkPrefixOf(convertExpr(args.getExpression(0)), callerExpr);
         case "replace":
-          return eFactory.mkReplace(callerExpr, arg1, convertExpr(args.getExpression(1)));
+          return eFactory.mkReplace(
+              callerExpr, convertExpr(args.getExpression(0)), convertExpr(args.getExpression(1)));
         case "containsAll":
-          return eFactory.containsAll(callerExpr, arg1);
+          return eFactory.containsAll(callerExpr, convertExpr(args.getExpression(0)));
         case "isEmpty":
           return eFactory.mkIsEmpty(callerExpr);
+        case "isPresent":
+          return eFactory.mkNot(eFactory.mkIsEmpty(callerExpr));
+        case "get":
+          return cdFactory.unwrapOptional(callerExpr);
       }
     }
     Log.error("Conversion of ASTMethodeCall  not fully implemented");

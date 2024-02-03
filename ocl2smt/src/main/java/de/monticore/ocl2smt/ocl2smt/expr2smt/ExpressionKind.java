@@ -8,4 +8,5 @@ public enum ExpressionKind {
   STRING,
   CHAR,
   OO,
+  OPTIONAL
 }

@@ -89,6 +89,11 @@ public class Z3TypeAdapter implements TypeAdapter<Sort> {
   }
 
   @Override
+  public boolean isOptional() {
+    return kind == ExpressionKind.OPTIONAL;
+  }
+
+  @Override
   public String toString() {
     return name;
   }

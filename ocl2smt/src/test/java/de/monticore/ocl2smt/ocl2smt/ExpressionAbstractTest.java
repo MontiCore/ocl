@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocl2smt;
 
+import com.microsoft.z3.Context;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
@@ -52,31 +53,34 @@ public abstract class ExpressionAbstractTest extends OCL2SMTAbstractTest {
     return ocl2SMTGenerator.convertInv(constr);
   }
 
-  public void testInv(String invName, String directory) {
+  public boolean testInv(String invName, String directory) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
     solverConstraints.add(getConstraint(invName));
     Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
-    org.junit.jupiter.api.Assertions.assertSame(Status.SATISFIABLE, solver.check());
+    boolean res = Status.SATISFIABLE == solver.check();
     Optional<ASTODArtifact> od =
         ocl2SMTGenerator.getCD2SMTGenerator().smt2od(solver.getModel(), false, invName);
     org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
     IOHelper.printOD(od.get(), Path.of(RELATIVE_TARGET_PATH + directory));
+    return res;
   }
 
-  public void testUnsatInv(Set<String> invNames, String directory) {
+  public boolean testUnsatInv(Set<String> invNames, String directory) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
     invNames.forEach(name -> solverConstraints.add(getConstraint(name)));
-
-    IOHelper.printOD(checkUnSat(solverConstraints), Path.of(RELATIVE_TARGET_PATH + directory));
-  }
-
-  public ASTODArtifact checkUnSat(List<IdentifiableBoolExpr> solverConstraints) {
+    Context ctx = ocl2SMTGenerator.getCD2SMTGenerator().getContext();
     Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
-    org.junit.jupiter.api.Assertions.assertSame(Status.UNSATISFIABLE, solver.check());
-    return TraceUnSatCore.buildUnSatOD(
-        new ArrayList<>(),
-        List.of(
-            solverConstraints.get(0).negate(ocl2SMTGenerator.getCD2SMTGenerator().getContext())),
-        TraceUnSatCore.traceUnSatCore(solver));
+
+    boolean res = Status.UNSATISFIABLE == solver.check();
+    if (res) {
+      ASTODArtifact od =
+          TraceUnSatCore.buildUnSatOD(
+              new ArrayList<>(),
+              List.of(solverConstraints.get(0).negate(ctx)),
+              TraceUnSatCore.traceUnSatCore(solver));
+
+      IOHelper.printOD(od, Path.of(RELATIVE_TARGET_PATH + directory));
+    }
+    return res;
   }
 }

@@ -59,6 +59,10 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>, Sort> {
     return type.isSet();
   }
 
+  public boolean isOptExpr() {
+    return type.isOptional();
+  }
+
   public boolean isIntExpr() {
     return type.isInt();
   }

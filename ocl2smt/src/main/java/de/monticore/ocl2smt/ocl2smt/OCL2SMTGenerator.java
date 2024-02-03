@@ -89,7 +89,9 @@ public class OCL2SMTGenerator {
         invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
     exprConv.reset();
     return IdentifiableBoolExpr.buildIdentifiable(
-        (BoolExpr) fullInv.getExpr(), srcPos, name); // todo fix (BoolExpr) add simplify()
+        (BoolExpr) fullInv.getExpr().simplify(),
+        srcPos,
+        name); // todo fix (BoolExpr) add simplify()
   }
 
   protected Function<Z3ExprAdapter, Z3ExprAdapter> openInvScope(ASTOCLInvariant invariant) {

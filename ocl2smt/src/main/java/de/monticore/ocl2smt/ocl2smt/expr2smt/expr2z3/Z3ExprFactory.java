@@ -8,6 +8,7 @@ import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.ExpressionKind;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory.CDExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory.ExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
@@ -61,7 +62,14 @@ public class Z3ExprFactory
   @Override
   public Z3ExprAdapter mkSet(
       Function<Z3ExprAdapter, Z3ExprAdapter> setFunction, Z3ExprAdapter expr) {
-    return new Z3SetExprAdapter(setFunction, expr);
+    String name = "set<" + expr.getExprType().getName() + ">";
+    return new Z3GenExprAdapter(setFunction, expr, name, ExpressionKind.SET);
+  }
+
+  public Z3ExprAdapter mkOptional(
+      Function<Z3ExprAdapter, Z3ExprAdapter> setFunction, Z3ExprAdapter expr) {
+    String name = "Optional<" + expr.getExprType().getName() + ">";
+    return new Z3GenExprAdapter(setFunction, expr, name, ExpressionKind.OPTIONAL);
   }
 
   @Override
@@ -163,7 +171,7 @@ public class Z3ExprFactory
           new Z3ExprAdapter(
               ctx.mkEq(leftNode.getExpr(), rightNode.getExpr()), tFactory.mkBoolType());
     } else {
-      Z3ExprAdapter element = ((Z3SetExprAdapter) leftNode).getElement();
+      Z3ExprAdapter element = ((Z3GenExprAdapter) leftNode).getElement();
 
       Expr<?> left = mkContains(rightNode, element).getExpr();
       Expr<?> right = mkContains(leftNode, element).getExpr();
@@ -351,8 +359,8 @@ public class Z3ExprFactory
     checkSet("containsAll", exp1);
     checkSet("containsAll", exp1);
 
-    Z3SetExprAdapter set1 = (Z3SetExprAdapter) exp1;
-    Z3SetExprAdapter set2 = (Z3SetExprAdapter) exp2;
+    Z3GenExprAdapter set1 = (Z3GenExprAdapter) exp1;
+    Z3GenExprAdapter set2 = (Z3GenExprAdapter) exp2;
     Z3ExprAdapter expr = set1.getElement();
     Z3ExprAdapter body = mkImplies(mkContains(set2, expr), mkContains(set1, expr));
     Z3ExprAdapter res = mkForall(List.of(expr), body);
@@ -361,11 +369,11 @@ public class Z3ExprFactory
 
   @Override
   public Z3ExprAdapter mkIsEmpty(Z3ExprAdapter expr) {
-    checkSet("mkIsEmpty", expr);
+    checkGen("mkIsEmpty", expr);
 
-    Z3SetExprAdapter set = ((Z3SetExprAdapter) expr);
-    Z3ExprAdapter con = set.getElement();
-    Z3ExprAdapter res = mkForall(List.of(expr), mkNot(mkContains(set, con)));
+    Z3GenExprAdapter set = ((Z3GenExprAdapter) expr);
+    Z3ExprAdapter elem = set.getElement();
+    Z3ExprAdapter res = mkForall(List.of(elem), mkNot(mkContains(set, elem)));
     return wrap(res, expr);
   }
 
@@ -374,8 +382,8 @@ public class Z3ExprFactory
     checkSet("mkSetUnion", expr1);
     checkSet("mkSetUnion", expr2);
 
-    Z3SetExprAdapter set1 = (Z3SetExprAdapter) expr1;
-    Z3SetExprAdapter set2 = (Z3SetExprAdapter) expr2;
+    Z3GenExprAdapter set1 = (Z3GenExprAdapter) expr1;
+    Z3GenExprAdapter set2 = (Z3GenExprAdapter) expr2;
     Function<Z3ExprAdapter, Z3ExprAdapter> setFunction =
         obj -> mkOr(mkContains(set1, obj), mkContains(set2, obj));
     Z3ExprAdapter res = mkSet(setFunction, set1.getElement());
@@ -387,8 +395,8 @@ public class Z3ExprFactory
     checkSet("mkSetIntersect", expr1);
     checkSet("mkSetIntersect", expr2);
 
-    Z3SetExprAdapter set1 = (Z3SetExprAdapter) expr1;
-    Z3SetExprAdapter set2 = (Z3SetExprAdapter) expr2;
+    Z3GenExprAdapter set1 = (Z3GenExprAdapter) expr1;
+    Z3GenExprAdapter set2 = (Z3GenExprAdapter) expr2;
     Function<Z3ExprAdapter, Z3ExprAdapter> setFunction =
         obj -> mkAnd(mkContains(set1, obj), mkContains(set2, obj));
     Z3ExprAdapter res = mkSet(setFunction, set1.getElement());
@@ -400,8 +408,8 @@ public class Z3ExprFactory
     checkSet("mkSetMinus", expr1);
     checkSet("mkSetMinus", expr2);
 
-    Z3SetExprAdapter set1 = (Z3SetExprAdapter) expr1;
-    Z3SetExprAdapter set2 = (Z3SetExprAdapter) expr2;
+    Z3GenExprAdapter set1 = (Z3GenExprAdapter) expr1;
+    Z3GenExprAdapter set2 = (Z3GenExprAdapter) expr2;
     Function<Z3ExprAdapter, Z3ExprAdapter> setFunction =
         obj -> mkAnd(mkContains(set1, obj), mkNot(mkContains(set2, obj)));
     Z3ExprAdapter res = mkSet(setFunction, set1.getElement());
@@ -416,8 +424,8 @@ public class Z3ExprFactory
       Expr<SeqSort<Sort>> str2 = (Expr<SeqSort<Sort>>) arg1.getExpr();
       res = new Z3ExprAdapter(ctx.mkContains(str1, str2), tFactory.mkBoolType());
     } else {
-      checkSet("mkContains", expr1);
-      res = ((Z3SetExprAdapter) expr1).isIn(arg1);
+      checkGen("mkContains", expr1);
+      res = ((Z3GenExprAdapter) expr1).isIn(arg1);
     }
 
     return wrap(res, expr1, arg1);
@@ -529,6 +537,16 @@ public class Z3ExprFactory
     return wrap(res, obj);
   }
 
+  @Override
+  public Z3ExprAdapter unwrapOptional(Z3ExprAdapter opt) {
+    checkOptional("unwrapOptional", opt);
+    Z3GenExprAdapter set = ((Z3GenExprAdapter) opt);
+    Z3ExprAdapter res = set.getElement();
+
+    res.setWrapper(bool -> mkExists(List.of(res), mkAnd(bool, set.isIn(res))));
+    return wrap(res, opt);
+  }
+
   public static void checkPreCond(Z3ExprAdapter obj) {
     String message =
         "Method getLink(...) expected an object expression as first parameter but got %s ";
@@ -616,8 +634,10 @@ public class Z3ExprFactory
       otherObj.setWrapper(bool -> mkExists(List.of(otherObj), mkAnd(bool, link.apply(otherObj))));
       res = otherObj;
     } else if (cardinality.isOpt()) {
-      Log.error("Access to Optional object not implemented yet");
-      res = null;
+      // otherObj.setWrapper(bool -> mkExists(List.of(otherObj), mkAnd(bool,
+      // link.apply(otherObj))));
+      // todo complete
+      res = mkOptional(link, otherObj);
     } else {
       res = mkSet(link, otherObj);
     }
@@ -680,7 +700,19 @@ public class Z3ExprFactory
 
   private void checkSet(String method, Z3ExprAdapter node) {
     if (!node.isSetExpr()) {
-      Log.error(String.format(wrongParam, method, node.getExprType(), "'set'"));
+      Log.error(String.format(wrongParam, method, node.getExprType(), "'Set'"));
+    }
+  }
+
+  private void checkGen(String method, Z3ExprAdapter node) {
+    if (!node.isSetExpr() && !node.isOptExpr()) {
+      Log.error(String.format(wrongParam, method, node.getExprType(), "'Set<?> or Optional<?>'"));
+    }
+  }
+
+  private void checkOptional(String method, Z3ExprAdapter node) {
+    if (!node.isOptExpr()) {
+      Log.error(String.format(wrongParam, method, node.getExprType(), "'Optional'"));
     }
   }
 
