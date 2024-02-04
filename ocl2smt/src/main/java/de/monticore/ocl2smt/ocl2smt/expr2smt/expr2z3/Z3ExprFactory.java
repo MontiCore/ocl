@@ -438,7 +438,7 @@ public class Z3ExprFactory
   @Override
   public Z3ExprAdapter mkNeq(Z3ExprAdapter left, Z3ExprAdapter right) {
     Z3ExprAdapter res = mkNot(mkEq(left, right));
-    return wrap(res, left, right);
+    return wrap(res);
   }
 
   @Override
@@ -487,7 +487,6 @@ public class Z3ExprFactory
   public Z3ExprAdapter getLink(Z3ExprAdapter obj, String link) {
     checkPreCond(obj);
     ASTCDType astcdType = obj.getExprType().getCDType();
-    ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
     Z3ExprAdapter res;
 
     // case association Link
@@ -605,7 +604,9 @@ public class Z3ExprFactory
     ASTCDType type = obj.getExprType().getCDType();
     ASTCDType otherType =
         isLeftSide(type, role, cd) ? getRightType(assoc, cd) : getLeftType(assoc, cd);
-    Z3ExprAdapter otherObj = mkConst("tempVariable", tFactory.adapt(otherType));
+
+    String linkName = obj.getExpr() + "_" + role + "_";
+    Z3ExprAdapter otherObj = mkConst(linkName, tFactory.adapt(otherType));
 
     Function<Z3ExprAdapter, Z3ExprAdapter> link;
     ASTCDCardinality cardinality;
@@ -633,9 +634,9 @@ public class Z3ExprFactory
       otherObj.setWrapper(bool -> mkExists(List.of(otherObj), mkAnd(bool, link.apply(otherObj))));
       res = otherObj;
     } else if (cardinality.isOpt()) {
-      res = mkOptional(link, otherObj);
+      res = mkOptional(link, mkConst(linkName, tFactory.adapt(otherType)));
     } else {
-      res = mkSet(link, otherObj);
+      res = mkSet(link, mkConst(linkName, tFactory.adapt(otherType)));
     }
     return res;
   }
@@ -713,13 +714,17 @@ public class Z3ExprFactory
   }
 
   private Z3ExprAdapter wrap(Z3ExprAdapter parent, Z3ExprAdapter... children) {
+    if (parent.isBoolExpr() && children.length == 0) {
+      return parent;
+    }
+
     Function<Z3ExprAdapter, Z3ExprAdapter> wrapper = expr -> expr;
     Z3ExprAdapter genConstraint = mkBool(true);
 
     for (Z3ExprAdapter child : children) {
       if (child.isPresentWrapper()) {
         Function<Z3ExprAdapter, Z3ExprAdapter> finalWrapper = wrapper;
-        wrapper = bool -> mkAnd(finalWrapper.apply(bool), child.getWrapper().apply(bool));
+        wrapper = bool -> child.getWrapper().apply(finalWrapper.apply(bool));
       }
 
       if (child.isPresentGenConstr()) {

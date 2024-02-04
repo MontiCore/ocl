@@ -1,7 +1,6 @@
 package de.monticore.ocl2smt.helpers;
 
 import com.microsoft.z3.*;
-import com.microsoft.z3.enumerations.Z3_lbool;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd4analysis.CD4AnalysisMill;
@@ -12,12 +11,11 @@ import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3TypeAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.ocl2smt.trafo.BuildPreCDTrafo;
-import de.monticore.ocl2smt.util.OCLMethodResult;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
@@ -28,6 +26,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.mcbasictypes._prettyprint.MCBasicTypesFullPrettyPrinter;
 import de.monticore.umlmodifier._ast.ASTModifier;
 import de.monticore.umlstereotype._ast.ASTStereotype;
+import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -124,28 +123,24 @@ public class OCLHelper {
 
   private static void setResultStereotypes(
       ASTODArtifact od, Model model, OPConstraint opConstraint) {
-    OCLMethodResult result = opConstraint.getResult();
+    Z3ExprAdapter result = opConstraint.getResult();
     if (!opConstraint.isPresentResult()) {
-      if (result.isVoid()) {
-        od.getObjectDiagram().setStereotype(buildStereotype("result", "Unspecified"));
-      }
+      od.getObjectDiagram().setStereotype(buildStereotype("result", "Unspecified"));
     } else {
 
-      if (result.isPrimitive()) {
-        String res =
-            model
-                .evaluate((Expr<? extends Sort>) result.getResultExpr().getExpr(), true)
-                .getSExpr();
+      if (result.getExprType().isNative()) {
+        String res = model.evaluate((Expr<? extends Sort>) result.getExpr(), true).getSExpr();
         od.getObjectDiagram().setStereotype(buildStereotype("result", res));
-      } else if (result.isObject()) {
+      } else if (result.isObjExpr()) {
         Expr<? extends Sort> resultExpr =
-            model.evaluate((Expr<? extends Sort>) result.getResultExpr().getExpr(), true);
-        ASTODNamedObject obj = getObjectWithExpr(result.getOclType(), resultExpr, od);
+            model.evaluate((Expr<? extends Sort>) result.getExpr(), true);
+        ASTODNamedObject obj = getObjectWithExpr(result.getExprType().getCDType(), resultExpr, od);
 
         obj.setModifier(buildModifier("result", "true"));
-      } else if (result.isSetOfObject()) {
-        List<Expr<? extends Sort>> resList = new ArrayList<>();
-        FuncDecl<BoolSort> seFunc = result.getResultSet();
+      } else if (result.isSetExpr()) {
+        Log.error("Setting result of Operation constraint not fully impelemented "); // todo fixme
+        /*   List<Expr<? extends Sort>> resList = new ArrayList<>();
+        FuncDecl<BoolSort> seFunc = result.getResultSet(;
         for (Expr<? extends Sort> expr : model.getSortUniverse(seFunc.getDomain()[0])) {
           if (model.evaluate(seFunc.apply(expr), true).getBoolValue() == Z3_lbool.Z3_L_TRUE) {
             resList.add(expr);
@@ -153,9 +148,9 @@ public class OCLHelper {
         }
         List<ASTODNamedObject> resObjList =
             resList.stream()
-                .map(expr -> getObjectWithExpr(result.getOclType(), expr, od))
+                .map(expr -> getObjectWithExpr(result.getExprType().getCDType(), expr, od))
                 .collect(Collectors.toList());
-        resObjList.forEach(obj -> obj.setModifier(buildModifier("result", "true")));
+        resObjList.forEach(obj -> obj.setModifier(buildModifier("result", "true")));*/
       }
     }
   }
@@ -244,7 +239,7 @@ public class OCLHelper {
   }
 
   public static ASTODNamedObject getObjectWithExpr(
-      Z3TypeAdapter type, Expr<? extends Sort> expr, ASTODArtifact od) {
+      ASTCDType type, Expr<? extends Sort> expr, ASTODArtifact od) {
     return OCLHelper.getObjectList(od).stream()
         .filter(x -> x.getName().equals(SMTHelper.buildObjectName(expr, type.getName())))
         .findFirst()

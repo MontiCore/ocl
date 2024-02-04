@@ -1,22 +1,26 @@
 package de.monticore.ocl2smt.ocl2smt;
 
 import com.microsoft.z3.*;
+import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
-import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
-import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
-import de.monticore.ocl.ocl._ast.ASTOCLOperationSignature;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
+import de.monticore.cdbasis._ast.ASTCDType;
+import de.monticore.ocl.ocl._ast.*;
+import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprFactory;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3TypeAdapter;
 import de.monticore.ocl2smt.ocl2smt.oclExpr2smt.FullOCLExprConverter;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.odbasis._ast.ASTODArtifact;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
   private final FullOCLExprConverter<Z3ExprAdapter, Sort> fullConv;
@@ -29,19 +33,6 @@ public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
     eFactory = new Z3ExprFactory(tFactory, cd2SMTGenerator);
     exprConv = new FullOCLExprConverter<>(eFactory, eFactory, tFactory);
     fullConv = (FullOCLExprConverter<Z3ExprAdapter, Sort>) exprConv;
-  }
-
-  // TODO:: fix   OCLOperationSignature = OCLMethodSignature | OCLConstructorSignature
-  private Z3ExprAdapter openOpScope(ASTOCLOperationSignature node) {
-    ASTOCLMethodSignature method = (ASTOCLMethodSignature) node;
-
-    // set the type of the method result
-    ((FullOCLExprConverter<Z3ExprAdapter, Sort>) exprConv).setResultType(method.getMCReturnType());
-
-    //  Z3ExprAdapter type = tFactory.adapt(method.getMethodName().getParts(0));
-    // declare the object to which the method will be applied
-    // return eFactory.mkConst(type + "__This", (Z3TypeAdapter)type);
-    return null;
   }
 
   private Z3ExprAdapter convertPreCond(ASTOCLOperationConstraint node) {
@@ -62,11 +53,14 @@ public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
   }
 
   public OPConstraint convertOpConst(ASTOCLOperationConstraint node) {
-
     exprConv.reset();
+    ASTOCLMethodSignature method = (ASTOCLMethodSignature) node.getOCLOperationSignature();
 
-    Z3ExprAdapter thisObj = openOpScope(node.getOCLOperationSignature());
-    fullConv.setThisObj(thisObj);
+    Pair<Z3ExprAdapter, List<Z3ExprAdapter>> vars = openScope(node);
+    List<String> methodParams = getMethodParams(method);
+
+    fullConv.setThisObj(vars.getLeft());
+    fullConv.setParams(methodParams, vars.getRight());
 
     // convert pre and post conditions
     Z3ExprAdapter pre = convertPreCond(node);
@@ -74,13 +68,13 @@ public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
 
     IdentifiableBoolExpr preConstr =
         IdentifiableBoolExpr.buildIdentifiable(
-            (BoolExpr) pre.getExpr(),
+            (BoolExpr) pre.getExpr().simplify(),
             node.getPreCondition(0).get_SourcePositionStart(),
             Optional.of("pre"));
 
     IdentifiableBoolExpr postConstr =
         IdentifiableBoolExpr.buildIdentifiable(
-            (BoolExpr) post.getExpr(),
+            (BoolExpr) post.getExpr().simplify(),
             node.getPostCondition(0).get_SourcePositionStart(),
             Optional.of("post"));
 
@@ -89,7 +83,28 @@ public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
         IdentifiableBoolExpr.buildIdentifiable(
             (BoolExpr) op.getExpr(), node.get_SourcePositionStart(), Optional.of("pre ==> Post"));
 
-    return new OPConstraint(preConstr, postConstr, opConstraint, fullConv.getResult(), thisObj);
+    return new OPConstraint(
+        preConstr, postConstr, opConstraint, fullConv.getResult(), vars.getLeft());
+  }
+
+  private Pair<Z3ExprAdapter, List<Z3ExprAdapter>> openScope(ASTOCLOperationConstraint node) {
+    ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
+    ASTOCLMethodSignature method = ((ASTOCLMethodSignature) node.getOCLOperationSignature());
+
+    String typeName = method.getMethodName().getParts(0);
+    ASTCDType type = CDHelper.getASTCDType(typeName, cd);
+    List<Z3ExprAdapter> params = new ArrayList<>();
+
+    for (ASTOCLParamDeclaration param : method.getOCLParamDeclarationList()) {
+      Z3TypeAdapter paramType = tFactory.adapt(param.getMCType());
+      Z3ExprAdapter paramExpr = eFactory.mkConst(param.getName(), paramType);
+      params.add(paramExpr);
+    }
+
+    // declare the object to which the method will be applied
+    Z3ExprAdapter caller = eFactory.mkConst("_this_" + typeName, tFactory.adapt(type));
+
+    return new ImmutablePair<>(caller, params);
   }
 
   public IdentifiableBoolExpr convertPreInv(ASTOCLInvariant invariant) {
@@ -112,11 +127,16 @@ public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
       boolean partial) {
     Optional<ASTODArtifact> od = buildOd(model, odName, partial);
     assert od.isPresent();
-    return null; // return OCLHelper.splitPreOD(method, od.get(), model, opConstraint); todo fixme
+    return OCLHelper.splitPreOD(method, od.get(), model, opConstraint);
   }
 
   public Solver makeSolver(List<IdentifiableBoolExpr> constraints) {
-    // return exprConv.getCd2smtGenerator().makeSolver(constraints);
-    return null; // todo fixme
+    return cd2SMTGenerator.makeSolver(constraints);
+  }
+
+  private List<String> getMethodParams(ASTOCLMethodSignature method) {
+    return method.getOCLParamDeclarationList().stream()
+        .map(ASTOCLParamDeclaration::getName)
+        .collect(Collectors.toList());
   }
 }

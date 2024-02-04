@@ -5,7 +5,6 @@ import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3TypeAdapter;
-import de.monticore.ocl2smt.util.OCLMethodResult;
 
 /** this Class is saves data obtains after the conversion of an OCL Constraint in SMT */
 public class OPConstraint {
@@ -15,14 +14,14 @@ public class OPConstraint {
   protected IdentifiableBoolExpr operationConstraint;
 
   protected final Z3ExprAdapter thisObj;
-  protected final OCLMethodResult result;
+  protected final Z3ExprAdapter result;
   protected final Z3TypeAdapter ThisType;
 
   public OPConstraint(
       IdentifiableBoolExpr preCond,
       IdentifiableBoolExpr postCond,
       IdentifiableBoolExpr opConstraint,
-      OCLMethodResult res,
+      Z3ExprAdapter res,
       Z3ExprAdapter thisObj) {
     this.preCond = preCond;
     this.postCond = postCond;
@@ -54,11 +53,11 @@ public class OPConstraint {
     return thisObj.getExpr();
   }
 
-  public OCLMethodResult getResult() {
+  public Z3ExprAdapter getResult() {
     return result;
   }
 
   public boolean isPresentResult() {
-    return this.result != null && result.isPresent();
+    return this.result != null;
   }
 }

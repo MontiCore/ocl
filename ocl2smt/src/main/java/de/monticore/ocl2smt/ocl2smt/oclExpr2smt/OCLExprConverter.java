@@ -18,7 +18,6 @@ import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeFactorry.TypeFactory;
 import de.monticore.ocl2smt.visitors.SetGeneratorCollector;
 import de.monticore.ocl2smt.visitors.SetVariableCollector;
-import de.monticore.types.check.SymTypeExpression;
 import de.se_rwth.commons.logging.Log;
 import java.util.*;
 import java.util.function.Function;
@@ -292,10 +291,11 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
     if (varNames.containsKey(node.getName())) {
       return varNames.get(node.getName());
     } else {
-
-      SymTypeExpression typeExpr = tFactory.deriveType(node);
+      Log.error("Conversion of ASTNameExpression not fully implemented");
+      /*   SymTypeExpression typeExpr = tFactory.deriveType(node);
       TypeAdapter<TYPE> type = tFactory.adapt(typeExpr);
-      return mkConst(node.getName(), type);
+      return mkConst(node.getName(), type);*/
+      return null;
     }
   }
 
