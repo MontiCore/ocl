@@ -10,7 +10,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl.types3.OCLTypeTraverserFactory;
 import de.monticore.ocl2smt.helpers.IOHelper;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.ExpressionKind;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.ExprKind;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeFactorry.TypeFactory;
 import de.monticore.types.check.SymTypeExpression;
@@ -32,33 +32,33 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
 
   @Override
   public Z3TypeAdapter mkBoolType() {
-    return new Z3TypeAdapter("bool", ctx.mkBoolSort(), ExpressionKind.BOOL);
+    return new Z3TypeAdapter("bool", ctx.mkBoolSort(), ExprKind.BOOL);
   }
 
   @Override
   public Z3TypeAdapter mkStringType() {
-    return new Z3TypeAdapter("String", ctx.mkStringSort(), ExpressionKind.STRING);
+    return new Z3TypeAdapter("String", ctx.mkStringSort(), ExprKind.STRING);
   }
 
   @Override
-  public Z3TypeAdapter mkCharTYpe() {
-    return new Z3TypeAdapter("char", ctx.mkIntSort(), ExpressionKind.CHAR);
+  public Z3TypeAdapter mkCharType() {
+    return new Z3TypeAdapter("char", ctx.mkIntSort(), ExprKind.CHAR);
   }
 
   @Override
   public Z3TypeAdapter mkInType() {
-    return new Z3TypeAdapter("int", ctx.mkIntSort(), ExpressionKind.INTEGER);
+    return new Z3TypeAdapter("int", ctx.mkIntSort(), ExprKind.INTEGER);
   }
 
   @Override
-  public TypeAdapter<Sort> mkSetType(Sort elementType) {
-    String name = "set<" + elementType + ">";
-    return new Z3TypeAdapter(name, elementType, ExpressionKind.SET);
+  public TypeAdapter<Sort> mkSetType(Sort elemType) {
+    String name = "set<" + elemType + ">";
+    return new Z3TypeAdapter(name, elemType, ExprKind.SET);
   }
 
   @Override
   public Z3TypeAdapter adapt(ASTCDType cdType) {
-    return new Z3TypeAdapter(cdType, cd2SMTGenerator.getSort(cdType), ExpressionKind.OO);
+    return new Z3TypeAdapter(cdType, cd2SMTGenerator.getSort(cdType), ExprKind.OO);
   }
 
   @Override
@@ -75,7 +75,7 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
       } else if (primType.isInt()) {
         res = Optional.ofNullable(mkInType());
       } else if (primType.isChar()) {
-        res = Optional.ofNullable(mkCharTYpe());
+        res = Optional.ofNullable(mkCharType());
       } else if (primType.isByte()) {
         res = Optional.ofNullable(mkInType());
       } else if (primType.isFloat()) {
@@ -106,20 +106,20 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
   }
 
   @Override
-  public TypeAdapter<Sort> adapt(SymTypeExpression typeSymbol) {
+  public TypeAdapter<Sort> adapt(SymTypeExpression type) {
     // case primitive type
-    Optional<Z3TypeAdapter> res = adaptQName(typeSymbol.printFullName());
+    Optional<Z3TypeAdapter> res = adaptQName(type.printFullName());
 
     // case CEType
     if (res.isEmpty()) {
-      String[] parts = typeSymbol.print().split("\\.");
+      String[] parts = type.print().split("\\.");
       String typeName = parts[parts.length - 1];
       Optional<ASTCDType> astcdType = resolveCDType(typeName);
       res = astcdType.map(this::adapt);
     }
 
     if (res.isEmpty()) {
-      Log.error("Cannot resolve the type " + typeSymbol.printFullName());
+      Log.error("Cannot resolve the type " + type.printFullName());
       assert false;
     }
     return res.get();
@@ -163,7 +163,7 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
   }
 
   public Z3TypeAdapter mkDoubleType() {
-    return new Z3TypeAdapter("double", ctx.mkFPSortDouble(), ExpressionKind.DOUBLE);
+    return new Z3TypeAdapter("double", ctx.mkFPSortDouble(), ExprKind.DOUBLE);
   }
 
   @Override

@@ -12,7 +12,7 @@ import de.monticore.cdassociation._ast.ASTCDCardinality;
 import de.monticore.cdbasis._ast.ASTCDAttribute;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.ExpressionKind;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.ExprKind;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory.CDExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory.ExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
@@ -24,7 +24,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Z3ExprFactory
-    implements ExprFactory<Z3ExprAdapter, Sort>, CDExprFactory<Z3ExprAdapter, Sort> {
+    implements ExprFactory<Z3ExprAdapter, Sort>, CDExprFactory<Z3ExprAdapter> {
   private final Context ctx;
   private final Z3TypeFactory tFactory;
   private final CD2SMTGenerator cd2SMTGenerator;
@@ -39,23 +39,23 @@ public class Z3ExprFactory
   }
 
   @Override
-  public Z3ExprAdapter mkBool(boolean node) {
-    return new Z3ExprAdapter(ctx.mkBool(node), tFactory.mkBoolType());
+  public Z3ExprAdapter mkBool(boolean value) {
+    return new Z3ExprAdapter(ctx.mkBool(value), tFactory.mkBoolType());
   }
 
   @Override
-  public Z3ExprAdapter mkString(String node) {
-    return new Z3ExprAdapter(ctx.mkString(node), tFactory.mkStringType());
+  public Z3ExprAdapter mkString(String value) {
+    return new Z3ExprAdapter(ctx.mkString(value), tFactory.mkStringType());
   }
 
   @Override
-  public Z3ExprAdapter mkInt(int node) {
-    return new Z3ExprAdapter(ctx.mkInt(node), tFactory.mkInType());
+  public Z3ExprAdapter mkInt(int value) {
+    return new Z3ExprAdapter(ctx.mkInt(value), tFactory.mkInType());
   }
 
   @Override
-  public Z3ExprAdapter mkChar(char node) {
-    return new Z3ExprAdapter(ctx.mkInt(node), tFactory.mkCharTYpe());
+  public Z3ExprAdapter mkChar(char value) {
+    return new Z3ExprAdapter(ctx.mkInt(value), tFactory.mkCharType());
   }
 
   @Override
@@ -66,14 +66,14 @@ public class Z3ExprFactory
   @Override
   public Z3ExprAdapter mkSet(
       Function<Z3ExprAdapter, Z3ExprAdapter> setFunction, Z3ExprAdapter expr) {
-    String name = "set<" + expr.getExprType().getName() + ">";
-    return new Z3GenExprAdapter(setFunction, expr, name, ExpressionKind.SET);
+    String name = "set<" + expr.getType().getName() + ">";
+    return new Z3GenExprAdapter(setFunction, expr, name, ExprKind.SET);
   }
 
   public Z3ExprAdapter mkOptional(
       Function<Z3ExprAdapter, Z3ExprAdapter> setFunction, Z3ExprAdapter expr) {
-    String name = "Optional<" + expr.getExprType().getName() + ">";
-    return new Z3GenExprAdapter(setFunction, expr, name, ExpressionKind.OPTIONAL);
+    String name = "Optional<" + expr.getType().getName() + ">";
+    return new Z3GenExprAdapter(setFunction, expr, name, ExprKind.OPTIONAL);
   }
 
   @Override
@@ -316,7 +316,7 @@ public class Z3ExprFactory
     checkBool("mkIte", cond);
 
     Expr<?> expr = ctx.mkITE((BoolExpr) cond.getExpr(), expr1.getExpr(), expr2.getExpr());
-    Z3ExprAdapter res = new Z3ExprAdapter(expr, expr1.getExprType());
+    Z3ExprAdapter res = new Z3ExprAdapter(expr, expr1.getType());
     return wrap(res, cond, expr1, expr2);
   }
 
@@ -484,43 +484,43 @@ public class Z3ExprFactory
   }
 
   @Override
-  public Z3ExprAdapter getLink(Z3ExprAdapter obj, String link) {
+  public Z3ExprAdapter getLink(Z3ExprAdapter obj, String role) {
     checkPreCond(obj);
-    ASTCDType astcdType = obj.getExprType().getCDType();
+    ASTCDType astcdType = obj.getType().getCDType();
     Z3ExprAdapter res;
 
     // case association Link
-    Optional<ASTCDAssociation> association = resolveAssociation(astcdType, link);
+    Optional<ASTCDAssociation> association = resolveAssociation(astcdType, role);
     if (association.isPresent()) {
-      res = getAssocLink(association.get(), obj, link);
+      res = getAssocLink(association.get(), obj, role);
       return wrap(res);
     }
 
     // case attribute
-    Optional<ASTCDAttribute> attribute = resolveAttribute(astcdType, link);
+    Optional<ASTCDAttribute> attribute = resolveAttribute(astcdType, role);
     if (attribute.isPresent()) {
 
-      Expr<?> expr = cd2SMTGenerator.getAttribute(astcdType, link, obj.getExpr());
+      Expr<?> expr = cd2SMTGenerator.getAttribute(astcdType, role, obj.getExpr());
       Z3TypeAdapter typeAdapter = tFactory.adapt(attribute.get().getMCType());
       res = new Z3ExprAdapter(expr, typeAdapter);
       return wrap(res, obj);
     }
 
-    Log.error("Cannot resolve role or attribute " + link + " for the type " + astcdType.getName());
+    Log.error("Cannot resolve role or attribute " + role + " for the type " + astcdType.getName());
     return null;
   }
 
   @Override
-  public Z3ExprAdapter getTransitiveLink(Z3ExprAdapter obj, String role) {
+  public Z3ExprAdapter getLinkTransitive(Z3ExprAdapter obj, String role) {
     ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
-    ASTCDType astcdType = obj.getExprType().getCDType();
-    Sort sort = obj.getExprType().getSort();
+    ASTCDType astcdType = obj.getType().getCDType();
+    Sort sort = obj.getType().getSort();
     ASTCDAssociation association = CDHelper.getAssociation(astcdType, role, cd);
 
     FuncDecl<BoolSort> rel =
         ctx.mkFuncDecl("reflexive_relation", new Sort[] {sort, sort}, ctx.mkBoolSort());
-    Z3ExprAdapter obj1 = mkConst("obj1", obj.getExprType());
-    Z3ExprAdapter obj2 = mkConst("obj2", obj1.getExprType());
+    Z3ExprAdapter obj1 = mkConst("obj1", obj.getType());
+    Z3ExprAdapter obj2 = mkConst("obj2", obj1.getType());
 
     BoolExpr constr =
         cd2SMTGenerator.evaluateLink(
@@ -528,7 +528,7 @@ public class Z3ExprFactory
     Z3ExprAdapter assocConstraint = new Z3ExprAdapter(constr, tFactory.mkBoolType());
 
     Expr<?> definition = rel.apply(obj1.getExpr(), obj2.getExpr());
-    Z3ExprAdapter funcDef = new Z3ExprAdapter(definition, obj.getExprType());
+    Z3ExprAdapter funcDef = new Z3ExprAdapter(definition, obj.getType());
     Z3ExprAdapter rel_is_assocFunc = mkForall(List.of(obj1, obj2), mkEq(funcDef, assocConstraint));
 
     FuncDecl<BoolSort> trans_rel = TransitiveClosure.mkTransitiveClosure(ctx, rel);
@@ -545,7 +545,7 @@ public class Z3ExprFactory
   }
 
   @Override
-  public Z3ExprAdapter unwrapOptional(Z3ExprAdapter opt) {
+  public Z3ExprAdapter unWrap(Z3ExprAdapter opt) {
     checkOptional("unwrapOptional", opt);
     Z3GenExprAdapter set = ((Z3GenExprAdapter) opt);
     Z3ExprAdapter res = set.getElement();
@@ -581,7 +581,7 @@ public class Z3ExprFactory
   }
 
   public List<ASTCDType> collectCDType(List<Z3ExprAdapter> params) {
-    return params.stream().map(e -> e.getExprType().getCDType()).collect(Collectors.toList());
+    return params.stream().map(e -> e.getType().getCDType()).collect(Collectors.toList());
   }
 
   public Optional<ASTCDAssociation> resolveAssociation(ASTCDType astcdType, String otherRole) {
@@ -601,7 +601,7 @@ public class Z3ExprFactory
   public Z3ExprAdapter getAssocLink(ASTCDAssociation assoc, Z3ExprAdapter obj, String role) {
 
     ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
-    ASTCDType type = obj.getExprType().getCDType();
+    ASTCDType type = obj.getType().getCDType();
     ASTCDType otherType =
         isLeftSide(type, role, cd) ? getRightType(assoc, cd) : getLeftType(assoc, cd);
 
@@ -611,7 +611,7 @@ public class Z3ExprFactory
     Function<Z3ExprAdapter, Z3ExprAdapter> link;
     ASTCDCardinality cardinality;
 
-    if (isLeftSide(obj.getExprType().getCDType(), role, cd)) {
+    if (isLeftSide(obj.getType().getCDType(), role, cd)) {
       cardinality = assoc.getRight().getCDCardinality();
       link =
           expr ->
@@ -673,43 +673,43 @@ public class Z3ExprFactory
 
   private void checkBool(String method, Z3ExprAdapter node) {
     if (!node.isBoolExpr()) {
-      Log.error(String.format(wrongParam, method, node.getExprType().getName(), "bool"));
+      Log.error(String.format(wrongParam, method, node.getType().getName(), "bool"));
     }
   }
 
   private void checkArith(String method, Z3ExprAdapter node) {
     if (!node.isIntExpr() && !node.isDoubleExpr() && !node.isCharExpr()) {
-      Log.error(String.format(wrongParam, method, node.getExprType(), "int or double"));
+      Log.error(String.format(wrongParam, method, node.getType(), "int or double"));
     }
   }
 
   private void checkString(String method, Z3ExprAdapter node) {
     if (!node.isStringExpr()) {
-      Log.error(String.format(wrongParam, method, node.getExprType(), "String"));
+      Log.error(String.format(wrongParam, method, node.getType(), "String"));
     }
   }
 
   private void checkInt(String method, Z3ExprAdapter node) {
     if (!node.isIntExpr()) {
-      Log.error(String.format(wrongParam, method, node.getExprType(), "int"));
+      Log.error(String.format(wrongParam, method, node.getType(), "int"));
     }
   }
 
   private void checkSet(String method, Z3ExprAdapter node) {
     if (!node.isSetExpr()) {
-      Log.error(String.format(wrongParam, method, node.getExprType(), "'Set'"));
+      Log.error(String.format(wrongParam, method, node.getType(), "'Set'"));
     }
   }
 
   private void checkGen(String method, Z3ExprAdapter node) {
     if (!node.isSetExpr() && !node.isOptExpr()) {
-      Log.error(String.format(wrongParam, method, node.getExprType(), "'Set<?> or Optional<?>'"));
+      Log.error(String.format(wrongParam, method, node.getType(), "'Set<?> or Optional<?>'"));
     }
   }
 
   private void checkOptional(String method, Z3ExprAdapter node) {
     if (!node.isOptExpr()) {
-      Log.error(String.format(wrongParam, method, node.getExprType(), "'Optional'"));
+      Log.error(String.format(wrongParam, method, node.getType(), "'Optional'"));
     }
   }
 

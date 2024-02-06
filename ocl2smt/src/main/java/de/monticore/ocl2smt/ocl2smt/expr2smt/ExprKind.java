@@ -1,6 +1,6 @@
 package de.monticore.ocl2smt.ocl2smt.expr2smt;
 
-public enum ExpressionKind {
+public enum ExprKind {
   INTEGER,
   DOUBLE,
   SET,

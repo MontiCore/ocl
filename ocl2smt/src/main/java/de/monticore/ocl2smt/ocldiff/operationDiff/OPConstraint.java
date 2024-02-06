@@ -27,7 +27,7 @@ public class OPConstraint {
     this.postCond = postCond;
     this.result = res;
 
-    this.ThisType = thisObj.getExprType();
+    this.ThisType = thisObj.getType();
     this.thisObj = thisObj;
 
     operationConstraint = opConstraint;

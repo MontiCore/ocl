@@ -128,13 +128,13 @@ public class OCLHelper {
       od.getObjectDiagram().setStereotype(buildStereotype("result", "Unspecified"));
     } else {
 
-      if (result.getExprType().isNative()) {
+      if (result.getType().isNative()) {
         String res = model.evaluate((Expr<? extends Sort>) result.getExpr(), true).getSExpr();
         od.getObjectDiagram().setStereotype(buildStereotype("result", res));
       } else if (result.isObjExpr()) {
         Expr<? extends Sort> resultExpr =
             model.evaluate((Expr<? extends Sort>) result.getExpr(), true);
-        ASTODNamedObject obj = getObjectWithExpr(result.getExprType().getCDType(), resultExpr, od);
+        ASTODNamedObject obj = getObjectWithExpr(result.getType().getCDType(), resultExpr, od);
 
         obj.setModifier(buildModifier("result", "true"));
       } else if (result.isSetExpr()) {

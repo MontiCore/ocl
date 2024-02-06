@@ -1,6 +1,6 @@
 package de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3;
 
-import de.monticore.ocl2smt.ocl2smt.expr2smt.ExpressionKind;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.ExprKind;
 import java.util.function.Function;
 
 public class Z3GenExprAdapter extends Z3ExprAdapter {
@@ -13,8 +13,8 @@ public class Z3GenExprAdapter extends Z3ExprAdapter {
       Function<Z3ExprAdapter, Z3ExprAdapter> function,
       Z3ExprAdapter element,
       String name,
-      ExpressionKind kind) {
-    super(null, new Z3TypeAdapter(name, element.getExprType().getSort(), kind));
+      ExprKind kind) {
+    super(null, new Z3TypeAdapter(name, element.getType().getSort(), kind));
 
     this.function = function;
     this.element = element;

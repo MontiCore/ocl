@@ -4,72 +4,73 @@ import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import java.util.function.Function;
 
+// todo add documentation
 public interface ExprFactory<E extends ExprAdapter<?, T>, T> {
-  E mkBool(boolean expr);
+  E mkBool(boolean value);
 
-  E mkString(String expr);
+  E mkString(String value);
 
-  E mkInt(int expr);
+  E mkInt(int value);
 
-  E mkChar(char expr);
+  E mkChar(char value);
 
-  E mkDouble(double expr);
+  E mkDouble(double value);
+
+  E mkConst(String name, TypeAdapter<T> type);
 
   E mkNot(E expr);
 
-  E mkAnd(E expr1, E expr);
+  E mkAnd(E leftExpr, E rightExpr);
 
-  E mkOr(E expr1, E expr);
+  E mkOr(E leftExpr, E rightExpr);
 
-  E mkEq(E expr1, E expr);
+  E mkEq(E leftExpr, E rightExpr);
 
-  E mkImplies(E expr1, E expr);
+  E mkImplies(E leftExpr, E rightExpr);
 
-  E mkNeq(E expr1, E expr);
+  E mkNeq(E leftExpr, E rightExpr);
 
-  E mkLt(E expr1, E expr);
+  E mkLt(E leftExpr, E rightExpr);
 
-  E mkLeq(E expr1, E expr);
+  E mkLeq(E leftExpr, E rightExpr);
 
-  E mkGt(E expr1, E expr);
+  E mkGt(E leftExpr, E rightExpr);
 
-  E mkGe(E expr1, E expr);
+  E mkGe(E leftExpr, E rightExpr);
 
-  E mkSub(E expr1, E expr);
+  E mkSub(E leftExpr, E rightExpr);
 
-  E mkPlus(E expr1, E expr);
+  E mkPlus(E leftExpr, E rightExpr);
 
-  E mkMul(E expr1, E expr);
+  E mkMul(E leftExpr, E rightExpr);
 
-  E mkDiv(E expr1, E expr);
+  E mkDiv(E leftExpr, E rightExpr);
 
-  E mkMod(E expr1, E expr);
+  E mkMod(E leftExpr, E rightExpr);
 
-  E mkPlusPrefix(E expr1);
+  E mkPlusPrefix(E expr);
 
-  E mkMinusPrefix(E expr1);
+  E mkMinusPrefix(E expr);
 
-  E mkIte(E cond, E expr1, E expr2);
+  E mkIte(E cond, E leftExpr, E rightExpr);
 
-  E mkReplace(E s, E s1, E s2);
+  E mkReplace(E string, E src, E dest);
 
-  E mkPrefixOf(E s1, E s2);
+  E mkPrefixOf(E prefix, E string);
 
-  E mkSuffixOf(E s1, E s2);
+  E mkSuffixOf(E suffix, E string);
 
-  E mkSet(Function<E, E> setFunction, E element);
+  E mkSet(Function<E, E> setFunction, E elem);
 
   E containsAll(E set1, E set2);
 
   E mkIsEmpty(E set);
 
-  E mkSetUnion(E set1, E set);
+  E mkSetUnion(E set1, E set2);
 
-  E mkSetIntersect(E set1, E set);
+  E mkSetIntersect(E set1, E set2);
 
-  E mkSetMinus(E set1, E set);
+  E mkSetMinus(E set1, E set2);
 
-  E mkContains(E callerExpr, E arg1);
-
-  E mkConst(String name, TypeAdapter<T> type);
+  E mkContains(E collection, E element);
 }

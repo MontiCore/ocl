@@ -21,7 +21,7 @@ public class FullOCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE>
 
   public FullOCLExprConverter(
       ExprFactory<EXPR, TYPE> factory,
-      CDExprFactory<EXPR, TYPE> cdFactory,
+      CDExprFactory<EXPR> cdFactory,
       TypeFactory<TYPE> typeFactory) {
     super(factory, cdFactory, typeFactory);
   }

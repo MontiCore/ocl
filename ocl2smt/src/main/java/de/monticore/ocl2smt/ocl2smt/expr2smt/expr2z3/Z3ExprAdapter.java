@@ -33,7 +33,7 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>, Sort> {
   }
 
   @Override
-  public Z3TypeAdapter getExprType() {
+  public Z3TypeAdapter getType() {
     return type;
   }
 

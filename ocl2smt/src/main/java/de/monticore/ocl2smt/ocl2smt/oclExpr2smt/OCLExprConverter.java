@@ -31,12 +31,12 @@ import org.apache.commons.lang3.tuple.Pair;
 public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
   protected Map<String, EXPR> varNames;
   protected ExprFactory<EXPR, TYPE> eFactory;
-  protected CDExprFactory<EXPR, TYPE> cdFactory;
+  protected CDExprFactory<EXPR> cdFactory;
   protected TypeFactory<TYPE> tFactory;
 
   public OCLExprConverter(
       ExprFactory<EXPR, TYPE> factory,
-      CDExprFactory<EXPR, TYPE> cdFactory,
+      CDExprFactory<EXPR> cdFactory,
       TypeFactory<TYPE> typeFactory) {
 
     this.eFactory = factory;
@@ -220,7 +220,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
         case "isPresent":
           return eFactory.mkNot(eFactory.mkIsEmpty(callerExpr));
         case "get":
-          return cdFactory.unwrapOptional(callerExpr);
+          return cdFactory.unWrap(callerExpr);
       }
     }
     Log.error("Conversion of ASTMethodeCall  not fully implemented");
@@ -368,7 +368,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
         EXPR value = convertExpr(((ASTSetValueItem) item).getExpression());
         Function<EXPR, EXPR> finalFunc = setFunc;
         setFunc = obj -> eFactory.mkOr(finalFunc.apply(obj), eFactory.mkEq(value, obj));
-        type = value.getExprType();
+        type = value.getType();
       } else {
         ASTSetValueRange range = (ASTSetValueRange) item;
         EXPR expr1 = convertExpr(range.getUpperBound());
@@ -380,7 +380,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
             obj -> eFactory.mkAnd(eFactory.mkLeq(low, obj), eFactory.mkLeq(obj, up));
         Function<EXPR, EXPR> finalFunc = setFunc;
         setFunc = obj -> eFactory.mkOr(finalFunc.apply(obj), func.apply(obj));
-        type = expr1.getExprType();
+        type = expr1.getType();
       }
     }
     EXPR setElem = mkConst("elem", type);
@@ -443,11 +443,11 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
 
       EXPR temp = convertExpr(node.getExpression());
 
-      expr = mkConst("var", temp.getExprType());
+      expr = mkConst("var", temp.getType());
       filter = eFactory.mkEq(expr, temp);
       vars.add(expr);
     }
-    EXPR setElem = mkConst("elem", expr.getExprType());
+    EXPR setElem = mkConst("elem", expr.getType());
     return bool ->
         eFactory.mkSet(
             obj ->
@@ -471,7 +471,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
       return convertExpr(node);
     }
     EXPR obj = convertExpr(fieldAcc.getExpression());
-    return cdFactory.getTransitiveLink(obj, fieldAcc.getName());
+    return cdFactory.getLinkTransitive(obj, fieldAcc.getName());
   }
 
   /***
