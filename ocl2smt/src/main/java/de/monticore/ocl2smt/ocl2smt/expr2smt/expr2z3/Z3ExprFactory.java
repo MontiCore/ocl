@@ -23,8 +23,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class Z3ExprFactory
-    implements ExprFactory<Z3ExprAdapter, Sort>, CDExprFactory<Z3ExprAdapter> {
+public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<Z3ExprAdapter> {
   private final Context ctx;
   private final Z3TypeFactory tFactory;
   private final CD2SMTGenerator cd2SMTGenerator;
@@ -77,8 +76,9 @@ public class Z3ExprFactory
   }
 
   @Override
-  public Z3ExprAdapter mkConst(String name, TypeAdapter<Sort> type) {
-    return new Z3ExprAdapter(ctx.mkConst(name, type.getSort()), (Z3TypeAdapter) type);
+  public Z3ExprAdapter mkConst(String name, TypeAdapter type) {
+    return new Z3ExprAdapter(
+        ctx.mkConst(name, ((Z3TypeAdapter) type).getSort()), (Z3TypeAdapter) type);
   }
 
   @Override
@@ -549,8 +549,7 @@ public class Z3ExprFactory
     return wrap(res, opt);
   }
 
-  //todo continuew review here...
-
+  // todo continuew review here...
 
   private BoolExpr mkForAll(List<Expr<?>> quanParams, BoolExpr body) {
     if (quanParams.isEmpty()) {
@@ -667,7 +666,7 @@ public class Z3ExprFactory
     }
   }
 
-  public  void checkObj(String method, Z3ExprAdapter node) {
+  public void checkObj(String method, Z3ExprAdapter node) {
     if (!node.isObjExpr()) {
       Log.error(String.format(wrongParam, method, node.getType().getName(), " as CDType"));
     }

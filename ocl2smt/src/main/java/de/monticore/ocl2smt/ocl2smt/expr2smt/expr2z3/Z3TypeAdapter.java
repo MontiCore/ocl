@@ -5,7 +5,7 @@ import de.monticore.cdbasis._ast.ASTCDType;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.ExprKind;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 
-public class Z3TypeAdapter implements TypeAdapter<Sort> {
+public class Z3TypeAdapter implements TypeAdapter {
   private final String name;
   private final Sort sort;
   private final ExprKind kind;
@@ -70,7 +70,6 @@ public class Z3TypeAdapter implements TypeAdapter<Sort> {
     return name;
   }
 
-  @Override
   public Sort getSort() {
     return sort;
   }

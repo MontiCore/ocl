@@ -13,7 +13,6 @@ import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory.CDExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory.ExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeFactorry.TypeFactory;
 import de.monticore.ocl2smt.visitors.SetGeneratorCollector;
@@ -28,21 +27,15 @@ import org.apache.commons.lang3.tuple.Pair;
 // todo  cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator(); place that on the right position
 // todo cd2SMTGenerator.cd2smt(cdAst, ctx);
 /** This class convert All OCL-Expressions except @Pre-Expressions in SMT */
-public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
+public class OCLExprConverter<EXPR extends ExprAdapter<?>> {
   protected Map<String, EXPR> varNames;
-  protected ExprFactory<EXPR, TYPE> eFactory;
-  protected CDExprFactory<EXPR> cdFactory;
-  protected TypeFactory<TYPE> tFactory;
 
-  public OCLExprConverter(
-      ExprFactory<EXPR, TYPE> factory,
-      CDExprFactory<EXPR> cdFactory,
-      TypeFactory<TYPE> typeFactory) {
+  protected CDExprFactory<EXPR> eFactory;
+  protected TypeFactory tFactory;
 
-    this.eFactory = factory;
+  public OCLExprConverter(CDExprFactory<EXPR> eFactory, TypeFactory typeFactory) {
     this.tFactory = typeFactory;
-    this.cdFactory = cdFactory;
-
+    this.eFactory = eFactory;
     varNames = new HashMap<>();
   }
 
@@ -220,14 +213,14 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
         case "isPresent":
           return eFactory.mkNot(eFactory.mkIsEmpty(callerExpr));
         case "get":
-          return cdFactory.unWrap(callerExpr);
+          return eFactory.unWrap(callerExpr);
       }
     }
     Log.error("Conversion of ASTMethodeCall  not fully implemented");
     return null;
   }
 
-  public EXPR mkConst(String name, TypeAdapter<TYPE> type) {
+  public EXPR mkConst(String name, TypeAdapter type) {
     EXPR expr = eFactory.mkConst(name, type);
     varNames.put(name, expr);
     return expr;
@@ -238,7 +231,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
     Pair<List<EXPR>, EXPR> quanParams = openScope(node.getInDeclarationList());
 
     EXPR body = eFactory.mkImplies(quanParams.getRight(), convertExpr(node.getExpression()));
-    EXPR result = cdFactory.mkForall(quanParams.getLeft(), body);
+    EXPR result = eFactory.mkForall(quanParams.getLeft(), body);
 
     closeScope(node.getInDeclarationList());
     return result;
@@ -248,7 +241,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
     Pair<List<EXPR>, EXPR> quanParams = openScope(node.getInDeclarationList());
 
     EXPR body = eFactory.mkAnd(quanParams.getRight(), convertExpr(node.getExpression()));
-    EXPR result = cdFactory.mkExists(quanParams.getLeft(), body);
+    EXPR result = eFactory.mkExists(quanParams.getLeft(), body);
 
     closeScope(node.getInDeclarationList());
     return result;
@@ -261,7 +254,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
     for (ASTInDeclaration decl : inDeclarations) {
       for (ASTInDeclarationVariable varDecl : decl.getInDeclarationVariableList()) {
 
-        TypeAdapter<TYPE> type =
+        TypeAdapter type =
             decl.isPresentMCType()
                 ? tFactory.adapt(decl.getMCType())
                 : tFactory.adapt(varDecl.getSymbol().getType());
@@ -301,7 +294,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
 
   protected EXPR convert(ASTFieldAccessExpression node) {
     EXPR obj = convertExpr(node.getExpression());
-    return cdFactory.getLink(obj, node.getName());
+    return eFactory.getLink(obj, node.getName());
   }
 
   protected EXPR convertSetComp(ASTSetComprehension node) {
@@ -330,13 +323,13 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
 
     // convert set variables to Expr: int x  = 10
     for (ASTSetVariableDeclaration var : varCollector.getAllVariables()) {
-      TypeAdapter<TYPE> varType = tFactory.adapt(var.getMCType());
+      TypeAdapter varType = tFactory.adapt(var.getMCType());
       mkConst(var.getName(), varType);
     }
 
     // convert variable by generator-declaration : int x in {1,2}
     for (ASTGeneratorDeclaration gen : generatorCollector.getAllGenrators()) {
-      TypeAdapter<TYPE> type;
+      TypeAdapter type;
       if (gen.isPresentMCType()) {
         type = tFactory.adapt(gen.getMCType());
       } else {
@@ -359,7 +352,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
   }
 
   protected EXPR convertSetEnum(ASTSetEnumeration node) {
-    TypeAdapter<TYPE> type = null;
+    TypeAdapter type = null;
     Function<EXPR, EXPR> setFunc = obj -> eFactory.mkBool(false);
 
     for (ASTSetCollectionItem item : node.getSetCollectionItemList()) {
@@ -451,7 +444,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
     return bool ->
         eFactory.mkSet(
             obj ->
-                cdFactory.mkExists(
+                eFactory.mkExists(
                     vars, eFactory.mkAnd(eFactory.mkEq(obj, expr), eFactory.mkAnd(filter, bool))),
             setElem);
   }
@@ -471,7 +464,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE> {
       return convertExpr(node);
     }
     EXPR obj = convertExpr(fieldAcc.getExpression());
-    return cdFactory.getLinkTransitive(obj, fieldAcc.getName());
+    return eFactory.getLinkTransitive(obj, fieldAcc.getName());
   }
 
   /***

@@ -7,23 +7,18 @@ import de.monticore.ocl.oclexpressions._ast.ASTOCLAtPreQualification;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory.CDExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory.ExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeFactorry.TypeFactory;
 import java.util.List;
 
 /** This class convert All OCL-Expressions including @Pre-Expressions in SMT */
-public class FullOCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE>
-    extends OCLExprConverter<EXPR, TYPE> {
+public class FullOCLExprConverter<EXPR extends ExprAdapter<?>> extends OCLExprConverter<EXPR> {
   private boolean isPreStrategy = false;
   private boolean isPreCond = false;
   private EXPR thisObj;
   private EXPR result;
 
-  public FullOCLExprConverter(
-      ExprFactory<EXPR, TYPE> factory,
-      CDExprFactory<EXPR> cdFactory,
-      TypeFactory<TYPE> typeFactory) {
-    super(factory, cdFactory, typeFactory);
+  public FullOCLExprConverter(CDExprFactory<EXPR> cdFactory, TypeFactory typeFactory) {
+    super(cdFactory, typeFactory);
   }
 
   public void enterPreStrategy() {
@@ -86,7 +81,7 @@ public class FullOCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE>
     }
 
     String role = isPreStrategy() ? OCLHelper.mkPre(node.getName()) : node.getName();
-    EXPR res = cdFactory.getLink(thisObj, role);
+    EXPR res = eFactory.getLink(thisObj, role);
 
     result = node.getName().equals("result") ? res : null;
 
@@ -100,7 +95,7 @@ public class FullOCLExprConverter<EXPR extends ExprAdapter<?, TYPE>, TYPE>
     exitPreStrategy();
 
     EXPR obj = convertExpr(node.getExpression());
-    return cdFactory.getLink(obj, role);
+    return eFactory.getLink(obj, role);
   }
 
   public void setThisObj(EXPR thisObj) {

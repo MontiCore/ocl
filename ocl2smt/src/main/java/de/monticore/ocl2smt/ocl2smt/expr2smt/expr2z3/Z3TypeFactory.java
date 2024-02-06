@@ -1,7 +1,6 @@
 package de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3;
 
 import com.microsoft.z3.Context;
-import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
@@ -16,7 +15,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
-public class Z3TypeFactory implements TypeFactory<Sort> {
+public class Z3TypeFactory implements TypeFactory {
   private final Context ctx;
   private final CD2SMTGenerator cd2SMTGenerator;
 
@@ -50,9 +49,10 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
   }
 
   @Override
-  public TypeAdapter<Sort> mkSetType(Sort elemType) {
-    String name = "set<" + elemType + ">";
-    return new Z3TypeAdapter(name, elemType, ExprKind.SET);
+  public TypeAdapter mkSetType(TypeAdapter type) {
+    String name = "set<" + type.getName() + ">";
+    Z3TypeAdapter z3Sort = (Z3TypeAdapter) type;
+    return new Z3TypeAdapter(name, z3Sort.getSort(), ExprKind.SET);
   }
 
   @Override
@@ -105,7 +105,7 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
   }
 
   @Override
-  public TypeAdapter<Sort> adapt(SymTypeExpression type) {
+  public TypeAdapter adapt(SymTypeExpression type) {
     // case primitive type
     Optional<Z3TypeAdapter> res = adaptQName(type.printFullName());
 

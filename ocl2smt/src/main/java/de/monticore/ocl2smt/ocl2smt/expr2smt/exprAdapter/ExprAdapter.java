@@ -2,8 +2,8 @@ package de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter;
 
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 
-public interface ExprAdapter<E, T> {
+public interface ExprAdapter<E> {
   E getExpr();
 
-  TypeAdapter<T> getType();
+  TypeAdapter getType();
 }

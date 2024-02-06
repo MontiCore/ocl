@@ -156,7 +156,7 @@ public class OCLHelper {
   }
 
   private static boolean isThis(
-      ASTODNamedObject obj, Model model, TypeAdapter<?> type, Expr<? extends Sort> thisObj) {
+      ASTODNamedObject obj, Model model, TypeAdapter type, Expr<? extends Sort> thisObj) {
     return obj.getName()
         .equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true), type.getName()));
   }

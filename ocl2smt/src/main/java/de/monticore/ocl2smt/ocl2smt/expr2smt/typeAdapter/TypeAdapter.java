@@ -4,13 +4,11 @@ package de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.ExprKind;
 // todo add documentation
 
-public interface TypeAdapter<T> {
+public interface TypeAdapter {
 
   ExprKind getKind();
 
   String getName();
-
-  T getSort();
 
   boolean isInt();
 

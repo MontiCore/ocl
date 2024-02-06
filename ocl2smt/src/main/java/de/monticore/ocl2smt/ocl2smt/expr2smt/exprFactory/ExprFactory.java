@@ -5,7 +5,7 @@ import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import java.util.function.Function;
 
 // todo add documentation
-public interface ExprFactory<E extends ExprAdapter<?, T>, T> {
+public interface ExprFactory<E extends ExprAdapter<?>> {
   E mkBool(boolean value);
 
   E mkString(String value);
@@ -16,7 +16,7 @@ public interface ExprFactory<E extends ExprAdapter<?, T>, T> {
 
   E mkDouble(double value);
 
-  E mkConst(String name, TypeAdapter<T> type);
+  E mkConst(String name, TypeAdapter type);
 
   E mkNot(E expr);
 

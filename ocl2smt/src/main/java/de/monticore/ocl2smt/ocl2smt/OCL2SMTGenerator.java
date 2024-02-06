@@ -22,7 +22,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class OCL2SMTGenerator {
-  protected OCLExprConverter<Z3ExprAdapter, Sort> exprConv;
+  protected OCLExprConverter<Z3ExprAdapter> exprConv;
   protected Z3ExprFactory eFactory;
   protected Z3TypeFactory tFactory;
   protected CD2SMTGenerator cd2SMTGenerator;
@@ -33,13 +33,13 @@ public class OCL2SMTGenerator {
 
     tFactory = new Z3TypeFactory(cd2SMTGenerator);
     eFactory = new Z3ExprFactory(tFactory, cd2SMTGenerator);
-    exprConv = new OCLExprConverter<>(eFactory, eFactory, tFactory);
+    exprConv = new OCLExprConverter<>(eFactory, tFactory);
   }
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
     tFactory = new Z3TypeFactory(ocl2SMTGenerator.getCD2SMTGenerator());
     eFactory = new Z3ExprFactory(tFactory, ocl2SMTGenerator.getCD2SMTGenerator());
-    exprConv = new OCLExprConverter<>(eFactory, eFactory, tFactory);
+    exprConv = new OCLExprConverter<>(eFactory, tFactory);
   }
 
   public CD2SMTGenerator getCD2SMTGenerator() {

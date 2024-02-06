@@ -5,22 +5,22 @@ import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
-public interface TypeFactory<T> {
-  TypeAdapter<T> mkBoolType();
+public interface TypeFactory {
+  TypeAdapter mkBoolType();
 
-  TypeAdapter<T> mkStringType();
+  TypeAdapter mkStringType();
 
-  TypeAdapter<T> mkCharType();
+  TypeAdapter mkCharType();
 
-  TypeAdapter<T> mkInType();
+  TypeAdapter mkInType();
 
-  TypeAdapter<T> mkDoubleType();
+  TypeAdapter mkDoubleType();
 
-  TypeAdapter<T> mkSetType(T elemType);
+  TypeAdapter mkSetType(TypeAdapter elemType);
 
-  TypeAdapter<T> adapt(ASTCDType cdType);
+  TypeAdapter adapt(ASTCDType cdType);
 
-  TypeAdapter<T> adapt(ASTMCType mcType);
+  TypeAdapter adapt(ASTMCType mcType);
 
-  TypeAdapter<T> adapt(SymTypeExpression type);
+  TypeAdapter adapt(SymTypeExpression type);
 }

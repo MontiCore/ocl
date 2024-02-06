@@ -40,7 +40,7 @@ public class OD2SMTGenerator implements IOD2SMTGenerator {
   protected ASTCDCompilationUnit cd;
   protected ASTODArtifact od;
   protected Context ctx;
-  protected OCLExprConverter<Z3ExprAdapter, Sort> exprConv; // TODO: update to Expression2SMT
+  protected OCLExprConverter<Z3ExprAdapter> exprConv;
 
   protected Map<ASTODObject, Expr<?>> objectsMap = new HashMap<>();
   protected Map<ASTODObject, Set<IdentifiableBoolExpr>> objectConstraint = new HashMap<>();
@@ -59,7 +59,7 @@ public class OD2SMTGenerator implements IOD2SMTGenerator {
     cd2SMTGenerator.cd2smt(cd, ctx);
     Z3TypeFactory tFactory = new Z3TypeFactory(cd2SMTGenerator);
     Z3ExprFactory exprFactory = new Z3ExprFactory(tFactory, cd2SMTGenerator);
-    exprConv = new OCLExprConverter<>(exprFactory, exprFactory, tFactory);
+    exprConv = new OCLExprConverter<>(exprFactory, tFactory);
 
     this.ctx = ctx;
     this.cd = cd;

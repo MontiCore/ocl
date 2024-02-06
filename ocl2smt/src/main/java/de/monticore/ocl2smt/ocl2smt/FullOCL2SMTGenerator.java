@@ -23,7 +23,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
-  private final FullOCLExprConverter<Z3ExprAdapter, Sort> fullConv;
+  private final FullOCLExprConverter<Z3ExprAdapter> fullConv;
 
   public FullOCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
     super(ast, ctx);
@@ -31,8 +31,8 @@ public class FullOCL2SMTGenerator extends OCL2SMTGenerator {
     cd2SMTGenerator.cd2smt(ast, ctx);
 
     eFactory = new Z3ExprFactory(tFactory, cd2SMTGenerator);
-    exprConv = new FullOCLExprConverter<>(eFactory, eFactory, tFactory);
-    fullConv = (FullOCLExprConverter<Z3ExprAdapter, Sort>) exprConv;
+    exprConv = new FullOCLExprConverter<>(eFactory, tFactory);
+    fullConv = (FullOCLExprConverter<Z3ExprAdapter>) exprConv;
   }
 
   private Z3ExprAdapter convertPreCond(ASTOCLOperationConstraint node) {
