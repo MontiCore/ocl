@@ -7,11 +7,8 @@ import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 
 public class Z3TypeAdapter implements TypeAdapter<Sort> {
   private final String name;
-
   private final Sort sort;
-
   private final ExprKind kind;
-
   private final ASTCDType astcdType;
 
   Z3TypeAdapter(String name, Sort sort, ExprKind kind) {
@@ -36,11 +33,6 @@ public class Z3TypeAdapter implements TypeAdapter<Sort> {
   @Override
   public boolean isInt() {
     return kind == ExprKind.INTEGER;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    return super.equals(obj);
   }
 
   @Override

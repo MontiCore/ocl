@@ -4,19 +4,17 @@ import de.monticore.ocl2smt.ocl2smt.expr2smt.ExprKind;
 import java.util.function.Function;
 
 public class Z3GenExprAdapter extends Z3ExprAdapter {
-
-  private final Function<Z3ExprAdapter, Z3ExprAdapter> function;
-
+  private final Function<Z3ExprAdapter, Z3ExprAdapter> elementFilter;
   private final Z3ExprAdapter element;
 
   public Z3GenExprAdapter(
-      Function<Z3ExprAdapter, Z3ExprAdapter> function,
+      Function<Z3ExprAdapter, Z3ExprAdapter> elementFilter,
       Z3ExprAdapter element,
-      String name,
+      String elementType,
       ExprKind kind) {
-    super(null, new Z3TypeAdapter(name, element.getType().getSort(), kind));
+    super(null, new Z3TypeAdapter(elementType, element.getType().getSort(), kind));
 
-    this.function = function;
+    this.elementFilter = elementFilter;
     this.element = element;
   }
 
@@ -25,12 +23,6 @@ public class Z3GenExprAdapter extends Z3ExprAdapter {
   }
 
   public Z3ExprAdapter isIn(Z3ExprAdapter element) {
-    // todo check types
-    return function.apply(element);
-  }
-
-  @Override
-  public String toString() {
-    return super.toString();
+    return elementFilter.apply(element);
   }
 }

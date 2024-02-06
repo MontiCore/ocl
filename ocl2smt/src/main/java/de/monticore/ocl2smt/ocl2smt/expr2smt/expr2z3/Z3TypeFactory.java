@@ -4,12 +4,8 @@ import com.microsoft.z3.Context;
 import com.microsoft.z3.Sort;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
-import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
-import de.monticore.ocl.ocl._visitor.OCLTraverser;
-import de.monticore.ocl.ocl.types3.OCLTypeTraverserFactory;
-import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.ExprKind;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeFactorry.TypeFactory;
@@ -17,7 +13,6 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.monticore.types3.Type4Ast;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
@@ -48,6 +43,10 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
   @Override
   public Z3TypeAdapter mkInType() {
     return new Z3TypeAdapter("int", ctx.mkIntSort(), ExprKind.INTEGER);
+  }
+
+  public Z3TypeAdapter mkDoubleType() {
+    return new Z3TypeAdapter("double", ctx.mkFPSortDouble(), ExprKind.DOUBLE);
   }
 
   @Override
@@ -88,7 +87,7 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
 
       // case qualified type
     } else if (mcType instanceof ASTMCQualifiedType) {
-      res = Optional.ofNullable(adaptQName(mcType.printType()).orElse(null));
+      res = adaptQName(mcType.printType());
     }
 
     // case CDType
@@ -110,7 +109,7 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
     // case primitive type
     Optional<Z3TypeAdapter> res = adaptQName(type.printFullName());
 
-    // case CEType
+    // case CDType
     if (res.isEmpty()) {
       String[] parts = type.print().split("\\.");
       String typeName = parts[parts.length - 1];
@@ -150,29 +149,8 @@ public class Z3TypeFactory implements TypeFactory<Sort> {
     return Optional.empty();
   }
 
-  public static SymTypeExpression deriveType(ASTExpression node) {
-    Type4Ast type4Ast = new Type4Ast();
-    OCLTraverser typeMapTraverser = new OCLTypeTraverserFactory().createTraverser(type4Ast);
-    node.accept(typeMapTraverser);
-    SymTypeExpression typeExpr = type4Ast.getTypeOfExpression(node);
-    if (typeExpr == null) {
-      Log.error("Unable to derive the type of the expression " + IOHelper.print(node));
-      assert false;
-    }
-    return typeExpr;
-  }
-
-  public Z3TypeAdapter mkDoubleType() {
-    return new Z3TypeAdapter("double", ctx.mkFPSortDouble(), ExprKind.DOUBLE);
-  }
-
-  @Override
-  public SymTypeExpression deriveType(ASTNameExpression node) {
-    return deriveType((ASTExpression) node);
-  }
-
   private Optional<ASTCDType> resolveCDType(String name) {
-    return Optional.ofNullable(
-        CDHelper.getASTCDType(name, cd2SMTGenerator.getClassDiagram().getCDDefinition()));
+    ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
+    return Optional.ofNullable(CDHelper.getASTCDType(name, cd));
   }
 }

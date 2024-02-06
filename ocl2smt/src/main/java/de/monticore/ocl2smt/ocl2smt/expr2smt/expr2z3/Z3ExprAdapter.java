@@ -11,35 +11,19 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>, Sort> {
   private Function<Z3ExprAdapter, Z3ExprAdapter> wrapper = null;
   private Z3ExprAdapter genConstraint = null;
 
+  public Z3ExprAdapter(Expr<?> expr, Z3TypeAdapter type) {
+    this.expr = expr;
+    this.type = type;
+  }
+
   @Override
   public Expr<?> getExpr() {
     return expr;
   }
 
-  public void setWrapper(Function<Z3ExprAdapter, Z3ExprAdapter> wrapper) {
-    this.wrapper = wrapper;
-  }
-
-  public Function<Z3ExprAdapter, Z3ExprAdapter> getWrapper() {
-    return wrapper;
-  }
-
-  public boolean isPresentWrapper() {
-    return wrapper != null;
-  }
-
-  public boolean isPresentGenConstr() {
-    return genConstraint != null;
-  }
-
   @Override
   public Z3TypeAdapter getType() {
     return type;
-  }
-
-  public Z3ExprAdapter(Expr<?> expr, Z3TypeAdapter type) {
-    this.expr = expr;
-    this.type = type;
   }
 
   public boolean isStringExpr() {
@@ -70,13 +54,24 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>, Sort> {
     return type.isDouble();
   }
 
-  @Override
-  public String toString() {
-    return expr.toString();
-  }
-
   public boolean isCharExpr() {
     return type.isChar();
+  }
+
+  public void setWrapper(Function<Z3ExprAdapter, Z3ExprAdapter> wrapper) {
+    this.wrapper = wrapper;
+  }
+
+  public Function<Z3ExprAdapter, Z3ExprAdapter> getWrapper() {
+    return wrapper;
+  }
+
+  public boolean isPresentWrapper() {
+    return wrapper != null;
+  }
+
+  public boolean isPresentGenConstr() {
+    return genConstraint != null;
   }
 
   public void addGenConstraint(Z3ExprAdapter constraint) {
@@ -85,5 +80,10 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>, Sort> {
 
   public Z3ExprAdapter getGenConstraint() {
     return genConstraint;
+  }
+
+  @Override
+  public String toString() {
+    return expr.toString();
   }
 }
