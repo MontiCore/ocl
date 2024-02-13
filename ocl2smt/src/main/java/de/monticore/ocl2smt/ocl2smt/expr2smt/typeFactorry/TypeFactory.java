@@ -5,6 +5,9 @@ import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
+/***
+ * this interface serve as factory for types.
+ */
 public interface TypeFactory {
   TypeAdapter mkBoolType();
 

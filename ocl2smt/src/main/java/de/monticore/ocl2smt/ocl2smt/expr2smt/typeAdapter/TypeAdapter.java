@@ -2,8 +2,10 @@
 package de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter;
 
 import de.monticore.ocl2smt.ocl2smt.expr2smt.ExprKind;
-// todo add documentation
 
+/***
+ * this interface abstract Expression types(int, boolean, CDType, char,...)
+ */
 public interface TypeAdapter {
 
   ExprKind getKind();

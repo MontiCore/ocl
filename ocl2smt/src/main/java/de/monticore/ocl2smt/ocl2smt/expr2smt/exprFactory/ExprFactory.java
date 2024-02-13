@@ -4,7 +4,9 @@ import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import java.util.function.Function;
 
-// todo add documentation
+/**
+ * this interface introduce basic operations on SMT expressions.
+ */
 public interface ExprFactory<E extends ExprAdapter<?>> {
   E mkBool(boolean value);
 
