@@ -5,7 +5,6 @@ import de.monticore.expressions.bitexpressions.types3.BitExpressionsTypeVisitor;
 import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeVisitor;
 import de.monticore.expressions.commonexpressions.types3.OCLCommonExpressionsTypeVisitor;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeVisitor;
-import de.monticore.expressions.uglyexpressions.types3.UglyExpressionsTypeVisitor;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
@@ -41,7 +40,6 @@ public class OCLTypeTraverserFactory {
     visitors.derOCLExpressions.setType4Ast(type4Ast);
     visitors.derOptionalOperators.setType4Ast(type4Ast);
     visitors.derSetExpressions.setType4Ast(type4Ast);
-    visitors.derUglyExpressions.setType4Ast(type4Ast);
     // MCTypes
     visitors.synMCBasicTypes.setType4Ast(type4Ast);
     visitors.synMCCollectionTypes.setType4Ast(type4Ast);
@@ -58,7 +56,6 @@ public class OCLTypeTraverserFactory {
     visitors.derOCLExpressions = new OCLExpressionsTypeVisitor();
     visitors.derOptionalOperators = new OptionalOperatorsTypeVisitor();
     visitors.derSetExpressions = new SetExpressionsTypeVisitor();
-    visitors.derUglyExpressions = new UglyExpressionsTypeVisitor();
     // MCTypes
     visitors.synMCBasicTypes = new MCBasicTypesTypeVisitor();
     visitors.synMCCollectionTypes = new MCCollectionTypesTypeVisitor();
@@ -91,7 +88,6 @@ public class OCLTypeTraverserFactory {
     traverser.add4OCLExpressions(visitors.derOCLExpressions);
     traverser.add4OptionalOperators(visitors.derOptionalOperators);
     traverser.add4SetExpressions(visitors.derSetExpressions);
-    traverser.add4UglyExpressions(visitors.derUglyExpressions);
     // MCTypes
     traverser.add4MCBasicTypes(visitors.synMCBasicTypes);
     traverser.add4MCCollectionTypes(visitors.synMCCollectionTypes);
@@ -116,8 +112,6 @@ public class OCLTypeTraverserFactory {
     public OptionalOperatorsTypeVisitor derOptionalOperators;
 
     public SetExpressionsTypeVisitor derSetExpressions;
-
-    public UglyExpressionsTypeVisitor derUglyExpressions;
 
     // MCTypes
 
