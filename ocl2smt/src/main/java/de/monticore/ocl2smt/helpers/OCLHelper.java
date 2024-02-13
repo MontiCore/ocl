@@ -1,12 +1,9 @@
 package de.monticore.ocl2smt.helpers;
 
 import com.microsoft.z3.*;
-import com.microsoft.z3.enumerations.Z3_lbool;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
-import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd4analysis.CD4AnalysisMill;
-import de.monticore.cdassociation._ast.ASTCDAssociation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -14,11 +11,11 @@ import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OPConstraint;
 import de.monticore.ocl2smt.trafo.BuildPreCDTrafo;
-import de.monticore.ocl2smt.util.OCLMethodResult;
-import de.monticore.ocl2smt.util.OCLType;
 import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odbasis._ast.ASTODAttribute;
@@ -33,28 +30,11 @@ import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class OCLHelper {
-
-  public static ASTCDAssociation getAssociation(
-      OCLType type, String otherRole, ASTCDDefinition cd) {
-    return CDHelper.getAssociation(CDHelper.getASTCDType(type.getName(), cd), otherRole, cd);
-  }
-
-  public static OCLType getOtherType(
-      ASTCDAssociation association, OCLType type, String otherRole, ASTCDDefinition cd) {
-    OCLType type1 = OCLType.buildOCLType(association.getLeftQualifiedName().getQName());
-    OCLType type2 = OCLType.buildOCLType(association.getRightQualifiedName().getQName());
-    if (isLeftSide(CDHelper.getASTCDType(type.getName(), cd), otherRole, cd)) {
-      return type2;
-    } else {
-      return type1;
-    }
-  }
 
   public static List<ASTODNamedObject> getObjectList(ASTODArtifact od) {
     return od.getObjectDiagram().getODElementList().stream()
@@ -69,72 +49,6 @@ public class OCLHelper {
         .filter(x -> x instanceof ASTODLink)
         .map(x -> (ASTODLink) x)
         .collect(Collectors.toList());
-  }
-
-  public static BoolExpr evaluateLink(
-      ASTCDAssociation association,
-      Expr<? extends Sort> obj,
-      String otherRole,
-      Expr<? extends Sort> otherObj,
-      CD2SMTGenerator cd2SMTGenerator,
-      Function<Expr<?>, OCLType> types) {
-
-    ASTCDDefinition cd = cd2SMTGenerator.getClassDiagram().getCDDefinition();
-    OCLType oclType = types.apply(obj);
-    ASTCDType type = CDHelper.getASTCDType(oclType.getName(), cd);
-
-    ASTCDType otherType = CDHelper.getASTCDType(types.apply(otherObj).getName(), cd);
-
-    BoolExpr res;
-    if (isLeftSide(CDHelper.getASTCDType(type.getName(), cd), otherRole, cd)) {
-      res = cd2SMTGenerator.evaluateLink(association, type, otherType, obj, otherObj);
-    } else {
-      res = cd2SMTGenerator.evaluateLink(association, otherType, type, otherObj, obj);
-    }
-
-    return res;
-  }
-
-  public static boolean isLeftSide(ASTCDType astcdType, String otherRole, ASTCDDefinition cd) {
-    List<ASTCDType> objTypes = new ArrayList<>();
-    objTypes.add(astcdType);
-    objTypes.addAll(CDHelper.getSuperTypeAllDeep(astcdType, cd));
-
-    ASTCDType leftType;
-    ASTCDType rightType;
-    String leftRole;
-    String rightRole;
-
-    for (ASTCDAssociation association : cd.getCDAssociationsList()) {
-      leftType = CDHelper.getASTCDType(association.getLeftQualifiedName().getQName(), cd);
-      rightType = CDHelper.getASTCDType(association.getRightQualifiedName().getQName(), cd);
-      leftRole = association.getLeft().getCDRole().getName();
-      rightRole = association.getRight().getCDRole().getName();
-
-      if (objTypes.contains(leftType) && otherRole.equals(rightRole)) {
-        return true;
-      } else if (objTypes.contains(rightType) && otherRole.equals(leftRole)) {
-        return false;
-      }
-    }
-    Log.error(
-        "Association with the other-role "
-            + otherRole
-            + " not found for the ASTCDType"
-            + astcdType.getName());
-    return false;
-  }
-
-  public static Expr<? extends Sort> getAttribute(
-      Expr<? extends Sort> obj,
-      OCLType type,
-      String attributeName,
-      CD2SMTGenerator cd2SMTGenerator) {
-
-    return cd2SMTGenerator.getAttribute(
-        CDHelper.getASTCDType(type.getName(), cd2SMTGenerator.getClassDiagram().getCDDefinition()),
-        attributeName,
-        obj);
   }
 
   public static OCLOPWitness splitPreOD(
@@ -209,24 +123,24 @@ public class OCLHelper {
 
   private static void setResultStereotypes(
       ASTODArtifact od, Model model, OPConstraint opConstraint) {
-    OCLMethodResult result = opConstraint.getResult();
+    Z3ExprAdapter result = opConstraint.getResult();
     if (!opConstraint.isPresentResult()) {
-      if (result.isVoid()) {
-        od.getObjectDiagram().setStereotype(buildStereotype("result", "Unspecified"));
-      }
+      od.getObjectDiagram().setStereotype(buildStereotype("result", "Unspecified"));
     } else {
 
-      if (result.isPrimitive()) {
-        String res = model.evaluate(result.getResultExpr(), true).getSExpr();
+      if (result.getType().isNative()) {
+        String res = model.evaluate((Expr<? extends Sort>) result.getExpr(), true).getSExpr();
         od.getObjectDiagram().setStereotype(buildStereotype("result", res));
-      } else if (result.isObject()) {
-        Expr<? extends Sort> resultExpr = model.evaluate(result.getResultExpr(), true);
-        ASTODNamedObject obj = getObjectWithExpr(result.getOclType(), resultExpr, od);
+      } else if (result.isObjExpr()) {
+        Expr<? extends Sort> resultExpr =
+            model.evaluate((Expr<? extends Sort>) result.getExpr(), true);
+        ASTODNamedObject obj = getObjectWithExpr(result.getType().getCDType(), resultExpr, od);
 
         obj.setModifier(buildModifier("result", "true"));
-      } else if (result.isSetOfObject()) {
-        List<Expr<? extends Sort>> resList = new ArrayList<>();
-        FuncDecl<BoolSort> seFunc = result.getResultSet();
+      } else if (result.isSetExpr()) {
+        Log.error("Setting result of Operation constraint not fully impelemented "); // todo fixme
+        /*   List<Expr<? extends Sort>> resList = new ArrayList<>();
+        FuncDecl<BoolSort> seFunc = result.getResultSet(;
         for (Expr<? extends Sort> expr : model.getSortUniverse(seFunc.getDomain()[0])) {
           if (model.evaluate(seFunc.apply(expr), true).getBoolValue() == Z3_lbool.Z3_L_TRUE) {
             resList.add(expr);
@@ -234,15 +148,15 @@ public class OCLHelper {
         }
         List<ASTODNamedObject> resObjList =
             resList.stream()
-                .map(expr -> getObjectWithExpr(result.getOclType(), expr, od))
+                .map(expr -> getObjectWithExpr(result.getExprType().getCDType(), expr, od))
                 .collect(Collectors.toList());
-        resObjList.forEach(obj -> obj.setModifier(buildModifier("result", "true")));
+        resObjList.forEach(obj -> obj.setModifier(buildModifier("result", "true")));*/
       }
     }
   }
 
   private static boolean isThis(
-      ASTODNamedObject obj, Model model, OCLType type, Expr<? extends Sort> thisObj) {
+      ASTODNamedObject obj, Model model, TypeAdapter type, Expr<? extends Sort> thisObj) {
     return obj.getName()
         .equals(SMTHelper.buildObjectName(model.evaluate(thisObj, true), type.getName()));
   }
@@ -325,7 +239,7 @@ public class OCLHelper {
   }
 
   public static ASTODNamedObject getObjectWithExpr(
-      OCLType type, Expr<? extends Sort> expr, ASTODArtifact od) {
+      ASTCDType type, Expr<? extends Sort> expr, ASTODArtifact od) {
     return OCLHelper.getObjectList(od).stream()
         .filter(x -> x.getName().equals(SMTHelper.buildObjectName(expr, type.getName())))
         .findFirst()

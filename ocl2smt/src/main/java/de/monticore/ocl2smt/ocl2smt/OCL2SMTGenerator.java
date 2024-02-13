@@ -4,12 +4,14 @@ package de.monticore.ocl2smt.ocl2smt;
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
-import de.monticore.ocl2smt.ocl2smt.expressionconverter.OCLExpressionConverter;
-import de.monticore.ocl2smt.util.OCLType;
-import de.monticore.ocl2smt.util.SMTSet;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprFactory;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3TypeFactory;
+import de.monticore.ocl2smt.ocl2smt.oclExpr2smt.OCLExprConverter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.SourcePosition;
 import java.util.ArrayList;
@@ -20,25 +22,28 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class OCL2SMTGenerator {
-  protected OCLExpressionConverter exprConv;
-  protected final Context ctx;
+  protected OCLExprConverter<Z3ExprAdapter> exprConv;
+  protected Z3ExprFactory eFactory;
+  protected Z3TypeFactory tFactory;
+  protected CD2SMTGenerator cd2SMTGenerator;
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, Context ctx) {
-    exprConv = new OCLExpressionConverter(ast, ctx);
-    this.ctx = ctx;
+    cd2SMTGenerator = CD2SMTMill.cd2SMTGenerator();
+    cd2SMTGenerator.cd2smt(ast, ctx);
+
+    tFactory = new Z3TypeFactory(cd2SMTGenerator);
+    eFactory = new Z3ExprFactory(tFactory, cd2SMTGenerator);
+    exprConv = new OCLExprConverter<>(eFactory, tFactory);
   }
 
   public OCL2SMTGenerator(ASTCDCompilationUnit ast, OCL2SMTGenerator ocl2SMTGenerator) {
-    exprConv = new OCLExpressionConverter(ast, ocl2SMTGenerator);
-    this.ctx = ocl2SMTGenerator.ctx;
-  }
-
-  public Context getCtx() {
-    return ctx;
+    tFactory = new Z3TypeFactory(ocl2SMTGenerator.getCD2SMTGenerator());
+    eFactory = new Z3ExprFactory(tFactory, ocl2SMTGenerator.getCD2SMTGenerator());
+    exprConv = new OCLExprConverter<>(eFactory, tFactory);
   }
 
   public CD2SMTGenerator getCD2SMTGenerator() {
-    return exprConv.getCd2smtGenerator();
+    return cd2SMTGenerator;
   }
   /**
    * Convert an ASTOCLArtifact in a Set of SMT BoolExpr
@@ -55,17 +60,16 @@ public class OCL2SMTGenerator {
     return constraints;
   }
 
-  protected Expr<? extends Sort> convertCtxParDec(ASTOCLParamDeclaration node) {
-    OCLType oclType = exprConv.typeConverter.buildOCLType(node.getMCType());
-    return exprConv.declVariable(oclType, node.getName());
+  protected Z3ExprAdapter convertCtxParDec(ASTOCLParamDeclaration node) {
+    return exprConv.mkConst(node.getName(), tFactory.adapt(node.getMCType()));
   }
 
-  protected Pair<Expr<? extends Sort>, BoolExpr> convertGenDec(ASTGeneratorDeclaration node) {
-    Expr<? extends Sort> expr =
-        exprConv.declVariable(
-            exprConv.typeConverter.buildOCLType(node.getSymbol()), node.getName());
-    SMTSet set = exprConv.convertSet(node.getExpression());
-    return new ImmutablePair<>(expr, set.contains(expr));
+  protected Pair<Z3ExprAdapter, Z3ExprAdapter> convertGenDec(ASTGeneratorDeclaration node) {
+    Z3ExprAdapter expr =
+        exprConv.mkConst(node.getName(), tFactory.adapt(node.getSymbol().getType()));
+    Z3ExprAdapter set = exprConv.convertExpr(node.getExpression());
+
+    return new ImmutablePair<>(expr, eFactory.mkContains(set, expr));
   }
 
   public IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
@@ -73,55 +77,52 @@ public class OCL2SMTGenerator {
     SourcePosition srcPos = invariant.get_SourcePositionStart();
 
     // convert parameter declaration  in context
-    Function<BoolExpr, BoolExpr> invCtx = openInvScope(invariant);
+    Function<Z3ExprAdapter, Z3ExprAdapter> invCtx = openInvScope(invariant);
 
     // convert the inv body
-    BoolExpr inv = invCtx.apply(exprConv.convertBoolExpr(invariant.getExpression()));
+    Z3ExprAdapter inv = invCtx.apply(exprConv.convertExpr(invariant.getExpression()));
 
-    // add general invConstraints
-    for (BoolExpr constr : exprConv.getGenConstraints()) {
-      inv = ctx.mkAnd(inv, constr);
-    }
+    Z3ExprAdapter fullInv =
+        inv.isPresentGenConstr() ? eFactory.mkAnd(inv, inv.getGenConstraint()) : inv;
 
     Optional<String> name =
         invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
     exprConv.reset();
-    return IdentifiableBoolExpr.buildIdentifiable(inv, srcPos, name);
+    return IdentifiableBoolExpr.buildIdentifiable(
+        (BoolExpr) fullInv.getExpr().simplify(),
+        srcPos,
+        name); // todo fix (BoolExpr) add simplify()
   }
 
-  protected Function<BoolExpr, BoolExpr> openInvScope(ASTOCLInvariant invariant) {
-    List<Expr<? extends Sort>> vars = new ArrayList<>();
-    BoolExpr varConstraint = ctx.mkTrue();
+  protected Function<Z3ExprAdapter, Z3ExprAdapter> openInvScope(ASTOCLInvariant invariant) {
+    List<Z3ExprAdapter> vars = new ArrayList<>();
+    Z3ExprAdapter varConstraint = eFactory.mkBool(true);
     for (ASTOCLContextDefinition invCtx : invariant.getOCLContextDefinitionList()) {
       if (invCtx.isPresentOCLParamDeclaration()) {
         vars.add(convertCtxParDec(invCtx.getOCLParamDeclaration()));
       }
       if (invCtx.isPresentGeneratorDeclaration()) {
-        Pair<Expr<? extends Sort>, BoolExpr> res = convertGenDec(invCtx.getGeneratorDeclaration());
-        varConstraint = ctx.mkAnd(varConstraint, res.getRight());
+        Pair<Z3ExprAdapter, Z3ExprAdapter> res = convertGenDec(invCtx.getGeneratorDeclaration());
+        varConstraint = eFactory.mkAnd(varConstraint, res.getRight());
         vars.add(res.getLeft());
       }
     }
-    BoolExpr varConstraint2 = varConstraint;
-    if (vars.size() > 0) {
-      return bool ->
-          ctx.mkForall(
-              vars.toArray(new Expr[0]),
-              ctx.mkImplies(varConstraint2, bool),
-              0,
-              null,
-              null,
-              null,
-              null);
+    Z3ExprAdapter varConstraint2 = varConstraint;
+    if (!vars.isEmpty()) {
+      return bool -> eFactory.mkForall(vars, eFactory.mkImplies(varConstraint2, bool));
     }
     return bool -> bool;
   }
 
   public Optional<ASTODArtifact> buildOd(Model model, String ODName, boolean partial) {
-    return exprConv.getCd2smtGenerator().smt2od(model, partial, ODName);
+    return cd2SMTGenerator.smt2od(model, partial, ODName);
   }
 
   public Solver makeSolver(List<IdentifiableBoolExpr> constraints) {
-    return exprConv.getCd2smtGenerator().makeSolver(constraints);
+    return cd2SMTGenerator.makeSolver(constraints);
+  }
+
+  public Context getCtx() {
+    return cd2SMTGenerator.getContext();
   }
 }

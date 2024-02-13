@@ -87,13 +87,12 @@ class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
         new ArrayList<>(od2SMTGenerator.getAllODConstraints());
 
     // check Sat
-    Solver solver = od2SMTGenerator.exprConv.getCd2smtGenerator().makeSolver(solverConstraints);
+    Solver solver = od2SMTGenerator.cd2SMTGenerator.makeSolver(solverConstraints);
     Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
     model = solver.getModel();
 
     // build od
-    Optional<ASTODArtifact> newOd =
-        od2SMTGenerator.exprConv.getCd2smtGenerator().smt2od(model, false, "Auction");
+    Optional<ASTODArtifact> newOd = od2SMTGenerator.cd2SMTGenerator.smt2od(model, false, "Auction");
     Assertions.assertTrue(newOd.isPresent());
     witness = newOd.get();
 

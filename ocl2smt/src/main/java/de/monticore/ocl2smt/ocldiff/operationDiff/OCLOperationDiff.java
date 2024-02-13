@@ -111,7 +111,7 @@ public class OCLOperationDiff {
     ctx = buildContext();
     Set<OCLOPWitness> opDiffWitness = new HashSet<>();
     List<ASTODLink> trace = new ArrayList<>();
-    OCLHelper.buildPreCD(ast);
+    // todo fixm  OCLHelper.buildPreCD(ast);
     FullOCL2SMTGenerator fullOcl2smt = new FullOCL2SMTGenerator(ast, ctx);
 
     // get new invariants

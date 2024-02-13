@@ -1,36 +1,35 @@
 package de.monticore.ocl2smt.util;
 
 import com.microsoft.z3.BoolSort;
-import com.microsoft.z3.Expr;
 import com.microsoft.z3.FuncDecl;
-import com.microsoft.z3.Sort;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprAdapter;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3TypeAdapter;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
-import de.se_rwth.commons.logging.Log;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class OCLMethodResult {
   private ResultType type;
 
-  private OCLType oclType;
-  private Expr<? extends Sort> res;
+  private Z3TypeAdapter exprType;
+  private Z3ExprAdapter res;
   private FuncDecl<BoolSort> resSet;
 
   public void setValue(FuncDecl<BoolSort> resSet) {
     this.resSet = resSet;
   }
 
-  public void setValue(Expr<? extends Sort> res) {
+  public void setValue(Z3ExprAdapter res) {
     this.res = res;
   }
 
-  public OCLType getOclType() {
-    return oclType;
+  public Z3TypeAdapter getOclType() {
+    return exprType;
   }
 
   public void setType(ASTMCReturnType type) {
-    if (type.isPresentMCVoidType()) {
+    /* if (type.isPresentMCVoidType()) {
       this.type = ResultType.VOID;
     } else if (type.isPresentMCType()) {
       ASTMCType mcType = type.getMCType();
@@ -39,36 +38,36 @@ public class OCLMethodResult {
         String innerType = getSetElementType(mcType);
         if (TypeConverter.hasSimpleType(innerType)) {
 
-          oclType = OCLType.buildOCLType(innerType);
+          ExprTypeAdapter = ExprTypeAdapter.buildOCLType(innerType);
         } else if (!innerType.contains("<")) {
           this.type = ResultType.SET_OF_OBJECT;
 
         } else {
           Log.error("Method return Type " + type.printType() + " not Supported");
         }
-        oclType = OCLType.buildOCLType(innerType);
+        ExprTypeAdapter = ExprTypeAdapter.buildOCLType(innerType);
       } else if (TypeConverter.hasSimpleType(mcType.printType())) {
         this.type = ResultType.PRIMITIVE;
-        oclType = OCLType.buildOCLType(mcType.printType());
+        ExprTypeAdapter = ExprTypeAdapter.buildOCLType(mcType.printType());
       } else if (!mcType.printType().contains("<")) {
         this.type = ResultType.OBJECT;
-        oclType = OCLType.buildOCLType(mcType.printType());
+        ExprTypeAdapter = ExprTypeAdapter.buildOCLType(mcType.printType());
       } else {
         Log.error("Method return Type " + type.printType() + " not Supported");
       }
 
     } else {
       this.type = ResultType.NO_RETURN_TYPE;
-    }
+    }*/
   }
 
-  public void setType(OCLType oclType) {
-    if (TypeConverter.hasSimpleType(oclType.getName())) {
+  public void setType(Z3TypeAdapter type) {
+    if (type.isNative()) {
       this.type = ResultType.PRIMITIVE;
     } else {
       this.type = ResultType.OBJECT;
     }
-    this.oclType = oclType;
+    this.exprType = exprType;
   }
 
   public boolean isPrimitive() {
@@ -91,7 +90,7 @@ public class OCLMethodResult {
     return type == ResultType.OBJECT;
   }
 
-  public Expr<? extends Sort> getResultExpr() {
+  public Z3ExprAdapter getResultExpr() {
     return res;
   }
 

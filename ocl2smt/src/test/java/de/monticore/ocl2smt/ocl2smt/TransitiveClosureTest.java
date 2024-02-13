@@ -31,6 +31,7 @@ public class TransitiveClosureTest extends ExpressionAbstractTest {
 
   @Test
   public void Test_SimpleTransitive_ClosureUNSAT() {
+    ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
     testUnsatInv(Set.of("SimpleTransitive_Closure_UNSAT"), "transitive-closure");
   }
 }

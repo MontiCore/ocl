@@ -14,7 +14,6 @@ import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.od4report._prettyprint.OD4ReportFullPrettyPrinter;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.prettyprint.IndentPrinter;
-import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
@@ -123,15 +122,5 @@ public class IOHelper {
 
   public static String print(ASTNode node) {
     return new OCLFullPrettyPrinter(new IndentPrinter()).prettyprint(node);
-  }
-
-  public static String printPosition(SourcePosition pos) {
-    String fileName;
-    if (pos.getFileName().isEmpty()) {
-      fileName = "";
-    } else {
-      fileName = pos.getFileName().get();
-    }
-    return fileName + "<" + pos.getLine() + "," + pos.getColumn() + ">";
   }
 }

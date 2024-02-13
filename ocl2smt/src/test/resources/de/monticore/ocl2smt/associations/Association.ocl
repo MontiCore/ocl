@@ -43,8 +43,8 @@ ocl NC1 {
    exists Enterprise e :
            e.person.contains(p) && p.age == 75 && e.name == "Microsoft";
 
- context Person p inv Assoc12 :
-    exists Enterprise e :
+ inv Assoc12 :
+    exists Person p  ,Enterprise e :
             e.person.contains(p) && !e.person.contains(p);
 
  context Enterprise e inv Assoc13 :
@@ -52,10 +52,12 @@ ocl NC1 {
 
 
 
- context Enterprise e inv Assoc14 :
+ inv Assoc14 :
+   exists Enterprise e:
      !e.person.containsAll(e.person);
 
- context Enterprise e inv Assoc15 :
+  inv Assoc15 :
+    exists Enterprise e:
       e.person.isEmpty() && exists p in e.person :true;
 
 
