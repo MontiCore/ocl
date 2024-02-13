@@ -2,7 +2,7 @@
 ocl cases2 {
   context Message m inv:
     let
-      Person p = m instanceof BidMessage ? m.bidder : null
+      Person p = typeif m instanceof BidMessage then m.bidder else null
     in
       true;
 }

@@ -6,7 +6,6 @@ ocl Test04 {
     (if a==b then a else b) &&
     (a==b ? a : b) &&
     (a <=> b) &&
-    (a instanceof Boolean) &&
     (typeif a instanceof Boolean then a else false) &&
     (a implies b);
 }
