@@ -565,19 +565,19 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
     return ctx.mkExists(quanParams.toArray(Expr[]::new), body, 0, null, null, null, null);
   }
 
-  public List<Expr<?>> revertAdaptation(List<Z3ExprAdapter> exprList) {
+  private List<Expr<?>> revertAdaptation(List<Z3ExprAdapter> exprList) {
     return exprList.stream().map(Z3ExprAdapter::getExpr).collect(Collectors.toList());
   }
 
-  public List<ASTCDType> collectCDType(List<Z3ExprAdapter> params) {
+  private List<ASTCDType> collectCDType(List<Z3ExprAdapter> params) {
     return params.stream().map(e -> e.getType().getCDType()).collect(Collectors.toList());
   }
 
-  public Optional<ASTCDAssociation> resolveAssociation(ASTCDType astcdType, String otherRole) {
+  private Optional<ASTCDAssociation> resolveAssociation(ASTCDType astcdType, String otherRole) {
     return Optional.ofNullable(CDHelper.getAssociation(astcdType, otherRole, getCD()));
   }
 
-  public Optional<ASTCDAttribute> resolveAttribute(ASTCDType astcdType, String attrName) {
+  private Optional<ASTCDAttribute> resolveAttribute(ASTCDType astcdType, String attrName) {
     for (ASTCDAttribute attr : CDSymbolTables.getAttributesInHierarchy(astcdType)) {
       if (attr.getName().equals(attrName)) {
         return Optional.of(attr);
@@ -586,7 +586,7 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
     return Optional.empty();
   }
 
-  public Z3ExprAdapter getAssocLink(ASTCDAssociation assoc, Z3ExprAdapter obj, String role) {
+  private Z3ExprAdapter getAssocLink(ASTCDAssociation assoc, Z3ExprAdapter obj, String role) {
 
     ASTCDType type = obj.getType().getCDType();
     ASTCDType otherType =
@@ -630,7 +630,7 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
     return res;
   }
 
-  public static boolean isLeftSide(ASTCDType astcdType, String otherRole, ASTCDDefinition cd) {
+  private static boolean isLeftSide(ASTCDType astcdType, String otherRole, ASTCDDefinition cd) {
     List<ASTCDType> objTypes = new ArrayList<>();
     objTypes.add(astcdType);
     objTypes.addAll(CDHelper.getSuperTypeAllDeep(astcdType, cd));
@@ -666,7 +666,7 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
     }
   }
 
-  public void checkObj(String method, Z3ExprAdapter node) {
+  private void checkObj(String method, Z3ExprAdapter node) {
     if (!node.isObjExpr()) {
       Log.error(String.format(wrongParam, method, node.getType().getName(), " as CDType"));
     }
