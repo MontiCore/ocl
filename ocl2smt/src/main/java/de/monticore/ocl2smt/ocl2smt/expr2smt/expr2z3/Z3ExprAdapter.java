@@ -11,7 +11,7 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>> {
   private Function<Z3ExprAdapter, Z3ExprAdapter> wrapper = null;
   private Z3ExprAdapter genConstraint = null;
 
-  Z3ExprAdapter(Expr<?> expr, Z3TypeAdapter type) {
+  public Z3ExprAdapter(Expr<?> expr, Z3TypeAdapter type) {
     this.expr = expr;
     this.type = type;
   }

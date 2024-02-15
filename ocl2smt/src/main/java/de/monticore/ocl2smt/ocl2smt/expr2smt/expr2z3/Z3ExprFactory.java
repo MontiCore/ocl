@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<Z3ExprAdapter> {
   private final Context ctx;
   private final Z3TypeFactory tFactory;
-  private final CD2SMTGenerator cd2SMTGenerator;
+  private CD2SMTGenerator cd2SMTGenerator;
 
   private final String wrongParam =
       "Method %s(...) get parameter with wrong type '%s' expected was %s";
@@ -34,6 +34,11 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
   public Z3ExprFactory(Z3TypeFactory factory, CD2SMTGenerator cd2SMTGenerator) {
     this.ctx = cd2SMTGenerator.getContext();
     this.cd2SMTGenerator = cd2SMTGenerator;
+    this.tFactory = factory;
+  }
+
+  public Z3ExprFactory(Z3TypeFactory factory, Context ctx) {
+    this.ctx = ctx;
     this.tFactory = factory;
   }
 
