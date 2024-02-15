@@ -21,6 +21,8 @@ public interface TypeFactory {
 
   TypeAdapter mkSetType(TypeAdapter elemType);
 
+  TypeAdapter mkSeqType(TypeAdapter elemType);
+
   TypeAdapter adapt(ASTCDType cdType);
 
   TypeAdapter adapt(ASTMCType mcType);

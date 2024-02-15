@@ -8,5 +8,7 @@ public enum ExprKind {
   STRING,
   CHAR,
   OO,
-  OPTIONAL
+  OPTIONAL,
+  SEQ,
+  ENUM
 }
