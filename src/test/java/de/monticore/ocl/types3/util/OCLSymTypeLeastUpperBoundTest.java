@@ -70,8 +70,8 @@ public class OCLSymTypeLeastUpperBoundTest extends AbstractTypeTest {
   public void leastUpperBound() {
     checkLub(_personSymType, "Person");
     checkLub(createUnion(_personSymType, _studentSymType), "Person");
-    checkLub(createUnion(_childSymType, _studentSymType), "(Person & Teachable)");
-    checkLub(createUnion(_childSymType, _csStudentSymType), "(Person & Teachable)");
+    checkLub(createUnion(_childSymType, _studentSymType), "Person & Teachable");
+    checkLub(createUnion(_childSymType, _csStudentSymType), "Person & Teachable");
     checkLub(createUnion(_childSymType, _carSymType), "Obscure");
     checkLub(
         createIntersection(_personSymType, createUnion(_childSymType, _studentSymType)),
@@ -91,7 +91,7 @@ public class OCLSymTypeLeastUpperBoundTest extends AbstractTypeTest {
     // there is (theoretically) no distinction (for OCL collection types)
     checkLub(
         createUnion(createSet(_childSymType), createSet(_csStudentSymType)),
-        "(Set<Person> & Set<Teachable>)");
+        "Set<Person> & Set<Teachable>");
   }
 
   protected void checkLub(SymTypeExpression type, String expectedPrint) {
