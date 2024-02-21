@@ -10,9 +10,9 @@ ocl New {
 
   // Balance_positive missing
 
-  context Account.withdraw(double amount)
+ /* context Account.withdraw(double amount)
   pre: balance >= amount;
-  post: balance == balance@pre - amount;
+  post: balance == balance@pre - amount;*/
 
 }
 

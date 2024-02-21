@@ -1,0 +1,9 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+ocl NC1 {
+ inv Names:
+ exists Person p : p.name == "Naruto" ;
+
+context Auction a inv EndAfterStart :
+  a.endDate.before(a.startDate);
+}

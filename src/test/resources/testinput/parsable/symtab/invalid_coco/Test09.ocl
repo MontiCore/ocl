@@ -1,0 +1,17 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl Test09 {
+
+  inv(List<int> xs):
+    xs[0] > 0;
+
+  inv(Set<List<int>> xs):
+    xs[0] == {0};
+
+  inv(List<Set<int>> xs):
+    xs[0] == {0};
+
+  inv(Optional<Optional<List<Set<List<Optional<int>>>>>> complexObj):
+    complexObj[0][0] ?== {1,2,3};
+}

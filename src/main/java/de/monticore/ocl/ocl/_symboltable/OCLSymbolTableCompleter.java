@@ -8,11 +8,11 @@ import de.monticore.ocl.ocl._ast.ASTOCLParamDeclaration;
 import de.monticore.ocl.ocl._visitor.OCLHandler;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
-import de.monticore.ocl.types.check.OCLSynthesizer;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
+import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
@@ -30,7 +30,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
   protected final List<ASTMCImportStatement> imports;
   protected final String packageDeclaration;
   protected OCLTraverser traverser;
-  OCLSynthesizer synthesizer;
+  ISynthesize synthesizer;
 
   public OCLSymbolTableCompleter(List<ASTMCImportStatement> imports, String packageDeclaration) {
     this.imports = imports;
@@ -47,7 +47,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
     this.traverser = traverser;
   }
 
-  public void setSynthesizer(OCLSynthesizer typesCalculator) {
+  public void setSynthesizer(ISynthesize typesCalculator) {
     if (typesCalculator != null) {
       this.synthesizer = typesCalculator;
     } else {
@@ -67,7 +67,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
     ast.getMCType().setEnclosingScope(ast.getEnclosingScope());
     ast.getMCType().accept(getTraverser());
     final TypeCheckResult typeResult = synthesizer.synthesizeType(ast.getMCType());
-    if (!typeResult.isPresentResult()) {
+    if (!typeResult.isPresentResult() || typeResult.getResult().isObscureType()) {
       Log.error(
           String.format(
               "The type (%s) of the object (%s) could not be calculated",
@@ -93,7 +93,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
           ASTMCType type = cd.getMCType();
           type.setEnclosingScope(cd.getEnclosingScope());
           final TypeCheckResult typeResult = synthesizer.synthesizeType(type);
-          if (!typeResult.isPresentResult()) {
+          if (!typeResult.isPresentResult() || typeResult.getResult().isObscureType()) {
             Log.error(String.format("The type (%s) could not be calculated", type));
           } else {
             // create VariableSymbols for "this" and "super"

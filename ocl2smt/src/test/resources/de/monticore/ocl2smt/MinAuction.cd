@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-classdiagram MinAuction {
+classdiagram MinAuction{
   public class Auction {
     int auctionIdent;
   }

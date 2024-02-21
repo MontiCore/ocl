@@ -2,7 +2,7 @@
 
 package invariants;
 
-ocl Test01 {
+ocl SetOp {
 
 inv  Only_one_auction:
   exists Auction a :

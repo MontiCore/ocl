@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
-package invariants;
 
-ocl Test02 {
+
+ocl QuantifiedExpr {
 
   inv Quan1:
     forall Boolean b:

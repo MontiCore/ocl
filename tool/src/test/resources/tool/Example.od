@@ -1,0 +1,6 @@
+objectdiagram ExampleOD {
+  tool:Tool {
+  String name = "OCLDiff";
+  };
+
+}

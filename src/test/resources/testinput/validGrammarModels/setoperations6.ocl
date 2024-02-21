@@ -1,8 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-ocl setoperations6 {
-  inv:
-    let
-      Collection<Integer> ci = [1, 2, 1]
-in
-      (ci instanceof Set<Integer> <=> false) && (ci instanceof List<Integer> <=> true) && (ci instanceof Collection<Integer> <=> true);
-}

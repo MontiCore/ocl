@@ -3,7 +3,7 @@
   // Artifact
   // ______________________________________________________
 
-ocl  ArtifactKindModel {
+ocl  ArtifactKindModelV0 {
   /*
    *
    *Initial OCL Model

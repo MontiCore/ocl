@@ -1,0 +1,20 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl comparisons {
+  inv(int a, int b):
+    a > b &&
+    a >= b &&
+    a < b &&
+    a <= b &&
+    a == b &&
+    a != b;
+
+  inv(Integer a, Integer b):
+    a > b &&
+    a >= b &&
+    a < b &&
+    a <= b &&
+    a == b &&
+    a != b;
+}

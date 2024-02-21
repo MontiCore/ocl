@@ -26,6 +26,8 @@ import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCompleter;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.util.SymbolTableUtil;
+import de.monticore.od4report.OD4ReportTool;
+import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
@@ -49,6 +51,11 @@ public class OCL_Loader {
     checkCDCoCos(cdAST);
 
     return cdAST;
+  }
+
+  public static ASTODArtifact loadAndCheckOD(File odFile) {
+    assert odFile.getName().endsWith(".od");
+    return new OD4ReportTool().parse(odFile.getAbsolutePath());
   }
 
   public static void setAssociationsRoles(ASTCDCompilationUnit ast) {
@@ -80,6 +87,7 @@ public class OCL_Loader {
 
     createCDSymTab(cdAST);
     loadCDModel(oclAST, cdAST);
+    // TODO: 17.08.2023   activate cocos when fixed
     checkOCLCoCos(oclAST);
     return oclAST;
   }
@@ -101,8 +109,8 @@ public class OCL_Loader {
   protected static ICD4CodeArtifactScope createCDSymTab(ASTCDCompilationUnit ast) {
     BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
     ICD4CodeArtifactScope as = CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
-    as.addImports(new ImportStatement("java.lang", true));
-    as.addImports(new ImportStatement("java.util", true));
+    as.addImports(new ImportStatement("java.lang.String", true));
+    as.addImports(new ImportStatement("java.util.Date", true));
     CD4CodeSymbolTableCompleter c =
         new CD4CodeSymbolTableCompleter(
             ast.getMCImportStatementList(), MCBasicTypesMill.mCQualifiedNameBuilder().build());
@@ -112,8 +120,8 @@ public class OCL_Loader {
 
   protected static IOCLArtifactScope createOCLSymTab(ASTOCLCompilationUnit ast) {
     IOCLArtifactScope as = OCLMill.scopesGenitorDelegator().createFromAST(ast);
-    as.addImports(new ImportStatement("java.lang", true));
-    as.addImports(new ImportStatement("java.util", true));
+    as.addImports(new ImportStatement("java.lang.String", true));
+    as.addImports(new ImportStatement("java.util.Date", true));
     OCLSymbolTableCompleter c =
         new OCLSymbolTableCompleter(
             ast.getMCImportStatementList(),
@@ -136,7 +144,7 @@ public class OCL_Loader {
   protected static void loadCDModel(ASTOCLCompilationUnit oclAST, ASTCDCompilationUnit cdAST) {
     String serialized =
         new CD4CodeSymbols2Json().serialize((ICD4CodeScope) cdAST.getEnclosingScope());
-    serialized = serialized.replaceAll("Optional", "java.util.Optional");
+    //  serialized = serialized.replaceAll("Optional", "java.util.Optional");
     Log.trace(serialized, OCL_Loader.class.getName());
     SymbolTableUtil.prepareMill();
     SymbolTableUtil.addCd4cSymbols();

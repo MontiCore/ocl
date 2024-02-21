@@ -5,13 +5,12 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl2smt.ocl2smt.ExpressionAbstractTest;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.se_rwth.commons.logging.Log;
+import java.io.IOException;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.io.IOException;
-import java.util.Set;
 
 public class ContextDeclTest extends ExpressionAbstractTest {
 

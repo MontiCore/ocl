@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.tool;
 
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.io.FileReaderWriter;
 import de.monticore.io.paths.MCPath;
@@ -12,10 +13,10 @@ import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
 import de.monticore.ocl.ocl._symboltable.OCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
-import de.monticore.ocl.oclexpressions._cocos.IterateExpressionVariableUsageIsCorrect;
-import de.monticore.ocl.setexpressions._cocos.SetComprehensionHasGenerator;
-import de.monticore.ocl.types.check.OCLDeriver;
-import de.monticore.ocl.types.check.OCLSynthesizer;
+import de.monticore.ocl.oclexpressions.cocos.IterateExpressionVariableUsageIsCorrect;
+import de.monticore.ocl.setexpressions.cocos.SetComprehensionHasGenerator;
+import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLDeriver;
+import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLSynthesizer;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
 import de.monticore.types.check.IDerive;
@@ -241,7 +242,7 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
           || cmd.hasOption("ow")) {
 
         CD4CodeMill.init();
-
+        CD2SMTMill.initDefault();
         // check if there are a class diagram
         if (!cmd.hasOption("cd")) {
           Log.error(
@@ -256,7 +257,7 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
         }
 
         // build the output path
-        Path output = Path.of("output");
+        Path output = Path.of("target/output");
         if (cmd.hasOption("o")) {
           output = Path.of(cmd.getOptionValue("o"));
         }
@@ -269,6 +270,8 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
         File newCd;
         Set<File> oclFiles = new HashSet<>();
         Set<File> newOClFiles = new HashSet<>();
+        Set<File> posOdExamples = new HashSet<>();
+        Set<File> negOdExample = new HashSet<>();
         String methodName;
 
         // get ocl files
@@ -284,9 +287,22 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
           }
         }
 
+        // get pos and negative od Examples
+        if (cmd.hasOption("od") && cmd.getOptionValues("od") != null) {
+          for (String file : cmd.getOptionValues("od")) {
+            posOdExamples.add(new File(file));
+          }
+        }
+
+        if (cmd.hasOption("nod") && cmd.getOptionValues("nod") != null) {
+          for (String file : cmd.getOptionValues("nod")) {
+            negOdExample.add(new File(file));
+          }
+        }
+
         // compute ocl witness
         if (cmd.hasOption("w")) {
-          OCLDiffGenerator.oclWitness(cd, oclFiles, partial, output);
+          OCLDiffGenerator.oclWitness(cd, oclFiles, posOdExamples, negOdExample, partial, output);
         }
 
         // compute ocl operations witness
@@ -302,16 +318,18 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
         if (cmd.hasOption("diff")) {
           if (cmd.hasOption("ncd") && cmd.getOptionValue("ncd") != null) {
             newCd = new File(cmd.getOptionValue("ncd"));
-            OCLDiffGenerator.oclDiff(cd, newCd, oclFiles, newOClFiles, partial, output);
+            OCLDiffGenerator.oclDiff(
+                cd, newCd, oclFiles, newOClFiles, posOdExamples, negOdExample, partial, output);
           } else {
-            OCLDiffGenerator.oclDiff(cd, oclFiles, newOClFiles, partial, output);
+            OCLDiffGenerator.oclDiff(
+                cd, oclFiles, newOClFiles, posOdExamples, negOdExample, partial, output);
           }
         }
 
         if (cmd.hasOption("odiff")) {
           if (cmd.hasOption("mn")) {
             methodName = cmd.getOptionValue("mn");
-            OCLDiffGenerator.oclOPDiff(cd, oclFiles, newOClFiles, methodName, partial, output);
+            OCLDiffGenerator.oclOPDiffV1(cd, oclFiles, newOClFiles, methodName, partial, output);
           } else {
             Log.error(
                 "The option --odiff need a Method name. this can be added with the option -mn");
@@ -399,7 +417,9 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
     checker.addCoCo(new ContextHasOnlyOneType());
     checker.addCoCo(new SetComprehensionHasGenerator());
     checker.addCoCo(new UnnamedInvariantDoesNotHaveParameters());
-    checker.addCoCo(new VariableDeclarationOfCorrectType(new OCLDeriver(), new OCLSynthesizer()));
+    checker.addCoCo(
+        new VariableDeclarationOfCorrectType(
+            new TypeCheck3AsOCLDeriver(), new TypeCheck3AsOCLSynthesizer()));
     checker.checkAll(ast);
   }
 
@@ -423,7 +443,7 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
    */
   public void checkAllCoCos(ASTOCLCompilationUnit ast) {
     checkAllExceptTypeCoCos(ast);
-    IDerive deriver = new OCLDeriver();
+    IDerive deriver = new TypeCheck3AsOCLDeriver();
     OCLCoCoChecker checker = new OCLCoCoChecker();
     checker.addCoCo(new ExpressionValidCoCo(deriver));
     checker.addCoCo(new PreAndPostConditionsAreBooleanType(deriver));
@@ -679,6 +699,26 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
             .build();
     options.addOption(nOcl);
 
+    // introduces the ocl constraints
+    Option posOD =
+        Option.builder("od")
+            .longOpt("OD-Example")
+            .desc("introduces system state that muss always appear with od")
+            .argName("odFiles")
+            .numberOfArgs(Option.UNLIMITED_VALUES)
+            .build();
+    options.addOption(posOD);
+
+    // introduces the new version of the oclConstraint
+    Option negOD =
+        Option.builder("nod")
+            .longOpt("negative-od")
+            .desc("introduces system state that muss not  appear appear with od")
+            .argName("odFileFiles")
+            .numberOfArgs(Option.UNLIMITED_VALUES)
+            .build();
+    options.addOption(negOD);
+
     // introduces the class diagram
     Option cd =
         Option.builder("cd")
@@ -708,7 +748,7 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
             .build();
     options.addOption(partial);
 
-    // option for partial models
+    // option for operation constraint
     Option method =
         Option.builder("mn")
             .longOpt("Method-Name")

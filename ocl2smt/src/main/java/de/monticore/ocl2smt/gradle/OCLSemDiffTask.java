@@ -22,7 +22,6 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.RegularFileProperty;
 import org.gradle.api.tasks.*;
-// import org.gradle.work.NormalizeLineEndings;
 
 @CacheableTask
 public abstract class OCLSemDiffTask extends DefaultTask {
@@ -80,10 +79,13 @@ public abstract class OCLSemDiffTask extends DefaultTask {
     // Compute Diff
     if (negativeOCL.isEmpty()) {
       witnesses = new HashSet<>();
-      witnesses.add(OCLDiffGenerator.oclWitness(cd, positiveOCL, false));
+      witnesses.add(
+          OCLDiffGenerator.oclWitness(cd, positiveOCL, new HashSet<>(), new HashSet<>(), false));
     } else {
 
-      diff = OCLDiffGenerator.oclDiff(cd, positiveOCL, negativeOCL, false);
+      diff =
+          OCLDiffGenerator.oclDiff(
+              cd, positiveOCL, negativeOCL, new HashSet<>(), new HashSet<>(), false);
       witnesses = diff.getDiffWitness();
       if (getTraceOD().isPresent()) {
         trace = diff.getUnSatCore();

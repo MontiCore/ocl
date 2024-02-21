@@ -4,12 +4,13 @@ package de.monticore.ocl.util.library;
 import static de.monticore.ocl.util.library.TypeUtil.*;
 
 import de.monticore.ocl.ocl.OCLMill;
+import de.monticore.ocl.ocl._symboltable.IOCLGlobalScope;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
+import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.monticore.types.check.SymTypeOfGenerics;
 
 /** Adds symbols for OCL/P sets */
 public class SetType {
@@ -18,18 +19,20 @@ public class SetType {
   protected TypeVarSymbol typeVarSymbol;
 
   public void addSetType() {
+    IOCLGlobalScope gs = OCLMill.globalScope();
     typeVarSymbol = OCLMill.typeVarSymbolBuilder().setName("X").build();
 
-    SymTypeOfGenerics superType =
+    SymTypeExpression collectionSuperType =
         SymTypeExpressionFactory.createGenerics(
-            getCollectionType(), SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
+            gs.resolveType("Collection").get(),
+            SymTypeExpressionFactory.createTypeVariable(typeVarSymbol));
 
     setSymbol =
         OCLMill.typeSymbolBuilder()
             .setName("Set")
             .setEnclosingScope(OCLMill.globalScope())
             .setSpannedScope(OCLMill.scope())
-            .addSuperTypes(superType)
+            .addSuperTypes(collectionSuperType)
             .build();
     setSymbol.getSpannedScope().setName("Set");
     setSymbol.addTypeVarSymbol(typeVarSymbol);
@@ -63,6 +66,7 @@ public class SetType {
         .setName(name)
         .setEnclosingScope(setSymbol.getSpannedScope())
         .setSpannedScope(OCLMill.scope())
+        .setAccessModifier(BasicAccessModifier.PUBLIC)
         .build();
   }
 

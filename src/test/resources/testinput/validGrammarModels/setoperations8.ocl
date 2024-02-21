@@ -1,8 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-ocl setoperations8 {
-  inv:
-    let
-      Set<Object> x = {Object y | y in z, y instanceof Set<Object> && !(y isin (Set<Object>)u)}
-    in
-      this;
-}

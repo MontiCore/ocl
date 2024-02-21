@@ -1,5 +1,5 @@
 #Build CLI
-FROM registry.git.rwth-aachen.de/monticore/container-registry/gradle:6.8.2-jdk11 as build
+FROM registry.git.rwth-aachen.de/monticore/container-registry/gradle:7.6.3-jdk11 as build
 ADD . /app
 WORKDIR /app
 RUN gradle build -x test -x javadoc

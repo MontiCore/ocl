@@ -23,4 +23,12 @@ public class OCLInvDiffResult {
   public Set<ASTODArtifact> getDiffWitness() {
     return diffWitness;
   }
+
+  public boolean isPresentTrace() {
+    return true; // todo fixme unSatCore != null && !OCLHelper.getLinkList(unSatCore).isEmpty();
+  }
+
+  public boolean isPresentWitness() {
+    return !diffWitness.isEmpty();
+  }
 }

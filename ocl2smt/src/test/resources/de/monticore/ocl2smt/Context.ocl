@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package invariants;
+
 
 ocl Context {
  context Boolean a, Boolean b , Auction a1 inv Context1 :

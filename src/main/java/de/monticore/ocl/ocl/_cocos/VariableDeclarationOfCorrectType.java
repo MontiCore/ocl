@@ -3,7 +3,7 @@ package de.monticore.ocl.ocl._cocos; /* (c) https://github.com/MontiCore/montico
 
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
 import de.monticore.ocl.oclexpressions._cocos.OCLExpressionsASTOCLVariableDeclarationCoCo;
-import de.monticore.ocl.types.check.OCLTypeCheck;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.TypeCheckResult;
@@ -15,11 +15,12 @@ public class VariableDeclarationOfCorrectType
   public VariableDeclarationOfCorrectType(IDerive iDerive, ISynthesize iSynthesize) {
     setIDerive(iDerive);
     setISynthesize(iSynthesize);
+    OCLSymTypeRelations.init();
   }
 
-  IDerive iDerive;
+  protected IDerive iDerive;
 
-  ISynthesize iSynthesize;
+  protected ISynthesize iSynthesize;
 
   public IDerive getIDerive() {
     return iDerive;
@@ -57,7 +58,7 @@ public class VariableDeclarationOfCorrectType
                 "0xOCL32 Type of Variable at %s could not be calculated.",
                 node.get_SourcePositionStart()));
       }
-      if (!OCLTypeCheck.compatible(result.getResult(), type.getResult())) {
+      if (!OCLSymTypeRelations.isCompatible(result.getResult(), type.getResult())) {
         Log.error(
             String.format(
                 "0xOCL33 (%s): Type of variable %s is incompatible with expression type %s.",

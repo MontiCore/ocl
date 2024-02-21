@@ -1,8 +1,0 @@
-/* (c) https://github.com/MontiCore/monticore */
-ocl cases2 {
-  context Message m inv:
-    let
-      Person p = m instanceof BidMessage ? m.bidder : null
-    in
-      true;
-}

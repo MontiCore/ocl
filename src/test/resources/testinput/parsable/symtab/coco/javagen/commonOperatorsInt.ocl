@@ -1,0 +1,11 @@
+/* (c) https://github.com/MontiCore/monticore */
+package invariants;
+
+ocl commonOperatorsInt {
+  inv Testints(int a, int b):
+    a + b != 0 &&
+    a - b != 0 &&
+    a * b != 0 &&
+    a / b != 0 &&
+    a % b != 0;
+}

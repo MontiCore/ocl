@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
-import de.monticore.ocl.types.check.OCLDeriver;
+import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLDeriver;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.TypeCheckResult;
@@ -24,13 +24,14 @@ public class TypeCheckTest extends AbstractTest {
 
   @Test
   public void testTypCheckForGenericMethodCalls() {
-    String filename = "list.ocl";
+    String filename = "list_typeinferringModels.ocl";
 
     Log.enableFailQuick(false);
 
     // given
     final Optional<ASTOCLCompilationUnit> ast =
-        parse(RELATIVE_MODEL_PATH + "/testinput" + "/typeInferringModels/" + filename, false);
+        parse(
+            RELATIVE_MODEL_PATH + "/testinput/parsable/symtab/coco/not_javagen/" + filename, false);
     assertThat(ast).isPresent();
 
     SymbolTableUtil.prepareMill();
@@ -42,14 +43,14 @@ public class TypeCheckTest extends AbstractTest {
     SymbolTableUtil.runSymTabGenitor(ast.get());
     SymbolTableUtil.runSymTabCompleter(ast.get());
 
-    IDerive deriver = new OCLDeriver();
+    IDerive deriver = new TypeCheck3AsOCLDeriver();
 
     TypeCheckResult t =
         deriver.deriveType(
             ((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getExpression());
 
     // Additional check that nothing broke
-    assertThat(Log.getErrorCount()).isEqualTo(0);
+    assertNoFindings();
     assertThat(t.isPresentResult()).isTrue();
   }
 }

@@ -15,59 +15,15 @@ import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @deprecated This class is no longer acceptable since we use <b>Type Check 3</b> to calculate the
+ *     type of expressions and literals related to OCL. Use OCLExpressionsTypeVisitor instead.
+ */
+@Deprecated(forRemoval = true)
 public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
     implements OCLExpressionsHandler {
 
   protected OCLExpressionsTraverser traverser;
-
-  @Override
-  public void traverse(ASTTypeCastExpression node) {
-    SymTypeExpression exprResult = null;
-    SymTypeExpression typeResult = null;
-
-    // check type of Expression
-    if (node.getExpression() != null) {
-      node.getExpression().accept(getTraverser());
-    }
-    if (typeCheckResult.isPresentResult()) {
-      exprResult = typeCheckResult.getResult();
-      typeCheckResult.reset();
-    } else {
-      LogHelper.error(
-          node,
-          "0xA3080",
-          "The type of the expression of the OCLTypeCastExpression could not be calculated");
-      return;
-    }
-
-    // check type of type to cast expression to
-    if (node.getMCType() != null) {
-      node.getMCType().accept(getTraverser());
-    }
-    if (typeCheckResult.isPresentResult()) {
-      typeResult = typeCheckResult.getResult();
-      typeCheckResult.reset();
-    } else {
-      LogHelper.error(
-          node,
-          "0xA3081",
-          "The type of the MCType of the OCLTypeCastExpression could not be calculated");
-      return;
-    }
-
-    // check whether typecast is possible
-    if (!OCLTypeCheck.compatible(typeResult, exprResult)) {
-      typeCheckResult.reset();
-      LogHelper.error(
-          node,
-          "0xA3082",
-          "The type of the expression of the OCLTypeCastExpression can't be cast to given type");
-      return;
-    } else {
-      // set result to typecasted expression
-      typeCheckResult.setResult(typeResult.deepClone());
-    }
-  }
 
   @Override
   public void traverse(ASTTypeIfExpression node) {
@@ -151,7 +107,7 @@ public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
     }
 
     // the condition has to be boolean
-    if (!OCLTypeCheck.isBoolean(conditionResult)) {
+    if (!TypeCheck.isBoolean(conditionResult)) {
       typeCheckResult.reset();
       LogHelper.error(
           node, "0xA3041", "The type of the condition of the OCLIfThenElseExpr has to be boolean");
@@ -229,7 +185,7 @@ public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
           "0xA3211",
           "The type of the expression in the ForallExpression could not be calculated");
     }
-    if (!OCLTypeCheck.isBoolean(exprResult)) {
+    if (!TypeCheck.isBoolean(exprResult)) {
       typeCheckResult.reset();
       LogHelper.error(
           node, "0xA3212", "The type of the expression in the ForallExpression has to be boolean");
@@ -255,7 +211,7 @@ public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
           "0xA3211",
           "The type of the expression in the ExistsExpression could not be calculated");
     }
-    if (!OCLTypeCheck.isBoolean(exprResult)) {
+    if (!TypeCheck.isBoolean(exprResult)) {
       typeCheckResult.reset();
       LogHelper.error(
           node, "0xA3212", "The type of the expression in the ExistsExpression has to be boolean");
@@ -369,106 +325,6 @@ public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
   }
 
   @Override
-  public void traverse(ASTInstanceOfExpression node) {
-    if (node.getExpression() != null) {
-      node.getExpression().accept(getTraverser());
-    }
-    if (typeCheckResult.isPresentResult()) {
-      typeCheckResult.reset();
-    } else {
-      LogHelper.error(
-          node,
-          "0xA3000",
-          "The type of the left expression of the OCLInstanceOfExpression could not be calculated");
-      return;
-    }
-
-    if (node.getMCType() != null) {
-      node.getMCType().accept(getTraverser());
-    }
-    if (typeCheckResult.isPresentResult()) {
-      typeCheckResult.reset();
-    } else {
-      LogHelper.error(
-          node,
-          "0xA3001",
-          "The type of the MCType of the OCLInstanceOfExpression could not be calculated");
-      return;
-    }
-
-    final SymTypeExpression wholeResult = createBoolean();
-    typeCheckResult.setResult(wholeResult);
-  }
-
-  @Override
-  public void traverse(ASTOCLArrayQualification node) {
-    SymTypeExpression exprResult;
-    if (node.getExpression() != null) {
-      node.getExpression().accept(getTraverser());
-    }
-    if (!typeCheckResult.isPresentResult()) {
-      LogHelper.error(
-          node,
-          "0xA3001",
-          "The type of the expression of the OCLArrayQualification could not be calculated");
-      return;
-    }
-    exprResult = typeCheckResult.getResult();
-    typeCheckResult.reset();
-    for (ASTExpression e : node.getArgumentsList()) {
-      if (e != null) {
-        e.accept(getTraverser());
-      }
-      if (!typeCheckResult.isPresentResult()) {
-        LogHelper.error(
-            node,
-            "0xA3001",
-            "The type of a expression in the arguments of the OCLArrayQualification could not be calculated");
-        typeCheckResult.reset();
-        return;
-      }
-      if (!isIntegralType(typeCheckResult.getResult())) {
-        LogHelper.error(
-            node,
-            "0xA3001",
-            "The type of one of the arguments of the OCLArrayQualification is not integral");
-        typeCheckResult.reset();
-        return;
-      }
-      typeCheckResult.reset();
-    }
-    if (exprResult instanceof SymTypeArray) {
-      LogHelper.setCurrentNode(node);
-      exprResult =
-          getCorrectResultArrayExpression(
-              node.getEnclosingScope(), exprResult, (SymTypeArray) exprResult);
-      typeCheckResult.setResult(exprResult);
-      return;
-    }
-    if (exprResult instanceof SymTypeOfGenerics) {
-      SymTypeOfGenerics collection = (SymTypeOfGenerics) exprResult;
-      if (collection.getArgumentList().size() > 1
-          && !collection.getTypeConstructorFullName().equals("java.util.Map")) {
-        LogHelper.error(
-            node,
-            "0xA3002",
-            "Array qualifications can only be used with one type argument or a map");
-      }
-      if (collection.getTypeConstructorFullName().equals("java.util.Map")) {
-        typeCheckResult.setResult(collection.getArgument(1));
-      } else {
-        typeCheckResult.setResult(collection.getArgument(0));
-      }
-      return;
-    }
-
-    LogHelper.error(
-        node,
-        "0xA3001",
-        "The type of the expression of the OCLArrayQualification has to be SymTypeArray");
-  }
-
-  @Override
   public void traverse(ASTOCLAtPreQualification node) {
     SymTypeExpression exprResult;
     if (node.getExpression() != null) {
@@ -520,7 +376,7 @@ public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
       return;
     }
 
-    if (!OCLTypeCheck.isBoolean(leftResult)) {
+    if (!TypeCheck.isBoolean(leftResult)) {
       typeCheckResult.reset();
       Log.error("0xA3201 The type of the left expression of the " + astType + " has to be boolean");
       return;
@@ -540,7 +396,7 @@ public class DeriveSymTypeOfOCLExpressions extends AbstractDeriveFromExpression
       return;
     }
 
-    if (!OCLTypeCheck.isBoolean(rightResult)) {
+    if (!TypeCheck.isBoolean(rightResult)) {
       typeCheckResult.reset();
       Log.error(
           "0xA3203 The type of the right expression of the " + astType + " has to be boolean");

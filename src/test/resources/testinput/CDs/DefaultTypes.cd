@@ -6,34 +6,9 @@ classdiagram DefaultTypes {
   class Class;
 
   class Object;
-  class Collection {
-    boolean containsAll(Collection c);
-    boolean contains(Collection c);
-    int size();
-    boolean isEmpty();
-    Collection addAll(Collection c);
-    Set asSet();
-    Collection flatten(); // see http://mbse.se-rwth.de/book1/index.php?c=chapter3-3#x1-560003.3.6
-  }
 
-  class List extends Collection {
-      boolean nonEmpty();
-      List addAll(List c);
-      List add(Object o);
-  }
 
-  class Set extends Collection {
-      Set addAll(Set c);
-      List asList();
-      Set add(Object o);
-  }
-
-  class Optional {
-    boolean isAbsent();
-    boolean isPresent();
-  }
-
-  class Date;
+ class Date;
   class Time {
       static Time now();
       boolean lessThan(Time that);

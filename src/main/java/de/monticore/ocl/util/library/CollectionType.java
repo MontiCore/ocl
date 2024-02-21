@@ -7,6 +7,7 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol;
+import de.monticore.symboltable.modifiers.BasicAccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 
@@ -56,6 +57,7 @@ public class CollectionType {
         .setName(name)
         .setEnclosingScope(collectionSymbol.getSpannedScope())
         .setSpannedScope(OCLMill.scope())
+        .setAccessModifier(BasicAccessModifier.PUBLIC)
         .build();
   }
 

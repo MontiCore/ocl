@@ -1,10 +1,12 @@
 package de.monticore.ocl2smt.helpers;
 
+import de.monticore.ast.ASTNode;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
+import de.monticore.ocl.ocl._prettyprint.OCLFullPrettyPrinter;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPDiffResult;
 import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
@@ -116,5 +118,9 @@ public class IOHelper {
       Log.error("No Operations constraints Specified for the Method " + name);
     }
     return res;
+  }
+
+  public static String print(ASTNode node) {
+    return new OCLFullPrettyPrinter(new IndentPrinter()).prettyprint(node);
   }
 }

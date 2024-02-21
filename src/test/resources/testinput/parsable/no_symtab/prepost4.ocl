@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+ocl prepost4 {
+  context List<Message> Person.getMsgOfAuction(Auction a)
+  pre:
+    defined(a);
+    typeif a instanceof Auction then true else false;
+  post:
+    defined(result);
+    result == [m in p.message | m.isAuctionSpecific() && m.getAuction() == a];
+}

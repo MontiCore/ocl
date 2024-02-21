@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.ocl._symboltable;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.google.common.base.Preconditions;
 import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl.OCLMill;
@@ -41,25 +43,24 @@ public class OCLScopesGenitorTest extends AbstractTest {
   }
 
   @ParameterizedTest
-  @MethodSource("getModelsWithValidSymTab")
+  @MethodSource("getSymbolTableModels")
   public void shouldSetEnclosingScopeOfOCLConstraint(String filename) throws IOException {
     // Given
-    String file = prefixValidModelsPath("/testinput/validGrammarModels/" + filename);
-    Optional<ASTOCLCompilationUnit> ast = OCLMill.parser().parse(file);
+    Optional<ASTOCLCompilationUnit> ast = OCLMill.parser().parse(filename);
     OCLScopesGenitorDelegator genitor = OCLMill.scopesGenitorDelegator();
 
-    Preconditions.checkState(
+    assertTrue(
         !OCLMill.parser().hasErrors(),
         String.format(
             "There where errors parsing the input file `%s`. "
                 + "The log lists the following findings: %s",
-            file, Log.getFindings()));
-    Preconditions.checkState(
+            filename, Log.getFindings()));
+    assertTrue(
         ast.isPresent(),
         String.format(
             "The parser did not return an abstract syntax tree for input file '%s'. "
                 + "The log lists the following findings: %s",
-            file, Log.getFindings()));
+            filename, Log.getFindings()));
 
     // When
     genitor.createFromAST(ast.get());
@@ -75,6 +76,7 @@ public class OCLScopesGenitorTest extends AbstractTest {
                     c.get_SourcePositionStart()));
           }
         });
+    assertNoFindings();
   }
 
   @ParameterizedTest
@@ -97,6 +99,7 @@ public class OCLScopesGenitorTest extends AbstractTest {
         "The scope at the tail of the scope stack "
             + "should match the manually added scope but does not. Thus, the genitor either removes too many scopes or "
             + "does not remove all added scopes.");
+    assertNoFindings();
   }
 
   /**
@@ -130,6 +133,7 @@ public class OCLScopesGenitorTest extends AbstractTest {
               ast.getEnclosingScope(),
               "The enclosing scope of the ast of the ocl invariant does not match the expected scope.");
         });
+    assertNoFindings();
   }
 
   /**
@@ -156,7 +160,7 @@ public class OCLScopesGenitorTest extends AbstractTest {
         () -> {
           Assertions.assertNotNull(
               ast.getSpannedScope(), "The ast of the ocl invariant is missing its spanned scope.");
-          Assertions.assertTrue(
+          assertTrue(
               ast.getSpannedScope().isPresentAstNode(),
               "The spanned scope is not linked with the ast of the ocl invariant.");
           Assertions.assertEquals(
@@ -170,10 +174,11 @@ public class OCLScopesGenitorTest extends AbstractTest {
               ast.getEnclosingScope(),
               ast.getSpannedScope().getEnclosingScope(),
               "The enclosing scope of the spanned scope of the ocl invariant does not match the expected scope.");
-          Assertions.assertTrue(
+          assertTrue(
               ast.getEnclosingScope().getSubScopes().contains(ast.getSpannedScope()),
               "The enclosing scope of the ocl invariant does not contain the spanned scope as sub-scope.");
         });
+    assertNoFindings();
   }
 
   /**
@@ -200,12 +205,12 @@ public class OCLScopesGenitorTest extends AbstractTest {
     // Then
     Assertions.assertAll(
         () -> {
-          Assertions.assertTrue(
+          assertTrue(
               ast.isPresentSymbol(), "The ast of the ocl invariant is not linked with its symbol.");
-          Assertions.assertTrue(
+          assertTrue(
               ast.getSpannedScope().isPresentSpanningSymbol(),
               "The spanning symbol of the scope spanned by the ocl invariant is missing.");
-          Assertions.assertTrue(
+          assertTrue(
               ast.getSpannedScope().getSpanningSymbol().isPresentAstNode(),
               "The symbol of the ocl invariant is not linked with its ast.");
           Assertions.assertNotNull(
@@ -227,10 +232,11 @@ public class OCLScopesGenitorTest extends AbstractTest {
               ast.getEnclosingScope(),
               ast.getSpannedScope().getSpanningSymbol().getEnclosingScope(),
               "The enclosing scope of the symbol of the ocl invariant does not match the enclosing scope of its ast.");
-          Assertions.assertTrue(
+          assertTrue(
               enclosingScope.getLocalOCLInvariantSymbols().contains(ast.getSymbol()),
               "The enclosing scope of the ocl invariant does not contain the spanning symbol as local symbol.");
         });
+    assertNoFindings();
   }
 
   /**

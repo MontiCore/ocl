@@ -19,7 +19,7 @@ for desired or unwanted situations.
 OCL/P is explained in detail by [Rum16], [Rum17].
                        
 This OCL language component contains 
-* four grammars, 
+* one grammar, 
 * context conditions (including typechecks), 
 * a symbol table infrastructure including functionality for 
   creating symbol tables and (de-)serializing symbol tables, 
@@ -66,14 +66,6 @@ be found in the directory `target/libs`.
 The usage of the `MCOCL` tool and detailed instructions for building the tool 
 from the source files are described **[here](../../../../../../README.md)**. 
 
-## Grammars
-
-The OCL language component contains four grammars:
-1. [OCL](./OCL.mc4),
-1. [OCLExpressions](./OCLExpressions.mc4), 
-1. [OptionalOperators](./OptionalOperators.mc4), and
-1. [SetExpressions](./SetExpressions.mc4). 
-
 ### OCL
 The grammar [OCL](./OCL.mc4) contains the basic constituents to define textual 
 representations of OCL/P in an artifact. 
@@ -97,61 +89,6 @@ The grammar [OCL](./OCL.mc4) extends the grammars
 * [SetExpressions](./SetExpressions.mc4) to be able to define and use sets in a
   math-like syntax, as well as list as enumeration of values, and
 * [BitExpressions][BitExpressionsRef] for using binary expressions in OCL.
-
-### OCLExpressions
-The grammar [OCLExpressions](./OCLExpressions.mc4) defines the syntax for basic 
-expressions defined by the OCL standard.
-
-The grammar [OCLExpressions](./OCLExpressions.mc4) defines the syntax for
-* forall and exists quantifiers,
-* any-element-selection from collections,
-* let-in local variable declarations,
-* type-if expressions, 
-* if-then-else expressions,
-* implies and equivalent expressions,
-* iterate expressions,
-* @pre and transitive closure qualifications, and
-* type checks and casts.
-
-The grammar [OCLExpressions](./OCLExpressions.mc4) extends the grammars
-* [ExpressionsBasis][ExpressionsBasisRef] to reuse expressions defined by other 
-  grammars,
-* [MCBasicTypes][MCBasicTypesRef] for referencing types, and
-* [BasicSymbols][BasicSymbolsRef] for importing type symbols.
-
-### OptionalOperators
-The grammar [OCLExpressions](./OCLExpressions.mc4) defines expressions for 
-accessing optional values (i.e. potentially absent values).
-These operators are also known as [Elvis operators][ElvisRef]
-
-The grammar [OptionalOperators](./OptionalOperators.mc4) defines the syntax for
-* accessing optionals in a possibly chained manner(`?:`),
-* equality and inequality checks on optionals (`?<=`, `?==`, etc.), and
-* type checks on optionals (`?~~`, `?!~`), 
-
-The grammar [OptionalOperators](./OptionalOperators.mc4) extends the grammars
-* [CommonExpressions][CommonExpressionsRef] for declaring optional operators as
-  `InfixExpression`.
-
-### SetExpressions
-
-The grammar [SetExpressions](./SetExpressions.mc4) defines the syntax for 
-defining and combining sets and lists in a math-like syntax.
-This also includes set/list comprehension, ranges of values and enumerations.
-
-The grammar [SetExpressions](./SetExpressions.mc4) defines the syntax for
-* set comprehension (also known as set-builder notation),
-* list comprehensions,
-* checking set membership,
-* set-theoretic union, intersection, and
-* logical AND and OR predicates on all elements of a set.
-
-The grammar [SetExpressions](./SetExpressions.mc4) extends the grammars
-* [ExpressionsBasis][ExpressionsBasisRef] to reuse expressions defined by other 
-  grammars,
-* [MCBasicTypes][MCBasicTypesRef] for referencing types, and
-* [BasicSymbols][BasicSymbolsRef] for importing type symbols.
-
 
 ## Context Conditions
 This section lists the context conditions for the OCL language.
@@ -181,9 +118,6 @@ checks the names of parameters are not already declared.
 
 * [```PreAndPostConditionsAreBooleanType```](../../../../java/de/monticore/ocl/ocl/_cocos/PreAndPostConditionsAreBooleanType.java)  
 checks the expressions used in pre- and postconditions return booleans.
-
-* [```SetComprehensionHasGenerator```](../../../../java/de/monticore/ocl/setexpressions/_cocos/SetComprehensionHasGenerator.java)  
-checks the set comprehensions always have a generator part.
 
 * [```UnnamedInvariantDoesNotHaveParameters```](../../../../java/de/monticore/ocl/ocl/_cocos/UnnamedInvariantDoesNotHaveParameters.java)  
 checks unnamed invariants do not have parameters.

@@ -5,6 +5,11 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.types.check.*;
 
+/**
+ * @deprecated This class is no longer acceptable since we use <b>Type Check 3</b> to calculate the
+ *     type of expressions and literals related to OCL. Use {@link OCLTraverserProvider} instead.
+ */
+@Deprecated
 public class OCLDeriver extends AbstractDerive {
 
   public OCLDeriver() {

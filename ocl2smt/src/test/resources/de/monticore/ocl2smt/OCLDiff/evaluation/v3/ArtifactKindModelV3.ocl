@@ -10,7 +10,7 @@
  *merge invariant 12 and 11
  *merge invariant 5,6,1
 */
-ocl  ArtifactKindModel {
+ocl  ArtifactKindModelV3 {
 
   context Artifact a inv Inv0:
     if   a.nameExtension == ""

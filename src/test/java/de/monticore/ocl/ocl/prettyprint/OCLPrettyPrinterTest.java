@@ -27,8 +27,7 @@ public class OCLPrettyPrinterTest extends AbstractTest {
   @MethodSource("getParsableModels")
   public void testOCLCompilationUnit(String filename) throws IOException {
     // given
-    final Optional<ASTOCLCompilationUnit> ast =
-        parse(prefixValidModelsPath("/testinput/validGrammarModels/" + filename), false);
+    final Optional<ASTOCLCompilationUnit> ast = parse(filename, false);
     assertThat(ast).isNotNull();
 
     // when
@@ -39,5 +38,6 @@ public class OCLPrettyPrinterTest extends AbstractTest {
     final Optional<ASTOCLCompilationUnit> astPrint = parser.parse_StringOCLCompilationUnit(output);
     assertTrue(astPrint.isPresent());
     assertTrue(ast.get().deepEquals(astPrint.get()));
+    assertNoFindings();
   }
 }

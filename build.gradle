@@ -15,7 +15,7 @@ plugins {
 
   id 'monticore' version "$mc_version"
   id 'com.github.johnrengelman.shadow' version '6.0.0'
-  //id 'de.set.ecj' version '1.4.1' // Eclipse compiler as it's faster than javac
+  id "io.github.themrmilchmann.ecj" version "0.2.0"
   id 'jacoco'
   id 'com.adarshr.test-logger' version '2.1.1'
   id 'maven-publish'
@@ -35,6 +35,7 @@ buildDir = "$projectDir/target"
 
 def grammarDir = "$projectDir/src/main/grammars"
 def reportsDir = "$buildDir/generated-sources/monticore/sourcecode/reports"
+def symbolsDir = "$projectDir/src/main/resources"
 
 /* ============================================================ */
 /* ======================= Configuration ====================== */
@@ -46,6 +47,12 @@ sourceSets {
   }
   test {
     java.srcDirs += ["$buildDir/generated-test-sources/monticore/sourcecode"]
+  }
+  symbols {
+    resources {
+      srcDirs(symbolsDir)
+      include "**/*.sym"
+    }
   }
   grammars {
     resources {
@@ -124,16 +131,12 @@ dependencies {
   implementation "org.antlr:antlr4:4.7.1"
   implementation "org.assertj:assertj-core:$assertj_version"
 
+  testImplementation ("de.monticore:monticore-grammar:$mc_version") {
+      capabilities {requireCapability("de.monticore:monticore-grammar-tests") }
+  }
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
-}
-
-configurations {
-  ecj
-}
-dependencies {
-  ecj 'org.eclipse.jdt:ecj:3.26.0'
 }
 
 /* ============================================================ */
@@ -145,17 +148,12 @@ tasks.withType(Test){
 }
 
 tasks.withType(JavaCompile) {
-  options.fork = true
   sourceCompatibility = JavaVersion.VERSION_11
   targetCompatibility = JavaVersion.VERSION_11
   options.encoding = 'UTF-8'
   options.headerOutputDirectory.convention(null)
   options.deprecation = false
   options.warnings = false
-  options.forkOptions.with {
-    executable = 'java'
-    jvmArgs = ['-classpath', project.configurations.ecj.asPath, 'org.eclipse.jdt.internal.compiler.batch.Main', '-nowarn', "-Xmx2048m"]
-  }
 }
 
 fileTree(grammarDir).matching { include '**/*.mc4' }.each {
@@ -207,7 +205,17 @@ shadowJar {
   }
 }
 
-jar.dependsOn(shadowJar)
+task symbolJar(type: Jar) {
+  from sourceSets.symbols.output
+  includeEmptyDirs = false
+  archiveBaseName = "ocl-library-symbols"
+}
+
+artifacts {
+  archives symbolJar
+}
+
+jar.dependsOn(symbolJar, shadowJar)
 
 publishing {
   publications {

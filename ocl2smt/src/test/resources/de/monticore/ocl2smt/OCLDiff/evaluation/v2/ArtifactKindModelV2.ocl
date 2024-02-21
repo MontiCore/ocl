@@ -7,7 +7,7 @@
  *add new OCL Invariant in  lines 99-132
  * to specify property of class JavaType added in the previous version
 */
-ocl  ArtifactKindModel {
+ocl  ArtifactKindModelV2 {
 
   context Artifact a inv Inv0:
     a.name == ((a.nameExtension == "") ? a.simpleName :

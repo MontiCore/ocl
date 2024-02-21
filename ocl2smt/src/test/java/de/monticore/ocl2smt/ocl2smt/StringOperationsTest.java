@@ -12,7 +12,7 @@ public class StringOperationsTest extends ExpressionAbstractTest {
   public void setup() throws IOException {
     super.initLogger();
     super.initMills();
-    parse("MinAuction.cd", "String.ocl");
+    parse("MinAuction.cd", "StringInv.ocl");
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }
 

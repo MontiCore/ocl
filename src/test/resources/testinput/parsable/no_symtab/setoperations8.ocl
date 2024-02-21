@@ -1,0 +1,12 @@
+/* (c) https://github.com/MontiCore/monticore */
+ocl setoperations8 {
+  inv:
+    let
+      Set<Object> x = {Object y |
+        y in z,
+        (typeif y instanceof Set<Object> then true else false) &&
+        !(y isin u)
+      }
+    in
+      this;
+}

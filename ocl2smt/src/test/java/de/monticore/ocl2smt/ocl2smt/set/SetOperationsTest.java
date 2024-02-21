@@ -1,20 +1,21 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocl2smt.set;
 
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.ocl2smt.ocl2smt.ExpressionAbstractTest;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
+import java.io.IOException;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.io.IOException;
-import java.util.Set;
 
 public class SetOperationsTest extends ExpressionAbstractTest {
   @BeforeEach
   public void setup() throws IOException {
     super.initLogger();
     super.initMills();
+    CD2SMTMill.initDefault();
     parse("/setExpressions/setOperations/SetOp.cd", "/setExpressions/setOperations/SetOp.ocl");
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }

@@ -21,11 +21,21 @@ import de.monticore.types.check.AbstractDeriveFromExpression;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedNameBuilder;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
+import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedTypeBuilder;
+import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @deprecated This class is no longer acceptable since we use <b>Type Check 3</b> to calculate the
+ *     type of expressions and literals related to OCL. Use SetExpressionsTypeVisitor instead.
+ */
+@Deprecated(forRemoval = true)
 public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
     implements SetExpressionsVisitor2, SetExpressionsHandler {
 
@@ -171,7 +181,7 @@ public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
   public void traverse(ASTSetComprehension node) {
     boolean obscure = false;
     SymTypeExpression result = null;
-    node.getMCType().accept(getTraverser());
+    getMCType(node).accept(getTraverser());
     if (getTypeCheckResult().isPresentResult()) {
       if (getTypeCheckResult().getResult().isObscureType()) {
         obscure = true;
@@ -194,7 +204,7 @@ public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
       }
     } else {
       getTypeCheckResult().reset();
-      Log.error("0xA0299 could not determine type of " + node.getMCType().getClass().getName());
+      Log.error("0xA0299 could not determine type of " + getMCType(node).getClass().getName());
     }
 
     SymTypeExpression leftType = null;
@@ -244,7 +254,7 @@ public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
             SymTypeExpressionFactory.createGenerics(
                 "java.util.Set", getScope(node.getEnclosingScope()));
       }
-      ((SymTypeOfGenerics) result).addArgument(leftType);
+      ((SymTypeOfGenerics) result).setArgument(0, leftType);
       getTypeCheckResult().setResult(result);
     } else {
       getTypeCheckResult().reset();
@@ -256,7 +266,7 @@ public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
     boolean obscure = false;
     SymTypeExpression result = null;
     SymTypeExpression innerResult = null;
-    node.getMCType().accept(getTraverser());
+    getMCType(node).accept(getTraverser());
     if (getTypeCheckResult().isPresentResult()) {
       boolean correct = false;
       for (String s : collections) {
@@ -324,7 +334,7 @@ public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
     }
 
     if (!obscure) {
-      ((SymTypeOfGenerics) result).addArgument(innerResult);
+      ((SymTypeOfGenerics) result).setArgument(0, innerResult);
       getTypeCheckResult().setResult(result);
     } else {
       getTypeCheckResult().reset();
@@ -354,5 +364,33 @@ public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
 
   public void setTraverser(SetExpressionsTraverser traverser) {
     this.traverser = traverser;
+  }
+
+  // deprecated helper moved here
+
+  protected ASTMCType getMCType(ASTSetComprehension node) {
+    ASTMCQualifiedName qname;
+    if (node.getOpeningBracket().equals("{")) {
+      qname = new ASTMCQualifiedNameBuilder().addParts("Set").build();
+    } else {
+      qname = new ASTMCQualifiedNameBuilder().addParts("List").build();
+    }
+    qname.setEnclosingScope(node.getEnclosingScope());
+    ASTMCQualifiedType mcType = new ASTMCQualifiedTypeBuilder().setMCQualifiedName(qname).build();
+    mcType.setEnclosingScope(node.getEnclosingScope());
+    return mcType;
+  }
+
+  protected ASTMCType getMCType(ASTSetEnumeration node) {
+    ASTMCQualifiedName qname;
+    if (node.getOpeningBracket().equals("{")) {
+      qname = new ASTMCQualifiedNameBuilder().addParts("Set").build();
+    } else {
+      qname = new ASTMCQualifiedNameBuilder().addParts("List").build();
+    }
+    qname.setEnclosingScope(node.getEnclosingScope());
+    ASTMCQualifiedType mcType = new ASTMCQualifiedTypeBuilder().setMCQualifiedName(qname).build();
+    mcType.setEnclosingScope(node.getEnclosingScope());
+    return mcType;
   }
 }

@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+ocl setoperations6 {
+  inv:
+    let
+      Collection<Integer> ci = [1, 2, 1]
+in
+      ((typeif ci instanceof Set<Integer> then true else false) <=> false) &&
+      ((typeif ci instanceof List<Integer> then true else false) <=> true) &&
+      ((typeif ci instanceof Collection<Integer> then true else false) <=> true);
+}

@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.codegen.visitors;
 
-import static de.monticore.types.check.SymTypePrimitive.box;
-
 import com.google.common.base.Preconditions;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.codegen.util.VariableNaming;
@@ -15,15 +13,14 @@ import de.monticore.ocl.oclexpressions._ast.ASTIfThenElseExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTImpliesExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclaration;
 import de.monticore.ocl.oclexpressions._ast.ASTInDeclarationVariable;
-import de.monticore.ocl.oclexpressions._ast.ASTInstanceOfExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTIterateExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTLetinExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
-import de.monticore.ocl.oclexpressions._ast.ASTTypeCastExpression;
 import de.monticore.ocl.oclexpressions._ast.ASTTypeIfExpression;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsHandler;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
@@ -43,6 +40,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter
     Preconditions.checkNotNull(naming);
     Preconditions.checkNotNull(deriver);
     Preconditions.checkNotNull(syntheziser);
+    OCLSymTypeRelations.init();
     this.printer = printer;
     this.naming = naming;
     this.deriver = deriver;
@@ -67,9 +65,11 @@ public class OCLExpressionsPrinter extends AbstractPrinter
   @Override
   public void handle(ASTTypeIfExpression node) {
     printExpressionBeginLambda(getDeriver().deriveType(node));
-    // returnType newName;
+    // TC1 -> TC3 hack
     TypeCheckResult type = this.getDeriver().deriveType(node);
-    if (!type.isPresentResult()) {
+    type.setResult(OCLSymTypeRelations.normalize(OCLSymTypeRelations.box(type.getResult())));
+    // returnType newName;
+    if (!type.isPresentResult() || type.getResult().isObscureType()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;
     } else {
@@ -158,8 +158,10 @@ public class OCLExpressionsPrinter extends AbstractPrinter
   @Override
   public void handle(ASTIfThenElseExpression node) {
     printExpressionBeginLambda(getDeriver().deriveType(node));
-    // expressionType newName;
+    // TC1 -> TC3 hack
     TypeCheckResult type = this.getDeriver().deriveType(node);
+    type.setResult(OCLSymTypeRelations.normalize(OCLSymTypeRelations.box(type.getResult())));
+    // expressionType newName;
     if (!type.isPresentResult()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
     } else {
@@ -277,15 +279,6 @@ public class OCLExpressionsPrinter extends AbstractPrinter
   }
 
   @Override
-  public void handle(ASTTypeCastExpression node) {
-    this.getPrinter().print("((");
-    getPrinter().print(boxType(getSynthesizer().synthesizeType(node.getMCType())));
-    this.getPrinter().print(") ");
-    node.getExpression().accept(getTraverser());
-    this.getPrinter().print(")");
-  }
-
-  @Override
   public void handle(ASTEquivalentExpression node) {
     printAsBoxedType(node.getLeft());
     this.getPrinter().print(".equals(");
@@ -347,15 +340,6 @@ public class OCLExpressionsPrinter extends AbstractPrinter
   }
 
   @Override
-  public void handle(ASTInstanceOfExpression node) {
-    this.getPrinter().print("(");
-    node.getExpression().accept(this.getTraverser());
-    this.getPrinter().print(" instanceof ");
-    getPrinter().print(boxType(getSynthesizer().synthesizeType(node.getMCType())));
-    this.getPrinter().print(")");
-  }
-
-  @Override
   public void handle(ASTAnyExpression node) {
     this.getPrinter().print("(");
     node.getExpression().accept(getTraverser());
@@ -376,7 +360,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter
     }
     if (type.getResult().isPrimitive()) {
       getPrinter().print("((");
-      this.getPrinter().print(box(type.getResult().printFullName()));
+      this.getPrinter().print((type.getResult().printFullName()));
       getPrinter().print(") ");
       node.accept(getTraverser());
       getPrinter().print(")");

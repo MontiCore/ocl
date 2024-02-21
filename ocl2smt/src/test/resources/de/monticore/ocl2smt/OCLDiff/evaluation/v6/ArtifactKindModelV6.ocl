@@ -7,7 +7,7 @@
  * l.134: Ensure that result of JavaSourceFile.compile() is not empty.
  *
 */
-ocl  ArtifactKindModel {
+ocl  ArtifactKindModelV6 {
 
   context Artifact a inv Inv0:
     if   a.nameExtension == ""

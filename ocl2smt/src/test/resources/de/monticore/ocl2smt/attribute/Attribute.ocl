@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 
-ocl NC1 {
+ocl Attribute{
 
   context Person p inv Date1:
        p.birthDate.before(p.dayOfDeath);
