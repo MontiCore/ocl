@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+
+ocl MyAuto {
+
+  context Auto a inv Inv0:
+     a.speed > a.speed ;
+
+
+}
