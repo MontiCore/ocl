@@ -721,15 +721,15 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
     if (children.length == 0) {
       return parent;
     }
-    Function<Z3ExprAdapter, Z3ExprAdapter> wrapper = parent.getWrapper() ;
+    Function<Z3ExprAdapter, Z3ExprAdapter> wrapper = parent.getWrapper();
 
     for (Z3ExprAdapter child : children) {
-        //append child wrapper
-        Function<Z3ExprAdapter, Z3ExprAdapter> temp = wrapper;
-        wrapper = bool -> child.getWrapper().apply(temp.apply(bool));
+      // append child wrapper
+      Function<Z3ExprAdapter, Z3ExprAdapter> temp = wrapper;
+      wrapper = bool -> child.getWrapper().apply(temp.apply(bool));
 
-        //append child general constraints
-        parent.addGenConstraint(child.getGenConstraint());
+      // append child general constraints
+      parent.addGenConstraint(child.getGenConstraint());
     }
 
     Z3ExprAdapter res;

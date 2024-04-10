@@ -65,9 +65,8 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>> {
   }
 
   public Function<Z3ExprAdapter, Z3ExprAdapter> getWrapper() {
-   return wrapper !=null ? wrapper:expr->expr ;
+    return wrapper != null ? wrapper : expr -> expr;
   }
-
 
   public void addGenConstraint(List<Z3ExprAdapter> constraint) {
     this.genConstraint.addAll(constraint);
