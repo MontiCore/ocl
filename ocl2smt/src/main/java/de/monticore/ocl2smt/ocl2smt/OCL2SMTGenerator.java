@@ -82,8 +82,7 @@ public class OCL2SMTGenerator {
     // convert the inv body
     Z3ExprAdapter inv = invCtx.apply(exprConv.convertExpr(invariant.getExpression()));
 
-    Z3ExprAdapter fullInv =
-        inv.isPresentGenConstr() ? eFactory.mkAnd(inv, inv.getGenConstraint()) : inv;
+    Z3ExprAdapter fullInv =eFactory.mkAnd(inv, mkAnd(inv.getGenConstraint()));
 
     Optional<String> name =
         invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
@@ -125,4 +124,9 @@ public class OCL2SMTGenerator {
   public Context getCtx() {
     return cd2SMTGenerator.getContext();
   }
+
+  private Z3ExprAdapter mkAnd(List<Z3ExprAdapter> constraints) {
+      return constraints.stream().reduce(eFactory.mkBool(true), eFactory::mkAnd);
+  }
+
 }

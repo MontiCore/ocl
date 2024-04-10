@@ -2,6 +2,8 @@ package de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3;
 
 import com.microsoft.z3.Expr;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 
 public class Z3ExprAdapter implements ExprAdapter<Expr<?>> {
@@ -9,7 +11,7 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>> {
 
   protected final Z3TypeAdapter type;
   private Function<Z3ExprAdapter, Z3ExprAdapter> wrapper = null;
-  private Z3ExprAdapter genConstraint = null;
+  private final List<Z3ExprAdapter> genConstraint = new ArrayList<>();
 
   public Z3ExprAdapter(Expr<?> expr, Z3TypeAdapter type) {
     this.expr = expr;
@@ -63,22 +65,15 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>> {
   }
 
   public Function<Z3ExprAdapter, Z3ExprAdapter> getWrapper() {
-    return wrapper;
+   return wrapper !=null ? wrapper:expr->expr ;
   }
 
-  public boolean isPresentWrapper() {
-    return wrapper != null;
+
+  public void addGenConstraint(List<Z3ExprAdapter> constraint) {
+    this.genConstraint.addAll(constraint);
   }
 
-  public boolean isPresentGenConstr() {
-    return genConstraint != null;
-  }
-
-  public void addGenConstraint(Z3ExprAdapter constraint) {
-    this.genConstraint = constraint;
-  }
-
-  public Z3ExprAdapter getGenConstraint() {
+  public List<Z3ExprAdapter> getGenConstraint() {
     return genConstraint;
   }
 
