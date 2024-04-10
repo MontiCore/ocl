@@ -284,10 +284,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?>> {
     if (varNames.containsKey(node.getName())) {
       return varNames.get(node.getName());
     } else {
-      Log.error("Conversion of ASTNameExpression not fully implemented");
-      /*   SymTypeExpression typeExpr = tFactory.deriveType(node);
-      TypeAdapter<TYPE> type = tFactory.adapt(typeExpr);
-      return mkConst(node.getName(), type);*/
+      Log.error("cannot resolve variable " + node.getName());
       return null;
     }
   }

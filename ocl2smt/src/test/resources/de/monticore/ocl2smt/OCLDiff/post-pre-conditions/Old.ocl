@@ -8,10 +8,10 @@ ocl Old {
      post: salary == salary@pre + amount &&
            result == true;
 
-   context Person p  inv OfLegalAgeOld :
+/*   context Person p  inv OfLegalAgeOld :
            p.age >= 18  ;
 
    context Person p inv SalaryGT1000New :
-             p.salary > 1000 ;
+             p.salary > 1000 ; */
 
 }

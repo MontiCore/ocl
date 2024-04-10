@@ -1,5 +1,6 @@
 package de.monticore.ocl2smt;
 
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl2smt.ocl2smt.ExpressionAbstractTest;
@@ -19,6 +20,7 @@ public class ContextDeclTest extends ExpressionAbstractTest {
     Log.init();
     OCLMill.init();
     CD4CodeMill.init();
+    CD2SMTMill.initDefault();
     parse("MinAuction.cd", "Context.ocl");
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
   }

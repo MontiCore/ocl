@@ -490,7 +490,7 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
     Optional<ASTCDAssociation> association = resolveAssociation(astcdType, role);
     if (association.isPresent()) {
       res = getAssocLink(association.get(), obj, role);
-      return wrap(res);
+      return wrap(res, obj);
     }
 
     // case attribute
@@ -538,9 +538,9 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
             new Z3ExprAdapter(
                 trans_rel.apply(obj.getExpr(), expr.getExpr()), tFactory.mkBoolType());
 
-    // return Set and  with the definition  of the new set as general constraint
+    // return Set and with the definition of the new set as general constraint
     Z3ExprAdapter res = mkSet(setFunc, obj1);
-    res.addGenConstraint(rel_is_assocFunc);
+    res.addGenConstraint(List.of(rel_is_assocFunc));
     return wrap(res, obj);
   }
 
@@ -718,30 +718,29 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
   }
 
   private Z3ExprAdapter wrap(Z3ExprAdapter parent, Z3ExprAdapter... children) {
-    if (parent.isBoolExpr() && children.length == 0) {
+    if (children.length == 0) {
       return parent;
     }
-
-    Function<Z3ExprAdapter, Z3ExprAdapter> wrapper = expr -> expr;
-    Z3ExprAdapter genConstraint = mkBool(true);
+    Function<Z3ExprAdapter, Z3ExprAdapter> wrapper = parent.getWrapper() ;
 
     for (Z3ExprAdapter child : children) {
-      if (child.isPresentWrapper()) {
-        Function<Z3ExprAdapter, Z3ExprAdapter> finalWrapper = wrapper;
-        wrapper = bool -> child.getWrapper().apply(finalWrapper.apply(bool));
-      }
+        //append child wrapper
+        Function<Z3ExprAdapter, Z3ExprAdapter> temp = wrapper;
+        wrapper = bool -> child.getWrapper().apply(temp.apply(bool));
 
-      if (child.isPresentGenConstr()) {
-        genConstraint = mkAnd(genConstraint, child.getGenConstraint());
-      }
+        //append child general constraints
+        parent.addGenConstraint(child.getGenConstraint());
     }
 
-    if (parent.isPresentGenConstr()) {
-      genConstraint = mkAnd(genConstraint, parent.getGenConstraint());
+    Z3ExprAdapter res;
+    if (parent.isBoolExpr()) {
+      res = wrapper.apply(parent);
+      res.addGenConstraint(parent.getGenConstraint());
+    } else {
+      parent.setWrapper(wrapper);
+      res = parent;
     }
 
-    Z3ExprAdapter res = parent.isBoolExpr() ? wrapper.apply(parent) : parent;
-    res.addGenConstraint(genConstraint);
     return res;
   }
 
