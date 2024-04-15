@@ -20,7 +20,7 @@ import java.util.function.Function;
 
 public class MCExprConverter extends OCLExprConverter<Z3ExprAdapter> {
 
-  private Function<String, ASTMCType> typeOfNamedVariable;
+  private Function<ASTNameExpression, ASTMCType> typeOfNamedVariable;
 
   public static MCExprConverter getInstance(ASTCDCompilationUnit cd, Context ctx) {
 
@@ -42,7 +42,7 @@ public class MCExprConverter extends OCLExprConverter<Z3ExprAdapter> {
   }
 
   public Z3ExprAdapter convertExpr(
-      ASTExpression expr, Function<String, ASTMCType> typeOfNamedVariable) {
+      ASTExpression expr, Function<ASTNameExpression, ASTMCType> typeOfNamedVariable) {
     this.typeOfNamedVariable = typeOfNamedVariable;
     return convertExpr(expr);
   }
@@ -52,7 +52,7 @@ public class MCExprConverter extends OCLExprConverter<Z3ExprAdapter> {
     if (varNames.containsKey(node.getName())) {
       return varNames.get(node.getName());
     } else {
-      ASTMCType type = typeOfNamedVariable.apply(node.getName());
+      ASTMCType type = typeOfNamedVariable.apply(node);
       if (type != null) {
         TypeAdapter tAdapter = tFactory.adapt(type);
         return mkConst(node.getName(), tAdapter);

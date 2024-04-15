@@ -31,7 +31,7 @@ public class MCExprConverterTest extends ExpressionAbstractTest {
     Context ctx = new Context();
     MCExprConverter exprConverter = MCExprConverter.getInstance(cdAST, ctx);
 
-    Z3ExprAdapter expr = exprConverter.convertExpr(getExpression(), this::getExprTypes);
+    Z3ExprAdapter expr = exprConverter.convertExpr(getExpression(), z->this.getExprTypes(z.getName()));
 
     Assertions.assertTrue(expr.isBoolExpr()); // a.speed > a.speed ;
     Log.println(expr.toString());
