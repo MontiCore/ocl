@@ -72,6 +72,41 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
     }
   }
 
+  @Test
+  public void stringDepTypeCheck() throws IOException {
+    /********* Setup *******************/
+
+    // map from Variable Name to the Condition that must hold over this Variable
+    Function<ASTNameExpression, ASTExpression> getCond;
+    {
+      Map<String,ASTExpression> condMap = new HashMap<>();
+      condMap.put("x", OCLMill.parser().parse_StringExpression("x.startsWith(\"moin\")").get());
+      condMap.put("y", OCLMill.parser().parse_StringExpression("true").get());
+      getCond = z -> condMap.get(z.getName());
+    }
+
+    // get type of Variables - here only integers
+    ASTMCType stringType = OCLMill.parser().parse_StringMCType("String").get();
+    Function<ASTNameExpression,ASTMCType> getType = (z -> stringType);
+
+    // Name of Variable that should be typechecked
+    ASTNameExpression zName = OCLMill.nameExpressionBuilder().setName("z").build();
+
+    {
+      // Check "String{z.startsWith("mo")} z = x:String{x.startsWith("moin")} + y:String{true}     --> Valid
+      ASTExpression zCondition = OCLMill.parser().parse_StringExpression("z.startsWith(\"mo\")").get();
+      ASTExpression zValue = OCLMill.parser().parse_StringExpression("x+y").get();
+      assertTrue(isTypeCorrect(zName, zValue, zCondition, getCond, getType));
+    }
+
+    {
+      // Check "String{z.startsWith("moin, wie gehts?")} z = x:String{x.startsWith("moin")} + y:String{true}     --> Invalid
+      ASTExpression zCondition = OCLMill.parser().parse_StringExpression("z.startsWith(\"moin, wie gehts?\")").get();
+      ASTExpression zValue = OCLMill.parser().parse_StringExpression("x+y").get();
+      assertFalse(isTypeCorrect(zName, zValue, zCondition, getCond, getType));
+    }
+  }
+
   /**
    *
    * @param zName Name of the Variable that is typechecked. Is also used in "zCondition" parameter
