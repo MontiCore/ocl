@@ -1,5 +1,7 @@
 package de.monticore.ocl2smt.deptypecheck;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.BoolSort;
 import com.microsoft.z3.Context;
@@ -13,23 +15,17 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl2smt.ocl2smt.ExpressionAbstractTest;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprAdapter;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprFactory;
 import de.monticore.ocl2smt.ocl2smt.oclExpr2smt.MCExprConverter;
 import de.monticore.ocl2smt.visitors.NameExpressionCollector;
-import de.monticore.statements.mcstatementsbasis._ast.ASTMCStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
-import org.checkerframework.dataflow.qual.TerminatesExecution;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class DepTypeCheckTest extends ExpressionAbstractTest {
   @BeforeEach
@@ -45,14 +41,16 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
     // map from Variable Name to the Condition that must hold over this Variable
     Function<ASTNameExpression, ASTExpression> getCond;
     {
-      Map<String,ASTExpression> condMap = new HashMap<>();
+      Map<String, ASTExpression> condMap = new HashMap<>();
       condMap.put("x", OCLMill.parser().parse_StringExpression("x>5").get());
       condMap.put("y", OCLMill.parser().parse_StringExpression("y>1").get());
       getCond = z -> condMap.get(z.getName());
     }
 
     // get type of Variables - here only integers
-    Function<ASTNameExpression,ASTMCType> getType = z -> OCLMill.mCPrimitiveTypeBuilder().setPrimitive(6).build(); // ... dafuq? gibts kein ENUM?
+    Function<ASTNameExpression, ASTMCType> getType =
+        z ->
+            OCLMill.mCPrimitiveTypeBuilder().setPrimitive(6).build(); // ... dafuq? gibts kein ENUM?
 
     // Name of Variable that should be typechecked
     ASTNameExpression zName = OCLMill.nameExpressionBuilder().setName("z").build();
@@ -79,7 +77,7 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
     // map from Variable Name to the Condition that must hold over this Variable
     Function<ASTNameExpression, ASTExpression> getCond;
     {
-      Map<String,ASTExpression> condMap = new HashMap<>();
+      Map<String, ASTExpression> condMap = new HashMap<>();
       condMap.put("x", OCLMill.parser().parse_StringExpression("x.startsWith(\"moin\")").get());
       condMap.put("y", OCLMill.parser().parse_StringExpression("true").get());
       getCond = z -> condMap.get(z.getName());
@@ -87,28 +85,31 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
 
     // get type of Variables - here only integers
     ASTMCType stringType = OCLMill.parser().parse_StringMCType("String").get();
-    Function<ASTNameExpression,ASTMCType> getType = (z -> stringType);
+    Function<ASTNameExpression, ASTMCType> getType = (z -> stringType);
 
     // Name of Variable that should be typechecked
     ASTNameExpression zName = OCLMill.nameExpressionBuilder().setName("z").build();
 
     {
-      // Check "String{z.startsWith("mo")} z = x:String{x.startsWith("moin")} + y:String{true}     --> Valid
-      ASTExpression zCondition = OCLMill.parser().parse_StringExpression("z.startsWith(\"mo\")").get();
+      // Check "String{z.startsWith("mo")} z = x:String{x.startsWith("moin")} + y:String{true}
+      // --> Valid
+      ASTExpression zCondition =
+          OCLMill.parser().parse_StringExpression("z.startsWith(\"mo\")").get();
       ASTExpression zValue = OCLMill.parser().parse_StringExpression("x+y").get();
       assertTrue(isTypeCorrect(zName, zValue, zCondition, getCond, getType));
     }
 
     {
-      // Check "String{z.startsWith("moin, wie gehts?")} z = x:String{x.startsWith("moin")} + y:String{true}     --> Invalid
-      ASTExpression zCondition = OCLMill.parser().parse_StringExpression("z.startsWith(\"moin, wie gehts?\")").get();
+      // Check "String{z.startsWith("moin, wie gehts?")} z = x:String{x.startsWith("moin")} +
+      // y:String{true}     --> Invalid
+      ASTExpression zCondition =
+          OCLMill.parser().parse_StringExpression("z.startsWith(\"moin, wie gehts?\")").get();
       ASTExpression zValue = OCLMill.parser().parse_StringExpression("x+y").get();
       assertFalse(isTypeCorrect(zName, zValue, zCondition, getCond, getType));
     }
   }
 
   /**
-   *
    * @param zName Name of the Variable that is typechecked. Is also used in "zCondition" parameter
    * @param zValue How the Variable-Value is computed
    * @param zCondition Type-Condition for the Variable
@@ -116,20 +117,24 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
    * @param getType get Types for Expressions
    * @return true iff type-condition is fulfilled
    */
-  private boolean isTypeCorrect(ASTNameExpression zName, ASTExpression zValue, ASTExpression zCondition,
-                                Function<ASTNameExpression,ASTExpression> getCondition,
-                                Function<ASTNameExpression,ASTMCType> getType) {
+  private boolean isTypeCorrect(
+      ASTNameExpression zName,
+      ASTExpression zValue,
+      ASTExpression zCondition,
+      Function<ASTNameExpression, ASTExpression> getCondition,
+      Function<ASTNameExpression, ASTMCType> getType) {
     Context ctx = new Context();
     solver = ctx.mkSolver();
 
     // Build empty dummy CD (currently only primitive types are supported)
-    ASTCDCompilationUnit cdAst = new ASTCDCompilationUnitBuilder()
-        .setCDDefinition(
-            new ASTCDDefinitionBuilder()
-                .setName("EmptyCD")
-                .setModifier(new ASTModifierBuilder().build())
-                .build())
-        .build();
+    ASTCDCompilationUnit cdAst =
+        new ASTCDCompilationUnitBuilder()
+            .setCDDefinition(
+                new ASTCDDefinitionBuilder()
+                    .setName("EmptyCD")
+                    .setModifier(new ASTModifierBuilder().build())
+                    .build())
+            .build();
     MCExprConverter exprConverter = MCExprConverter.getInstance(cdAst, ctx);
 
     // Add conditions for all variables that occur in zValue to the Solver
@@ -141,9 +146,9 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
       zValue.accept(trav);
 
       names = namedExpr.getVariableNames();
-      for(ASTNameExpression usedName:names){
+      for (ASTNameExpression usedName : names) {
         ASTExpression ConditionForName = getCondition.apply(usedName);
-        Z3ExprAdapter nameCond = exprConverter.convertExpr(ConditionForName,getType);
+        Z3ExprAdapter nameCond = exprConverter.convertExpr(ConditionForName, getType);
         solver.add((BoolExpr) nameCond.getExpr());
       }
     }
@@ -164,20 +169,29 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
     }
 
     // Check all Conditions
-    switch (solver.check()){
-      case SATISFIABLE: {
-        String value = "";
-        names.add(zName);
-        for(ASTNameExpression usedName:names){
-          value += "\n\t" + usedName.getName() + "\t=\t" + solver.getModel().eval(exprConverter.convertExpr(usedName, getType).getExpr(), true);
+    switch (solver.check()) {
+      case SATISFIABLE:
+        {
+          String value = "";
+          names.add(zName);
+          for (ASTNameExpression usedName : names) {
+            value +=
+                "\n\t"
+                    + usedName.getName()
+                    + "\t=\t"
+                    + solver
+                        .getModel()
+                        .eval(exprConverter.convertExpr(usedName, getType).getExpr(), true);
+          }
+          System.err.println("Counterexample " + value);
+          return false;
         }
-        System.err.println("Counterexample " + value);
-        return false;
-      }
-      case UNSATISFIABLE: {
-        return true;
-      }
-      default: throw new RuntimeException();
+      case UNSATISFIABLE:
+        {
+          return true;
+        }
+      default:
+        throw new RuntimeException();
     }
   }
 }

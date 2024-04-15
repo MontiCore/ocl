@@ -4,7 +4,6 @@ package de.monticore.ocl2smt.visitors;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpressionTOP;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor2;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
