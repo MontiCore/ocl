@@ -51,13 +51,16 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
 
     Function<ASTNameExpression,ASTMCType> getType = z -> OCLMill.mCPrimitiveTypeBuilder().setPrimitive(6).build(); // ... dafuq? gibts kein ENUM?
     ASTNameExpression zName = OCLMill.nameExpressionBuilder().setName("z").build();
+
     {
+      // Check "int{z>6} z = x:int{x>5} + y:int{y>1}     --> Valid
       ASTExpression zCondition = OCLMill.parser().parse_StringExpression("z>6").get();
       ASTExpression zValue = OCLMill.parser().parse_StringExpression("x+y").get();
       assertTrue(isTypeCorrect(zName, zValue, zCondition, getCond, getType));
     }
 
     {
+      // Check "int{z>10} z = x:int{x>5} + y:int{y>1}     --> Invalid and Counterexample
       ASTExpression zCondition = OCLMill.parser().parse_StringExpression("z>10").get();
       ASTExpression zValue = OCLMill.parser().parse_StringExpression("x+y").get();
       assertFalse(isTypeCorrect(zName, zValue, zCondition, getCond, getType));
