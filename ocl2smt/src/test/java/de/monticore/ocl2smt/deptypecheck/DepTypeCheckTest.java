@@ -68,6 +68,22 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
       ASTExpression zValue = OCLMill.parser().parse_StringExpression("x+y").get();
       assertFalse(isTypeCorrect(zName, zValue, zCondition, getCond, getType));
     }
+
+    {
+      // Check "int{z>x} z = x:int{x>5} + y:int{y>1}     --> Valid
+      // Not sure if this is required or wanted ...
+      ASTExpression zCondition = OCLMill.parser().parse_StringExpression("z>x").get();
+      ASTExpression zValue = OCLMill.parser().parse_StringExpression("x+y").get();
+      assertTrue(isTypeCorrect(zName, zValue, zCondition, getCond, getType));
+    }
+
+    {
+      // Check "int{z!=x+99} z = x:int{x>5} + y:int{y>1}     --> Valid
+      // Not sure if this is required or wanted ...
+      ASTExpression zCondition = OCLMill.parser().parse_StringExpression("z!=x+99").get();
+      ASTExpression zValue = OCLMill.parser().parse_StringExpression("x+y").get();
+      assertFalse(isTypeCorrect(zName, zValue, zCondition, getCond, getType));
+    }
   }
 
   @Test
@@ -123,75 +139,76 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
       ASTExpression zCondition,
       Function<ASTNameExpression, ASTExpression> getCondition,
       Function<ASTNameExpression, ASTMCType> getType) {
-    Context ctx = new Context();
-    solver = ctx.mkSolver();
+    try (Context ctx = new Context()) {
+      solver = ctx.mkSolver();
 
-    // Build empty dummy CD (currently only primitive types are supported)
-    ASTCDCompilationUnit cdAst =
-        new ASTCDCompilationUnitBuilder()
-            .setCDDefinition(
-                new ASTCDDefinitionBuilder()
-                    .setName("EmptyCD")
-                    .setModifier(new ASTModifierBuilder().build())
-                    .build())
-            .build();
-    MCExprConverter exprConverter = MCExprConverter.getInstance(cdAst, ctx);
+      // Build empty dummy CD (currently only primitive types are supported)
+      ASTCDCompilationUnit cdAst =
+          new ASTCDCompilationUnitBuilder()
+              .setCDDefinition(
+                  new ASTCDDefinitionBuilder()
+                      .setName("EmptyCD")
+                      .setModifier(new ASTModifierBuilder().build())
+                      .build())
+              .build();
+      MCExprConverter exprConverter = MCExprConverter.getInstance(cdAst, ctx);
 
-    // Add conditions for all variables that occur in zValue to the Solver
-    Set<ASTNameExpression> names = null;
-    {
-      NameExpressionCollector namedExpr = new NameExpressionCollector();
-      OCLTraverser trav = OCLMill.traverser();
-      trav.add4ExpressionsBasis(namedExpr);
-      zValue.accept(trav);
+      // Add conditions for all variables that occur in zValue to the Solver
+      Set<ASTNameExpression> names = null;
+      {
+        NameExpressionCollector namedExpr = new NameExpressionCollector();
+        OCLTraverser trav = OCLMill.traverser();
+        trav.add4ExpressionsBasis(namedExpr);
+        zValue.accept(trav);
 
-      names = namedExpr.getVariableNames();
-      for (ASTNameExpression usedName : names) {
-        ASTExpression ConditionForName = getCondition.apply(usedName);
-        Z3ExprAdapter nameCond = exprConverter.convertExpr(ConditionForName, getType);
-        solver.add((BoolExpr) nameCond.getExpr());
+        names = namedExpr.getVariableNames();
+        for (ASTNameExpression usedName : names) {
+          ASTExpression ConditionForName = getCondition.apply(usedName);
+          Z3ExprAdapter nameCond = exprConverter.convertExpr(ConditionForName, getType);
+          solver.add((BoolExpr) nameCond.getExpr());
+        }
       }
-    }
 
-    // Add "zName = zValue" to the Solver
-    {
-      Z3ExprAdapter resultExpr = exprConverter.convertExpr(zName, getType);
-      Z3ExprAdapter expr = exprConverter.convertExpr(zValue, getType);
-      Expr<BoolSort> equals = ctx.mkEq(resultExpr.getExpr(), expr.getExpr());
-      solver.add(equals);
-    }
+      // Add "zName = zValue" to the Solver
+      {
+        Z3ExprAdapter resultExpr = exprConverter.convertExpr(zName, getType);
+        Z3ExprAdapter expr = exprConverter.convertExpr(zValue, getType);
+        Expr<BoolSort> equals = ctx.mkEq(resultExpr.getExpr(), expr.getExpr());
+        solver.add(equals);
+      }
 
-    // Add "not(zCondition)" to the Solver
-    {
-      Z3ExprAdapter expr = exprConverter.convertExpr(zCondition, getType);
-      Expr<BoolSort> negated = ctx.mkNot((BoolExpr) expr.getExpr());
-      solver.add(negated);
-    }
+      // Add "not(zCondition)" to the Solver
+      {
+        Z3ExprAdapter expr = exprConverter.convertExpr(zCondition, getType);
+        Expr<BoolSort> negated = ctx.mkNot((BoolExpr) expr.getExpr());
+        solver.add(negated);
+      }
 
-    // Check all Conditions
-    switch (solver.check()) {
-      case SATISFIABLE:
-        {
-          String value = "";
-          names.add(zName);
-          for (ASTNameExpression usedName : names) {
-            value +=
-                "\n\t"
-                    + usedName.getName()
-                    + "\t=\t"
-                    + solver
-                        .getModel()
-                        .eval(exprConverter.convertExpr(usedName, getType).getExpr(), true);
+      // Check all Conditions
+      switch (solver.check()) {
+        case SATISFIABLE:
+          {
+            String value = "";
+            names.add(zName);
+            for (ASTNameExpression usedName : names) {
+              value +=
+                  "\n\t"
+                      + usedName.getName()
+                      + "\t=\t"
+                      + solver
+                          .getModel()
+                          .eval(exprConverter.convertExpr(usedName, getType).getExpr(), true);
+            }
+            System.err.println("Counterexample " + value);
+            return false;
           }
-          System.err.println("Counterexample " + value);
-          return false;
-        }
-      case UNSATISFIABLE:
-        {
-          return true;
-        }
-      default:
-        throw new RuntimeException();
+        case UNSATISFIABLE:
+          {
+            return true;
+          }
+        default:
+          throw new RuntimeException();
+      }
     }
   }
 }
