@@ -40,16 +40,21 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
 
   @Test
   public void natDepTypeCheck() throws IOException {
-    ASTExpression xCondition = OCLMill.parser().parse_StringExpression("x>5").get();
-    ASTExpression yCondition = OCLMill.parser().parse_StringExpression("y>1").get();
+    /********* Setup *******************/
 
-    Map<String,ASTExpression> condMap = new HashMap<>();
-    condMap.put("x", xCondition);
-    condMap.put("y", yCondition);
-    Function<ASTNameExpression,ASTExpression> getCond = z -> condMap.get(z.getName());
+    // map from Variable Name to the Condition that must hold over this Variable
+    Function<ASTNameExpression, ASTExpression> getCond;
+    {
+      Map<String,ASTExpression> condMap = new HashMap<>();
+      condMap.put("x", OCLMill.parser().parse_StringExpression("x>5").get());
+      condMap.put("y", OCLMill.parser().parse_StringExpression("y>1").get());
+      getCond = z -> condMap.get(z.getName());
+    }
 
-
+    // get type of Variables - here only integers
     Function<ASTNameExpression,ASTMCType> getType = z -> OCLMill.mCPrimitiveTypeBuilder().setPrimitive(6).build(); // ... dafuq? gibts kein ENUM?
+
+    // Name of Variable that should be typechecked
     ASTNameExpression zName = OCLMill.nameExpressionBuilder().setName("z").build();
 
     {
@@ -82,6 +87,7 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
     Context ctx = new Context();
     solver = ctx.mkSolver();
 
+    // Build empty dummy CD (currently only primitive types are supported)
     ASTCDCompilationUnit cdAst = new ASTCDCompilationUnitBuilder()
         .setCDDefinition(
             new ASTCDDefinitionBuilder()
@@ -91,8 +97,8 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
         .build();
     MCExprConverter exprConverter = MCExprConverter.getInstance(cdAst, ctx);
 
+    // Add conditions for all variables that occur in zValue to the Solver
     Set<ASTNameExpression> names = null;
-
     {
       NameExpressionCollector namedExpr = new NameExpressionCollector();
       OCLTraverser trav = OCLMill.traverser();
@@ -107,19 +113,22 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
       }
     }
 
-    Z3ExprAdapter resultExpr = exprConverter.convertExpr(zName, getType);
+    // Add "zName = zValue" to the Solver
     {
+      Z3ExprAdapter resultExpr = exprConverter.convertExpr(zName, getType);
       Z3ExprAdapter expr = exprConverter.convertExpr(zValue, getType);
       Expr<BoolSort> equals = ctx.mkEq(resultExpr.getExpr(), expr.getExpr());
       solver.add(equals);
     }
 
+    // Add "not(zCondition)" to the Solver
     {
       Z3ExprAdapter expr = exprConverter.convertExpr(zCondition, getType);
       Expr<BoolSort> negated = ctx.mkNot((BoolExpr) expr.getExpr());
       solver.add(negated);
     }
 
+    // Check all Conditions
     switch (solver.check()){
       case SATISFIABLE: {
         String value = "";
