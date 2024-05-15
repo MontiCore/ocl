@@ -2,9 +2,12 @@
 
 classdiagram MyAuto{
 
-
   public class Auto {
     int speed ;
+  }
+
+  public class Audi extends Auto {
+    int superSpeed;
   }
 
 }

@@ -6,5 +6,13 @@ ocl MyAuto {
   context Auto a inv Inv0:
      a.speed > a.speed ;
 
+   context Auto x inv Inv1:
+       (typeif x instanceof Audi then false else  x.speed < 0 );
 
+   context Auto x inv Inv2:
+          (typeif x instanceof Audi then x.superSpeed > 0 else  false);
+
+   context Auto x inv Inv3:
+             (typeif x instanceof Audi then x.superSpeed > 0 else  false) &&
+               (typeif x instanceof Audi then x.superSpeed < 0 else  false);
 }
