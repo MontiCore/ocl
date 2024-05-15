@@ -2,6 +2,7 @@ package de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory;
 
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprAdapter.ExprAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.exprFactory.ExprFactory;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import java.util.List;
 
 /***
@@ -41,6 +42,8 @@ public interface CDExprFactory<E extends ExprAdapter<?>> extends ExprFactory<E> 
    * this method quantified object and depends on the strategy used to transform CD to SMT
    */
   E mkForall(List<E> params, E body);
+
+  E instanceOf(E expr, TypeAdapter typeAdapter);
 
   /***
    * this method quantified object and depends on the strategy used to transform CD to SMT

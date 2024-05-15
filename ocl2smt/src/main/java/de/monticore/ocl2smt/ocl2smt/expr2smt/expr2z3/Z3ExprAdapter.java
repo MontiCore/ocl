@@ -10,6 +10,7 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>> {
   private final Expr<?> expr;
 
   protected final Z3TypeAdapter type;
+  protected Z3TypeAdapter typeCast;
   private Function<Z3ExprAdapter, Z3ExprAdapter> wrapper = null;
   private final List<Z3ExprAdapter> genConstraint = new ArrayList<>();
 
@@ -79,5 +80,17 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>> {
   @Override
   public String toString() {
     return expr.toString();
+  }
+
+  public void setTypeCast(Z3TypeAdapter typeCast) {
+    this.typeCast = typeCast;
+  }
+
+  public boolean isPresentTypeCast() {
+    return typeCast != null;
+  }
+
+  public Z3TypeAdapter getTypeCast() {
+    return typeCast;
   }
 }

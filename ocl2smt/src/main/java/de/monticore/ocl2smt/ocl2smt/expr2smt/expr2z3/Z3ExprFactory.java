@@ -24,9 +24,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<Z3ExprAdapter> {
-  private final Context ctx;
-  private final Z3TypeFactory tFactory;
-  private CD2SMTGenerator cd2SMTGenerator;
+  protected final Context ctx;
+  protected final Z3TypeFactory tFactory;
+  protected CD2SMTGenerator cd2SMTGenerator;
 
   private final String wrongParam =
       "Method %s(...) get parameter with wrong type '%s' expected was %s";
@@ -480,10 +480,24 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
   }
 
   @Override
+  public Z3ExprAdapter instanceOf(Z3ExprAdapter expr, TypeAdapter typeAdapter) {
+    assert typeAdapter instanceof Z3TypeAdapter;
+
+    Z3TypeAdapter typeAdapter1 = (Z3TypeAdapter) typeAdapter;
+
+    Z3ExprAdapter res =
+        new Z3ExprAdapter(
+            cd2SMTGenerator.instanceOf(expr.getExpr(), typeAdapter1.getCDType()),
+            tFactory.mkBoolType());
+    return wrap(res, expr);
+  }
+
+  @Override
   public Z3ExprAdapter getLink(Z3ExprAdapter obj, String role) {
     checkObj("getLink", obj);
 
-    ASTCDType astcdType = obj.getType().getCDType();
+    ASTCDType astcdType =
+        obj.isPresentTypeCast() ? obj.getTypeCast().getCDType() : obj.getType().getCDType();
     Z3ExprAdapter res;
 
     // case association Link
@@ -502,7 +516,9 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
       return wrap(res, obj);
     }
 
-    Log.error("Cannot resolve role or attribute " + role + " for the type " + astcdType.getName());
+    Log.info(
+        "Cannot resolve role or attribute " + role + " for the type " + astcdType.getName(),
+        this.getClass().getName());
     return null;
   }
 
@@ -717,7 +733,7 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
     return (Expr<SeqSort<Sort>>) expr.getExpr();
   }
 
-  private Z3ExprAdapter wrap(Z3ExprAdapter parent, Z3ExprAdapter... children) {
+  protected Z3ExprAdapter wrap(Z3ExprAdapter parent, Z3ExprAdapter... children) {
     if (children.length == 0) {
       return parent;
     }

@@ -9,9 +9,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory.CDExprFactory;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprAdapter;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprFactory;
-import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3TypeFactory;
+import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.*;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeFactorry.TypeFactory;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
@@ -20,10 +18,10 @@ import java.util.function.Function;
 
 public class MCExprConverter extends OCLExprConverter<Z3ExprAdapter> {
 
-  private Function<ASTNameExpression, ASTMCType> typeOfNamedVariable;
+  protected Function<ASTNameExpression, ASTMCType> typeOfNamedVariable;
+  protected CD2SMTGenerator cd2SMTGenerator;
 
   public static MCExprConverter getInstance(ASTCDCompilationUnit cd, Context ctx) {
-
     CD2SMTGenerator cd2SMTGenerator =
         new CD2SMTGenerator(
             ClassStrategy.Strategy.DS,
@@ -34,11 +32,15 @@ public class MCExprConverter extends OCLExprConverter<Z3ExprAdapter> {
     Z3TypeFactory tFactory = new Z3TypeFactory(cd2SMTGenerator);
     CDExprFactory<Z3ExprAdapter> cdExprFactory = new Z3ExprFactory(tFactory, cd2SMTGenerator);
 
-    return new MCExprConverter(cdExprFactory, tFactory);
+    return new MCExprConverter(cdExprFactory, tFactory, cd2SMTGenerator);
   }
 
-  private MCExprConverter(CDExprFactory<Z3ExprAdapter> eFactory, TypeFactory typeFactory) {
+  protected MCExprConverter(
+      CDExprFactory<Z3ExprAdapter> eFactory,
+      TypeFactory typeFactory,
+      CD2SMTGenerator cd2SMTGenerator) {
     super(eFactory, typeFactory);
+    this.cd2SMTGenerator = cd2SMTGenerator;
   }
 
   public Z3ExprAdapter convertExpr(

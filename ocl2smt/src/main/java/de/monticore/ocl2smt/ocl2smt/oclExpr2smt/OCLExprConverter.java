@@ -163,7 +163,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?>> {
     } else if (node instanceof ASTSetEnumeration) {
       result = convertSetEnum((ASTSetEnumeration) node);
     } else {
-      Log.error("conversion of Set of the type " + node.getClass().getName() + " not implemented");
+      Log.error("conversion of expr of the type " + node.getClass().getName() + " not implemented");
     }
     return result;
   }
