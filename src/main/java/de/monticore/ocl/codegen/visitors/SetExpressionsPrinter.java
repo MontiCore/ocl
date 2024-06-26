@@ -72,7 +72,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
   public void handle(ASTUnionExpression node) {
     printExpressionBeginLambda(getDeriver().deriveType(node));
 
-    getPrinter().print("Set<");
+    getPrinter().print("java.util.Set<");
     printDerivedInnerType(node);
     getPrinter().print("> ");
     getPrinter().print(getNaming().getName(node));
@@ -98,7 +98,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
   public void handle(ASTIntersectionExpression node) {
     printExpressionBeginLambda(getDeriver().deriveType(node));
 
-    getPrinter().print("Set<");
+    getPrinter().print("java.util.Set<");
     printDerivedInnerType(node);
     getPrinter().print("> ");
     getPrinter().print(getNaming().getName(node));
@@ -125,7 +125,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
   public void handle(ASTSetMinusExpression node) {
     printExpressionBeginLambda(getDeriver().deriveType(node));
 
-    getPrinter().print("Set<");
+    getPrinter().print("java.util.Set<");
     printDerivedInnerType(node);
     getPrinter().print("> ");
     getPrinter().print(getNaming().getName(node));
@@ -159,7 +159,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
     node.getSet().accept(getTraverser());
     getPrinter().println(";");
 
-    getPrinter().print("Set<");
+    getPrinter().print("java.util.Set<");
     printDerivedInnerType(node);
     getPrinter().print("> ");
     getPrinter().print(getNaming().getName(node));
