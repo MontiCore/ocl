@@ -4,6 +4,7 @@ package de.monticore.ocl.ocl.types3;
 import de.monticore.expressions.bitexpressions.types3.BitExpressionsTypeVisitor;
 import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeVisitor;
 import de.monticore.expressions.commonexpressions.types3.OCLCommonExpressionsTypeVisitor;
+import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisCTTIVisitor;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeVisitor;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.ocl.ocl.OCLMill;
@@ -17,6 +18,7 @@ import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
 import de.monticore.types.mcsimplegenerictypes.types3.MCSimpleGenericTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
+import de.monticore.types3.generics.context.InferenceContext4Ast;
 import de.monticore.types3.util.FunctionRelations;
 import de.monticore.types3.util.NameExpressionTypeCalculator;
 import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
@@ -24,9 +26,17 @@ import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
 public class OCLTypeTraverserFactory {
 
   public OCLTraverser createTraverser(Type4Ast type4Ast) {
+    return createTraverser(type4Ast, new InferenceContext4Ast());
+  }
+
+  public OCLTraverser createTraverser(
+      Type4Ast type4Ast,
+      InferenceContext4Ast ctx4Ast
+  ) {
     OCLTraverser traverser = OCLMill.inheritanceTraverser();
     VisitorList visitors = constructVisitors();
     setType4Ast(visitors, type4Ast);
+    setContext4Ast(visitors, ctx4Ast);
     populateTraverser(visitors, traverser);
     return traverser;
   }
@@ -46,12 +56,30 @@ public class OCLTypeTraverserFactory {
     visitors.synMCSimpleGenericTypes.setType4Ast(type4Ast);
   }
 
+  protected void setContext4Ast(
+      VisitorList visitors,
+      InferenceContext4Ast ctx4Ast
+  ) {
+    // Expressions
+    visitors.derBitExpressions.setContext4Ast(ctx4Ast);
+    visitors.derCommonExpressions.setContext4Ast(ctx4Ast);
+    visitors.derExpressionBasis.setContext4Ast(ctx4Ast);
+    visitors.derMCCommonLiterals.setContext4Ast(ctx4Ast);
+    visitors.derOCLExpressions.setContext4Ast(ctx4Ast);
+    visitors.derOptionalOperators.setContext4Ast(ctx4Ast);
+    visitors.derSetExpressions.setContext4Ast(ctx4Ast);
+    // MCTypes
+    visitors.synMCBasicTypes.setContext4Ast(ctx4Ast);
+    visitors.synMCCollectionTypes.setContext4Ast(ctx4Ast);
+    visitors.synMCSimpleGenericTypes.setContext4Ast(ctx4Ast);
+  }
+
   protected VisitorList constructVisitorsDefault() {
     VisitorList visitors = new VisitorList();
     // Expressions
     visitors.derBitExpressions = new BitExpressionsTypeVisitor();
     visitors.derCommonExpressions = new OCLCommonExpressionsTypeVisitor();
-    visitors.derExpressionBasis = new ExpressionBasisTypeVisitor();
+    visitors.derExpressionBasis = new ExpressionBasisCTTIVisitor();
     visitors.derMCCommonLiterals = new MCCommonLiteralsTypeVisitor();
     visitors.derOCLExpressions = new OCLExpressionsTypeVisitor();
     visitors.derOptionalOperators = new OptionalOperatorsTypeVisitor();

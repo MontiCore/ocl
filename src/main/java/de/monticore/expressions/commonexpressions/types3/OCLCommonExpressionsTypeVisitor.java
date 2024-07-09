@@ -8,7 +8,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.se_rwth.commons.logging.Log;
 
-public class OCLCommonExpressionsTypeVisitor extends CommonExpressionsTypeVisitor {
+public class OCLCommonExpressionsTypeVisitor extends CommonExpressionsCTTIVisitor {
 
   @Override
   protected SymTypeExpression calculateArrayAccess(
