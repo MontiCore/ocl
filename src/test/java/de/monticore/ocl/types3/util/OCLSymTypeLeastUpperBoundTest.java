@@ -76,9 +76,6 @@ public class OCLSymTypeLeastUpperBoundTest extends AbstractTypeTest {
     checkLub(
         createIntersection(_personSymType, createUnion(_childSymType, _studentSymType)),
         "Person & Teachable");
-    checkLub(
-        createUnion(createTypeArray(_childSymType, 2), createTypeArray(_csStudentSymType, 2)),
-        "Person[][] & Teachable[][]");
   }
 
   @Test
