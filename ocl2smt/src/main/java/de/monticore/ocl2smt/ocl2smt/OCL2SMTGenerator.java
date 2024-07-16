@@ -73,7 +73,6 @@ public class OCL2SMTGenerator {
   }
 
   public IdentifiableBoolExpr convertInv(ASTOCLInvariant invariant) {
-
     SourcePosition srcPos = invariant.get_SourcePositionStart();
 
     // convert parameter declaration  in context
@@ -88,9 +87,7 @@ public class OCL2SMTGenerator {
         invariant.isPresentName() ? Optional.ofNullable(invariant.getName()) : Optional.empty();
     exprConv.reset();
     return IdentifiableBoolExpr.buildIdentifiable(
-        (BoolExpr) fullInv.getExpr().simplify(),
-        srcPos,
-        name); // todo fix (BoolExpr) add simplify()
+        (BoolExpr) fullInv.getExpr().simplify(), srcPos, name);
   }
 
   protected Function<Z3ExprAdapter, Z3ExprAdapter> openInvScope(ASTOCLInvariant invariant) {

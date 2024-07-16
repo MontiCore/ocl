@@ -4,6 +4,7 @@ import java.lang.* ;
 classdiagram Association{
   class Auction {
     int auctionIdent;
+    String name ;
   }
 
   class Parent {
@@ -19,9 +20,12 @@ classdiagram Association{
    int id;
   }
 
+  class Hobby {String name;}
+
   association [1] Auction(auction)     --     (person)Person [1..*];
   association [*] Person(person)      --     (parent)Parent [1] ;
   association [*] Person            --      Enterprise[0..1] ;
+  association [*] Person            --      Hobby[*] ;
 
 
 }

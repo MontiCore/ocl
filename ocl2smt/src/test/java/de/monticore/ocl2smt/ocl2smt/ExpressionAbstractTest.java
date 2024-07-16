@@ -13,6 +13,7 @@ import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.ocl2smt.util.OCL_Loader;
 import de.monticore.odbasis._ast.ASTODArtifact;
+import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,13 +57,18 @@ public abstract class ExpressionAbstractTest extends OCL2SMTAbstractTest {
   public boolean testInv(String invName, String directory) {
     List<IdentifiableBoolExpr> solverConstraints = new ArrayList<>();
     solverConstraints.add(getConstraint(invName));
+    Log.println("checked Invariant: " + solverConstraints.get(0).getValue().toString());
+
     Solver solver = ocl2SMTGenerator.getCD2SMTGenerator().makeSolver(solverConstraints);
-    boolean res = Status.SATISFIABLE == solver.check();
+    Status res = solver.check();
+    Log.println("Check result: " + res.name());
+    Log.println("UnsatCore:" + Arrays.toString(solver.getUnsatCore()));
+
     Optional<ASTODArtifact> od =
         ocl2SMTGenerator.getCD2SMTGenerator().smt2od(solver.getModel(), false, invName);
     org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
     IOHelper.printOD(od.get(), Path.of(RELATIVE_TARGET_PATH + directory));
-    return res;
+    return res == Status.SATISFIABLE;
   }
 
   public boolean testUnsatInv(Set<String> invNames, String directory) {

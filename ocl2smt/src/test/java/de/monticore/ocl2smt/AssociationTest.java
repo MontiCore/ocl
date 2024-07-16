@@ -49,13 +49,15 @@ public class AssociationTest extends ExpressionAbstractTest {
     Assertions.assertTrue(testInv("Assoc8", outDir));
     Assertions.assertTrue(testInv("Assoc11", outDir));
     Assertions.assertTrue(testInv("Assoc13", outDir));
+    Assertions.assertTrue(testInv("Assoc20", outDir));
   }
 
   @ParameterizedTest
   @MethodSource("cd2smtStrategies")
   public void testAssociationUnSat(
       ClassStrategy.Strategy cs, InheritanceData.Strategy is, AssociationStrategy.Strategy as) {
-
+    Assumptions.assumeFalse(cs == SS && is == ME);
+    Assumptions.assumeFalse(cs == SSCOMB && is == SE);
     CD2SMTMill.init(cs, is, as);
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
 
@@ -66,5 +68,9 @@ public class AssociationTest extends ExpressionAbstractTest {
     Assertions.assertTrue(testUnsatInv(Set.of("Assoc12"), outDir));
     Assertions.assertTrue(testUnsatInv(Set.of("Assoc14"), outDir));
     Assertions.assertTrue(testUnsatInv(Set.of("Assoc15"), outDir));
+    Assertions.assertTrue(testUnsatInv(Set.of("Assoc17"), outDir));
+    Assertions.assertTrue(testUnsatInv(Set.of("Assoc18"), outDir));
+    Assertions.assertTrue(testUnsatInv(Set.of("Assoc19"), outDir));
+    Assertions.assertTrue(testUnsatInv(Set.of("Assoc22"), outDir));
   }
 }

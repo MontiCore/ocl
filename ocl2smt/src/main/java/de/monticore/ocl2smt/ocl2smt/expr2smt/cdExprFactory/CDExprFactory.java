@@ -7,7 +7,7 @@ import java.util.List;
 
 /***
  * @author valdes-voufo
- * This interface is a factory to build  SMT expressions that can result form the
+ * This interface is a factory to build SMT expressions that can result form the
  * tranformation of the class diagram to SMT.
  * @param <E> the expression adapter used.
  */
@@ -32,9 +32,9 @@ public interface CDExprFactory<E extends ExprAdapter<?>> extends ExprFactory<E> 
   E getLinkTransitive(E obj, String role);
 
   /***
-   * this function unwrap (Optional.get()) an optional expression resulting form a 1 ->[0..1] association.
+   * this function unwraps (Optional.get()) an optional expression resulting form a 1 ->[0..1] association.
    * @param opt the optional expression to be unwrapped.
-   * @return the unwrap object as Expr.
+   * @return the unwrapped object as Expr.
    */
   E unWrap(E opt);
 

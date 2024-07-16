@@ -1,10 +1,12 @@
 package de.monticore.ocl2smt.ocldiff.invariantDiff;
 
 import static de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy.Strategy.DEFAULT;
-import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.FINITEDS;
+import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.*;
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.ME;
+import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
 
 import com.microsoft.z3.Context;
+import com.microsoft.z3.Status;
 import de.monticore.cd2smt.CDTypeInitializer;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
@@ -45,7 +47,6 @@ public class FiniteOCLInvariantDiff implements OCLInvDiffStrategy {
     boolean found =
         cardinalities.anyMatch(
             card -> {
-              Log.info("checking witness..." + counter, this.getClass().getSimpleName());
               CD2SMTMill.init(FINITEDS, ME, DEFAULT, card);
               // TODO:04.09.2023  make strategy choice flexible
 
@@ -85,15 +86,12 @@ public class FiniteOCLInvariantDiff implements OCLInvDiffStrategy {
     boolean found =
         cardinalities.anyMatch(
             card -> {
-              Log.info(
-                  ": checking invariant " + invName + "..." + counter,
-                  this.getClass().getSimpleName());
-
               CD2SMTMill.init(FINITEDS, ME, DEFAULT, card);
               OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
-
-              if (checkConsistency(cd, newConstr, addConstr, ctx, timeout, partial)) {
-
+              CD2SMTMill.init(SSCOMB, SE, DEFAULT);
+              if (checkConsistency(cd, newConstr, addConstr, ctx, timeout)
+                  != Status.UNSATISFIABLE) {
+                CD2SMTMill.init(DS, ME, DEFAULT);
                 List<IdentifiableBoolExpr> posConstraints =
                     invariant2SMT(ocl2SMTGenerator, newConstr);
                 posConstraints.addAll(addConstr);

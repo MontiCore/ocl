@@ -40,7 +40,6 @@ public class TraceUnSatCore {
     List<ASTODLink> elementList = new ArrayList<>();
     List<IdentifiableBoolExpr> posConstraints = new ArrayList<>();
     List<IdentifiableBoolExpr> negConstraints = new ArrayList<>();
-
     // get the constraints from the id
     Arrays.stream(solver.getUnsatCore())
         .forEach(
@@ -54,7 +53,7 @@ public class TraceUnSatCore {
                 posConstraints.add(constraint);
               }
             });
-    if (posConstraints.size() == 0) {
+    if (posConstraints.isEmpty() && !negConstraints.isEmpty()) {
       ASTODLink link =
           ODHelper.buildLink(
               getInvObjName(negConstraints.get(0)), getInvObjName(negConstraints.get(0)), "trace");

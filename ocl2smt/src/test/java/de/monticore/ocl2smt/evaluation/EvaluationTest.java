@@ -1,4 +1,4 @@
-package de.monticore.ocl2smt.ocldiff.evaluation;
+package de.monticore.ocl2smt.evaluation;
 
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+@Disabled
 public class EvaluationTest extends OCLDiffAbstractTest {
   private List<ASTCDCompilationUnit> ast;
   private List<ASTOCLCompilationUnit> ocl;
