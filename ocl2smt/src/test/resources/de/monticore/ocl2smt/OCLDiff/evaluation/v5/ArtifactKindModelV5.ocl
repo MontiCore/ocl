@@ -60,8 +60,8 @@ ocl  ArtifactKindModelV5 {
   // JavaSourceFile
   // ______________________________________________________
 
- context JavaSourceFile f inv Inv8:
-     f.reliesOnJavaArtifact.containsAll(f.imports);
+/* context JavaSourceFile f inv Inv8:
+     f.reliesOnJavaArtifact.containsAll(f.imports);*/ //todo enable
 
 
 

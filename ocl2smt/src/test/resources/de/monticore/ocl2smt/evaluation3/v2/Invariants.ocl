@@ -1,0 +1,62 @@
+ocl User {
+
+/*************************************/
+//    Original Model                  /
+/*************************************/
+//a user cannot have two mutual excluding roles.
+
+/**************************************************************************/
+// typo on manager               /
+/************************************************************************/
+
+context User u inv ConflictingRoles:
+  !(u.roles.name.contains("accounts payable manager") && u.roles.name.contains( "purchasing manger"));
+
+/**************************************************************************/
+// invariant conflicting permission                                       /
+/************************************************************************/
+//conflicting permission cannot be assigned to the same role.
+context Role r inv  ConflictingPermissions:
+  !(r.permissions.name.contains("prepare check") && r.permissions.name.contains("issue check"));
+
+/**************************************************************************/
+// syntactical refactoring                                                /
+/************************************************************************/
+//conflicting user cannot be assigned to the same role  "purchase manager"
+context User a,  User b inv  ConflictingUser:
+      !(a.name == "alpha" && b.name  =="beta") ||(a.roles.name.contains("purchase manager") implies !b.roles.name.contains("purchase manager"));
+
+
+/**************************************************************************/
+// forgot a ! at the begenning by removing implications                 /
+/************************************************************************/
+// a user can be assigned a role r if the user already have the role r2
+context User u inv IncludingRoles :
+ u.roles.name.contains("tester") || u.roles.name.contains("project_team");
+
+
+
+ //some roles have exactly one user
+ context Role r inv ExactlyOneChairman:
+  !(r.name == "chairman") ||
+  exists User u in r.users: ( forall User u1 in r.users: u == u1);
+
+context User u inv SessionLimitation:
+    !(exists Session s1, Session s2,Session s3 :  u.sessions.containsAll(Set{s1,s2,s3}) &&
+          s1 != s2 && s3 != s2 && s1 != s3) ;
+
+ //conflicting role cannot be activated in the same session
+    context Session s inv ConflictingSessions:
+     s.user.roles.name.contains("purchase manager") implies !s.user.roles.name.contains("account payable manager");
+
+//conflicting permission cannot be assigned to the same role
+context Role r1, Role r2  inv RoleNameUnique:
+  (r1.name == r2.name) <=> r1 == r2 ;
+
+context Permission p1, Permission p2 inv PermissionNAmeUnique:
+  (p1.name == p2.name) <=> p1 == p2 ;
+
+
+
+}
+

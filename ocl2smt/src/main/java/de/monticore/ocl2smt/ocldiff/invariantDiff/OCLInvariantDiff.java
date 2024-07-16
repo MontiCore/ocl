@@ -1,7 +1,10 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocldiff.invariantDiff;
 
+import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.*;
+
 import com.microsoft.z3.Context;
+import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
@@ -51,12 +54,10 @@ public class OCLInvariantDiff implements OCLInvDiffStrategy {
       int timeout,
       boolean partial) {
     String invName = inv.isPresentName() ? inv.getName() : "";
-    Log.info(": checking invariant " + invName, this.getClass().getSimpleName());
+    Log.println("\n");
 
     OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
-
-    if (checkConsistency(cd, newConstr, addConstr, ctx, timeout, partial)) {
-
+    if (checkConsistency(cd, newConstr, addConstr, ctx, timeout) != Status.UNSATISFIABLE) {
       List<IdentifiableBoolExpr> newConstraints = invariant2SMT(ocl2SMTGenerator, newConstr);
       newConstraints.addAll(addConstr);
 
@@ -78,8 +79,7 @@ public class OCLInvariantDiff implements OCLInvDiffStrategy {
       Context ctx,
       boolean partial) {
 
-    OCL2SMTGenerator ocl2SMTGenerator =
-        new OCL2SMTGenerator(newCD, ctx); // Fixme: translate both class diagram
+    OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(newCD, ctx);
 
     // list of new OCl Constraints
     List<IdentifiableBoolExpr> newOClConstraints = invariant2SMT(ocl2SMTGenerator, newOCL);

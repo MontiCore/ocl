@@ -79,7 +79,7 @@ public class Z3ExprAdapter implements ExprAdapter<Expr<?>> {
 
   @Override
   public String toString() {
-    return expr.toString();
+    return expr != null ? expr.toString() : "null";
   }
 
   public void setTypeCast(Z3TypeAdapter typeCast) {

@@ -25,4 +25,9 @@ public class Z3GenExprAdapter extends Z3ExprAdapter {
   public Z3ExprAdapter isIn(Z3ExprAdapter element) {
     return elementFilter.apply(element);
   }
+
+  @Override
+  public String toString() {
+    return elementFilter.toString();
+  }
 }

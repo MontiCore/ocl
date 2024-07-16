@@ -82,7 +82,7 @@ public abstract class OCLDiffAbstractTest extends OCL2SMTAbstractTest {
 
   public OCLInvDiffResult computeDiffOneCDFinite(
       String cdName, String oldOCLName, String newOCLName, long max) throws IOException {
-    return OCLDiffGenerator.oclDiffFinite(
+    return OCLDiffGenerator.oclDiffComp(
         parseCD(cdName),
         new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
         new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
@@ -150,7 +150,6 @@ public abstract class OCLDiffAbstractTest extends OCL2SMTAbstractTest {
       if (obj.getModifier().isPresentStereotype()) {
         ASTStereotype stereotype = obj.getModifier().getStereotype();
         if (stereotype.contains("this") && stereotype.getValue("this").equals("true")) {
-          System.out.println(stereotype.getValue("this"));
           return obj;
         }
       }

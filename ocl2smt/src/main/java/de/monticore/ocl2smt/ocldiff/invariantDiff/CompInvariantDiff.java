@@ -48,12 +48,12 @@ public class CompInvariantDiff implements OCLInvDiffStrategy {
       boolean partial) {
 
     OCLInvDiffResult res =
-        normalOperator.oclInvDiff(cd, newConstr, inv, addConstr, ctx, 10000, partial);
+        normalOperator.oclInvDiff(cd, newConstr, inv, addConstr, ctx, 15000, partial);
     // TODO: 04.09.2023  flexible time out
     if (res.isPresentTrace() || res.isPresentWitness()) {
       return res;
     }
 
-    return finiteOperator.oclInvDiff(cd, newConstr, inv, addConstr, ctx, partial);
+    return finiteOperator.oclInvDiff(cd, newConstr, inv, addConstr, ctx, 30000, partial);
   }
 }

@@ -60,9 +60,30 @@ ocl NC1 {
     exists Enterprise e:
       e.person.isEmpty() && exists p in e.person :true;
 
+  context Person p inv Assoc17 :
+        p.parent.person.isEmpty();
+
+  context Parent p inv Assoc18 :
+        p.person.isEmpty();
+
+  context Parent p inv Assoc19 :
+        p.person.parent.isEmpty();
+
+  context Parent p1, Parent p2 inv Assoc20 :
+        p1.person.hobby == p2.person.hobby;
+
+  context Parent p inv Assoc21:
+    p.person.hobby.name.contains("MyHobby") &&
+    !p.person.hobby.name.contains("MyHobby2") &&
+    exists Hobby h : h.name == "MyHobby2";
 
 
+  context Auction a inv Assoc22:
+    a.name isin Set{"Auction1", "Auction2"} intersect Set{"Auction3"} ;
 
+
+  context Auction a  inv Assoc23:
+    a.name == "Auction1";
 
 }
 

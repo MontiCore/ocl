@@ -158,10 +158,13 @@ public interface OCLInvDiffStrategy {
 
     // add one by one all Constraints to the Solver and check if it can always produce a Model
     for (IdentifiableBoolExpr negConstraint : negConstraintList) {
+
       posConstraintList.add(negConstraint);
       Solver solver = ocl2SMTGenerator.makeSolver(posConstraintList);
       setTimeout(solver, ocl2SMTGenerator.getCtx(), timeout);
-      if (solver.check() == Status.SATISFIABLE) {
+      Status status = solver.check();
+      if (status == Status.SATISFIABLE) {
+        Log.info("[SAT]The invariant is not refined by the new model", this.getClass().getName());
         String name = negConstraint.getInvariantName().orElse("NoInvName").split("_____NegInv")[0];
 
         Optional<ASTODArtifact> witness =
@@ -169,7 +172,10 @@ public interface OCLInvDiffStrategy {
 
         assert witness.isPresent();
         satOdList.add(witness.get());
+      } else if (status == Status.UNKNOWN) {
+        return new OCLInvDiffResult(null, new HashSet<>());
       } else {
+        Log.info("[UNSAT]The invariant is refined by the new model", this.getClass().getName());
         traceUnSat.addAll(TraceUnSatCore.traceUnSatCore(solver));
       }
       posConstraintList.remove(negConstraint);
@@ -189,20 +195,20 @@ public interface OCLInvDiffStrategy {
         .collect(Collectors.toList());
   }
 
-  default boolean checkConsistency(
+  default Status checkConsistency(
       ASTCDCompilationUnit cd,
       Set<ASTOCLCompilationUnit> newOCL,
       Set<IdentifiableBoolExpr> addConstr,
       Context ctx,
-      int timeout,
-      boolean partial) {
+      int timeout) {
 
-    if (oclWitnessInternal(cd, newOCL, addConstr, ctx, timeout, partial) == null) {
-      Log.info(": timeout or inconsistent model", this.getClass().getSimpleName());
-      return false;
-    }
+    OCL2SMTGenerator ocl2SMTGenerator = new OCL2SMTGenerator(cd, ctx);
+    List<IdentifiableBoolExpr> solverConstraints = invariant2SMT(ocl2SMTGenerator, newOCL);
+    solverConstraints.addAll(addConstr);
+    Solver solver = ocl2SMTGenerator.makeSolver(solverConstraints);
+    setTimeout(solver, ctx, timeout);
 
-    return true;
+    return solver.check();
   }
 
   default void setTimeout(Solver solver, Context ctx, int timeout) {

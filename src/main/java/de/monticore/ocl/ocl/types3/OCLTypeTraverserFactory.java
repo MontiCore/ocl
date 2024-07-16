@@ -29,10 +29,7 @@ public class OCLTypeTraverserFactory {
     return createTraverser(type4Ast, new InferenceContext4Ast());
   }
 
-  public OCLTraverser createTraverser(
-      Type4Ast type4Ast,
-      InferenceContext4Ast ctx4Ast
-  ) {
+  public OCLTraverser createTraverser(Type4Ast type4Ast, InferenceContext4Ast ctx4Ast) {
     OCLTraverser traverser = OCLMill.inheritanceTraverser();
     VisitorList visitors = constructVisitors();
     setType4Ast(visitors, type4Ast);
@@ -56,10 +53,7 @@ public class OCLTypeTraverserFactory {
     visitors.synMCSimpleGenericTypes.setType4Ast(type4Ast);
   }
 
-  protected void setContext4Ast(
-      VisitorList visitors,
-      InferenceContext4Ast ctx4Ast
-  ) {
+  protected void setContext4Ast(VisitorList visitors, InferenceContext4Ast ctx4Ast) {
     // Expressions
     visitors.derBitExpressions.setContext4Ast(ctx4Ast);
     visitors.derCommonExpressions.setContext4Ast(ctx4Ast);

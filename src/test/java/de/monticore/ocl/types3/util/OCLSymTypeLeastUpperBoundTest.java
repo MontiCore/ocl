@@ -4,7 +4,6 @@ package de.monticore.ocl.types3.util;
 
 import static de.monticore.ocl.types3.util.OCLCollectionSymTypeFactory.createOCLCollection;
 import static de.monticore.types.check.SymTypeExpressionFactory.createIntersection;
-import static de.monticore.types.check.SymTypeExpressionFactory.createTypeArray;
 import static de.monticore.types.check.SymTypeExpressionFactory.createUnion;
 import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createList;
 import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createOptional;

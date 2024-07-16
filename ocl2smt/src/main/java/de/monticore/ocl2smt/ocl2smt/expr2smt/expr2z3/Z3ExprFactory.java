@@ -176,17 +176,22 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
   @Override
   public Z3ExprAdapter mkEq(Z3ExprAdapter leftNode, Z3ExprAdapter rightNode) {
     Z3ExprAdapter res;
-    if (!leftNode.isSetExpr() && !rightNode.isSetExpr()) {
+    if (leftNode.isOptExpr() || rightNode.isOptExpr()) {
       res =
           new Z3ExprAdapter(
-              ctx.mkEq(leftNode.getExpr(), rightNode.getExpr()), tFactory.mkBoolType());
-    } else {
+              ctx.mkEq(unWrap(leftNode).getExpr(), unWrap(leftNode).getExpr()),
+              tFactory.mkBoolType());
+    } else if (leftNode.isSetExpr() || rightNode.isSetExpr()) {
       Z3ExprAdapter element = ((Z3GenExprAdapter) leftNode).getElement();
 
       Expr<?> left = mkContains(rightNode, element).getExpr();
       Expr<?> right = mkContains(leftNode, element).getExpr();
       Z3ExprAdapter body = new Z3ExprAdapter(ctx.mkEq(left, right), tFactory.mkBoolType());
       res = mkForall(List.of(element), body);
+    } else {
+      res =
+          new Z3ExprAdapter(
+              ctx.mkEq(leftNode.getExpr(), rightNode.getExpr()), tFactory.mkBoolType());
     }
 
     return wrap(res, leftNode, rightNode);
@@ -494,10 +499,13 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
 
   @Override
   public Z3ExprAdapter getLink(Z3ExprAdapter obj, String role) {
-    checkObj("getLink", obj);
-
-    ASTCDType astcdType =
-        obj.isPresentTypeCast() ? obj.getTypeCast().getCDType() : obj.getType().getCDType();
+    ASTCDType astcdType;
+    if (obj.isSetExpr()) {
+      astcdType = ((Z3GenExprAdapter) obj).getElement().getType().getCDType();
+    } else {
+      astcdType =
+          obj.isPresentTypeCast() ? obj.getTypeCast().getCDType() : obj.getType().getCDType();
+    }
     Z3ExprAdapter res;
 
     // case association Link
@@ -509,11 +517,28 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
 
     // case attribute
     Optional<ASTCDAttribute> attribute = resolveAttribute(astcdType, role);
+
     if (attribute.isPresent()) {
-      Expr<?> expr = cd2SMTGenerator.getAttribute(astcdType, role, obj.getExpr());
-      Z3TypeAdapter typeAdapter = tFactory.adapt(attribute.get().getMCType());
-      res = new Z3ExprAdapter(expr, typeAdapter);
-      return wrap(res, obj);
+      Z3TypeAdapter attrType = tFactory.adapt(attribute.get().getMCType());
+
+      if (!obj.isSetExpr()) {
+        Expr<?> expr = cd2SMTGenerator.getAttribute(astcdType, role, obj.getExpr());
+        res = new Z3ExprAdapter(expr, attrType);
+        return wrap(res, obj);
+      } else {
+
+        Z3GenExprAdapter set = (Z3GenExprAdapter) obj;
+        Expr<?> attr = cd2SMTGenerator.getAttribute(astcdType, role, set.getElement().getExpr());
+        Z3ExprAdapter attrAdapter = new Z3ExprAdapter(attr, attrType);
+        Z3ExprAdapter constant = mkConst(attribute.get().getName(), attrType);
+
+        Function<Z3ExprAdapter, Z3ExprAdapter> filter =
+            expr ->
+                mkExists(
+                    List.of(set.getElement()),
+                    mkAnd(set.isIn(set.getElement()), mkEq(expr, attrAdapter)));
+        return mkSet(filter, constant);
+      }
     }
 
     Log.info(
@@ -570,8 +595,6 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
     return wrap(res, opt);
   }
 
-  // todo continuew review here...
-
   private BoolExpr mkForAll(List<Expr<?>> quanParams, BoolExpr body) {
     if (quanParams.isEmpty()) {
       return body;
@@ -608,8 +631,12 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
   }
 
   private Z3ExprAdapter getAssocLink(ASTCDAssociation assoc, Z3ExprAdapter obj, String role) {
-
-    ASTCDType type = obj.getType().getCDType();
+    ASTCDType type;
+    if (obj.isSetExpr()) {
+      type = ((Z3GenExprAdapter) obj).getElement().getType().getCDType();
+    } else {
+      type = obj.getType().getCDType();
+    }
     ASTCDType otherType =
         isLeftSide(type, role, getCD())
             ? getRightType(assoc, getCD())
@@ -620,14 +647,15 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
 
     Function<Z3ExprAdapter, Z3ExprAdapter> link;
     ASTCDCardinality cardinality;
+    Z3ExprAdapter obj1 = obj.isSetExpr() ? ((Z3GenExprAdapter) obj).getElement() : obj;
 
-    if (isLeftSide(obj.getType().getCDType(), role, getCD())) {
+    if (isLeftSide(type, role, getCD())) {
       cardinality = assoc.getRight().getCDCardinality();
       link =
           expr ->
               new Z3ExprAdapter(
                   cd2SMTGenerator.evaluateLink(
-                      assoc, type, otherType, obj.getExpr(), expr.getExpr()),
+                      assoc, type, otherType, obj1.getExpr(), expr.getExpr()),
                   tFactory.mkBoolType());
     } else {
       cardinality = assoc.getLeft().getCDCardinality();
@@ -635,18 +663,43 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
           expr ->
               new Z3ExprAdapter(
                   cd2SMTGenerator.evaluateLink(
-                      assoc, otherType, type, expr.getExpr(), obj.getExpr()),
+                      assoc, otherType, type, expr.getExpr(), obj1.getExpr()),
                   tFactory.mkBoolType());
     }
 
     Z3ExprAdapter res;
-    if (cardinality.isOne()) {
-      otherObj.setWrapper(bool -> mkExists(List.of(otherObj), mkAnd(bool, link.apply(otherObj))));
-      res = otherObj;
-    } else if (cardinality.isOpt()) {
-      res = mkOptional(link, mkConst(linkName, tFactory.adapt(otherType)));
+    if (!obj.isSetExpr()) {
+      if (cardinality.isOne()) {
+        Function<Z3ExprAdapter, Z3ExprAdapter> finalLink1 = link;
+        otherObj.setWrapper(
+            bool -> mkExists(List.of(otherObj), mkAnd(bool, finalLink1.apply(otherObj))));
+
+        res = otherObj;
+      } else if (cardinality.isOpt()) {
+        res = mkOptional(link, mkConst(linkName, otherObj.getType())); // todo handle
+      } else {
+
+        Function<Z3ExprAdapter, Z3ExprAdapter> finalLink = link;
+        link = expr -> obj.getWrapper().apply(finalLink.apply(expr));
+
+        res = mkSet(link, mkConst(linkName, tFactory.adapt(otherType)));
+      }
     } else {
-      res = mkSet(link, mkConst(linkName, tFactory.adapt(otherType)));
+      Z3GenExprAdapter set = (Z3GenExprAdapter) obj;
+      if (cardinality.isOne()) {
+
+        Function<Z3ExprAdapter, Z3ExprAdapter> finalLink1 = link;
+        link = expr -> mkExists(List.of(obj1), mkAnd(set.isIn(obj1), finalLink1.apply(expr)));
+        res = mkSet(link, mkConst(linkName, tFactory.adapt(otherType)));
+
+      } else if (cardinality.isOpt()) {
+        res = mkOptional(link, mkConst(linkName, otherObj.getType())); // todo handle
+      } else {
+
+        Function<Z3ExprAdapter, Z3ExprAdapter> finalLink = link;
+        link = expr -> mkExists(List.of(obj1), mkAnd(set.isIn(obj1), finalLink.apply(expr)));
+        res = mkSet(link, mkConst(linkName, tFactory.adapt(otherType)));
+      }
     }
     return res;
   }

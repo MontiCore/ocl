@@ -1,0 +1,157 @@
+/* (c) https://github.com/MontiCore/monticore */
+package de.monticore.ocl2smt.evaluation2.v1;
+/***
+ delete the 5 firsts invariant to produces witnesses
+***/
+ocl JavaProjectV1 {
+
+  //______________________________________________________
+  // Artifact
+  //______________________________________________________
+  context Artifact a inv Inv0:
+     a.name == ((a.nameExtension == "") ? a.simpleName :
+       a.simpleName + "." + a.nameExtension);
+
+  context Artifact a inv Inv1:
+     (a.isRoot <=> a.parent.isEmpty());
+
+  context Artifact a inv Inv2:
+     a.fullName == (a.isRoot ? "." :
+        (a.parent.get().isRoot ? "." + a.name :
+        a.parent.get().fullName + "." + a.name));
+
+  context Artifact a, Artifact b inv Inv3:
+     (a.name == b.name && a.parent == b.parent)
+     implies a == b;
+
+  context Artifact a inv Inv4:
+    a.isRoot <=> (a.simpleName == ".");
+
+  context Artifact a inv Inv5:
+    a.name.contains(".") implies a.isRoot;
+
+  //______________________________________________________
+  // Directory
+  //______________________________________________________
+  context Directory d inv Inv6:
+    d.nameExtension == "";
+
+  // ______________________________________________________
+  // JavaView
+  // ______________________________________________________
+  context JavaView v inv Inv7:
+     v.name.endsWith("java");
+
+  context JavaView v inv Inv8:
+     v.fullName == (v.javaPackage.get().isRoot ? v.name :
+        v.javaPackage.get().fullName + "." + v.name);
+
+  // ______________________________________________________
+  // JavaPackage
+  // ______________________________________________________
+  context JavaPackage p inv Inv9:
+    !p.name.contains(".");
+
+  context JavaPackage pk inv Inv10:
+    (pk.isRoot <=> pk.parent.isEmpty());
+
+  context JavaPackage p inv Inv11:
+    !p.isRoot implies
+      p.fullName == p.parent.get().fullName + "." + p.name;
+
+  context JavaPackage a, JavaPackage b inv Inv12:
+    (a.parent.get() == b.parent.get() && a.name == b.name) implies a == b;
+
+  context JavaPackage p inv Inv13:
+     forall JavaView v in p.javaView :
+        !v.lastModified.after(p.lastModified);
+
+  // ______________________________________________________
+  // JavaVisibility
+  // ______________________________________________________
+  context JavaVisibility v  inv Inv14:
+     (v.isPublic implies !v.isProtected && !v.isPrivate && !v.isPackagePrivate) &&
+     (v.isPrivate implies !v.isProtected && !v.isPublic &&!v.isPackagePrivate)&&
+     (v.isProtected implies !v.isPublic && !v.isPrivate &&!v.isPackagePrivate)&&
+     (!v.isPackagePrivate implies !v.isPublic && !v.isPrivate &&!v.isProtected)&&
+     (v.isPublic ||v.isProtected || v.isPrivate || v.isPackagePrivate); //todo :use xor and  extends expression converter to convert boolean operations
+
+
+  // ______________________________________________________
+  // JavaType
+  // ______________________________________________________
+
+  context JavaType t inv Inv15:
+     (t.isInnerType <=> !t.containingType.isEmpty());
+
+  context JavaType t inv Inv16:
+     t.name == (t.isInnerType ?
+        t.containingType.get().name + "." + t.name : t.name);
+
+  context JavaType j inv Inv17:
+    j.reliesOnJavaType.containsAll(j.innerType);
+
+/*  context JavaType j inv Inv18:
+    j.innerType.containsAll(j.innerClasses);*/ //todo uncomment when fix data wrapper
+
+
+  // ______________________________________________________
+  // Relation between JavaView and Java Types
+  // ______________________________________________________
+  context JavaView v inv Inv19:
+     exists JavaType t :
+        (t isin  v.definedTypes)  && !t.isInnerType;
+
+  context JavaView v ,JavaType t1, JavaType t2 inv Inv20:
+     !(!t1.isInnerType && !t2.isInnerType && t1 isin v.definedTypes && t2 isin v.definedTypes && t1 != t2 );
+
+  context JavaView v inv  Inv21:
+     forall  t in v.definedTypes :
+       !t.isInnerType implies t.name == v.name;
+
+  context JavaView v inv Inv22:
+    !v.mainType.isInnerType ;
+
+  context JavaView v inv Inv23 :
+     forall  t1,t2 in v.definedTypes :
+        t1 != t2 implies t2.name != t1.name ;
+
+  // ______________________________________________________
+  // JavaClass
+  // ______________________________________________________
+  context JavaClass c inv  Inv24:
+     if c.subclass.isPresent()
+     then c.subclass.get() != c
+     else true ;
+
+ context JavaClass c1, JavaClass c2 inv Inv25:
+     c1.subclass.get() == c2 implies c2.subclass.get() !=c1 ;
+
+  context JavaClass c inv Inv26:
+    forall  v1,v2 in c.variables :
+        v1 != v2 implies v2.name != v1.name ;
+
+  // ______________________________________________________
+  // JavaInterface
+  // ______________________________________________________
+ /* context JavaInterface i inv  Inv27:
+     !i.interfaces.contains(i);*/
+
+ /* context JavaInterface i1, JavaInterface i2 inv  Inv28:
+     i1.interfaces.contains(i2) implies !i2.interfaces.contains(i1);*/
+
+  // ______________________________________________________
+  // JavaMethod
+  // ______________________________________________________
+  context JavaMethod m inv Inv29:
+     forall  p1,p2 in m.params :
+        p1 != p2 implies p2.name != p1.name ;
+
+  context JavaMethod m1, JavaMethod m2 inv Inv30:
+     m1 != m2 implies m1.name != m2.name || m1.params != m2.params ;
+
+  context JavaMethod m inv Inv31:
+    m.isStatic implies (forall v in m.useVariables:
+    v.isStatic) ;
+
+}
