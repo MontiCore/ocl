@@ -16,7 +16,6 @@ import de.monticore.ocl2smt.ocl2smt.expr2smt.typeFactorry.TypeFactory;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Optional;
 import java.util.function.Function;
 

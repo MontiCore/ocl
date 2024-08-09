@@ -2,7 +2,6 @@ package de.monticore.ocl2smt.ocl2smt.oclExpr2smt;
 
 import com.microsoft.z3.BoolExpr;
 import com.microsoft.z3.Context;
-import com.microsoft.z3.Model;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
@@ -17,11 +16,9 @@ import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3ExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3TypeAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.Z3TypeFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeFactorry.TypeFactory;
-import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
