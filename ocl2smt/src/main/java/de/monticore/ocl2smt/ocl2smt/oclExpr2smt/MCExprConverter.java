@@ -1,6 +1,7 @@
 package de.monticore.ocl2smt.ocl2smt.oclExpr2smt;
 
 import com.microsoft.z3.Context;
+import com.microsoft.z3.Model;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
@@ -12,8 +13,11 @@ import de.monticore.ocl2smt.ocl2smt.expr2smt.cdExprFactory.CDExprFactory;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.expr2z3.*;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeAdapter.TypeAdapter;
 import de.monticore.ocl2smt.ocl2smt.expr2smt.typeFactorry.TypeFactory;
+import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.Optional;
 import java.util.function.Function;
 
 public class MCExprConverter extends OCLExprConverter<Z3ExprAdapter> {
@@ -63,5 +67,9 @@ public class MCExprConverter extends OCLExprConverter<Z3ExprAdapter> {
         return null;
       }
     }
+  }
+
+  public Optional<ASTODArtifact> buildOD(Model model, String odName) {
+    return cd2SMTGenerator.smt2od(model, false, odName);
   }
 }

@@ -26,7 +26,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class MCExprConverterTest extends ExpressionAbstractTest {
+public class TypeIfMcExprConverterTest extends ExpressionAbstractTest {
   TypeIfMcExprConverter exprConverter;
 
   @BeforeEach
@@ -61,7 +61,7 @@ public class MCExprConverterTest extends ExpressionAbstractTest {
     Assertions.assertFalse(model.isPresent());
   }
 
-  public Optional<Model> checkExpr(int invPos, String varType, Status result) {
+  private Optional<Model> checkExpr(int invPos, String varType, Status result) {
     CD2SMTMill.init(
         ClassStrategy.Strategy.SS,
         InheritanceData.Strategy.SE,
@@ -83,14 +83,14 @@ public class MCExprConverterTest extends ExpressionAbstractTest {
     return Optional.ofNullable(solverResult == Status.SATISFIABLE ? solver.getModel() : null);
   }
 
-  public void buildAndPrintOD(TypeIfMcExprConverter exprConverter, Model model, String odName) {
+  private void buildAndPrintOD(TypeIfMcExprConverter exprConverter, Model model, String odName) {
 
     Optional<ASTODArtifact> od = exprConverter.buildOD(model, odName);
     Assertions.assertTrue(od.isPresent());
     IOHelper.printOD(od.get(), Path.of("target/mc2smt/"));
   }
 
-  public ASTMCType buildMCType(String name) {
+  private ASTMCType buildMCType(String name) {
     return OD4ReportMill.mCQualifiedTypeBuilder()
         .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(name))
         .build();

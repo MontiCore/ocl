@@ -87,8 +87,4 @@ public class TypeIfMcExprConverter extends MCExprConverter {
 
     return eFactory.mkIte(cond, thenExpr, elseExpr);
   }
-
-  public Optional<ASTODArtifact> buildOD(Model model, String odName) {
-    return cd2SMTGenerator.smt2od(model, false, odName);
-  }
 }
