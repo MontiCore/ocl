@@ -1,6 +1,7 @@
 package de.monticore.ocl.types;
 
 import static de.monticore.types3.util.DefsTypesForTests.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
@@ -10,7 +11,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._parser.OCLParser;
-import de.monticore.ocl.ocl.types3.OCLTypeTraverserFactory;
+import de.monticore.ocl.ocl.types3.OCLTypeCheck3;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.ocl.types3.util.OCLCollectionSymTypeFactory;
 import de.monticore.ocl.util.SymbolTableUtil;
@@ -19,10 +20,9 @@ import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
-import de.monticore.types3.Type4Ast;
+import de.monticore.types3.TypeCheck3;
 import de.monticore.types3.util.DefsTypesForTests;
 import de.monticore.types3.util.DefsVariablesForTests;
-import de.monticore.visitor.ITraverser;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
@@ -38,14 +38,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class OCLExpressionsTypeVisitorTest extends AbstractTest {
-
-  // we can use our own type4Ast instance to try to find occurrences of
-  // Type Visitors using the map from the mill instead of the provided one
-  protected Type4Ast type4Ast;
-
-  protected ITraverser typeMapTraverser;
-
-  protected ITraverser scopeGenitor;
 
   protected OCLParser parser;
 
@@ -64,12 +56,10 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     setupValues();
 
     parser = OCLMill.parser();
-    type4Ast = new Type4Ast();
+
+    OCLTypeCheck3.init();
     OCLSymTypeRelations.init();
 
-    typeMapTraverser = new OCLTypeTraverserFactory().createTraverser(type4Ast);
-
-    scopeGenitor = OCLMill.traverser();
     assertNoFindings();
   }
 
@@ -320,12 +310,10 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
 
     generateScopes(expr);
     assertNoFindings();
-    expr.accept(typeMapTraverser);
+    SymTypeExpression type = TypeCheck3.typeOf(expr);
     assertNoFindings();
 
-    assertTrue(
-        getType4Ast().hasTypeOfExpression(expr), "No type calculated for expression " + exprStr);
-    SymTypeExpression type = getType4Ast().getTypeOfExpression(expr);
+    assertFalse(type.isObscureType(), "No type calculated for expression " + exprStr);
     SymTypeExpression typeNormalized = OCLSymTypeRelations.normalize(type);
     assertNoFindings();
     Assertions.assertEquals(
@@ -341,8 +329,7 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
 
     generateScopes(expr);
     assertNoFindings();
-    expr.accept(typeMapTraverser);
-    SymTypeExpression type = getType4Ast().getTypeOfExpression(astExpression.get());
+    SymTypeExpression type = TypeCheck3.typeOf(expr);
     assertTrue(
         type.isObscureType(),
         "expected Obscure for expression \"" + exprStr + "\" but got " + type.printFullName());
@@ -382,14 +369,6 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     // complete the symbol table
     SymbolTableUtil.runSymTabGenitor(compilationUnit);
     SymbolTableUtil.runSymTabCompleter(compilationUnit);
-  }
-
-  protected Type4Ast getType4Ast() {
-    return type4Ast;
-  }
-
-  protected ITraverser getScopeGenitor() {
-    return scopeGenitor;
   }
 
   // TODO Randbedingungen wann TODOs abgearbeitet werden

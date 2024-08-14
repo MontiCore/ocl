@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
+import de.monticore.ocl.ocl.types3.OCLTypeCheck3;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
@@ -48,6 +49,7 @@ public class OCL2JavaGeneratorTest extends AbstractTest {
   protected void setup() {
     SymbolTableUtil.prepareMill();
     SymbolTableUtil.addCd4cSymbols();
+    OCLTypeCheck3.init();
   }
 
   @ParameterizedTest

@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._parser.OCLParser;
+import de.monticore.ocl.ocl.types3.OCLTypeCheck3;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.se_rwth.commons.logging.Finding;
 import de.se_rwth.commons.logging.Log;
 import de.se_rwth.commons.logging.LogStub;
@@ -34,6 +36,9 @@ public abstract class AbstractTest {
     OCLMill.reset();
     OCLMill.init();
     OCLMill.globalScope().clear();
+    // OCL TypeCheck
+    OCLTypeCheck3.init();
+    OCLSymTypeRelations.init();
   }
 
   protected static final String RELATIVE_MODEL_PATH = "src/test/resources";
