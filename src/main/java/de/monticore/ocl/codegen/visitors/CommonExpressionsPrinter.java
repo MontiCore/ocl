@@ -1,8 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.codegen.visitors;
 
-import static de.monticore.types.check.SymTypePrimitive.box;
-
 import com.google.common.base.Preconditions;
 import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsHandler;
@@ -15,24 +13,32 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.TypeCheckResult;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
+
+import static de.monticore.types.check.SymTypePrimitive.box;
 
 public class CommonExpressionsPrinter extends AbstractPrinter
     implements CommonExpressionsHandler, CommonExpressionsVisitor2 {
 
   protected CommonExpressionsTraverser traverser;
 
+  /**
+   * @deprecated use other Constructor (requires TypeCheck3)
+   */
+  @Deprecated
   public CommonExpressionsPrinter(
       IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
-    Preconditions.checkNotNull(printer);
-    Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(deriver);
-    Preconditions.checkNotNull(syntheziser);
-    this.printer = printer;
-    this.naming = naming;
+    this(printer, naming);
     this.deriver = deriver;
     this.syntheziser = syntheziser;
+  }
+
+  public CommonExpressionsPrinter(IndentPrinter printer, VariableNaming naming) {
+    Preconditions.checkNotNull(printer);
+    Preconditions.checkNotNull(naming);
+    this.printer = printer;
+    this.naming = naming;
   }
 
   @Override
@@ -171,12 +177,12 @@ public class CommonExpressionsPrinter extends AbstractPrinter
   @Override
   public void handle(ASTArrayAccessExpression node) {
     Log.errorIfNull(node);
-    TypeCheckResult exprTypeRes = getDeriver().deriveType(node.getExpression());
-    if (!exprTypeRes.isPresentResult()) {
+    SymTypeExpression exprType = TypeCheck3.typeOf(node.getExpression());
+    if (exprType.isObscureType()) {
       // error should be logged already
       getPrinter().print("NO_TYPE_DERIVED_ARRAY_ACCESS_EXPRESSION");
-    } else {
-      SymTypeExpression exprType = exprTypeRes.getResult();
+    }
+    else {
       getPrinter().print("(");
       node.getExpression().accept(getTraverser());
       getPrinter().print(")");
@@ -191,11 +197,13 @@ public class CommonExpressionsPrinter extends AbstractPrinter
       getPrinter().print("[");
       node.getIndexExpression().accept(getTraverser());
       getPrinter().print("]");
-    } else if (OCLSymTypeRelations.isList(exprType) || OCLSymTypeRelations.isMap(exprType)) {
+    }
+    else if (OCLSymTypeRelations.isList(exprType) || OCLSymTypeRelations.isMap(exprType)) {
       getPrinter().print(".get(");
       node.getIndexExpression().accept(getTraverser());
       getPrinter().print(")");
-    } else if (OCLSymTypeRelations.isOptional(exprType)) {
+    }
+    else if (OCLSymTypeRelations.isOptional(exprType)) {
       getPrinter().print(".map(");
       getPrinter().print(getNaming().getName(node) + "_optVar" + depth);
       getPrinter().print(" ->");
@@ -221,7 +229,8 @@ public class CommonExpressionsPrinter extends AbstractPrinter
       getPrinter().print(")");
       getPrinter()
           .print(".collect(java.util.stream.Collectors.toCollection(java.util.HashSet::new))");
-    } else {
+    }
+    else {
       // error already logged
       getPrinter().print("NO_VALID_TYPE_DERIVED_ARRAY_ACCESS_EXPRESSION");
     }
@@ -262,18 +271,19 @@ public class CommonExpressionsPrinter extends AbstractPrinter
    * @param node the expression to be printed
    */
   protected void printAsBoxedType(ASTExpression node) {
-    TypeCheckResult type = this.getDeriver().deriveType(node);
-    if (!type.isPresentResult()) {
+    SymTypeExpression type = TypeCheck3.typeOf(node);
+    if (type.isObscureType()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;
     }
-    if (type.getResult().isPrimitive()) {
+    if (type.isPrimitive()) {
       getPrinter().print("((");
-      this.getPrinter().print(box(type.getResult().getTypeInfo().getFullName()));
+      this.getPrinter().print(box(type.getTypeInfo().getFullName()));
       getPrinter().print(") ");
       node.accept(getTraverser());
       getPrinter().print(")");
-    } else {
+    }
+    else {
       node.accept(getTraverser());
     }
   }

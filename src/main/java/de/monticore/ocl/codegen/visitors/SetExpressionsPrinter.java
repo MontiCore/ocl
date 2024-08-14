@@ -10,6 +10,8 @@ import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.*;
+import de.monticore.types3.SymTypeRelations;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 
 public class SetExpressionsPrinter extends AbstractPrinter
@@ -24,16 +26,22 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   protected IndentPrinter printer;
 
+  /**
+   * @deprecated use other Constructor (requires TypeCheck3)
+   */
+  @Deprecated
   public SetExpressionsPrinter(
       IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
-    Preconditions.checkNotNull(printer);
-    Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(deriver);
-    Preconditions.checkNotNull(syntheziser);
-    this.printer = printer;
-    this.naming = naming;
+    this(printer, naming);
     this.deriver = deriver;
     this.syntheziser = syntheziser;
+  }
+
+  public SetExpressionsPrinter(IndentPrinter printer, VariableNaming naming) {
+    Preconditions.checkNotNull(printer);
+    Preconditions.checkNotNull(naming);
+    this.printer = printer;
+    this.naming = naming;
   }
 
   @Override
@@ -70,7 +78,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTUnionExpression node) {
-    printExpressionBeginLambda(getDeriver().deriveType(node));
+    printExpressionBeginLambda(TypeCheck3.typeOf(node));
 
     getPrinter().print("java.util.Set<");
     printDerivedInnerType(node);
@@ -96,7 +104,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTIntersectionExpression node) {
-    printExpressionBeginLambda(getDeriver().deriveType(node));
+    printExpressionBeginLambda(TypeCheck3.typeOf(node));
 
     getPrinter().print("java.util.Set<");
     printDerivedInnerType(node);
@@ -123,7 +131,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetMinusExpression node) {
-    printExpressionBeginLambda(getDeriver().deriveType(node));
+    printExpressionBeginLambda(TypeCheck3.typeOf(node));
 
     getPrinter().print("java.util.Set<");
     printDerivedInnerType(node);
@@ -150,9 +158,9 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetUnionExpression node) {
-    printExpressionBeginLambda(getDeriver().deriveType(node));
+    printExpressionBeginLambda(TypeCheck3.typeOf(node));
 
-    getPrinter().print(getDeriver().deriveType(node.getSet()));
+    getPrinter().print(TypeCheck3.typeOf(node.getSet()));
     getPrinter().print(" ");
     getPrinter().print(getNaming().getName(node.getSet()));
     getPrinter().print(" = ");
@@ -166,7 +174,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
     getPrinter().println(" = new java.util.HashSet<>();");
 
     getPrinter().print("for(");
-    getPrinter().print(getDeriver().deriveType(node));
+    getPrinter().print(TypeCheck3.typeOf(node));
     getPrinter().print(" ");
     getPrinter().print(getNaming().getName(node.getSet()));
     getPrinter().print("_item");
@@ -193,7 +201,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetIntersectionExpression node) {
-    printExpressionBeginLambda(getDeriver().deriveType(node));
+    printExpressionBeginLambda(TypeCheck3.typeOf(node));
 
     printDerivedType(node.getSet());
     getPrinter().print(" ");
@@ -238,7 +246,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetAndExpression node) {
-    printExpressionBeginLambda(getDeriver().deriveType(node));
+    printExpressionBeginLambda(TypeCheck3.typeOf(node));
 
     getPrinter().print("Boolean ");
     getPrinter().print(getNaming().getName(node));
@@ -279,7 +287,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetOrExpression node) {
-    printExpressionBeginLambda(getDeriver().deriveType(node));
+    printExpressionBeginLambda(TypeCheck3.typeOf(node));
 
     getPrinter().print("Boolean ");
     getPrinter().print(getNaming().getName(node));
@@ -321,7 +329,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetComprehension node) {
-    printExpressionBeginLambda(getDeriver().deriveType(node));
+    printExpressionBeginLambda(TypeCheck3.typeOf(node));
     printDerivedType(node);
     getPrinter().print(" ");
     getPrinter().print(getNaming().getName(node));
@@ -371,8 +379,8 @@ public class SetExpressionsPrinter extends AbstractPrinter
   @Override
   public void handle(ASTSetComprehensionItem node) {
     if (node.isPresentExpression()) {
-      TypeCheckResult type = getDeriver().deriveType(node.getExpression());
-      if (type.isPresentResult() && TypeCheck.isBoolean(type.getResult())) {
+      SymTypeExpression type = TypeCheck3.typeOf(node.getExpression());
+      if (SymTypeRelations.isBoolean(type)) {
         getPrinter().print("if (");
         node.getExpression().accept(getTraverser());
         getPrinter().println(") {");
@@ -385,9 +393,9 @@ public class SetExpressionsPrinter extends AbstractPrinter
     } else if (node.isPresentSetVariableDeclaration()) {
       ASTSetVariableDeclaration setVarDecl = node.getSetVariableDeclaration();
       if (setVarDecl.isPresentMCType()) {
-        getPrinter().print(boxType(getSynthesizer().synthesizeType(setVarDecl.getMCType())));
+        getPrinter().print(boxType(TypeCheck3.symTypeFromAST(setVarDecl.getMCType())));
       } else if (setVarDecl.isPresentExpression()) {
-        getPrinter().print(boxType(getDeriver().deriveType(setVarDecl.getExpression())));
+        getPrinter().print(boxType(TypeCheck3.typeOf(setVarDecl.getExpression())));
       } else {
         Log.error(
             UNEXPECTED_STATE_AST_NODE,
@@ -409,7 +417,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
   public void handle(ASTGeneratorDeclaration node) {
     getPrinter().print("for (");
     if (node.isPresentMCType()) {
-      getPrinter().print(boxType(getSynthesizer().synthesizeType(node.getMCType())));
+      getPrinter().print(boxType(TypeCheck3.symTypeFromAST(node.getMCType())));
     } else {
       printDerivedInnerType(node.getExpression());
     }
@@ -423,7 +431,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTSetEnumeration node) {
-    printExpressionBeginLambda(getDeriver().deriveType(node));
+    printExpressionBeginLambda(TypeCheck3.typeOf(node));
 
     printDerivedType(node);
     getPrinter().print(" ");
@@ -527,9 +535,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
     // java.Lang.Character -> avoid type errors
     // this works as only primitives are supported
     getPrinter()
-        .print(
-            SymTypePrimitive.unbox(
-                getDeriver().deriveType(node.getLowerBound()).getResult().printFullName()));
+        .print(SymTypePrimitive.unbox(TypeCheck3.typeOf(node.getLowerBound()).printFullName()));
     getPrinter().print(")(");
     getPrinter().print(getNaming().getName(node));
     getPrinter().print("_iter + ");
@@ -554,8 +560,8 @@ public class SetExpressionsPrinter extends AbstractPrinter
   }
 
   protected void printDerivedType(ASTExpression node) {
-    TypeCheckResult type = getDeriver().deriveType(node);
-    if (!type.isPresentResult()) {
+    SymTypeExpression type = TypeCheck3.typeOf(node);
+    if (type.isObscureType()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;
     }
@@ -588,11 +594,11 @@ public class SetExpressionsPrinter extends AbstractPrinter
    */
   protected SymTypeExpression getInnerType(ASTExpression node) {
     SymTypeExpression innerType = null;
-    TypeCheckResult type = this.getDeriver().deriveType(node);
-    if (type.isPresentResult()
-        && type.getResult().isGenericType()
-        && ((SymTypeOfGenerics) type.getResult()).sizeArguments() == 1) {
-      innerType = ((SymTypeOfGenerics) type.getResult()).getArgument(0);
+    SymTypeExpression type = TypeCheck3.typeOf(node);
+    if (!type.isObscureType()
+        && type.isGenericType()
+        && ((SymTypeOfGenerics) type).sizeArguments() == 1) {
+      innerType = ((SymTypeOfGenerics) type).getArgument(0);
     }
     if (innerType == null) {
       Log.error(INNER_TYPE_NOT_DERIVED_ERROR, node.get_SourcePositionStart());

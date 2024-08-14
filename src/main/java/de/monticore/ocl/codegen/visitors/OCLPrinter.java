@@ -16,7 +16,9 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -26,16 +28,22 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
 
   protected OCLTraverser traverser;
 
+  /**
+   * @deprecated use other Constructor (requires TypeCheck3)
+   */
+  @Deprecated
   public OCLPrinter(
       IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
-    Preconditions.checkNotNull(printer);
-    Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(deriver);
-    Preconditions.checkNotNull(syntheziser);
-    this.printer = printer;
-    this.naming = naming;
+    this(printer, naming);
     this.deriver = deriver;
     this.syntheziser = syntheziser;
+  }
+
+  public OCLPrinter(IndentPrinter printer, VariableNaming naming) {
+    Preconditions.checkNotNull(printer);
+    Preconditions.checkNotNull(naming);
+    this.printer = printer;
+    this.naming = naming;
   }
 
   @Override
@@ -106,7 +114,7 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
   @Override
   public void handle(ASTOCLContextDefinition node) {
     if (node.isPresentMCType()) {
-      this.getPrinter().print(boxType(this.getSynthesizer().synthesizeType(node.getMCType())));
+      this.getPrinter().print(boxType(TypeCheck3.symTypeFromAST(node.getMCType())));
     } else if (node.isPresentOCLParamDeclaration()) {
       node.getOCLParamDeclaration().accept(this.getTraverser());
     } else {
@@ -116,7 +124,7 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
 
   @Override
   public void handle(ASTOCLParamDeclaration node) {
-    this.getPrinter().print(boxType(this.getSynthesizer().synthesizeType(node.getMCType())));
+    this.getPrinter().print(boxType(TypeCheck3.symTypeFromAST(node.getMCType())));
     this.getPrinter().print(" ");
     this.printer.print(node.getName());
     if (node.isPresentExpression()) {
