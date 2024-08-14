@@ -23,6 +23,8 @@ import de.monticore.types3.util.FunctionRelations;
 import de.monticore.types3.util.NameExpressionTypeCalculator;
 import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
 
+/** @deprecated use {@link OCLTypeCheck3} instead. */
+@Deprecated
 public class OCLTypeTraverserFactory {
 
   public OCLTraverser createTraverser(Type4Ast type4Ast) {
