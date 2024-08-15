@@ -20,13 +20,15 @@ public abstract class OCL2SMTAbstractTest {
     OCLMill.reset();
     OCLMill.init();
     OCLMill.globalScope().clear();
-    OCLTypeCheck3.init();
 
     CD4CodeMill.reset();
     CD4CodeMill.init();
     CD4CodeMill.globalScope().clear();
 
     CD2SMTMill.initDefault();
+
+    // init OCL TypeCheck again after other mills
+    OCLTypeCheck3.init();
   }
 
   protected void initLogger() {

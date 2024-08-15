@@ -9,6 +9,7 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions.types3.OCLExpressionsTypeVisitor;
 import de.monticore.ocl.optionaloperators.types3.OptionalOperatorsTypeVisitor;
 import de.monticore.ocl.setexpressions.types3.SetExpressionsCTTIVisitor;
+import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.ocl.types3.util.OCLNameExpressionTypeCalculator;
 import de.monticore.ocl.types3.util.OCLWithinTypeBasicSymbolsResolver;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
@@ -29,6 +30,11 @@ import de.se_rwth.commons.logging.Log;
 public class OCLTypeCheck3 extends MapBasedTypeCheck3 {
 
   public static void init() {
+    initTC3Delegate();
+    OCLSymTypeRelations.init();
+  }
+
+  protected static void initTC3Delegate() {
     Log.trace("init OCLTypeCheck3", "TypeCheck setup");
 
     OCLTraverser traverser = OCLMill.traverser();

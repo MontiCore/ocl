@@ -10,10 +10,6 @@ import java.util.stream.Collectors;
 
 public class OCLSymTypeLubCalculator extends SymTypeLubCalculator {
 
-  public OCLSymTypeLubCalculator() {
-    OCLSymTypeRelations.init();
-  }
-
   /** handles the OCL Collection types */
   @Override
   public Optional<SymTypeExpression> leastUpperBound(Collection<SymTypeExpression> types) {

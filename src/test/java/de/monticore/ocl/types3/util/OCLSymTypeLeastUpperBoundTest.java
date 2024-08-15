@@ -47,7 +47,6 @@ public class OCLSymTypeLeastUpperBoundTest extends AbstractTypeTest {
     OCLMill.init();
     DefsTypesForTests.setup();
     setupCollectionType();
-    OCLSymTypeRelations.init();
   }
 
   protected void setupCollectionType() {

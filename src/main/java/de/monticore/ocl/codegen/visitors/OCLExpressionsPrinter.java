@@ -48,7 +48,6 @@ public class OCLExpressionsPrinter extends AbstractPrinter
   public OCLExpressionsPrinter(IndentPrinter printer, VariableNaming naming) {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
-    OCLSymTypeRelations.init();
     this.printer = printer;
     this.naming = naming;
   }
