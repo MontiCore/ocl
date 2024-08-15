@@ -18,7 +18,6 @@ import de.monticore.types.check.ISynthesize;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -28,9 +27,7 @@ public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisito
 
   protected OCLTraverser traverser;
 
-  /**
-   * @deprecated use other Constructor (requires TypeCheck3)
-   */
+  /** @deprecated use other Constructor (requires TypeCheck3) */
   @Deprecated
   public OCLPrinter(
       IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {

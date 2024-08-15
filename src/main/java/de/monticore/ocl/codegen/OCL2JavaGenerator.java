@@ -20,7 +20,6 @@ import de.monticore.types.check.ISynthesize;
 import de.monticore.types.mcbasictypes._prettyprint.MCBasicTypesPrettyPrinter;
 import de.monticore.types.mccollectiontypes._prettyprint.MCCollectionTypesPrettyPrinter;
 import de.monticore.types.mcsimplegenerictypes._prettyprint.MCSimpleGenericTypesPrettyPrinter;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -67,9 +66,7 @@ public class OCL2JavaGenerator {
     this(printer, new VariableNaming());
   }
 
-  /**
-   * @deprecated use {@link #OCL2JavaGenerator(IndentPrinter, VariableNaming)}
-   */
+  /** @deprecated use {@link #OCL2JavaGenerator(IndentPrinter, VariableNaming)} */
   @Deprecated
   protected OCL2JavaGenerator(
       IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {

@@ -1,6 +1,8 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.codegen.visitors;
 
+import static de.monticore.types.check.SymTypePrimitive.box;
+
 import com.google.common.base.Preconditions;
 import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsHandler;
@@ -16,16 +18,12 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 
-import static de.monticore.types.check.SymTypePrimitive.box;
-
 public class CommonExpressionsPrinter extends AbstractPrinter
     implements CommonExpressionsHandler, CommonExpressionsVisitor2 {
 
   protected CommonExpressionsTraverser traverser;
 
-  /**
-   * @deprecated use other Constructor (requires TypeCheck3)
-   */
+  /** @deprecated use other Constructor (requires TypeCheck3) */
   @Deprecated
   public CommonExpressionsPrinter(
       IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
@@ -181,8 +179,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter
     if (exprType.isObscureType()) {
       // error should be logged already
       getPrinter().print("NO_TYPE_DERIVED_ARRAY_ACCESS_EXPRESSION");
-    }
-    else {
+    } else {
       getPrinter().print("(");
       node.getExpression().accept(getTraverser());
       getPrinter().print(")");
@@ -197,13 +194,11 @@ public class CommonExpressionsPrinter extends AbstractPrinter
       getPrinter().print("[");
       node.getIndexExpression().accept(getTraverser());
       getPrinter().print("]");
-    }
-    else if (OCLSymTypeRelations.isList(exprType) || OCLSymTypeRelations.isMap(exprType)) {
+    } else if (OCLSymTypeRelations.isList(exprType) || OCLSymTypeRelations.isMap(exprType)) {
       getPrinter().print(".get(");
       node.getIndexExpression().accept(getTraverser());
       getPrinter().print(")");
-    }
-    else if (OCLSymTypeRelations.isOptional(exprType)) {
+    } else if (OCLSymTypeRelations.isOptional(exprType)) {
       getPrinter().print(".map(");
       getPrinter().print(getNaming().getName(node) + "_optVar" + depth);
       getPrinter().print(" ->");
@@ -229,8 +224,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter
       getPrinter().print(")");
       getPrinter()
           .print(".collect(java.util.stream.Collectors.toCollection(java.util.HashSet::new))");
-    }
-    else {
+    } else {
       // error already logged
       getPrinter().print("NO_VALID_TYPE_DERIVED_ARRAY_ACCESS_EXPRESSION");
     }
@@ -282,8 +276,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter
       getPrinter().print(") ");
       node.accept(getTraverser());
       getPrinter().print(")");
-    }
-    else {
+    } else {
       node.accept(getTraverser());
     }
   }

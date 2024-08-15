@@ -34,9 +34,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter
 
   protected OCLExpressionsTraverser traverser;
 
-  /**
-   * @deprecated use other Constructor (requires TypeCheck3)
-   */
+  /** @deprecated use other Constructor (requires TypeCheck3) */
   @Deprecated
   public OCLExpressionsPrinter(
       IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
@@ -301,8 +299,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter
       if (!type.isObscureType()) {
         innerType = type;
       }
-    }
-    else if (node.isPresentExpression()) {
+    } else if (node.isPresentExpression()) {
       SymTypeExpression type = TypeCheck3.typeOf(node.getExpression());
       if (!type.isObscureType()
           && type.isGenericType()
@@ -335,8 +332,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter
     // variable is not final for iterate expressions
     if (node.isPresentMCType()) {
       getPrinter().print(boxType(TypeCheck3.symTypeFromAST(node.getMCType())));
-    }
-    else if (node.isPresentExpression()) {
+    } else if (node.isPresentExpression()) {
       getPrinter().print(boxType(TypeCheck3.typeOf(node.getExpression())));
     }
     this.getPrinter().print(" ");

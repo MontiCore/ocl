@@ -27,23 +27,17 @@ public abstract class AbstractPrinter {
     return this.naming;
   }
 
-  @Deprecated
-  protected IDerive deriver;
+  @Deprecated protected IDerive deriver;
 
-  /**
-   * @deprecated use {@link de.monticore.types.check.TypeCheck}
-   */
+  /** @deprecated use {@link de.monticore.types.check.TypeCheck} */
   @Deprecated
   protected IDerive getDeriver() {
     return this.deriver;
   }
 
-  @Deprecated
-  protected ISynthesize syntheziser;
+  @Deprecated protected ISynthesize syntheziser;
 
-  /**
-   * @deprecated use {@link de.monticore.types.check.TypeCheck}
-   */
+  /** @deprecated use {@link de.monticore.types.check.TypeCheck} */
   @Deprecated
   protected ISynthesize getSynthesizer() {
     return this.syntheziser;
@@ -57,9 +51,7 @@ public abstract class AbstractPrinter {
 
   // common functions
 
-  /**
-   * @deprecated use {@link #boxType(SymTypeExpression)}
-   */
+  /** @deprecated use {@link #boxType(SymTypeExpression)} */
   @Deprecated
   protected String boxType(TypeCheckResult type) {
     return boxType(type.getResult());
@@ -79,9 +71,7 @@ public abstract class AbstractPrinter {
     return OCLSymTypeRelations.normalize(OCLSymTypeRelations.box(type)).printFullName();
   }
 
-  /**
-   * @deprecated use {@link #printExpressionBeginLambda(SymTypeExpression)}
-   */
+  /** @deprecated use {@link #printExpressionBeginLambda(SymTypeExpression)} */
   @Deprecated
   protected void printExpressionBeginLambda(TypeCheckResult type) {
     printExpressionBeginLambda(type.getResult());

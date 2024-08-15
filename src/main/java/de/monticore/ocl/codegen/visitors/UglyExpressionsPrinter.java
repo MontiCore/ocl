@@ -18,8 +18,7 @@ import de.monticore.types.check.ISynthesize;
 import de.se_rwth.commons.logging.Log;
 
 /**
- * @deprecated UglyExpressions are not part of OCL,
- *     thus, this is to be removed from the OCL-Project
+ * @deprecated UglyExpressions are not part of OCL, thus, this is to be removed from the OCL-Project
  */
 @Deprecated(forRemoval = true)
 public class UglyExpressionsPrinter extends AbstractPrinter

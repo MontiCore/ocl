@@ -26,9 +26,7 @@ public class SetExpressionsPrinter extends AbstractPrinter
 
   protected IndentPrinter printer;
 
-  /**
-   * @deprecated use other Constructor (requires TypeCheck3)
-   */
+  /** @deprecated use other Constructor (requires TypeCheck3) */
   @Deprecated
   public SetExpressionsPrinter(
       IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
