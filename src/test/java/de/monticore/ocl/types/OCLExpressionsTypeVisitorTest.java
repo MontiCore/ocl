@@ -11,7 +11,6 @@ import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._parser.OCLParser;
-import de.monticore.ocl.ocl.types3.OCLTypeCheck3;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.ocl.types3.util.OCLCollectionSymTypeFactory;
 import de.monticore.ocl.util.SymbolTableUtil;
@@ -56,9 +55,6 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     setupValues();
 
     parser = OCLMill.parser();
-
-    OCLTypeCheck3.init();
-    OCLSymTypeRelations.init();
 
     assertNoFindings();
   }
