@@ -8,6 +8,7 @@ import com.microsoft.z3.Context;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.ocl.ocl.OCLMill;
+import de.monticore.ocl.ocl.types3.OCLTypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,9 @@ public abstract class OCL2SMTAbstractTest {
     CD4CodeMill.globalScope().clear();
 
     CD2SMTMill.initDefault();
+
+    // init OCL TypeCheck again after other mills
+    OCLTypeCheck3.init();
   }
 
   protected void initLogger() {

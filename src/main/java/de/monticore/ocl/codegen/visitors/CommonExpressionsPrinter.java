@@ -15,7 +15,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.TypeCheckResult;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 
 public class CommonExpressionsPrinter extends AbstractPrinter
@@ -23,16 +23,20 @@ public class CommonExpressionsPrinter extends AbstractPrinter
 
   protected CommonExpressionsTraverser traverser;
 
+  /** @deprecated use other Constructor (requires TypeCheck3) */
+  @Deprecated
   public CommonExpressionsPrinter(
       IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
-    Preconditions.checkNotNull(printer);
-    Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(deriver);
-    Preconditions.checkNotNull(syntheziser);
-    this.printer = printer;
-    this.naming = naming;
+    this(printer, naming);
     this.deriver = deriver;
     this.syntheziser = syntheziser;
+  }
+
+  public CommonExpressionsPrinter(IndentPrinter printer, VariableNaming naming) {
+    Preconditions.checkNotNull(printer);
+    Preconditions.checkNotNull(naming);
+    this.printer = printer;
+    this.naming = naming;
   }
 
   @Override
@@ -171,12 +175,11 @@ public class CommonExpressionsPrinter extends AbstractPrinter
   @Override
   public void handle(ASTArrayAccessExpression node) {
     Log.errorIfNull(node);
-    TypeCheckResult exprTypeRes = getDeriver().deriveType(node.getExpression());
-    if (!exprTypeRes.isPresentResult()) {
+    SymTypeExpression exprType = TypeCheck3.typeOf(node.getExpression());
+    if (exprType.isObscureType()) {
       // error should be logged already
       getPrinter().print("NO_TYPE_DERIVED_ARRAY_ACCESS_EXPRESSION");
     } else {
-      SymTypeExpression exprType = exprTypeRes.getResult();
       getPrinter().print("(");
       node.getExpression().accept(getTraverser());
       getPrinter().print(")");
@@ -262,14 +265,14 @@ public class CommonExpressionsPrinter extends AbstractPrinter
    * @param node the expression to be printed
    */
   protected void printAsBoxedType(ASTExpression node) {
-    TypeCheckResult type = this.getDeriver().deriveType(node);
-    if (!type.isPresentResult()) {
+    SymTypeExpression type = TypeCheck3.typeOf(node);
+    if (type.isObscureType()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
       return;
     }
-    if (type.getResult().isPrimitive()) {
+    if (type.isPrimitive()) {
       getPrinter().print("((");
-      this.getPrinter().print(box(type.getResult().getTypeInfo().getFullName()));
+      this.getPrinter().print(box(type.getTypeInfo().getFullName()));
       getPrinter().print(") ");
       node.accept(getTraverser());
       getPrinter().print(")");

@@ -5,7 +5,12 @@ import de.monticore.ocl.ocl.types3.OCLTypeTraverserFactory;
 import de.monticore.types.check.types3wrapper.TypeCheck3AsISynthesize;
 import de.monticore.types3.Type4Ast;
 
-/** OCL Defaults */
+/**
+ * OCL Defaults
+ *
+ * @deprecated use {@link de.monticore.ocl.ocl.types3.OCLTypeCheck3}
+ */
+@Deprecated
 public class TypeCheck3AsOCLSynthesizer extends TypeCheck3AsISynthesize {
 
   public TypeCheck3AsOCLSynthesizer() {

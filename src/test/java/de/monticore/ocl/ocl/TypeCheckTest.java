@@ -2,13 +2,14 @@
 package de.monticore.ocl.ocl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
-import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLDeriver;
 import de.monticore.ocl.util.SymbolTableUtil;
-import de.monticore.types.check.IDerive;
-import de.monticore.types.check.TypeCheckResult;
+import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,14 +44,12 @@ public class TypeCheckTest extends AbstractTest {
     SymbolTableUtil.runSymTabGenitor(ast.get());
     SymbolTableUtil.runSymTabCompleter(ast.get());
 
-    IDerive deriver = new TypeCheck3AsOCLDeriver();
-
-    TypeCheckResult t =
-        deriver.deriveType(
-            ((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getExpression());
+    ASTExpression expr =
+        ((ASTOCLInvariant) ast.get().getOCLArtifact().getOCLConstraint(0)).getExpression();
+    SymTypeExpression type = TypeCheck3.typeOf(expr);
 
     // Additional check that nothing broke
     assertNoFindings();
-    assertThat(t.isPresentResult()).isTrue();
+    assertFalse(type.isObscureType());
   }
 }

@@ -6,6 +6,7 @@ import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
+import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheckResult;
 import de.se_rwth.commons.logging.Log;
 
@@ -26,14 +27,18 @@ public abstract class AbstractPrinter {
     return this.naming;
   }
 
-  protected IDerive deriver;
+  @Deprecated protected IDerive deriver;
 
+  /** @deprecated use {@link de.monticore.types.check.TypeCheck} */
+  @Deprecated
   protected IDerive getDeriver() {
     return this.deriver;
   }
 
-  protected ISynthesize syntheziser;
+  @Deprecated protected ISynthesize syntheziser;
 
+  /** @deprecated use {@link de.monticore.types.check.TypeCheck} */
+  @Deprecated
   protected ISynthesize getSynthesizer() {
     return this.syntheziser;
   }
@@ -46,6 +51,12 @@ public abstract class AbstractPrinter {
 
   // common functions
 
+  /** @deprecated use {@link #boxType(SymTypeExpression)} */
+  @Deprecated
+  protected String boxType(TypeCheckResult type) {
+    return boxType(type.getResult());
+  }
+
   /**
    * boxes the type e.g. {@code List<int>} to {@code java.util.List<Integer>}
    *
@@ -53,11 +64,17 @@ public abstract class AbstractPrinter {
    * @return String of type, boxed
    * @deprecated TC1 logic, needs to be replaced (more) with TC3
    */
-  protected String boxType(TypeCheckResult type) {
-    if (!type.isPresentResult()) {
+  protected String boxType(SymTypeExpression type) {
+    if (type.isObscureType()) {
       Log.error(NO_TYPE_DERIVED_ERROR);
     }
-    return OCLSymTypeRelations.normalize(OCLSymTypeRelations.box(type.getResult())).printFullName();
+    return OCLSymTypeRelations.normalize(OCLSymTypeRelations.box(type)).printFullName();
+  }
+
+  /** @deprecated use {@link #printExpressionBeginLambda(SymTypeExpression)} */
+  @Deprecated
+  protected void printExpressionBeginLambda(TypeCheckResult type) {
+    printExpressionBeginLambda(type.getResult());
   }
 
   /**
@@ -66,7 +83,7 @@ public abstract class AbstractPrinter {
    *
    * @param type the type of the expression
    */
-  protected void printExpressionBeginLambda(TypeCheckResult type) {
+  protected void printExpressionBeginLambda(SymTypeExpression type) {
     this.getPrinter().print("((java.util.function.Supplier<");
     this.getPrinter().print(boxType(type));
     this.getPrinter().println(">)()->{");

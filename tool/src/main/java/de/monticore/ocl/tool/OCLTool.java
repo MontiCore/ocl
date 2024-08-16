@@ -15,11 +15,8 @@ import de.monticore.ocl.ocl._symboltable.OCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.oclexpressions.cocos.IterateExpressionVariableUsageIsCorrect;
 import de.monticore.ocl.setexpressions.cocos.SetComprehensionHasGenerator;
-import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLDeriver;
-import de.monticore.ocl.types.check.types3wrapper.TypeCheck3AsOCLSynthesizer;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
-import de.monticore.types.check.IDerive;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
@@ -417,9 +414,7 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
     checker.addCoCo(new ContextHasOnlyOneType());
     checker.addCoCo(new SetComprehensionHasGenerator());
     checker.addCoCo(new UnnamedInvariantDoesNotHaveParameters());
-    checker.addCoCo(
-        new VariableDeclarationOfCorrectType(
-            new TypeCheck3AsOCLDeriver(), new TypeCheck3AsOCLSynthesizer()));
+    checker.addCoCo(new VariableDeclarationOfCorrectType());
     checker.checkAll(ast);
   }
 
@@ -443,10 +438,9 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
    */
   public void checkAllCoCos(ASTOCLCompilationUnit ast) {
     checkAllExceptTypeCoCos(ast);
-    IDerive deriver = new TypeCheck3AsOCLDeriver();
     OCLCoCoChecker checker = new OCLCoCoChecker();
-    checker.addCoCo(new ExpressionValidCoCo(deriver));
-    checker.addCoCo(new PreAndPostConditionsAreBooleanType(deriver));
+    checker.addCoCo(new ExpressionValidCoCo());
+    checker.addCoCo(new PreAndPostConditionsAreBooleanType());
     checker.checkAll(ast);
   }
 

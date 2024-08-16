@@ -10,6 +10,7 @@ import de.monticore.ocl.optionaloperators._visitor.OptionalOperatorsVisitor2;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 import org.assertj.core.util.Preconditions;
 
@@ -18,20 +19,20 @@ public class OptionalOperatorsPrinter extends AbstractPrinter
 
   protected OptionalOperatorsTraverser traverser;
 
+  /** @deprecated use other Constructor (requires TypeCheck3) */
+  @Deprecated
   public OptionalOperatorsPrinter(
       IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize syntheziser) {
-    Preconditions.checkNotNull(printer);
-    Preconditions.checkNotNull(naming);
-    Preconditions.checkNotNull(deriver);
-    Preconditions.checkNotNull(syntheziser);
-    this.printer = printer;
-    this.naming = naming;
+    this(printer, naming);
     this.deriver = deriver;
     this.syntheziser = syntheziser;
   }
 
-  protected IDerive getDeriver() {
-    return this.deriver;
+  public OptionalOperatorsPrinter(IndentPrinter printer, VariableNaming naming) {
+    Preconditions.checkNotNull(printer);
+    Preconditions.checkNotNull(naming);
+    this.printer = printer;
+    this.naming = naming;
   }
 
   protected IndentPrinter getPrinter() {
@@ -54,7 +55,7 @@ public class OptionalOperatorsPrinter extends AbstractPrinter
     // typecheck returns Integer for (a?:5)
     // in Java, (a.isPresent()?a.get():5) has type int
     this.getPrinter().print("((");
-    this.getPrinter().print(boxType(getDeriver().deriveType(node)));
+    this.getPrinter().print(boxType(TypeCheck3.typeOf(node)));
     this.getPrinter().print(")(");
     node.getLeft().accept(getTraverser());
     this.getPrinter().print(".isPresent() ? ");
