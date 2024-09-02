@@ -33,6 +33,11 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
   /* Part 1: Handling the arguments and options
   /*=================================================================*/
 
+  public static void main(String[] args) {
+    OCLTool tool = new OCLTool();
+    tool.run(args);
+  }
+
   /**
    * Processes user input from command line and delegates to the corresponding tools.
    *

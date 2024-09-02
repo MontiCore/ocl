@@ -1,7 +1,19 @@
 package de.monticore.ocl.tool;
 
+import de.monticore.ocl.ocl.OCLMill;
+import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OCLToolTest {
 
@@ -18,6 +30,21 @@ public class OCLToolTest {
     cd = path + "Tool.cd";
     oclv1 = path + "Tool.ocl";
     od = path + "Example.od";
+  }
+
+  @Test
+  public void testPrettyPrint() throws IOException {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(out));
+    OCLTool.main(new String[] {
+        "-i", oclv1,
+        "-pp"
+    });
+    String printed = out.toString().trim();
+    assertNotNull(printed);
+    Optional<ASTOCLCompilationUnit> astOpt = OCLMill.parser().parse_String(printed);
+    assertEquals(0, Log.getFindingsCount());
+    assertTrue(astOpt.isPresent());
   }
 
   @Test
