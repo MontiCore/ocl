@@ -38,8 +38,6 @@ dependencies {
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
 }
 
-group = 'de.monticore.lang'
-
 java {
   toolchain {
     languageVersion = JavaLanguageVersion.of(11)
