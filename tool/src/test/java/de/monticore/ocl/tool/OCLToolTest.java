@@ -1,19 +1,18 @@
 package de.monticore.ocl.tool;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.se_rwth.commons.logging.Log;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class OCLToolTest {
 
@@ -36,10 +35,7 @@ public class OCLToolTest {
   public void testPrettyPrint() throws IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     System.setOut(new PrintStream(out));
-    OCLTool.main(new String[] {
-        "-i", oclv1,
-        "-pp"
-    });
+    OCLTool.main(new String[] {"-i", oclv1, "-pp"});
     String printed = out.toString().trim();
     assertNotNull(printed);
     Optional<ASTOCLCompilationUnit> astOpt = OCLMill.parser().parse_String(printed);
