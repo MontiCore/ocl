@@ -194,16 +194,6 @@ sourcesJar.dependsOn project.collect { it.tasks.withType(MCTask)}
 // generated java doc contains errors, disable for now
 javadoc.failOnError(false)
 
-shadowJar {
-  manifest {
-    attributes "Main-Class": "de.monticore.ocl.ocl.${archiveBaseName.get().toUpperCase()}Tool"
-  }
-  archiveFileName = "MC${archiveBaseName.get().toUpperCase()}.${archiveExtension.get()}"
-  archiveClassifier = "mc-tool"
-  minimize {
-    exclude(dependency('org.freemarker:freemarker:.*'))
-  }
-}
 
 task symbolJar(type: Jar) {
   from sourceSets.symbols.output
@@ -215,7 +205,7 @@ artifacts {
   archives symbolJar
 }
 
-jar.dependsOn(symbolJar, shadowJar)
+jar.dependsOn(symbolJar)
 
 publishing {
   publications {

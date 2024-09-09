@@ -1,6 +1,7 @@
 plugins {
   id 'java'
   id 'com.github.johnrengelman.shadow' //version '6.0.0'
+  id 'maven-publish'
 }
 
 repositories {
@@ -37,6 +38,8 @@ dependencies {
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
 }
 
+group = 'de.monticore.lang'
+
 java {
   toolchain {
     languageVersion = JavaLanguageVersion.of(11)
@@ -53,9 +56,23 @@ shadowJar {
   }
   archiveFileName = "MCOCL.jar"
   archiveClassifier = "mc-tool"
-  minimize {
-    exclude(dependency('org.freemarker:freemarker:.*'))
-  }
+  zip64 = true
 }
 
 jar.dependsOn(shadowJar)
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      // from components.java
+      artifact shadowJar
+      artifactId = "ocl"
+    }
+  }
+  repositories.maven {
+    name = "$SE_Nexus_ID"
+    credentials.username mavenUser
+    credentials.password mavenPassword
+    url = version.endsWith('SNAPSHOT') ? "$snapshotsRepoUrl" : "$releasesRepoUrl"
+  }
+}
