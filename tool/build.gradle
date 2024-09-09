@@ -38,7 +38,7 @@ dependencies {
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
 }
 
-group = 'de.monticore.lang'
+group = 'de.monticore.lang.ocl'
 
 java {
   toolchain {
