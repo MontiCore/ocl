@@ -59,6 +59,14 @@ shadowJar {
   zip64 = true
 }
 
+tasks.register("ocldiffDemo", JavaExec) {
+  classpath = files(tasks.shadowJar.archiveFile)
+  def modelDir = "src/test/resources/tool/"
+  def cd = modelDir+ "Tool.cd"
+  def ocl = modelDir+ "Tool.ocl"
+  args = ["--diff", "-cd", cd, "-ocl", ocl, "-nocl", ocl]
+}
+
 jar.dependsOn(shadowJar)
 
 publishing {
