@@ -66,6 +66,7 @@ tasks.register("ocldiffDemo", JavaExec) {
   def ocl = modelDir+ "Tool.ocl"
   args = ["--diff", "-cd", cd, "-ocl", ocl, "-nocl", ocl]
 }
+build.dependsOn('ocldiffDemo')
 
 jar.dependsOn(shadowJar)
 
