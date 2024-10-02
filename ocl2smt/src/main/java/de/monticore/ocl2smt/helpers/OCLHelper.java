@@ -4,6 +4,7 @@ import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
 import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisTraverser;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -201,6 +202,10 @@ public class OCLHelper {
 
     final CDBasisTraverser traverser = CD4AnalysisMill.traverser();
     traverser.add4CDBasis(preAttributeTrafo);
+    if (traverser instanceof CD4CodeBasisTraverser) {
+      // CD4CodeBasis overrides the CDClass production
+      ((CD4CodeBasisTraverser) traverser).add4CD4CodeBasis(preAttributeTrafo);
+    }
     traverser.setCDBasisHandler(preAttributeTrafo);
     ast.accept(traverser);
   }

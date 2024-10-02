@@ -1,6 +1,7 @@
 package de.monticore.ocl2smt.trafo;
 
 import de.monticore.cd.facade.CDAttributeFacade;
+import de.monticore.cd4codebasis._visitor.CD4CodeBasisVisitor2;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.*;
@@ -11,7 +12,7 @@ import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
-public class BuildPreCDTrafo implements CDBasisHandler, CDBasisVisitor2 {
+public class BuildPreCDTrafo implements CDBasisHandler, CDBasisVisitor2, CD4CodeBasisVisitor2 {
 
   protected CDBasisTraverser traverser;
 
@@ -33,6 +34,12 @@ public class BuildPreCDTrafo implements CDBasisHandler, CDBasisVisitor2 {
 
   @Override
   public void handle(ASTCDClass node) {
+    node.getCDAttributeList().forEach(attr -> node.addCDMember(createPreAttribute(attr)));
+  }
+
+  @Override
+  public void visit(de.monticore.cd4codebasis._ast.ASTCDClass node) {
+    // CD4CodeBasis overrides the CDClass production
     node.getCDAttributeList().forEach(attr -> node.addCDMember(createPreAttribute(attr)));
   }
 
