@@ -210,7 +210,7 @@ public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
     SymTypeExpression leftType = null;
     Set<String> varNames = new HashSet<>();
     if (node.getLeft().isPresentExpression()) {
-      SetExpressionsTraverser traverser = SetExpressionsMill.traverser();
+      SetExpressionsTraverser traverser = SetExpressionsMill.inheritanceTraverser();
       NameExpressionsFromExpressionVisitor nameVisitor = new NameExpressionsFromExpressionVisitor();
       traverser.add4ExpressionsBasis(nameVisitor);
       node.getLeft().getExpression().accept(traverser);

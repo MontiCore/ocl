@@ -157,7 +157,7 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
       Set<ASTNameExpression> names = null;
       {
         NameExpressionCollector namedExpr = new NameExpressionCollector();
-        OCLTraverser trav = OCLMill.traverser();
+        OCLTraverser trav = OCLMill.inheritanceTraverser();
         trav.add4ExpressionsBasis(namedExpr);
         zValue.accept(trav);
 

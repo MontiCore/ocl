@@ -37,7 +37,7 @@ public class OCLTypeCheck3 extends MapBasedTypeCheck3 {
   protected static void initTC3Delegate() {
     Log.trace("init OCLTypeCheck3", "TypeCheck setup");
 
-    OCLTraverser traverser = OCLMill.traverser();
+    OCLTraverser traverser = OCLMill.inheritanceTraverser();
     Type4Ast type4Ast = new Type4Ast();
     InferenceContext4Ast ctx4Ast = new InferenceContext4Ast();
 

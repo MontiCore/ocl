@@ -13,7 +13,7 @@ import de.monticore.types.check.*;
 public class OCLDeriver extends AbstractDerive {
 
   public OCLDeriver() {
-    this(OCLMill.traverser());
+    this(OCLMill.inheritanceTraverser());
   }
 
   public OCLDeriver(OCLTraverser traverser) {

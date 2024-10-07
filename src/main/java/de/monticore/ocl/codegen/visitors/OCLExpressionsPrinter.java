@@ -224,7 +224,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter
     this.getPrinter().print(" &= ");
     node.getExpression().accept(getTraverser());
     this.getPrinter().println(";");
-    OCLExpressionsTraverser endTraverser = OCLMill.traverser();
+    OCLExpressionsTraverser endTraverser = OCLMill.inheritanceTraverser();
     endTraverser.setOCLExpressionsHandler(new EndingBracketPrinter(this.getPrinter()));
     node.getInDeclarationList().forEach(dec -> dec.accept(endTraverser));
     this.getPrinter().print("return ");
@@ -244,7 +244,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter
     this.getPrinter().print(" |= ");
     node.getExpression().accept(getTraverser());
     this.getPrinter().println(";");
-    OCLExpressionsTraverser endTraverser = OCLMill.traverser();
+    OCLExpressionsTraverser endTraverser = OCLMill.inheritanceTraverser();
     endTraverser.setOCLExpressionsHandler(new EndingBracketPrinter(this.getPrinter()));
     node.getInDeclarationList().forEach(dec -> dec.accept(endTraverser));
     this.getPrinter().print("return ");

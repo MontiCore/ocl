@@ -12,7 +12,7 @@ import de.monticore.types.check.SynthesizeSymTypeFromMCSimpleGenericTypes;
 public class OCLSynthesizer extends AbstractSynthesize {
 
   public OCLSynthesizer() {
-    this(OCLMill.traverser());
+    this(OCLMill.inheritanceTraverser());
   }
 
   public OCLSynthesizer(OCLTraverser traverser) {
