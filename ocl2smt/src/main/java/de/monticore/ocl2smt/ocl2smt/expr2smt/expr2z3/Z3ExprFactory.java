@@ -541,9 +541,7 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
       }
     }
 
-    Log.error(
-        "Cannot resolve role or attribute " + role + " for the type " + astcdType.getName()
-    );
+    Log.error("Cannot resolve role or attribute " + role + " for the type " + astcdType.getName());
     return null;
   }
 
