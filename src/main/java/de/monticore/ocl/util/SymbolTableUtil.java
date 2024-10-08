@@ -86,7 +86,7 @@ public class SymbolTableUtil {
     stCompleter3.setDeriver(new TypeCheck3AsOCLDeriver());
     stCompleter3.setSynthesizer(new TypeCheck3AsOCLSynthesizer());
 
-    OCLTraverser t = OCLMill.traverser();
+    OCLTraverser t = OCLMill.inheritanceTraverser();
     t.add4BasicSymbols(stCompleter);
     t.add4OCL(stCompleter);
     t.setOCLHandler(stCompleter);

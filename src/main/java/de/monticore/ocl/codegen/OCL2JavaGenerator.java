@@ -73,7 +73,7 @@ public class OCL2JavaGenerator {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
 
-    this.traverser = OCLMill.traverser();
+    this.traverser = OCLMill.inheritanceTraverser();
 
     // Expressions
     CommonExpressionsPrinter comExprPrinter =
@@ -125,7 +125,7 @@ public class OCL2JavaGenerator {
     Preconditions.checkNotNull(printer);
     Preconditions.checkNotNull(naming);
 
-    this.traverser = OCLMill.traverser();
+    this.traverser = OCLMill.inheritanceTraverser();
 
     // Expressions
     CommonExpressionsPrinter comExprPrinter = new CommonExpressionsPrinter(printer, naming);

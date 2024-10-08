@@ -199,7 +199,7 @@ public class OCLHelper {
   public static void buildPreCD(ASTCDCompilationUnit ast) {
     final BuildPreCDTrafo preAttributeTrafo = new BuildPreCDTrafo();
 
-    final CDBasisTraverser traverser = CD4AnalysisMill.traverser();
+    final CDBasisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
     traverser.add4CDBasis(preAttributeTrafo);
     traverser.setCDBasisHandler(preAttributeTrafo);
     ast.accept(traverser);

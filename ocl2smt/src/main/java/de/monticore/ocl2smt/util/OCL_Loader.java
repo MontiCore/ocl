@@ -42,7 +42,7 @@ public class OCL_Loader {
     ASTCDCompilationUnit cdAST = parseCDModel(cdFile.getAbsolutePath());
 
     // apply role name trafo
-    CD4CodeTraverser t = CD4CodeMill.traverser();
+    CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
     t.add4CDAssociation(new CDAssociationRoleNameTrafo());
     cdAST.accept(t);
 
@@ -62,7 +62,7 @@ public class OCL_Loader {
     // transformations that need an already created symbol table
     createCDSymTab(ast);
     final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo = new CDAssociationRoleNameTrafo();
-    final CDAssociationTraverser traverser = CD4AnalysisMill.traverser();
+    final CDAssociationTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
     traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
     ast.accept(traverser);
   }
@@ -70,7 +70,7 @@ public class OCL_Loader {
   protected static void transformAllRoles(ASTCDCompilationUnit cdAST) {
     final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
         new CDAssociationCreateFieldsFromAllRoles();
-    final CD4AnalysisTraverser traverser = CD4AnalysisMill.traverser();
+    final CD4AnalysisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
     traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
     traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
     cdAssociationCreateFieldsFromAllRoles.transform(cdAST);
@@ -126,7 +126,7 @@ public class OCL_Loader {
         new OCLSymbolTableCompleter(
             ast.getMCImportStatementList(),
             MCBasicTypesMill.mCQualifiedNameBuilder().build().getQName());
-    c.setTraverser(OCLMill.traverser());
+    c.setTraverser(OCLMill.inheritanceTraverser());
     ast.accept(c.getTraverser());
     return as;
   }

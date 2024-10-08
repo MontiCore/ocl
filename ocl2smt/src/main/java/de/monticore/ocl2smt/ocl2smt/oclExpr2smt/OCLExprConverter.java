@@ -311,7 +311,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?>> {
   private Set<String> openSetCompScope(ASTSetComprehension node) {
 
     // collect all variables in the set comp
-    OCLTraverser traverser = OCLMill.traverser();
+    OCLTraverser traverser = OCLMill.inheritanceTraverser();
     SetVariableCollector varCollector = new SetVariableCollector();
     SetGeneratorCollector generatorCollector = new SetGeneratorCollector();
     traverser.add4SetExpressions(varCollector);
