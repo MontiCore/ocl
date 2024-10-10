@@ -4,35 +4,20 @@ import de.monticore.cd.facade.CDAttributeFacade;
 import de.monticore.cdassociation.CDAssociationMill;
 import de.monticore.cdassociation._ast.*;
 import de.monticore.cdbasis._ast.*;
-import de.monticore.cdbasis._visitor.CDBasisHandler;
-import de.monticore.cdbasis._visitor.CDBasisTraverser;
 import de.monticore.cdbasis._visitor.CDBasisVisitor2;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifier;
 
-public class BuildPreCDTrafo implements CDBasisHandler, CDBasisVisitor2 {
-
-  protected CDBasisTraverser traverser;
+public class BuildPreCDTrafo implements CDBasisVisitor2 {
 
   @Override
-  public CDBasisTraverser getTraverser() {
-    return traverser;
-  }
-
-  @Override
-  public void setTraverser(CDBasisTraverser traverser) {
-    this.traverser = traverser;
-  }
-
-  @Override
-  public void handle(ASTCDDefinition node) {
+  public void visit(ASTCDDefinition node) {
     node.getCDAssociationsList().forEach(assoc -> node.addCDElement(buildPreAssociation(assoc)));
-    node.getCDClassesList().forEach(Class -> Class.accept(traverser));
   }
 
   @Override
-  public void handle(ASTCDClass node) {
+  public void visit(ASTCDClass node) {
     node.getCDAttributeList().forEach(attr -> node.addCDMember(createPreAttribute(attr)));
   }
 
