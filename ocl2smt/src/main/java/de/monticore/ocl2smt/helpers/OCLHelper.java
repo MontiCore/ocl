@@ -201,7 +201,6 @@ public class OCLHelper {
 
     final CDBasisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
     traverser.add4CDBasis(preAttributeTrafo);
-    traverser.setCDBasisHandler(preAttributeTrafo);
     ast.accept(traverser);
   }
 
