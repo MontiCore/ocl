@@ -3,7 +3,7 @@ package de.monticore.ocl2smt.helpers;
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.CDHelper;
 import de.monticore.cd2smt.Helper.SMTHelper;
-import de.monticore.cd4analysis.CD4AnalysisMill;
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDDefinition;
 import de.monticore.cdbasis._ast.ASTCDType;
@@ -199,7 +199,7 @@ public class OCLHelper {
   public static void buildPreCD(ASTCDCompilationUnit ast) {
     final BuildPreCDTrafo preAttributeTrafo = new BuildPreCDTrafo();
 
-    final CDBasisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
+    final CDBasisTraverser traverser = CD4CodeMill.inheritanceTraverser();
     traverser.add4CDBasis(preAttributeTrafo);
     ast.accept(traverser);
   }

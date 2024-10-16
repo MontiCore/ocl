@@ -2,7 +2,6 @@
 package de.monticore.ocl2smt.util;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd4analysis.CD4AnalysisMill;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4code.CD4CodeMill;
@@ -62,7 +61,7 @@ public class OCL_Loader {
     // transformations that need an already created symbol table
     createCDSymTab(ast);
     final CDAssociationRoleNameTrafo cdAssociationRoleNameTrafo = new CDAssociationRoleNameTrafo();
-    final CDAssociationTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
+    final CDAssociationTraverser traverser = CD4CodeMill.inheritanceTraverser();
     traverser.add4CDAssociation(cdAssociationRoleNameTrafo);
     ast.accept(traverser);
   }
@@ -70,7 +69,7 @@ public class OCL_Loader {
   protected static void transformAllRoles(ASTCDCompilationUnit cdAST) {
     final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
         new CDAssociationCreateFieldsFromAllRoles();
-    final CD4AnalysisTraverser traverser = CD4AnalysisMill.inheritanceTraverser();
+    final CD4AnalysisTraverser traverser = CD4CodeMill.inheritanceTraverser();
     traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
     traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
     cdAssociationCreateFieldsFromAllRoles.transform(cdAST);

@@ -1,8 +1,10 @@
 package de.monticore.ocl2smt;
 
 import static de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy.Strategy.DEFAULT;
+import static de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy.Strategy.ONE2ONE;
 import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.*;
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.ME;
+import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
 
 import com.microsoft.z3.Context;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
@@ -42,11 +44,12 @@ public abstract class OCL2SMTAbstractTest {
   }
 
   public static Stream<Arguments> cd2smtStrategies() {
-    return Stream.of(Arguments.of(SS, ME, DEFAULT));
-    // Arguments.of(SS, ME, ONE2ONE),
-    //  Arguments.of(DS, ME, DEFAULT),
-    //  Arguments.of(DS, ME, ONE2ONE),
-    //  Arguments.of(SSCOMB, SE, DEFAULT),
-    // Arguments.of(SSCOMB, SE, ONE2ONE)););
+    return Stream.of(
+        Arguments.of(SS, ME, DEFAULT),
+        Arguments.of(SS, ME, ONE2ONE),
+        Arguments.of(DS, ME, DEFAULT),
+        Arguments.of(DS, ME, ONE2ONE),
+        Arguments.of(SSCOMB, SE, DEFAULT),
+        Arguments.of(SSCOMB, SE, ONE2ONE));
   }
 }

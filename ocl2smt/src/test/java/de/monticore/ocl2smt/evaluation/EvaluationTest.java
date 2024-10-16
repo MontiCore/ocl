@@ -14,12 +14,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
-@Disabled
 public class EvaluationTest extends OCLDiffAbstractTest {
   private List<ASTCDCompilationUnit> ast;
   private List<ASTOCLCompilationUnit> ocl;
@@ -45,7 +41,7 @@ public class EvaluationTest extends OCLDiffAbstractTest {
   }
 
   @Test
-  @Disabled
+  @Tag("non-terminating")
   public void evaluateOCLDiff() throws IOException {
     Log.info(
         "------------------------------------------------------------------------------------\n \n \n ",
@@ -85,7 +81,7 @@ public class EvaluationTest extends OCLDiffAbstractTest {
   }
 
   @Test
-  @Disabled
+  @Tag("non-terminating")
   public void evaluateCDAndOCLDiff() throws IOException {
     Log.info(
         "------------------------------------------------------------------------------------\n \n \n ",
@@ -127,7 +123,7 @@ public class EvaluationTest extends OCLDiffAbstractTest {
   }
 
   @Test
-  @Disabled
+  @Tag("non-terminating")
   public void evaluateOpDiff() throws IOException {
     Log.info(
         "------------------------------------------------------------------------------------\n \n \n ",
