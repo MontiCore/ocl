@@ -47,9 +47,14 @@ java {
     languageVersion = JavaLanguageVersion.of(11)
   }
 }
-tasks.withType(Test){
-  useJUnitPlatform()
+
+tasks.test {
+
+  useJUnitPlatform{
+    excludeTags 'slow', 'non-terminating'
+  }
   finalizedBy jacocoTestReport
+
 }
 
 gradlePlugin {

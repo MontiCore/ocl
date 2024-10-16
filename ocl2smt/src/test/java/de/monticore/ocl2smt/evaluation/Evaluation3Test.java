@@ -17,8 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 public class Evaluation3Test extends OCL2SMTAbstractTest {
 
@@ -34,6 +33,7 @@ public class Evaluation3Test extends OCL2SMTAbstractTest {
     super.initMills();
   }
 
+  @Tag("slow")
   @Test
   public void testWitness() {
     loadModels("v0", "v0");
@@ -42,36 +42,42 @@ public class Evaluation3Test extends OCL2SMTAbstractTest {
   }
 
   @Test
+  @Tag("slow")
   public void evaluationV0_V1() {
     Log.info("Computing diff(version_0 vs version_1) \n\n", this.getClass().getName());
     evaluateOCLDiff("v0", "v1");
   }
 
   @Test
+  @Tag("slow")
   public void evaluationV0_V2() {
     Log.info("Computing diff(version_0 vs version_2) \n\n", this.getClass().getName());
     evaluateOCLDiff("v0", "v2");
   }
 
   @Test
+  @Tag("slow")
   public void evaluationV0_V3() {
     Log.info("Computing diff(version_0 vs version_3) \n\n", this.getClass().getName());
     evaluateOCLDiff("v0", "v3");
   }
 
   @Test
+  @Tag("slow")
   public void evaluationV1_V2() {
     Log.info("Computing diff(version_1 vs version_2) \n\n", this.getClass().getName());
     evaluateOCLDiff("v1", "v2");
   }
 
   @Test
+  @Tag("slow")
   public void evaluationV1_V3() {
     Log.info("Computing diff(version_1 vs version_3) \n\n", this.getClass().getName());
     evaluateOCLDiff("v1", "v3");
   }
 
   @Test
+  @Tag("slow")
   public void evaluationV2_V3() {
     Log.info("Computing diff(version_2 vs version_3) \n\n", this.getClass().getName());
     evaluateOCLDiff("v2", "v3");

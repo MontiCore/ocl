@@ -18,12 +18,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
-@Disabled("Use finite strategies which currently do not work well")
 public class Evaluation2Test extends OCL2SMTAbstractTest {
 
   private final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt/evaluation2";
@@ -41,6 +37,7 @@ public class Evaluation2Test extends OCL2SMTAbstractTest {
   }
 
   @Test
+  @Tag("non-terminating")
   public void checkConsistencyOldVersionTest() {
 
     ASTODArtifact witness =
@@ -52,6 +49,7 @@ public class Evaluation2Test extends OCL2SMTAbstractTest {
   }
 
   @Test
+  @Tag("non-terminating")
   public void checkConsistencyNewVersionTest() {
 
     ASTODArtifact witness =
@@ -63,6 +61,7 @@ public class Evaluation2Test extends OCL2SMTAbstractTest {
   }
 
   @Test
+  @Tag("non-terminating")
   public void evaluateOCLDiff() {
     OCLInvDiffResult res;
     CD2SMTMill.init(
