@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.codegen.visitors;
 
+import com.google.common.base.Preconditions;
 import de.monticore.expressions.commonexpressions._ast.ASTInfixExpression;
 import de.monticore.ocl.codegen.util.VariableNaming;
 import de.monticore.ocl.optionaloperators._ast.*;
@@ -12,7 +13,6 @@ import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
 import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
-import org.assertj.core.util.Preconditions;
 
 public class OptionalOperatorsPrinter extends AbstractPrinter
     implements OptionalOperatorsHandler, OptionalOperatorsVisitor2 {
