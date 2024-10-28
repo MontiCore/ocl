@@ -21,7 +21,7 @@ stages:
 Validate Gradle:
   stage: build
   script:
-    - gradle assemble --refresh-dependencies
+    - gradle assemble --refresh-dependencies --warning-mode all
   artifacts:
     paths:
       - ./target/
