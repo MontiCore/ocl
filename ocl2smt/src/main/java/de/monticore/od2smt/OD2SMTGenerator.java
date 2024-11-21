@@ -95,6 +95,13 @@ public class OD2SMTGenerator implements IOD2SMTGenerator {
     return res;
   }
 
+  @Override
+  public void closeCtx() {
+    if (ctx != null) {
+      ctx.close();
+    }
+  }
+
   private void convert(ASTODObject node) {
     Set<IdentifiableBoolExpr> objectConstr = new HashSet<>();
     String objectName = "object_" + count_object;

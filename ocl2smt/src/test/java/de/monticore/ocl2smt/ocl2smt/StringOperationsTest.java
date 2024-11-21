@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class StringOperationsTest extends ExpressionAbstractTest {
+public class StringOperationsTest extends CleanExpr2SMTTest {
   @BeforeEach
   public void setup() throws IOException {
     super.initLogger();

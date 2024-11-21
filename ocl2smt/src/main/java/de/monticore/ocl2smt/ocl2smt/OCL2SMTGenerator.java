@@ -125,4 +125,10 @@ public class OCL2SMTGenerator {
   private Z3ExprAdapter mkAnd(List<Z3ExprAdapter> constraints) {
     return constraints.stream().reduce(eFactory.mkBool(true), eFactory::mkAnd);
   }
+
+  public void closeCtx() {
+    if (getCtx() != null) {
+      getCtx().close();
+    }
+  }
 }

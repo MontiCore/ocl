@@ -1,14 +1,14 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt;
 
-import de.monticore.ocl2smt.ocl2smt.ExpressionAbstractTest;
+import de.monticore.ocl2smt.ocl2smt.CleanExpr2SMTTest;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class AttributeTest extends ExpressionAbstractTest {
+public class AttributeTest extends CleanExpr2SMTTest {
   @BeforeEach
   public void setup() throws IOException {
     super.initLogger();

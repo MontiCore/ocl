@@ -6,6 +6,7 @@ import de.monticore.ocl2smt.ocl2smt.ExpressionAbstractTest;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import java.io.IOException;
 import java.util.Set;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -31,5 +32,12 @@ public class SetOperationsTest extends ExpressionAbstractTest {
   @ValueSource(strings = {"SetOp5", "SetOp7", "SetOp9", "SetOp12"})
   public void testSetOperationUnSat(String value) {
     testUnsatInv(Set.of(value), "setOperation");
+  }
+
+  @AfterEach
+  public void cleanUp() {
+    if (ocl2SMTGenerator != null) {
+      ocl2SMTGenerator.closeCtx();
+    }
   }
 }

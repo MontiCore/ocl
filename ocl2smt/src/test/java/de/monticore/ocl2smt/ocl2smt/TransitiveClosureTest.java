@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class TransitiveClosureTest extends ExpressionAbstractTest {
+public class TransitiveClosureTest extends CleanExpr2SMTTest {
   @BeforeEach
   public void setup() throws IOException {
     super.initLogger();

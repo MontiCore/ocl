@@ -49,4 +49,9 @@ public interface IOD2SMTGenerator {
    * @return all the constraints defined for thw object diagram
    */
   Set<IdentifiableBoolExpr> getAllODConstraints();
+
+  /***
+   * closes the SMT context
+   */
+  void closeCtx();
 }

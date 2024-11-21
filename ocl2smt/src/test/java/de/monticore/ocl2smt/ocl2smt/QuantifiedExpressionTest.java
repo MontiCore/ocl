@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class QuantifiedExpressionTest extends ExpressionAbstractTest {
+public class QuantifiedExpressionTest extends CleanExpr2SMTTest {
 
   @BeforeEach
   public void setup() throws IOException {

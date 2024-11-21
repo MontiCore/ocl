@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -106,5 +107,12 @@ class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
     String newObjName = SMTHelper.buildObjectName(model.evaluate(oldObj, true), objType);
 
     return OD2SMTUtils.getObject(newObjName, witness);
+  }
+
+  @AfterEach
+  public void cleanUp() {
+    if (od2SMTGenerator != null) {
+      od2SMTGenerator.closeCtx();
+    }
   }
 }
