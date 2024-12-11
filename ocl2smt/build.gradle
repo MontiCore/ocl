@@ -38,6 +38,7 @@ dependencies {
   testImplementation "org.assertj:assertj-core:$assertj_version"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
+  testImplementation group: 'org.junit.platform', name: 'junit-platform-launcher', version: '1.11.3'
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
 }
 
@@ -74,4 +75,3 @@ publishing {
     url = version.endsWith('SNAPSHOT') ? "$snapshotsRepoUrl" : "$releasesRepoUrl"
   }
 }
-
