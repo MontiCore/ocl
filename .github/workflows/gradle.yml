@@ -15,7 +15,7 @@ on:
 
 env:
   GRADLE_VERSION: 7.4 # Gradle version used
-  GRADLE_CLI_OPTS: "-Pci --build-cache " # CLI options passed to Gradle
+  GRADLE_CLI_OPTS: "-Pci --build-cache --info " # CLI options passed to Gradle
 
 permissions:
   contents: read # This action may run somewhat unsafe code
