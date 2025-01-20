@@ -16,6 +16,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @deprecated unused (at least in OCL)
+ */
+@Deprecated
 public class CompleterUtil {
   protected static final String USED_BUT_UNDEFINED = "0xB0028: Type '%s' is used but not defined.";
 
