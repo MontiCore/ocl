@@ -10,7 +10,7 @@ import de.monticore.ocl.oclexpressions.types3.OCLExpressionsTypeVisitor;
 import de.monticore.ocl.optionaloperators.types3.OptionalOperatorsTypeVisitor;
 import de.monticore.ocl.setexpressions.types3.SetExpressionsCTTIVisitor;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
-import de.monticore.ocl.types3.util.OCLNameExpressionTypeCalculator;
+import de.monticore.ocl.types3.util.OCLWithinScopeBasicSymbolsResolver;
 import de.monticore.ocl.types3.util.OCLWithinTypeBasicSymbolsResolver;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
@@ -18,8 +18,8 @@ import de.monticore.types.mcsimplegenerictypes.types3.MCSimpleGenericTypesTypeVi
 import de.monticore.types3.Type4Ast;
 import de.monticore.types3.generics.context.InferenceContext4Ast;
 import de.monticore.types3.util.MapBasedTypeCheck3;
-import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
-import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
+import de.monticore.types3.util.TypeContextCalculator;
+import de.monticore.types3.util.TypeVisitorOperatorCalculator;
 import de.monticore.visitor.ITraverser;
 import de.se_rwth.commons.logging.Log;
 
@@ -37,15 +37,14 @@ public class OCLTypeCheck3 extends MapBasedTypeCheck3 {
   protected static void initTC3Delegate() {
     Log.trace("init OCLTypeCheck3", "TypeCheck setup");
 
+    OCLWithinTypeBasicSymbolsResolver.init();
+    OCLWithinScopeBasicSymbolsResolver.init();
+    TypeContextCalculator.init();
+    TypeVisitorOperatorCalculator.init();
+
     OCLTraverser traverser = OCLMill.inheritanceTraverser();
     Type4Ast type4Ast = new Type4Ast();
     InferenceContext4Ast ctx4Ast = new InferenceContext4Ast();
-
-    // for some Visitors
-    WithinTypeBasicSymbolsResolver withinTypeBasicSymbolsResolver =
-        new OCLWithinTypeBasicSymbolsResolver();
-    WithinScopeBasicSymbolsResolver withinScopeBasicSymbolsResolver =
-        new OCLNameExpressionTypeCalculator();
 
     // Expressions
 
@@ -54,15 +53,12 @@ public class OCLTypeCheck3 extends MapBasedTypeCheck3 {
     traverser.add4BitExpressions(visBitExpressions);
 
     OCLCommonExpressionsTypeVisitor visCommonExpressions = new OCLCommonExpressionsTypeVisitor();
-    visCommonExpressions.setWithinTypeBasicSymbolsResolver(withinTypeBasicSymbolsResolver);
-    visCommonExpressions.setWithinScopeResolver(withinScopeBasicSymbolsResolver);
     visCommonExpressions.setType4Ast(type4Ast);
     visCommonExpressions.setContext4Ast(ctx4Ast);
     traverser.add4CommonExpressions(visCommonExpressions);
     traverser.setCommonExpressionsHandler(visCommonExpressions);
 
     ExpressionBasisCTTIVisitor visExpressionBasis = new ExpressionBasisCTTIVisitor();
-    visExpressionBasis.setWithinScopeResolver(withinScopeBasicSymbolsResolver);
     visExpressionBasis.setType4Ast(type4Ast);
     visExpressionBasis.setContext4Ast(ctx4Ast);
     traverser.add4ExpressionsBasis(visExpressionBasis);
@@ -89,8 +85,6 @@ public class OCLTypeCheck3 extends MapBasedTypeCheck3 {
     // MCTypes
 
     MCBasicTypesTypeVisitor visMCBasicTypes = new MCBasicTypesTypeVisitor();
-    visMCBasicTypes.setWithinTypeResolver(withinTypeBasicSymbolsResolver);
-    visMCBasicTypes.setWithinScopeResolver(withinScopeBasicSymbolsResolver);
     visMCBasicTypes.setType4Ast(type4Ast);
     traverser.add4MCBasicTypes(visMCBasicTypes);
 
