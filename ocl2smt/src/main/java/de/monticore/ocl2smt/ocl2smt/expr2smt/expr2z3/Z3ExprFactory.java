@@ -203,10 +203,19 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
     checkArith("mkGe", rightNode);
 
     Expr<?> expr;
-    if (leftNode.isIntExpr() || rightNode.isIntExpr()) {
-      expr = ctx.mkGe((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr());
+    if (leftNode.isIntExpr() && rightNode.isIntExpr()) {
+      expr = ctx.mkGt((ArithExpr<?>) leftNode.getExpr(), (ArithExpr<?>) rightNode.getExpr());
     } else {
-      expr = ctx.mkFPGEq((FPExpr) leftNode.getExpr(), (FPExpr) rightNode.getExpr());
+      var left = leftNode.getExpr();
+      var right = rightNode.getExpr();
+
+      if (leftNode.isIntExpr()) {
+        left = ctx.mkFPToFP(ctx.mkFPRNE(), ctx.mkInt2Real((Expr<IntSort>) left), ctx.mkFPSortDouble());
+      }
+      if (rightNode.isIntExpr()) {
+        right = ctx.mkFPToFP(ctx.mkFPRNE(), ctx.mkInt2Real((Expr<IntSort>) right), ctx.mkFPSortDouble());
+      }
+      expr = ctx.mkFPGt((FPExpr) left, (FPExpr) right);
     }
     Z3ExprAdapter res = new Z3ExprAdapter(expr, tFactory.mkBoolType());
     return wrap(res, leftNode, rightNode);
