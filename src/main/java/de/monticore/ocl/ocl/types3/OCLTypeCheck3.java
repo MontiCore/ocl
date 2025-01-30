@@ -32,15 +32,14 @@ public class OCLTypeCheck3 extends MapBasedTypeCheck3 {
   public static void init() {
     initTC3Delegate();
     OCLSymTypeRelations.init();
-  }
-
-  protected static void initTC3Delegate() {
-    Log.trace("init OCLTypeCheck3", "TypeCheck setup");
-
     OCLWithinTypeBasicSymbolsResolver.init();
     OCLWithinScopeBasicSymbolsResolver.init();
     TypeContextCalculator.init();
     TypeVisitorOperatorCalculator.init();
+  }
+
+  protected static void initTC3Delegate() {
+    Log.trace("init OCLTypeCheck3", "TypeCheck setup");
 
     OCLTraverser traverser = OCLMill.inheritanceTraverser();
     Type4Ast type4Ast = new Type4Ast();
