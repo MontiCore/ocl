@@ -11,7 +11,7 @@ buildscript {
 }
 
 plugins {
-  id 'java'ft
+  id 'java'
 
   id 'de.monticore.generator' version "$mc_version"
   id 'com.github.johnrengelman.shadow' version '6.0.0'
