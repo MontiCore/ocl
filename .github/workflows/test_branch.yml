@@ -45,6 +45,6 @@ jobs:
     needs: [ build ]
     uses: MontiCore/monticore/.github/workflows/call_montiverse_branch.yml@dev
     with:
-      project: "CD4A"
+      project: "OCL"
     secrets: inherit
 
