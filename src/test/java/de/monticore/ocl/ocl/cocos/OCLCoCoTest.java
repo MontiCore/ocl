@@ -121,7 +121,7 @@ public class OCLCoCoTest extends AbstractTest {
       Log.getFindings().clear();
     }
 
-    assertFalse(Log.getFindings().isEmpty());
+    assertNoFindings();
   }
 
   @ParameterizedTest
