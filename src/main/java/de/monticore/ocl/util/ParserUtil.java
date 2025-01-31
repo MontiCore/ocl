@@ -15,9 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/**
- * @deprecated unused (at least in OCL)
- */
+/** @deprecated unused (at least in OCL) */
 @Deprecated
 public class ParserUtil {
 

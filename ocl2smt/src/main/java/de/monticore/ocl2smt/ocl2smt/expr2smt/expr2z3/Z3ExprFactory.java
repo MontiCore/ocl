@@ -210,10 +210,13 @@ public class Z3ExprFactory implements ExprFactory<Z3ExprAdapter>, CDExprFactory<
       var right = rightNode.getExpr();
 
       if (leftNode.isIntExpr()) {
-        left = ctx.mkFPToFP(ctx.mkFPRNE(), ctx.mkInt2Real((Expr<IntSort>) left), ctx.mkFPSortDouble());
+        left =
+            ctx.mkFPToFP(ctx.mkFPRNE(), ctx.mkInt2Real((Expr<IntSort>) left), ctx.mkFPSortDouble());
       }
       if (rightNode.isIntExpr()) {
-        right = ctx.mkFPToFP(ctx.mkFPRNE(), ctx.mkInt2Real((Expr<IntSort>) right), ctx.mkFPSortDouble());
+        right =
+            ctx.mkFPToFP(
+                ctx.mkFPRNE(), ctx.mkInt2Real((Expr<IntSort>) right), ctx.mkFPSortDouble());
       }
       expr = ctx.mkFPGt((FPExpr) left, (FPExpr) right);
     }

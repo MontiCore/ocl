@@ -131,7 +131,8 @@ public class OCL2SMTGenerator {
       try {
         getCtx().close();
         // Might throw an error if the ctx was never opened ("Context closed")
-      } catch (Z3Exception ignored) {}
+      } catch (Z3Exception ignored) {
+      }
     }
   }
 }

@@ -11,7 +11,6 @@ import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory;
 import de.monticore.types3.util.OOWithinTypeBasicSymbolsResolver;
 import de.se_rwth.commons.logging.Log;
-
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -49,8 +48,7 @@ public class OCLWithinTypeBasicSymbolsResolver extends OOWithinTypeBasicSymbolsR
     // todo what about Optionals? same with flatten
     //  -> could be added? but should they?
     if (resolvedSymType.isEmpty() && OCLSymTypeRelations.isOCLCollection(thisType)) {
-      SymTypeExpression elementThisType =
-          OCLSymTypeRelations.getCollectionElementType(thisType);
+      SymTypeExpression elementThisType = OCLSymTypeRelations.getCollectionElementType(thisType);
       Optional<SymTypeExpression> elementResolvedSymType =
           resolveVariable(elementThisType, name, accessModifier, predicate);
       if (elementResolvedSymType.isPresent()) {

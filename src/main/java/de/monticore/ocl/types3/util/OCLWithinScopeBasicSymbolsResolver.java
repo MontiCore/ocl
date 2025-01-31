@@ -6,7 +6,6 @@ import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory;
 import de.monticore.types3.util.OOWithinScopeBasicSymbolsResolver;
-
 import java.util.Optional;
 import java.util.function.Predicate;
 
