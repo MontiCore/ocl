@@ -134,7 +134,7 @@ public abstract class AbstractTest {
     return optAst;
   }
 
-  protected void assertNoFindings() {
+  protected static void assertNoFindings() {
     assertTrue(
         Log.getFindings().isEmpty(),
         Log.getFindings().stream()
