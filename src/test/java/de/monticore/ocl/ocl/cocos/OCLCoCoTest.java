@@ -47,6 +47,7 @@ public class OCLCoCoTest extends AbstractTest {
             || filename.endsWith("comprehension3.ocl")
             || filename.endsWith("comprehension5.ocl")
             || filename.endsWith("comprehension7.ocl")
+            || filename.endsWith("comprehension8.ocl")
             || filename.endsWith("comprehension9.ocl")
             || filename.endsWith("invalidVariableDeclaration.ocl")
             || filename.endsWith("listsAndSetsAsArguments.ocl")
