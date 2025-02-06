@@ -1,7 +1,7 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types3.util;
 
-import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.ocl.types3.OCLCollectionSymTypeRelations;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.util.SymTypeLubCalculator;
 import java.util.Collection;
@@ -14,10 +14,10 @@ public class OCLSymTypeLubCalculator extends SymTypeLubCalculator {
   @Override
   public Optional<SymTypeExpression> leastUpperBound(Collection<SymTypeExpression> types) {
     Optional<SymTypeExpression> lub;
-    if (types.stream().allMatch(OCLSymTypeRelations::isOCLCollection)) {
+    if (types.stream().allMatch(OCLCollectionSymTypeRelations::isOCLCollection)) {
       Collection<SymTypeExpression> elementTypes =
           types.stream()
-              .map(OCLSymTypeRelations::getCollectionElementType)
+              .map(OCLCollectionSymTypeRelations::getCollectionElementType)
               .collect(Collectors.toSet());
       // lub of element types
       Optional<SymTypeExpression> elementLub = leastUpperBound(elementTypes);
@@ -25,9 +25,9 @@ public class OCLSymTypeLubCalculator extends SymTypeLubCalculator {
         lub = Optional.empty();
       }
       // search for correct collection type
-      else if (types.stream().allMatch(OCLSymTypeRelations::isList)) {
+      else if (types.stream().allMatch(OCLCollectionSymTypeRelations::isList)) {
         lub = Optional.of(OCLCollectionSymTypeFactory.createList(elementLub.get()));
-      } else if (types.stream().allMatch(OCLSymTypeRelations::isSet)) {
+      } else if (types.stream().allMatch(OCLCollectionSymTypeRelations::isSet)) {
         lub = Optional.of(OCLCollectionSymTypeFactory.createSet(elementLub.get()));
       } else {
         lub = Optional.of(OCLCollectionSymTypeFactory.createOCLCollection(elementLub.get()));

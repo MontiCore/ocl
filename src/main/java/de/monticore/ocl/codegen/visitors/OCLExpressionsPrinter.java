@@ -20,12 +20,12 @@ import de.monticore.ocl.oclexpressions._ast.ASTTypeIfExpression;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsHandler;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
-import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
+import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 
@@ -70,7 +70,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter
     SymTypeExpression type = TypeCheck3.typeOf(node);
     printExpressionBeginLambda(type);
     // TC1 -> TC3 hack
-    type = OCLSymTypeRelations.normalize(OCLSymTypeRelations.box(type));
+    type = SymTypeRelations.normalize(SymTypeRelations.box(type));
     // returnType newName;
     if (type.isObscureType()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());
@@ -165,7 +165,7 @@ public class OCLExpressionsPrinter extends AbstractPrinter
     printExpressionBeginLambda(type);
     // TC1 -> TC3 hack
 
-    type = OCLSymTypeRelations.normalize(OCLSymTypeRelations.box(type));
+    type = SymTypeRelations.normalize(SymTypeRelations.box(type));
     // expressionType newName;
     if (type.isObscureType()) {
       Log.error(NO_TYPE_DERIVED_ERROR, node.get_SourcePositionStart());

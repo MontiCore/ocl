@@ -1,7 +1,7 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types3.util;
 
-import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.ocl.types3.OCLCollectionSymTypeRelations;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.generics.bounds.Bound;
 import de.monticore.types3.util.SymTypeCompatibilityCalculator;
@@ -19,18 +19,20 @@ public class OCLSymTypeCompatibilityCalculator extends SymTypeCompatibilityCalcu
     if (result.stream().anyMatch(Bound::isUnsatisfiableBound)) {
       if (
       // OCL collections
-      OCLSymTypeRelations.isOCLCollection(subType)
-          && OCLSymTypeRelations.isOCLCollection(superType)
+      OCLCollectionSymTypeRelations.isOCLCollection(subType)
+          && OCLCollectionSymTypeRelations.isOCLCollection(superType)
           &&
           // Set is-a Collection
-          (!OCLSymTypeRelations.isSet(superType) || OCLSymTypeRelations.isSet(subType))
+          (!OCLCollectionSymTypeRelations.isSet(superType)
+              || OCLCollectionSymTypeRelations.isSet(subType))
           &&
           // List is-a Collection
-          (!OCLSymTypeRelations.isList(superType) || OCLSymTypeRelations.isList(subType))) {
+          (!OCLCollectionSymTypeRelations.isList(superType)
+              || OCLCollectionSymTypeRelations.isList(subType))) {
         result =
             internal_constrainSubTypeOfPreNormalized(
-                OCLSymTypeRelations.getCollectionElementType(subType),
-                OCLSymTypeRelations.getCollectionElementType(superType));
+                OCLCollectionSymTypeRelations.getCollectionElementType(subType),
+                OCLCollectionSymTypeRelations.getCollectionElementType(superType));
       }
     }
     return result;

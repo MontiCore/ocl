@@ -2,12 +2,12 @@
 package de.monticore.ocl.codegen.visitors;
 
 import de.monticore.ocl.codegen.util.VariableNaming;
-import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.TypeCheckResult;
+import de.monticore.types3.SymTypeRelations;
 import de.se_rwth.commons.logging.Log;
 
 public abstract class AbstractPrinter {
@@ -68,7 +68,10 @@ public abstract class AbstractPrinter {
     if (type.isObscureType()) {
       Log.error(NO_TYPE_DERIVED_ERROR);
     }
-    return OCLSymTypeRelations.normalize(OCLSymTypeRelations.box(type)).printFullName();
+    if (type.isRegExType()) {
+      return "java.lang.String";
+    }
+    return SymTypeRelations.normalize(SymTypeRelations.box(type)).printFullName();
   }
 
   /** @deprecated use {@link #printExpressionBeginLambda(SymTypeExpression)} */

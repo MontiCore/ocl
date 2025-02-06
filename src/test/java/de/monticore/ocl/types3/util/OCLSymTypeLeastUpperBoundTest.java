@@ -20,7 +20,6 @@ import static de.monticore.types3.util.DefsTypesForTests.typeVariable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import de.monticore.ocl.ocl.OCLMill;
-import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsGlobalScope;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
@@ -29,6 +28,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types3.AbstractTypeTest;
+import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.util.DefsTypesForTests;
 import java.util.List;
 import java.util.Optional;
@@ -90,7 +90,7 @@ public class OCLSymTypeLeastUpperBoundTest extends AbstractTypeTest {
   }
 
   protected void checkLub(SymTypeExpression type, String expectedPrint) {
-    Optional<SymTypeExpression> lubOpt = OCLSymTypeRelations.leastUpperBound(type);
+    Optional<SymTypeExpression> lubOpt = SymTypeRelations.leastUpperBound(type);
     String printed = lubOpt.map(SymTypeExpression::printFullName).orElse("");
     assertNoFindings();
     assertEquals(expectedPrint, printed);

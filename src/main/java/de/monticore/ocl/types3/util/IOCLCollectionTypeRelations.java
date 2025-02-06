@@ -5,6 +5,8 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types.mccollectiontypes.types3.IMCCollectionTypeRelations;
 
+/** @deprecated serves no use anymore */
+@Deprecated
 public interface IOCLCollectionTypeRelations extends IMCCollectionTypeRelations {
 
   /**
