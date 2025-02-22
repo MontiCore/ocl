@@ -9,7 +9,7 @@ import de.monticore.types.check.*;
  * @deprecated This class is no longer acceptable since we use <b>Type Check 3</b> to calculate the
  *     type of expressions and literals related to OCL. Use {@link OCLTraverserProvider} instead.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class OCLDeriver extends AbstractDerive {
 
   public OCLDeriver() {

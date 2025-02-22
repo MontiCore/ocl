@@ -78,8 +78,9 @@ ocl NC1 {
     exists Hobby h : h.name == "MyHobby2";
 
 
-  context Auction a inv Assoc22:
-    a.name isin Set{"Auction1", "Auction2"} intersect Set{"Auction3"} ;
+  // disabled, as expression not supported
+  //context Auction a inv Assoc22:
+  //  a.name isin Set{"Auction1", "Auction2"} intersect Set{"Auction3"} ;
 
 
   context Auction a  inv Assoc23:

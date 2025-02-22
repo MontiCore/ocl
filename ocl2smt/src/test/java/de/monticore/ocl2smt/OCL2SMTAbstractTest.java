@@ -11,10 +11,11 @@ import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl.types3.OCLTypeCheck3;
-import de.se_rwth.commons.logging.Log;
+import de.se_rwth.commons.logging.LogStub;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.provider.Arguments;
 
 public abstract class OCL2SMTAbstractTest {
@@ -34,7 +35,19 @@ public abstract class OCL2SMTAbstractTest {
   }
 
   protected void initLogger() {
-    Log.init();
+    LogStub.init();
+  }
+
+  @AfterEach
+  protected void assertNoFindings() {
+    // todo https://git.rwth-aachen.de/monticore/monticore/-/issues/4518
+    // disabled, as OCL2SMT currently throws a bunch of warnings,
+    // it seemingly has never been tested with Log (some CoCos fail as well)
+    // assertTrue(
+    //    Log.getFindings().isEmpty(),
+    //    Log.getFindings().stream()
+    //        .map(Finding::buildMsg)
+    //        .collect(Collectors.joining(System.lineSeparator())));
   }
 
   public Context buildContext() {

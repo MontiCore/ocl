@@ -1,5 +1,5 @@
 # (c) https://github.com/MontiCore/monticore
-name: Gradle
+name: Deploy Snapshot
 
 
 concurrency: # run this test workflow only once per "branch"
@@ -7,18 +7,20 @@ concurrency: # run this test workflow only once per "branch"
   cancel-in-progress: true
 
 on:
-  push: # run this test pipeline on every push
-  pull_request: # and pull request
+  push: # run this pipeline on every push
+    paths-ignore:
+      - "*.md" # do not run this pipeline if the only change was to markdown files
+    branches: [ "dev" ] # Only run on the default branch
   repository_dispatch: # and on request of upstream projects
     types: [ trigger_after_upstream_deploy ]
 
-
 env:
   GRADLE_VERSION: 7.4 # Gradle version used
-  GRADLE_CLI_OPTS: "-Pci --build-cache --info " # CLI options passed to Gradle
+  GRADLE_CLI_OPTS: "-Pci --build-cache --info --refresh-dependencies " # CLI options passed to Gradle
+  GRADLE_BUILD_ACTION_CACHE_KEY_JOB: "test-cache-${{ github.head_ref }}.${{ github.sha }}"
 
 permissions:
-  contents: read # This action may run somewhat unsafe code
+  contents: read
 
 
 jobs:
@@ -53,15 +55,7 @@ jobs:
   # Trigger GitHub downstream projects (without reporting the pipeline result)
   trigger-github-downstream:
     needs: [ deploy ]
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        project: [ "MontiCore/sequence-diagram", "MontiCore/sysmlv2" ]
-    steps:
-      - name: Trigger ${{ matrix.project }}
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.DOWNSTREAM_PAT }}
-          repository: ${{ matrix.project }}
-          event-type: trigger_after_upstream_deploy
-
+    uses: MontiCore/monticore/.github/workflows/call_trigger_downstream.yml@dev
+    with:
+      projects: "['MontiCore/sequence-diagram','MontiCore/sysmlv2']"
+    secrets: inherit

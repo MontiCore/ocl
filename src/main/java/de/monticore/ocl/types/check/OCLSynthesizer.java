@@ -8,7 +8,7 @@ import de.monticore.types.check.SynthesizeSymTypeFromMCBasicTypes;
 import de.monticore.types.check.SynthesizeSymTypeFromMCCollectionTypes;
 import de.monticore.types.check.SynthesizeSymTypeFromMCSimpleGenericTypes;
 
-@Deprecated
+@Deprecated(forRemoval = true)
 public class OCLSynthesizer extends AbstractSynthesize {
 
   public OCLSynthesizer() {

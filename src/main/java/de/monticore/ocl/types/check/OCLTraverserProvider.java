@@ -13,7 +13,7 @@ import de.monticore.types.mcsimplegenerictypes.types3.MCSimpleGenericTypesTypeVi
 import de.monticore.types3.Type4Ast;
 
 /** @deprecated use {@link de.monticore.ocl.ocl.types3.OCLTypeTraverserFactory} */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class OCLTraverserProvider {
 
   // TODO MSm add Bit Expressions after XIN created them

@@ -12,19 +12,14 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions.types3.OCLExpressionsTypeVisitor;
 import de.monticore.ocl.optionaloperators.types3.OptionalOperatorsTypeVisitor;
 import de.monticore.ocl.setexpressions.types3.SetExpressionsTypeVisitor;
-import de.monticore.ocl.types3.util.OCLNameExpressionTypeCalculator;
-import de.monticore.ocl.types3.util.OCLWithinTypeBasicSymbolsResolver;
 import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
 import de.monticore.types.mcsimplegenerictypes.types3.MCSimpleGenericTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
 import de.monticore.types3.generics.context.InferenceContext4Ast;
-import de.monticore.types3.util.FunctionRelations;
-import de.monticore.types3.util.NameExpressionTypeCalculator;
-import de.monticore.types3.util.WithinTypeBasicSymbolsResolver;
 
 /** @deprecated use {@link OCLTypeCheck3} instead. */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class OCLTypeTraverserFactory {
 
   public OCLTraverser createTraverser(Type4Ast type4Ast) {
@@ -89,16 +84,6 @@ public class OCLTypeTraverserFactory {
 
   protected VisitorList constructVisitors() {
     VisitorList visitors = constructVisitorsDefault();
-    WithinTypeBasicSymbolsResolver withinTypeBasicSymbolsResolver =
-        new OCLWithinTypeBasicSymbolsResolver();
-    NameExpressionTypeCalculator nameExpressionTypeCalculator =
-        new OCLNameExpressionTypeCalculator();
-    FunctionRelations functionRelations = new FunctionRelations();
-    visitors.derCommonExpressions.setWithinTypeBasicSymbolsResolver(withinTypeBasicSymbolsResolver);
-    visitors.derCommonExpressions.setNameExpressionTypeCalculator(nameExpressionTypeCalculator);
-    visitors.derExpressionBasis.setNameExpressionTypeCalculator(nameExpressionTypeCalculator);
-    visitors.synMCBasicTypes.setWithinTypeResolver(withinTypeBasicSymbolsResolver);
-    visitors.synMCBasicTypes.setNameExpressionTypeCalculator(nameExpressionTypeCalculator);
     return visitors;
   }
 

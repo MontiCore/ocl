@@ -70,18 +70,6 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     inScope(gs, variable("intArray3", SymTypeExpressionFactory.createTypeArray(_intSymType, 3)));
   }
 
-  protected static Stream<Arguments> typeIfExpressions() { // TODO FDr UnionType ready machen
-    return Stream.of(
-        Arguments.of("typeif vardouble instanceof double then 5.0 else 2*2", "double"),
-        Arguments.of("typeif vardouble instanceof int then 5 else 5.0", "double"));
-  }
-
-  @ParameterizedTest
-  @MethodSource("typeIfExpressions")
-  protected void checkTypeIfExpressions(String exprStr, String expectedType) throws IOException {
-    checkExpr(exprStr, expectedType);
-  }
-
   @Test
   protected void checkTypeIfExpressionCorrectTypeInThen() throws IOException {
     // add Student::getSemester

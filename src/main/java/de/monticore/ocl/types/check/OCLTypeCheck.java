@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 /** @deprecated replaced by TypeCheck3 SymTypeRelations */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class OCLTypeCheck {
 
   // TODO MSm better variant will be provided by FDr

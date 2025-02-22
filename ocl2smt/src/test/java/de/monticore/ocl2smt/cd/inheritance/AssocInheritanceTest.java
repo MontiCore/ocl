@@ -26,9 +26,12 @@ public class AssocInheritanceTest extends CleanExpr2SMTTest {
   @MethodSource("cd2smtStrategies")
   public void testAssocInheritance(
       ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as) {
+    // This one combination tends to run endlessly (120min+) -> ignore it
     Assumptions.assumeFalse(
-        cs == ClassStrategy.Strategy.SSCOMB && is == InheritanceStrategy.Strategy.SE
-            && as == AssociationStrategy.Strategy.DEFAULT, "This test is prone to timeouts");
+        cs == ClassStrategy.Strategy.SSCOMB
+            && is == InheritanceStrategy.Strategy.SE
+            && as == AssociationStrategy.Strategy.DEFAULT,
+        "This test is prone to timeouts");
     CD2SMTMill.init(cs, is, as);
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
 

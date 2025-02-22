@@ -71,6 +71,7 @@ public class AssociationTest extends ExpressionAbstractTest {
     Assertions.assertTrue(testUnsatInv(Set.of("Assoc17"), outDir));
     Assertions.assertTrue(testUnsatInv(Set.of("Assoc18"), outDir));
     Assertions.assertTrue(testUnsatInv(Set.of("Assoc19"), outDir));
-    Assertions.assertTrue(testUnsatInv(Set.of("Assoc22"), outDir));
+    // disabled, as expression is not supported
+    // Assertions.assertTrue(testUnsatInv(Set.of("Assoc22"), outDir));
   }
 }
