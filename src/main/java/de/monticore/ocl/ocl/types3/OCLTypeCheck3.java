@@ -2,6 +2,7 @@ package de.monticore.ocl.ocl.types3;
 
 import de.monticore.expressions.bitexpressions.types3.BitExpressionsTypeVisitor;
 import de.monticore.expressions.commonexpressions.types3.OCLCommonExpressionsTypeVisitor;
+import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsLValueRelations;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisCTTIVisitor;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.ocl.ocl.OCLMill;
@@ -9,6 +10,7 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.oclexpressions.types3.OCLExpressionsTypeVisitor;
 import de.monticore.ocl.optionaloperators.types3.OptionalOperatorsTypeVisitor;
 import de.monticore.ocl.setexpressions.types3.SetExpressionsCTTIVisitor;
+import de.monticore.ocl.types3.OCLCollectionSymTypeRelations;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.ocl.types3.util.OCLWithinScopeBasicSymbolsResolver;
 import de.monticore.ocl.types3.util.OCLWithinTypeBasicSymbolsResolver;
@@ -16,6 +18,8 @@ import de.monticore.types.mcbasictypes.types3.MCBasicTypesTypeVisitor;
 import de.monticore.types.mccollectiontypes.types3.MCCollectionTypesTypeVisitor;
 import de.monticore.types.mcsimplegenerictypes.types3.MCSimpleGenericTypesTypeVisitor;
 import de.monticore.types3.Type4Ast;
+import de.monticore.types3.TypeCheck3;
+import de.monticore.types3.generics.TypeParameterRelations;
 import de.monticore.types3.generics.context.InferenceContext4Ast;
 import de.monticore.types3.util.MapBasedTypeCheck3;
 import de.monticore.types3.util.TypeContextCalculator;
@@ -32,10 +36,24 @@ public class OCLTypeCheck3 extends MapBasedTypeCheck3 {
   public static void init() {
     initTC3Delegate();
     OCLSymTypeRelations.init();
+    OCLCollectionSymTypeRelations.init();
     OCLWithinTypeBasicSymbolsResolver.init();
     OCLWithinScopeBasicSymbolsResolver.init();
     TypeContextCalculator.init();
     TypeVisitorOperatorCalculator.init();
+    CommonExpressionsLValueRelations.init();
+    TypeParameterRelations.init();
+  }
+
+  public static void reset() {
+    TypeCheck3.resetDelegate();
+    OCLCollectionSymTypeRelations.reset();
+    OCLWithinTypeBasicSymbolsResolver.reset();
+    OCLWithinScopeBasicSymbolsResolver.reset();
+    TypeContextCalculator.reset();
+    TypeVisitorOperatorCalculator.reset();
+    CommonExpressionsLValueRelations.reset();
+    TypeParameterRelations.init();
   }
 
   protected static void initTC3Delegate() {

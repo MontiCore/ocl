@@ -9,4 +9,9 @@ public class OCLMill extends OCLMillTOP {
     OCLMillTOP.init();
     OCLTypeCheck3.init();
   }
+
+  public static void reset() {
+    OCLMillTOP.reset();
+    OCLTypeCheck3.reset();
+  }
 }

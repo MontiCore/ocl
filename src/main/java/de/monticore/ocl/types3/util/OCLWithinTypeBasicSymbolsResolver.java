@@ -1,7 +1,7 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types3.util;
 
-import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.ocl.types3.OCLCollectionSymTypeRelations;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.modifiers.AccessModifier;
@@ -47,8 +47,9 @@ public class OCLWithinTypeBasicSymbolsResolver extends OOWithinTypeBasicSymbolsR
     // case thisType is a Set and we follow an association with multiplicity > 1
     // todo what about Optionals? same with flatten
     //  -> could be added? but should they?
-    if (resolvedSymType.isEmpty() && OCLSymTypeRelations.isOCLCollection(thisType)) {
-      SymTypeExpression elementThisType = OCLSymTypeRelations.getCollectionElementType(thisType);
+    if (resolvedSymType.isEmpty() && OCLCollectionSymTypeRelations.isOCLCollection(thisType)) {
+      SymTypeExpression elementThisType =
+          OCLCollectionSymTypeRelations.getCollectionElementType(thisType);
       Optional<SymTypeExpression> elementResolvedSymType =
           resolveVariable(elementThisType, name, accessModifier, predicate);
       if (elementResolvedSymType.isPresent()) {
@@ -56,7 +57,7 @@ public class OCLWithinTypeBasicSymbolsResolver extends OOWithinTypeBasicSymbolsR
         SymTypeOfGenerics unFlattenedSymType = (SymTypeOfGenerics) thisType.deepClone();
         unFlattenedSymType.setArgument(0, elementResolvedSymType.get());
         // need to flatten, as this is following an association
-        resolvedSymType = Optional.of(OCLSymTypeRelations.flatten(unFlattenedSymType));
+        resolvedSymType = Optional.of(OCLCollectionSymTypeRelations.flatten(unFlattenedSymType));
       }
     }
     return resolvedSymType;
