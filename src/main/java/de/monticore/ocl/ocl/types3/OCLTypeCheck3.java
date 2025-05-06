@@ -53,7 +53,7 @@ public class OCLTypeCheck3 extends MapBasedTypeCheck3 {
     TypeContextCalculator.reset();
     TypeVisitorOperatorCalculator.reset();
     CommonExpressionsLValueRelations.reset();
-    TypeParameterRelations.init();
+    TypeParameterRelations.reset();
   }
 
   protected static void initTC3Delegate() {
