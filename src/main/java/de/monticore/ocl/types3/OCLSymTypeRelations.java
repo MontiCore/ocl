@@ -1,37 +1,32 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types3;
 
-import de.monticore.ocl.types3.util.IOCLCollectionTypeRelations;
-import de.monticore.ocl.types3.util.OCLCollectionTypeRelations;
 import de.monticore.ocl.types3.util.OCLNominalSuperTypeCalculator;
 import de.monticore.ocl.types3.util.OCLSymTypeBoxingVisitor;
 import de.monticore.ocl.types3.util.OCLSymTypeCompatibilityCalculator;
+import de.monticore.ocl.types3.util.OCLSymTypeLubCalculator;
 import de.monticore.ocl.types3.util.OCLSymTypeUnboxingVisitor;
-import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types.check.SymTypeOfGenerics;
-import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
+import de.monticore.types3.SymTypeRelations;
+import de.monticore.types3.util.BuiltInTypeRelations;
+import de.monticore.types3.util.SymTypeNormalizeVisitor;
+import de.monticore.types3.util.SymTypeRelationsDefaultDelegatee;
 
-public class OCLSymTypeRelations extends MCCollectionSymTypeRelations {
-
-  protected static IOCLCollectionTypeRelations oclCollectionTypeRelations;
+public abstract class OCLSymTypeRelations extends SymTypeRelations {
 
   public static void init() {
-    // default values
-    MCCollectionSymTypeRelations.init();
-    compatibilityDelegate = new OCLSymTypeCompatibilityCalculator();
-    boxingVisitor = new OCLSymTypeBoxingVisitor();
-    unboxingVisitor = new OCLSymTypeUnboxingVisitor();
-    superTypeCalculator = new OCLNominalSuperTypeCalculator();
-    OCLCollectionTypeRelations oclCTR = new OCLCollectionTypeRelations();
-    oclCollectionTypeRelations = oclCTR;
-    mcCollectionTypeRelations = oclCTR;
+    SymTypeRelations.setDelegate(new OCLSymTypeRelationsDelegatee());
   }
 
-  public static boolean isOCLCollection(SymTypeExpression type) {
-    return oclCollectionTypeRelations.isOCLCollection(type);
-  }
-
-  public static SymTypeOfGenerics flatten(SymTypeOfGenerics toFlatten) {
-    return oclCollectionTypeRelations.flatten(toFlatten);
+  // selecting the concrete implementations
+  protected static class OCLSymTypeRelationsDelegatee extends SymTypeRelationsDefaultDelegatee {
+    public OCLSymTypeRelationsDelegatee() {
+      compatibilityDelegate = new OCLSymTypeCompatibilityCalculator();
+      superTypeCalculator = new OCLNominalSuperTypeCalculator();
+      boxingVisitor = new OCLSymTypeBoxingVisitor();
+      unboxingVisitor = new OCLSymTypeUnboxingVisitor();
+      normalizeVisitor = new SymTypeNormalizeVisitor();
+      lubDelegate = new OCLSymTypeLubCalculator();
+      builtInRelationsDelegate = new BuiltInTypeRelations();
+    }
   }
 }

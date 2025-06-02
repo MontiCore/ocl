@@ -1,7 +1,7 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types3.util;
 
-import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.ocl.types3.OCLCollectionSymTypeRelations;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.util.NominalSuperTypeCalculator;
 import java.util.List;
@@ -15,15 +15,16 @@ public class OCLNominalSuperTypeCalculator extends NominalSuperTypeCalculator {
     // given Set<A> with A < B, we calculate Collection<A> and Set<B>.
     // With Collection<A> AND Set<B>, we calculate Collection<B> in the next step
     List<SymTypeExpression> superTypes = super.getNominalSuperTypes(thisType);
-    if (OCLSymTypeRelations.isOCLCollection(thisType)) {
-      SymTypeExpression elementType = OCLSymTypeRelations.getCollectionElementType(thisType);
+    if (OCLCollectionSymTypeRelations.isOCLCollection(thisType)) {
+      SymTypeExpression elementType =
+          OCLCollectionSymTypeRelations.getCollectionElementType(thisType);
       if (isSupported(elementType)) {
         List<SymTypeExpression> superElementTypes = getNominalSuperTypes(elementType);
         // simply go other all options
-        if (OCLSymTypeRelations.isList(thisType)) {
+        if (OCLCollectionSymTypeRelations.isList(thisType)) {
           superElementTypes.forEach(
               et -> superTypes.add(OCLCollectionSymTypeFactory.createList(et)));
-        } else if (OCLSymTypeRelations.isSet(thisType)) {
+        } else if (OCLCollectionSymTypeRelations.isSet(thisType)) {
           superElementTypes.forEach(
               et -> superTypes.add(OCLCollectionSymTypeFactory.createSet(et)));
         } else {

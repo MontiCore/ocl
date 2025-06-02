@@ -1,5 +1,5 @@
 // (c) https://github.com/MontiCore/monticore
-package de.monticore.ocl.types3.util;
+package de.monticore.ocl.types3;
 
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsGlobalScope;
@@ -7,43 +7,34 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.SymTypeOfGenerics;
+import de.monticore.types.mccollectiontypes.types3.MCCollectionSymTypeRelations;
 import de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory;
-import de.monticore.types.mccollectiontypes.types3.util.MCCollectionTypeRelations;
 import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 
-/**
- * adds support for Collection
- *
- * @deprecated not needed anymore use OCLCollectionSymTypeRelations
- */
-@Deprecated
-public class OCLCollectionTypeRelations extends MCCollectionTypeRelations
-    implements IOCLCollectionTypeRelations {
+public class OCLCollectionSymTypeRelations extends MCCollectionSymTypeRelations {
 
   protected static final String LOG_NAME = "OCLCollectionTypeRelations";
+
+  protected static OCLCollectionSymTypeRelations delegate;
 
   /**
    * specifically checks for List, Set, and Collection, as specified in Modellierung mit UML chapter
    * 3-3.
    */
-  public boolean isOCLCollection(SymTypeExpression type) {
+  public static boolean isOCLCollection(SymTypeExpression type) {
+    return getDelegate()._isOCLCollection(type);
+  }
+
+  protected boolean _isOCLCollection(SymTypeExpression type) {
     return isSet(type) || isList(type) || isOCLCollectionNoSubType(type);
   }
 
-  public boolean isCollection(SymTypeExpression type) {
-    return isList(type)
-        || isSet(type)
-        || isOptional(type)
-        || isMap(type)
-        || isOCLCollectionNoSubType(type);
+  public static SymTypeOfGenerics flatten(SymTypeOfGenerics toFlatten) {
+    return getDelegate()._flatten(toFlatten);
   }
 
-  /**
-   * flattens collection types, s. Modellierung mit UML 3.3.6. If it cannot be flattened, this is
-   * id.
-   */
-  public SymTypeOfGenerics flatten(SymTypeOfGenerics toFlatten) {
+  protected SymTypeOfGenerics _flatten(SymTypeOfGenerics toFlatten) {
     SymTypeOfGenerics flattened;
     if (isOCLCollection(toFlatten) && isOCLCollection(getCollectionElementType(toFlatten))) {
       SymTypeOfGenerics innerCollectionType =
@@ -72,6 +63,13 @@ public class OCLCollectionTypeRelations extends MCCollectionTypeRelations
     return flattened;
   }
 
+  // Hookpoints
+
+  @Override
+  protected boolean isCollectionType(SymTypeExpression type) {
+    return isMCCollection(type) || isOCLCollection(type);
+  }
+
   // Helper
 
   protected SymTypeOfGenerics createCollection(SymTypeExpression elementType) {
@@ -92,5 +90,29 @@ public class OCLCollectionTypeRelations extends MCCollectionTypeRelations
 
   protected boolean isOCLCollectionNoSubType(SymTypeExpression type) {
     return isSpecificCollection(type, "Collection", "java.util.Collection", 1);
+  }
+
+  // static delegate
+
+  public static void init() {
+    Log.trace("init OCLCollectionSymTypeRelations", "TypeCheck setup");
+    setDelegate(new OCLCollectionSymTypeRelations());
+  }
+
+  public static void reset() {
+    OCLCollectionSymTypeRelations.delegate = null;
+    MCCollectionSymTypeRelations.reset();
+  }
+
+  protected static void setDelegate(OCLCollectionSymTypeRelations newDelegate) {
+    OCLCollectionSymTypeRelations.delegate = Log.errorIfNull(newDelegate);
+    MCCollectionSymTypeRelations.setDelegate(newDelegate);
+  }
+
+  protected static OCLCollectionSymTypeRelations getDelegate() {
+    if (OCLCollectionSymTypeRelations.delegate == null) {
+      init();
+    }
+    return OCLCollectionSymTypeRelations.delegate;
   }
 }

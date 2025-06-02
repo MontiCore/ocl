@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.ocl.ocl.OCLMill;
+import de.monticore.ocl.types3.OCLCollectionSymTypeRelations;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsGlobalScope;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
@@ -28,7 +29,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
+public class OCLCollectionSymTypeRelationsTest extends AbstractTypeTest {
 
   protected SymTypeOfGenerics _unboxedCollectionSymType;
 
@@ -38,6 +39,7 @@ public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
   public void init() {
     OCLMill.reset();
     OCLMill.init();
+    OCLCollectionSymTypeRelations.init();
     BasicSymbolsMill.initializePrimitives();
     DefsTypesForTests.setup();
     setupCollectionType();
@@ -60,52 +62,51 @@ public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
 
   @Test
   public void recognizeUnboxedOCLCollectionTypes() {
-    assertTrue(getRel().isOCLCollection(_unboxedCollectionSymType));
-    assertTrue(getRel().isOCLCollection(_unboxedListSymType));
-    assertTrue(getRel().isOCLCollection(_unboxedSetSymType));
+    assertTrue(OCLCollectionSymTypeRelations.isOCLCollection(_unboxedCollectionSymType));
+    assertTrue(OCLCollectionSymTypeRelations.isOCLCollection(_unboxedListSymType));
+    assertTrue(OCLCollectionSymTypeRelations.isOCLCollection(_unboxedSetSymType));
   }
 
   @Test
   public void recognizeBoxedCollectionTypes() {
-    assertTrue(getRel().isOCLCollection(_boxedCollectionSymType));
-    assertTrue(getRel().isOCLCollection(_boxedListSymType));
-    assertTrue(getRel().isOCLCollection(_boxedSetSymType));
+    assertTrue(OCLCollectionSymTypeRelations.isOCLCollection(_boxedCollectionSymType));
+    assertTrue(OCLCollectionSymTypeRelations.isOCLCollection(_boxedListSymType));
+    assertTrue(OCLCollectionSymTypeRelations.isOCLCollection(_boxedSetSymType));
   }
 
   @Test
   public void recognizeNonCollectionTypes() {
-    assertFalse(getRel().isOCLCollection(_unboxedOptionalSymType));
-    assertFalse(getRel().isOCLCollection(_unboxedMapSymType));
-    assertFalse(getRel().isOCLCollection(_boxedOptionalSymType));
-    assertFalse(getRel().isOCLCollection(_boxedMapSymType));
-    assertFalse(getRel().isCollection(_intSymType));
-    assertFalse(getRel().isCollection(_personSymType));
-    assertFalse(getRel().isCollection(_unboxedString));
+    assertFalse(OCLCollectionSymTypeRelations.isOCLCollection(_unboxedOptionalSymType));
+    assertFalse(OCLCollectionSymTypeRelations.isOCLCollection(_unboxedMapSymType));
+    assertFalse(OCLCollectionSymTypeRelations.isOCLCollection(_boxedOptionalSymType));
+    assertFalse(OCLCollectionSymTypeRelations.isOCLCollection(_boxedMapSymType));
+    assertFalse(OCLCollectionSymTypeRelations.isOCLCollection(_intSymType));
+    assertFalse(OCLCollectionSymTypeRelations.isOCLCollection(_personSymType));
+    assertFalse(OCLCollectionSymTypeRelations.isOCLCollection(_unboxedString));
     assertFalse(
-        getRel()
-            .isCollection(
-                SymTypeExpressionFactory.createGenerics(
-                    "noList", BasicSymbolsMill.scope(), _intSymType)));
+        OCLCollectionSymTypeRelations.isOCLCollection(
+            SymTypeExpressionFactory.createGenerics(
+                "noList", BasicSymbolsMill.scope(), _intSymType)));
 
     // incorrect number of arguments
     _unboxedCollectionSymType.setArgumentList(Collections.emptyList());
     _boxedCollectionSymType.setArgumentList(Collections.emptyList());
-    assertFalse(getRel().isList(_unboxedCollectionSymType));
-    assertFalse(getRel().isList(_boxedCollectionSymType));
+    assertFalse(OCLCollectionSymTypeRelations.isList(_unboxedCollectionSymType));
+    assertFalse(OCLCollectionSymTypeRelations.isList(_boxedCollectionSymType));
     _unboxedCollectionSymType.setArgumentList(List.of(_intSymType, _intSymType));
     _boxedCollectionSymType.setArgumentList(List.of(_intSymType, _intSymType));
-    assertFalse(getRel().isList(_unboxedCollectionSymType));
-    assertFalse(getRel().isList(_boxedCollectionSymType));
+    assertFalse(OCLCollectionSymTypeRelations.isList(_unboxedCollectionSymType));
+    assertFalse(OCLCollectionSymTypeRelations.isList(_boxedCollectionSymType));
   }
 
   @Test
   public void getCollectionElementTypeTest() {
     assertSame(
         _unboxedCollectionSymType.getArgument(0),
-        getRel().getCollectionElementType(_unboxedCollectionSymType));
+        OCLCollectionSymTypeRelations.getCollectionElementType(_unboxedCollectionSymType));
     assertSame(
         _boxedCollectionSymType.getArgument(0),
-        getRel().getCollectionElementType(_boxedCollectionSymType));
+        OCLCollectionSymTypeRelations.getCollectionElementType(_boxedCollectionSymType));
   }
 
   @Test
@@ -132,28 +133,39 @@ public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
 
   protected void flattenTestUsingDefinition(SymTypeExpression innerType) {
     // Tests according to Modellierung mit UML 3.3.6
-    assertTrue(createSet(innerType).deepEquals(getRel().flatten(createSet(createSet(innerType)))));
     assertTrue(
-        createList(innerType).deepEquals(getRel().flatten(createSet(createList(innerType)))));
-    assertTrue(
-        createCollection(innerType)
-            .deepEquals(getRel().flatten(createSet(createCollection(innerType)))));
-    assertTrue(
-        createList(innerType).deepEquals(getRel().flatten(createList(createSet(innerType)))));
-    assertTrue(
-        createList(innerType).deepEquals(getRel().flatten(createList(createList(innerType)))));
+        createSet(innerType)
+            .deepEquals(OCLCollectionSymTypeRelations.flatten(createSet(createSet(innerType)))));
     assertTrue(
         createList(innerType)
-            .deepEquals(getRel().flatten(createList(createCollection(innerType)))));
+            .deepEquals(OCLCollectionSymTypeRelations.flatten(createSet(createList(innerType)))));
     assertTrue(
         createCollection(innerType)
-            .deepEquals(getRel().flatten(createCollection(createSet(innerType)))));
+            .deepEquals(
+                OCLCollectionSymTypeRelations.flatten(createSet(createCollection(innerType)))));
     assertTrue(
         createList(innerType)
-            .deepEquals(getRel().flatten(createCollection(createList(innerType)))));
+            .deepEquals(OCLCollectionSymTypeRelations.flatten(createList(createSet(innerType)))));
+    assertTrue(
+        createList(innerType)
+            .deepEquals(OCLCollectionSymTypeRelations.flatten(createList(createList(innerType)))));
+    assertTrue(
+        createList(innerType)
+            .deepEquals(
+                OCLCollectionSymTypeRelations.flatten(createList(createCollection(innerType)))));
     assertTrue(
         createCollection(innerType)
-            .deepEquals(getRel().flatten(createCollection(createCollection(innerType)))));
+            .deepEquals(
+                OCLCollectionSymTypeRelations.flatten(createCollection(createSet(innerType)))));
+    assertTrue(
+        createList(innerType)
+            .deepEquals(
+                OCLCollectionSymTypeRelations.flatten(createCollection(createList(innerType)))));
+    assertTrue(
+        createCollection(innerType)
+            .deepEquals(
+                OCLCollectionSymTypeRelations.flatten(
+                    createCollection(createCollection(innerType)))));
   }
 
   @Test
@@ -170,14 +182,10 @@ public class OCLCollectionTypeRelationsTest extends AbstractTypeTest {
   }
 
   protected void testFlattenAsId(SymTypeOfGenerics toNotFlatten) {
-    assertTrue(toNotFlatten.deepEquals(getRel().flatten(toNotFlatten)));
+    assertTrue(toNotFlatten.deepEquals(OCLCollectionSymTypeRelations.flatten(toNotFlatten)));
   }
 
   // Helper
-
-  protected IOCLCollectionTypeRelations getRel() {
-    return new OCLCollectionTypeRelations();
-  }
 
   protected SymTypeOfGenerics createCollection(SymTypeExpression elementType) {
     IBasicSymbolsGlobalScope gs = BasicSymbolsMill.globalScope();

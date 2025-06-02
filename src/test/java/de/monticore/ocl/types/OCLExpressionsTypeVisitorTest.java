@@ -11,7 +11,6 @@ import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._parser.OCLParser;
-import de.monticore.ocl.types3.OCLSymTypeRelations;
 import de.monticore.ocl.types3.util.OCLCollectionSymTypeFactory;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
@@ -19,6 +18,7 @@ import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
+import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.TypeCheck3;
 import de.monticore.types3.util.DefsTypesForTests;
 import de.monticore.types3.util.DefsVariablesForTests;
@@ -298,7 +298,7 @@ public class OCLExpressionsTypeVisitorTest extends AbstractTest {
     assertNoFindings();
 
     assertFalse(type.isObscureType(), "No type calculated for expression " + exprStr);
-    SymTypeExpression typeNormalized = OCLSymTypeRelations.normalize(type);
+    SymTypeExpression typeNormalized = SymTypeRelations.normalize(type);
     assertNoFindings();
     Assertions.assertEquals(
         expectedType, typeNormalized.printFullName(), "Wrong type for expression " + exprStr);

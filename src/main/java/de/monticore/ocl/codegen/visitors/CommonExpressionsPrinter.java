@@ -10,7 +10,7 @@ import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTrav
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.codegen.util.VariableNaming;
-import de.monticore.ocl.types3.OCLSymTypeRelations;
+import de.monticore.ocl.types3.OCLCollectionSymTypeRelations;
 import de.monticore.prettyprint.IndentPrinter;
 import de.monticore.types.check.IDerive;
 import de.monticore.types.check.ISynthesize;
@@ -194,31 +194,34 @@ public class CommonExpressionsPrinter extends AbstractPrinter
       getPrinter().print("[");
       node.getIndexExpression().accept(getTraverser());
       getPrinter().print("]");
-    } else if (OCLSymTypeRelations.isList(exprType) || OCLSymTypeRelations.isMap(exprType)) {
+    } else if (OCLCollectionSymTypeRelations.isList(exprType)
+        || OCLCollectionSymTypeRelations.isMap(exprType)) {
       getPrinter().print(".get(");
       node.getIndexExpression().accept(getTraverser());
       getPrinter().print(")");
-    } else if (OCLSymTypeRelations.isOptional(exprType)) {
+    } else if (OCLCollectionSymTypeRelations.isOptional(exprType)) {
       getPrinter().print(".map(");
       getPrinter().print(getNaming().getName(node) + "_optVar" + depth);
       getPrinter().print(" ->");
       getPrinter().println();
       getPrinter().indent();
       getPrinter().print(getNaming().getName(node) + "_optVar" + depth);
-      printArrayAccess(OCLSymTypeRelations.getCollectionElementType(exprType), node, depth + 1);
+      printArrayAccess(
+          OCLCollectionSymTypeRelations.getCollectionElementType(exprType), node, depth + 1);
       getPrinter().println();
       getPrinter().unindent();
       getPrinter().print(")");
     }
     // can only be set or collection
-    else if (OCLSymTypeRelations.isOCLCollection(exprType)) {
+    else if (OCLCollectionSymTypeRelations.isOCLCollection(exprType)) {
       getPrinter().print(".stream().map(");
       getPrinter().print(getNaming().getName(node) + "_setVar" + depth);
       getPrinter().print(" ->");
       getPrinter().println();
       getPrinter().indent();
       getPrinter().print(getNaming().getName(node) + "_setVar" + depth);
-      printArrayAccess(OCLSymTypeRelations.getCollectionElementType(exprType), node, depth + 1);
+      printArrayAccess(
+          OCLCollectionSymTypeRelations.getCollectionElementType(exprType), node, depth + 1);
       getPrinter().println();
       getPrinter().unindent();
       getPrinter().print(")");
