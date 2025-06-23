@@ -20,6 +20,7 @@ import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
 import de.se_rwth.commons.logging.Log;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -170,7 +171,7 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
                 files.filter(file -> file.toString().toLowerCase().matches(".*\\.[a-z]*sym$"))
                     .forEach(file -> SymbolTableUtil.loadSymbolFile(file.toString()));
               }
-              catch (IOException e) {
+              catch (IOException | UncheckedIOException e) {
                 Log.error("0xA7106 Could not deserialize symbol files", e);
               }
             }
