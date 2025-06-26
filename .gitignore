@@ -13,5 +13,6 @@ gradlew.bat
 gradlew
 /gradle
 ocl2smt/build/
+*/build/
 tool/build/
 tool/output

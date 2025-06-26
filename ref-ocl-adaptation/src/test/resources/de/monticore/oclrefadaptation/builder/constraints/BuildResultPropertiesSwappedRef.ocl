@@ -1,0 +1,14 @@
+/* (c) https://github.com/MontiCore/monticore */
+ocl BuildResultHasCorrectPropertiesSwapped {
+
+  /*
+   * NOTE: Semantically, this OCL constraint is equivalent to BuildResultHasCorrectProperties.
+   * However, the order of the equals expression is swapped which requires a slightly different
+   * adaptation algorithm.
+   * TODO link to javadoc/some public documentation!
+   * [TEMP see: https://www.notion.so/OCL-Adaptation-1f248d2bd1f5808eaec2f241d509a83e ]
+   */
+
+  context DataClass DataClassBuilder.build()
+    post: attribute == result.attribute;
+}
