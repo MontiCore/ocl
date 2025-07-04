@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public abstract class ReferenceArtifactAdapter {
+public abstract class ReferenceArtifactAdapter<C extends IAdaptationContext> {
 
   protected ITraverser bindingVariantsTraverser;
 
@@ -43,19 +43,29 @@ public abstract class ReferenceArtifactAdapter {
     return contextHolder;
   }
 
+  public Adaptations4Ast getAdaptations4Ast() {
+    return adaptations4Ast;
+  }
+
   /**
    * Adapt the given AST node to all its variants.
-   * @param refNode
-   * @return
-   * @param <T>
+   *
+   * @param refNode the reference AST node to adapt
+   * @param context the adaptation context to use for the adaptation
+   *
+   * @return a list of all adapted AST nodes that are variants of the given reference node
+   * @param <T> the type of the AST node to adapt
    */
-  public <T extends ASTNode> List<T> adapt(T refNode) {
-    // reset AdaptationVariants4Ast & AdaptationResults4Ast...
+  public <T extends ASTNode> List<T> adapt(T refNode, C context) {
+    // 1. reset
+    getAdaptations4Ast().reset();
+    // 2. init context
+    getContextHolder().setContext(context);
+    // 3. find all valid binding variants
     refNode.accept(getBindingVariantsTraverser());
-    // now we know all the variants in BindingVariants4Ast
-
-    // adaptation visitor gets variants via BindingVariants4Ast
+    // 4. adapt the reference node according to the binding variants
     refNode.accept(getAdaptationTraverser());
+    // 5. collect all adaptations of the reference node from the variants
     return adaptations4Ast.getVariants(refNode).stream()
             .map(variant -> {
               Optional<T> adaptedNode = variant.getAdaptedNode(refNode);

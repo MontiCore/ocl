@@ -1,5 +1,6 @@
 package de.monticore.ocl;
 
+import de.monticore.ast.ASTNode;
 import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationVisitor;
 import de.monticore.expressions.commonexpressions.CommonExpressionsBindingVariantsVisitor;
 import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVisitor;
@@ -9,21 +10,24 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.refadaptation.AdaptationContextHolder;
 import de.monticore.refadaptation.Adaptations4Ast;
 import de.monticore.refadaptation.ReferenceArtifactAdapter;
+import de.monticore.symbols.OOSymbolsIncMapping;
 import de.monticore.types.mcbasictypes.MCBasicTypesAdaptationVisitor;
 import de.monticore.types.mcbasictypes.MCBasicTypesBindingVariantsVisitor;
+import de.monticore.types.mccollectiontypes.MCCollectionTypesAdaptationVisitor;
+import de.monticore.types.mccollectiontypes.MCCollectionTypesBindingVariantsVisitor;
 import de.monticore.visitor.ITraverser;
 import de.se_rwth.commons.logging.Log;
 
-public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter {
+import java.util.List;
 
-  protected OCLReferenceArtifactAdapter(
-          ITraverser bindingVariantsTraverser,
-          ITraverser adaptationTraverser,
-          AdaptationContextHolder contextHolder,
-          Adaptations4Ast adaptations4Ast) {
-    super(bindingVariantsTraverser, adaptationTraverser, contextHolder, adaptations4Ast);
-  }
+public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAdaptationContext> {
 
+  /**
+   * Factory method to create an instance of the {@link OCLReferenceArtifactAdapter} configured
+   * with all the binding variant & adaptation visitors for the OCL language and sub-languages.
+   *
+   * @return a ready to use {@link OCLReferenceArtifactAdapter} instance
+   */
   public static OCLReferenceArtifactAdapter create() {
     Log.trace("init OCLTypeCheck3", "TypeCheck setup");
 
@@ -31,6 +35,19 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter {
     OCLTraverser adaptationTraverser = OCLMill.inheritanceTraverser();
     AdaptationContextHolder contextHolder = new AdaptationContextHolder();
     Adaptations4Ast adaptations4Ast = new Adaptations4Ast();
+
+    // OCL main language
+
+    OCLBindingVariantsVisitor oclBindingVis = new OCLBindingVariantsVisitor();
+    oclBindingVis.setContextHolder(contextHolder);
+    oclBindingVis.setAdaptations4Ast(adaptations4Ast);
+    bindingVariantsTraverser.add4OCL(oclBindingVis);
+    bindingVariantsTraverser.setOCLHandler(oclBindingVis);
+
+    OCLAdaptationVisitor oclAdaptVis = new OCLAdaptationVisitor();
+    oclAdaptVis.setContextHolder(contextHolder);
+    oclAdaptVis.setAdaptations4Ast(adaptations4Ast);
+    adaptationTraverser.add4OCL(oclAdaptVis);
 
     // Expressions
 
@@ -68,6 +85,17 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter {
     mcBasicTypesAdaptVis.setAdaptations4Ast(adaptations4Ast);
     adaptationTraverser.add4MCBasicTypes(mcBasicTypesAdaptVis);
 
+    MCCollectionTypesBindingVariantsVisitor mcCollectionTypesBindingVis = new MCCollectionTypesBindingVariantsVisitor();
+    mcCollectionTypesBindingVis.setContextHolder(contextHolder);
+    mcCollectionTypesBindingVis.setAdaptations4Ast(adaptations4Ast);
+    bindingVariantsTraverser.add4MCCollectionTypes(mcCollectionTypesBindingVis);
+    bindingVariantsTraverser.setMCCollectionTypesHandler(mcCollectionTypesBindingVis);
+
+    MCCollectionTypesAdaptationVisitor mcCollectionTypesAdaptVis = new MCCollectionTypesAdaptationVisitor();
+    mcCollectionTypesAdaptVis.setContextHolder(contextHolder);
+    mcCollectionTypesAdaptVis.setAdaptations4Ast(adaptations4Ast);
+    adaptationTraverser.add4MCCollectionTypes(mcCollectionTypesAdaptVis);
+
     // create instance
     return new OCLReferenceArtifactAdapter(
         bindingVariantsTraverser,
@@ -75,5 +103,35 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter {
         contextHolder,
         adaptations4Ast
     );
+  }
+
+  protected OCLReferenceArtifactAdapter(
+          ITraverser bindingVariantsTraverser,
+          ITraverser adaptationTraverser,
+          AdaptationContextHolder contextHolder,
+          Adaptations4Ast adaptations4Ast) {
+    super(bindingVariantsTraverser, adaptationTraverser, contextHolder, adaptations4Ast);
+  }
+
+  /**
+   * Creates an adaptation context for the given OOSymbolsIncMapping.
+   *
+   * @param ooSymbolsIncMapping the OOSymbolsIncMapping to use for the adaptation context
+   * @return a context representing the given incarnation mapping
+   */
+  protected OCLAdaptationContext createAdaptationContext(OOSymbolsIncMapping ooSymbolsIncMapping) {
+    return new OCLAdaptationContextImpl(ooSymbolsIncMapping);
+  }
+
+  /**
+   * Convenience method to adapt the given reference node using the provided OOSymbolsIncMapping.
+   *
+   * @param refNode the reference node to adapt
+   * @param ooSymbolsIncMapping the OOSymbolsIncMapping to use for adaptation
+   * @return a list of adapted AST nodes of type
+   * @param <T> the type of ASTNode to adapt
+   */
+  public <T extends ASTNode> List<T> adapt(T refNode, OOSymbolsIncMapping ooSymbolsIncMapping) {
+    return adapt(refNode, createAdaptationContext(ooSymbolsIncMapping));
   }
 }

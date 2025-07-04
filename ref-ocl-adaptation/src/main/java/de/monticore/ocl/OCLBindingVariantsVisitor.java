@@ -9,14 +9,16 @@ import de.monticore.refadaptation.AbstractAdaptationVisitor;
 
 public class OCLBindingVariantsVisitor extends AbstractAdaptationVisitor implements OCLVisitor2, OCLHandler {
 
+  private OCLTraverser traverser;
+
   @Override
   public OCLTraverser getTraverser() {
-    return null;
+    return traverser;
   }
 
   @Override
   public void setTraverser(OCLTraverser traverser) {
-
+    this.traverser = traverser;
   }
 
   @Override

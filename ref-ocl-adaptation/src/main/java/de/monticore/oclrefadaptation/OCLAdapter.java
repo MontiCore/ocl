@@ -3,16 +3,14 @@ package de.monticore.oclrefadaptation;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
-import de.monticore.cdconformance.CDConformanceContext;
-import de.monticore.cdconformance.DefaultCDConformanceContext;
-import de.monticore.cdconformance.inc.CDIncarnationMapping;
-import de.monticore.cdconformance.inc.DefaultCDIncarnationMapping;
-import de.monticore.ocl.ocl.OCLTool;
+import de.monticore.ocl.OCLReferenceArtifactAdapter;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.symbols.OOSymbolsIncMapping;
+import de.se_rwth.commons.logging.Log;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -21,6 +19,8 @@ public class OCLAdapter {
   public static final String DEFAULT_UNDERSPECIFIED_TYPE_NAME = "undef";
   protected Set<CDConfParameter> confParams;
   protected String underspecifiedTypeName = DEFAULT_UNDERSPECIFIED_TYPE_NAME;
+
+  protected OCLReferenceArtifactAdapter oclRefAdapter = OCLReferenceArtifactAdapter.create();
 
   public OCLAdapter(Set<CDConfParameter> confParams) {
     this.confParams = confParams;
@@ -64,11 +64,19 @@ public class OCLAdapter {
       // TODO Custom exception
       throw new IllegalStateException("Concrete CD does not conform to reference CD");
     }
-    CDIncarnationMapping incMapping = checker.getIncarnationMapping();
 
-    // TODO implement adaptation
+    OOSymbolsIncMapping incMapping = new LegacyCDIncarnationMapping2OOSymbolsIncMapping(checker.getIncarnationMapping());
 
-    return Collections.emptyList();
+    List<ASTOCLCompilationUnit> adaptedArtifacts = new ArrayList<>();
+    for (ASTOCLCompilationUnit refOCL : refOCLArtifacts) {
+      List<ASTOCLCompilationUnit> adaptedOCL = oclRefAdapter.adapt(refOCL, incMapping);
+      if (adaptedOCL.isEmpty()) {
+        Log.warn("0xA1234 No OCL artifacts adapted for the given reference artifact. ");
+      }
+      adaptedArtifacts.addAll(adaptedOCL);
+    }
+
+    return adaptedArtifacts;
   }
 
   public void setUnderspecifiedTypeName(String underspecifiedTypeName) {

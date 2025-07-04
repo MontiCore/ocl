@@ -3,7 +3,6 @@ package de.monticore.ocl;
 import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationContext;
 import de.monticore.refadaptation.IAdaptationContext;
 import de.monticore.types.mccollectiontypes.MCCollectionTypesAdaptationContext;
-import de.monticore.types.mccollectiontypes.MCCollectionTypesAdaptationVariant;
 
 public interface OCLAdaptationContext extends
         /*

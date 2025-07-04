@@ -8,7 +8,7 @@ import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesHandler;
 import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesTraverser;
 import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesVisitor2;
 
-public class MCollectionTypesBindingVariantsVisitor extends AbstractAdaptationVisitor implements MCCollectionTypesVisitor2, MCCollectionTypesHandler {
+public class MCCollectionTypesBindingVariantsVisitor extends AbstractAdaptationVisitor implements MCCollectionTypesVisitor2, MCCollectionTypesHandler {
 
   protected MCCollectionTypesTraverser traverser;
 

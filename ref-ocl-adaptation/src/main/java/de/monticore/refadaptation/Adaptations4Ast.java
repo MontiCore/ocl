@@ -23,4 +23,8 @@ public class Adaptations4Ast {
   public void removeVariant(ASTNode refNode, IAdaptationVariant variant) {
     variants.remove(refNode, variant);
   }
+
+  public void reset() {
+    variants.clear();
+  }
 }
