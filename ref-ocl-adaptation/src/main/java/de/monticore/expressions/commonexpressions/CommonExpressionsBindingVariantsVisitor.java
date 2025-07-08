@@ -5,7 +5,7 @@ import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsHandler;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTraverser;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
-import de.monticore.refadaptation.AbstractAdaptationVisitor;
+import de.monticore.refadaptation.AbstractAdaptationHandler;
 import de.monticore.refadaptation.Binding;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public class CommonExpressionsBindingVariantsVisitor
-        extends AbstractAdaptationVisitor<CommonExpressionsAdaptationContext>
+        extends AbstractAdaptationHandler<CommonExpressionsAdaptationContext, CommonExpressionsAdaptationVariant>
         implements CommonExpressionsVisitor2, CommonExpressionsHandler {
 
   private CommonExpressionsTraverser traverser;
@@ -74,6 +74,8 @@ public class CommonExpressionsBindingVariantsVisitor
 
   @Override
   public void traverse(ASTEqualsExpression expr) {
+    // TODO cleanup
+/*
     if (null != expr.getLeft()) {
       expr.getLeft().accept(getTraverser());
       List<CommonExpressionsAdaptationVariant> leftAdapted = getAdaptations4Ast().getVariants(expr.getLeft());
@@ -100,9 +102,8 @@ public class CommonExpressionsBindingVariantsVisitor
       }
       // IMPORTANT: reset the adaptation context to the previous one
       setAdaptationContext(previousCtx);
-    }
-    /*
-     * TODO We can generalize this method to K child nodes where constraints are propagated from each child to the next
-     */
+    }*/
+    List<CommonExpressionsAdaptationVariant> variants = traverseAndPropagateConstraints(expr.getLeft(), expr.getRight());
+    getAdaptations4Ast().addVariants(expr, variants);
   }
 }

@@ -7,7 +7,7 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
 import de.monticore.refadaptation.AbstractAdaptationVisitor;
 
-public class OCLBindingVariantsVisitor extends AbstractAdaptationVisitor implements OCLVisitor2, OCLHandler {
+public class OCLBindingVariantsVisitor extends AbstractAdaptationVisitor<OCLAdaptationContext> implements OCLVisitor2, OCLHandler {
 
   private OCLTraverser traverser;
 
@@ -34,5 +34,7 @@ public class OCLBindingVariantsVisitor extends AbstractAdaptationVisitor impleme
     // TODO refactor after -> extract helper methods that help with the usual
     //   chaining / constraint propagation form one child to another
     // Idea: we only pass a list of ASTNode instances to a function and it will do for each
+
+
   }
 }
