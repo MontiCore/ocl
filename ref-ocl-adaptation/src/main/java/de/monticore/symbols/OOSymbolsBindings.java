@@ -7,8 +7,11 @@ import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface OOSymbolsBindings extends BasicSymbolsBindings {
+
+  OOSymbolsBindings copy();
 
   Optional<Binding<OOTypeSymbol>> getBinding(OOTypeSymbol typeSymbol);
   Optional<Binding<FieldSymbol>> getBinding(FieldSymbol fieldSymbol);
@@ -19,4 +22,12 @@ public interface OOSymbolsBindings extends BasicSymbolsBindings {
   void addFieldBinding(Binding<FieldSymbol> binding);
 
   void addMethodBinding(Binding<MethodSymbol> binding);
+
+  Set<Binding<OOTypeSymbol>> getOOTypeBindings();
+
+  Set<Binding<FieldSymbol>> getFieldBindings();
+
+  Set<Binding<MethodSymbol>> getMethodBindings();
+
+  void addAll(OOSymbolsBindings bindings);
 }

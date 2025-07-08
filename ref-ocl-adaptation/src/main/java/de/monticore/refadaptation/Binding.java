@@ -2,6 +2,13 @@ package de.monticore.refadaptation;
 
 import java.util.Set;
 
+/**
+ * TODO document
+ *
+ * A {@link Binding} instance is immutable!
+ *
+ * @param <T>
+ */
 public class Binding<T> {
   public enum Kind {
     STRICT,       // only these incarnations are allowed
@@ -67,6 +74,12 @@ public class Binding<T> {
 
     // Aggregates are compatible
     return false;
+  }
+
+  public <O> Binding<O> cast() {
+    @SuppressWarnings("unchecked")
+    Binding<O> casted = (Binding<O>) this;
+    return casted;
   }
 
   @Override

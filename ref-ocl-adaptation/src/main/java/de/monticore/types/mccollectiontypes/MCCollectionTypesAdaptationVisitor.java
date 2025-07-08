@@ -1,10 +1,8 @@
 package de.monticore.types.mccollectiontypes;
 
 import de.monticore.refadaptation.AbstractAdaptationVisitor;
-import de.monticore.refadaptation.AbstractAdaptationVariant;
 import de.monticore.refadaptation.IAdaptationVariant;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
-import de.monticore.types.mccollectiontypes.MCCollectionTypesMill;
 import de.monticore.types.mccollectiontypes._ast.ASTMCBasicTypeArgument;
 import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCTypeArgument;

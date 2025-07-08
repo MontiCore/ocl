@@ -111,6 +111,10 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
     assertEquals(1, adaptedOCLList.size(),
         "Expected exactly one adapted OCL artifact for a single reference artifact");
     ASTOCLCompilationUnit adaptedOCL = adaptedOCLList.get(0);
+
+    System.out.println("Adapted OCL: \n");
+    System.out.println(OCLMill.prettyPrint(adaptedOCL, true));
+
     assertTrue(expectedAdaptedOCL.deepEquals(adaptedOCL, false),
             "Expected adapted OCL does not match the actual one");
     return adaptedOCL;

@@ -2,7 +2,6 @@ package de.monticore.expressions.expressionsbasis;
 
 import de.monticore.refadaptation.IAdaptationVariant;
 import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
-import de.monticore.symbols.basicsymbols.BasicSymbolsIncMapping;
 
 public interface ExpressionsBasisAdaptationVariant extends IAdaptationVariant {
 

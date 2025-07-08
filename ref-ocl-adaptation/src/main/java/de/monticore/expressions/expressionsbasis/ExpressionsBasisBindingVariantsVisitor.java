@@ -52,11 +52,16 @@ public class ExpressionsBasisBindingVariantsVisitor extends AbstractAdaptationVi
 
       VariableSymbol refVarSymbol = sourceSymbolOpt.get();
       Set<VariableSymbol> incarnations = getAdaptationContext().getBasicSymbolsIncMapping().getIncarnations(refVarSymbol);
-      // we have the incarnations which are possible in this context
-      for (VariableSymbol variableIncarnation : incarnations) {
-        ExpressionsBasisAdaptationVariant newVariant = getAdaptationContext().createVariant();
-        newVariant.getBasicSymbolsBindings().addVariableBinding(Binding.createStrict(refVarSymbol, variableIncarnation));
-        getAdaptations4Ast().addVariant(refExpr, newVariant);
+      if (incarnations.isEmpty()) {
+        // no field symbol, use the constraints from the parent expression
+        getAdaptations4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
+      } else {
+        // we have the incarnations which are possible in this context
+        for (VariableSymbol variableIncarnation : incarnations) {
+          ExpressionsBasisAdaptationVariant newVariant = getAdaptationContext().createVariant();
+          newVariant.getBasicSymbolsBindings().addVariableBinding(Binding.createStrict(refVarSymbol, variableIncarnation));
+          getAdaptations4Ast().addVariant(refExpr, newVariant);
+        }
       }
     } else {
       // no VariableSymbol, should not be adapted and just deepCloned

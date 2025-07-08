@@ -7,7 +7,7 @@ import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTrav
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 import de.monticore.refadaptation.AbstractAdaptationVisitor;
 import de.monticore.refadaptation.Binding;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.TypeCheck3;
 
@@ -34,12 +34,12 @@ public class CommonExpressionsBindingVariantsVisitor
   @Override
   public void endVisit(ASTFieldAccessExpression refExpr) {
     SymTypeExpression expressionType = TypeCheck3.typeOf(refExpr);
-    Optional<FieldSymbol> sourceSymbolOpt = expressionType.getSourceInfo().getSourceSymbol()
-            .filter(s -> s instanceof FieldSymbol)
-            .map(s -> (FieldSymbol) s);
+    Optional<VariableSymbol> sourceSymbolOpt = expressionType.getSourceInfo().getSourceSymbol()
+            .filter(s -> s instanceof VariableSymbol)
+            .map(s -> (VariableSymbol) s);
     if (sourceSymbolOpt.isPresent()) {
-      FieldSymbol sourceSymbol = sourceSymbolOpt.get();
-      System.out.println("Field Source symbol: " + sourceSymbol);
+      VariableSymbol sourceSymbol = sourceSymbolOpt.get();
+      System.out.println("FieldAccessExpression Variable Source symbol: " + sourceSymbol);
       System.out.println("symbol full name: " + sourceSymbol.getFullName());
     }
 
@@ -52,17 +52,17 @@ public class CommonExpressionsBindingVariantsVisitor
     for (CommonExpressionsAdaptationVariant parentVariant : parentVariants) {
       // 2. if we have a field symbol, get all incarnations and create variants for it
       if (sourceSymbolOpt.isPresent()) {
-        FieldSymbol refFieldSymbol = sourceSymbolOpt.get();
-        Set<FieldSymbol> incarnations = getAdaptationContext().getOOSymbolsIncMapping().getIncarnations(refFieldSymbol);
+        VariableSymbol refFieldSymbol = sourceSymbolOpt.get();
+        Set<VariableSymbol> incarnations = getAdaptationContext().getBasicSymbolsIncMapping().getIncarnations(refFieldSymbol);
         if (incarnations.isEmpty()) {
           // no field symbol, use the constraints from the parent expression
           getAdaptations4Ast().addVariant(refExpr, parentVariant);
           continue;
         }
         // we have the incarnations which are possible in this context
-        for (FieldSymbol fieldIncarnation : incarnations) {
+        for (VariableSymbol fieldIncarnation : incarnations) {
           CommonExpressionsAdaptationVariant newVariant = parentVariant.copy();
-          newVariant.getOOSymbolsBindings().addFieldBinding(Binding.createStrict(refFieldSymbol, fieldIncarnation));
+          newVariant.getBasicSymbolsBindings().addVariableBinding(Binding.createStrict(refFieldSymbol, fieldIncarnation));
           getAdaptations4Ast().addVariant(refExpr, newVariant);
         }
       } else {

@@ -1,7 +1,7 @@
 package de.monticore.expressions.expressionsbasis;
 
 import de.monticore.refadaptation.IAdaptationContext;
-import de.monticore.symbols.basicsymbols.BasicSymbolsIncMapping;
+import de.monticore.symbols.basicsymbols.BasicSymbolsLocalIncMapping;
 
 public interface ExpressionsBasisAdaptationContext extends IAdaptationContext {
 
@@ -19,5 +19,7 @@ public interface ExpressionsBasisAdaptationContext extends IAdaptationContext {
   // Language specific incarnation mappings required for adaptation
   // ==============================================================
 
-  BasicSymbolsIncMapping getBasicSymbolsIncMapping();
+  BasicSymbolsLocalIncMapping getBasicSymbolsIncMapping();
+
+  BasicSymbolsLocalIncMapping getOriginalBasicSymbolsIncMapping();
 }

@@ -3,17 +3,41 @@ package de.monticore.ocl;
 import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationVariant;
 import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVariant;
 import de.monticore.refadaptation.IAdaptationVariant;
-import de.monticore.symbols.OOSymbolsIncMapping;
+import de.monticore.symbols.*;
 import de.monticore.symbols.basicsymbols.BasicSymbolsIncMapping;
+import de.monticore.symbols.basicsymbols.BasicSymbolsLocalIncMapping;
 import de.monticore.types.mcbasictypes.MCBasicTypesAdaptationVariant;
 import de.monticore.types.mccollectiontypes.MCCollectionTypesAdaptationVariant;
 
 public class OCLAdaptationContextImpl implements OCLAdaptationContext {
 
-  private OOSymbolsIncMapping ooSymbolsIncMapping;
+  private final OOSymbolsIncMapping ooSymbolsIncMapping;
+  private final OOSymbolsBindings ooSymbolsBindings;
+  private final OOSymbolsLocalIncMapping ooSymbolsLocalIncMapping;
 
   public OCLAdaptationContextImpl(OOSymbolsIncMapping ooSymbolsIncMapping) {
+    this(ooSymbolsIncMapping, new OOSymbolsBindingsImpl());
+  }
+
+  protected OCLAdaptationContextImpl(
+          OOSymbolsIncMapping ooSymbolsIncMapping,
+          OOSymbolsBindings ooSymbolsBindings) {
+    /*
+     * We initialize the local incarnation mapping once to avoid repeated creation of new instances
+     * when getOOSymbolsIncMapping() is called.
+     */
+    this(ooSymbolsIncMapping,
+        ooSymbolsBindings,
+        new OOSymbolsRestrictedIncMapping(ooSymbolsIncMapping, ooSymbolsBindings));
+  }
+
+  protected OCLAdaptationContextImpl(
+          OOSymbolsIncMapping ooSymbolsIncMapping,
+          OOSymbolsBindings ooSymbolsBindings,
+          OOSymbolsLocalIncMapping ooSymbolsLocalIncMapping) {
     this.ooSymbolsIncMapping = ooSymbolsIncMapping;
+    this.ooSymbolsBindings = ooSymbolsBindings;
+    this.ooSymbolsLocalIncMapping = ooSymbolsLocalIncMapping;
   }
 
   @Override
@@ -23,17 +47,30 @@ public class OCLAdaptationContextImpl implements OCLAdaptationContext {
 
   @Override
   public OCLAdaptationContext fork() {
-    return new OCLAdaptationContextImpl(ooSymbolsIncMapping);
+    return new OCLAdaptationContextImpl(
+        ooSymbolsIncMapping,
+        ooSymbolsBindings.copy());
   }
 
   @Override
-  public OOSymbolsIncMapping getOOSymbolsIncMapping() {
-    return null;
+  public OOSymbolsLocalIncMapping getOOSymbolsIncMapping() {
+    return ooSymbolsLocalIncMapping;
   }
 
   @Override
-  public BasicSymbolsIncMapping getBasicSymbolsIncMapping() {
-    return null;
+  public BasicSymbolsLocalIncMapping getBasicSymbolsIncMapping() {
+    // The OOSymbolsLocalIncMapping is a specific implementation of BasicSymbolsLocalIncMapping
+    return ooSymbolsLocalIncMapping;
+  }
+
+  @Override
+  public BasicSymbolsIncMapping getOriginalBasicSymbolsIncMapping() {
+    return ooSymbolsIncMapping;
+  }
+
+  @Override
+  public OOSymbolsIncMapping getOriginalOOSymbolsIncMapping() {
+    return ooSymbolsIncMapping;
   }
 
   @Override

@@ -2,6 +2,8 @@ package de.monticore.oclrefadaptation;
 
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdconformance.CDConfParameter;
+import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
+import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
@@ -44,6 +46,9 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               System.out.println("resolved type symbol full name: " + typeSymbol.getFullName());
               System.out.println("resolved type symbol class: " + typeSymbol.getClass());
             });
+
+    ASTEqualsExpression equalsExpr = (ASTEqualsExpression) operationConstraint.getPostCondition(0);
+    ASTFieldAccessExpression fieldAccessExpr = (ASTFieldAccessExpression) equalsExpr.getLeft();
   }
 
 

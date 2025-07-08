@@ -2,6 +2,7 @@ package de.monticore.refadaptation;
 
 import de.monticore.ast.ASTNode;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -10,11 +11,9 @@ import java.util.Optional;
  * Stores a map of adapted AST nodes that are all consistent regarding the incarnations which
  * were used to adapt the nodes.
  */
-// TODO better not implement all the bindings here -> maybe delegate?
-public abstract class AbstractAdaptationVariant {
+public abstract class AbstractAdaptationVariant implements IAdaptationVariant {
 
-  private final Map<ASTNode, ASTNode> adaptedNodes;
-  // TODO add bindings/context
+  protected final Map<ASTNode, ASTNode> adaptedNodes;
 
 
   public AbstractAdaptationVariant() {
@@ -25,8 +24,19 @@ public abstract class AbstractAdaptationVariant {
     this.adaptedNodes = new HashMap<>(adaptedNodes);
   }
 
+  @Override
   public <T extends ASTNode> Optional<T> getAdaptedNode(T refNode) {
     return Optional.ofNullable((T) adaptedNodes.get(refNode));
+  }
+
+  @Override
+  public Map<ASTNode, ASTNode> getAdaptedNodes() {
+    return Collections.unmodifiableMap(adaptedNodes);
+  }
+
+  @Override
+  public void addAdaptedNodes(Map<ASTNode, ASTNode> adaptedNodes) {
+    this.adaptedNodes.putAll(adaptedNodes);
   }
 
   // TODO better deepClone parent and only set child if it exists in adaptedNodes
@@ -38,6 +48,4 @@ public abstract class AbstractAdaptationVariant {
   public void setAdaptedNode(ASTNode refNode, ASTNode adaptedNode) {
     adaptedNodes.put(refNode, adaptedNode);
   }
-
-  public abstract AbstractAdaptationVariant copy();
 }

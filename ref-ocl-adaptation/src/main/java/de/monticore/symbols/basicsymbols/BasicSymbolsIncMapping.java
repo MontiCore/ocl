@@ -1,17 +1,21 @@
 package de.monticore.symbols.basicsymbols;
 
-import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.symboltable.IScope;
+import de.monticore.symboltable.ISymbol;
 
-import java.util.Set;
+public interface BasicSymbolsIncMapping extends BasicSymbolsLocalIncMapping {
 
-public interface BasicSymbolsIncMapping {
+  String computeSymbolKey(ISymbol symbol);
 
-  Set<TypeSymbol> getIncarnations(TypeSymbol typeSymbol);
+  //BasicSymbolsLocalIncMapping getFullMapping(); // TODO extend local mapping vs getter?
 
-  Set<VariableSymbol> getIncarnations(VariableSymbol variableSymbol);
+  BasicSymbolsLocalIncMapping getScopedMapping(ISymbol contextSymbol);
 
-  Set<FunctionSymbol> getIncarnations(FunctionSymbol functionSymbol);
+  BasicSymbolsLocalIncMapping getScopedMapping(IScope scope);
+
+  BasicSymbolsBindings getScopedBindings(String contextSymbolKey);
+
+  BasicSymbolsBindings getScopedBindings(ISymbol contextSymbol);
+
+  BasicSymbolsBindings getScopedBindings(IScope scope);
 }

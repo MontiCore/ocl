@@ -1,17 +1,22 @@
 package de.monticore.symbols;
 
 import de.monticore.symbols.basicsymbols.BasicSymbolsIncMapping;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
-import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
-import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
+import de.monticore.symboltable.IScope;
+import de.monticore.symboltable.ISymbol;
 
-import java.util.Set;
+public interface OOSymbolsIncMapping extends BasicSymbolsIncMapping, OOSymbolsLocalIncMapping {
 
-public interface OOSymbolsIncMapping extends BasicSymbolsIncMapping {
+  String computeSymbolKey(ISymbol symbol);
 
-  Set<OOTypeSymbol> getIncarnations(OOTypeSymbol typeSymbol);
+  //OOSymbolsLocalIncMapping getFullMapping(); // TODO extend local mapping vs getter?
 
-  Set<FieldSymbol> getIncarnations(FieldSymbol fieldSymbol);
+  OOSymbolsLocalIncMapping getScopedMapping(ISymbol contextSymbol);
 
-  Set<MethodSymbol> getIncarnations(MethodSymbol methodSymbol);
+  OOSymbolsLocalIncMapping getScopedMapping(IScope scope);
+
+  OOSymbolsBindings getScopedBindings(String contextSymbolKey);
+
+  OOSymbolsBindings getScopedBindings(ISymbol contextSymbol);
+
+  OOSymbolsBindings getScopedBindings(IScope scope);
 }

@@ -11,6 +11,7 @@ import de.monticore.refadaptation.AdaptationContextHolder;
 import de.monticore.refadaptation.Adaptations4Ast;
 import de.monticore.refadaptation.ReferenceArtifactAdapter;
 import de.monticore.symbols.OOSymbolsIncMapping;
+import de.monticore.symbols.OOSymbolsLocalIncMapping;
 import de.monticore.types.mcbasictypes.MCBasicTypesAdaptationVisitor;
 import de.monticore.types.mcbasictypes.MCBasicTypesBindingVariantsVisitor;
 import de.monticore.types.mccollectiontypes.MCCollectionTypesAdaptationVisitor;
@@ -116,7 +117,8 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
   /**
    * Creates an adaptation context for the given OOSymbolsIncMapping.
    *
-   * @param ooSymbolsIncMapping the OOSymbolsIncMapping to use for the adaptation context
+   * @param ooSymbolsIncMapping the incarnation mapping of OOSymbols models to use for the
+   *                            adaptation context
    * @return a context representing the given incarnation mapping
    */
   protected OCLAdaptationContext createAdaptationContext(OOSymbolsIncMapping ooSymbolsIncMapping) {
@@ -127,7 +129,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
    * Convenience method to adapt the given reference node using the provided OOSymbolsIncMapping.
    *
    * @param refNode the reference node to adapt
-   * @param ooSymbolsIncMapping the OOSymbolsIncMapping to use for adaptation
+   * @param ooSymbolsIncMapping the incarnation mapping of OOSymbols models to use for adaptation
    * @return a list of adapted AST nodes of type
    * @param <T> the type of ASTNode to adapt
    */

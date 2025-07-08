@@ -2,6 +2,7 @@ package de.monticore.types.mcbasictypes;
 
 import de.monticore.refadaptation.IAdaptationContext;
 import de.monticore.symbols.basicsymbols.BasicSymbolsIncMapping;
+import de.monticore.symbols.basicsymbols.BasicSymbolsLocalIncMapping;
 
 public interface MCBasicTypesAdaptationContext extends IAdaptationContext {
 
@@ -9,5 +10,7 @@ public interface MCBasicTypesAdaptationContext extends IAdaptationContext {
   MCBasicTypesAdaptationContext fork();
   void addBindings(MCBasicTypesAdaptationVariant variant);
 
-  BasicSymbolsIncMapping getBasicSymbolsIncMapping();
+  BasicSymbolsLocalIncMapping getBasicSymbolsIncMapping();
+
+  BasicSymbolsIncMapping getOriginalBasicSymbolsIncMapping();
 }
