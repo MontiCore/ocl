@@ -72,6 +72,8 @@ public class OCLHelper {
       }
     }
 
+    OD4ReportMill.init();
+
     ASTODArtifact preOD =
         de.monticore.cd2smt.Helper.ODHelper.buildOD(
             "pre_" + od.getObjectDiagram().getName(), preOdElements);
@@ -177,6 +179,8 @@ public class OCLHelper {
             .filter(a -> isPre(a.getName()))
             .collect(Collectors.toList());
     preObjAttributeList.forEach(a -> a.setName(removePre(a.getName())));
+
+    OD4ReportMill.init();
 
     String type =
         new MCBasicTypesFullPrettyPrinter(new IndentPrinter())

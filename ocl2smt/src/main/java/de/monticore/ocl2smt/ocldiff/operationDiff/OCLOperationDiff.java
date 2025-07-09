@@ -9,6 +9,7 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.FullOCL2SMTGenerator;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
@@ -154,6 +155,7 @@ public class OCLOperationDiff {
 
       solver = fullOcl2smt.makeSolver(solverConstraints);
 
+      OD4ReportMill.init();
       if (solver.check() == Status.SATISFIABLE) {
         opDiffWitness.add(
             fullOcl2smt.buildOPOd(solver.getModel(), "Witness", method, oldConstraint, partial));

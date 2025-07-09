@@ -11,6 +11,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl2smt.helpers.OCLHelper;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.monticore.odlink._ast.ASTODLink;
 import de.se_rwth.commons.logging.Log;
@@ -175,11 +176,13 @@ public interface OCLInvDiffStrategy {
       } else if (status == Status.UNKNOWN) {
         return new OCLInvDiffResult(null, new HashSet<>());
       } else {
+        OD4ReportMill.init();
         Log.info("[UNSAT]The invariant is refined by the new model", this.getClass().getName());
         traceUnSat.addAll(TraceUnSatCore.traceUnSatCore(solver));
       }
       posConstraintList.remove(negConstraint);
     }
+    OD4ReportMill.init();
     return new OCLInvDiffResult(
         TraceUnSatCore.buildUnSatOD(posConstraintList, negConstraintList, traceUnSat), satOdList);
   }

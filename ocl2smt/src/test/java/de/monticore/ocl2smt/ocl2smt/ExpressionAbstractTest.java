@@ -12,6 +12,7 @@ import de.monticore.ocl2smt.OCL2SMTAbstractTest;
 import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.ocldiff.TraceUnSatCore;
 import de.monticore.ocl2smt.util.OCL_Loader;
+import de.monticore.od4report.OD4ReportMill;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
@@ -79,6 +80,7 @@ public abstract class ExpressionAbstractTest extends OCL2SMTAbstractTest {
 
     boolean res = Status.UNSATISFIABLE == solver.check();
     if (res) {
+      OD4ReportMill.init();
       ASTODArtifact od =
           TraceUnSatCore.buildUnSatOD(
               new ArrayList<>(),

@@ -91,6 +91,7 @@ public class TypeIfMcExprConverterTest extends ExpressionAbstractTest {
   }
 
   private ASTMCType buildMCType(String name) {
+    OD4ReportMill.init();
     return OD4ReportMill.mCQualifiedTypeBuilder()
         .setMCQualifiedName(MCQualifiedNameFacade.createQualifiedName(name))
         .build();
