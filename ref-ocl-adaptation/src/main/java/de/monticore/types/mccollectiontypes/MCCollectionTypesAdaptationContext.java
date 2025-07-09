@@ -7,5 +7,4 @@ public interface MCCollectionTypesAdaptationContext extends IAdaptationContext, 
 
   MCCollectionTypesAdaptationVariant createVariant();
   MCCollectionTypesAdaptationContext fork();
-  void addBindings(MCCollectionTypesAdaptationVariant variant);
 }

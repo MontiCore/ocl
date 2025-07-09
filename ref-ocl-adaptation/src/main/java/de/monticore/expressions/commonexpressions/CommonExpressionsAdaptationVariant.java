@@ -16,7 +16,5 @@ public interface CommonExpressionsAdaptationVariant extends IAdaptationVariant, 
 
   CommonExpressionsAdaptationVariant copy();
 
-  CommonExpressionsAdaptationVariant merge(CommonExpressionsAdaptationVariant otherVariant);
-
   OOSymbolsBindings getOOSymbolsBindings();
 }

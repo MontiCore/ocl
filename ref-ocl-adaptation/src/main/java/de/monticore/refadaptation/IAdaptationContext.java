@@ -2,6 +2,9 @@ package de.monticore.refadaptation;
 
 public interface IAdaptationContext {
 
+  // TODO add generic parameters C and V to have better type safety
+  //  (might not be possible because languages can have multiple
+
   /** Acts as a type safe factory method for variants. */
   IAdaptationVariant createVariant();
 

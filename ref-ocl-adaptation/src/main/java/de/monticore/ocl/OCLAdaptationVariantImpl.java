@@ -1,8 +1,6 @@
 package de.monticore.ocl;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationVariant;
-import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVariant;
 import de.monticore.refadaptation.AbstractAdaptationVariant;
 import de.monticore.refadaptation.IAdaptationVariant;
 import de.monticore.symbols.OOSymbolsBindings;
@@ -27,30 +25,22 @@ public class OCLAdaptationVariantImpl extends AbstractAdaptationVariant implemen
 
   @Override
   public OCLAdaptationVariant copy() {
-    return new OCLAdaptationVariantImpl(ooSymbolsBindings, adaptedNodes);
+    return new OCLAdaptationVariantImpl(
+            ooSymbolsBindings.copy(),
+            new HashMap<>(adaptedNodes));
   }
 
   @Override
   public IAdaptationVariant merge(IAdaptationVariant otherVariant) {
+    if (!(otherVariant instanceof OCLAdaptationVariant)) {
+      throw new IllegalArgumentException("Cannot merge with " + otherVariant.getClass().getSimpleName() +
+              ". Expected an instance of OCLAdaptationContext.");
+    }
+    OCLAdaptationVariant otherOCLVariant = (OCLAdaptationVariant) otherVariant;
     OCLAdaptationVariant merged = copy();
     merged.addAdaptedNodes(otherVariant.getAdaptedNodes());
-    return merged;
-  }
-
-  @Override
-  public OCLAdaptationVariant merge(ExpressionsBasisAdaptationVariant otherVariant) {
-    OCLAdaptationVariant merged = copy();
-    merged.addAdaptedNodes(otherVariant.getAdaptedNodes());
-    merged.getBasicSymbolsBindings().addAll(otherVariant.getBasicSymbolsBindings());
-    return merged;
-  }
-
-  @Override
-  public CommonExpressionsAdaptationVariant merge(CommonExpressionsAdaptationVariant otherVariant) {
-    OCLAdaptationVariant merged = copy();
-    merged.addAdaptedNodes(otherVariant.getAdaptedNodes());
-    merged.getBasicSymbolsBindings().addAll(otherVariant.getBasicSymbolsBindings());
-    merged.getOOSymbolsBindings().addAll(otherVariant.getOOSymbolsBindings());
+    merged.getBasicSymbolsBindings().addAll(otherOCLVariant.getBasicSymbolsBindings());
+    merged.getOOSymbolsBindings().addAll(otherOCLVariant.getOOSymbolsBindings());
     return merged;
   }
 

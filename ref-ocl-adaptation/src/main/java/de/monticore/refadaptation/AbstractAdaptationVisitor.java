@@ -2,11 +2,12 @@ package de.monticore.refadaptation;
 
 import com.google.common.base.Preconditions;
 import de.monticore.ast.ASTNode;
+import de.monticore.visitor.IVisitor;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
 
-public abstract class AbstractAdaptationVisitor<C extends IAdaptationContext> {
+public abstract class AbstractAdaptationVisitor<C extends IAdaptationContext> implements IVisitor {
 
   /**
    * The map to be filled with adaptation variants.

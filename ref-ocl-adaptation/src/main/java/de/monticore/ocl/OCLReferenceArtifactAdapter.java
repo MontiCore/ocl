@@ -12,6 +12,7 @@ import de.monticore.refadaptation.Adaptations4Ast;
 import de.monticore.refadaptation.ReferenceArtifactAdapter;
 import de.monticore.symbols.OOSymbolsIncMapping;
 import de.monticore.symbols.OOSymbolsLocalIncMapping;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsGlobalScope;
 import de.monticore.types.mcbasictypes.MCBasicTypesAdaptationVisitor;
 import de.monticore.types.mcbasictypes.MCBasicTypesBindingVariantsVisitor;
 import de.monticore.types.mccollectiontypes.MCCollectionTypesAdaptationVisitor;
@@ -43,6 +44,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
     oclBindingVis.setContextHolder(contextHolder);
     oclBindingVis.setAdaptations4Ast(adaptations4Ast);
     bindingVariantsTraverser.add4OCL(oclBindingVis);
+    bindingVariantsTraverser.add4IVisitor(oclBindingVis);
     bindingVariantsTraverser.setOCLHandler(oclBindingVis);
 
     OCLAdaptationVisitor oclAdaptVis = new OCLAdaptationVisitor();
@@ -56,6 +58,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
     commonExpressionsBindingVis.setContextHolder(contextHolder);
     commonExpressionsBindingVis.setAdaptations4Ast(adaptations4Ast);
     bindingVariantsTraverser.add4CommonExpressions(commonExpressionsBindingVis);
+    bindingVariantsTraverser.add4IVisitor(commonExpressionsBindingVis);
     bindingVariantsTraverser.setCommonExpressionsHandler(commonExpressionsBindingVis);
 
     CommonExpressionsAdaptationVisitor commonExpressionsAdaptVis = new CommonExpressionsAdaptationVisitor();
@@ -67,6 +70,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
     expressionsBasisBindingVis.setContextHolder(contextHolder);
     expressionsBasisBindingVis.setAdaptations4Ast(adaptations4Ast);
     bindingVariantsTraverser.add4ExpressionsBasis(expressionsBasisBindingVis);
+    bindingVariantsTraverser.add4IVisitor(expressionsBasisBindingVis);
     bindingVariantsTraverser.setExpressionsBasisHandler(expressionsBasisBindingVis);
 
     ExpressionsBasisAdaptationVisitor expressionsBasisAdaptVis = new ExpressionsBasisAdaptationVisitor();
@@ -80,6 +84,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
     mcBasicTypesBindingVis.setContextHolder(contextHolder);
     mcBasicTypesBindingVis.setAdaptations4Ast(adaptations4Ast);
     bindingVariantsTraverser.add4MCBasicTypes(mcBasicTypesBindingVis);
+    bindingVariantsTraverser.add4IVisitor(mcBasicTypesBindingVis);
 
     MCBasicTypesAdaptationVisitor mcBasicTypesAdaptVis = new MCBasicTypesAdaptationVisitor();
     mcBasicTypesAdaptVis.setContextHolder(contextHolder);
@@ -90,6 +95,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
     mcCollectionTypesBindingVis.setContextHolder(contextHolder);
     mcCollectionTypesBindingVis.setAdaptations4Ast(adaptations4Ast);
     bindingVariantsTraverser.add4MCCollectionTypes(mcCollectionTypesBindingVis);
+    bindingVariantsTraverser.add4IVisitor(mcCollectionTypesBindingVis);
     bindingVariantsTraverser.setMCCollectionTypesHandler(mcCollectionTypesBindingVis);
 
     MCCollectionTypesAdaptationVisitor mcCollectionTypesAdaptVis = new MCCollectionTypesAdaptationVisitor();
@@ -121,8 +127,10 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
    *                            adaptation context
    * @return a context representing the given incarnation mapping
    */
-  protected OCLAdaptationContext createAdaptationContext(OOSymbolsIncMapping ooSymbolsIncMapping) {
-    return new OCLAdaptationContextImpl(ooSymbolsIncMapping);
+  protected OCLAdaptationContext createAdaptationContext(
+          IOOSymbolsGlobalScope iooSymbolsGlobalScope,
+          OOSymbolsIncMapping ooSymbolsIncMapping) {
+    return new OCLAdaptationContextImpl(iooSymbolsGlobalScope, ooSymbolsIncMapping);
   }
 
   /**
@@ -133,7 +141,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
    * @return a list of adapted AST nodes of type
    * @param <T> the type of ASTNode to adapt
    */
-  public <T extends ASTNode> List<T> adapt(T refNode, OOSymbolsIncMapping ooSymbolsIncMapping) {
-    return adapt(refNode, createAdaptationContext(ooSymbolsIncMapping));
+  public <T extends ASTNode> List<T> adapt(T refNode, IOOSymbolsGlobalScope iooSymbolsGlobalScope, OOSymbolsIncMapping ooSymbolsIncMapping) {
+    return adapt(refNode, createAdaptationContext(iooSymbolsGlobalScope, ooSymbolsIncMapping));
   }
 }

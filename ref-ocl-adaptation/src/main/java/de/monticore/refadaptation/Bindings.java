@@ -23,7 +23,7 @@ import java.util.function.Function;
  */
 public class Bindings<T extends ISymbol> {
 
-  private final Map<String, Binding<T>> typeBindings = new HashMap<>();
+  private final Map<String, Binding<T>> bindings = new HashMap<>();
   private final Function<ISymbol, String> computeKeyFunction;
 
   public Bindings(Function<ISymbol, String> computeKeyFunction) {
@@ -36,7 +36,7 @@ public class Bindings<T extends ISymbol> {
 
   public Bindings(Bindings<T> other) {
     this.computeKeyFunction = other.computeKeyFunction;
-    this.typeBindings.putAll(other.typeBindings);
+    this.bindings.putAll(other.bindings);
   }
 
   public static String computeDefaultKey(ISymbol symbol) {
@@ -50,16 +50,16 @@ public class Bindings<T extends ISymbol> {
     // TODO check again
     Preconditions.checkNotNull(binding);
     String key = computeKeyFunction.apply(binding.getReferenceElement());
-    typeBindings.put(key, binding);
+    bindings.put(key, binding);
   }
 
   public Optional<Binding<T>> get(T refElement) {
     Preconditions.checkNotNull(refElement);
     String key = computeKeyFunction.apply(refElement);
-    return Optional.ofNullable(typeBindings.get(key));
+    return Optional.ofNullable(bindings.get(key));
   }
 
   public Set<Binding<T>> getAll() {
-    return Set.copyOf(typeBindings.values());
+    return Set.copyOf(bindings.values());
   }
 }

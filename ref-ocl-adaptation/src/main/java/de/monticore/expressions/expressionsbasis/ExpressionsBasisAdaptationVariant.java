@@ -11,8 +11,6 @@ public interface ExpressionsBasisAdaptationVariant extends IAdaptationVariant {
 
   ExpressionsBasisAdaptationVariant copy();
 
-  ExpressionsBasisAdaptationVariant merge(ExpressionsBasisAdaptationVariant otherVariant);
-
   // ==============================================================
   // Language specific incarnation mappings required for adaptation
   // ==============================================================

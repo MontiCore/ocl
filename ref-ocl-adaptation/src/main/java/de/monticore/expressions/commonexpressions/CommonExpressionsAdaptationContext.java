@@ -2,6 +2,7 @@ package de.monticore.expressions.commonexpressions;
 
 import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationContext;
 import de.monticore.refadaptation.IAdaptationContext;
+import de.monticore.symbols.OOSymbolsBindings;
 import de.monticore.symbols.OOSymbolsIncMapping;
 import de.monticore.symbols.OOSymbolsLocalIncMapping;
 
@@ -15,11 +16,11 @@ public interface CommonExpressionsAdaptationContext extends IAdaptationContext, 
 
   CommonExpressionsAdaptationContext fork();
 
-  void addBindings(CommonExpressionsAdaptationVariant variant);
-
   // ==============================================================
   // Language specific incarnation mappings required for adaptation
   // ==============================================================
+
+  OOSymbolsBindings getOOSymbolsBindings();
 
   OOSymbolsLocalIncMapping getOOSymbolsIncMapping();
 

@@ -13,8 +13,6 @@ public interface ExpressionsBasisAdaptationContext extends IAdaptationContext {
 
   ExpressionsBasisAdaptationContext fork();
 
-  void addBindings(ExpressionsBasisAdaptationVariant variant);
-
   // ==============================================================
   // Language specific incarnation mappings required for adaptation
   // ==============================================================

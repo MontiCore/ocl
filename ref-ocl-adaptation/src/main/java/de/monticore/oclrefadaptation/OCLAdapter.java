@@ -1,5 +1,6 @@
 package de.monticore.oclrefadaptation;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
@@ -69,7 +70,7 @@ public class OCLAdapter {
 
     List<ASTOCLCompilationUnit> adaptedArtifacts = new ArrayList<>();
     for (ASTOCLCompilationUnit refOCL : refOCLArtifacts) {
-      List<ASTOCLCompilationUnit> adaptedOCL = oclRefAdapter.adapt(refOCL, incMapping);
+      List<ASTOCLCompilationUnit> adaptedOCL = oclRefAdapter.adapt(refOCL, CD4CodeMill.globalScope(), incMapping);
       if (adaptedOCL.isEmpty()) {
         Log.warn("0xA1234 No OCL artifacts adapted for the given reference artifact. ");
       }

@@ -8,7 +8,6 @@ public interface MCBasicTypesAdaptationContext extends IAdaptationContext {
 
   MCBasicTypesAdaptationVariant createVariant();
   MCBasicTypesAdaptationContext fork();
-  void addBindings(MCBasicTypesAdaptationVariant variant);
 
   BasicSymbolsLocalIncMapping getBasicSymbolsIncMapping();
 

@@ -2,6 +2,7 @@ package de.monticore.ocl;
 
 import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationContext;
 import de.monticore.refadaptation.IAdaptationContext;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsGlobalScope;
 import de.monticore.types.mccollectiontypes.MCCollectionTypesAdaptationContext;
 
 public interface OCLAdaptationContext extends
@@ -19,5 +20,7 @@ public interface OCLAdaptationContext extends
 
   OCLAdaptationVariant createVariant();
   OCLAdaptationContext fork();
-  void addBindings(OCLAdaptationVariant variant);
+
+  // TODO decide if we should move this to the OOSymbolsIncMapping interface
+  IOOSymbolsGlobalScope getOOSymbolsGlobalScope();
 }

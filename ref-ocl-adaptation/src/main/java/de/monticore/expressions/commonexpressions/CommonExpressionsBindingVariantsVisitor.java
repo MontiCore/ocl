@@ -1,5 +1,6 @@
 package de.monticore.expressions.commonexpressions;
 
+import de.monticore.ast.ASTNode;
 import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsHandler;
@@ -30,6 +31,20 @@ public class CommonExpressionsBindingVariantsVisitor
   public void setTraverser(CommonExpressionsTraverser traverser) {
     this.traverser = traverser;
   }
+
+  @Override
+  public void handle(ASTEqualsExpression node) {
+    getAdaptations4Ast().clearVariants(node);
+    CommonExpressionsHandler.super.handle(node);
+  }
+
+  @Override
+  public void handle(ASTFieldAccessExpression node) {
+    getAdaptations4Ast().clearVariants(node);
+    CommonExpressionsHandler.super.handle(node);
+  }
+
+  // TODO other handle methods
 
   @Override
   public void endVisit(ASTFieldAccessExpression refExpr) {

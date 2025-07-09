@@ -30,6 +30,24 @@ public class ExpressionsBasisBindingVariantsVisitor extends AbstractAdaptationVi
   }
 
   @Override
+  public void handle(ASTNameExpression node) {
+    getAdaptations4Ast().clearVariants(node);
+    ExpressionsBasisHandler.super.handle(node);
+  }
+
+  @Override
+  public void handle(ASTArguments node) {
+    getAdaptations4Ast().clearVariants(node);
+    ExpressionsBasisHandler.super.handle(node);
+  }
+
+  @Override
+  public void handle(ASTLiteralExpression node) {
+    getAdaptations4Ast().clearVariants(node);
+    ExpressionsBasisHandler.super.handle(node);
+  }
+
+  @Override
   public void endVisit(ASTNameExpression refExpr) {
     SymTypeExpression expressionType = TypeCheck3.typeOf(refExpr);
     Optional<VariableSymbol> sourceSymbolOpt = expressionType.getSourceInfo().getSourceSymbol()
