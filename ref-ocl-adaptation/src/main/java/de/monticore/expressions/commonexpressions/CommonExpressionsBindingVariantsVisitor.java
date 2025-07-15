@@ -1,6 +1,5 @@
 package de.monticore.expressions.commonexpressions;
 
-import de.monticore.ast.ASTNode;
 import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsHandler;
@@ -89,36 +88,7 @@ public class CommonExpressionsBindingVariantsVisitor
 
   @Override
   public void traverse(ASTEqualsExpression expr) {
-    // TODO cleanup
-/*
-    if (null != expr.getLeft()) {
-      expr.getLeft().accept(getTraverser());
-      List<CommonExpressionsAdaptationVariant> leftAdapted = getAdaptations4Ast().getVariants(expr.getLeft());
-      CommonExpressionsAdaptationContext previousCtx = getAdaptationContext();
-      for (CommonExpressionsAdaptationVariant leftResult : leftAdapted) {
-        CommonExpressionsAdaptationContext localCtx = previousCtx.fork();
-        localCtx.addBindings(leftResult);
-
-        setAdaptationContext(localCtx);
-        if (null != expr.getRight()) {
-          expr.getRight().accept(getTraverser());
-        }
-
-        List<CommonExpressionsAdaptationVariant> rightAdapted = getAdaptations4Ast().getVariants(expr.getRight());
-        if (rightAdapted.isEmpty()) {
-          // conflict with existing bindings -> drop current leftResult
-          getAdaptations4Ast().removeVariant(expr.getLeft(), leftResult);
-        } else {
-          for (CommonExpressionsAdaptationVariant rightResult : rightAdapted) {
-            CommonExpressionsAdaptationVariant mergedVariant = leftResult.merge(rightResult);
-            getAdaptations4Ast().addVariant(expr, mergedVariant);
-          }
-        }
-      }
-      // IMPORTANT: reset the adaptation context to the previous one
-      setAdaptationContext(previousCtx);
-    }*/
-    List<CommonExpressionsAdaptationVariant> variants = traverseAndPropagateConstraints(expr.getLeft(), expr.getRight());
-    getAdaptations4Ast().addVariants(expr, variants);
+    // TODO maybe introduce helper method to make this even shorter and more readable
+    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
   }
 }

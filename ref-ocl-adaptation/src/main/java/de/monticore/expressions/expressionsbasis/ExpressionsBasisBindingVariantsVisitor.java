@@ -6,7 +6,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisHandler;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisTraverser;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor2;
-import de.monticore.refadaptation.AbstractAdaptationVisitor;
+import de.monticore.refadaptation.AbstractAdaptationHandler;
 import de.monticore.refadaptation.Binding;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
@@ -15,7 +15,9 @@ import de.monticore.types3.TypeCheck3;
 import java.util.Optional;
 import java.util.Set;
 
-public class ExpressionsBasisBindingVariantsVisitor extends AbstractAdaptationVisitor<ExpressionsBasisAdaptationContext> implements ExpressionsBasisVisitor2, ExpressionsBasisHandler {
+public class ExpressionsBasisBindingVariantsVisitor
+        extends AbstractAdaptationHandler<ExpressionsBasisAdaptationContext, ExpressionsBasisAdaptationVariant>
+        implements ExpressionsBasisVisitor2, ExpressionsBasisHandler {
 
   private ExpressionsBasisTraverser traverser;
 
@@ -100,12 +102,7 @@ public class ExpressionsBasisBindingVariantsVisitor extends AbstractAdaptationVi
   }
 
   @Override
-  public void traverse(ASTArguments node) {
-    /*
-     * TODO: First achieve clean implementation of binary expressions (equals etc.) before
-     *  tackling the n-ary variant of the traversal.
-     *  At best, we can reuse the same utility method to traverse through n sub elements
-     *  while applying "constraint propagation" of the bindings.
-     */
+  public void traverse(ASTArguments arguments) {
+    getAdaptations4Ast().addVariants(arguments, traverseAndPropagateConstraints(arguments.getExpressionList()));
   }
 }

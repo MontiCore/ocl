@@ -1,14 +1,17 @@
 package de.monticore.types.mccollectiontypes;
 
-import de.monticore.refadaptation.AbstractAdaptationVisitor;
+import de.monticore.refadaptation.AbstractAdaptationHandler;
 import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCMapType;
+import de.monticore.types.mccollectiontypes._ast.ASTMCOptionalType;
 import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
 import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesHandler;
 import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesTraverser;
 import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesVisitor2;
 
-public class MCCollectionTypesBindingVariantsVisitor extends AbstractAdaptationVisitor implements MCCollectionTypesVisitor2, MCCollectionTypesHandler {
+public class MCCollectionTypesBindingVariantsVisitor
+        extends AbstractAdaptationHandler<MCCollectionTypesAdaptationContext, MCCollectionTypesAdaptationVariant>
+        implements MCCollectionTypesVisitor2, MCCollectionTypesHandler {
 
   protected MCCollectionTypesTraverser traverser;
 
@@ -33,12 +36,12 @@ public class MCCollectionTypesBindingVariantsVisitor extends AbstractAdaptationV
   }
 
   @Override
-  public void traverse(ASTMCMapType node) {
-    MCCollectionTypesHandler.super.traverse(node);
+  public void endVisit(ASTMCOptionalType node) {
+    passChildVariantsUpwards(node, node.getMCTypeArgument());
   }
 
   @Override
-  public void endVisit(ASTMCMapType node) {
-    // TODO traverse key first and then value
+  public void traverse(ASTMCMapType node) {
+    getAdaptations4Ast().addVariants(node, traverseAndPropagateConstraints(node.getKey(), node.getValue()));
   }
 }

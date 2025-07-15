@@ -22,13 +22,13 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
    * @param children
    * @return
    */
-  protected List<V> traverseAndPropagateConstraints(List<ASTNode> children) {
+  protected List<V> traverseAndPropagateConstraints(List<? extends ASTNode> children) {
     if (children.isEmpty()) {
       return List.of((V) getAdaptationContext().createVariant()); // empty variant
     }
     // we have at least one child node
     // 1. get variants for first child
-    Iterator<ASTNode> iterator = children.iterator();
+    Iterator<? extends ASTNode> iterator = children.iterator();
     ASTNode firstChild = iterator.next();
     firstChild.accept(getTraverser());
     List<V> variants = getAdaptations4Ast().getVariants(firstChild);
@@ -38,10 +38,6 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
       variants = traverseForEachVariant(variants, nextChild);
     }
     // now, variants contains all variants where each child  is adapted under the same constraints
-    // 3. set these variants for all children
-    /*for (ASTNode child : children) {
-      getAdaptations4Ast().setVariants(child, variants);
-    }*/
     return variants;
   }
 
@@ -66,8 +62,6 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
       localCtx.addBindings(sourceVariant);
 
       setAdaptationContext(localCtx);
-      // clear previous variant results for node
-      //getAdaptations4Ast().clearVariants(node); // TODO w cna remove this if we clear on every handle(ASTNode)
 
       node.accept(getTraverser());
 

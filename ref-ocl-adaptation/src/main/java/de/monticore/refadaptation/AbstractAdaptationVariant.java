@@ -49,6 +49,7 @@ public abstract class AbstractAdaptationVariant implements IAdaptationVariant {
   @Override
   public void addChildVariant(ASTNode refNode, IAdaptationVariant variant) {
     childVariants.put(refNode, variant);
+    // TODO if we add a child variant we must also add the bindings to the bindings of the parent variant
   }
 
   @Override
