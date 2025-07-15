@@ -1,5 +1,6 @@
 package de.monticore.symbols;
 
+import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.Bindings;
 import de.monticore.symbols.basicsymbols.BasicSymbolBindingsImpl;
@@ -13,6 +14,7 @@ import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class OOSymbolsBindingsImpl implements OOSymbolsBindings {
 
@@ -112,11 +114,26 @@ public class OOSymbolsBindingsImpl implements OOSymbolsBindings {
   @Override
   public void addMethodBinding(Binding<MethodSymbol> binding) {
     // 1. enforce OO specific constraints
+    createTypeBindingForMethodBinding(binding);
     // TODO check for declaring type conflicts with existing bindings OOTypeSymbol
     // 2. call BasicSymbolsBindings.addFunctionBinding (already checks conflicts with existing TypeSymbol)
     basicSymbolsBindings.addFunctionBinding(binding.cast());
     // 3. if that is successful add to ooTypeBindings
     methodBindings.add(binding);
+  }
+
+  protected void createTypeBindingForMethodBinding(Binding<MethodSymbol> binding) {
+    TypeSymbol declaringRefType = SymbolUtil.getDeclaringTypeSymbol(binding.getReferenceElement());
+    Set<TypeSymbol> declaringTypeIncs = binding.getConcreteElements().stream()
+            .map(SymbolUtil::getDeclaringTypeSymbol)
+            .collect(Collectors.toSet());
+    Binding<TypeSymbol> typeBinding;
+    if (binding.isStrict()) {
+      typeBinding = Binding.createStrict(declaringRefType, declaringTypeIncs.stream().findFirst().orElseThrow());
+    } else {
+      typeBinding = Binding.createAggregate(declaringRefType, declaringTypeIncs);
+    }
+    addTypeBinding(typeBinding);
   }
 
   @Override

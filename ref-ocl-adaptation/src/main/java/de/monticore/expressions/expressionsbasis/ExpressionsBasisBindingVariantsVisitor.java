@@ -1,5 +1,6 @@
 package de.monticore.expressions.expressionsbasis;
 
+import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.expressions.expressionsbasis._ast.ASTArguments;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
@@ -9,9 +10,11 @@ import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisito
 import de.monticore.refadaptation.AbstractAdaptationHandler;
 import de.monticore.refadaptation.Binding;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.TypeCheck3;
 
+import java.lang.reflect.Type;
 import java.util.Optional;
 import java.util.Set;
 
@@ -51,6 +54,11 @@ public class ExpressionsBasisBindingVariantsVisitor
 
   @Override
   public void endVisit(ASTNameExpression refExpr) {
+    /*
+     * TODO If this is called for a NameExpression which is part of a CallExpression th TypeCheck
+     *  will fail!
+     *  -> only call TypeCheck for valid expression -> should traverse of ASTCallExpression already stop this visit from being called?
+     */
     SymTypeExpression expressionType = TypeCheck3.typeOf(refExpr);
     Optional<VariableSymbol> sourceSymbolOpt = expressionType.getSourceInfo().getSourceSymbol()
             .filter(s -> s instanceof VariableSymbol)
@@ -64,13 +72,23 @@ public class ExpressionsBasisBindingVariantsVisitor
      * ...
      */
 
-    if (sourceSymbolOpt.isPresent()) {
-      // If we have a VariableSymbol, get all incarnations and create variants for it
-      VariableSymbol sourceSymbol = sourceSymbolOpt.get();
-      System.out.println("variable Source symbol: " + sourceSymbol);
-      System.out.println("symbol full name: " + sourceSymbol.getFullName());
+    /*
+     * TODO Decide / discuss where we need to do this translation from variable symbols in OCL scope to CD4C symbols
+     *  here?
+     *  I think we should only try to do the lookup in OOSymbols if we have a VariableSymbol && it can be translated to a CD4Code symbol
+     *  -> but then we woul have a tight coupling in ExpressionBasisAdapter to CD4CodeMill
+     *  ALTERNATIVE:
+     *  - add an "adapter" class around the incarnating mapping that translates the VariableSymbol to a FieldSymbol
+     */
+    // TODO Also handle method parameter variable symbols ! -> this should be covered by using resolveVariable instead of resolvField
+    Optional<VariableSymbol> cd4cTranslatedSymbolOpt = sourceSymbolOpt.flatMap(s -> CD4CodeMill.globalScope().resolveVariable(s.getFullName()));
 
-      VariableSymbol refVarSymbol = sourceSymbolOpt.get();
+    if (cd4cTranslatedSymbolOpt.isPresent()) {
+      // If we have a VariableSymbol, get all incarnations and create variants for it
+      VariableSymbol refVarSymbol = cd4cTranslatedSymbolOpt.get();
+      System.out.println("variable Source symbol: " + refVarSymbol);
+      System.out.println("symbol full name: " + refVarSymbol.getFullName());
+
       Set<VariableSymbol> incarnations = getAdaptationContext().getBasicSymbolsIncMapping().getIncarnations(refVarSymbol);
       if (incarnations.isEmpty()) {
         // no field symbol, use the constraints from the parent expression

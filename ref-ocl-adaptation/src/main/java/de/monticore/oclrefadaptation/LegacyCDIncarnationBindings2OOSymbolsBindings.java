@@ -1,5 +1,8 @@
 package de.monticore.oclrefadaptation;
 
+import com.google.common.collect.SetMultimap;
+import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cdconcretization.util.MethodSignatureString;
 import de.monticore.cdconformance.inc.CDIncarnationBindings;
 import de.monticore.refadaptation.Binding;
 import de.monticore.symbols.OOSymbolsBindings;
@@ -12,9 +15,11 @@ import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Deprecated
 public class LegacyCDIncarnationBindings2OOSymbolsBindings implements OOSymbolsBindings {
@@ -62,7 +67,54 @@ public class LegacyCDIncarnationBindings2OOSymbolsBindings implements OOSymbolsB
 
   @Override
   public Set<Binding<TypeSymbol>> getTypeBindings() {
-    throw new UnsupportedOperationException();
+    SetMultimap<String, TypeSymbol> bindings;
+    if (contextSymbol != null) {
+      bindings = cdIncarnationBindings.getTypeBindings(contextSymbol);
+    } else if (scope != null) {
+      bindings = cdIncarnationBindings.getTypeBindings(scope);
+    } else {
+      throw new IllegalStateException("No context symbol or scope provided for binding lookup.");
+    }
+    return bindings.asMap().entrySet().stream()
+        .map(entry -> {
+          if (entry.getValue().size() != 1) {
+            throw new IllegalStateException("Expected exactly one TypeSymbol for key: " + entry.getKey() + ", but found: " + entry.getValue().size());
+          }
+          return Binding.createStrict(resolveTypeSymbolByKey(entry.getKey()), entry.getValue().stream().findFirst().orElseThrow());
+        })
+        .collect(java.util.stream.Collectors.toSet());
+  }
+
+  @Override
+  public Set<Binding<FieldSymbol>> getFieldBindings() {
+    SetMultimap<String, FieldSymbol> bindings;
+    if (contextSymbol != null) {
+      bindings = cdIncarnationBindings.getFieldBindings(contextSymbol);
+    } else if (scope != null) {
+      bindings = cdIncarnationBindings.getFieldBindings(scope);
+    } else {
+      throw new IllegalStateException("No context symbol or scope provided for binding lookup.");
+    }
+    return bindings.asMap().entrySet().stream()
+            .map(entry -> {
+              if (entry.getValue().size() != 1) {
+                throw new IllegalStateException("Expected exactly one TypeSymbol for key: " + entry.getKey() + ", but found: " + entry.getValue().size());
+              }
+              return Binding.createStrict(resolveFieldSymbolByKey(entry.getKey()), entry.getValue().stream().findFirst().orElseThrow());
+            })
+            .collect(java.util.stream.Collectors.toSet());
+  }
+
+  protected TypeSymbol resolveTypeSymbolByKey(String symbolKey) {
+    return CD4CodeMill.globalScope().resolveType(symbolKey).orElseThrow();
+  }
+
+  protected FieldSymbol resolveFieldSymbolByKey(String symbolKey) {
+    return CD4CodeMill.globalScope().resolveField(symbolKey).orElseThrow();
+  }
+
+  protected MethodSymbol resolveMethodSymbolByKey(String symbolKey) {
+    return MethodSignatureString.resolveMethodSignature(CD4CodeMill.globalScope(), symbolKey).orElseThrow();
   }
 
   @Override
@@ -152,26 +204,43 @@ public class LegacyCDIncarnationBindings2OOSymbolsBindings implements OOSymbolsB
 
   @Override
   public Set<Binding<OOTypeSymbol>> getOOTypeBindings() {
-    throw new UnsupportedOperationException();
+    return getTypeBindings().stream()
+            .filter(binding -> binding.getReferenceElement() instanceof OOTypeSymbol)
+            .map(Binding::<OOTypeSymbol>cast)
+            .collect(Collectors.toSet());
   }
 
   @Override
   public Set<Binding<FunctionSymbol>> getFunctionBindings() {
-    throw new UnsupportedOperationException();
+    return getMethodBindings().stream()
+            .map(Binding::<FunctionSymbol>cast)
+            .collect(Collectors.toSet());
   }
 
   @Override
   public Set<Binding<VariableSymbol>> getVariableBindings() {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public Set<Binding<FieldSymbol>> getFieldBindings() {
-    throw new UnsupportedOperationException();
+    return getFieldBindings().stream()
+            .map(Binding::<VariableSymbol>cast)
+            .collect(Collectors.toSet());
   }
 
   @Override
   public Set<Binding<MethodSymbol>> getMethodBindings() {
-    throw new UnsupportedOperationException();
+    SetMultimap<String, MethodSymbol> bindings;
+    if (contextSymbol != null) {
+      bindings = cdIncarnationBindings.getMethodBindings(contextSymbol);
+    } else if (scope != null) {
+      bindings = cdIncarnationBindings.getMethodBindings(scope);
+    } else {
+      throw new IllegalStateException("No context symbol or scope provided for binding lookup.");
+    }
+    return bindings.asMap().entrySet().stream()
+            .map(entry -> {
+              if (entry.getValue().size() != 1) {
+                throw new IllegalStateException("Expected exactly one TypeSymbol for key: " + entry.getKey() + ", but found: " + entry.getValue().size());
+              }
+              return Binding.createStrict(resolveMethodSymbolByKey(entry.getKey()), entry.getValue().stream().findFirst().orElseThrow());
+            })
+            .collect(java.util.stream.Collectors.toSet());
   }
 }

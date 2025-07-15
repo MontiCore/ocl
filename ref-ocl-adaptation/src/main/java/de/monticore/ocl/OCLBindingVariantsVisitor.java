@@ -8,6 +8,7 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
 import de.monticore.refadaptation.AbstractAdaptationHandler;
 import de.monticore.refadaptation.Binding;
+import de.monticore.symbols.OOSymbolsBindings;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 
 import java.util.ArrayList;
@@ -95,11 +96,12 @@ public class OCLBindingVariantsVisitor
       // we have the incarnations which are possible in this context
       for (MethodSymbol methodIncarnation : incarnations) {
         CommonExpressionsAdaptationVariant newVariant = getAdaptationContext().createVariant();
+        // 1. Add strict binding for the selected method
+        // (Implicitly adds type bindings for declaring type, return type and parameter types)
         newVariant.getOOSymbolsBindings().addMethodBinding(Binding.createStrict(refMethodSymbol, methodIncarnation));
-        // TODO add bindings attached to method from original incarnation mapping
-        // TODO getting all bindings at a context symbol from incarnation mapping not supported yet
-        //OOSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalOOSymbolsIncMapping().getScopedBindings(methodIncarnation);
-        //newVariant.getOOSymbolsBindings().addAll(bindingsFromModel);
+        // 2. Add bindings from the original model attached to the method
+        OOSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalOOSymbolsIncMapping().getScopedBindings(methodIncarnation);
+        newVariant.getOOSymbolsBindings().addAll(bindingsFromModel);
         getAdaptations4Ast().addVariant(refMethodSignature, newVariant);
       }
     }
