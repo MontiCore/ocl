@@ -1,11 +1,13 @@
 package de.monticore.expressions.commonexpressions;
 
+import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTInfixExpression;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.refadaptation.AbstractAdaptationVisitor;
 import de.monticore.refadaptation.Binding;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.TypeCheck3;
@@ -21,7 +23,7 @@ public class CommonExpressionsAdaptationVisitor
   private static final String LOG_NAME = CommonExpressionsAdaptationVisitor.class.getName();
 
   @Override
-  public void endVisit(ASTInfixExpression expr) {
+  public void endVisit(ASTEqualsExpression expr) {
     /*
      * Get all result variants that were found during traversal of the expression.
      * Each entry "AdaptationVariant" holds a consistent combination of all adapted
@@ -46,12 +48,12 @@ public class CommonExpressionsAdaptationVisitor
   @Override
   public void endVisit(ASTFieldAccessExpression refExpr) {
     SymTypeExpression expressionType = TypeCheck3.typeOf(refExpr);
-    Optional<FieldSymbol> sourceSymbolOpt = expressionType.getSourceInfo().getSourceSymbol()
-            .filter(s -> s instanceof FieldSymbol)
-            .map(s -> (FieldSymbol) s);
+    Optional<VariableSymbol> sourceSymbolOpt = expressionType.getSourceInfo().getSourceSymbol()
+            .filter(s -> s instanceof VariableSymbol)
+            .map(s -> (VariableSymbol) s);
     if (sourceSymbolOpt.isPresent()) {
-      FieldSymbol sourceSymbol = sourceSymbolOpt.get();
-      System.out.println("Field Source symbol: " + sourceSymbol);
+      VariableSymbol sourceSymbol = sourceSymbolOpt.get();
+      System.out.println("Variable Source symbol: " + sourceSymbol);
       System.out.println("symbol full name: " + sourceSymbol.getFullName());
     }
 
@@ -72,11 +74,11 @@ public class CommonExpressionsAdaptationVisitor
 
       // 2. if we have a field symbol, get all incarnations and create variants for it
       if (sourceSymbolOpt.isPresent()) {
-        FieldSymbol refFieldSymbol = sourceSymbolOpt.get();
-        Optional<Binding<FieldSymbol>> binding = variant.getOOSymbolsBindings().getBinding(refFieldSymbol);
+        VariableSymbol refFieldSymbol = sourceSymbolOpt.get();
+        Optional<Binding<VariableSymbol>> binding = variant.getOOSymbolsBindings().getBinding(refFieldSymbol);
         if (binding.isPresent()) {
-          // a field binding attached to a ASTFieldAccessExpression is always required to be strict (??)
-          FieldSymbol fieldSymbolInc = binding.get().getStrictConcreteElement();
+          // a variable binding attached to a ASTFieldAccessExpression is always required to be strict (??)
+          VariableSymbol fieldSymbolInc = binding.get().getStrictConcreteElement();
           adaptedExpr.setName(fieldSymbolInc.getName());
         } else {
           // This is not an error. it is completely normal for fields that are not declared in the

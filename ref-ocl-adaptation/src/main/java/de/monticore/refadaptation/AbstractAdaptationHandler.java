@@ -3,10 +3,7 @@ package de.monticore.refadaptation;
 import de.monticore.ast.ASTNode;
 import de.monticore.visitor.ITraverser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V extends IAdaptationVariant>
         extends AbstractAdaptationVisitor<C> {
@@ -40,11 +37,11 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
       ASTNode nextChild = iterator.next();
       variants = traverseForEachVariant(variants, nextChild);
     }
-    // now, variants contains all variants where each child is adapted under the same constraints
+    // now, variants contains all variants where each child  is adapted under the same constraints
     // 3. set these variants for all children
-    for (ASTNode child : children) {
+    /*for (ASTNode child : children) {
       getAdaptations4Ast().setVariants(child, variants);
-    }
+    }*/
     return variants;
   }
 
@@ -58,7 +55,7 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
    * @return
    */
   // TODO formalize this more precise / mathematically (look at constraint propagation again)
-  // TODO decide if this is meant as helper API for suers or only as internal support method for traverseAndPropagateConstraints
+  // TODO decide if this is meant as helper API for users or only as internal support method for traverseAndPropagateConstraints
   protected List<V> traverseForEachVariant(
           List<V> sourceVariants, ASTNode node) {
     C previousCtx = getAdaptationContext();
@@ -76,7 +73,7 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
 
       setAdaptationContext(localCtx);
       // clear previous variant results for node
-      getAdaptations4Ast().clearVariants(node); // TODO w cna remove this if we clear on every handle(ASTNode)
+      //getAdaptations4Ast().clearVariants(node); // TODO w cna remove this if we clear on every handle(ASTNode)
 
       node.accept(getTraverser());
 
@@ -85,10 +82,14 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
         // conflict with existing bindings -> drop current leftResult
         getAdaptations4Ast().removeVariant(sourceVariant);
       } else {
+        List<V> mergedVariants = new ArrayList<>();
         for (V nodeVariant : nodeVariants) {
           V mergedVariant = (V) sourceVariant.merge(nodeVariant);
+          mergedVariants.add(mergedVariant);
           resultVariants.add(mergedVariant);
+          getAdaptations4Ast().replaceVariant(nodeVariant, resultVariants); // can we improve here?
         }
+        getAdaptations4Ast().replaceVariant(sourceVariant, mergedVariants);
       }
     }
     // IMPORTANT: reset the adaptation context to the previous one

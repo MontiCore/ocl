@@ -2,6 +2,7 @@ package de.monticore.refadaptation;
 
 import de.monticore.ast.ASTNode;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -25,4 +26,6 @@ public interface IAdaptationVariant {
   IAdaptationVariant copy();
 
   IAdaptationVariant merge(IAdaptationVariant otherVariant);
+
+  //List<IAdaptationVariant> getChildVariants(ASTNode refNode);
 }
