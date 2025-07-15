@@ -28,39 +28,45 @@ public class OCLAdaptationVisitor extends AbstractAdaptationVisitor<OCLAdaptatio
 
   @Override
   public void endVisit(ASTOCLCompilationUnit refCompilationUnit) {
-    List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refCompilationUnit.getOCLArtifact());
+    List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refCompilationUnit);
     for (OCLAdaptationVariant variant : variants) {
       ASTOCLCompilationUnit adaptedCompilationUnit = refCompilationUnit.deepClone();
       Optional<ASTOCLArtifact> adaptedArtifact = variant.getAdaptedNode(refCompilationUnit.getOCLArtifact());
       adaptedArtifact.ifPresent(adaptedCompilationUnit::setOCLArtifact);
       // Set the adapted node for the compilation unit
       variant.setAdaptedNode(refCompilationUnit, adaptedCompilationUnit);
-      // link variant to compilation unit
-      getAdaptations4Ast().addVariant(refCompilationUnit, variant);
     }
   }
 
   @Override
   public void endVisit(ASTOCLArtifact refArtifact) {
-    ASTOCLArtifact adaptedArtifact = refArtifact.deepClone();
-    List<ASTOCLConstraint> allAdaptedConstraints = new ArrayList<>();
-    for (ASTOCLConstraint refConstraint : refArtifact.getOCLConstraintList()) {
-      List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refConstraint);
-      List<ASTOCLConstraint> adaptedConstraints = variants.stream().map(v -> v.getAdaptedNode(refConstraint))
-                      .filter(Optional::isPresent)
-                      .map(Optional::get)
-              .collect(Collectors.toList());
-      if (!adaptedConstraints.isEmpty()) {
-        // separator between constraints so they are grouped by reference constraint
-        adaptedConstraints.get(0).add_PreComment(new Comment("=========="));
+    List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refArtifact);
+    for (OCLAdaptationVariant variant : variants) {
+      ASTOCLArtifact adaptedArtifact = refArtifact.deepClone();
+
+      List<ASTOCLConstraint> allAdaptedConstraints = new ArrayList<>();
+      for (ASTOCLConstraint refConstraint : refArtifact.getOCLConstraintList()) {
+        /*
+         * NOTE: The knowledge that a variant of a OCLArtifact contains multiple child variants
+         * for each OCLConstraint is a tight coupling between this visitor and the related
+         * OCLAdaptation visitor. This can be considered bad design, but is required to enable us
+         * to perform two different visitors runs: 1. one to find all variants 2. one to adapt the
+         * AST (saving unnecessary deepClone calls)!
+         */
+        List<OCLAdaptationVariant> constraintVariants = variant.getChildVariants(refConstraint);
+        List<ASTOCLConstraint> adaptedConstraints = constraintVariants.stream().map(v -> v.getAdaptedNode(refConstraint))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+        if (!adaptedConstraints.isEmpty()) {
+          // separator between constraints so they are grouped by reference constraint
+          adaptedConstraints.get(0).add_PreComment(new Comment("=========="));
+        }
+        allAdaptedConstraints.addAll(adaptedConstraints);
       }
-      allAdaptedConstraints.addAll(adaptedConstraints);
+      adaptedArtifact.setOCLConstraintList(allAdaptedConstraints);
+      variant.setAdaptedNode(refArtifact, adaptedArtifact);
     }
-    adaptedArtifact.setOCLConstraintList(allAdaptedConstraints);
-    // Add a SINGLE variant for the artifact combining all the adapted constraints
-    OCLAdaptationVariant variant = getAdaptationContext().createVariant();
-    variant.setAdaptedNode(refArtifact, adaptedArtifact);
-    getAdaptations4Ast().addVariant(refArtifact, variant);
   }
 
   @Override

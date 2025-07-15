@@ -58,10 +58,27 @@ public abstract class AbstractAdaptationVisitor<C extends IAdaptationContext> im
     }
   }
 
-  protected void passChildConstraintsUpwards(ASTNode node, ASTNode child) {
-    List<IAdaptationVariant> childVariants = getAdaptations4Ast().getVariants(child);
-    for (IAdaptationVariant variant : childVariants) {
-      getAdaptations4Ast().addVariant(node, variant);
+  /**
+   * Passes the child variants of the given child node upwards to the parent node.
+   *
+   * @param node the parent node to which the child constraints should be passed
+   * @param child the child node whose constraints should be passed upwards
+   */
+  protected void passChildVariantsUpwards(ASTNode node, ASTNode child) {
+    getAdaptations4Ast().addVariants(node, getAdaptations4Ast().getVariants(child));
+  }
+
+  /**
+   * Aggregates the variants of the given children into a single variant of the parent node.
+   *
+   * @param parent the parent node to which the aggregated variant will be added
+   * @param children the list of child nodes whose variants will be aggregated
+   */
+  protected void aggregateChildVariants(ASTNode parent, List<? extends ASTNode> children) {
+    IAdaptationVariant aggregateVariant = getAdaptationContext().createVariant();
+    for (ASTNode child : children) {
+      aggregateVariant.addChildVariants(child, getAdaptations4Ast().getVariants(child));
     }
+    getAdaptations4Ast().addVariant(parent, aggregateVariant);
   }
 }

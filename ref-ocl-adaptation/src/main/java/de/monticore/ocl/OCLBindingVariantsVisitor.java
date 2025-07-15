@@ -2,27 +2,16 @@ package de.monticore.ocl;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationVariant;
-import de.monticore.expressions.commonexpressions.CommonExpressionsBindingVariantsVisitor;
-import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVariant;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLHandler;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
 import de.monticore.refadaptation.AbstractAdaptationHandler;
-import de.monticore.refadaptation.AbstractAdaptationVisitor;
 import de.monticore.refadaptation.Binding;
-import de.monticore.symbols.OOSymbolsBindings;
-import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
-import de.monticore.symboltable.modifiers.AccessModifier;
-import de.monticore.types.check.SymTypeExpression;
-import de.monticore.types3.TypeCheck3;
-import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public class OCLBindingVariantsVisitor
@@ -42,9 +31,33 @@ public class OCLBindingVariantsVisitor
   }
 
   @Override
-  public void traverse(ASTOCLCompilationUnit node) {
-    OCLHandler.super.traverse(node);
-   }
+  public void handle(ASTOCLCompilationUnit node) {
+    getAdaptations4Ast().clearVariants(node);
+    OCLHandler.super.handle(node);
+  }
+
+  @Override
+  public void endVisit(ASTOCLCompilationUnit node) {
+    passChildVariantsUpwards(node, node.getOCLArtifact());
+  }
+
+  @Override
+  public void handle(ASTOCLArtifact node) {
+    getAdaptations4Ast().clearVariants(node);
+    OCLHandler.super.handle(node);
+  }
+
+  @Override
+  public void endVisit(ASTOCLArtifact refArtifact) {
+    // Adds a SINGLE variant for the artifact combining all the adapted constraints
+    aggregateChildVariants(refArtifact, refArtifact.getOCLConstraintList());
+  }
+
+  @Override
+  public void handle(ASTOCLMethodSignature node) {
+    getAdaptations4Ast().clearVariants(node);
+    OCLHandler.super.handle(node);
+  }
 
   @Override
   public void traverse(ASTOCLInvariant refInvariant) {

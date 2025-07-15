@@ -63,12 +63,6 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
     for (V sourceVariant : sourceVariants) {
       C localCtx = (C) previousCtx.fork(); // TODO avoid unchecked casts by better generics
 
-      /*
-       * TODO IMPORTANT BUG! The localCtx.addBindings(sourceVariant) call is linked to the
-       *  addBindings(IAdaptationVariant) method in the AdaptationContext which not calls
-       *  the specific overridden variants, e.g., for CommonExpressionsAdaptationContext
-       *  This results in no bindings being added to the context at the moment
-       */
       localCtx.addBindings(sourceVariant);
 
       setAdaptationContext(localCtx);
@@ -77,6 +71,7 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
 
       node.accept(getTraverser());
 
+      // TODO do we need to copy here? we might modify the list down in the loop
       List<V> nodeVariants = getAdaptations4Ast().getVariants(node);
       if (nodeVariants.isEmpty()) {
         // conflict with existing bindings -> drop current leftResult

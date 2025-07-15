@@ -1,6 +1,5 @@
 package de.monticore.expressions.expressionsbasis;
 
-import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationVariant;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor2;
 import de.monticore.refadaptation.AbstractAdaptationVisitor;

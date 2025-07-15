@@ -24,12 +24,12 @@ public class MCCollectionTypesBindingVariantsVisitor extends AbstractAdaptationV
 
   @Override
   public void endVisit(ASTMCListType node) {
-    passChildConstraintsUpwards(node, node.getMCTypeArgument());
+    passChildVariantsUpwards(node, node.getMCTypeArgument());
   }
 
   @Override
   public void endVisit(ASTMCSetType node) {
-    passChildConstraintsUpwards(node, node.getMCTypeArgument());
+    passChildVariantsUpwards(node, node.getMCTypeArgument());
   }
 
   @Override

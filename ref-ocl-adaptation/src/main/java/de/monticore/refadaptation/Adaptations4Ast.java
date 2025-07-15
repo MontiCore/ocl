@@ -6,7 +6,6 @@ import de.monticore.ast.ASTNode;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 // TODO keep 4 in name so similarity with TypeCheck3 is clear or rename to "AdaptationResults"?
 public class Adaptations4Ast {
@@ -34,19 +33,31 @@ public class Adaptations4Ast {
         variantList.addAll(index, newVariants);
       }
     }
+    // TODO Should we replace all occurrences of oldVariant in childVariants as well?
   }
 
   public <T extends IAdaptationVariant> List<T> getVariants(ASTNode refNode) {
+    // TODO Do we need to return read-only / copy here?
     return (List<T>) variants.get(refNode);
   }
 
-  // TODO remove variants from all keys?
-  public void removeVariant(ASTNode refNode, IAdaptationVariant variant) {
-    variants.remove(refNode, variant);
-  }
-
+  /**
+   * Removes the given variant from all ASTNodes it is attached to. Also, if the variant has any
+   * child variants, they will be removed as well.<br>
+   * <br>
+   * Call this during variant identification to remove variants that turn out to be incompatible
+   * with the constraints of other reference elements.
+   *
+   * @param variant the variant to remove
+   */
   public void removeVariant(IAdaptationVariant variant) {
     variants.entries().removeIf(entry -> entry.getValue().equals(variant));
+    // TODO Should we also remove the variant from childVariants?
+    // TODO We have a reference counting / garbage collection issue here. Should we remove all child
+    //   variants from the variants map as well? -> Since variants are not referenced from multiple parent variants -> yes
+    for (IAdaptationVariant childVariant : variant.getAllChildVariants().values()) {
+      removeVariant(childVariant);
+    }
   }
 
   public void clearVariants(ASTNode refNode) {

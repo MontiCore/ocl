@@ -38,6 +38,7 @@ public class OCLAdaptationVariantImpl extends AbstractAdaptationVariant implemen
     }
     OCLAdaptationVariant otherOCLVariant = (OCLAdaptationVariant) otherVariant;
     OCLAdaptationVariant merged = copy();
+    merged.addAllChildVariants(otherVariant); // TODO check for conflicts!
     merged.addAdaptedNodes(otherVariant.getAdaptedNodes());
     merged.getBasicSymbolsBindings().addAll(otherOCLVariant.getBasicSymbolsBindings());
     merged.getOOSymbolsBindings().addAll(otherOCLVariant.getOOSymbolsBindings());

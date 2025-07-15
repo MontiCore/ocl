@@ -1,7 +1,9 @@
 package de.monticore.refadaptation;
 
+import com.google.common.collect.ListMultimap;
 import de.monticore.ast.ASTNode;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,7 +27,21 @@ public interface IAdaptationVariant {
    */
   IAdaptationVariant copy();
 
+  // TODO Throw exception in case bindings or child variants conflict
   IAdaptationVariant merge(IAdaptationVariant otherVariant);
 
-  //List<IAdaptationVariant> getChildVariants(ASTNode refNode);
+  /**
+   * Adds a child variant for the given reference node.<br>
+   *
+   * @param refNode
+   * @param childVariant
+   */
+  void addChildVariant(ASTNode refNode, IAdaptationVariant childVariant);
+  void addChildVariants(ASTNode refNode, Collection<? extends IAdaptationVariant> childVariants);
+
+  void addAllChildVariants(IAdaptationVariant variant);
+
+  <T extends IAdaptationVariant> List<T> getChildVariants(ASTNode refNode);
+
+  ListMultimap<ASTNode, IAdaptationVariant> getAllChildVariants();
 }
