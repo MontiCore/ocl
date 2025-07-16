@@ -119,5 +119,15 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "simple/SimpleRef.ocl",
               "simple/SimpleOut.ocl");
     }
+
+    @Test
+    void typeMI() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "simple/TypeMI.cd",
+              "simple/SimpleRef.cd",
+              "simple/SimpleRef.ocl",
+              "simple/typeMIOut.ocl");
+    }
   }
 }

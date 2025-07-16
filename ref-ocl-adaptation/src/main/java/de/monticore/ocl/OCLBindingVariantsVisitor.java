@@ -61,6 +61,18 @@ public class OCLBindingVariantsVisitor
   }
 
   @Override
+  public void handle(ASTOCLContextDefinition node) {
+    getAdaptations4Ast().clearVariants(node);
+    OCLHandler.super.handle(node);
+  }
+
+  @Override
+  public void handle(ASTOCLParamDeclaration node) {
+    getAdaptations4Ast().clearVariants(node);
+    OCLHandler.super.handle(node);
+  }
+
+  @Override
   public void traverse(ASTOCLInvariant refInvariant) {
     List<ASTNode> nodesForConstraintPropagation = new ArrayList<>();
     nodesForConstraintPropagation.addAll(refInvariant.getOCLContextDefinitionList());

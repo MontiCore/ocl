@@ -1,0 +1,10 @@
+ocl SimpleOCL {
+  context SimpleConc.User p inv AgePositive:
+    p.age >= 0;
+
+  context SimpleConc.Customer p inv AgePositive:
+    p.age >= 0;
+
+  context SimpleConc.Employee p inv AgePositive:
+    p.ageInYears >= 0;
+}

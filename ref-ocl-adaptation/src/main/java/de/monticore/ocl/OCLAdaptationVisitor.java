@@ -79,36 +79,25 @@ public class OCLAdaptationVisitor extends AbstractAdaptationVisitor<OCLAdaptatio
      */
     List<OCLAdaptationVariant> invariantVariants = getAdaptations4Ast().getVariants(refInvariant);
 
-    // Create a new OCLAdaptationVariant for each variant with the adapted context adn expression
-    int i =0;
+    // Create a new OCLAdaptationVariant for each variant with the adapted context and expression
     for (OCLAdaptationVariant variant : invariantVariants) {
       // TODO deepClone vs Builder & custom "adapt" implementation
       ASTOCLInvariant adaptedInvariant = refInvariant.deepClone();
-      adaptedInvariant.clearOCLContextDefinitions();
 
       // 1. add the adapted context definitions
-      for (ASTOCLContextDefinition refConstraint : refInvariant.getOCLContextDefinitionList()) {
-        List<OCLAdaptationVariant> contextDefVariants = getAdaptations4Ast().getVariants(refConstraint);
-        List<ASTOCLContextDefinition> adaptedConstraints = contextDefVariants.stream()
-                .map(v -> v.getAdaptedNode(refConstraint))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
-        adaptedInvariant.addAllOCLContextDefinitions(adaptedConstraints);
+      adaptedInvariant.clearOCLContextDefinitions();
+      for (ASTOCLContextDefinition refContextDef : refInvariant.getOCLContextDefinitionList()) {
+        Optional<ASTOCLContextDefinition> adaptedContextDef = variant.getAdaptedNode(refContextDef);
+        // use adapted or add ref context def again
+        adaptedInvariant.addOCLContextDefinition(adaptedContextDef.orElse(refContextDef));
       }
 
       // 2. set the adapted expression
       Optional<ASTExpression> expression = variant.getAdaptedNode(refInvariant.getExpression());
       expression.ifPresent(adaptedInvariant::setExpression);
 
-      // 3. find a useful name for the refInvariant
-      if (refInvariant.getName() != null && !refInvariant.getName().isBlank()) {
-        // TODO maybe something better than counting. We could use infix replacement & suffixes again...
-        if (invariantVariants.size() > 1) {
-          // only add suffix if we have multiple variants
-          adaptedInvariant.setName(refInvariant.getName() + "_" + i);
-        }
-      }
+      // TODO 3. find a useful name for the refInvariant
+      // TODO maybe something better than counting. We could use infix replacement & suffixes again...
 
       // store adapted expression in variant
       variant.setAdaptedNode(refInvariant, adaptedInvariant);
