@@ -1,7 +1,6 @@
 package de.monticore.expressions.commonexpressions;
 
-import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
+import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsHandler;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTraverser;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
@@ -90,5 +89,70 @@ public class CommonExpressionsBindingVariantsVisitor
   public void traverse(ASTEqualsExpression expr) {
     // TODO maybe introduce helper method to make this even shorter and more readable
     getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+  }
+
+  @Override
+  public void traverse(ASTLessThanExpression expr) {
+    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+  }
+
+  @Override
+  public void traverse(ASTLessEqualExpression expr) {
+    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+  }
+
+  @Override
+  public void traverse(ASTGreaterThanExpression expr) {
+    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+  }
+
+  @Override
+  public void traverse(ASTGreaterEqualExpression expr) {
+    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+  }
+
+  @Override
+  public void traverse(ASTBooleanAndOpExpression expr) {
+    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+  }
+
+  @Override
+  public void traverse(ASTBooleanOrOpExpression expr) {
+    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+  }
+
+  @Override
+  public void traverse(ASTPlusExpression expr) {
+    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+  }
+
+  @Override
+  public void traverse(ASTMinusExpression expr) {
+    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+  }
+
+  @Override
+  public void traverse(ASTMultExpression expr) {
+    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+  }
+
+  @Override
+  public void traverse(ASTDivideExpression expr) {
+    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+  }
+
+  @Override
+  public void traverse(ASTModuloExpression expr) {
+    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+  }
+
+  @Override
+  public void endVisit(ASTBooleanNotExpression expr) {
+    passChildVariantsUpwards(expr, expr.getExpression());
+  }
+
+  @Override
+  public void traverse(ASTCallExpression refCallExpression) {
+    SymTypeExpression symType = TypeCheck3.typeOf(refCallExpression);
   }
 }

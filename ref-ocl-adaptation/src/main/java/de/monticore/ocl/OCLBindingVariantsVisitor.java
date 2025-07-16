@@ -71,6 +71,21 @@ public class OCLBindingVariantsVisitor
   }
 
   @Override
+  public void traverse(ASTOCLContextDefinition node) {
+    List<ASTNode> nodesForConstraintPropagation = new ArrayList<>();
+    if (node.isPresentMCType()) {
+      nodesForConstraintPropagation.add(node.getMCType());
+    }
+    if (node.isPresentGeneratorDeclaration()) {
+      nodesForConstraintPropagation.add(node.getGeneratorDeclaration());
+    }
+    if (node.isPresentOCLParamDeclaration()) {
+      nodesForConstraintPropagation.add(node.getOCLParamDeclaration());
+    }
+    getAdaptations4Ast().addVariants(node, traverseAndPropagateConstraints(nodesForConstraintPropagation));
+  }
+
+  @Override
   public void traverse(ASTOCLOperationConstraint refConstraint) {
     List<ASTNode> nodesForConstraintPropagation = new ArrayList<>();
     nodesForConstraintPropagation.add(refConstraint.getOCLOperationSignature());
@@ -105,5 +120,16 @@ public class OCLBindingVariantsVisitor
         getAdaptations4Ast().addVariant(refMethodSignature, newVariant);
       }
     }
+  }
+
+  @Override
+  public void traverse(ASTOCLParamDeclaration refParamDeclaration) {
+    List<ASTNode> children = new ArrayList<>();
+    children.add(refParamDeclaration.getMCType());
+    if (refParamDeclaration.isPresentExpression()) {
+      children.add(refParamDeclaration.getExpression());
+    }
+    List<OCLAdaptationVariant> variants = traverseAndPropagateConstraints(children);
+    getAdaptations4Ast().addVariants(refParamDeclaration, variants);
   }
 }

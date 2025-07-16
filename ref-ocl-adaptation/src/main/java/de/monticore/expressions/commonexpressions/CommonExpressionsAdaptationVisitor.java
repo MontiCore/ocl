@@ -23,7 +23,7 @@ public class CommonExpressionsAdaptationVisitor
   private static final String LOG_NAME = CommonExpressionsAdaptationVisitor.class.getName();
 
   @Override
-  public void endVisit(ASTEqualsExpression expr) {
+  public void endVisit(ASTInfixExpression expr) {
     /*
      * Get all result variants that were found during traversal of the expression.
      * Each entry "AdaptationVariant" holds a consistent combination of all adapted

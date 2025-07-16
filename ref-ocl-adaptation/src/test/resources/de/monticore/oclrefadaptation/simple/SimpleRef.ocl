@@ -1,0 +1,4 @@
+ocl SimpleOCL {
+  context Person p inv AgePositive:
+    p.age >= 0;
+}

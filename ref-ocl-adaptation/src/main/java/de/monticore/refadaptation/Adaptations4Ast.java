@@ -4,6 +4,7 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import de.monticore.ast.ASTNode;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,11 +27,13 @@ public class Adaptations4Ast {
 
   public void replaceVariant(IAdaptationVariant oldVariant, List<? extends IAdaptationVariant> newVariants) {
     for (ASTNode key : variants.keySet()) {
-      List<IAdaptationVariant> variantList = variants.get(key);
-      if (variantList.contains(oldVariant)) {
+      if (variants.get(key).contains(oldVariant)) {
+        // copy list because Multimap returns view-only list when calling 'get'
+        List<IAdaptationVariant> variantList = new ArrayList<>(variants.get(key));
         int index = variantList.indexOf(oldVariant);
         variantList.remove(index);
         variantList.addAll(index, newVariants);
+        variants.replaceValues(key, variantList);
       }
     }
     // TODO Should we replace all occurrences of oldVariant in childVariants as well?
@@ -38,7 +41,7 @@ public class Adaptations4Ast {
 
   public <T extends IAdaptationVariant> List<T> getVariants(ASTNode refNode) {
     // TODO Do we need to return read-only / copy here?
-    return (List<T>) variants.get(refNode);
+    return new ArrayList<T>((Collection<T>) variants.get(refNode));
   }
 
   /**

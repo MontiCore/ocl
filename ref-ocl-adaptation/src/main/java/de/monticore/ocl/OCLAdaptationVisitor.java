@@ -6,6 +6,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
+import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
 import de.monticore.refadaptation.AbstractAdaptationVisitor;
 import de.monticore.refadaptation.Binding;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -115,6 +116,31 @@ public class OCLAdaptationVisitor extends AbstractAdaptationVisitor<OCLAdaptatio
   }
 
   @Override
+  public void endVisit(ASTOCLContextDefinition node) {
+    List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    for (OCLAdaptationVariant variant : variants) {
+      // TODO deepClone vs Builder & custom "adapt" implementation
+      ASTOCLContextDefinition adaptedContextDef = node.deepClone();
+
+      if (node.isPresentMCType()) {
+        Optional<ASTMCType> adaptedType = variant.getAdaptedNode(node.getMCType());
+        adaptedType.ifPresent(adaptedContextDef::setMCType);
+      }
+      if (node.isPresentGeneratorDeclaration()) {
+        Optional<ASTGeneratorDeclaration> adaptedGenerator = variant.getAdaptedNode(node.getGeneratorDeclaration());
+        adaptedGenerator.ifPresent(adaptedContextDef::setGeneratorDeclaration);
+      }
+      if (node.isPresentOCLParamDeclaration()) {
+        Optional<ASTOCLParamDeclaration> adaptedParamDecl = variant.getAdaptedNode(node.getOCLParamDeclaration());
+        adaptedParamDecl.ifPresent(adaptedContextDef::setOCLParamDeclaration);
+      }
+
+      // store adapted expression in variant
+      variant.setAdaptedNode(node, adaptedContextDef);
+    }
+  }
+
+  @Override
   public void endVisit(ASTOCLOperationConstraint refConstraint) {
     List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refConstraint);
     for (OCLAdaptationVariant variant : variants) {
@@ -180,6 +206,24 @@ public class OCLAdaptationVisitor extends AbstractAdaptationVisitor<OCLAdaptatio
 
       // store adapted signature in variant
       variant.setAdaptedNode(refMethodSignature, adaptedSignature);
+    }
+  }
+
+  @Override
+  public void endVisit(ASTOCLParamDeclaration node) {
+    List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    for (OCLAdaptationVariant variant : variants) {
+      // TODO deepClone vs Builder & custom "adapt" implementation
+      ASTOCLParamDeclaration adaptedParamDecl = node.deepClone();
+
+      // 1. use the adapted type
+      Optional<ASTMCType> adaptedType = variant.getAdaptedNode(node.getMCType());
+      adaptedType.ifPresent(adaptedParamDecl::setMCType);
+
+      // TODO What about the expression of OCLParamDeclaration? -> when is this used?
+
+      // store adapted expression in variant
+      variant.setAdaptedNode(node, adaptedParamDecl);
     }
   }
 

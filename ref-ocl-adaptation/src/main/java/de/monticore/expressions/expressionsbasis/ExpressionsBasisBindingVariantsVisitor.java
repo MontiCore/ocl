@@ -117,6 +117,7 @@ public class ExpressionsBasisBindingVariantsVisitor
     // OR
     // - we return an atomic "empty binding variant" and pass this upwards
     // TODO We need to decide in "traverse(AST...)" what we do if the list is empty -> default variant or is this a conflict?
+    getAdaptations4Ast().addVariant(node, getAdaptationContext().createVariant());
   }
 
   @Override

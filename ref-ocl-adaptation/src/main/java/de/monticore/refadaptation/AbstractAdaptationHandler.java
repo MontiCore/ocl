@@ -32,6 +32,7 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
     ASTNode firstChild = iterator.next();
     firstChild.accept(getTraverser());
     List<V> variants = getAdaptations4Ast().getVariants(firstChild);
+    // TODO report error if we get zero variants ? -> or default to empty variant?
     // 2. get variants for each subsequent child under constraints from all previous children
     while (iterator.hasNext()) {
       ASTNode nextChild = iterator.next();
