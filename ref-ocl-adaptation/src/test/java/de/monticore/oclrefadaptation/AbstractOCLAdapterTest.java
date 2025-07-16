@@ -1,11 +1,15 @@
 package de.monticore.oclrefadaptation;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
+import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
+import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.ICD4CodeScope;
+import de.monticore.cdassociation._visitor.CDAssociationTraverser;
+import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconcretization.UnderspecifiedPlaceholderType;
 import de.monticore.cdconformance.CDConfParameter;
@@ -17,12 +21,10 @@ import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCompleter;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.ocl.types3.OCLTypeCheck3;
 import de.monticore.ocl.util.SymbolTableUtil;
-import de.monticore.oclrefadaptation.OCLAdapter;
 import de.monticore.symboltable.ImportStatement;
 import de.monticore.types.mcbasictypes.MCBasicTypesMill;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -120,9 +122,32 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
     return adaptedOCL;
   }
 
+  public static void createRoleNamesIfAbsent(ASTCDCompilationUnit ast) {
+    final CDAssociationTraverser traverser = CD4CodeMill.inheritanceTraverser();
+    /*
+     * NOTE: Although in ocl2smt there is a comment this Trafo needs to be applied after the
+     * symbol table was created, this is wrong! Looking at CDAssociationDirectCompositionTrafo
+     * the docs state that the Trafo should be applied before the symbol table is created!
+     */
+    traverser.add4CDAssociation(new CDAssociationRoleNameTrafo());
+    ast.accept(traverser);
+  }
+
+  protected static void transformAllRoles(ASTCDCompilationUnit cdAST) {
+    final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
+            new CDAssociationCreateFieldsFromAllRoles();
+    final CD4AnalysisTraverser traverser = CD4CodeMill.inheritanceTraverser();
+    traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
+    traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
+    cdAssociationCreateFieldsFromAllRoles.transform(cdAST);
+  }
+
   protected void parseModels(String concreteCDFile, String refCDDFile, String refOCLFile, String expectedOCLFile) {
     conCD = loadCD(concreteCDFile);
+    transformAllRoles(conCD);
+
     refCD = loadCD(refCDDFile);
+    transformAllRoles(refCD);
 
     /*
      * TODO Cleanup & make sure everything is working fine. if we cannot compare symbols in CD4CodeMill and OCLMill global scopes we have issues...
@@ -169,8 +194,16 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
     ast.setEnclosingScope(as);
   }
 
+  protected static ICD4CodeArtifactScope createCDSymTab(ASTCDCompilationUnit ast) {
+    BuiltInTypes.addBuiltInTypes(CD4CodeMill.globalScope());
+    ICD4CodeArtifactScope as = CD4CodeMill.scopesGenitorDelegator().createFromAST(ast);
+    ast.accept(new CD4CodeSymbolTableCompleter(ast).getTraverser());
+    return as;
+  }
+
   public static ASTCDCompilationUnit loadCD(String filePath) {
     ASTCDCompilationUnit cd;
+    // 1. parse CD
     try {
       cd = CD4CodeMill.parser().parseCDCompilationUnit(TEST_RES_DIR + filePath).orElseThrow(
               () -> new RuntimeException("Could not parse CD: " + filePath));
@@ -178,8 +211,11 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
     catch (IOException e) {
       throw new RuntimeException("Failed to load CD: " + filePath, e);
     }
-    CD4CodeMill.scopesGenitorDelegator().createFromAST(cd);
-    cd.accept(new CD4CodeSymbolTableCompleter(cd).getTraverser());
+    // 2. AST trafo adding all implicit role names
+    createRoleNamesIfAbsent(cd);
+
+    // 3. create symbol table
+    cd.setEnclosingScope(createCDSymTab(cd));
 
     assertNoFindings();
     return cd;

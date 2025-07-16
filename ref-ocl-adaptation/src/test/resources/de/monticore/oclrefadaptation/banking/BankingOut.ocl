@@ -5,8 +5,8 @@ ocl bankingChecks {
   let
     balances = { acc.balance | BankAccount acc in b.bankAccount };
     calculatedBalance = iterate { balance in balances;
-                                  double sum = 0.0 :
-                                  sum = sum + balance }
+                                  double accumulated = 0.0 :
+                                  sum = accumulated + balance }
   in
     b.totalMoney == calculatedBalance;
 }

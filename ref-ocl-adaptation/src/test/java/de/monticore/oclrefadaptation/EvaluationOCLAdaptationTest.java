@@ -94,4 +94,30 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "builder/constraints/MethodCallChangesBuildResultSwappedOut.ocl");
     }
   }
+
+  @Nested
+  class Banking {
+    @Test
+    void simpleRenaming() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "banking/BankingConc.cd",
+              "banking/BankingRef.cd",
+              "banking/BankingRef.ocl",
+              "banking/BankingOut.ocl");
+    }
+  }
+
+  @Nested
+  class Simple {
+    @Test
+    void simpleExamples() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "simple/SimpleConc.cd",
+              "simple/SimpleRef.cd",
+              "simple/SimpleRef.ocl",
+              "simple/SimpleOut.ocl");
+    }
+  }
 }

@@ -4,9 +4,13 @@ ocl bankingChecks {
   context Bank b inv OverallBalanceCorrect:
   let
     balances = { acc.balance | Account acc in b.account };
+    /*
+     * WARN: We cannot use "sum" as variable name here because there is a functin symbol "sum"
+     * which causes type check to fail.
+     */
     calculatedBalance = iterate { balance in balances;
-                                  double sum = 0.0 :
-                                  sum = sum + balance }
+                                  double accumulated = 0.0 :
+                                  accumulated = accumulated + balance }
   in
     b.overallBalance == calculatedBalance;
 }
