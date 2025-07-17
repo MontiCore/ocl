@@ -1,6 +1,7 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl._symboltable;
 
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLContextDefinition;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
@@ -16,11 +17,12 @@ import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
 import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.TypeCheckResult;
-import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mcbasictypes._ast.*;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -164,14 +166,17 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
     if (type.isPresent()) {
       for (VariableSymbol var : type.get().getVariableList()) {
         if (node.getEnclosingScope().resolveVariableDownMany(var.getName()).isEmpty()) {
-          // only add field from type if there is no VariableSymbol with the same name yet
-          node.getEnclosingScope().add(var);
+          // Clone the VariableSymbol to avoid issues with the same symbol in different scopes!
+          // Otherwise, the original VariableSymbol suddenly has an unexpected enclosing scope
+          // which causes issues in the type check!
+          node.getEnclosingScope().add(var.deepClone());
         }
       }
       /*
-       * NOTE: We do not add FunctionSymbols from th declaring type here because TypeCheck
-       * has issues deriving a type if a VariableSymbol and FunctionSymbol have th same name!
+       * NOTE: We do not add FunctionSymbols from the declaring type here because TypeCheck
+       * has issues deriving a type if a VariableSymbol and FunctionSymbol have the same name!
        * Thus, users need to use 'this.myFunction()' to access functions from the type.
+       * See https://github.com/MontiCore/ocl/pull/3 for discussion.
        */
 
       // create VariableSymbols for "this" and "super"
