@@ -155,7 +155,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
   @Override
   public void endVisit(ASTOCLMethodSignature node) {
     /*
-     * We add symbols from the type in endVisit, so we can check if there is already a
+     * We add symbols from the type in 'endVisit', so we can check if there is already a
      * VariableSymbol with the same name as a field form a type. In this case we do not add the
      * field and users need to access it with 'this.myField'.
      */
