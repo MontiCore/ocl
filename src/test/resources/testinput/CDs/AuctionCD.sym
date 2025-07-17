@@ -1,87 +1,167 @@
 {
-  "generated-using": "www.MontiCore.de technology",
-  "name": "AuctionCD",
-  "symbols": [
+  "generated-using":"www.MontiCore.de technology",
+  "name":"AuctionCD",
+  "symbols":[
     {
-      "kind": "de.monticore.cdassociation._symboltable.CDAssociationSymbol",
-      "name": "participants",
-      "association": 397071633
+      "kind":"de.monticore.cdassociation._symboltable.CDAssociationSymbol",
+      "name":"participants",
+      "association":820878444
     },
     {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "Date",
-      "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": false,
-      "isStatic": false,
-      "isFinal": false
-    },
-    {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "Time",
-      "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": false,
-      "isStatic": false,
-      "isFinal": false,
-      "spannedScope": {
-        "isShadowingScope": false,
-        "symbols": [
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"Date",
+      "fullName":"AuctionCD.Date",
+      "packageName":"AuctionCD",
+      "isClass":true,
+      "spannedScope":{
+        "symbols":[
           {
-            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
-            "name": "now",
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Time"
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"Date",
+            "fullName":"Date",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Date"
             },
-            "isConstructor": false,
-            "isMethod": true,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": true,
-            "isFinal": false,
-            "isElliptic": false
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
+          }
+        ]
+      }
+    },
+    {
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"Time",
+      "fullName":"AuctionCD.Time",
+      "packageName":"AuctionCD",
+      "isClass":true,
+      "spannedScope":{
+        "symbols":[
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"now",
+            "fullName":"AuctionCD.Time.now",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Time"
+            },
+            "isMethod":true,
+            "isStatic":true
           },
           {
-            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
-            "name": "lessThan",
-            "type": {
-              "kind": "de.monticore.types.check.SymTypePrimitive",
-              "primitiveName": "boolean"
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"lessThan",
+            "fullName":"AuctionCD.Time.lessThan",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypePrimitive",
+              "primitiveName":"boolean"
             },
-            "isConstructor": false,
-            "isMethod": true,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "isElliptic": false,
-            "spannedScope": {
-              "isShadowingScope": false,
-              "symbols": [
+            "isMethod":true,
+            "spannedScope":{
+              "symbols":[
                 {
-                  "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-                  "name": "that",
-                  "isPrivate": false,
-                  "isProtected": false,
-                  "isPublic": false,
-                  "isStatic": false,
-                  "isFinal": false,
-                  "type": {
-                    "kind": "de.monticore.types.check.SymTypeOfObject",
-                    "objName": "Time"
-                  },
-                  "isReadOnly": false
+                  "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name":"that",
+                  "fullName":"AuctionCD.Time.lessThan.that",
+                  "packageName":"AuctionCD",
+                  "type":{
+                    "kind":"de.monticore.types.check.SymTypeOfObject",
+                    "objName":"AuctionCD.Time"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"Time",
+            "fullName":"Time",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Time"
+            },
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
+          }
+        ]
+      }
+    },
+    {
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"AllData",
+      "fullName":"AuctionCD.AllData",
+      "packageName":"AuctionCD",
+      "isClass":true,
+      "isPublic":true,
+      "spannedScope":{
+        "symbols":[
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"AllData",
+            "fullName":"AllData",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.AllData"
+            },
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
+          },
+          {
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"person",
+            "fullName":"AuctionCD.AllData.person",
+            "packageName":"AuctionCD",
+            "isDefinitiveNavigable":true,
+            "cardinality":"[*]",
+            "association":2113243119,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Person"
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"welcomeMsg",
+            "fullName":"AuctionCD.AllData.welcomeMsg",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Message"
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"auction",
+            "fullName":"AuctionCD.AllData.auction",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName":"java.util.List",
+              "arguments":[
+                {
+                  "kind":"de.monticore.types.check.SymTypeOfObject",
+                  "objName":"AuctionCD.Auction"
+                }
+              ]
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"person",
+            "fullName":"AuctionCD.AllData.person",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName":"java.util.Set",
+              "arguments":[
+                {
+                  "kind":"de.monticore.types.check.SymTypeOfObject",
+                  "objName":"AuctionCD.Person"
                 }
               ]
             }
@@ -90,929 +170,795 @@
       }
     },
     {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "AllData",
-      "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": true,
-      "isStatic": false,
-      "isFinal": false,
-      "spannedScope": {
-        "isShadowingScope": false,
-        "symbols": [
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"Name",
+      "fullName":"AuctionCD.Name",
+      "packageName":"AuctionCD",
+      "isClass":true,
+      "isPublic":true,
+      "spannedScope":{
+        "symbols":[
           {
-            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
-            "name": "person",
-            "isDefinitiveNavigable": true,
-            "cardinality": "[*]",
-            "field": "AllData.person",
-            "association": 1689730682,
-            "isOrdered": false,
-            "isLeft": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Person"
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"Name",
+            "fullName":"Name",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Name"
             },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "welcomeMsg",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Message"
-            },
-            "isReadOnly": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "auction",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfGenerics",
-              "typeConstructorFullName": "java.util.List",
-              "arguments": [
-                {
-                  "kind": "de.monticore.types.check.SymTypeOfObject",
-                  "objName": "Auction"
-                }
-              ]
-            },
-            "isReadOnly": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "person",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfGenerics",
-              "typeConstructorFullName": "java.util.Set",
-              "arguments": [
-                {
-                  "kind": "de.monticore.types.check.SymTypeOfObject",
-                  "objName": "Person"
-                }
-              ]
-            },
-            "isReadOnly": false
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
           }
         ]
       }
     },
     {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "Name",
-      "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": true,
-      "isStatic": false,
-      "isFinal": false
-    },
-    {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "Company",
-      "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": true,
-      "isStatic": false,
-      "isFinal": false,
-      "spannedScope": {
-        "isShadowingScope": false,
-        "symbols": [
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"Company",
+      "fullName":"AuctionCD.Company",
+      "packageName":"AuctionCD",
+      "isClass":true,
+      "isPublic":true,
+      "spannedScope":{
+        "symbols":[
           {
-            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
-            "name": "person",
-            "isDefinitiveNavigable": true,
-            "cardinality": "[*]",
-            "field": "Company.person",
-            "association": 317562294,
-            "isOrdered": false,
-            "isLeft": true,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Person"
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"Company",
+            "fullName":"Company",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Company"
             },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
           },
           {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "name",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "java.lang.String"
-            },
-            "isReadOnly": false
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"person",
+            "fullName":"AuctionCD.Company.person",
+            "packageName":"AuctionCD",
+            "isDefinitiveNavigable":true,
+            "cardinality":"[*]",
+            "association":1972326147,
+            "isLeft":true,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Person"
+            }
           },
           {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "person",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfGenerics",
-              "typeConstructorFullName": "java.util.Set",
-              "arguments": [
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"name",
+            "fullName":"AuctionCD.Company.name",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"java.lang.String"
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"person",
+            "fullName":"AuctionCD.Company.person",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName":"java.util.Set",
+              "arguments":[
                 {
-                  "kind": "de.monticore.types.check.SymTypeOfObject",
-                  "objName": "Person"
+                  "kind":"de.monticore.types.check.SymTypeOfObject",
+                  "objName":"AuctionCD.Person"
                 }
               ]
-            },
-            "isReadOnly": false
+            }
           }
         ]
       }
     },
     {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "Auction",
-      "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": true,
-      "isStatic": false,
-      "isFinal": false,
-      "spannedScope": {
-        "isShadowingScope": false,
-        "symbols": [
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"Auction",
+      "fullName":"AuctionCD.Auction",
+      "packageName":"AuctionCD",
+      "isClass":true,
+      "isPublic":true,
+      "spannedScope":{
+        "symbols":[
           {
-            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
-            "name": "bidder",
-            "isDefinitiveNavigable": true,
-            "cardinality": "[*]",
-            "field": "Auction.bidder",
-            "association": 397071633,
-            "isOrdered": false,
-            "isLeft": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Person"
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"Auction",
+            "fullName":"Auction",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Auction"
             },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
           },
           {
-            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
-            "name": "message",
-            "isDefinitiveNavigable": true,
-            "cardinality": "[*]",
-            "field": "Auction.message",
-            "association": 1346799731,
-            "isOrdered": false,
-            "isLeft": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Message"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"bidder",
+            "fullName":"AuctionCD.Auction.bidder",
+            "packageName":"AuctionCD",
+            "isDefinitiveNavigable":true,
+            "cardinality":"[*]",
+            "association":820878444,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Person"
+            }
           },
           {
-            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
-            "name": "policy",
-            "isDefinitiveNavigable": true,
-            "cardinality": "[1]",
-            "field": "Auction.policy",
-            "association": 342198178,
-            "isOrdered": false,
-            "isLeft": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Policy"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"message",
+            "fullName":"AuctionCD.Auction.message",
+            "packageName":"AuctionCD",
+            "isDefinitiveNavigable":true,
+            "cardinality":"[*]",
+            "association":1764291958,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Message"
+            }
           },
           {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "numberOfBids",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypePrimitive",
-              "primitiveName": "int"
-            },
-            "isReadOnly": false
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"policy",
+            "fullName":"AuctionCD.Auction.policy",
+            "packageName":"AuctionCD",
+            "isDefinitiveNavigable":true,
+            "cardinality":"[1]",
+            "association":1712230656,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Policy"
+            }
           },
           {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "auctionIdent",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypePrimitive",
-              "primitiveName": "int"
-            },
-            "isReadOnly": false
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"numberOfBids",
+            "fullName":"AuctionCD.Auction.numberOfBids",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypePrimitive",
+              "primitiveName":"int"
+            }
           },
           {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "status",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "AuctionStatus"
-            },
-            "isReadOnly": false
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"auctionIdent",
+            "fullName":"AuctionCD.Auction.auctionIdent",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypePrimitive",
+              "primitiveName":"int"
+            }
           },
           {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "startTime",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Time"
-            },
-            "isReadOnly": false
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"status",
+            "fullName":"AuctionCD.Auction.status",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.AuctionStatus"
+            }
           },
           {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "closingTime",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Time"
-            },
-            "isReadOnly": false
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"startTime",
+            "fullName":"AuctionCD.Auction.startTime",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Time"
+            }
           },
           {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "finishTime",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Time"
-            },
-            "isReadOnly": false
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"closingTime",
+            "fullName":"AuctionCD.Auction.closingTime",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Time"
+            }
           },
           {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "bidder",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfGenerics",
-              "typeConstructorFullName": "java.util.Set",
-              "arguments": [
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"finishTime",
+            "fullName":"AuctionCD.Auction.finishTime",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Time"
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"bidder",
+            "fullName":"AuctionCD.Auction.bidder",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName":"java.util.Set",
+              "arguments":[
                 {
-                  "kind": "de.monticore.types.check.SymTypeOfObject",
-                  "objName": "Person"
+                  "kind":"de.monticore.types.check.SymTypeOfObject",
+                  "objName":"AuctionCD.Person"
                 }
               ]
-            },
-            "isReadOnly": false
+            }
           },
           {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "message",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfGenerics",
-              "typeConstructorFullName": "java.util.Set",
-              "arguments": [
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"message",
+            "fullName":"AuctionCD.Auction.message",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName":"java.util.Set",
+              "arguments":[
                 {
-                  "kind": "de.monticore.types.check.SymTypeOfObject",
-                  "objName": "Message"
+                  "kind":"de.monticore.types.check.SymTypeOfObject",
+                  "objName":"AuctionCD.Message"
                 }
               ]
-            },
-            "isReadOnly": false
+            }
           },
           {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "policy",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Policy"
-            },
-            "isReadOnly": false
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"policy",
+            "fullName":"AuctionCD.Auction.policy",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Policy"
+            }
           }
         ]
       }
     },
     {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "AuctionStatus",
-      "isClass": false,
-      "isInterface": false,
-      "isEnum": true,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": true,
-      "isStatic": false,
-      "isFinal": false,
-      "spannedScope": {
-        "isShadowingScope": false,
-        "symbols": [
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "INITIAL",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": true,
-            "isStatic": true,
-            "isFinal": true,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "AuctionStatus"
-            },
-            "isReadOnly": true
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "RUNNING",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": true,
-            "isStatic": true,
-            "isFinal": true,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "AuctionStatus"
-            },
-            "isReadOnly": true
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "FINISHED",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": true,
-            "isStatic": true,
-            "isFinal": true,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "AuctionStatus"
-            },
-            "isReadOnly": true
-          }
-        ]
-      }
-    },
-    {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "Message",
-      "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": true,
-      "isStatic": false,
-      "isFinal": false,
-      "spannedScope": {
-        "isShadowingScope": false,
-        "symbols": [
-          {
-            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
-            "name": "bidder",
-            "isDefinitiveNavigable": true,
-            "field": "Message.bidder",
-            "association": 1832669781,
-            "isOrdered": false,
-            "isLeft": true,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Person"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
-          },
-          {
-            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
-            "name": "auction",
-            "isDefinitiveNavigable": true,
-            "field": "Message.auction",
-            "association": 1346799731,
-            "isOrdered": false,
-            "isLeft": true,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Auction"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "time",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Time"
-            },
-            "isReadOnly": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "bidder",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Person"
-            },
-            "isReadOnly": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "auction",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Auction"
-            },
-            "isReadOnly": false
-          }
-        ]
-      }
-    },
-    {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "Policy",
-      "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": true,
-      "isStatic": false,
-      "isFinal": false,
-      "spannedScope": {
-        "isShadowingScope": false,
-        "symbols": [
-          {
-            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
-            "name": "auction",
-            "isDefinitiveNavigable": false,
-            "association": 342198178,
-            "isOrdered": false,
-            "isLeft": true,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Auction"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
-          }
-        ]
-      }
-    },
-    {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "Person",
-      "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": true,
-      "isStatic": false,
-      "isFinal": false,
-      "spannedScope": {
-        "isShadowingScope": false,
-        "symbols": [
-          {
-            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
-            "name": "allData",
-            "isDefinitiveNavigable": true,
-            "field": "Person.allData",
-            "association": 1689730682,
-            "isOrdered": false,
-            "isLeft": true,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "AllData"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
-          },
-          {
-            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
-            "name": "auctions",
-            "isDefinitiveNavigable": true,
-            "cardinality": "[*]",
-            "field": "Person.auctions",
-            "association": 397071633,
-            "isOrdered": false,
-            "isLeft": true,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Auction"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
-          },
-          {
-            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
-            "name": "company",
-            "isDefinitiveNavigable": true,
-            "cardinality": "[1]",
-            "field": "Person.company",
-            "association": 317562294,
-            "isOrdered": false,
-            "isLeft": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Company"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
-          },
-          {
-            "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
-            "name": "message",
-            "isDefinitiveNavigable": true,
-            "cardinality": "[*]",
-            "field": "Person.message",
-            "association": 1832669781,
-            "isOrdered": false,
-            "isLeft": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Message"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "isActive",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypePrimitive",
-              "primitiveName": "boolean"
-            },
-            "isReadOnly": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "allData",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "AllData"
-            },
-            "isReadOnly": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "auctions",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfGenerics",
-              "typeConstructorFullName": "java.util.Set",
-              "arguments": [
-                {
-                  "kind": "de.monticore.types.check.SymTypeOfObject",
-                  "objName": "Auction"
-                }
-              ]
-            },
-            "isReadOnly": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "company",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Company"
-            },
-            "isReadOnly": false
-          },
-          {
-            "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name": "message",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "type": {
-              "kind": "de.monticore.types.check.SymTypeOfGenerics",
-              "typeConstructorFullName": "java.util.Set",
-              "arguments": [
-                {
-                  "kind": "de.monticore.types.check.SymTypeOfObject",
-                  "objName": "Message"
-                }
-              ]
-            },
-            "isReadOnly": false
-          }
-        ]
-      }
-    },
-    {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "Student",
-      "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": true,
-      "isStatic": false,
-      "isFinal": false,
-      "superTypes": [
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"BidMessage",
+      "fullName":"AuctionCD.BidMessage",
+      "packageName":"AuctionCD",
+      "superTypes":[
         {
-          "kind": "de.monticore.types.check.SymTypeOfObject",
-          "objName": "Person"
+          "kind":"de.monticore.types.check.SymTypeOfObject",
+          "objName":"AuctionCD.Message"
         }
-      ]
-    },
-    {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "BidMessage",
-      "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": true,
-      "isStatic": false,
-      "isFinal": false,
-      "superTypes": [
-        {
-          "kind": "de.monticore.types.check.SymTypeOfObject",
-          "objName": "Message"
-        }
-      ]
-    },
-    {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "Betreuer",
-      "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": true,
-      "isStatic": false,
-      "isFinal": false,
-      "superTypes": [
-        {
-          "kind": "de.monticore.types.check.SymTypeOfObject",
-          "objName": "Person"
-        }
-      ]
-    },
-    {
-      "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
-      "name": "Building",
-      "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": true,
-      "isStatic": false,
-      "isFinal": false,
-      "spannedScope": {
-        "isShadowingScope": false,
-        "symbols": [
+      ],
+      "isClass":true,
+      "isPublic":true,
+      "spannedScope":{
+        "symbols":[
           {
-            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
-            "name": "height",
-            "type": {
-              "kind": "de.monticore.types.check.SymTypePrimitive",
-              "primitiveName": "double"
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"BidMessage",
+            "fullName":"BidMessage",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.BidMessage"
             },
-            "isConstructor": false,
-            "isMethod": true,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "isElliptic": false
-          },
-          {
-            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
-            "name": "width",
-            "type": {
-              "kind": "de.monticore.types.check.SymTypePrimitive",
-              "primitiveName": "double"
-            },
-            "isConstructor": false,
-            "isMethod": true,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "isElliptic": false
-          },
-          {
-            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
-            "name": "length",
-            "type": {
-              "kind": "de.monticore.types.check.SymTypePrimitive",
-              "primitiveName": "double"
-            },
-            "isConstructor": false,
-            "isMethod": true,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
-            "isElliptic": false
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
           }
         ]
       }
     },
     {
-      "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
-      "name": "AuctionCD"
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"AuctionStatus",
+      "fullName":"AuctionCD.AuctionStatus",
+      "packageName":"AuctionCD",
+      "isEnum":true,
+      "isPublic":true,
+      "spannedScope":{
+        "symbols":[
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"INITIAL",
+            "fullName":"AuctionCD.AuctionStatus.INITIAL",
+            "packageName":"AuctionCD",
+            "isPublic":true,
+            "isStatic":true,
+            "isFinal":true,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.AuctionStatus"
+            },
+            "isReadOnly":true
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"RUNNING",
+            "fullName":"AuctionCD.AuctionStatus.RUNNING",
+            "packageName":"AuctionCD",
+            "isPublic":true,
+            "isStatic":true,
+            "isFinal":true,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.AuctionStatus"
+            },
+            "isReadOnly":true
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"FINISHED",
+            "fullName":"AuctionCD.AuctionStatus.FINISHED",
+            "packageName":"AuctionCD",
+            "isPublic":true,
+            "isStatic":true,
+            "isFinal":true,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.AuctionStatus"
+            },
+            "isReadOnly":true
+          }
+        ]
+      }
+    },
+    {
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"Message",
+      "fullName":"AuctionCD.Message",
+      "packageName":"AuctionCD",
+      "isClass":true,
+      "isPublic":true,
+      "spannedScope":{
+        "symbols":[
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"Message",
+            "fullName":"Message",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Message"
+            },
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
+          },
+          {
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"bidder",
+            "fullName":"AuctionCD.Message.bidder",
+            "packageName":"AuctionCD",
+            "isDefinitiveNavigable":true,
+            "association":896852376,
+            "isLeft":true,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Person"
+            }
+          },
+          {
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"auction",
+            "fullName":"AuctionCD.Message.auction",
+            "packageName":"AuctionCD",
+            "isDefinitiveNavigable":true,
+            "association":1764291958,
+            "isLeft":true,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Auction"
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"time",
+            "fullName":"AuctionCD.Message.time",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Time"
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"bidder",
+            "fullName":"AuctionCD.Message.bidder",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Person"
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"auction",
+            "fullName":"AuctionCD.Message.auction",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Auction"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"Policy",
+      "fullName":"AuctionCD.Policy",
+      "packageName":"AuctionCD",
+      "isClass":true,
+      "isPublic":true,
+      "spannedScope":{
+        "symbols":[
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"Policy",
+            "fullName":"Policy",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Policy"
+            },
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
+          },
+          {
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"auction",
+            "fullName":"AuctionCD.Policy.auction",
+            "packageName":"AuctionCD",
+            "association":1712230656,
+            "isLeft":true,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Auction"
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"auction",
+            "fullName":"AuctionCD.Policy.auction",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Auction"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"Person",
+      "fullName":"AuctionCD.Person",
+      "packageName":"AuctionCD",
+      "isClass":true,
+      "isPublic":true,
+      "spannedScope":{
+        "symbols":[
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"setActive",
+            "fullName":"AuctionCD.Person.setActive",
+            "packageName":"AuctionCD",
+            "type":"void",
+            "isMethod":true,
+            "spannedScope":{
+              "symbols":[
+                {
+                  "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+                  "name":"active",
+                  "fullName":"AuctionCD.Person.setActive.active",
+                  "packageName":"AuctionCD",
+                  "type":{
+                    "kind":"de.monticore.types.check.SymTypePrimitive",
+                    "primitiveName":"boolean"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"getActive",
+            "fullName":"AuctionCD.Person.getActive",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypePrimitive",
+              "primitiveName":"boolean"
+            },
+            "isMethod":true
+          },
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"Person",
+            "fullName":"Person",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Person"
+            },
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
+          },
+          {
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"allData",
+            "fullName":"AuctionCD.Person.allData",
+            "packageName":"AuctionCD",
+            "isDefinitiveNavigable":true,
+            "association":2113243119,
+            "isLeft":true,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.AllData"
+            }
+          },
+          {
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"auctions",
+            "fullName":"AuctionCD.Person.auctions",
+            "packageName":"AuctionCD",
+            "isDefinitiveNavigable":true,
+            "cardinality":"[*]",
+            "association":820878444,
+            "isLeft":true,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Auction"
+            }
+          },
+          {
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"company",
+            "fullName":"AuctionCD.Person.company",
+            "packageName":"AuctionCD",
+            "isDefinitiveNavigable":true,
+            "cardinality":"[1]",
+            "association":1972326147,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Company"
+            }
+          },
+          {
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"message",
+            "fullName":"AuctionCD.Person.message",
+            "packageName":"AuctionCD",
+            "isDefinitiveNavigable":true,
+            "cardinality":"[*]",
+            "association":896852376,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Message"
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"isActive",
+            "fullName":"AuctionCD.Person.isActive",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypePrimitive",
+              "primitiveName":"boolean"
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"allData",
+            "fullName":"AuctionCD.Person.allData",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.AllData"
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"auctions",
+            "fullName":"AuctionCD.Person.auctions",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName":"java.util.Set",
+              "arguments":[
+                {
+                  "kind":"de.monticore.types.check.SymTypeOfObject",
+                  "objName":"AuctionCD.Auction"
+                }
+              ]
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"company",
+            "fullName":"AuctionCD.Person.company",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Company"
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"message",
+            "fullName":"AuctionCD.Person.message",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName":"java.util.Set",
+              "arguments":[
+                {
+                  "kind":"de.monticore.types.check.SymTypeOfObject",
+                  "objName":"AuctionCD.Message"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"Student",
+      "fullName":"AuctionCD.Student",
+      "packageName":"AuctionCD",
+      "superTypes":[
+        {
+          "kind":"de.monticore.types.check.SymTypeOfObject",
+          "objName":"AuctionCD.Person"
+        }
+      ],
+      "isClass":true,
+      "isPublic":true,
+      "spannedScope":{
+        "symbols":[
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"demandForDiscount",
+            "fullName":"AuctionCD.Student.demandForDiscount",
+            "packageName":"AuctionCD",
+            "type":"void",
+            "isMethod":true
+          },
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"Student",
+            "fullName":"Student",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Student"
+            },
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
+          }
+        ]
+      }
+    },
+    {
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"Betreuer",
+      "fullName":"AuctionCD.Betreuer",
+      "packageName":"AuctionCD",
+      "superTypes":[
+        {
+          "kind":"de.monticore.types.check.SymTypeOfObject",
+          "objName":"AuctionCD.Person"
+        }
+      ],
+      "isClass":true,
+      "isPublic":true,
+      "spannedScope":{
+        "symbols":[
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"Betreuer",
+            "fullName":"Betreuer",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Betreuer"
+            },
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
+          }
+        ]
+      }
+    },
+    {
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"Building",
+      "fullName":"AuctionCD.Building",
+      "packageName":"AuctionCD",
+      "isClass":true,
+      "isPublic":true,
+      "spannedScope":{
+        "symbols":[
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"height",
+            "fullName":"AuctionCD.Building.height",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypePrimitive",
+              "primitiveName":"double"
+            },
+            "isMethod":true
+          },
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"width",
+            "fullName":"AuctionCD.Building.width",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypePrimitive",
+              "primitiveName":"double"
+            },
+            "isMethod":true
+          },
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"length",
+            "fullName":"AuctionCD.Building.length",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypePrimitive",
+              "primitiveName":"double"
+            },
+            "isMethod":true
+          },
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"Building",
+            "fullName":"Building",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Building"
+            },
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
+          }
+        ]
+      }
+    },
+    {
+      "kind":"de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
+      "name":"AuctionCD",
+      "fullName":"AuctionCD"
     }
   ],
-  "furtherObjects": {
-    "1346799731": {
-      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
-      "isAssociation": true,
-      "isComposition": false
+  "furtherObjects":{
+    "820878444":{
+      "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation":true
     },
-    "342198178": {
-      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
-      "isAssociation": true,
-      "isComposition": false
+    "2113243119":{
+      "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation":true
     },
-    "1832669781": {
-      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
-      "isAssociation": true,
-      "isComposition": false
+    "1972326147":{
+      "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation":true
     },
-    "397071633": {
-      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
-      "isAssociation": true,
-      "isComposition": false
+    "896852376":{
+      "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation":true
     },
-    "317562294": {
-      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
-      "isAssociation": true,
-      "isComposition": false
+    "1764291958":{
+      "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation":true
     },
-    "1689730682": {
-      "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
-      "isAssociation": true,
-      "isComposition": false
+    "1712230656":{
+      "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation":true
     }
   }
 }

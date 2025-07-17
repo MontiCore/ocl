@@ -1,0 +1,4 @@
+ocl superInOperationConstraint {
+  context void Student.demandForDiscount()
+    post: super.isActive == this.isActive && super.getActive() == this.getActive();
+}
