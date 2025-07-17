@@ -13,6 +13,7 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
 import de.monticore.types.check.ISynthesize;
+import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
@@ -126,6 +127,21 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
     if (type.isPresent()) {
       for (VariableSymbol var : type.get().getVariableList()) {
         node.getEnclosingScope().add(var);
+      }
+      for (FunctionSymbol fun : type.get().getFunctionList()) {
+        node.getEnclosingScope().add(fun);
+      }
+
+      // create VariableSymbols for "this" and "super"
+      VariableSymbol t = new VariableSymbol("this");
+      t.setType(SymTypeExpressionFactory.createFromSymbol(type.get()));
+      t.setIsReadOnly(true);
+      node.getEnclosingScope().add(t);
+      if (!type.get().isEmptySuperTypes()) {
+        VariableSymbol s = new VariableSymbol("super");
+        s.setType(type.get().getSuperClass());
+        s.setIsReadOnly(true);
+        node.getEnclosingScope().add(s);
       }
     }
 
