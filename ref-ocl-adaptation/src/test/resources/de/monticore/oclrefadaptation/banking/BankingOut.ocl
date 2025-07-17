@@ -3,8 +3,8 @@
 ocl bankingChecks {
   context SEPABank b inv OverallBalanceCorrect:
   let
-    balances = { acc.balance | BankAccount acc in b.bankAccount };
-    calculatedBalance = iterate { balance in balances;
+    Set<double> balances = { acc.balance | BankAccount acc in b.bankAccount };
+    double calculatedBalance = iterate { balance in balances;
                                   double accumulated = 0.0 :
                                   sum = accumulated + balance }
   in
