@@ -4,22 +4,22 @@ ocl MethodCallChangesBuildResultSwapped {
   // ----- Employee -----
 
   context EmployeeBuilder EmployeeBuilder.firstName(String firstName)
-    post: firstName == build().firstName;
+    post: firstName == this.build().firstName;
 
   context EmployeeBuilder EmployeeBuilder.lastName(String lastName)
-    post: lastName == build().lastName;
+    post: lastName == this.build().lastName;
 
   context EmployeeBuilder EmployeeBuilder.number(int number)
-    post: number == build().number;
+    post: number == this.build().number;
 
   context EmployeeBuilder EmployeeBuilder.salary(int salary)
-    post: salary == build().salary;
+    post: salary == this.build().salary;
 
   // ----- Department -----
 
   context DepartmentBuilder DepartmentBuilder.managerName(String managerName)
-    post: managerName == build().managerName;
+    post: managerName == this.build().managerName;
 
-  context DepartmentBuilder DepartmentBuilder.dept(int dept)
-    post: dept == build().dept;
+  context DepartmentBuilder DepartmentBuilder.depId(int depId)
+    post: depId == this.build().depId;
 }
