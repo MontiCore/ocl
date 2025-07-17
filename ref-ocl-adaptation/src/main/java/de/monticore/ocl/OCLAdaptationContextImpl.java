@@ -46,6 +46,9 @@ public class OCLAdaptationContextImpl implements OCLAdaptationContext {
 
   @Override
   public OCLAdaptationVariant createVariant() {
+    // TODO Should we add all bindings currently holding in this context to the variant?
+    //  there is at least one use case: traverse of OCLMethodSignature defines binding for
+    //  method parameters, but lower level variants need to b aware of the binding during AST adaptation visitor run
     return new OCLAdaptationVariantImpl();
   }
 

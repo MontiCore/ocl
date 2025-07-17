@@ -9,6 +9,7 @@ import de.monticore.ocl.ocl._visitor.OCLVisitor2;
 import de.monticore.refadaptation.AbstractAdaptationHandler;
 import de.monticore.refadaptation.Binding;
 import de.monticore.symbols.OOSymbolsBindings;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 
 import java.util.ArrayList;
@@ -38,20 +39,21 @@ public class OCLBindingVariantsVisitor
   }
 
   @Override
-  public void endVisit(ASTOCLCompilationUnit node) {
-    passChildVariantsUpwards(node, node.getOCLArtifact());
-  }
-
-  @Override
   public void handle(ASTOCLArtifact node) {
     getAdaptations4Ast().clearVariants(node);
     OCLHandler.super.handle(node);
   }
 
   @Override
-  public void endVisit(ASTOCLArtifact refArtifact) {
-    // Adds a SINGLE variant for the artifact combining all the adapted constraints
-    aggregateChildVariants(refArtifact, refArtifact.getOCLConstraintList());
+  public void handle(ASTOCLInvariant node) {
+    getAdaptations4Ast().clearVariants(node);
+    OCLHandler.super.handle(node);
+  }
+
+  @Override
+  public void handle(ASTOCLOperationConstraint node) {
+    getAdaptations4Ast().clearVariants(node);
+    OCLHandler.super.handle(node);
   }
 
   @Override
@@ -70,6 +72,17 @@ public class OCLBindingVariantsVisitor
   public void handle(ASTOCLParamDeclaration node) {
     getAdaptations4Ast().clearVariants(node);
     OCLHandler.super.handle(node);
+  }
+
+  @Override
+  public void endVisit(ASTOCLCompilationUnit node) {
+    passChildVariantsUpwards(node, node.getOCLArtifact());
+  }
+
+  @Override
+  public void endVisit(ASTOCLArtifact refArtifact) {
+    // Adds a SINGLE variant for the artifact combining all the adapted constraints
+    aggregateChildVariants(refArtifact, refArtifact.getOCLConstraintList());
   }
 
   @Override
@@ -129,6 +142,15 @@ public class OCLBindingVariantsVisitor
         // 2. Add bindings from the original model attached to the method
         OOSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalOOSymbolsIncMapping().getScopedBindings(methodIncarnation);
         newVariant.getOOSymbolsBindings().addAll(bindingsFromModel);
+        // 3. Manually, add bindings for the VariableSymbols representing the method parameters so they can be adapted later on
+        // TODO These bindings should be available frm the OOSymbolsBinding in the future since
+        //  parameters are naturally VariableSymbols enclosed in the scope of the method
+        for (int i=0; i<refMethodSignature.getOCLParamDeclarationList().size(); i++) {
+          // STRONG assumption: incarnation parameters are in same order as reference parameters
+          VariableSymbol refSymbol = refMethodSignature.getOCLParamDeclaration(i).getSymbol();
+          VariableSymbol conSymbol = methodIncarnation.getParameterList().get(i);
+          newVariant.getBasicSymbolsBindings().addVariableBinding(Binding.createStrict(refSymbol, conSymbol));
+        }
         getAdaptations4Ast().addVariant(refMethodSignature, newVariant);
       }
     }

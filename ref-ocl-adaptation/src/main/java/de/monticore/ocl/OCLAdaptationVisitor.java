@@ -9,10 +9,14 @@ import de.monticore.ocl.ocl._visitor.OCLVisitor2;
 import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
 import de.monticore.refadaptation.AbstractAdaptationVisitor;
 import de.monticore.refadaptation.Binding;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.types.MCTypeFacade;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types.check.SymTypePrimitive;
+import de.monticore.types.mcbasictypes._ast.ASTConstantsMCBasicTypes;
+import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
@@ -216,16 +220,43 @@ public class OCLAdaptationVisitor extends AbstractAdaptationVisitor<OCLAdaptatio
     }
   }
 
+  /*
+   * TODO if we kep this approach, refactor it to an interface IMCTypeFactory which can be injected
+   *  and adapted by language developers if they add more types.
+   */
   private ASTMCType createTypeFromSymTypeExpression(SymTypeExpression symTypeExpr) {
     // TODO Is there an easy way to construct ASTMCType objects from SymTypeExpressions?
     //  I think we should use visitor for type adaptation / construction as well. This
     //  way we stay opn for extension
     if (symTypeExpr.isPrimitive()) {
-      throw new NotImplementedException("Primitive types are not supported yet: " + symTypeExpr);
+      return OCLMill.mCPrimitiveTypeBuilder()
+              .setPrimitive(getPrimitiveConstant(symTypeExpr.asPrimitive()))
+              .build();
     } else if (symTypeExpr.isObjectType()) {
       return MCTypeFacade.getInstance().createQualifiedType(symTypeExpr.printFullName());
     } else {
       throw new NotImplementedException("unsupported type: " + symTypeExpr);
+    }
+  }
+
+  /*
+   * NOTE: This links the names of primitive types in the 'BasicSymbols' language to the
+   * hardcoded integer constants used in the 'MCBasicTypes' language.
+   */
+  private int getPrimitiveConstant(SymTypePrimitive primitive) {
+    switch (primitive.getPrimitiveName()) {
+      case BasicSymbolsMill.BOOLEAN:
+        return ASTConstantsMCBasicTypes.BOOLEAN;
+      case BasicSymbolsMill.INT:
+        return ASTConstantsMCBasicTypes.INT;
+      case BasicSymbolsMill.LONG:
+        return ASTConstantsMCBasicTypes.LONG;
+      case BasicSymbolsMill.FLOAT:
+        return ASTConstantsMCBasicTypes.FLOAT;
+      case BasicSymbolsMill.DOUBLE:
+        return ASTConstantsMCBasicTypes.DOUBLE;
+      default:
+        throw new NotImplementedException("Primitive type not supported: " + primitive.getPrimitiveName());
     }
   }
 
