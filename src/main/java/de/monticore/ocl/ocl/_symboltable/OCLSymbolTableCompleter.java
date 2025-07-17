@@ -102,7 +102,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
             t.setType(typeResult.getResult());
             t.setIsReadOnly(true);
             cd.getEnclosingScope().add(t);
-            if (!typeResult.getResult().getTypeInfo().isEmptySuperTypes()) {
+            if (typeResult.getResult().getTypeInfo().isPresentSuperClass()) {
               VariableSymbol s = new VariableSymbol("super");
               s.setType(typeResult.getResult().getTypeInfo().getSuperClass());
               s.setIsReadOnly(true);
@@ -178,7 +178,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
       t.setType(SymTypeExpressionFactory.createFromSymbol(type.get()));
       t.setIsReadOnly(true);
       node.getEnclosingScope().add(t);
-      if (!type.get().isEmptySuperTypes()) {
+      if (type.get().isPresentSuperClass()) {
         VariableSymbol s = new VariableSymbol("super");
         s.setType(type.get().getSuperClass());
         s.setIsReadOnly(true);
