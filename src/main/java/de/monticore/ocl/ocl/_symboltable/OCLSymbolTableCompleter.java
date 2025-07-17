@@ -169,9 +169,10 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
         }
       }
       /*
-      for (FunctionSymbol fun : type.get().getFunctionList()) {
-        node.getEnclosingScope().add(fun);
-      }*/
+       * NOTE: We do not add FunctionSymbols from th declaring type here because TypeCheck
+       * has issues deriving a type if a VariableSymbol and FunctionSymbol have th same name!
+       * Thus, users need to use 'this.myFunction()' to access functions from the type.
+       */
 
       // create VariableSymbols for "this" and "super"
       VariableSymbol t = new VariableSymbol("this");
