@@ -3,23 +3,23 @@ ocl MethodCallChangesBuildResult {
 
   // ----- Employee -----
 
-  context EmployeeBuilder EmployeeBuilder.firstName(String firstName)
+  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.firstName(java.lang.String firstName)
     post: this.build().firstName == firstName;
 
-  context EmployeeBuilder EmployeeBuilder.lastName(String lastName)
+  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.lastName(java.lang.String lastName)
     post: this.build().lastName == lastName;
 
-  context EmployeeBuilder EmployeeBuilder.number(int number)
+  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.number(int number)
     post: this.build().number == number;
 
-  context EmployeeBuilder EmployeeBuilder.salary(int salary)
+  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.salary(int salary)
     post: this.build().salary == salary;
 
   // ----- Department -----
 
-  context DepartmentBuilder DepartmentBuilder.managerName(String managerName)
+  context BuilderConc.DepartmentBuilder BuilderConc.DepartmentBuilder.managerName(java.lang.String managerName)
     post: this.build().managerName == managerName;
 
-  context DepartmentBuilder DepartmentBuilder.depId(int depId)
+  context BuilderConc.DepartmentBuilder BuilderConc.DepartmentBuilder.depId(int depId)
     post: this.build().depId == depId;
 }

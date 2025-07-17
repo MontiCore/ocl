@@ -115,6 +115,12 @@ public class CommonExpressionsBindingVariantsVisitor
     CommonExpressionsHandler.super.handle(node);
   }
 
+  @Override
+  public void handle(ASTCallExpression node) {
+    getAdaptations4Ast().clearVariants(node);
+    CommonExpressionsHandler.super.handle(node);
+  }
+
   // TODO other handle methods
 
   @Override
@@ -128,6 +134,12 @@ public class CommonExpressionsBindingVariantsVisitor
       System.out.println("FieldAccessExpression Variable Source symbol: " + sourceSymbol);
       System.out.println("symbol full name: " + sourceSymbol.getFullName());
     }
+
+    /*
+     * TODO Write the same logic for MethodSymbol/FunctionSymbol
+     *  -> next: maybe we can refactor this to a common helper method for introducing
+     *     variants for each incarnation of some symbol?
+     */
 
     /*
      * 2. get all variants of the parent expression
@@ -225,7 +237,8 @@ public class CommonExpressionsBindingVariantsVisitor
   }
 
   @Override
-  public void traverse(ASTCallExpression refCallExpression) {
-    SymTypeExpression symType = TypeCheck3.typeOf(refCallExpression);
+  public void traverse(ASTCallExpression callExpr) {
+    getAdaptations4Ast().addVariants(callExpr,
+            traverseAndPropagateConstraints(callExpr.getExpression(), callExpr.getArguments()));
   }
 }

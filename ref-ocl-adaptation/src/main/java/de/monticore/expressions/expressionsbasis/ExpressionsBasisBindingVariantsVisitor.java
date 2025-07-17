@@ -64,6 +64,8 @@ public class ExpressionsBasisBindingVariantsVisitor
             .filter(s -> s instanceof VariableSymbol)
             .map(s -> (VariableSymbol) s);
 
+    // TODO ad support for FunctionSymbol/MethodSymbol here -> NameExpression can be part of method call
+
     // TODO What symbols do we even expect here?
     /*
      * 1. name expressions can point to fields of a class if we process an invariant
@@ -76,11 +78,11 @@ public class ExpressionsBasisBindingVariantsVisitor
      * TODO Decide / discuss where we need to do this translation from variable symbols in OCL scope to CD4C symbols
      *  here?
      *  I think we should only try to do the lookup in OOSymbols if we have a VariableSymbol && it can be translated to a CD4Code symbol
-     *  -> but then we woul have a tight coupling in ExpressionBasisAdapter to CD4CodeMill
+     *  -> but then we would have a tight coupling in ExpressionBasisAdapter to CD4CodeMill
      *  ALTERNATIVE:
      *  - add an "adapter" class around the incarnating mapping that translates the VariableSymbol to a FieldSymbol
      */
-    // TODO Also handle method parameter variable symbols ! -> this should be covered by using resolveVariable instead of resolvField
+    // TODO Also handle method parameter variable symbols ! -> this should be covered by using resolveVariable instead of resolveField
     Optional<VariableSymbol> cd4cTranslatedSymbolOpt = sourceSymbolOpt.flatMap(s -> CD4CodeMill.globalScope().resolveVariable(s.getFullName()));
 
     if (cd4cTranslatedSymbolOpt.isPresent()) {
