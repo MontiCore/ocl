@@ -122,29 +122,6 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
 
   @Override
   public void visit(ASTOCLMethodSignature node) {
-    String typeName = Names.getQualifier(node.getMethodName().getQName());
-    Optional<TypeSymbol> type = node.getEnclosingScope().resolveType(typeName);
-    if (type.isPresent()) {
-      for (VariableSymbol var : type.get().getVariableList()) {
-        node.getEnclosingScope().add(var);
-      }
-      for (FunctionSymbol fun : type.get().getFunctionList()) {
-        node.getEnclosingScope().add(fun);
-      }
-
-      // create VariableSymbols for "this" and "super"
-      VariableSymbol t = new VariableSymbol("this");
-      t.setType(SymTypeExpressionFactory.createFromSymbol(type.get()));
-      t.setIsReadOnly(true);
-      node.getEnclosingScope().add(t);
-      if (!type.get().isEmptySuperTypes()) {
-        VariableSymbol s = new VariableSymbol("super");
-        s.setType(type.get().getSuperClass());
-        s.setIsReadOnly(true);
-        node.getEnclosingScope().add(s);
-      }
-    }
-
     if (node.isPresentMCReturnType()) {
       // create VariableSymbol for result of method
       final TypeCheckResult typeResult;
@@ -170,6 +147,42 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
         result.setType(typeResult.getResult());
         result.setIsReadOnly(true);
         node.getEnclosingScope().add(result);
+      }
+    }
+  }
+
+  @Override
+  public void endVisit(ASTOCLMethodSignature node) {
+    /*
+     * We add symbols from the type in 'endVisit', so we can check if there is already a
+     * VariableSymbol with the same name as a field form a type. In this case we do not add the
+     * field and users need to access it with 'this.myField'.
+     */
+    String typeName = Names.getQualifier(node.getMethodName().getQName());
+    Optional<TypeSymbol> type = node.getEnclosingScope().resolveType(typeName);
+    if (type.isPresent()) {
+      for (VariableSymbol var : type.get().getVariableList()) {
+        if (node.getEnclosingScope().resolveVariableDownMany(var.getName()).isEmpty()) {
+          // only add field from type if there is no VariableSymbol with the same name yet
+          node.getEnclosingScope().add(var);
+        }
+      }
+      /*
+       * NOTE: We do not add FunctionSymbols from th declaring type here because TypeCheck
+       * has issues deriving a type if a VariableSymbol and FunctionSymbol have th same name!
+       * Thus, users need to use 'this.myFunction()' to access functions from the type.
+       */
+
+      // create VariableSymbols for "this" and "super"
+      VariableSymbol t = new VariableSymbol("this");
+      t.setType(SymTypeExpressionFactory.createFromSymbol(type.get()));
+      t.setIsReadOnly(true);
+      node.getEnclosingScope().add(t);
+      if (!type.get().isEmptySuperTypes()) {
+        VariableSymbol s = new VariableSymbol("super");
+        s.setType(type.get().getSuperClass());
+        s.setIsReadOnly(true);
+        node.getEnclosingScope().add(s);
       }
     }
   }
