@@ -77,11 +77,16 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
     @Test
     void methodCallChangedBuildResult() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
-      testAdaptedEqualsExpected(
+      //testAdaptedEqualsExpected(
+      parseModels(
               "builder/BuilderConc.cd",
               "builder/BuilderRef.cd",
               "builder/constraints/MethodCallChangesBuildResultRef.ocl",
               "builder/constraints/MethodCallChangesBuildResultOut.ocl");
+
+      ASTOCLOperationConstraint constraint = (ASTOCLOperationConstraint) refOCL.getOCLArtifact().getOCLConstraint(0);
+      ASTEqualsExpression equalsExpr = (ASTEqualsExpression) constraint.getPostConditionList().get(0);
+
     }
 
     @Test

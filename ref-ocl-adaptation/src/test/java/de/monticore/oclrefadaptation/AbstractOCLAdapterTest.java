@@ -4,10 +4,12 @@ import de.monticore.cd._symboltable.BuiltInTypes;
 import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
 import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
 import de.monticore.cd4code._symboltable.CD4CodeSymbols2Json;
 import de.monticore.cd4code._symboltable.ICD4CodeArtifactScope;
 import de.monticore.cd4code._symboltable.ICD4CodeScope;
+import de.monticore.cd4code.cocos.CD4CodeCoCosDelegator;
 import de.monticore.cdassociation._visitor.CDAssociationTraverser;
 import de.monticore.cdassociation.trafo.CDAssociationRoleNameTrafo;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -16,6 +18,8 @@ import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._cocos.OCLCoCoChecker;
+import de.monticore.ocl.ocl._cocos.OCLCoCos;
 import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
 import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCompleter;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
@@ -153,14 +157,19 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
      * TODO Cleanup & make sure everything is working fine. if we cannot compare symbols in CD4CodeMill and OCLMill global scopes we have issues...
      */
 
-
     refOCL = parseOCL(refOCLFile);
     createOCLSymTab(refOCL);
+    // TODO oclAST.setEnclosingScope(createOCLSymTab(oclAST)); ??
     loadCDModel(refOCL, refCD);
+    checkOCLCoCos(refOCL);
+    assertNoFindings();
 
     expectedAdaptedOCL = parseOCL(expectedOCLFile);
     createOCLSymTab(expectedAdaptedOCL);
+    // TODO oclAST.setEnclosingScope(createOCLSymTab(oclAST)); ??
     loadCDModel(expectedAdaptedOCL, conCD);
+    checkOCLCoCos(expectedAdaptedOCL);
+    assertNoFindings();
 
 
     //refOCL = loadOCL(refOCLFile);
@@ -217,6 +226,9 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
     // 3. create symbol table
     cd.setEnclosingScope(createCDSymTab(cd));
 
+    // 4. check CoCos
+    checkCDCoCos(cd);
+
     assertNoFindings();
     return cd;
   }
@@ -226,5 +238,15 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
             .orElseThrow(() -> new RuntimeException("Could not parse OCL: " + filePath));
     assertNoFindings();
     return ocl;
+  }
+
+  protected static void checkCDCoCos(ASTCDCompilationUnit cdAST) {
+    CD4CodeCoCoChecker cdChecker = new CD4CodeCoCosDelegator().getCheckerForAllCoCos();
+    cdChecker.checkAll(cdAST);
+  }
+
+  protected static void checkOCLCoCos(ASTOCLCompilationUnit oclAST) {
+    OCLCoCoChecker oclChecker = OCLCoCos.createChecker();
+    oclChecker.checkAll(oclAST);
   }
 }
