@@ -1,0 +1,5 @@
+ocl thisInOperationConstraint {
+  context void Person.setActive(boolean active)
+    post: this.isActive == active && this.isActive == isActive && this.getActive() == isActive;
+}
+

@@ -48,9 +48,12 @@ classdiagram AuctionCD {
   public class Person {
     //boolean lessThan(Person that);
     boolean isActive;
+    void setActive(boolean active);
+    boolean getActive();
   }
 
   public class Student extends Person {
+    void demandForDiscount();
   }
 
   public class Betreuer extends Person{
