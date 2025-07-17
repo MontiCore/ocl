@@ -77,8 +77,7 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
     @Test
     void methodCallChangedBuildResult() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
-      //testAdaptedEqualsExpected(
-      parseModels(
+      testAdaptedEqualsExpected(
               "builder/BuilderConc.cd",
               "builder/BuilderRef.cd",
               "builder/constraints/MethodCallChangesBuildResultRef.ocl",
