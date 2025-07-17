@@ -2,5 +2,5 @@
 ocl MethodCallChangesBuildResultSwapped {
 
   context DataClassBuilder DataClassBuilder.attribute(undef attribute)
-    post: attribute == build().attribute;
+    post: attribute == this.build().attribute;
 }
