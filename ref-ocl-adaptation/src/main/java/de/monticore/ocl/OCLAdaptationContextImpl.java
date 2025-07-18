@@ -6,6 +6,10 @@ import de.monticore.symbols.basicsymbols.BasicSymbolsIncMapping;
 import de.monticore.symbols.basicsymbols.BasicSymbolsLocalIncMapping;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsGlobalScope;
 
+/*
+ * NOTE: Could be generated if we would declare the dependencies between the language and
+ * the languages from which we want to use symbols/incarnation mappings!
+ */
 public class OCLAdaptationContextImpl implements OCLAdaptationContext {
 
   private final IOOSymbolsGlobalScope ooSymbolsGlobalScope;

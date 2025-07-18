@@ -1,15 +1,8 @@
 package de.monticore.expressions.expressionsbasis;
 
-import de.monticore.refadaptation.IAdaptationVariant;
 import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
 
-public interface ExpressionsBasisAdaptationVariant extends IAdaptationVariant {
-
-  // ==========================================================
-  // Methods from IAdaptationVariant redefined for type safety
-  // ===========================================================
-
-  ExpressionsBasisAdaptationVariant copy();
+public interface ExpressionsBasisAdaptationVariant extends ExpressionsBasisAdaptationVariantTOP {
 
   // ==============================================================
   // Language specific incarnation mappings required for adaptation

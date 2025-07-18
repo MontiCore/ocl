@@ -1,56 +1,21 @@
 package de.monticore.expressions.expressionsbasis;
 
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.expressions.expressionsbasis._ast.ASTArguments;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
-import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisHandler;
-import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisTraverser;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor2;
-import de.monticore.refadaptation.AbstractAdaptationHandler;
+import de.monticore.refadaptation.AbstractAdaptationVisitor;
 import de.monticore.refadaptation.Binding;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.TypeCheck3;
 
-import java.lang.reflect.Type;
 import java.util.Optional;
 import java.util.Set;
 
 public class ExpressionsBasisBindingVariantsVisitor
-        extends AbstractAdaptationHandler<ExpressionsBasisAdaptationContext, ExpressionsBasisAdaptationVariant>
-        implements ExpressionsBasisVisitor2, ExpressionsBasisHandler {
-
-  private ExpressionsBasisTraverser traverser;
-
-  @Override
-  public ExpressionsBasisTraverser getTraverser() {
-    return traverser;
-  }
-
-  @Override
-  public void setTraverser(ExpressionsBasisTraverser traverser) {
-    this.traverser = traverser;
-  }
-
-  @Override
-  public void handle(ASTNameExpression node) {
-    getAdaptations4Ast().clearVariants(node);
-    ExpressionsBasisHandler.super.handle(node);
-  }
-
-  @Override
-  public void handle(ASTArguments node) {
-    getAdaptations4Ast().clearVariants(node);
-    ExpressionsBasisHandler.super.handle(node);
-  }
-
-  @Override
-  public void handle(ASTLiteralExpression node) {
-    getAdaptations4Ast().clearVariants(node);
-    ExpressionsBasisHandler.super.handle(node);
-  }
+        extends AbstractAdaptationVisitor<ExpressionsBasisAdaptationContext>
+        implements ExpressionsBasisVisitor2 {
 
   @Override
   public void endVisit(ASTNameExpression refExpr) {
@@ -64,7 +29,7 @@ public class ExpressionsBasisBindingVariantsVisitor
             .filter(s -> s instanceof VariableSymbol)
             .map(s -> (VariableSymbol) s);
 
-    // TODO ad support for FunctionSymbol/MethodSymbol here -> NameExpression can be part of method call
+    // TODO add support for FunctionSymbol/MethodSymbol here -> NameExpression can be part of method call
 
     // TODO What symbols do we even expect here?
     /*
@@ -99,7 +64,13 @@ public class ExpressionsBasisBindingVariantsVisitor
         // we have the incarnations which are possible in this context
         for (VariableSymbol variableIncarnation : incarnations) {
           ExpressionsBasisAdaptationVariant newVariant = getAdaptationContext().createVariant();
+          // 1. Add strict binding for the selected variable
+          // (Implicitly adds type bindings for variable type)
           newVariant.getBasicSymbolsBindings().addVariableBinding(Binding.createStrict(refVarSymbol, variableIncarnation));
+          // 2. Add bindings from the original model attached to the method
+          // TODO add add
+          //BasicSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalBasicSymbolsIncMapping().getScopedBindings(variableIncarnation);
+          //newVariant.getOOSymbolsBindings().addAll(bindingsFromModel);
           getAdaptations4Ast().addVariant(refExpr, newVariant);
         }
       }
@@ -120,10 +91,5 @@ public class ExpressionsBasisBindingVariantsVisitor
     // - we return an atomic "empty binding variant" and pass this upwards
     // TODO We need to decide in "traverse(AST...)" what we do if the list is empty -> default variant or is this a conflict?
     getAdaptations4Ast().addVariant(node, getAdaptationContext().createVariant());
-  }
-
-  @Override
-  public void traverse(ASTArguments arguments) {
-    getAdaptations4Ast().addVariants(arguments, traverseAndPropagateConstraints(arguments.getExpressionList()));
   }
 }

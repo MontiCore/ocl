@@ -10,6 +10,16 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
 
   protected abstract ITraverser getTraverser();
 
+  protected void traverseForConsistentVariants(ASTNode parentNode, ASTNode... children) {
+    List<V> variants = traverseAndPropagateConstraints(children);
+    getAdaptations4Ast().addVariants(parentNode, variants);
+  }
+
+  protected void traverseForConsistentVariants(ASTNode parentNode, List<? extends ASTNode> children) {
+    List<V> variants = traverseAndPropagateConstraints(children);
+    getAdaptations4Ast().addVariants(parentNode, variants);
+  }
+
   protected List<V> traverseAndPropagateConstraints(ASTNode... nodes) {
     return traverseAndPropagateConstraints(Arrays.asList(nodes));
   }
