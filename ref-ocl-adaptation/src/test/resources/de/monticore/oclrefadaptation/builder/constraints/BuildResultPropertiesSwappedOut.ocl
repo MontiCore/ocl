@@ -2,9 +2,9 @@
 ocl BuildResultHasCorrectPropertiesSwapped {
 
   context Employee EmployeeBuilder.build()
-    post: firstName == result.firstName && lastName == result.lastName
-  			  && number == result.number && salary == result.salary;
+    post: mFirstName == result.firstName && mLastName == result.lastName
+  			  && mNumber == result.number && mSalary == result.salary;
 
   context Department DepartmentBuilder.build()
-    post: managerName == result.managerName && depId == result.depId;
+    post: mManagerName == result.managerName && mDepId == result.depId;
 }

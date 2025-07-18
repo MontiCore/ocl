@@ -6,8 +6,13 @@ classdiagram BuilderRef {
   }
 
   <<forEach="DataClass">> class DataClassBuilder {
-    <<forEach="DataClass.attribute">> undef attribute;
-    <<forEach="DataClass.attribute">> DataClassBuilder attribute(undef attribute);
+    /*
+     * We need the prefixes to avoid TypeCheck issues because of function and variable symbol names
+     * with the same name.
+     * See https://github.com/MontiCore/ocl/pull/3
+     */
+    <<forEach="DataClass.attribute">> undef mAttribute;
+    <<forEach="DataClass.attribute">> DataClassBuilder attribute(undef pAttribute);
     DataClass build();
   }
 }

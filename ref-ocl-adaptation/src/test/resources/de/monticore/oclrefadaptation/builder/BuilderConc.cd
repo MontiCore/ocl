@@ -15,23 +15,23 @@ classdiagram BuilderConc {
 
   <<ref="BuilderRef.DataClassBuilder">>
   class EmployeeBuilder {
-    <<ref="BuilderRef.DataClassBuilder.attribute">> String firstName;
-    <<ref="BuilderRef.DataClassBuilder.attribute">> String lastName;
-    <<ref="BuilderRef.DataClassBuilder.attribute">> int number;
-    <<ref="BuilderRef.DataClassBuilder.attribute">> int salary;
-    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder firstName(String firstName);
-    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder lastName(String lastName);
-    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder number(int number);
-    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder salary(int salary);
+    <<ref="BuilderRef.DataClassBuilder.mAttribute">> String mFirstName;
+    <<ref="BuilderRef.DataClassBuilder.mAttribute">> String mLastName;
+    <<ref="BuilderRef.DataClassBuilder.mAttribute">> int mNumber;
+    <<ref="BuilderRef.DataClassBuilder.mAttribute">> int mSalary;
+    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder firstName(String pFirstName);
+    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder lastName(String pLastName);
+    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder number(int pNumber);
+    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder salary(int pSalary);
     Employee build();
   }
 
   <<ref="BuilderRef.DataClassBuilder">>
   class DepartmentBuilder {
-    <<ref="BuilderRef.DataClassBuilder.attribute">> String managerName;
-    <<ref="BuilderRef.DataClassBuilder.attribute">> int depId;
-    <<ref="BuilderRef.DataClassBuilder.attribute">> DepartmentBuilder managerName(String managerName);
-    <<ref="BuilderRef.DataClassBuilder.attribute">> DepartmentBuilder depId(int depId);
+    <<ref="BuilderRef.DataClassBuilder.mAttribute">> String mManagerName;
+    <<ref="BuilderRef.DataClassBuilder.mAttribute">> int mDepId;
+    <<ref="BuilderRef.DataClassBuilder.attribute">> DepartmentBuilder managerName(String pManagerName);
+    <<ref="BuilderRef.DataClassBuilder.attribute">> DepartmentBuilder depId(int pDepId);
     Department build();
   }
 }
