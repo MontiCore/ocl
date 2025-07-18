@@ -157,8 +157,8 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
   public void endVisit(ASTOCLMethodSignature node) {
     /*
      * We add symbols from the type in 'endVisit', so we can check if there is already a
-     * VariableSymbol with the same name as a field form a type. In this case we do not add the
-     * field and users need to access it with 'this.myField'.
+     * Variable/Function symbol with the same name. In this case we do not add the field/method and
+     * users need to access it with 'this.myField'.
      */
     String typeName = Names.getQualifier(node.getMethodName().getQName());
     Optional<TypeSymbol> type = node.getEnclosingScope().resolveType(typeName);
@@ -171,12 +171,11 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
           node.getEnclosingScope().add(var.deepClone());
         }
       }
-      /*
-       * NOTE: We do not add FunctionSymbols from the declaring type here because TypeCheck
-       * has issues deriving a type if a VariableSymbol and FunctionSymbol have the same name!
-       * Thus, users need to use 'this.myFunction()' to access functions from the type.
-       * See https://github.com/MontiCore/ocl/pull/3 for discussion.
-       */
+      for (FunctionSymbol fun : type.get().getFunctionList()) {
+        if (node.getEnclosingScope().resolveFunctionDownMany(fun.getName()).isEmpty()) {
+          node.getEnclosingScope().add(fun.deepClone());
+        }
+      }
 
       // create VariableSymbols for "this" and "super"
       VariableSymbol t = new VariableSymbol("this");
