@@ -10,5 +10,5 @@ ocl BuildResultHasCorrectPropertiesSwapped {
    */
 
   context DataClass DataClassBuilder.build()
-    post: attribute == result.attribute;
+    post: mAttribute == result.attribute;
 }

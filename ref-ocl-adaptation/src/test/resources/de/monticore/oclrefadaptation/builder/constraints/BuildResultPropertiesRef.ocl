@@ -2,5 +2,5 @@
 ocl BuildResultHasCorrectProperties {
 
   context DataClass DataClassBuilder.build()
-    post: result.attribute == attribute;
+    post: result.attribute == mAttribute;
 }

@@ -3,23 +3,23 @@ ocl MethodCallChangesBuildResult {
 
   // ----- Employee -----
 
-  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.firstName(java.lang.String firstName)
-    post: this.build().firstName == firstName;
+  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.firstName(java.lang.String pFirstName)
+    post: this.build().firstName == pFirstName;
 
-  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.lastName(java.lang.String lastName)
-    post: this.build().lastName == lastName;
+  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.lastName(java.lang.String pLastName)
+    post: this.build().lastName == pLastName;
 
-  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.number(int number)
-    post: this.build().number == number;
+  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.number(int pNumber)
+    post: this.build().number == pNumber;
 
-  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.salary(int salary)
-    post: this.build().salary == salary;
+  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.salary(int pSalary)
+    post: this.build().salary == pSalary;
 
   // ----- Department -----
 
-  context BuilderConc.DepartmentBuilder BuilderConc.DepartmentBuilder.managerName(java.lang.String managerName)
-    post: this.build().managerName == managerName;
+  context BuilderConc.DepartmentBuilder BuilderConc.DepartmentBuilder.managerName(java.lang.String pManagerName)
+    post: this.build().managerName == pManagerName;
 
-  context BuilderConc.DepartmentBuilder BuilderConc.DepartmentBuilder.depId(int depId)
-    post: this.build().depId == depId;
+  context BuilderConc.DepartmentBuilder BuilderConc.DepartmentBuilder.depId(int pDepId)
+    post: this.build().depId == pDepId;
 }

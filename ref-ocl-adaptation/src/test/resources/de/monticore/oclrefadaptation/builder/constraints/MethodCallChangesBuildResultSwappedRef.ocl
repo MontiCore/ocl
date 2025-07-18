@@ -1,6 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl MethodCallChangesBuildResultSwapped {
 
-  context DataClassBuilder DataClassBuilder.attribute(undef attribute)
-    post: attribute == this.build().attribute;
+  context DataClassBuilder DataClassBuilder.attribute(undef pAttribute)
+    post: pAttribute == this.build().attribute;
 }
