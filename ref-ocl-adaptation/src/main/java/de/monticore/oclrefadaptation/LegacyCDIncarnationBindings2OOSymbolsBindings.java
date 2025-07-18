@@ -15,7 +15,6 @@ import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.Optional;
 import java.util.Set;

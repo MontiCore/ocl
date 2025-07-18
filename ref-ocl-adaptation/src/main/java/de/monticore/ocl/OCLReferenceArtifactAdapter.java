@@ -3,6 +3,7 @@ package de.monticore.ocl;
 import de.monticore.ast.ASTNode;
 import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationVisitor;
 import de.monticore.expressions.commonexpressions.CommonExpressionsBindingVariantsVisitor;
+import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVariantsHandler;
 import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVisitor;
 import de.monticore.expressions.expressionsbasis.ExpressionsBasisBindingVariantsVisitor;
 import de.monticore.ocl.ocl.OCLMill;
@@ -73,12 +74,16 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
     commonExpressionsAdaptVis.setAdaptations4Ast(adaptations4Ast);
     adaptationTraverser.add4CommonExpressions(commonExpressionsAdaptVis);
 
+    ExpressionsBasisAdaptationVariantsHandler expressionsBasisVariantsHandler = new ExpressionsBasisAdaptationVariantsHandler();
+    expressionsBasisVariantsHandler.setContextHolder(contextHolder);
+    expressionsBasisVariantsHandler.setAdaptations4Ast(adaptations4Ast);
+    bindingVariantsTraverser.setExpressionsBasisHandler(expressionsBasisVariantsHandler);
+
     ExpressionsBasisBindingVariantsVisitor expressionsBasisBindingVis = new ExpressionsBasisBindingVariantsVisitor();
     expressionsBasisBindingVis.setContextHolder(contextHolder);
     expressionsBasisBindingVis.setAdaptations4Ast(adaptations4Ast);
     bindingVariantsTraverser.add4ExpressionsBasis(expressionsBasisBindingVis);
     bindingVariantsTraverser.add4IVisitor(expressionsBasisBindingVis);
-    bindingVariantsTraverser.setExpressionsBasisHandler(expressionsBasisBindingVis);
 
     ExpressionsBasisAdaptationVisitor expressionsBasisAdaptVis = new ExpressionsBasisAdaptationVisitor();
     expressionsBasisAdaptVis.setContextHolder(contextHolder);

@@ -172,73 +172,71 @@ public class CommonExpressionsBindingVariantsVisitor
 
   @Override
   public void traverse(ASTEqualsExpression expr) {
-    // TODO maybe introduce helper method to make this even shorter and more readable
-    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+    traverseForConsistentVariants(expr, expr.getLeft(), expr.getRight());
   }
 
   @Override
   public void traverse(ASTLessThanExpression expr) {
-    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+    traverseForConsistentVariants(expr, expr.getLeft(), expr.getRight());
   }
 
   @Override
   public void traverse(ASTLessEqualExpression expr) {
-    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+    traverseForConsistentVariants(expr, expr.getLeft(), expr.getRight());
   }
 
   @Override
   public void traverse(ASTGreaterThanExpression expr) {
-    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+    traverseForConsistentVariants(expr, expr.getLeft(), expr.getRight());
   }
 
   @Override
   public void traverse(ASTGreaterEqualExpression expr) {
-    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+    traverseForConsistentVariants(expr, expr.getLeft(), expr.getRight());
   }
 
   @Override
   public void traverse(ASTBooleanAndOpExpression expr) {
-    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+    traverseForConsistentVariants(expr, expr.getLeft(), expr.getRight());
   }
 
   @Override
   public void traverse(ASTBooleanOrOpExpression expr) {
-    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+    traverseForConsistentVariants(expr, expr.getLeft(), expr.getRight());
   }
 
   @Override
   public void traverse(ASTPlusExpression expr) {
-    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+    traverseForConsistentVariants(expr, expr.getLeft(), expr.getRight());
   }
 
   @Override
   public void traverse(ASTMinusExpression expr) {
-    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+    traverseForConsistentVariants(expr, expr.getLeft(), expr.getRight());
   }
 
   @Override
   public void traverse(ASTMultExpression expr) {
-    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+    traverseForConsistentVariants(expr, expr.getLeft(), expr.getRight());
   }
 
   @Override
   public void traverse(ASTDivideExpression expr) {
-    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+    traverseForConsistentVariants(expr, expr.getLeft(), expr.getRight());
   }
 
   @Override
   public void traverse(ASTModuloExpression expr) {
-    getAdaptations4Ast().addVariants(expr, traverseAndPropagateConstraints(expr.getLeft(), expr.getRight()));
+    traverseForConsistentVariants(expr, expr.getLeft(), expr.getRight());
+  }
+
+  @Override
+  public void traverse(ASTCallExpression callExpr) {
+    traverseForConsistentVariants(callExpr, callExpr.getExpression(), callExpr.getArguments());
   }
 
   @Override
   public void endVisit(ASTBooleanNotExpression expr) {
     passChildVariantsUpwards(expr, expr.getExpression());
-  }
-
-  @Override
-  public void traverse(ASTCallExpression callExpr) {
-    getAdaptations4Ast().addVariants(callExpr,
-            traverseAndPropagateConstraints(callExpr.getExpression(), callExpr.getArguments()));
   }
 }

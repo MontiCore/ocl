@@ -4,6 +4,7 @@ import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationVar
 import de.monticore.refadaptation.IAdaptationVariant;
 import de.monticore.types.mccollectiontypes.MCCollectionTypesAdaptationVariant;
 
+// NOTE: Can be generated
 public interface OCLAdaptationVariant extends
         IAdaptationVariant,
         CommonExpressionsAdaptationVariant,
