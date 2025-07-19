@@ -1,7 +1,9 @@
 package de.monticore.ocl;
 
+import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.refadaptation.IAdaptationVariant;
 import de.monticore.symbols.*;
+import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
 import de.monticore.symbols.basicsymbols.BasicSymbolsIncMapping;
 import de.monticore.symbols.basicsymbols.BasicSymbolsLocalIncMapping;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsGlobalScope;
@@ -53,7 +55,7 @@ public class OCLAdaptationContextImpl implements OCLAdaptationContext {
     // TODO Should we add all bindings currently holding in this context to the variant?
     //  there is at least one use case: traverse of OCLMethodSignature defines binding for
     //  method parameters, but lower level variants need to b aware of the binding during AST adaptation visitor run
-    return new OCLAdaptationVariantImpl();
+    return new OCLAdaptationVariantImpl(ooSymbolsBindings.copy());
   }
 
   @Override
@@ -66,6 +68,11 @@ public class OCLAdaptationContextImpl implements OCLAdaptationContext {
 
   @Override
   public OOSymbolsBindings getOOSymbolsBindings() {
+    return ooSymbolsBindings;
+  }
+
+  @Override
+  public BasicSymbolsBindings getBasicSymbolsBindings() {
     return ooSymbolsBindings;
   }
 
@@ -96,7 +103,7 @@ public class OCLAdaptationContextImpl implements OCLAdaptationContext {
   }
 
   @Override
-  public void addBindings(IAdaptationVariant variant) {
+  public void addBindings(IAdaptationVariant variant) throws BindingConflictException {
     // no bindings to add
     // TODO does this method then even make sense in the interface?
     // variant used with OCLAdaptationContext should be of type OCLAdaptationVariant
@@ -104,6 +111,11 @@ public class OCLAdaptationContextImpl implements OCLAdaptationContext {
       throw new IllegalArgumentException("Expected an OCLAdaptationVariant, but got: " + variant.getClass().getName());
     }
     OCLAdaptationVariant oclVariant = (OCLAdaptationVariant) variant;
+    // IMPL NOT: If the context would rely on more bindings from other languages we MUST check
+    // ALL for conflicts before 'executing' any change
+    if (ooSymbolsBindings.isConflicting(oclVariant.getBasicSymbolsBindings())) {
+      throw new BindingConflictException();
+    }
     // TODO rely on ooSymbolsBindings including all basic symbol bindings or add them separately?
     //   decide and adapt addAll implementation accordingly
     ooSymbolsBindings.addAll(oclVariant.getBasicSymbolsBindings());

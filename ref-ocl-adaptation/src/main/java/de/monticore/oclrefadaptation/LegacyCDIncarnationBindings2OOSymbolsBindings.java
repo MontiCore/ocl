@@ -122,6 +122,11 @@ public class LegacyCDIncarnationBindings2OOSymbolsBindings implements OOSymbolsB
   }
 
   @Override
+  public boolean isConflictingTypeBinding(Binding<TypeSymbol> binding) {
+    return false;
+  }
+
+  @Override
   public Optional<Binding<VariableSymbol>> getBinding(VariableSymbol variableSymbol) {
     throw new UnsupportedOperationException("no variable symbols supported yet");
   }
@@ -182,7 +187,27 @@ public class LegacyCDIncarnationBindings2OOSymbolsBindings implements OOSymbolsB
   }
 
   @Override
+  public boolean isConflictingOOTypeBinding(Binding<OOTypeSymbol> binding) {
+    throw new UnsupportedOperationException("read only");
+  }
+
+  @Override
+  public boolean isConflictingFieldBinding(Binding<FieldSymbol> binding) {
+    throw new UnsupportedOperationException("read only");
+  }
+
+  @Override
+  public boolean isConflictingMethodBinding(Binding<MethodSymbol> binding) {
+    throw new UnsupportedOperationException("read only");
+  }
+
+  @Override
   public void addVariableBinding(Binding<VariableSymbol> binding) {
+    throw new UnsupportedOperationException("read only");
+  }
+
+  @Override
+  public boolean isConflictingVariableBinding(Binding<VariableSymbol> binding) {
     throw new UnsupportedOperationException("read only");
   }
 
@@ -192,12 +217,27 @@ public class LegacyCDIncarnationBindings2OOSymbolsBindings implements OOSymbolsB
   }
 
   @Override
+  public boolean isConflictingFunctionBinding(Binding<FunctionSymbol> binding) {
+    throw new UnsupportedOperationException("read only");
+  }
+
+  @Override
   public void addAll(OOSymbolsBindings bindings) {
     throw new UnsupportedOperationException("read only");
   }
 
   @Override
+  public boolean isConflicting(OOSymbolsBindings otherBindings) {
+    throw new UnsupportedOperationException("read only");
+  }
+
+  @Override
   public void addAll(BasicSymbolsBindings bindings) {
+    throw new UnsupportedOperationException("read only");
+  }
+
+  @Override
+  public boolean isConflicting(BasicSymbolsBindings otherBindings) {
     throw new UnsupportedOperationException("read only");
   }
 

@@ -4,9 +4,11 @@ import de.monticore.ast.ASTNode;
 import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationVariant;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.refadaptation.Binding;
+import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.symbols.OOSymbolsBindings;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,25 +74,56 @@ public class OCLBindingVariantsVisitor extends OCLBindingVariantsVisitorTOP {
     } else {
       // we have the incarnations which are possible in this context
       for (MethodSymbol methodIncarnation : incarnations) {
-        CommonExpressionsAdaptationVariant newVariant = getAdaptationContext().createVariant();
-        // 1. Add strict binding for the selected method
-        // (Implicitly adds type bindings for declaring type, return type and parameter types)
-        newVariant.getOOSymbolsBindings().addMethodBinding(Binding.createStrict(refMethodSymbol, methodIncarnation));
-        // 2. Add bindings from the original model attached to the method
-        OOSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalOOSymbolsIncMapping().getScopedBindings(methodIncarnation);
-        newVariant.getOOSymbolsBindings().addAll(bindingsFromModel);
-        // 3. Manually, add bindings for the VariableSymbols representing the method parameters so they can be adapted later on
-        // TODO These bindings should be available frm the OOSymbolsBinding in the future since
-        //  parameters are naturally VariableSymbols enclosed in the scope of the method
-        for (int i=0; i<refMethodSignature.getOCLParamDeclarationList().size(); i++) {
-          // STRONG assumption: incarnation parameters are in same order as reference parameters
-          VariableSymbol refSymbol = refMethodSignature.getOCLParamDeclaration(i).getSymbol();
-          VariableSymbol conSymbol = methodIncarnation.getParameterList().get(i);
-          newVariant.getBasicSymbolsBindings().addVariableBinding(Binding.createStrict(refSymbol, conSymbol));
-        }
-        getAdaptations4Ast().addVariant(refMethodSignature, newVariant);
+        addVariantForMethodIncarnation(refMethodSignature, refMethodSymbol, methodIncarnation);
       }
     }
+  }
+
+  protected void addVariantForMethodIncarnation(
+          ASTOCLMethodSignature refMethodSignature,
+          MethodSymbol refMethodSymbol,
+          MethodSymbol methodIncarnation) {
+    CommonExpressionsAdaptationVariant newVariant = getAdaptationContext().createVariant();
+    // 1. Add strict binding for the selected method
+    // (Implicitly adds type bindings for declaring type, return type and parameter types)
+    try {
+      newVariant.getOOSymbolsBindings().addMethodBinding(Binding.createStrict(refMethodSymbol, methodIncarnation));
+    } catch (BindingConflictException e) {
+      // This is unexpected as the current adaptation context should only return incarnations
+      // that are valid in the current context, i.e., no conflicts with existing bindings.
+      Log.warn("getIncarnations returned incarnation that conflicts with existing binding: "
+              + methodIncarnation.getFullName() + " in " + refMethodSignature.get_SourcePositionStart(), e);
+      return;
+    }
+    // 2. Add bindings from the original model attached to the method
+    OOSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalOOSymbolsIncMapping().getScopedBindings(methodIncarnation);
+    try {
+      newVariant.getOOSymbolsBindings().addAll(bindingsFromModel);
+    } catch (BindingConflictException e) {
+      // This is unexpected in context of OCL. There is no obvious reason why there could be
+      // bindings on this level of the AST that conflict with bindings of the method...
+      Log.warn("Ignoring incarnation due to binding conflict: "
+              + methodIncarnation.getFullName() + " in " + refMethodSignature.get_SourcePositionStart(), e);
+      return;
+    }
+    // 3. Manually, add bindings for the VariableSymbols representing the method parameters so they can be adapted later on
+    // TODO These bindings should be available frm the OOSymbolsBinding in the future since
+    //  parameters are naturally VariableSymbols enclosed in the scope of the method
+    for (int i=0; i<refMethodSignature.getOCLParamDeclarationList().size(); i++) {
+      // STRONG assumption: incarnation parameters are in same order as reference parameters
+      VariableSymbol refSymbol = refMethodSignature.getOCLParamDeclaration(i).getSymbol();
+      VariableSymbol conSymbol = methodIncarnation.getParameterList().get(i);
+      try {
+        newVariant.getBasicSymbolsBindings().addVariableBinding(Binding.createStrict(refSymbol, conSymbol));
+      } catch (BindingConflictException e) {
+        // This is unexpected in context of OCL. There is no obvious reason why there could be
+        // bindings on this level of the AST that conflict with bindings of the method...
+        Log.warn("Ignoring incarnation due to binding conflict caused by parameter VariableSymbol: "
+                + methodIncarnation.getFullName() + " in " + refMethodSignature.get_SourcePositionStart(), e);
+        return;
+      }
+    }
+    getAdaptations4Ast().addVariant(refMethodSignature, newVariant);
   }
 
   @Override

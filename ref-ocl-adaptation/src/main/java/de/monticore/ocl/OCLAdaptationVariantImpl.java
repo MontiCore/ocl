@@ -2,6 +2,7 @@ package de.monticore.ocl;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.refadaptation.AbstractAdaptationVariant;
+import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.refadaptation.IAdaptationVariant;
 import de.monticore.symbols.OOSymbolsBindings;
 import de.monticore.symbols.OOSymbolsBindingsImpl;
@@ -14,8 +15,8 @@ public class OCLAdaptationVariantImpl extends AbstractAdaptationVariant implemen
 
   protected final OOSymbolsBindings ooSymbolsBindings;
 
-  public OCLAdaptationVariantImpl() {
-    this(new OOSymbolsBindingsImpl(), new HashMap<>());
+  public OCLAdaptationVariantImpl(OOSymbolsBindings ooSymbolsBindings) {
+    this(ooSymbolsBindings, new HashMap<>());
   }
 
   protected OCLAdaptationVariantImpl(OOSymbolsBindings ooSymbolsBindings, Map<ASTNode, ASTNode> adaptedNodes) {
@@ -31,16 +32,22 @@ public class OCLAdaptationVariantImpl extends AbstractAdaptationVariant implemen
   }
 
   @Override
-  public IAdaptationVariant merge(IAdaptationVariant otherVariant) {
+  public IAdaptationVariant merge(IAdaptationVariant otherVariant) throws BindingConflictException {
     if (!(otherVariant instanceof OCLAdaptationVariant)) {
       throw new IllegalArgumentException("Cannot merge with " + otherVariant.getClass().getSimpleName() +
               ". Expected an instance of OCLAdaptationContext.");
     }
     OCLAdaptationVariant otherOCLVariant = (OCLAdaptationVariant) otherVariant;
+
+    if (getOOSymbolsBindings().isConflicting(otherOCLVariant.getOOSymbolsBindings())) {
+      throw new BindingConflictException();
+    }
+
     OCLAdaptationVariant merged = copy();
     merged.addAllChildVariants(otherVariant); // TODO check for conflicts!
     merged.addAdaptedNodes(otherVariant.getAdaptedNodes());
-    merged.getBasicSymbolsBindings().addAll(otherOCLVariant.getBasicSymbolsBindings());
+    // TODO remove? since OOSymbols extends BasicSymbols the basic symbols are added by OOSymbolBindings as well
+    //merged.getBasicSymbolsBindings().addAll(otherOCLVariant.getBasicSymbolsBindings());
     merged.getOOSymbolsBindings().addAll(otherOCLVariant.getOOSymbolsBindings());
     return merged;
   }

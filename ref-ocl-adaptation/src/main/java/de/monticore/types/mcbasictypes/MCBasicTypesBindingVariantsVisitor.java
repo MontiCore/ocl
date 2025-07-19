@@ -3,6 +3,7 @@ package de.monticore.types.mcbasictypes;
 import de.monticore.refadaptation.AbstractAdaptationHandler;
 import de.monticore.refadaptation.AbstractAdaptationVisitor;
 import de.monticore.refadaptation.Binding;
+import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
@@ -64,7 +65,15 @@ public class MCBasicTypesBindingVariantsVisitor
       }
       for (TypeSymbol typeSymbolInc : incarnations) {
         MCBasicTypesAdaptationVariant adaptationVariant = getAdaptationContext().createVariant();
-        adaptationVariant.getBasicSymbolsBindings().addTypeBinding(Binding.createStrict(typeSymbol, typeSymbolInc));
+        try {
+          adaptationVariant.getBasicSymbolsBindings().addTypeBinding(Binding.createStrict(typeSymbol, typeSymbolInc));
+        } catch (BindingConflictException e) {
+          // This is unexpected as the current adaptation context should only return incarnations
+          // that are valid in the current context, i.e., no conflicts with existing bindings.
+          Log.warn("getIncarnations returned incarnation that conflicts with existing binding: "
+                  + typeSymbolInc.getFullName() + " in " + refType.get_SourcePositionStart(), e);
+          continue;
+        }
         getAdaptations4Ast().addVariant(refType, adaptationVariant);
       }
     } else {
@@ -87,7 +96,15 @@ public class MCBasicTypesBindingVariantsVisitor
         }
         for (TypeSymbol typeSymbolInc : incarnations) {
           MCBasicTypesAdaptationVariant adaptationVariant = getAdaptationContext().createVariant();
-          adaptationVariant.getBasicSymbolsBindings().addTypeBinding(Binding.createStrict(typeSymbol.get(), typeSymbolInc));
+          try {
+            adaptationVariant.getBasicSymbolsBindings().addTypeBinding(Binding.createStrict(typeSymbol.get(), typeSymbolInc));
+          } catch (BindingConflictException e) {
+            // This is unexpected as the current adaptation context should only return incarnations
+            // that are valid in the current context, i.e., no conflicts with existing bindings.
+            Log.warn("getIncarnations returned incarnation that conflicts with existing binding: "
+                    + typeSymbolInc.getFullName() + " in " + refImport.get_SourcePositionStart(), e);
+            continue;
+          }
           getAdaptations4Ast().addVariant(refImport, adaptationVariant);
         }
       } else {

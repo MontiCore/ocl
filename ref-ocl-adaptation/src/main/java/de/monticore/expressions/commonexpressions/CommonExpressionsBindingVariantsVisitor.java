@@ -7,9 +7,11 @@ import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTrav
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 import de.monticore.refadaptation.AbstractAdaptationHandler;
 import de.monticore.refadaptation.Binding;
+import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.TypeCheck3;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
 import java.util.Optional;
@@ -160,7 +162,16 @@ public class CommonExpressionsBindingVariantsVisitor
         // we have the incarnations which are possible in this context
         for (VariableSymbol fieldIncarnation : incarnations) {
           CommonExpressionsAdaptationVariant newVariant = parentVariant.copy();
-          newVariant.getBasicSymbolsBindings().addVariableBinding(Binding.createStrict(refFieldSymbol, fieldIncarnation));
+          try {
+            newVariant.getBasicSymbolsBindings().addVariableBinding(Binding.createStrict(refFieldSymbol, fieldIncarnation));
+          } catch (BindingConflictException e) {
+            // This is unexpected as the current adaptation context should only return incarnations
+            // that are valid in the current context, i.e., no conflicts with existing bindings.
+            Log.warn("getIncarnations returned incarnation that conflicts with existing binding: "
+                    + fieldIncarnation.getFullName() + " in " + refExpr.get_SourcePositionStart(), e);
+            continue;
+          }
+          // TODO add implied bindings from original incarnation mapping
           getAdaptations4Ast().addVariant(refExpr, newVariant);
         }
       } else {
