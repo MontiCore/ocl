@@ -28,7 +28,7 @@ public interface IAdaptationVariant {
   IAdaptationVariant copy();
 
   // TODO Throw exception in case bindings or child variants conflict
-  IAdaptationVariant merge(IAdaptationVariant otherVariant);
+  IAdaptationVariant merge(IAdaptationVariant otherVariant) throws BindingConflictException;
 
   /**
    * Adds a child variant for the given reference node.<br>

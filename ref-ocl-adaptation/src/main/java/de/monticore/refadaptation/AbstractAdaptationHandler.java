@@ -2,6 +2,7 @@ package de.monticore.refadaptation;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.visitor.ITraverser;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
 
@@ -70,13 +71,19 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
     for (V sourceVariant : sourceVariants) {
       C localCtx = (C) previousCtx.fork(); // TODO avoid unchecked casts by better generics
 
-      localCtx.addBindings(sourceVariant);
+      try {
+        localCtx.addBindings(sourceVariant);
+      } catch (BindingConflictException e) {
+        // unexpected. sourceVariants should be compatible with the current context
+        Log.warn("Unexpected binding conflict. sourceVariants are expected to be " +
+                "compatible with the current context when calling 'traverseForEachVariant'");
+      }
 
       setAdaptationContext(localCtx);
 
       node.accept(getTraverser());
 
-      // TODO do we need to copy here? we might modify the list down in the loop
+      // no need to copy the list here. getVariants creates a new list internally
       List<V> nodeVariants = getAdaptations4Ast().getVariants(node);
       if (nodeVariants.isEmpty()) {
         // conflict with existing bindings -> drop current leftResult
@@ -84,11 +91,21 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
       } else {
         List<V> mergedVariants = new ArrayList<>();
         for (V nodeVariant : nodeVariants) {
-          V mergedVariant = (V) sourceVariant.merge(nodeVariant);
+          V mergedVariant = null;
+          try {
+            mergedVariant = (V) sourceVariant.merge(nodeVariant);
+          } catch (BindingConflictException e) {
+            // This can happen if some visitors return variants not compatible with the current context
+            // However, it is better for performance to prune these variants EARLY. Otherwise, they are
+            // propagated up in the tree and cause variant explosion and are then dropped anyway
+            continue;
+          }
           mergedVariants.add(mergedVariant);
           resultVariants.add(mergedVariant);
           getAdaptations4Ast().replaceVariant(nodeVariant, resultVariants); // can we improve here?
         }
+        // TODO What if all variants had merge conflicts? -> mergedVariants is empty
+        //   -> replaceVariant actually causes removal of the sourceVariant
         getAdaptations4Ast().replaceVariant(sourceVariant, mergedVariants);
       }
     }

@@ -6,9 +6,12 @@ import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor2;
 import de.monticore.refadaptation.AbstractAdaptationVisitor;
 import de.monticore.refadaptation.Binding;
+import de.monticore.refadaptation.BindingConflictException;
+import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.TypeCheck3;
+import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
 import java.util.Set;
@@ -16,6 +19,8 @@ import java.util.Set;
 public class ExpressionsBasisBindingVariantsVisitor
         extends AbstractAdaptationVisitor<ExpressionsBasisAdaptationContext>
         implements ExpressionsBasisVisitor2 {
+
+  private static final String LOG_NAME = ExpressionsBasisBindingVariantsVisitor.class.getName();
 
   @Override
   public void endVisit(ASTNameExpression refExpr) {
@@ -66,11 +71,30 @@ public class ExpressionsBasisBindingVariantsVisitor
           ExpressionsBasisAdaptationVariant newVariant = getAdaptationContext().createVariant();
           // 1. Add strict binding for the selected variable
           // (Implicitly adds type bindings for variable type)
-          newVariant.getBasicSymbolsBindings().addVariableBinding(Binding.createStrict(refVarSymbol, variableIncarnation));
+          try {
+            newVariant.getBasicSymbolsBindings().addVariableBinding(Binding.createStrict(refVarSymbol, variableIncarnation));
+          } catch (BindingConflictException e) {
+            // This is unexpected as the current adaptation context should only return incarnations
+            // that are valid in the current context, i.e., no conflicts with existing bindings.
+            Log.warn("getIncarnations returned incarnation that conflicts with existing binding: "
+                    + variableIncarnation.getFullName() + " in " + refExpr.get_SourcePositionStart(), e);
+            continue;
+          }
           // 2. Add bindings from the original model attached to the method
-          // TODO add add
-          //BasicSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalBasicSymbolsIncMapping().getScopedBindings(variableIncarnation);
-          //newVariant.getOOSymbolsBindings().addAll(bindingsFromModel);
+          // TODO WIP
+          //
+          BasicSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalBasicSymbolsIncMapping().getScopedBindings(variableIncarnation);
+          try {
+            newVariant.getBasicSymbolsBindings().addAll(bindingsFromModel);
+          } catch (BindingConflictException e) {
+            // This is expected as some bindings implied by the incarnation may not be compatibl
+            // with the existing bindings in the adaptation context.
+            // We ignore this incarnation. Example: employee.firstName == employeeBuilder.lastName
+            // TODO switch to debug level
+            Log.info("Ignoring incarnation due to binding conflict: "
+                    + variableIncarnation.getFullName() + " in " + refExpr.get_SourcePositionStart(), LOG_NAME);
+            continue;
+          }
           getAdaptations4Ast().addVariant(refExpr, newVariant);
         }
       }

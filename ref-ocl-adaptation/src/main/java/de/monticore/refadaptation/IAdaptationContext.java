@@ -20,5 +20,5 @@ public interface IAdaptationContext {
    *
    * @param variant the adaptation variant containing the bindings to be added
    */
-  void addBindings(IAdaptationVariant variant);
+  void addBindings(IAdaptationVariant variant) throws BindingConflictException;
 }

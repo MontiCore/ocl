@@ -1,10 +1,21 @@
 /* (c) https://github.com/MontiCore/monticore */
 ocl BuildResultHasCorrectProperties {
 
-  context Employee EmployeeBuilder.build()
-    post: result.firstName == mFirstName && result.lastName == mLastName
-  			  && result.number == mNumber && result.salary == mSalary;
+  context BuilderConc.Employee BuilderConc.EmployeeBuilder.build()
+      post: result.firstName == mFirstName;
 
-  context Department DepartmentBuilder.build()
-    post: result.managerName == mManagerName && result.depId == mDepId;
+  context BuilderConc.Employee BuilderConc.EmployeeBuilder.build()
+        post: result.lastName == mLastName;
+
+  context BuilderConc.Employee BuilderConc.EmployeeBuilder.build()
+        post: result.number == mNumber;
+
+  context BuilderConc.Employee BuilderConc.EmployeeBuilder.build()
+        post: result.salary == mSalary;
+
+  context BuilderConc.Department BuilderConc.DepartmentBuilder.build()
+          post: result.managerName == mManagerName;
+
+  context BuilderConc.Department BuilderConc.DepartmentBuilder.build()
+            post: result.depId == mDepId;
 }
