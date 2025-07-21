@@ -8,15 +8,42 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Abstract implementation defining the basic framework for reference artifact adaptation.
+ * This class provides the necessary traverser instances and datastructures to perform the
+ * adaptation of an AST node. The high level adaptation process is defined in
+ * {@link #adapt(ASTNode, IAdaptationContext)}.<br>
+ * <br>
+ * Subclasses do not have to add additional functionality to this class, but can add
+ * language-specific convenience methods which do not require users to create an adaptation
+ * context themselves, but just pass the required incarnation mappings.
+ * See {@link de.monticore.ocl.OCLReferenceArtifactAdapter}.
+ *
+ * @param <C> the language specific adaptation context type
+ */
 public abstract class ReferenceArtifactAdapter<C extends IAdaptationContext> {
 
+  /**
+   * The traverser for step 1: Used to identify all valid binding variants.
+   * All handlers for constraint propagation and visitors that add variants must be added to
+   * this traverser.
+   */
   protected ITraverser bindingVariantsTraverser;
 
+  /**
+   * The traverser for step 2: Used to adapt the reference AST according to the bindings from
+   * step 1.
+   */
   protected ITraverser adaptationTraverser;
 
+  /** Provides access to the current adaptation context. */
   protected AdaptationContextHolder contextHolder;
 
-  /** Results of step 1/2 the adapted variants of an AST node */
+  /**
+   * Maps reference AST nodes to all their adaptation variants.<br>
+   * Step 1 adds the variants in the first place, while step 2 enriches each variant with the
+   * adapted AST nodes.
+   */
   protected Adaptations4Ast adaptations4Ast;
 
   protected ReferenceArtifactAdapter(
@@ -48,12 +75,27 @@ public abstract class ReferenceArtifactAdapter<C extends IAdaptationContext> {
   }
 
   /**
-   * Adapt the given AST node to all its variants.
+   * Adapt the given AST node to all variants possible within the given context.<br>
+   * <br>
+   * On a high level, this method performs the following steps:
+   * <ol>
+   *   <li>
+   *     Identify all possible variants of each AST node considering the given incarnation mapping.
+   *   </li>
+   *   <li>
+   *     For each variant, adapt the reference AST node according to the bindings of the variant.
+   *   </li>
+   *   <li>
+   *     Return all adapted variants of the root AST node that was passed to the method.
+   *   </li>
+   * </ol>
+   * If you want detailed insights into the variants and the identified bindings, you can use
+   * {@link #getAdaptations4Ast()} to access the variants for each reference AST node.
    *
    * @param refNode the reference AST node to adapt
    * @param context the adaptation context to use for the adaptation
    *
-   * @return a list of all adapted AST nodes that are variants of the given reference node
+   * @return a list of all adaptations of the given reference AST node
    * @param <T> the type of the AST node to adapt
    */
   public <T extends ASTNode> List<T> adapt(T refNode, C context) {
@@ -70,7 +112,7 @@ public abstract class ReferenceArtifactAdapter<C extends IAdaptationContext> {
             .map(variant -> {
               Optional<T> adaptedNode = variant.getAdaptedNode(refNode);
               if (adaptedNode.isEmpty()) {
-                Log.warn("0xFD336 "
+                Log.warn("0xAD001 "
                         + "no adapted node for original input node in variant: " + variant);
                 return adaptedNode;
               }

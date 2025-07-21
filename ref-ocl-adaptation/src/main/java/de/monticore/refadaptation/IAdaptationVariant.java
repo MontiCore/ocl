@@ -27,7 +27,20 @@ public interface IAdaptationVariant {
    */
   IAdaptationVariant copy();
 
-  // TODO Throw exception in case bindings or child variants conflict
+  /**
+   * Merges this adaptation variant with another one creating a new variant.<br>
+   * <ul>
+   *   <li>The other variant MUST NOT have any conflicting bindings with this variant.
+   *   </li>
+   *   <li>The other variant MUST NOT have child constraints conflicting with the child constraints
+   *   of this variant. See {@link IAdaptationVariant#addChildVariant(ASTNode, IAdaptationVariant)}
+   *   </li>
+   * </ul>
+   *
+   * @param otherVariant
+   * @return
+   * @throws BindingConflictException
+   */
   IAdaptationVariant merge(IAdaptationVariant otherVariant) throws BindingConflictException;
 
   /**

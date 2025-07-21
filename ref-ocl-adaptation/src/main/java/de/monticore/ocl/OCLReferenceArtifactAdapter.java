@@ -12,7 +12,6 @@ import de.monticore.refadaptation.AdaptationContextHolder;
 import de.monticore.refadaptation.Adaptations4Ast;
 import de.monticore.refadaptation.ReferenceArtifactAdapter;
 import de.monticore.symbols.OOSymbolsIncMapping;
-import de.monticore.symbols.OOSymbolsLocalIncMapping;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsGlobalScope;
 import de.monticore.types.mcbasictypes.MCBasicTypesAdaptationVisitor;
 import de.monticore.types.mcbasictypes.MCBasicTypesBindingVariantsVisitor;
@@ -23,6 +22,11 @@ import de.se_rwth.commons.logging.Log;
 
 import java.util.List;
 
+/**
+ * Reference artifact adapter for the OCL language. Given an incarnation mapping
+ * of the OOSymbols language ({@link OOSymbolsIncMapping}) this adapter produces valid
+ * concrete OCL artifacts from reference artifacts.
+ */
 public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAdaptationContext> {
 
   /**
