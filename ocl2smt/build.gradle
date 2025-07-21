@@ -51,7 +51,7 @@ java {
 tasks.test {
 
   // todo: https://git.rwth-aachen.de/monticore/monticore/-/issues/4216
-  enabled = false
+  enabled = true
 
   useJUnitPlatform{
     excludeTags 'slow', 'non-terminating'

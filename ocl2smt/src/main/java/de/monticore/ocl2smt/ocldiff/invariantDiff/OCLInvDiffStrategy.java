@@ -5,6 +5,7 @@ import com.microsoft.z3.Params;
 import com.microsoft.z3.Solver;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
@@ -218,9 +219,12 @@ public interface OCLInvDiffStrategy {
     if (timeout <= 0) {
       Log.error("Time out must be greater than 0");
     }
-
     if (timeout < Integer.MAX_VALUE) {
       Params params = ctx.mkParams();
+      if (CD2SMTGenerator.isSeedEnabled()) {
+        // Set the random seed for determinism
+        params.add("random_seed", CD2SMTGenerator.getSeed()); // Choose your seed value
+      }
       params.add("timeout", timeout);
       solver.setParameters(params);
     }

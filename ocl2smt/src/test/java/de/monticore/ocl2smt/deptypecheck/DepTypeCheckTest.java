@@ -2,10 +2,8 @@ package de.monticore.ocl2smt.deptypecheck;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.microsoft.z3.BoolExpr;
-import com.microsoft.z3.BoolSort;
-import com.microsoft.z3.Context;
-import com.microsoft.z3.Expr;
+import com.microsoft.z3.*;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnitBuilder;
 import de.monticore.cdbasis._ast.ASTCDDefinitionBuilder;
@@ -141,6 +139,12 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
       Function<ASTNameExpression, ASTMCType> getType) {
     try (Context ctx = new Context()) {
       solver = ctx.mkSolver();
+      if (CD2SMTGenerator.isSeedEnabled()) {
+        // Set the random seed for determinism
+        Params p = ctx.mkParams();
+        p.add("random_seed", CD2SMTGenerator.getSeed()); // Choose your seed value
+        solver.setParameters(p);
+      }
 
       // Build empty dummy CD (currently only primitive types are supported)
       ASTCDCompilationUnit cdAst =

@@ -7,6 +7,7 @@ import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
 
 import com.microsoft.z3.Context;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.ocl.ocl.OCLMill;
@@ -16,9 +17,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.provider.Arguments;
 
 public abstract class OCL2SMTAbstractTest {
+
+  @BeforeAll
+  public static void initSeed() {
+    CD2SMTGenerator.setSeed(42);
+  }
+
   protected void initMills() {
     OCLMill.reset();
     OCLMill.init();

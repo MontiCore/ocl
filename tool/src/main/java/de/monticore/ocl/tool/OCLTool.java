@@ -27,7 +27,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FilenameUtils;
 
@@ -168,10 +167,10 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
             // Deserialize *.sym files
             for (Path path : symbolPath.getEntries()) {
               try (Stream<Path> files = Files.walk(path)) {
-                files.filter(file -> file.toString().toLowerCase().matches(".*\\.[a-z]*sym$"))
+                files
+                    .filter(file -> file.toString().toLowerCase().matches(".*\\.[a-z]*sym$"))
                     .forEach(file -> SymbolTableUtil.loadSymbolFile(file.toString()));
-              }
-              catch (IOException | UncheckedIOException e) {
+              } catch (IOException | UncheckedIOException e) {
                 Log.error("0xA7106 Could not deserialize symbol files", e);
               }
             }

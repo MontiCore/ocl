@@ -1,7 +1,6 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl._symboltable;
 
-import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLContextDefinition;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
@@ -17,11 +16,8 @@ import de.monticore.types.check.ISynthesize;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.TypeCheckResult;
 import de.monticore.types.mcbasictypes._ast.*;
-import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 

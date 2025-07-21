@@ -1,10 +1,8 @@
 package de.monticore.ocl2smt;
 
-import com.microsoft.z3.BoolExpr;
-import com.microsoft.z3.Context;
-import com.microsoft.z3.Model;
-import com.microsoft.z3.Status;
+import com.microsoft.z3.*;
 import de.monticore.cd.facade.MCQualifiedNameFacade;
+import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
@@ -74,6 +72,12 @@ public class TypeIfMcExprConverterTest extends ExpressionAbstractTest {
     Assertions.assertTrue(expr.isBoolExpr()); // a.speed > a.speed ;
     Log.println(expr.toString());
     solver = ctx.mkSolver();
+    if (CD2SMTGenerator.isSeedEnabled()) {
+      // Set the random seed for determinism
+      Params p = ctx.mkParams();
+      p.add("random_seed", CD2SMTGenerator.getSeed()); // Choose your seed value
+      solver.setParameters(p);
+    }
     solver.add((BoolExpr) expr.getExpr());
     expr.getGenConstraint().forEach(c -> solver.add((BoolExpr) c.getExpr()));
 
