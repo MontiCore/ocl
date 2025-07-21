@@ -1,7 +1,5 @@
 package de.monticore.refadaptation;
 
-import de.se_rwth.commons.logging.Log;
-
 import java.util.Set;
 
 /**
