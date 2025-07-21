@@ -1,6 +1,7 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.ocl._symboltable;
 
+import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLContextDefinition;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
@@ -13,12 +14,14 @@ import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.basicsymbols._visitor.BasicSymbolsVisitor2;
 import de.monticore.types.check.ISynthesize;
+import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types.check.TypeCheckResult;
-import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
-import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
+import de.monticore.types.mcbasictypes._ast.*;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,7 +104,7 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
             t.setType(typeResult.getResult());
             t.setIsReadOnly(true);
             cd.getEnclosingScope().add(t);
-            if (!typeResult.getResult().getTypeInfo().isEmptySuperTypes()) {
+            if (typeResult.getResult().getTypeInfo().isPresentSuperClass()) {
               VariableSymbol s = new VariableSymbol("super");
               s.setType(typeResult.getResult().getTypeInfo().getSuperClass());
               s.setIsReadOnly(true);
@@ -121,14 +124,6 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
 
   @Override
   public void visit(ASTOCLMethodSignature node) {
-    String typeName = Names.getQualifier(node.getMethodName().getQName());
-    Optional<TypeSymbol> type = node.getEnclosingScope().resolveType(typeName);
-    if (type.isPresent()) {
-      for (VariableSymbol var : type.get().getVariableList()) {
-        node.getEnclosingScope().add(var);
-      }
-    }
-
     if (node.isPresentMCReturnType()) {
       // create VariableSymbol for result of method
       final TypeCheckResult typeResult;
@@ -154,6 +149,44 @@ public class OCLSymbolTableCompleter implements OCLVisitor2, BasicSymbolsVisitor
         result.setType(typeResult.getResult());
         result.setIsReadOnly(true);
         node.getEnclosingScope().add(result);
+      }
+    }
+  }
+
+  @Override
+  public void endVisit(ASTOCLMethodSignature node) {
+    /*
+     * We add symbols from the type in 'endVisit', so we can check if there is already a
+     * Variable/Function symbol with the same name. In this case we do not add the field/method and
+     * users need to access it with 'this.myField'.
+     */
+    String typeName = Names.getQualifier(node.getMethodName().getQName());
+    Optional<TypeSymbol> type = node.getEnclosingScope().resolveType(typeName);
+    if (type.isPresent()) {
+      for (VariableSymbol var : type.get().getVariableList()) {
+        if (node.getEnclosingScope().resolveVariableDownMany(var.getName()).isEmpty()) {
+          // Clone the VariableSymbol to avoid issues with the same symbol in different scopes!
+          // Otherwise, the original VariableSymbol suddenly has an unexpected enclosing scope
+          // which causes issues in the type check!
+          node.getEnclosingScope().add(var.deepClone());
+        }
+      }
+      for (FunctionSymbol fun : type.get().getFunctionList()) {
+        if (node.getEnclosingScope().resolveFunctionDownMany(fun.getName()).isEmpty()) {
+          node.getEnclosingScope().add(fun.deepClone());
+        }
+      }
+
+      // create VariableSymbols for "this" and "super"
+      VariableSymbol t = new VariableSymbol("this");
+      t.setType(SymTypeExpressionFactory.createFromSymbol(type.get()));
+      t.setIsReadOnly(true);
+      node.getEnclosingScope().add(t);
+      if (type.get().isPresentSuperClass()) {
+        VariableSymbol s = new VariableSymbol("super");
+        s.setType(type.get().getSuperClass());
+        s.setIsReadOnly(true);
+        node.getEnclosingScope().add(s);
       }
     }
   }

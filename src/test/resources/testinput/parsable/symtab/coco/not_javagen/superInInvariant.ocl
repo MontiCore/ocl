@@ -1,0 +1,5 @@
+ocl superInInvariant {
+  context Student inv:
+    super.isActive == this.isActive && super.isActive == super.getActive();
+}
+

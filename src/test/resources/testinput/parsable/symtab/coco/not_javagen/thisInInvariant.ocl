@@ -1,0 +1,5 @@
+ocl thisInInvariant {
+  context Person inv:
+    this.isActive == this.getActive();
+}
+
