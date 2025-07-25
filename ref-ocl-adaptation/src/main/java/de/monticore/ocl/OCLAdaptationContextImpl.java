@@ -52,9 +52,12 @@ public class OCLAdaptationContextImpl implements OCLAdaptationContext {
 
   @Override
   public OCLAdaptationVariant createVariant() {
-    // TODO Should we add all bindings currently holding in this context to the variant?
-    //  there is at least one use case: traverse of OCLMethodSignature defines binding for
-    //  method parameters, but lower level variants need to b aware of the binding during AST adaptation visitor run
+    // We add all bindings currently holding in this context to the new variant.
+    // There is at least one use case: traverse of OCLMethodSignature defines binding for
+    // method parameters, but lower level variants need to be aware of the binding during AST
+    // adaptation visitor run.
+    // Also, as mentioned in IAdaptationContext.createVariant, adding the bindings enables early
+    // pruning of invalid variant before they are passed upwards and cause a blowup.
     return new OCLAdaptationVariantImpl(ooSymbolsBindings.copy());
   }
 

@@ -1,5 +1,6 @@
 package de.monticore.refadaptation;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import de.monticore.ast.ASTNode;
@@ -13,10 +14,8 @@ import java.util.*;
 public abstract class AbstractAdaptationVariant implements IAdaptationVariant {
 
   protected final Map<ASTNode, ASTNode> adaptedNodes;
-  // Implementation note: LinkedList makes more sense as we usually only have one child?
-  // TODO Does this impl note still makes sense if we keep merging variants and ony set children if
-  //   we have aggregated variants.
-  protected final ListMultimap<ASTNode, IAdaptationVariant> childVariants = LinkedListMultimap.create();
+
+  protected final ListMultimap<ASTNode, IAdaptationVariant> childVariants = ArrayListMultimap.create();
 
 
   protected AbstractAdaptationVariant() {

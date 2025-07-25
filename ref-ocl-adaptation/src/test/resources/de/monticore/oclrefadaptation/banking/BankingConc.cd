@@ -5,7 +5,7 @@ classdiagram Banking {
 
   <<ref="Bank">> class SEPABank {
     <<ref="id">> String bic;
-    double totalMoney; // money of all accounts together
+    <<ref="overallBalance">> double totalMoney; // money of all accounts together
   }
 
   <<ref="Account">> class BankAccount {

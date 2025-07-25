@@ -10,6 +10,7 @@ import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class OCLAdaptationVariantImpl extends AbstractAdaptationVariant implements OCLAdaptationVariant {
 

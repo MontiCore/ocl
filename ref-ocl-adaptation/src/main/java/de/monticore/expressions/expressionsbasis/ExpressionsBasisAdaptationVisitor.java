@@ -1,5 +1,7 @@
 package de.monticore.expressions.expressionsbasis;
 
+import de.monticore.expressions.expressionsbasis._ast.ASTArguments;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor2;
 import de.monticore.refadaptation.AbstractAdaptationVisitor;
@@ -45,7 +47,7 @@ public class ExpressionsBasisAdaptationVisitor
         VariableSymbol refFieldSymbol = sourceSymbolOpt.get();
         Optional<Binding<VariableSymbol>> binding = variant.getBasicSymbolsBindings().getBinding(refFieldSymbol);
         if (binding.isPresent()) {
-          // a variable binding attached to a ASTFieldAccessExpression is always required to be strict (??)
+          // a variable binding attached to a ASTNameExpression is always required to be strict (??)
           VariableSymbol fieldSymbolInc = binding.get().getStrictConcreteElement();
           adaptedExpr.setName(fieldSymbolInc.getName());
         } else {
@@ -57,5 +59,31 @@ public class ExpressionsBasisAdaptationVisitor
       }
       variant.setAdaptedNode(refExpr, adaptedExpr);
     }
+  }
+
+  @Override
+  public void endVisit(ASTArguments arguments) {
+    List<ExpressionsBasisAdaptationVariant> variants = getAdaptations4Ast().getVariants(arguments);
+    for (ExpressionsBasisAdaptationVariant variant : variants) {
+      // TODO if (canProcess(variant)) {
+      ASTArguments adaptedNode = adapt(arguments, variant);
+      variant.setAdaptedNode(arguments, adaptedNode);
+    }
+  }
+
+  protected ASTArguments adapt(ASTArguments original, ExpressionsBasisAdaptationVariant variant) {
+    ASTArguments adapted = ExpressionsBasisMill.argumentsBuilder().uncheckedBuild();
+    for (ASTExpression expression : original.getExpressionList()) {
+      Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(expression);
+      adapted.getExpressionList().add(adaptedExpression.orElseGet(expression::deepClone));
+    }
+
+    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
+      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
+      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    return adapted;
   }
 }
