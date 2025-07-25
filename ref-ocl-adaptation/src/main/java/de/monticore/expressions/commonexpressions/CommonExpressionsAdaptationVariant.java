@@ -4,10 +4,6 @@ import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVaria
 import de.monticore.refadaptation.IAdaptationVariant;
 import de.monticore.symbols.OOSymbolsBindings;
 
-/*
- * TODO maybe rename CommonExpressionsBindingVariant and separate adapted AST nodes in other
- *  then we can store adapted AST nodes PER IBindingVariant
- */
 public interface CommonExpressionsAdaptationVariant extends IAdaptationVariant, ExpressionsBasisAdaptationVariant {
 
   // ==========================================================

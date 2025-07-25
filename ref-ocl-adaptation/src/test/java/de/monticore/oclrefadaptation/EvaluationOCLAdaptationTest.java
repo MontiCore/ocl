@@ -125,6 +125,16 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
     }
 
     @Test
+    void queryMethodRename() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "simple/SimpleConc.cd",
+              "simple/SimpleRef.cd",
+              "simple/QueryMethodRef.ocl",
+              "simple/QueryMethodOut.ocl");
+    }
+
+    @Test
     void typeMI() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testAdaptedEqualsExpected(

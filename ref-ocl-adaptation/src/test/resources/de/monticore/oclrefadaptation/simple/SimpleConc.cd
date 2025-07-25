@@ -4,5 +4,7 @@ classdiagram SimpleConc {
   <<ref="Person">> class User {
     String name;
     int age;
+
+    <<ref="isLegallyAdult">> boolean hasReachedAgeOfMajority();
   }
 }

@@ -4,15 +4,18 @@ classdiagram SimpleConc {
   <<ref="Person">> class User {
     String name;
     int age;
+    boolean isLegallyAdult();
   }
 
   <<ref="Person">> class Customer {
     String name;
     int age;
+    boolean isLegallyAdult();
   }
 
   <<ref="Person">> class Employee {
     String name;
     <<ref="age">> int ageInYears;
+    boolean isLegallyAdult();
   }
 }

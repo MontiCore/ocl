@@ -1,0 +1,164 @@
+package de.monticore.expressions.commonexpressions;
+
+import de.monticore.expressions.commonexpressions._ast.*;
+import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
+import de.monticore.expressions.expressionsbasis._ast.ASTArguments;
+import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
+import de.monticore.refadaptation.AbstractAdaptationVisitor;
+
+import java.util.List;
+import java.util.Optional;
+
+public class CommonExpressionsASTAdaptationVisitorTOP<C extends CommonExpressionsAdaptationContext>
+        extends AbstractAdaptationVisitor<C>
+        implements CommonExpressionsVisitor2 {
+
+  @Override
+  public void endVisit(ASTEqualsExpression expr) {
+    List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    for (CommonExpressionsAdaptationVariant variant : variants) {
+      ASTEqualsExpression adaptedNode = adapt(expr, variant);
+      variant.setAdaptedNode(expr, adaptedNode);
+    }
+  }
+
+  /*
+   * TODO use this. This is a demonstration that we can generate this efficient adaptation code for
+   *  every AST node in the language.
+   */
+  protected ASTEqualsExpression adapt(ASTEqualsExpression original, CommonExpressionsAdaptationVariant variant) {
+    ASTEqualsExpression adapted = CommonExpressionsMill.equalsExpressionBuilder().uncheckedBuild();
+    Optional<ASTExpression> adaptedLeft = variant.getAdaptedNode(original.getLeft());
+    adapted.setLeft(adaptedLeft.orElseGet(() -> original.getLeft().deepClone()));
+    Optional<ASTExpression> adaptedRight = variant.getAdaptedNode(original.getRight());
+    adapted.setRight(adaptedRight.orElseGet(() -> original.getRight().deepClone()));
+    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
+      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
+      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    return adapted;
+  }
+
+  @Override
+  public void endVisit(ASTBooleanNotExpression expr) {
+    List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    for (CommonExpressionsAdaptationVariant variant : variants) {
+      ASTBooleanNotExpression adaptedNode = adapt(expr, variant);
+      variant.setAdaptedNode(expr, adaptedNode);
+    }
+  }
+
+  protected ASTBooleanNotExpression adapt(ASTBooleanNotExpression original, CommonExpressionsAdaptationVariant variant) {
+    ASTBooleanNotExpression adapted = CommonExpressionsMill.booleanNotExpressionBuilder().uncheckedBuild();
+    Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(original.getExpression());
+    adapted.setExpression(adaptedExpression.orElseGet(() -> original.getExpression().deepClone()));
+    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
+      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
+      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    return adapted;
+  }
+
+  @Override
+  public void endVisit(ASTLogicalNotExpression expr) {
+    List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    for (CommonExpressionsAdaptationVariant variant : variants) {
+      ASTLogicalNotExpression adaptedNode = adapt(expr, variant);
+      variant.setAdaptedNode(expr, adaptedNode);
+    }
+  }
+
+  protected ASTLogicalNotExpression adapt(ASTLogicalNotExpression original, CommonExpressionsAdaptationVariant variant) {
+    ASTLogicalNotExpression adapted = CommonExpressionsMill.logicalNotExpressionBuilder().uncheckedBuild();
+    Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(original.getExpression());
+    adapted.setExpression(adaptedExpression.orElseGet(() -> original.getExpression().deepClone()));
+    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
+      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
+      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    return adapted;
+  }
+
+  @Override
+  public void endVisit(ASTBracketExpression expr) {
+    List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    for (CommonExpressionsAdaptationVariant variant : variants) {
+      ASTBracketExpression adaptedNode = adapt(expr, variant);
+      variant.setAdaptedNode(expr, adaptedNode);
+    }
+  }
+
+  protected ASTBracketExpression adapt(ASTBracketExpression original, CommonExpressionsAdaptationVariant variant) {
+    ASTBracketExpression adapted = CommonExpressionsMill.bracketExpressionBuilder().uncheckedBuild();
+    Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(original.getExpression());
+    adapted.setExpression(adaptedExpression.orElseGet(() -> original.getExpression().deepClone()));
+    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
+      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
+      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    return adapted;
+  }
+
+  @Override
+  public void endVisit(ASTFieldAccessExpression expr) {
+    /*
+     * Get all result variants that were found during traversal of the expression.
+     * Each entry "AdaptationVariant" holds a consistent combination of all adapted
+     * sub-nodes/expressions and the bindings that were used to adapt them.
+     */
+    List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    for (CommonExpressionsAdaptationVariant variant : variants) {
+      ASTFieldAccessExpression adaptedNode = adapt(expr, variant);
+      variant.setAdaptedNode(expr, adaptedNode);
+    }
+  }
+
+  protected ASTFieldAccessExpression adapt(ASTFieldAccessExpression original, CommonExpressionsAdaptationVariant variant) {
+    ASTFieldAccessExpression adapted = CommonExpressionsMill.fieldAccessExpressionBuilder().uncheckedBuild();
+    Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(original.getExpression());
+    adapted.setExpression(adaptedExpression.orElseGet(() -> original.getExpression().deepClone()));
+
+    adapted.setName(original.getName());
+
+    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
+      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
+      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    return adapted;
+  }
+
+  @Override
+  public void endVisit(ASTCallExpression expr) {
+    List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    for (CommonExpressionsAdaptationVariant variant : variants) {
+      ASTCallExpression adaptedNode = adapt(expr, variant);
+      variant.setAdaptedNode(expr, adaptedNode);
+    }
+  }
+
+  protected ASTCallExpression adapt(ASTCallExpression original, CommonExpressionsAdaptationVariant variant) {
+    ASTCallExpression adapted = CommonExpressionsMill.callExpressionBuilder().uncheckedBuild();
+    Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(original.getExpression());
+    adapted.setExpression(adaptedExpression.orElseGet(() -> original.getExpression().deepClone()));
+    Optional<ASTArguments> adaptedArguments = variant.getAdaptedNode(original.getArguments());
+    adapted.setArguments(adaptedArguments.orElseGet(() -> original.getArguments().deepClone()));
+
+    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
+      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
+      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
+    }
+    return adapted;
+  }
+}

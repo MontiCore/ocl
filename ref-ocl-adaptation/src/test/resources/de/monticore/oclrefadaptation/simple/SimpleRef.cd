@@ -4,5 +4,7 @@ classdiagram SimpleRef {
   class Person {
     String name;
     int age;
+
+    boolean isLegallyAdult();
   }
 }
