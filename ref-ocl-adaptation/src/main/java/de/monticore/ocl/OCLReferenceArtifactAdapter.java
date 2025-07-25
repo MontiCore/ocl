@@ -2,7 +2,7 @@ package de.monticore.ocl;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.expressions.commonexpressions.CommonExpressionsASTAdaptationVisitor;
-import de.monticore.expressions.commonexpressions.CommonExpressionsBindingVariantsVisitor;
+import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationVariantsVisitor;
 import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVariantsHandler;
 import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVisitor;
 import de.monticore.expressions.expressionsbasis.ExpressionsBasisBindingVariantsVisitor;
@@ -66,7 +66,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
 
     // Expressions
 
-    CommonExpressionsBindingVariantsVisitor commonExpressionsBindingVis = new CommonExpressionsBindingVariantsVisitor();
+    CommonExpressionsAdaptationVariantsVisitor commonExpressionsBindingVis = new CommonExpressionsAdaptationVariantsVisitor();
     commonExpressionsBindingVis.setContextHolder(contextHolder);
     commonExpressionsBindingVis.setAdaptations4Ast(adaptations4Ast);
     bindingVariantsTraverser.add4CommonExpressions(commonExpressionsBindingVis);
