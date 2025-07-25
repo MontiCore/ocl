@@ -1,0 +1,8 @@
+import java.lang.String;
+
+classdiagram SimpleRef {
+  class Person {
+    String name;
+    int age;
+  }
+}

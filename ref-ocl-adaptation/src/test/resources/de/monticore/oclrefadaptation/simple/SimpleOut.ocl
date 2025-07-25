@@ -1,0 +1,4 @@
+ocl SimpleOCL {
+  context SimpleConc.User p inv AgePositive:
+    p.age >= 0;
+}

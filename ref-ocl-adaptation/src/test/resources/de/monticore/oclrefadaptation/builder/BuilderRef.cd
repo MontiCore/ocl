@@ -1,0 +1,13 @@
+import java.lang.String;
+
+classdiagram BuilderRef {
+  class DataClass {
+    undef attribute;
+  }
+
+  <<forEach="DataClass">> class DataClassBuilder {
+    <<forEach="DataClass.attribute">> undef attribute;
+    <<forEach="DataClass.attribute">> DataClassBuilder attribute(undef attribute);
+    DataClass build();
+  }
+}

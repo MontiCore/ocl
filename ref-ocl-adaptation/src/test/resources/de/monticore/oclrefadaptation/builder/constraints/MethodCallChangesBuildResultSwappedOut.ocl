@@ -1,0 +1,25 @@
+/* (c) https://github.com/MontiCore/monticore */
+ocl MethodCallChangesBuildResultSwapped {
+
+  // ----- Employee -----
+
+  context EmployeeBuilder EmployeeBuilder.firstName(String firstName)
+    post: firstName == build().firstName;
+
+  context EmployeeBuilder EmployeeBuilder.lastName(String lastName)
+    post: lastName == build().lastName;
+
+  context EmployeeBuilder EmployeeBuilder.number(int number)
+    post: number == build().number;
+
+  context EmployeeBuilder EmployeeBuilder.salary(int salary)
+    post: salary == build().salary;
+
+  // ----- Department -----
+
+  context DepartmentBuilder DepartmentBuilder.managerName(String managerName)
+    post: managerName == build().managerName;
+
+  context DepartmentBuilder DepartmentBuilder.dept(int dept)
+    post: dept == build().dept;
+}

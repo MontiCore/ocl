@@ -1,0 +1,37 @@
+import java.lang.String;
+
+classdiagram BuilderConc {
+  <<ref="DataClass">> class Employee {
+    <<ref="attribute">> String firstName;
+    <<ref="attribute">> String lastName;
+    <<ref="attribute">> int number;
+    <<ref="attribute">> int salary;
+  }
+
+  <<ref="DataClass">> class Department {
+    <<ref="attribute">> String managerName;
+    <<ref="attribute">> int depId;
+  }
+
+  <<ref="BuilderRef.DataClassBuilder">>
+  class EmployeeBuilder {
+    <<ref="BuilderRef.DataClassBuilder.attribute">> String firstName;
+    <<ref="BuilderRef.DataClassBuilder.attribute">> String lastName;
+    <<ref="BuilderRef.DataClassBuilder.attribute">> int number;
+    <<ref="BuilderRef.DataClassBuilder.attribute">> int salary;
+    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder firstName(String firstName);
+    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder lastName(String lastName);
+    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder number(int number);
+    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder salary(int salary);
+    Employee build();
+  }
+
+  <<ref="BuilderRef.DataClassBuilder">>
+  class DepartmentBuilder {
+    <<ref="BuilderRef.DataClassBuilder.attribute">> String managerName;
+    <<ref="BuilderRef.DataClassBuilder.attribute">> int depId;
+    <<ref="BuilderRef.DataClassBuilder.attribute">> DepartmentBuilder managerName(String managerName);
+    <<ref="BuilderRef.DataClassBuilder.attribute">> DepartmentBuilder depId(int depId);
+    Department build();
+  }
+}

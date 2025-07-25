@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+ocl BuildResultHasCorrectProperties {
+
+  context Employee EmployeeBuilder.build()
+    post: result.firstName == firstName && result.lastName == lastName
+  			  && result.number == number && result.salary == salary;
+
+  context Department DepartmentBuilder.build()
+    post: result.managerName == managerName && result.depId == depId;
+}
