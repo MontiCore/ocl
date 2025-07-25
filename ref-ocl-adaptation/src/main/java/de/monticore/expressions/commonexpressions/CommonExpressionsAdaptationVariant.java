@@ -12,5 +12,9 @@ public interface CommonExpressionsAdaptationVariant extends IAdaptationVariant, 
 
   CommonExpressionsAdaptationVariant copy();
 
+  // ==============================================================
+  // Language specific incarnation mappings required for adaptation
+  // ==============================================================
+
   OOSymbolsBindings getOOSymbolsBindings();
 }
