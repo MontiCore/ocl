@@ -53,7 +53,7 @@ public class LegacyCDIncarnationBindings2OOSymbolsBindings implements OOSymbolsB
     return createBinding(typeSymbol, conElements);
   }
 
-  private <T> Optional<Binding<T>> createBinding(T refSymbol, Set<T> concreteSymbols) {
+  private <T extends ISymbol> Optional<Binding<T>> createBinding(T refSymbol, Set<T> concreteSymbols) {
     if (concreteSymbols.isEmpty()) {
       return Optional.empty();
     } else if (concreteSymbols.size() == 1) {
