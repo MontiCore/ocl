@@ -15,6 +15,7 @@ import de.monticore.symbols.OOSymbolsIncMapping;
 import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsGlobalScope;
 import de.monticore.types.mcbasictypes.MCBasicTypesAdaptationVisitor;
 import de.monticore.types.mcbasictypes.MCBasicTypesBindingVariantsVisitor;
+import de.monticore.types.mcbasictypes.refadaptation.MCTypeFactory;
 import de.monticore.types.mccollectiontypes.MCCollectionTypesAdaptationVisitor;
 import de.monticore.types.mccollectiontypes.MCCollectionTypesBindingVariantsVisitor;
 import de.monticore.visitor.ITraverser;
@@ -43,6 +44,8 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
     AdaptationContextHolder contextHolder = new AdaptationContextHolder();
     Adaptations4Ast adaptations4Ast = new Adaptations4Ast();
 
+    MCTypeFactory mcTypeFactory = new OCLMCTypeFactory();
+
     // OCL main language
 
     OCLBindingVariantsVisitor oclBindingVis = new OCLBindingVariantsVisitor();
@@ -51,7 +54,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
     bindingVariantsTraverser.add4OCL(oclBindingVis);
     bindingVariantsTraverser.setOCLHandler(oclBindingVis);
 
-    OCLAdaptationVisitor oclAdaptVis = new OCLAdaptationVisitor();
+    OCLAdaptationVisitor oclAdaptVis = new OCLAdaptationVisitor(mcTypeFactory);
     oclAdaptVis.setContextHolder(contextHolder);
     oclAdaptVis.setAdaptations4Ast(adaptations4Ast);
     adaptationTraverser.add4OCL(oclAdaptVis);
