@@ -58,6 +58,8 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
 
   protected Set<CDConfParameter> confParameters;
 
+  protected OCLAdapter oclAdapter;
+
   @BeforeEach
   @Override
   protected void initLogger() {
@@ -70,6 +72,7 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
     Log.clearFindings();
     initMills();
     confParameters = new HashSet<>(DEFAULT_CONFORMANCE_PARAMS);
+    oclAdapter = new OCLAdapter(confParameters);
   }
 
   @Override
@@ -112,7 +115,6 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
   protected ASTOCLCompilationUnit testAdaptedEqualsExpected(
       String conCDFile, String refCDFile, String refOCLFile, String expectedOCLFile) {
     parseModels(conCDFile, refCDFile, refOCLFile, expectedOCLFile);
-    OCLAdapter oclAdapter = new OCLAdapter(confParameters);
     List<ASTOCLCompilationUnit> adaptedOCLList = oclAdapter.adapt(conCD, refCD, "ref", List.of(refOCL));
     assertEquals(1, adaptedOCLList.size(),
         "Expected exactly one adapted OCL artifact for a single reference artifact");
@@ -137,21 +139,13 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
     ast.accept(traverser);
   }
 
-  protected static void transformAllRoles(ASTCDCompilationUnit cdAST) {
-    final CDAssociationCreateFieldsFromAllRoles cdAssociationCreateFieldsFromAllRoles =
-            new CDAssociationCreateFieldsFromAllRoles();
-    final CD4AnalysisTraverser traverser = CD4CodeMill.inheritanceTraverser();
-    traverser.add4CDAssociation(cdAssociationCreateFieldsFromAllRoles);
-    traverser.setCDAssociationHandler(cdAssociationCreateFieldsFromAllRoles);
-    cdAssociationCreateFieldsFromAllRoles.transform(cdAST);
-  }
-
   protected void parseModels(String concreteCDFile, String refCDDFile, String refOCLFile, String expectedOCLFile) {
     conCD = loadCD(concreteCDFile);
-    transformAllRoles(conCD);
-
     refCD = loadCD(refCDDFile);
-    transformAllRoles(refCD);
+
+    oclAdapter.applyFieldsFromRolesTrafo(conCD, refCD);
+    System.out.println("Transformed concrete CD: \n");
+    System.out.println(CD4CodeMill.prettyPrint(conCD, true));
 
     /*
      * TODO Cleanup & make sure everything is working fine. if we cannot compare symbols in CD4CodeMill and OCLMill global scopes we have issues...
