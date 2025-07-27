@@ -54,7 +54,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
     bindingVariantsTraverser.add4OCL(oclBindingVis);
     bindingVariantsTraverser.setOCLHandler(oclBindingVis);
 
-    OCLAdaptationVisitor oclAdaptVis = new OCLAdaptationVisitor(mcTypeFactory);
+    OCLASTAdaptationVisitor oclAdaptVis = new OCLASTAdaptationVisitor(mcTypeFactory);
     oclAdaptVis.setContextHolder(contextHolder);
     oclAdaptVis.setAdaptations4Ast(adaptations4Ast);
     adaptationTraverser.add4OCL(oclAdaptVis);

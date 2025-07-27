@@ -9,7 +9,8 @@ import java.util.function.Function;
 
 /**
  * Utility class for handling incarnation mappings and bindings.<br>
- * Specifically, it is used to reduce duplication in language specific (generated) code.
+ * Specifically, it is used to reduce duplication in language specific (generated) code because in
+ * fact we do not generate any code (yet).
  */
 public class IncMappingUtils {
 
