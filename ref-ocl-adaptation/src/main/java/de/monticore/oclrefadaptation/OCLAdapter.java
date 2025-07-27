@@ -17,7 +17,7 @@ import java.util.Set;
 
 public class OCLAdapter {
 
-  public static final String DEFAULT_UNDERSPECIFIED_TYPE_NAME = "undef";
+  public static final String DEFAULT_UNDERSPECIFIED_TYPE_NAME = "anytype";
   protected Set<CDConfParameter> confParams;
   protected String underspecifiedTypeName = DEFAULT_UNDERSPECIFIED_TYPE_NAME;
 

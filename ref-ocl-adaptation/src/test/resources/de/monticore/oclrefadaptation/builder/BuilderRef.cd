@@ -2,7 +2,7 @@ import java.lang.String;
 
 classdiagram BuilderRef {
   class DataClass {
-    undef attribute;
+    anytype attribute;
   }
 
   <<forEach="DataClass">> class DataClassBuilder {
@@ -11,8 +11,8 @@ classdiagram BuilderRef {
      * with the same name.
      * See https://github.com/MontiCore/ocl/pull/3
      */
-    <<forEach="DataClass.attribute">> undef mAttribute;
-    <<forEach="DataClass.attribute">> DataClassBuilder attribute(undef pAttribute);
+    <<forEach="DataClass.attribute">> anytype mAttribute;
+    <<forEach="DataClass.attribute">> DataClassBuilder attribute(anytype pAttribute);
     DataClass build();
   }
 }
