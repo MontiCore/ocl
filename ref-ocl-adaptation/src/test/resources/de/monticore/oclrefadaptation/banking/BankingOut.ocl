@@ -3,10 +3,10 @@
 ocl bankingChecks {
   context Banking.SEPABank b inv OverallBalanceCorrect:
   let
-    Set<double> balances = { acc.balance | BankAccount acc in b.bankAccount };
+    Set<double> balances = { acc.balance | Banking.BankAccount acc in b.bankAccount };
     double calculatedBalance = iterate { balance in balances;
                                   double accumulated = 0.0 :
-                                  sum = accumulated + balance }
+                                  accumulated = accumulated + balance }
   in
     b.totalMoney == calculatedBalance;
 }
