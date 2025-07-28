@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class CommonExpressionsASTAdaptationVisitor
-        extends CommonExpressionsASTAdaptationVisitorTOP<CommonExpressionsAdaptationContext> {
+        extends CommonExpressionsASTAdaptationVisitorTOP {
 
   private static final String LOG_NAME = CommonExpressionsASTAdaptationVisitor.class.getName();
 

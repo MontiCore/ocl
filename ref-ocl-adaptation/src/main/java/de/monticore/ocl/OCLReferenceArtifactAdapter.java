@@ -8,6 +8,10 @@ import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVisit
 import de.monticore.expressions.expressionsbasis.ExpressionsBasisBindingVariantsVisitor;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
+import de.monticore.ocl.oclexpressions.OCLExpressionsASTAdaptationVisitor;
+import de.monticore.ocl.oclexpressions.OCLExpressionsAdaptationVariantsVisitor;
+import de.monticore.ocl.setexpressions.SetExpressionsASTAdaptationVisitor;
+import de.monticore.ocl.setexpressions.SetExpressionsAdaptationVariantsVisitor;
 import de.monticore.refadaptation.AdaptationContextHolder;
 import de.monticore.refadaptation.Adaptations4Ast;
 import de.monticore.refadaptation.ReferenceArtifactAdapter;
@@ -16,7 +20,7 @@ import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsGlobalScope;
 import de.monticore.types.mcbasictypes.MCBasicTypesAdaptationVisitor;
 import de.monticore.types.mcbasictypes.MCBasicTypesBindingVariantsVisitor;
 import de.monticore.types.mcbasictypes.refadaptation.MCTypeFactory;
-import de.monticore.types.mccollectiontypes.MCCollectionTypesAdaptationVisitor;
+import de.monticore.types.mccollectiontypes.MCCollectionTypesASTAdaptationVisitor;
 import de.monticore.types.mccollectiontypes.MCCollectionTypesBindingVariantsVisitor;
 import de.monticore.visitor.ITraverser;
 import de.se_rwth.commons.logging.Log;
@@ -60,6 +64,28 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
     adaptationTraverser.add4OCL(oclAdaptVis);
 
     // Expressions
+
+    OCLExpressionsAdaptationVariantsVisitor oclExpressionsBindingVis = new OCLExpressionsAdaptationVariantsVisitor();
+    oclExpressionsBindingVis.setContextHolder(contextHolder);
+    oclExpressionsBindingVis.setAdaptations4Ast(adaptations4Ast);
+    bindingVariantsTraverser.add4OCLExpressions(oclExpressionsBindingVis);
+    bindingVariantsTraverser.setOCLExpressionsHandler(oclExpressionsBindingVis);
+
+    OCLExpressionsASTAdaptationVisitor oclExpressionsAdaptVis = new OCLExpressionsASTAdaptationVisitor();
+    oclExpressionsAdaptVis.setContextHolder(contextHolder);
+    oclExpressionsAdaptVis.setAdaptations4Ast(adaptations4Ast);
+    adaptationTraverser.add4OCLExpressions(oclExpressionsAdaptVis);
+
+    SetExpressionsAdaptationVariantsVisitor setExpressionsBindingVis = new SetExpressionsAdaptationVariantsVisitor();
+    setExpressionsBindingVis.setContextHolder(contextHolder);
+    setExpressionsBindingVis.setAdaptations4Ast(adaptations4Ast);
+    bindingVariantsTraverser.add4SetExpressions(setExpressionsBindingVis);
+    bindingVariantsTraverser.setSetExpressionsHandler(setExpressionsBindingVis);
+
+    SetExpressionsASTAdaptationVisitor setExpressionsAdaptVis = new SetExpressionsASTAdaptationVisitor();
+    setExpressionsAdaptVis.setContextHolder(contextHolder);
+    setExpressionsAdaptVis.setAdaptations4Ast(adaptations4Ast);
+    adaptationTraverser.add4SetExpressions(setExpressionsAdaptVis);
 
     CommonExpressionsAdaptationVariantsVisitor commonExpressionsBindingVis = new CommonExpressionsAdaptationVariantsVisitor();
     commonExpressionsBindingVis.setContextHolder(contextHolder);
@@ -106,7 +132,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
     bindingVariantsTraverser.add4MCCollectionTypes(mcCollectionTypesBindingVis);
     bindingVariantsTraverser.setMCCollectionTypesHandler(mcCollectionTypesBindingVis);
 
-    MCCollectionTypesAdaptationVisitor mcCollectionTypesAdaptVis = new MCCollectionTypesAdaptationVisitor();
+    MCCollectionTypesASTAdaptationVisitor mcCollectionTypesAdaptVis = new MCCollectionTypesASTAdaptationVisitor();
     mcCollectionTypesAdaptVis.setContextHolder(contextHolder);
     mcCollectionTypesAdaptVis.setAdaptations4Ast(adaptations4Ast);
     adaptationTraverser.add4MCCollectionTypes(mcCollectionTypesAdaptVis);

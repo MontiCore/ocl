@@ -1,7 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 
 ocl bankingChecks {
-  context SEPABank b inv OverallBalanceCorrect:
+  context Banking.SEPABank b inv OverallBalanceCorrect:
   let
     Set<double> balances = { acc.balance | BankAccount acc in b.bankAccount };
     double calculatedBalance = iterate { balance in balances;

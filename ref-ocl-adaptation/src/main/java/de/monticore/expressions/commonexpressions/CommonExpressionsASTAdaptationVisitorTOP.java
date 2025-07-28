@@ -5,12 +5,13 @@ import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisi
 import de.monticore.expressions.expressionsbasis._ast.ASTArguments;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.refadaptation.AbstractAdaptationVisitor;
+import de.monticore.refadaptation.RefAdaptationUtils;
 
 import java.util.List;
 import java.util.Optional;
 
-public class CommonExpressionsASTAdaptationVisitorTOP<C extends CommonExpressionsAdaptationContext>
-        extends AbstractAdaptationVisitor<C>
+public class CommonExpressionsASTAdaptationVisitorTOP
+        extends AbstractAdaptationVisitor<CommonExpressionsAdaptationContext>
         implements CommonExpressionsVisitor2 {
 
   @Override
@@ -32,12 +33,8 @@ public class CommonExpressionsASTAdaptationVisitorTOP<C extends CommonExpression
     adapted.setLeft(adaptedLeft.orElseGet(() -> original.getLeft().deepClone()));
     Optional<ASTExpression> adaptedRight = variant.getAdaptedNode(original.getRight());
     adapted.setRight(adaptedRight.orElseGet(() -> original.getRight().deepClone()));
-    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
-      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
-    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
-      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
+
+    RefAdaptationUtils.deepCloneComments(original, adapted);
     return adapted;
   }
 
@@ -54,12 +51,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP<C extends CommonExpression
     ASTBooleanNotExpression adapted = CommonExpressionsMill.booleanNotExpressionBuilder().uncheckedBuild();
     Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(original.getExpression());
     adapted.setExpression(adaptedExpression.orElseGet(() -> original.getExpression().deepClone()));
-    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
-      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
-    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
-      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
+    RefAdaptationUtils.deepCloneComments(original, adapted);
     return adapted;
   }
 
@@ -76,12 +68,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP<C extends CommonExpression
     ASTLogicalNotExpression adapted = CommonExpressionsMill.logicalNotExpressionBuilder().uncheckedBuild();
     Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(original.getExpression());
     adapted.setExpression(adaptedExpression.orElseGet(() -> original.getExpression().deepClone()));
-    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
-      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
-    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
-      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
+    RefAdaptationUtils.deepCloneComments(original, adapted);
     return adapted;
   }
 
@@ -98,12 +85,8 @@ public class CommonExpressionsASTAdaptationVisitorTOP<C extends CommonExpression
     ASTBracketExpression adapted = CommonExpressionsMill.bracketExpressionBuilder().uncheckedBuild();
     Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(original.getExpression());
     adapted.setExpression(adaptedExpression.orElseGet(() -> original.getExpression().deepClone()));
-    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
-      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
-    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
-      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
+
+    RefAdaptationUtils.deepCloneComments(original, adapted);
     return adapted;
   }
 
@@ -128,12 +111,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP<C extends CommonExpression
 
     adapted.setName(original.getName());
 
-    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
-      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
-    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
-      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
+    RefAdaptationUtils.deepCloneComments(original, adapted);
     return adapted;
   }
 
@@ -153,12 +131,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP<C extends CommonExpression
     Optional<ASTArguments> adaptedArguments = variant.getAdaptedNode(original.getArguments());
     adapted.setArguments(adaptedArguments.orElseGet(() -> original.getArguments().deepClone()));
 
-    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
-      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
-    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
-      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
+    RefAdaptationUtils.deepCloneComments(original, adapted);
     return adapted;
   }
 }
