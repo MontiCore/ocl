@@ -5,7 +5,7 @@ ocl bankingChecks {
   let
     Set<double> balances = { acc.balance | Account acc in b.account };
     /*
-     * WARN: We cannot use "sum" as variable name here because there is a functin symbol "sum"
+     * WARN: We cannot use "sum" as variable name here because there is a function symbol "sum"
      * which causes type check to fail.
      */
     double calculatedBalance = iterate { balance in balances;

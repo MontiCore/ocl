@@ -6,6 +6,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor2;
 import de.monticore.refadaptation.AbstractAdaptationVisitor;
 import de.monticore.refadaptation.Binding;
+import de.monticore.refadaptation.RefAdaptationUtils;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.TypeCheck3;
@@ -78,12 +79,7 @@ public class ExpressionsBasisAdaptationVisitor
       adapted.getExpressionList().add(adaptedExpression.orElseGet(expression::deepClone));
     }
 
-    for (de.monticore.ast.Comment x : original.get_PreCommentList()) {
-      adapted.get_PreCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
-    for (de.monticore.ast.Comment x : original.get_PostCommentList()) {
-      adapted.get_PostCommentList().add(new de.monticore.ast.Comment(x.getText()));
-    }
+    RefAdaptationUtils.deepCloneComments(original, adapted);
     return adapted;
   }
 }

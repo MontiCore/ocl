@@ -51,7 +51,6 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
     ASTFieldAccessExpression fieldAccessExpr = (ASTFieldAccessExpression) equalsExpr.getLeft();
   }
 
-
   @Nested
   class Builder {
     @Test

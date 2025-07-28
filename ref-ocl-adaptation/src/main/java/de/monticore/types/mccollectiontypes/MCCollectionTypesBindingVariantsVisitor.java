@@ -1,29 +1,9 @@
 package de.monticore.types.mccollectiontypes;
 
-import de.monticore.refadaptation.AbstractAdaptationHandler;
-import de.monticore.types.mccollectiontypes._ast.ASTMCListType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCMapType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCOptionalType;
-import de.monticore.types.mccollectiontypes._ast.ASTMCSetType;
-import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesHandler;
-import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesTraverser;
-import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesVisitor2;
+import de.monticore.types.mccollectiontypes._ast.*;
 
 public class MCCollectionTypesBindingVariantsVisitor
-        extends AbstractAdaptationHandler<MCCollectionTypesAdaptationContext, MCCollectionTypesAdaptationVariant>
-        implements MCCollectionTypesVisitor2, MCCollectionTypesHandler {
-
-  protected MCCollectionTypesTraverser traverser;
-
-  @Override
-  public MCCollectionTypesTraverser getTraverser() {
-    return traverser;
-  }
-
-  @Override
-  public void setTraverser(MCCollectionTypesTraverser traverser) {
-    this.traverser = traverser;
-  }
+        extends MCCollectionTypesBindingVariantsVisitorTOP {
 
   @Override
   public void endVisit(ASTMCListType node) {
@@ -38,6 +18,16 @@ public class MCCollectionTypesBindingVariantsVisitor
   @Override
   public void endVisit(ASTMCOptionalType node) {
     passChildVariantsUpwards(node, node.getMCTypeArgument());
+  }
+
+  @Override
+  public void endVisit(ASTMCBasicTypeArgument node) {
+    passChildVariantsUpwards(node, node.getMCQualifiedType());
+  }
+
+  @Override
+  public void endVisit(ASTMCPrimitiveTypeArgument node) {
+    passChildVariantsUpwards(node, node.getMCPrimitiveType());
   }
 
   @Override

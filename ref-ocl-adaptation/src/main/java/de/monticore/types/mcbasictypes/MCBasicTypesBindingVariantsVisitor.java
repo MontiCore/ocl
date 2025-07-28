@@ -8,6 +8,7 @@ import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
+import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcbasictypes._symboltable.IMCBasicTypesScope;
@@ -46,6 +47,12 @@ public class MCBasicTypesBindingVariantsVisitor
   }
 
   @Override
+  public void handle(ASTMCPrimitiveType node) {
+    getAdaptations4Ast().clearVariants(node);
+    MCBasicTypesHandler.super.handle(node);
+  }
+
+  @Override
   public void handle(ASTMCImportStatement node) {
     getAdaptations4Ast().clearVariants(node);
     MCBasicTypesHandler.super.handle(node);
@@ -79,6 +86,12 @@ public class MCBasicTypesBindingVariantsVisitor
     } else {
       Log.warn("Unexpected! ASTMCQualifiedType without type info: " + refType.getMCQualifiedName());
     }
+  }
+
+  @Override
+  public void endVisit(ASTMCPrimitiveType node) {
+    // keep primitives as is
+    getAdaptations4Ast().addVariant(node, getAdaptationContext().createVariant());
   }
 
   @Override
