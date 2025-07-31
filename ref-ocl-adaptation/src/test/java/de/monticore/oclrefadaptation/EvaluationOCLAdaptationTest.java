@@ -143,4 +143,17 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "simple/typeMIOut.ocl");
     }
   }
+
+  @Nested
+  class Auction {
+    @Test
+    void singleInc() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "auction/singleInc/AuctionConc.cd",
+              "auction/AuctionRef.cd",
+              "auction/quantifiers2Ref.ocl",
+              "auction/singleInc/quantifiers2Out.ocl");
+    }
+  }
 }
