@@ -155,5 +155,15 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "auction/quantifiers2Ref.ocl",
               "auction/singleInc/quantifiers2Out.ocl");
     }
+
+    @Test
+    void multiInc() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "auction/multiInc/AuctionConc.cd",
+              "auction/AuctionRef.cd",
+              "auction/quantifiers2Ref.ocl",
+              "auction/multiInc/quantifiers2Out.ocl");
+    }
   }
 }
