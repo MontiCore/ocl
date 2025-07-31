@@ -4,6 +4,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
+import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ISymbol;
@@ -62,6 +63,8 @@ public class CommonExpressionsAdaptationVariantsVisitor
       // we have the incarnations which are possible in this context
       for (VariableSymbol fieldIncarnation : incarnations) {
         CommonExpressionsAdaptationVariant newVariant = parentVariant.copy();
+        // 1. Add strict binding for the selected variable
+        // (Implicitly adds type bindings for variable type)
         try {
           newVariant.getBasicSymbolsBindings().addVariableBinding(Binding.createStrict(refVariableSymbol, fieldIncarnation));
         } catch (BindingConflictException e) {
@@ -71,7 +74,23 @@ public class CommonExpressionsAdaptationVariantsVisitor
                   + fieldIncarnation.getFullName() + " in " + refExpr.get_SourcePositionStart(), e);
           continue;
         }
-        // TODO add implied bindings from original incarnation mapping
+        // 2. Add bindings from the original model attached to the method
+        BasicSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalBasicSymbolsIncMapping().getScopedBindings(fieldIncarnation);
+        try {
+          newVariant.getBasicSymbolsBindings().addAll(bindingsFromModel);
+        } catch (BindingConflictException e) {
+          // This is expected as some bindings implied by the incarnation may not be compatible
+          // with the existing bindings in the adaptation context.
+          // We ignore this incarnation. Example: employee.firstName == employeeBuilder.lastName
+          Log.debug("Ignoring incarnation due to binding conflict: "
+                  + fieldIncarnation.getFullName() + " in " + refExpr.get_SourcePositionStart(), LOG_NAME);
+          continue;
+        }
+        // 3. Specify the AST Adaptation / transformation
+        newVariant.addASTAdaptation(refExpr, adaptedNode -> {
+          adaptedNode.setName(fieldIncarnation.getName());
+          return adaptedNode;
+        });
         getAdaptations4Ast().addVariant(refExpr, newVariant);
       }
     }
@@ -100,6 +119,8 @@ public class CommonExpressionsAdaptationVariantsVisitor
       // we have the incarnations which are possible in this context
       for (FunctionSymbol incarnation : incarnations) {
         CommonExpressionsAdaptationVariant newVariant = parentVariant.copy();
+        // 1. Add strict binding for the selected function
+        // (Implicitly adds type bindings for return & parameter types)
         try {
           newVariant.getBasicSymbolsBindings().addFunctionBinding(Binding.createStrict(oclRefFunctionSymbol, incarnation));
         } catch (BindingConflictException e) {
@@ -109,7 +130,23 @@ public class CommonExpressionsAdaptationVariantsVisitor
                   + incarnation.getFullName() + " in " + refExpr.get_SourcePositionStart(), e);
           continue;
         }
-        // TODO add implied bindings from original incarnation mapping
+        // 2. Add bindings from the original model attached to the method
+        BasicSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalBasicSymbolsIncMapping().getScopedBindings(incarnation);
+        try {
+          newVariant.getBasicSymbolsBindings().addAll(bindingsFromModel);
+        } catch (BindingConflictException e) {
+          // This is expected as some bindings implied by the incarnation may not be compatible
+          // with the existing bindings in the adaptation context.
+          // We ignore this incarnation. Example: employee.firstName == employeeBuilder.lastName
+          Log.debug("Ignoring incarnation due to binding conflict: "
+                  + incarnation.getFullName() + " in " + refExpr.get_SourcePositionStart(), LOG_NAME);
+          continue;
+        }
+        // 3. Specify the AST Adaptation / transformation
+        newVariant.addASTAdaptation(refExpr, adaptedNode -> {
+          adaptedNode.setName(incarnation.getName());
+          return adaptedNode;
+        });
         getAdaptations4Ast().addVariant(refExpr, newVariant);
       }
     }
