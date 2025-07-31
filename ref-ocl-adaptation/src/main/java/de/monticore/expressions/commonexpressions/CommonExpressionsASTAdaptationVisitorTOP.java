@@ -5,6 +5,7 @@ import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisi
 import de.monticore.expressions.expressionsbasis._ast.ASTArguments;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.refadaptation.AbstractAdaptationVisitor;
+import de.monticore.refadaptation.IASTAdaptation;
 import de.monticore.refadaptation.RefAdaptationUtils;
 
 import java.util.List;
@@ -18,7 +19,12 @@ public class CommonExpressionsASTAdaptationVisitorTOP
   public void endVisit(ASTEqualsExpression expr) {
     List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
     for (CommonExpressionsAdaptationVariant variant : variants) {
+      // 1. Default adaptation (links to adapted child nodes)
       ASTEqualsExpression adaptedNode = adapt(expr, variant);
+      // 2. Apply AST adaptations registered specifically for this variant
+      for (IASTAdaptation<ASTEqualsExpression> adaptationFun : variant.getASTAdaptations(expr)) {
+        adaptedNode = adaptationFun.adapt(adaptedNode);
+      }
       variant.setAdaptedNode(expr, adaptedNode);
     }
   }
@@ -42,7 +48,12 @@ public class CommonExpressionsASTAdaptationVisitorTOP
   public void endVisit(ASTBooleanNotExpression expr) {
     List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
     for (CommonExpressionsAdaptationVariant variant : variants) {
+      // 1. Default adaptation (links to adapted child nodes)
       ASTBooleanNotExpression adaptedNode = adapt(expr, variant);
+      // 2. Apply AST adaptations registered specifically for this variant
+      for (IASTAdaptation<ASTBooleanNotExpression> adaptationFun : variant.getASTAdaptations(expr)) {
+        adaptedNode = adaptationFun.adapt(adaptedNode);
+      }
       variant.setAdaptedNode(expr, adaptedNode);
     }
   }
@@ -59,7 +70,12 @@ public class CommonExpressionsASTAdaptationVisitorTOP
   public void endVisit(ASTLogicalNotExpression expr) {
     List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
     for (CommonExpressionsAdaptationVariant variant : variants) {
+      // 1. Default adaptation (links to adapted child nodes)
       ASTLogicalNotExpression adaptedNode = adapt(expr, variant);
+      // 2. Apply AST adaptations registered specifically for this variant
+      for (IASTAdaptation<ASTLogicalNotExpression> adaptationFun : variant.getASTAdaptations(expr)) {
+        adaptedNode = adaptationFun.adapt(adaptedNode);
+      }
       variant.setAdaptedNode(expr, adaptedNode);
     }
   }
@@ -76,7 +92,12 @@ public class CommonExpressionsASTAdaptationVisitorTOP
   public void endVisit(ASTBracketExpression expr) {
     List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
     for (CommonExpressionsAdaptationVariant variant : variants) {
+      // 1. Default adaptation (links to adapted child nodes)
       ASTBracketExpression adaptedNode = adapt(expr, variant);
+      // 2. Apply AST adaptations registered specifically for this variant
+      for (IASTAdaptation<ASTBracketExpression> adaptationFun : variant.getASTAdaptations(expr)) {
+        adaptedNode = adaptationFun.adapt(adaptedNode);
+      }
       variant.setAdaptedNode(expr, adaptedNode);
     }
   }
@@ -99,7 +120,12 @@ public class CommonExpressionsASTAdaptationVisitorTOP
      */
     List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
     for (CommonExpressionsAdaptationVariant variant : variants) {
+      // 1. Default adaptation (links to adapted child nodes)
       ASTFieldAccessExpression adaptedNode = adapt(expr, variant);
+      // 2. Apply AST adaptations registered specifically for this variant
+      for (IASTAdaptation<ASTFieldAccessExpression> adaptationFun : variant.getASTAdaptations(expr)) {
+        adaptedNode = adaptationFun.adapt(adaptedNode);
+      }
       variant.setAdaptedNode(expr, adaptedNode);
     }
   }
@@ -119,7 +145,12 @@ public class CommonExpressionsASTAdaptationVisitorTOP
   public void endVisit(ASTCallExpression expr) {
     List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
     for (CommonExpressionsAdaptationVariant variant : variants) {
+      // 1. Default adaptation (links to adapted child nodes)
       ASTCallExpression adaptedNode = adapt(expr, variant);
+      // 2. Apply AST adaptations registered specifically for this variant
+      for (IASTAdaptation<ASTCallExpression> adaptationFun : variant.getASTAdaptations(expr)) {
+        adaptedNode = adaptationFun.adapt(adaptedNode);
+      }
       variant.setAdaptedNode(expr, adaptedNode);
     }
   }
