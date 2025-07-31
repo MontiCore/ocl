@@ -1,12 +1,10 @@
 package de.monticore.oclrefadaptation;
 
 import de.monticore.cd4code.CD4CodeMill;
-import de.monticore.cd4code._symboltable.ICD4CodeScope;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttributeTOP;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
-import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.symbols.OOSymbolsBindings;
 import de.monticore.symbols.OOSymbolsIncMapping;
 import de.monticore.symbols.OOSymbolsLocalIncMapping;
@@ -18,7 +16,6 @@ import de.monticore.symbols.oosymbols._symboltable.*;
 import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;

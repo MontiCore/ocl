@@ -1,0 +1,92 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram AuctionCD {
+
+  class Date;
+  class Time {
+      static Time now();
+      boolean lessThan(Time that);
+  }
+
+  public class AllData {
+    ChatMessage welcomeMsg;
+    <<ref="auction">> java.util.List<PublicAuction> publicAuction;
+    <<ref="auction">> java.util.List<PrivateAuction> privateAuction;
+  }
+
+  public class Name {}
+
+  public class Company {
+    java.lang.String name;
+  }
+
+  <<ref="Auction">> public class PublicAuction {
+    int numberOfBids;
+    int auctionIdent;
+    AuctionStatus status;
+    Time startTime;
+    Time closingTime;
+    Time finishTime;
+  }
+
+  <<ref="Auction">> public class PrivateAuction {
+    int numberOfBids;
+    int auctionIdent;
+    AuctionStatus status;
+    Time startTime;
+    Time closingTime;
+    Time finishTime;
+  }
+
+  public enum AuctionStatus {
+    INITIAL,
+    RUNNING,
+    FINISHED;
+  }
+
+  <<ref="Message">> public class BidMessage {
+    Time time;
+  }
+
+  <<ref="Message">> public class ChatMessage {
+      Time time;
+    }
+
+  public class Policy;
+
+  <<ref="Person">> public class User {
+    boolean isActive;
+    void setActive(boolean active);
+    boolean getActive();
+  }
+
+  public class Student extends User {
+    void demandForDiscount();
+  }
+
+  public class Betreuer extends User{
+  }
+
+  public class Building {
+    double height();
+    double width();
+    double length();
+  }
+
+
+  association AllData <-> User [*] <<ordered>>;
+  <<ref="participants">> association publicAuctionNormalParticipants [*] PublicAuction (publicAuctions) <-> (normalBidder) User [*] <<ordered>>;
+  <<ref="participants">> association publicAuctionVipParticipants [*] PublicAuction (privateAuctions) <-> (vipBidder) User [*] <<ordered>>;
+  <<ref="participants">> association privateAuctionNormalParticipants [*] PrivateAuction (publicAuctions) <-> (normalBidder) User [*] <<ordered>>;
+  <<ref="participants">> association privateAuctionVipParticipants [*] PrivateAuction (privateAuctions) <-> (vipBidder) User [*] <<ordered>>;
+  association [*] User <-> Company [1];
+  association User (bidder) <-> BidMessage [*] <<ordered>>;
+  association User (bidder) <-> ChatMessage [*] <<ordered>>;
+  association PublicAuction <-> BidMessage [*] <<ordered>>;
+  association PublicAuction <-> ChatMessage [*] <<ordered>>;
+  association PrivateAuction <-> BidMessage [*] <<ordered>>;
+  association PrivateAuction <-> ChatMessage [*] <<ordered>>;
+  association PublicAuction -> Policy [1];
+  association PrivateAuction -> Policy [1];
+
+}
