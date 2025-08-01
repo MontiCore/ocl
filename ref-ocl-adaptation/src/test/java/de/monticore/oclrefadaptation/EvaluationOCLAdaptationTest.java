@@ -101,13 +101,31 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
   @Nested
   class Banking {
     @Test
-    void simpleRenaming() {
+    void singleInc() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testAdaptedEqualsExpected(
-              "banking/BankingConc.cd",
+              "banking/singleInc/BankingConc.cd",
               "banking/BankingRef.cd",
               "banking/BankingRef.ocl",
-              "banking/BankingOut.ocl");
+              "banking/singleInc/BankingOut.ocl");
+    }
+
+    /**
+     * In this example, we have two incarnations of 'Account', 'BankAccount' and 'PrivateAccount'.
+     * Also, we have two incarnations of 'Bank.overallBalance', 'overallPrivateAccountsBalance' and
+     * 'overallBusinessAccountsBalance'. However, we do not want to get adapted OCL that combines
+     * usage of the 'Bank.privateAccount' association role with the field 'Bank.overallBusinessAccountsBalance'.
+     * Therefore, we manually add bindings via stereotype to the two field incarnations binding the
+     * 'Account' type either to 'BusinessAccount' or 'PrivateAccount'.
+     */
+    @Test
+    void multiIncWithBind() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "banking/multiIncWithBind/BankingConc.cd",
+              "banking/BankingRef.cd",
+              "banking/BankingRef.ocl",
+              "banking/multiIncWithBind/BankingOut.ocl");
     }
   }
 

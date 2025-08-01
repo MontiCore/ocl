@@ -1,0 +1,22 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+ocl bankingChecks {
+  context Banking.SEPABank b inv OverallBalanceCorrect:
+    let
+      Set<double> balances = { acc.balance | Banking.PrivateAccount acc in b.privateAccount };
+      double calculatedBalance = iterate { balance in balances;
+                                    double accumulated = 0.0 :
+                                    accumulated = accumulated + balance }
+    in
+      b.privateAccountsOverallBalance == calculatedBalance;
+
+
+  context Banking.SEPABank b inv OverallBalanceCorrect:
+    let
+      Set<double> balances = { acc.balance | Banking.BusinessAccount acc in b.businessAccount };
+      double calculatedBalance = iterate { balance in balances;
+                                    double accumulated = 0.0 :
+                                    accumulated = accumulated + balance }
+    in
+      b.businessAccountsOverallBalance == calculatedBalance;
+}
