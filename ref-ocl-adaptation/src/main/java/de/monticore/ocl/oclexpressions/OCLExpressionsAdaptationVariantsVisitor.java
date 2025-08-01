@@ -58,6 +58,13 @@ public class OCLExpressionsAdaptationVariantsVisitor
   }
 
   @Override
+  public void traverse(ASTExistsExpression expr) {
+    List<ASTNode> children = new ArrayList<>(expr.getInDeclarationList());
+    children.add(expr.getExpression());
+    traverseForConsistentVariants(expr, children);
+  }
+
+  @Override
   public void traverse(ASTLetinExpression expr) {
     List<ASTNode> children = new ArrayList<>(expr.getOCLVariableDeclarationList());
     children.add(expr.getExpression());
