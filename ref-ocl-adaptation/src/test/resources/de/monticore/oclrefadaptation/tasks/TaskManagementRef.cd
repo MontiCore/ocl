@@ -2,6 +2,7 @@ classdiagram TaskManagementRef {
 
   class Company {
     boolean isTeamBehindSchedule(int deadline);
+    int getTotalRemainingWorkload();
   }
 
   class Employee {

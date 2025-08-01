@@ -1,10 +1,10 @@
-ocl EmployeeBehindSchedule {
+ocl BehindSchedule {
   context boolean TaskManagementConc.TeamMember.isOffTrack(int deadline)
     post:
       let
        Set<int> workloads = { task.workload | TaskManagementConc.NormalTask task in this.assignedNormalTasks, task.completed == false };
-       double totalWorkload = iterate { w in workloads;
-                                         double accumulated = 0.0 :
+       int totalWorkload = iterate { w in workloads;
+                                         int accumulated = 0 :
                                          accumulated = accumulated + w }
       in
         totalWorkload > deadline;

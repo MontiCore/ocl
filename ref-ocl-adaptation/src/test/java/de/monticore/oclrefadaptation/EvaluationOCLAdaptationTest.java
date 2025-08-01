@@ -189,13 +189,14 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
   class TaskManagement {
 
     @Test
-    void singleInc() {
+    void singleIncBehindSchedule() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testAdaptedEqualsExpected(
               "tasks/singleInc/TaskManagementConc.cd",
               "tasks/TaskManagementRef.cd",
-              "tasks/TaskManagementRef.ocl",
-              "tasks/singleInc/TaskManagementOut.ocl");
+              "tasks/BehindScheduleRef.ocl",
+              "tasks/singleInc/BehindScheduleOut.ocl");
     }
+
   }
 }
