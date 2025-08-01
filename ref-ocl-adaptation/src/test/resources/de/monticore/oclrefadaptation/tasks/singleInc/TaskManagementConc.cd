@@ -1,0 +1,21 @@
+classdiagram TaskManagementConc {
+
+  class Company {
+     boolean isTeamBehindSchedule(int deadline);
+     int getTotalRemainingWorkload();
+   }
+
+  <<ref="Employee">> class TeamMember {
+    <<ref="isBehindSchedule">> boolean isOffTrack(int deadline);
+  }
+
+  <<ref="Task">> class NormalTask {
+    int id;
+    int workload;
+    int deadline; // integer instead of DateTime for simplicity
+    boolean completed;
+  }
+
+  association Company -> TeamMember [*];
+  association TeamMember -> (assignedNormalTasks) NormalTask [*];
+}

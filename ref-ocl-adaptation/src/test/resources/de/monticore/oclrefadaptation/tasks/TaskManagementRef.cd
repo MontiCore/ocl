@@ -1,0 +1,21 @@
+classdiagram TaskManagementRef {
+
+  class Company {
+    boolean isTeamBehindSchedule(int deadline);
+    int getTotalRemainingWorkload();
+  }
+
+  class Employee {
+    boolean isBehindSchedule(int deadline);
+  }
+
+  class Task {
+    int id;
+    int workload;
+    int deadline; // integer instead of DateTime for simplicity
+    boolean completed;
+  }
+
+  association Company -> Employee [*];
+  association Employee -> (assignedTasks) Task [*];
+}
