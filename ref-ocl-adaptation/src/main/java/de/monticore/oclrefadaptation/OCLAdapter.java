@@ -63,11 +63,11 @@ public class OCLAdapter {
       List<ASTOCLCompilationUnit> refOCLArtifacts) {
 
     OOSymbolsIncMapping incMapping = new LegacyCDIncarnationMapping2OOSymbolsIncMapping(
-            createIncarnationMapping(concreteCD, referenceCD));
+            createIncarnationMapping(concreteCD, referenceCD), concreteCD, referenceCD);
 
     List<ASTOCLCompilationUnit> adaptedArtifacts = new ArrayList<>();
     for (ASTOCLCompilationUnit refOCL : refOCLArtifacts) {
-      List<ASTOCLCompilationUnit> adaptedOCL = oclRefAdapter.adapt(refOCL, CD4CodeMill.globalScope(), incMapping);
+      List<ASTOCLCompilationUnit> adaptedOCL = oclRefAdapter.adapt(refOCL, incMapping);
       if (adaptedOCL.isEmpty()) {
         Log.warn("0xA1234 No OCL artifacts adapted for the given reference artifact. ");
       }
