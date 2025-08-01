@@ -184,4 +184,18 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "auction/multiInc/quantifiers2Out.ocl");
     }
   }
+
+  @Nested
+  class TaskManagement {
+
+    @Test
+    void singleInc() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "tasks/singleInc/TaskManagementConc.cd",
+              "tasks/TaskManagementRef.cd",
+              "tasks/TaskManagementRef.ocl",
+              "tasks/singleInc/TaskManagementOut.ocl");
+    }
+  }
 }
