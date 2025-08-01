@@ -86,7 +86,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
     setExpressionsAdaptVis.setAdaptations4Ast(adaptations4Ast);
     adaptationTraverser.add4SetExpressions(setExpressionsAdaptVis);
 
-    CommonExpressionsAdaptationVariantsVisitor commonExpressionsBindingVis = new CommonExpressionsAdaptationVariantsVisitor();
+    OCLCommonExpressionsAdaptationVariantsVisitor commonExpressionsBindingVis = new OCLCommonExpressionsAdaptationVariantsVisitor();
     commonExpressionsBindingVis.setContextHolder(contextHolder);
     commonExpressionsBindingVis.setAdaptations4Ast(adaptations4Ast);
     bindingVariantsTraverser.add4CommonExpressions(commonExpressionsBindingVis);

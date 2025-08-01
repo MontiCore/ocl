@@ -1,6 +1,5 @@
 package de.monticore.oclrefadaptation;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttributeTOP;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
@@ -13,7 +12,10 @@ import de.monticore.symbols.OOSymbolsRestrictedIncMapping;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
-import de.monticore.symbols.oosymbols._symboltable.*;
+import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsScope;
+import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
+import de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol;
 import de.monticore.symboltable.IScope;
 import de.monticore.symboltable.ISymbol;
 
@@ -87,23 +89,22 @@ public class LegacyCDIncarnationMapping2OOSymbolsIncMapping implements OOSymbols
   @Override
   public Set<TypeSymbol> getIncarnations(TypeSymbol typeSymbol) {
     // TODO solve this in another way
-    TypeSymbol cd4cSymbol = CD4CodeMill.globalScope().resolveType(typeSymbol.getFullName()).orElseThrow();
+    Optional<TypeSymbol> cd4cSymbol = getReferenceScope()
+            .resolveTypeDown(SymbolUtil.getFullNameWithoutCD(typeSymbol));
     // TODO move to CDIncarnationMapping
-    if (!cd4cSymbol.isPresentAstNode()) {
+    if (cd4cSymbol.isEmpty() || !cd4cSymbol.get().isPresentAstNode()) {
       return Collections.emptySet();
     }
-    return cdIncarnationMapping.getIncarnations(cd4cSymbol);
+    return cdIncarnationMapping.getIncarnations(cd4cSymbol.get());
   }
 
   @Override
   public Set<VariableSymbol> getIncarnations(VariableSymbol variableSymbol) {
-    // TODO solve this in another way
-    Optional<FieldSymbol> cd4cSymbolOpt = CD4CodeMill.globalScope().resolveField(variableSymbol.getFullName());
-    // TODO move to CDIncarnationMapping
-    if (cd4cSymbolOpt.isEmpty() || !cd4cSymbolOpt.get().isPresentAstNode()) {
+    if (variableSymbol instanceof FieldSymbol) {
+      return new HashSet<>(getIncarnations((FieldSymbol) variableSymbol));
+    } else {
       return Collections.emptySet();
     }
-    return new HashSet<>(getIncarnations(cd4cSymbolOpt.get()));
   }
 
   @Override
@@ -111,7 +112,7 @@ public class LegacyCDIncarnationMapping2OOSymbolsIncMapping implements OOSymbols
     if (functionSymbol instanceof MethodSymbol) {
       return new HashSet<>(getIncarnations((MethodSymbol) functionSymbol));
     } else {
-      throw new UnsupportedOperationException("only method symbols supported yet");
+      return Collections.emptySet();
     }
   }
 

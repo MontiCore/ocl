@@ -1,6 +1,5 @@
 package de.monticore.expressions.expressionsbasis;
 
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor2;
@@ -16,6 +15,15 @@ import de.se_rwth.commons.logging.Log;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Adaptation variant visitor for the ExpressionsBasis language.
+ * <h5>Adaptations</h5>
+ * <code>NameExpression</code>:
+ * <ul>
+ *   <li>One variant for each incarnation of the related VariableSymbol</li>
+ *   <li>One variant for each incarnation of the related FunctionSymbol</li>
+ * </ul>
+ */
 public class ExpressionsBasisAdaptationVariantsVisitor
         extends AbstractAdaptationVisitor<ExpressionsBasisAdaptationContext>
         implements ExpressionsBasisVisitor2 {
@@ -47,8 +55,13 @@ public class ExpressionsBasisAdaptationVariantsVisitor
     }
   }
 
+  /**
+   * Introduces one variant for each incarnation of the given variable symbol.
+   *
+   * @param refExpr the ASTNameExpression that references the variable symbol
+   * @param refVarSymbol the VariableSymbol from the reference model
+   */
   protected void addVariantsForVariableSymbol(ASTNameExpression refExpr, VariableSymbol refVarSymbol) {
-    // If we have a VariableSymbol, get all incarnations and create variants for it
     // TODO maybe add "isReferenceSymbol" so we can check if the incarnation mapping is applicable here?
     //  then, if it is applicable but get zero incarnations -> we know we ran into a conflict
     //        if not, we can safely ignore it an create a default variant
