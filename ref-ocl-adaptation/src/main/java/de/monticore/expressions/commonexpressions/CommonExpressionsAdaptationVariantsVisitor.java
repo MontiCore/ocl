@@ -1,6 +1,5 @@
 package de.monticore.expressions.commonexpressions;
 
-import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
@@ -16,6 +15,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+/**
+ * Adaptation variant visitor for the CommonExpressions language.
+ * <h5>Adaptations</h5>
+ * <code>FieldAccessExpression</code>:
+ * <ul>
+ *   <li>One variant for each incarnation of the related VariableSymbol</li>
+ *   <li>One variant for each incarnation of the related FunctionSymbol</li>
+ * </ul>
+ */
 public class CommonExpressionsAdaptationVariantsVisitor
         extends CommonExpressionsAdaptationVariantsVisitorTOP {
 
@@ -24,18 +32,16 @@ public class CommonExpressionsAdaptationVariantsVisitor
   @Override
   public void endVisit(ASTFieldAccessExpression refExpr) {
     /*
-     * TODO Write the same logic for MethodSymbol/FunctionSymbol
-     *  -> next: maybe we can refactor this to a common helper method for introducing
+     * TODO maybe we can refactor this to a common helper method for introducing
      *     variants for each incarnation of some symbol?
      */
-
-    // 2. Get the source symbol for the field name
+    // 1. Get the source symbol for the field name
     Optional<ISymbol> sourceSymbolOpt = TypeCheck3.typeOf(refExpr).getSourceInfo().getSourceSymbol();
     if (sourceSymbolOpt.isPresent()) {
       ISymbol sourceSymbol = sourceSymbolOpt.get();
       System.out.println("FieldAccessExpression Variable Source symbol: " + sourceSymbol);
       System.out.println("symbol full name: " + sourceSymbol.getFullName());
-      // 3. identify variants depending on the symbol kind
+      // 2. identify variants depending on the symbol kind
       if (sourceSymbol instanceof VariableSymbol) {
         addVariantsForEachVariableIncarnation(refExpr, (VariableSymbol) sourceSymbol);
       } else if (sourceSymbol instanceof FunctionSymbol) {
@@ -50,6 +56,13 @@ public class CommonExpressionsAdaptationVariantsVisitor
     }
   }
 
+  /**
+   * Introduces one variant for each incarnation of the given variable symbol (including field
+   * symbols).
+   *
+   * @param refExpr the ASTFieldAccessExpression that references the variable
+   * @param refVariableSymbol the VariableSymbol form the reference model
+   */
   protected void addVariantsForEachVariableIncarnation(ASTFieldAccessExpression refExpr, VariableSymbol refVariableSymbol) {
     // 1. get all variants of the parent expression
     List<CommonExpressionsAdaptationVariant> parentVariants = getAdaptations4Ast().getVariants(refExpr.getExpression());
@@ -113,31 +126,19 @@ public class CommonExpressionsAdaptationVariantsVisitor
     }
   }
 
-  protected void addVariantsForEachFunctionIncarnation(ASTFieldAccessExpression refExpr, FunctionSymbol oclRefFunctionSymbol) {
-    // TODO Decide / discuss where we need to do this translation from variable symbols in OCL scope to CD4C symbols
-    /*
-     * two important considerations:
-     * - we use resolveDown as we are only interested in symbols from the reference model.
-     *   Otherwise, we might get errors because of multiple symbols with same name!
-     * - we have to use the "internal qualified name" (full name without diagram name). Otherwise,
-     *   "resolveDown" will not enter the sub scopes of the reference model. It only checks scopes
-     *   where the simple name matches the first part of the qualified name to be resoled!
-     */
-    Optional<FunctionSymbol> cd4cTranslatedSymbolOpt = getAdaptationContext()
-            .getOriginalOOSymbolsIncMapping().getReferenceScope()
-            .resolveFunctionDown(SymbolUtil.getFullNameWithoutCD(oclRefFunctionSymbol));
-
-    if (cd4cTranslatedSymbolOpt.isEmpty()) {
-      Log.info("Could not resolve FunctionSymbol: " + oclRefFunctionSymbol.getFullName() + " in " + refExpr.get_SourcePositionStart(), LOG_NAME);
-      // TODO Better have a "global" fallback in the handle in case no variant was published by ay visitor?
-      passChildVariantsUpwards(refExpr, refExpr.getExpression());
-      return;
-    }
+  /**
+   * Introduces one variant for each incarnation of the given function symbol (including method
+   * symbols).
+   *
+   * @param refExpr the ASTFieldAccessExpression that references the function
+   * @param refFunctionSymbol the FunctionSymbol from the reference model
+   */
+  protected void addVariantsForEachFunctionIncarnation(ASTFieldAccessExpression refExpr, FunctionSymbol refFunctionSymbol) {
     // 1. get all variants of the parent expression
     List<CommonExpressionsAdaptationVariant> parentVariants = getAdaptations4Ast().getVariants(refExpr.getExpression());
     // 2. for each variant we can now check the available FieldSymbols incarnations
     for (CommonExpressionsAdaptationVariant parentVariant : parentVariants) {
-      Set<FunctionSymbol> incarnations = getAdaptationContext().getBasicSymbolsIncMapping().getIncarnations(cd4cTranslatedSymbolOpt.get());
+      Set<FunctionSymbol> incarnations = getAdaptationContext().getBasicSymbolsIncMapping().getIncarnations(refFunctionSymbol);
       if (incarnations.isEmpty()) {
         // no function symbol, use the constraints from the parent expression
         // TODO pass the parent variant upwards vs. error. vs. no variant?
@@ -151,7 +152,7 @@ public class CommonExpressionsAdaptationVariantsVisitor
         // 1. Add strict binding for the selected function
         // (Implicitly adds type bindings for return & parameter types)
         try {
-          newVariant.getBasicSymbolsBindings().addFunctionBinding(Binding.createStrict(oclRefFunctionSymbol, incarnation));
+          newVariant.getBasicSymbolsBindings().addFunctionBinding(Binding.createStrict(refFunctionSymbol, incarnation));
         } catch (BindingConflictException e) {
           // This is unexpected as the current adaptation context should only return incarnations
           // that are valid in the current context, i.e., no conflicts with existing bindings.
