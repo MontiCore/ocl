@@ -3,6 +3,7 @@ package de.monticore.oclrefadaptation;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4codebasis._ast.ASTCDMethod;
 import de.monticore.cdbasis._ast.ASTCDAttributeTOP;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.symbols.OOSymbolsBindings;
@@ -27,8 +28,30 @@ import java.util.stream.Collectors;
 public class LegacyCDIncarnationMapping2OOSymbolsIncMapping implements OOSymbolsIncMapping {
 
   private CDIncarnationMapping cdIncarnationMapping;
-  public LegacyCDIncarnationMapping2OOSymbolsIncMapping(CDIncarnationMapping cdIncarnationMapping) {
+  private ASTCDCompilationUnit concreteCD;
+  private ASTCDCompilationUnit referenceCD;
+
+  public LegacyCDIncarnationMapping2OOSymbolsIncMapping(
+          CDIncarnationMapping cdIncarnationMapping,
+          ASTCDCompilationUnit concreteCD,
+          ASTCDCompilationUnit referenceCD) {
     this.cdIncarnationMapping = cdIncarnationMapping;
+    this.concreteCD = concreteCD;
+    this.referenceCD = referenceCD;
+  }
+
+  @Override
+  public IOOSymbolsScope getReferenceScope() {
+    // TODO Once a incarnation mapping can related multiple concrete and reference artifacts,
+    // this needs to be adapted.
+    return referenceCD.getEnclosingScope();
+  }
+
+  @Override
+  public IOOSymbolsScope getConcreteScope() {
+    // TODO Once a incarnation mapping can related multiple concrete and reference artifacts,
+    // this needs to be adapted.
+    return concreteCD.getEnclosingScope();
   }
 
   @Override

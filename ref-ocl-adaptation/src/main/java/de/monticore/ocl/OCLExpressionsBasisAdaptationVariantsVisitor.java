@@ -113,8 +113,8 @@ public class OCLExpressionsBasisAdaptationVariantsVisitor extends ExpressionsBas
             .getIncarnations(variableSymbol);
     if (varIncarnations.isEmpty()) {
       // maybe the variable symbols needs to be translated to a CD4Code symbol first?
-      // TODO CD4CodeMill.globalScope() vs. getAdaptationContext().getOriginalBasicSymbolsIncMapping()
-      Optional<VariableSymbol> cd4cTranslatedSymbolOpt = CD4CodeMill.globalScope()
+      Optional<VariableSymbol> cd4cTranslatedSymbolOpt = getAdaptationContext()
+              .getOriginalBasicSymbolsIncMapping().getReferenceScope()
               .resolveVariable(variableSymbol.getFullName());
       if (cd4cTranslatedSymbolOpt.isPresent()) {
         super.addVariantsForVariableSymbol(refExpr, cd4cTranslatedSymbolOpt.get());

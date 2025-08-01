@@ -65,7 +65,8 @@ public class OCLASTAdaptationVisitor extends OCLASTAdaptationVisitorTOP {
 
   @Override
   protected ASTOCLMethodSignature adapt(ASTOCLMethodSignature original, OCLAdaptationVariant variant) {
-    MethodSymbol refMethodSymbol = OCLAdaptationUtils.resolveMethodSymbol(getAdaptationContext(), original);
+    MethodSymbol refMethodSymbol = OCLAdaptationUtils.resolveMethodSymbol(getAdaptationContext()
+            .getOriginalOOSymbolsIncMapping().getReferenceScope(), original);
     // NOTE: we still reuse the generated "adapt" method instead of "deepClone". In case we have no
     // binding for the method symbol, we still want be able to adapt, e.g. only a return type
     ASTOCLMethodSignature adapted = super.adapt(original, variant);

@@ -161,9 +161,8 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
    * @return a context representing the given incarnation mapping
    */
   protected OCLAdaptationContext createAdaptationContext(
-          IOOSymbolsGlobalScope iooSymbolsGlobalScope,
           OOSymbolsIncMapping ooSymbolsIncMapping) {
-    return new OCLAdaptationContextImpl(iooSymbolsGlobalScope, ooSymbolsIncMapping);
+    return new OCLAdaptationContextImpl(ooSymbolsIncMapping);
   }
 
   /**
@@ -174,7 +173,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<OCLAda
    * @return a list of adapted AST nodes of type
    * @param <T> the type of ASTNode to adapt
    */
-  public <T extends ASTNode> List<T> adapt(T refNode, IOOSymbolsGlobalScope iooSymbolsGlobalScope, OOSymbolsIncMapping ooSymbolsIncMapping) {
-    return adapt(refNode, createAdaptationContext(iooSymbolsGlobalScope, ooSymbolsIncMapping));
+  public <T extends ASTNode> List<T> adapt(T refNode, OOSymbolsIncMapping ooSymbolsIncMapping) {
+    return adapt(refNode, createAdaptationContext(ooSymbolsIncMapping));
   }
 }

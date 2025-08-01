@@ -14,37 +14,30 @@ import de.monticore.symbols.oosymbols._symboltable.IOOSymbolsGlobalScope;
  */
 public class OCLAdaptationContextImpl implements OCLAdaptationContext {
 
-  private final IOOSymbolsGlobalScope ooSymbolsGlobalScope;
   private final OOSymbolsIncMapping ooSymbolsIncMapping;
   private final OOSymbolsBindings ooSymbolsBindings;
   private final OOSymbolsLocalIncMapping ooSymbolsLocalIncMapping;
 
-  public OCLAdaptationContextImpl(
-          IOOSymbolsGlobalScope ooSymbolsGlobalScope,
-          OOSymbolsIncMapping ooSymbolsIncMapping) {
-    this(ooSymbolsGlobalScope, ooSymbolsIncMapping, new OOSymbolsBindingsImpl());
+  public OCLAdaptationContextImpl(OOSymbolsIncMapping ooSymbolsIncMapping) {
+    this(ooSymbolsIncMapping, new OOSymbolsBindingsImpl());
   }
 
   protected OCLAdaptationContextImpl(
-          IOOSymbolsGlobalScope ooSymbolsGlobalScope,
           OOSymbolsIncMapping ooSymbolsIncMapping,
           OOSymbolsBindings ooSymbolsBindings) {
     /*
      * We initialize the local incarnation mapping once to avoid repeated creation of new instances
      * when getOOSymbolsIncMapping() is called.
      */
-    this(ooSymbolsGlobalScope,
-        ooSymbolsIncMapping,
+    this(ooSymbolsIncMapping,
         ooSymbolsBindings,
         new OOSymbolsRestrictedIncMapping(ooSymbolsIncMapping, ooSymbolsBindings));
   }
 
   protected OCLAdaptationContextImpl(
-          IOOSymbolsGlobalScope ooSymbolsGlobalScope,
           OOSymbolsIncMapping ooSymbolsIncMapping,
           OOSymbolsBindings ooSymbolsBindings,
           OOSymbolsLocalIncMapping ooSymbolsLocalIncMapping) {
-    this.ooSymbolsGlobalScope = ooSymbolsGlobalScope;
     this.ooSymbolsIncMapping = ooSymbolsIncMapping;
     this.ooSymbolsBindings = ooSymbolsBindings;
     this.ooSymbolsLocalIncMapping = ooSymbolsLocalIncMapping;
@@ -64,7 +57,6 @@ public class OCLAdaptationContextImpl implements OCLAdaptationContext {
   @Override
   public OCLAdaptationContext fork() {
     return new OCLAdaptationContextImpl(
-        ooSymbolsGlobalScope,
         ooSymbolsIncMapping,
         ooSymbolsBindings.copy());
   }
@@ -98,11 +90,6 @@ public class OCLAdaptationContextImpl implements OCLAdaptationContext {
   @Override
   public OOSymbolsIncMapping getOriginalOOSymbolsIncMapping() {
     return ooSymbolsIncMapping;
-  }
-
-  @Override
-  public IOOSymbolsGlobalScope getOOSymbolsGlobalScope() {
-    return ooSymbolsGlobalScope;
   }
 
   @Override
