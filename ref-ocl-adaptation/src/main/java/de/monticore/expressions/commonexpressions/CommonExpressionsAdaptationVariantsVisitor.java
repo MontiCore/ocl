@@ -11,6 +11,7 @@ import de.monticore.symboltable.ISymbol;
 import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -61,6 +62,7 @@ public class CommonExpressionsAdaptationVariantsVisitor
         continue;
       }
       // we have the incarnations which are possible in this context
+      List<CommonExpressionsAdaptationVariant> newVariants = new ArrayList<>();
       for (VariableSymbol fieldIncarnation : incarnations) {
         CommonExpressionsAdaptationVariant newVariant = parentVariant.copy();
         // 1. Add strict binding for the selected variable
@@ -92,7 +94,22 @@ public class CommonExpressionsAdaptationVariantsVisitor
           return adaptedNode;
         });
         getAdaptations4Ast().addVariant(refExpr, newVariant);
+        newVariants.add(newVariant);
       }
+      /*
+       * IMPORTANT: If we do not replace the variants of the "parent" / left expression,
+       * the subtree of the left expression looses connection to the higher level variants.
+       * (same issue as in traverseForConsistentVariants)
+       * TODO Try to introduce a helper method for this kind of adaption:
+       *   input: - a list of source variants from some child expression
+       *          - a function to generate X variants from a parent variant
+       *   output: - a list of new variants that replace the parent variants
+       *
+       * TODO likely we can reuse the logic from 'AbstractAdaptationHandler.traverseForEachVariant'
+       *  then traverseForEachVariant would reuse this new function and adds the traversal behavior
+       *  there
+       */
+      getAdaptations4Ast().replaceVariant(parentVariant, newVariants);
     }
   }
 
@@ -116,6 +133,7 @@ public class CommonExpressionsAdaptationVariantsVisitor
         getAdaptations4Ast().addVariant(refExpr, parentVariant);
         continue;
       }
+      List<CommonExpressionsAdaptationVariant> newVariants = new ArrayList<>();
       // we have the incarnations which are possible in this context
       for (FunctionSymbol incarnation : incarnations) {
         CommonExpressionsAdaptationVariant newVariant = parentVariant.copy();
@@ -148,7 +166,10 @@ public class CommonExpressionsAdaptationVariantsVisitor
           return adaptedNode;
         });
         getAdaptations4Ast().addVariant(refExpr, newVariant);
+        newVariants.add(newVariant);
       }
+      // TODO replace with helper method (see above)
+      getAdaptations4Ast().replaceVariant(parentVariant, newVariants);
     }
   }
 

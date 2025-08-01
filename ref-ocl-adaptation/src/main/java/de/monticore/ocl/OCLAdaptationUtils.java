@@ -8,8 +8,6 @@ import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.Optional;
-
 public class OCLAdaptationUtils {
 
   private OCLAdaptationUtils() {
