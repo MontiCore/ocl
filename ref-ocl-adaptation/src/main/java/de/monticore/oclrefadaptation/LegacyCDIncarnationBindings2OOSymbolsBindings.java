@@ -5,8 +5,11 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdconcretization.util.MethodSignatureString;
 import de.monticore.cdconformance.inc.CDIncarnationBindings;
 import de.monticore.refadaptation.Binding;
+import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.symbols.OOSymbolsBindings;
+import de.monticore.symbols.OOSymbolsBindingsImpl;
 import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
+import de.monticore.symbols.basicsymbols.BasicSymbolsBindingsImpl;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -127,6 +130,11 @@ public class LegacyCDIncarnationBindings2OOSymbolsBindings implements OOSymbolsB
   }
 
   @Override
+  public OOSymbolsBindings getTypeImpliedBindings(Binding<TypeSymbol> binding) throws BindingConflictException {
+    return new OOSymbolsBindingsImpl();
+  }
+
+  @Override
   public Optional<Binding<VariableSymbol>> getBinding(VariableSymbol variableSymbol) {
     throw new UnsupportedOperationException("no variable symbols supported yet");
   }
@@ -202,6 +210,21 @@ public class LegacyCDIncarnationBindings2OOSymbolsBindings implements OOSymbolsB
   }
 
   @Override
+  public OOSymbolsBindings getOOTypeImpliedBindings(Binding<OOTypeSymbol> binding) throws BindingConflictException {
+    return new OOSymbolsBindingsImpl();
+  }
+
+  @Override
+  public OOSymbolsBindings getFieldImpliedBindings(Binding<FieldSymbol> binding) throws BindingConflictException {
+    return new OOSymbolsBindingsImpl();
+  }
+
+  @Override
+  public OOSymbolsBindings getMethodImpliedBindings(Binding<MethodSymbol> binding) throws BindingConflictException {
+    return new OOSymbolsBindingsImpl();
+  }
+
+  @Override
   public void addVariableBinding(Binding<VariableSymbol> binding) {
     throw new UnsupportedOperationException("read only");
   }
@@ -212,6 +235,11 @@ public class LegacyCDIncarnationBindings2OOSymbolsBindings implements OOSymbolsB
   }
 
   @Override
+  public OOSymbolsBindings getVariableImpliedBindings(Binding<VariableSymbol> binding) throws BindingConflictException {
+    return new OOSymbolsBindingsImpl();
+  }
+
+  @Override
   public void addFunctionBinding(Binding<FunctionSymbol> binding) {
     throw new UnsupportedOperationException("read only");
   }
@@ -219,6 +247,11 @@ public class LegacyCDIncarnationBindings2OOSymbolsBindings implements OOSymbolsB
   @Override
   public boolean isConflictingFunctionBinding(Binding<FunctionSymbol> binding) {
     throw new UnsupportedOperationException("read only");
+  }
+
+  @Override
+  public OOSymbolsBindings getFunctionImpliedBindings(Binding<FunctionSymbol> binding) throws BindingConflictException {
+    return new OOSymbolsBindingsImpl();
   }
 
   @Override
