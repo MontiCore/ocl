@@ -1,6 +1,6 @@
 package de.monticore.expressions.commonexpressions;
 
-import de.monticore.cd4code.CD4CodeMill;
+import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
@@ -115,7 +115,18 @@ public class CommonExpressionsAdaptationVariantsVisitor
 
   protected void addVariantsForEachFunctionIncarnation(ASTFieldAccessExpression refExpr, FunctionSymbol oclRefFunctionSymbol) {
     // TODO Decide / discuss where we need to do this translation from variable symbols in OCL scope to CD4C symbols
-    Optional<FunctionSymbol> cd4cTranslatedSymbolOpt = CD4CodeMill.globalScope().resolveFunction(oclRefFunctionSymbol.getFullName());
+    /*
+     * two important considerations:
+     * - we use resolveDown as we are only interested in symbols from the reference model.
+     *   Otherwise, we might get errors because of multiple symbols with same name!
+     * - we have to use the "internal qualified name" (full name without diagram name). Otherwise,
+     *   "resolveDown" will not enter the sub scopes of the reference model. It only checks scopes
+     *   where the simple name matches the first part of the qualified name to be resoled!
+     */
+    Optional<FunctionSymbol> cd4cTranslatedSymbolOpt = getAdaptationContext()
+            .getOriginalOOSymbolsIncMapping().getReferenceScope()
+            .resolveFunctionDown(SymbolUtil.getFullNameWithoutCD(oclRefFunctionSymbol));
+
     if (cd4cTranslatedSymbolOpt.isEmpty()) {
       Log.info("Could not resolve FunctionSymbol: " + oclRefFunctionSymbol.getFullName() + " in " + refExpr.get_SourcePositionStart(), LOG_NAME);
       // TODO Better have a "global" fallback in the handle in case no variant was published by ay visitor?
