@@ -129,5 +129,27 @@ public class CommonExpressionsAdaptationVariantsVisitorTOP
     CommonExpressionsHandler.super.handle(node);
   }
 
-  // TODO other handle methods
+  @Override
+  public void handle(ASTPlusPrefixExpression node) {
+    getAdaptations4Ast().clearVariants(node);
+    CommonExpressionsHandler.super.handle(node);
+  }
+
+  @Override
+  public void handle(ASTArrayAccessExpression node) {
+    getAdaptations4Ast().clearVariants(node);
+    CommonExpressionsHandler.super.handle(node);
+  }
+
+  @Override
+  public void handle(ASTConditionalExpression node) {
+    getAdaptations4Ast().clearVariants(node);
+    CommonExpressionsHandler.super.handle(node);
+  }
+
+  @Override
+  public void handle(ASTMinusPrefixExpression node) {
+    getAdaptations4Ast().clearVariants(node);
+    CommonExpressionsHandler.super.handle(node);
+  }
 }

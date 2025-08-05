@@ -29,10 +29,6 @@ public class CommonExpressionsASTAdaptationVisitorTOP
     }
   }
 
-  /*
-   * TODO use this. This is a demonstration that we can generate this efficient adaptation code for
-   *  every AST node in the language.
-   */
   protected ASTEqualsExpression adapt(ASTEqualsExpression original, CommonExpressionsAdaptationVariant variant) {
     ASTEqualsExpression adapted = CommonExpressionsMill.equalsExpressionBuilder().uncheckedBuild();
     Optional<ASTExpression> adaptedLeft = variant.getAdaptedNode(original.getLeft());
@@ -165,4 +161,6 @@ public class CommonExpressionsASTAdaptationVisitorTOP
     RefAdaptationUtils.deepCloneComments(original, adapted);
     return adapted;
   }
+
+  // TODO Add endVisit/adapt for missing AST nodes
 }

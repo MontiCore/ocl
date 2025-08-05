@@ -128,15 +128,15 @@ public class OCLExpressionsBasisAdaptationVariantsVisitor extends ExpressionsBas
   }
 
   @Override
-  protected void addVariantsForFunctionSymbol(ASTNameExpression refExpr, FunctionSymbol functionSymbol) {
+  protected void addVariantsForFunctionSymbol(ASTNameExpression refExpr, FunctionSymbol refFunctionSymbol) {
     Optional<FunctionSymbol> cd4cTranslatedSymbolOpt = getAdaptationContext()
             .getOriginalBasicSymbolsIncMapping().getReferenceScope()
-            .resolveFunctionDown(SymbolUtil.getFullNameWithoutCD(functionSymbol));
+            .resolveFunctionDown(SymbolUtil.getFullNameWithoutCD(refFunctionSymbol));
     if (cd4cTranslatedSymbolOpt.isPresent()) {
       super.addVariantsForFunctionSymbol(refExpr, cd4cTranslatedSymbolOpt.get());
     } else {
       // normal handling as defined for ExpressionsBasis language
-      super.addVariantsForFunctionSymbol(refExpr, functionSymbol);
+      super.addVariantsForFunctionSymbol(refExpr, refFunctionSymbol);
     }
   }
 }
