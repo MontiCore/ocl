@@ -8,6 +8,7 @@ import de.monticore.refadaptation.AbstractAdaptationVisitor;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
+import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.types3.TypeCheck3;
@@ -53,8 +54,9 @@ public class ExpressionsBasisAdaptationVariantsVisitor
     // identify variants depending on the symbol kind
     if (refSymbol instanceof VariableSymbol) {
       addVariantsForVariableSymbol(refExpr, (VariableSymbol) refSymbol);
+    } else if (refSymbol instanceof FunctionSymbol) {
+      addVariantsForFunctionSymbol(refExpr, (FunctionSymbol) refSymbol);
     } else {
-      // TODO add support for FunctionSymbol here -> NameExpression can be part of method call
       Log.warn("Unexpected symbol type: " + refSymbol.getClass().getSimpleName() + " for NameExpression: " + refExpr.get_SourcePositionStart());
       getAdaptations4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
     }
@@ -104,6 +106,55 @@ public class ExpressionsBasisAdaptationVariantsVisitor
         // 3. Specify the AST Adaptation / transformation
         newVariant.addASTAdaptation(refExpr, adaptedNode -> {
           adaptedNode.setName(variableIncarnation.getName());
+          return adaptedNode;
+        });
+        // 4. Add the new variant to the AST node
+        getAdaptations4Ast().addVariant(refExpr, newVariant);
+      }
+    }
+  }
+
+  /**
+   * Introduces one variant for each incarnation of the given function symbol.
+   *
+   * @param refExpr the ASTNameExpression that references the function symbol
+   * @param refFunSymbol the FunctionSymbol from the reference model
+   */
+  protected void addVariantsForFunctionSymbol(ASTNameExpression refExpr, FunctionSymbol refFunSymbol) {
+    Set<FunctionSymbol> incarnations = getAdaptationContext().getBasicSymbolsIncMapping().getIncarnations(refFunSymbol);
+    if (incarnations.isEmpty()) {
+      // no field symbol, use the constraints from the parent expression
+      getAdaptations4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
+    } else {
+      // we have the incarnations which are possible in this context
+      for (FunctionSymbol functionIncarnation : incarnations) {
+        ExpressionsBasisAdaptationVariant newVariant = getAdaptationContext().createVariant();
+        // 1. Add strict binding for the selected variable
+        // (Implicitly adds type bindings for variable type)
+        try {
+          newVariant.getBasicSymbolsBindings().addFunctionBinding(Binding.createStrict(refFunSymbol, functionIncarnation));
+        } catch (BindingConflictException e) {
+          // This is unexpected as the current adaptation context should only return incarnations
+          // that are valid in the current context, i.e., no conflicts with existing bindings.
+          Log.warn("getIncarnations returned incarnation that conflicts with existing binding: "
+                  + functionIncarnation.getFullName() + " in " + refExpr.get_SourcePositionStart(), e);
+          continue;
+        }
+        // 2. Add bindings from the original model attached to the method
+        BasicSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalBasicSymbolsIncMapping().getScopedBindings(functionIncarnation);
+        try {
+          newVariant.getBasicSymbolsBindings().addAll(bindingsFromModel);
+        } catch (BindingConflictException e) {
+          // This is expected as some bindings implied by the incarnation may not be compatible
+          // with the existing bindings in the adaptation context.
+          // We ignore this incarnation. Example: employee.firstName == employeeBuilder.lastName
+          Log.debug("Ignoring incarnation due to binding conflict: "
+                  + functionIncarnation.getFullName() + " in " + refExpr.get_SourcePositionStart(), LOG_NAME);
+          continue;
+        }
+        // 3. Specify the AST Adaptation / transformation
+        newVariant.addASTAdaptation(refExpr, adaptedNode -> {
+          adaptedNode.setName(functionIncarnation.getName());
           return adaptedNode;
         });
         // 4. Add the new variant to the AST node

@@ -5,17 +5,20 @@ classdiagram SimpleConc {
     String name;
     int age;
     boolean isLegallyAdult();
+    int getAge();
   }
 
   <<ref="Person">> class Customer {
     String name;
     int age;
     boolean isLegallyAdult();
+    int getAge();
   }
 
   <<ref="Person">> class Employee {
     String name;
     <<ref="age">> int ageInYears;
     boolean isLegallyAdult();
+    <<ref="getAge">> int getAgeInYears();
   }
 }

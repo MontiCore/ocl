@@ -7,6 +7,7 @@ import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
+import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.types.check.SymTypeExpression;
@@ -123,6 +124,19 @@ public class OCLExpressionsBasisAdaptationVariantsVisitor extends ExpressionsBas
     } else {
       // normal handling as defined for ExpressionsBasis language
       super.addVariantsForVariableSymbol(refExpr, variableSymbol);
+    }
+  }
+
+  @Override
+  protected void addVariantsForFunctionSymbol(ASTNameExpression refExpr, FunctionSymbol functionSymbol) {
+    Optional<FunctionSymbol> cd4cTranslatedSymbolOpt = getAdaptationContext()
+            .getOriginalBasicSymbolsIncMapping().getReferenceScope()
+            .resolveFunctionDown(SymbolUtil.getFullNameWithoutCD(functionSymbol));
+    if (cd4cTranslatedSymbolOpt.isPresent()) {
+      super.addVariantsForFunctionSymbol(refExpr, cd4cTranslatedSymbolOpt.get());
+    } else {
+      // normal handling as defined for ExpressionsBasis language
+      super.addVariantsForFunctionSymbol(refExpr, functionSymbol);
     }
   }
 }
