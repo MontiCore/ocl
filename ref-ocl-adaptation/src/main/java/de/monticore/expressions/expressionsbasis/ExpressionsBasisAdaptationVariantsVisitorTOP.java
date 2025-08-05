@@ -8,7 +8,7 @@ import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisito
 import de.monticore.refadaptation.AbstractAdaptationHandler;
 
 // NOTE: Can be generated.
-public class ExpressionsBasisAdaptationVariantsHandlerTOP
+public class ExpressionsBasisAdaptationVariantsVisitorTOP
         extends AbstractAdaptationHandler<ExpressionsBasisAdaptationContext, ExpressionsBasisAdaptationVariant>
         implements ExpressionsBasisVisitor2, ExpressionsBasisHandler {
 
