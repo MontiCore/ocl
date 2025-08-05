@@ -1,13 +1,20 @@
 package de.monticore.refadaptation;
 
 import de.monticore.ast.ASTNode;
+import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationVariant;
+import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.visitor.ITraverser;
 import de.se_rwth.commons.logging.Log;
+import org.apache.commons.lang3.function.FailableFunction;
+import org.apache.commons.lang3.function.FailableSupplier;
 
 import java.util.*;
+import java.util.function.Function;
 
 public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V extends IAdaptationVariant>
         extends AbstractAdaptationVisitor<C> {
+
+  private static final String LOG_NAME = AbstractAdaptationHandler.class.getName();
 
   protected abstract ITraverser getTraverser();
 
@@ -66,6 +73,58 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
   // TODO decide if this is meant as helper API for users or only as internal support method for traverseAndPropagateConstraints
   protected List<V> traverseForEachVariant(
           List<V> sourceVariants, ASTNode node) {
+    return expandAndMergeVariants(sourceVariants, v -> {
+      node.accept(getTraverser());
+      // no need to copy the list here. getVariants creates a new list internally
+      return getAdaptations4Ast().getVariants(node);
+    });
+  }
+
+  /**
+   * Expands the child variants of the given child node and adds them to the parent node.<br>
+   * This method is used to propagate the constraints from the child node to the parent node,
+   * allowing the parent node to adapt its variants based on the constraints of the child node.
+   *
+   * @param parentNode the parent node to which the variants will be added
+   * @param childNode the child node whose variants will be expanded
+   * @param expandVariant a function that retrieves all variants of the parent node for a given
+   *                      child variant,
+   */
+  protected void expandChildVariants(ASTNode parentNode, ASTNode childNode, Function<V, List<V>> expandVariant) {
+    List<V> sourceVariants = getAdaptations4Ast().getVariants(childNode);
+    if (sourceVariants.isEmpty()) {
+      Log.info("No variants found for child node " + childNode, LOG_NAME);
+      // TODO Set error in Adaptations4Ast so no default variant is created?
+    } else {
+      List<V> expandedVariants = expandAndMergeVariants(sourceVariants, expandVariant);
+      if (expandedVariants.isEmpty()) {
+        Log.info("No expanded variants found for child node " + childNode, LOG_NAME);
+        // TODO Set error in Adaptations4Ast so no default variant is created?
+      } else {
+        getAdaptations4Ast().addVariants(parentNode, expandedVariants);
+      }
+    }
+  }
+
+  /**
+   * Expands the given source variants and merges the results into a single list of variants.<br>
+   * More precisely, for each source variant:
+   * <ol>
+   *   <li>Forks the current adaptation context and adds the bindings of the variant.</li>
+   *   <li>Switches the current adaptation context to the new one</li>
+   *   <li>Retrieves all variants for the given source variant using the provided function.</li>
+   *   <li>Merges each retrieved variant with the source variant and replaces the source variant
+   *       with the list of merged variants in {@link Adaptations4Ast}.
+   *   </li>
+   * </ol>>
+   *
+   * @param sourceVariants the list of source variants to expand and merge
+   * @param getVariants a function that retrieves all variants for a given source variant, e.g.
+   *                    by traversing an AST node or applying
+   * @return
+   */
+  protected List<V> expandAndMergeVariants(
+          List<V> sourceVariants, Function<V, List<V>> getVariants) {
     C previousCtx = getAdaptationContext();
     List<V> resultVariants = new ArrayList<>();
     for (V sourceVariant : sourceVariants) {
@@ -81,17 +140,15 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
 
       setAdaptationContext(localCtx);
 
-      node.accept(getTraverser());
+      List<V> nodeVariants = getVariants.apply(sourceVariant);
 
-      // no need to copy the list here. getVariants creates a new list internally
-      List<V> nodeVariants = getAdaptations4Ast().getVariants(node);
       if (nodeVariants.isEmpty()) {
         // conflict with existing bindings -> drop current leftResult
         getAdaptations4Ast().removeVariant(sourceVariant);
       } else {
         List<V> mergedVariants = new ArrayList<>();
         for (V nodeVariant : nodeVariants) {
-          V mergedVariant = null;
+          V mergedVariant;
           try {
             mergedVariant = (V) sourceVariant.merge(nodeVariant);
           } catch (BindingConflictException e) {
@@ -112,5 +169,20 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
     // IMPORTANT: reset the adaptation context to the previous one
     setAdaptationContext(previousCtx);
     return resultVariants;
+  }
+
+  protected <T> List<V> tryCreateVariantsForIncarnations(
+          Set<T> incarnations,
+          FailableFunction<T, V, BindingConflictException> createVariant) {
+    List<V> variants = new ArrayList<>();
+    for (T incarnation : incarnations) {
+      try {
+        variants.add(createVariant.apply(incarnation));
+      } catch (BindingConflictException e) {
+        // This is expected as some bindings implied by the incarnation may not be compatible
+        // with the existing bindings in the adaptation context.
+      }
+    }
+    return variants;
   }
 }

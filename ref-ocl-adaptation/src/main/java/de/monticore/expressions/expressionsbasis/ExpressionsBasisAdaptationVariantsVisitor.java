@@ -3,11 +3,7 @@ package de.monticore.expressions.expressionsbasis;
 import de.monticore.expressions.expressionsbasis._ast.ASTArguments;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
-import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor2;
-import de.monticore.refadaptation.AbstractAdaptationVisitor;
-import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
-import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ISymbol;
@@ -74,93 +70,85 @@ public class ExpressionsBasisAdaptationVariantsVisitor
     //        if not, we can safely ignore it an create a default variant
     Set<VariableSymbol> incarnations = getAdaptationContext().getBasicSymbolsIncMapping().getIncarnations(refVarSymbol);
     if (incarnations.isEmpty()) {
-      // no field symbol, use the constraints from the parent expression
+      // TODO only pass variant upwards if the refSymbol is not defined in the inc mapping
+      //  if it is defined, no incarnation is a sign that we should drop this variant
       getAdaptations4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
-    } else {
-      // we have the incarnations which are possible in this context
-      for (VariableSymbol variableIncarnation : incarnations) {
-        ExpressionsBasisAdaptationVariant newVariant = getAdaptationContext().createVariant();
-        // 1. Add strict binding for the selected variable
-        // (Implicitly adds type bindings for variable type)
-        try {
-          newVariant.getBasicSymbolsBindings().addVariableBinding(Binding.createStrict(refVarSymbol, variableIncarnation));
-        } catch (BindingConflictException e) {
-          // This is unexpected as the current adaptation context should only return incarnations
-          // that are valid in the current context, i.e., no conflicts with existing bindings.
-          Log.warn("getIncarnations returned incarnation that conflicts with existing binding: "
-                  + variableIncarnation.getFullName() + " in " + refExpr.get_SourcePositionStart(), e);
-          continue;
-        }
-        // 2. Add bindings from the original model attached to the method
-        BasicSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalBasicSymbolsIncMapping().getScopedBindings(variableIncarnation);
-        try {
-          newVariant.getBasicSymbolsBindings().addAll(bindingsFromModel);
-        } catch (BindingConflictException e) {
-          // This is expected as some bindings implied by the incarnation may not be compatible
-          // with the existing bindings in the adaptation context.
-          // We ignore this incarnation. Example: employee.firstName == employeeBuilder.lastName
-          Log.debug("Ignoring incarnation due to binding conflict: "
-                  + variableIncarnation.getFullName() + " in " + refExpr.get_SourcePositionStart(), LOG_NAME);
-          continue;
-        }
-        // 3. Specify the AST Adaptation / transformation
-        newVariant.addASTAdaptation(refExpr, adaptedNode -> {
-          adaptedNode.setName(variableIncarnation.getName());
-          return adaptedNode;
-        });
-        // 4. Add the new variant to the AST node
-        getAdaptations4Ast().addVariant(refExpr, newVariant);
-      }
+      return;
     }
+    getAdaptations4Ast().addVariants(refExpr, tryCreateVariantsForIncarnations(incarnations,
+            (incarnation) -> createVariantForVariableIncarnation(refExpr, refVarSymbol, incarnation)));
   }
 
   /**
    * Introduces one variant for each incarnation of the given function symbol.
    *
    * @param refExpr the ASTNameExpression that references the function symbol
-   * @param refFunSymbol the FunctionSymbol from the reference model
+   * @param refFunctionSymbol the FunctionSymbol from the reference model
    */
-  protected void addVariantsForFunctionSymbol(ASTNameExpression refExpr, FunctionSymbol refFunSymbol) {
-    Set<FunctionSymbol> incarnations = getAdaptationContext().getBasicSymbolsIncMapping().getIncarnations(refFunSymbol);
+  protected void addVariantsForFunctionSymbol(ASTNameExpression refExpr, FunctionSymbol refFunctionSymbol) {
+    Set<FunctionSymbol> incarnations = getAdaptationContext().getBasicSymbolsIncMapping().getIncarnations(refFunctionSymbol);
     if (incarnations.isEmpty()) {
-      // no field symbol, use the constraints from the parent expression
+      // TODO only pass variant upwards if the refSymbol is not defined in the inc mapping
+      //  if it is defined, no incarnation is a sign that we should drop this variant
       getAdaptations4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
-    } else {
-      // we have the incarnations which are possible in this context
-      for (FunctionSymbol functionIncarnation : incarnations) {
-        ExpressionsBasisAdaptationVariant newVariant = getAdaptationContext().createVariant();
-        // 1. Add strict binding for the selected variable
-        // (Implicitly adds type bindings for variable type)
-        try {
-          newVariant.getBasicSymbolsBindings().addFunctionBinding(Binding.createStrict(refFunSymbol, functionIncarnation));
-        } catch (BindingConflictException e) {
-          // This is unexpected as the current adaptation context should only return incarnations
-          // that are valid in the current context, i.e., no conflicts with existing bindings.
-          Log.warn("getIncarnations returned incarnation that conflicts with existing binding: "
-                  + functionIncarnation.getFullName() + " in " + refExpr.get_SourcePositionStart(), e);
-          continue;
-        }
-        // 2. Add bindings from the original model attached to the method
-        BasicSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalBasicSymbolsIncMapping().getScopedBindings(functionIncarnation);
-        try {
-          newVariant.getBasicSymbolsBindings().addAll(bindingsFromModel);
-        } catch (BindingConflictException e) {
-          // This is expected as some bindings implied by the incarnation may not be compatible
-          // with the existing bindings in the adaptation context.
-          // We ignore this incarnation. Example: employee.firstName == employeeBuilder.lastName
-          Log.debug("Ignoring incarnation due to binding conflict: "
-                  + functionIncarnation.getFullName() + " in " + refExpr.get_SourcePositionStart(), LOG_NAME);
-          continue;
-        }
-        // 3. Specify the AST Adaptation / transformation
-        newVariant.addASTAdaptation(refExpr, adaptedNode -> {
-          adaptedNode.setName(functionIncarnation.getName());
-          return adaptedNode;
-        });
-        // 4. Add the new variant to the AST node
-        getAdaptations4Ast().addVariant(refExpr, newVariant);
-      }
+      return;
     }
+    getAdaptations4Ast().addVariants(refExpr, tryCreateVariantsForIncarnations(incarnations,
+            (incarnation) -> createVariantForFunctionIncarnation(refExpr, refFunctionSymbol, incarnation)));
+  }
+
+  /**
+   * Creates a new variant which adapts the FieldAccessExpression according to the given
+   * incarnation of the variable symbol.
+   *
+   * @param refExpr the ASTFieldAccessExpression to adapt
+   * @param refVariableSymbol the reference VariableSymbol referenced in the expression
+   * @param incarnation the incarnation of the variable symbol to adapt to
+   * @return a new CommonExpressionsAdaptationVariant that adapts the expression
+   *
+   * @throws BindingConflictException if the binding conflicts with existing bindings in the context
+   */
+  protected ExpressionsBasisAdaptationVariant createVariantForVariableIncarnation(
+          ASTNameExpression refExpr,
+          VariableSymbol refVariableSymbol,
+          VariableSymbol incarnation) throws BindingConflictException {
+    // 1. Create a variant for the incarnation
+    ExpressionsBasisAdaptationVariant newVariant = getAdaptationContext()
+            .createVariantForIncarnation(refVariableSymbol, incarnation,
+                    refExpr.get_SourcePositionStart());
+    // 2. Specify the AST Adaptation / transformation
+    newVariant.addASTAdaptation(refExpr, adaptedNode -> {
+      adaptedNode.setName(incarnation.getName());
+      return adaptedNode;
+    });
+    return newVariant;
+  }
+
+  /**
+   * Creates a new variant which adapts the FieldAccessExpression according to the given
+   * incarnation of the variable symbol.
+   *
+   * @param refExpr the ASTFieldAccessExpression to adapt
+   * @param refFunctionSymbol the reference FunctionSymbol referenced in the expression
+   * @param incarnation the incarnation of the variable symbol to adapt to
+   * @return a new CommonExpressionsAdaptationVariant that adapts the expression
+   *
+   * @throws BindingConflictException if the binding conflicts with existing bindings in the context
+   */
+  protected ExpressionsBasisAdaptationVariant createVariantForFunctionIncarnation(
+          ASTNameExpression refExpr,
+          FunctionSymbol refFunctionSymbol,
+          FunctionSymbol incarnation) throws BindingConflictException {
+    // 1. Create a variant for the incarnation
+    ExpressionsBasisAdaptationVariant newVariant = getAdaptationContext()
+            .createVariantForIncarnation(refFunctionSymbol, incarnation,
+                    refExpr.get_SourcePositionStart());
+    // 2. Specify the AST Adaptation / transformation
+    newVariant.addASTAdaptation(refExpr, adaptedNode -> {
+      adaptedNode.setName(incarnation.getName());
+      return adaptedNode;
+    });
+    return newVariant;
   }
 
   @Override
