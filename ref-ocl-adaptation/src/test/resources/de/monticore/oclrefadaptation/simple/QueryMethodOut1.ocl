@@ -1,0 +1,7 @@
+ocl QueryMethod1 {
+  context SimpleConc.User p inv AdultIf18:
+    p.hasReachedAgeOfMajority() <=> p.age >= 18;
+
+  context boolean SimpleConc.User.hasReachedAgeOfMajority()
+    post: result == true <=> this.age >= 18;
+}

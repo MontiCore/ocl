@@ -141,6 +141,9 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "simple/SimpleOut.ocl");
     }
 
+    /**
+     * Demonstrates adaptation of query methods (here in FieldAccessExpression).
+     */
     @Test
     void queryMethodRename() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
@@ -149,6 +152,21 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "simple/SimpleRef.cd",
               "simple/QueryMethodRef.ocl",
               "simple/QueryMethodOut.ocl");
+    }
+
+    /**
+     * Demonstrates adaptation of query methods (here in FieldAccessExpression).
+     * Same as {@link #queryMethodRename()} but with a different syntax (using equivalent operator
+     * from OCLExpressions language)
+     */
+    @Test
+    void queryMethodRename1() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "simple/SimpleConc.cd",
+              "simple/SimpleRef.cd",
+              "simple/QueryMethodRef1.ocl",
+              "simple/QueryMethodOut1.ocl");
     }
 
     @Test
