@@ -4,7 +4,7 @@ import de.monticore.ocl.setexpressions.types3.SetExpressionsCTTIVisitor;
 import de.monticore.ocl.types3.OCLCollectionSymTypeRelations;
 import de.monticore.types.check.SymTypeExpression;
 
-public class OCLSetExpressionsTypeVisitor extends SetExpressionsCTTIVisitor {
+public class OCLSetExpressionsCTTIVisitor extends SetExpressionsCTTIVisitor {
 
   @Override
   protected boolean isSetOrListCollection(SymTypeExpression type) {
