@@ -1,0 +1,15 @@
+ocl collectionInIterateExpr {
+
+  context int Company.getTotalRemainingWorkload()
+    post:
+      let
+       Collection<int> someCollection = {1, 2, 3};
+       // we want to accept type 'Collection' in generator declaration
+       Collection<int> workloads = { x * 2 | int x in someCollection, x > 1 };
+       // we want to accept type 'Collection' in 'in expression' of IterateExpression
+       int totalWorkload = iterate { w in workloads;
+                                         int accumulated = 0 :
+                                         accumulated = accumulated + w }
+      in
+        result == totalWorkload;
+}
