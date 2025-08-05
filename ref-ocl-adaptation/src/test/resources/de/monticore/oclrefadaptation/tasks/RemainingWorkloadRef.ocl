@@ -1,0 +1,14 @@
+ocl RemainingWorkloadRef {
+
+  context int Company.getTotalRemainingWorkload()
+    post:
+      let
+       // Shows that we can handle chained association navigation
+       // TODO Change to 'Collection' once we support adaptation for MCSimpleGenericTypes
+       Set<int> workloads = { task.workload | Task task in this.employee.assignedTasks, task.completed == false };
+       int totalWorkload = iterate { w in workloads;
+                                         int accumulated = 0 :
+                                         accumulated = accumulated + w }
+      in
+        result == totalWorkload;
+}

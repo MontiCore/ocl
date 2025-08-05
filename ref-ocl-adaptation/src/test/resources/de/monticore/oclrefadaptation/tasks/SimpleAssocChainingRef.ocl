@@ -1,0 +1,5 @@
+ocl SimpleAssocChaining {
+
+  context Company inv MaxTotalTasks:
+    Company.employee.assignedTasks.size() <= 10;
+}

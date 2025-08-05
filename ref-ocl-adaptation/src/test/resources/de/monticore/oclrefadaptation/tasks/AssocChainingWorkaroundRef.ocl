@@ -1,0 +1,5 @@
+ocl SimpleAssocChaining {
+
+  context Company inv MaxTotalTasks:
+    { e.assignedTasks | Employee e in this.employee }.flatten().size() <= 10;
+}

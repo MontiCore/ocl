@@ -198,5 +198,34 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "tasks/singleInc/BehindScheduleOut.ocl");
     }
 
+    @Test
+    void singleIncRemainingWorkload() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "tasks/singleInc/TaskManagementConc.cd",
+              "tasks/TaskManagementRef.cd",
+              "tasks/RemainingWorkloadRef.ocl",
+              "tasks/singleInc/RemainingWorkloadOut.ocl");
+    }
+
+    @Test
+    void singleIncSimpleAssocChaining() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "tasks/singleInc/TaskManagementConc.cd",
+              "tasks/TaskManagementRef.cd",
+              "tasks/SimpleAssocChainingRef.ocl",
+              "tasks/singleInc/SimpleAssocChainingOut.ocl");
+    }
+
+    @Test
+    void singleIncAssocChainingWorkaround() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "tasks/singleInc/TaskManagementConc.cd",
+              "tasks/TaskManagementRef.cd",
+              "tasks/AssocChainingWorkaroundRef.ocl",
+              "tasks/singleInc/AssocChainingWorkaroundOut.ocl");
+    }
   }
 }

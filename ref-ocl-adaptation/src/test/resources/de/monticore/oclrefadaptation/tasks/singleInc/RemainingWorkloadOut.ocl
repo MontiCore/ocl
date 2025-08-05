@@ -1,0 +1,14 @@
+ocl RemainingWorkloadRef {
+  
+  context int TaskManagementConc.Company.getTotalRemainingWorkload()
+    post:
+      let
+       // Shows that we can handle chained association navigation
+       Set<int> workloads = { task.workload | TaskManagementConc.NormalTask task
+                   in this.teamMember.assignedNormalTasks, task.completed == false };
+       int totalWorkload = iterate { w in workloads;
+                                         int accumulated = 0 :
+                                         accumulated = accumulated + w }
+      in
+        result == totalWorkload;
+}

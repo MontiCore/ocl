@@ -3,6 +3,8 @@
 ocl bankingChecks {
   context Bank b inv OverallBalanceCorrect:
   let
+    // TODO not use Set here! there can be multiple accounts with the same balance!
+    // TODO Change to 'Collection' once we support adaptation for MCSimpleGenericTypes
     Set<double> balances = { acc.balance | Account acc in b.account };
     /*
      * WARN: We cannot use "sum" as variable name here because there is a function symbol "sum"
