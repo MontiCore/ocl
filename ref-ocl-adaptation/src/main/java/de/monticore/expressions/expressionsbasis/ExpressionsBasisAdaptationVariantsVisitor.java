@@ -1,5 +1,6 @@
 package de.monticore.expressions.expressionsbasis;
 
+import de.monticore.expressions.expressionsbasis._ast.ASTArguments;
 import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor2;
@@ -25,10 +26,14 @@ import java.util.Set;
  * </ul>
  */
 public class ExpressionsBasisAdaptationVariantsVisitor
-        extends AbstractAdaptationVisitor<ExpressionsBasisAdaptationContext>
-        implements ExpressionsBasisVisitor2 {
+        extends ExpressionsBasisAdaptationVariantsVisitorTOP {
 
   private static final String LOG_NAME = ExpressionsBasisAdaptationVariantsVisitor.class.getName();
+
+  @Override
+  public void traverse(ASTArguments arguments) {
+    traverseForConsistentVariants(arguments, arguments.getExpressionList());
+  }
 
   @Override
   public void endVisit(ASTNameExpression refExpr) {
