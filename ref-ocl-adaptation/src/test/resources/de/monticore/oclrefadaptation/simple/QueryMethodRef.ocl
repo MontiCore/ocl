@@ -1,9 +1,7 @@
 ocl QueryMethod {
   context Person p inv AdultIf18:
-    //p.isLegallyAdult() <=> p.age >= 18;
     !p.isLegallyAdult() || p.age >= 18 && !(p.age >= 18) || p.isLegallyAdult();
 
   context boolean Person.isLegallyAdult()
-    //post: result == true <=> this.age >= 18;
     post: !(result == true) || this.age >= 18 && !(this.age >= 18) || result == true;
 }
