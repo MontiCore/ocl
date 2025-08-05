@@ -58,8 +58,7 @@ public class OCLWithinTypeBasicSymbolsResolver extends OOWithinTypeBasicSymbolsR
         unFlattenedSymType.setArgument(0, elementResolvedSymType.get());
         // need to flatten, as this is following an association
         resolvedSymType = Optional.of(OCLCollectionSymTypeRelations.flatten(unFlattenedSymType));
-        // add the original source info to the flattened symType so that other code can check what
-        // VariableSymbol was references with the given name
+        // add the original source info to the flattened symType
         resolvedSymType.ifPresent(
                 s -> s._internal_setSourceInfo(elementResolvedSymType.get()
                         .getSourceInfo())

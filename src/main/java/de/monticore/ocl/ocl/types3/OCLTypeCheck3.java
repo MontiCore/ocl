@@ -4,11 +4,11 @@ import de.monticore.expressions.bitexpressions.types3.BitExpressionsTypeVisitor;
 import de.monticore.expressions.commonexpressions.types3.OCLCommonExpressionsCTTIVisitor;
 import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsLValueRelations;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisCTTIVisitor;
-import de.monticore.ocl.oclexpressions.OCLOCLExpressionsTypeVisitor;
-import de.monticore.expressions.setexpressions.types3.OCLSetExpressionsTypeVisitor;
+import de.monticore.expressions.setexpressions.types3.OCLSetExpressionsCTTIVisitor;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
+import de.monticore.ocl.oclexpressions.OCLOCLExpressionsTypeVisitor;
 import de.monticore.ocl.optionaloperators.types3.OptionalOperatorsTypeVisitor;
 import de.monticore.ocl.types3.OCLCollectionSymTypeRelations;
 import de.monticore.ocl.types3.OCLSymTypeRelations;
@@ -93,7 +93,7 @@ public class OCLTypeCheck3 extends MapBasedTypeCheck3 {
     visOptionalOperators.setType4Ast(type4Ast);
     traverser.add4OptionalOperators(visOptionalOperators);
 
-    OCLSetExpressionsTypeVisitor visSetExpressions = new OCLSetExpressionsTypeVisitor();
+    OCLSetExpressionsCTTIVisitor visSetExpressions = new OCLSetExpressionsCTTIVisitor();
     visSetExpressions.setType4Ast(type4Ast);
     visSetExpressions.setContext4Ast(ctx4Ast);
     traverser.add4SetExpressions(visSetExpressions);

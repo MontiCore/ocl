@@ -48,6 +48,7 @@ public class OCLWithinTypeBasicSymbolsResolverTest extends AbstractTest {
             "message",
             "AuctionCD.Person.message"
     ).traverseAndCheck(ast);
+    assertNoFindings();
   }
 
   /**
