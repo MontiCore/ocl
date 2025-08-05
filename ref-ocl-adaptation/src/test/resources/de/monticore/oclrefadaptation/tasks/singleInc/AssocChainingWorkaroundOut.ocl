@@ -1,0 +1,5 @@
+ocl SimpleAssocChaining {
+
+  context TaskManagementConc.Company inv MaxTotalTasks:
+    { e.assignedNormalTasks | TaskManagementConc.TeamMember e in this.teamMember }.flatten().size() <= 10;
+}
