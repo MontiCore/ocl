@@ -135,10 +135,10 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
     void simpleExamples() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testAdaptedEqualsExpected(
-              "simple/SimpleConc.cd",
+              "simple/singleInc/SimpleConc.cd",
               "simple/SimpleRef.cd",
               "simple/SimpleRef.ocl",
-              "simple/SimpleOut.ocl");
+              "simple/singleInc/SimpleOut.ocl");
     }
 
     /**
@@ -148,10 +148,10 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
     void queryMethodRename() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testAdaptedEqualsExpected(
-              "simple/SimpleConc.cd",
+              "simple/singleInc/SimpleConc.cd",
               "simple/SimpleRef.cd",
               "simple/QueryMethodRef.ocl",
-              "simple/QueryMethodOut.ocl");
+              "simple/singleInc/QueryMethodOut.ocl");
     }
 
     /**
@@ -163,20 +163,30 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
     void queryMethodRename1() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testAdaptedEqualsExpected(
-              "simple/SimpleConc.cd",
+              "simple/singleInc/SimpleConc.cd",
               "simple/SimpleRef.cd",
               "simple/QueryMethodRef1.ocl",
-              "simple/QueryMethodOut1.ocl");
+              "simple/singleInc/QueryMethodOut1.ocl");
+    }
+
+    @Test
+    void queryMethodInNameExpression() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "simple/singleInc/SimpleConc.cd",
+              "simple/SimpleRef.cd",
+              "simple/QueryMethodInNameExprRef.ocl",
+              "simple/singleInc/QueryMethodInNameExprOut.ocl");
     }
 
     @Test
     void typeMI() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
       testAdaptedEqualsExpected(
-              "simple/TypeMI.cd",
+              "simple/typeMI/TypeMI.cd",
               "simple/SimpleRef.cd",
               "simple/SimpleRef.ocl",
-              "simple/typeMIOut.ocl");
+              "simple/typeMI/typeMIOut.ocl");
     }
   }
 
