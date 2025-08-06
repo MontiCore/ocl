@@ -1,0 +1,5 @@
+ocl collectionInIterateExpr {
+
+  context int AllData.getTotalMessages()
+    post: result == this.person.message.size();
+}
