@@ -3,7 +3,7 @@ package de.monticore.ocl.ocl.types3;
 
 import de.monticore.expressions.bitexpressions.types3.BitExpressionsTypeVisitor;
 import de.monticore.expressions.commonexpressions.types3.CommonExpressionsTypeVisitor;
-import de.monticore.expressions.commonexpressions.types3.OCLCommonExpressionsTypeVisitor;
+import de.monticore.expressions.commonexpressions.types3.OCLCommonExpressionsCTTIVisitor;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisCTTIVisitor;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisTypeVisitor;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
@@ -69,7 +69,7 @@ public class OCLTypeTraverserFactory {
     VisitorList visitors = new VisitorList();
     // Expressions
     visitors.derBitExpressions = new BitExpressionsTypeVisitor();
-    visitors.derCommonExpressions = new OCLCommonExpressionsTypeVisitor();
+    visitors.derCommonExpressions = new OCLCommonExpressionsCTTIVisitor();
     visitors.derExpressionBasis = new ExpressionBasisCTTIVisitor();
     visitors.derMCCommonLiterals = new MCCommonLiteralsTypeVisitor();
     visitors.derOCLExpressions = new OCLExpressionsTypeVisitor();

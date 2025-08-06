@@ -1,7 +1,7 @@
 package de.monticore.ocl.ocl.types3;
 
 import de.monticore.expressions.bitexpressions.types3.BitExpressionsTypeVisitor;
-import de.monticore.expressions.commonexpressions.types3.OCLCommonExpressionsTypeVisitor;
+import de.monticore.expressions.commonexpressions.types3.OCLCommonExpressionsCTTIVisitor;
 import de.monticore.expressions.commonexpressions.types3.util.CommonExpressionsLValueRelations;
 import de.monticore.expressions.expressionsbasis.types3.ExpressionBasisCTTIVisitor;
 import de.monticore.literals.mccommonliterals.types3.MCCommonLiteralsTypeVisitor;
@@ -69,7 +69,7 @@ public class OCLTypeCheck3 extends MapBasedTypeCheck3 {
     visBitExpressions.setType4Ast(type4Ast);
     traverser.add4BitExpressions(visBitExpressions);
 
-    OCLCommonExpressionsTypeVisitor visCommonExpressions = new OCLCommonExpressionsTypeVisitor();
+    OCLCommonExpressionsCTTIVisitor visCommonExpressions = new OCLCommonExpressionsCTTIVisitor();
     visCommonExpressions.setType4Ast(type4Ast);
     visCommonExpressions.setContext4Ast(ctx4Ast);
     traverser.add4CommonExpressions(visCommonExpressions);
