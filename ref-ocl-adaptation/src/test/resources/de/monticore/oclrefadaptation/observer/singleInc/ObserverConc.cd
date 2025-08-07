@@ -1,0 +1,15 @@
+classdiagram EventsConc {
+
+  <<ref="Observer">> interface EventListener {
+    <<ref="update">> void onEvent();
+    <<ref="__hasSent_update">> boolean __hasSent_onEvent();
+  }
+
+  <<ref="Subject">> class EventManager {
+    <<ref="register">> void subscribe(EventListener listener);
+    <<ref="unregister">> void unsubscribe(EventListener listener);
+    void notifyAll();
+  }
+
+  association EventManager -> (listeners) EventListener [*] <<ordered>>;
+}

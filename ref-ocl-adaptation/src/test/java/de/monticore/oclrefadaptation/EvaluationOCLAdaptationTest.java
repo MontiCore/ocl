@@ -277,6 +277,20 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
   }
 
   @Nested
+  class Observer {
+    @Test
+    void singleInc() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "observer/singleInc/ObserverConc.cd",
+              "observer/ObserverRef.cd",
+              "observer/ObserverRef.ocl",
+              "observer/singleInc/ObserverOut.ocl");
+    }
+  }
+
+
+  @Nested
   class Evaluation3 {
 
     /**
