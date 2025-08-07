@@ -1,0 +1,32 @@
+classdiagram ObserverConc {
+
+  interface Observer {
+    void update();
+
+    // workaround because we do not support the 'hasSent' operator in MontiCore OCL yet
+    // see comment in ObserverRef.ocl
+    boolean __hasSent_update();
+  }
+
+  <<ref="Subject">> class EventManager {
+    <<ref="register">> void subscribe(Observer o);
+    <<ref="unregister">> void unsubscribe(Observer o);
+    void notifyAll();
+  }
+
+  <<ref="Subject">> abstract class UIState {
+    <<ref="register">> void subscribe(Observer o);
+    <<ref="unregister">> void unsubscribe(Observer o);
+    <<ref="notifyAll">> void commitStateChange();
+  }
+
+  <<ref="Subject">> class DeviceInputState {
+    <<ref="register">> void addObserver(Observer o);
+    <<ref="unregister">> void removeObserver(Observer o);
+    <<ref="notifyAll">> void updateObservers();
+  }
+
+  association EventManager -> (observers) Observer [*] <<ordered>>;
+  association UIState -> (observers) Observer [*] <<ordered>>;
+  association DeviceInputState -> (observers) Observer [*] <<ordered>>;
+}
