@@ -1,8 +1,6 @@
 package de.monticore.oclrefadaptation;
 
 import de.monticore.cd._symboltable.BuiltInTypes;
-import de.monticore.cd4analysis._visitor.CD4AnalysisTraverser;
-import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
 import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cd4code._cocos.CD4CodeCoCoChecker;
 import de.monticore.cd4code._symboltable.CD4CodeSymbolTableCompleter;
@@ -21,6 +19,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._cocos.OCLCoCoChecker;
 import de.monticore.ocl.ocl._cocos.OCLCoCos;
 import de.monticore.ocl.ocl._symboltable.IOCLArtifactScope;
+import de.monticore.ocl.ocl._symboltable.IOCLScope;
 import de.monticore.ocl.ocl._symboltable.OCLSymbolTableCompleter;
 import de.monticore.ocl.ocl._symboltable.OCLSymbols2Json;
 import de.monticore.ocl.ocl.types3.OCLTypeCheck3;
@@ -36,7 +35,8 @@ import java.util.List;
 import java.util.Set;
 
 import static de.monticore.cdconformance.CDConfParameter.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class AbstractOCLAdapterTest extends AbstractTest {
 
@@ -140,34 +140,40 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
   }
 
   protected void parseModels(String concreteCDFile, String refCDDFile, String refOCLFile, String expectedOCLFile) {
+    // 1. Load CDs
     conCD = loadCD(concreteCDFile);
     refCD = loadCD(refCDDFile);
 
+    // 2. Transform CDs to create fields from all roles and attach stereotypes to preserve incarnation
+    // mapping information from roles
     oclAdapter.applyFieldsFromRolesTrafo(conCD, refCD);
     System.out.println("Transformed concrete CD: \n");
     System.out.println(CD4CodeMill.prettyPrint(conCD, true));
 
     /*
-     * TODO Cleanup & make sure everything is working fine. if we cannot compare symbols in CD4CodeMill and OCLMill global scopes we have issues...
+     * 3. IMPORTANT: We reset the OCLMill here once again to avoid having the artifact scopes of the
+     * CD models twice in teh global scope!
+     * All the loading code here is inspired/copied from 'OCLLoader' in ocl2smt. However, there we
+     * have exactly the same issue, although it does not seem to disturb the functionality.
      */
+    initCD4CodeMill();
 
+    // 4. Load the reference OCL artifact
     refOCL = parseOCL(refOCLFile);
-    createOCLSymTab(refOCL);
-    // TODO oclAST.setEnclosingScope(createOCLSymTab(oclAST)); ??
+    refOCL.setEnclosingScope(createOCLSymTab(refOCL));
+    createCDSymTab(refCD);
     loadCDModel(refOCL, refCD);
     checkOCLCoCos(refOCL);
     assertNoFindings();
 
+    // 5. Load the expected adapted OCL artifact
     expectedAdaptedOCL = parseOCL(expectedOCLFile);
-    createOCLSymTab(expectedAdaptedOCL);
-    // TODO oclAST.setEnclosingScope(createOCLSymTab(oclAST)); ??
+    expectedAdaptedOCL.setEnclosingScope(createOCLSymTab(expectedAdaptedOCL));
+    createCDSymTab(conCD);
     loadCDModel(expectedAdaptedOCL, conCD);
     checkOCLCoCos(expectedAdaptedOCL);
+
     assertNoFindings();
-
-
-    //refOCL = loadOCL(refOCLFile);
-    //expectedAdaptedOCL = loadOCL(expectedOCLFile);
   }
 
   protected void loadCDModel(ASTOCLCompilationUnit oclAST, ASTCDCompilationUnit cdAST) {
@@ -184,7 +190,7 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
     SymbolTableUtil.runSymTabCompleter(oclAST);
   }
 
-  protected static void createOCLSymTab(ASTOCLCompilationUnit ast) {
+  protected static IOCLScope createOCLSymTab(ASTOCLCompilationUnit ast) {
     IOCLArtifactScope as = OCLMill.scopesGenitorDelegator().createFromAST(ast);
     as.addImports(new ImportStatement("java.lang.String", true));
     as.addImports(new ImportStatement("java.util.Date", true));
@@ -195,6 +201,7 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
     c.setTraverser(OCLMill.inheritanceTraverser());
     ast.accept(c.getTraverser());
     ast.setEnclosingScope(as);
+    return as;
   }
 
   protected static ICD4CodeArtifactScope createCDSymTab(ASTCDCompilationUnit ast) {
