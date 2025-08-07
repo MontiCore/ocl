@@ -1,0 +1,31 @@
+classdiagram ObserverConc {
+
+  <<ref="Observer">> interface Observer {
+    void update();
+    boolean __hasSent_update();
+  }
+
+  <<ref="Observer">> interface UpdateListener {
+    <<ref="update">> void onUpdate();
+    <<ref="__hasSent_update">> boolean __hasSent_onUpdate();
+  }
+
+  <<ref="Observer">> class MyConcreteObserver {
+    <<ref="update">> void onChange();
+    <<ref="__hasSent_update">> boolean __hasSent_onChange();
+  }
+
+  class Subject {
+    <<ref="register">> void register(Observer o);
+    <<ref="register">> void register(UpdateListener ul);
+    <<ref="register">> void register(MyConcreteObserver mco);
+    <<ref="unregister">> void unregister(Observer o);
+    <<ref="unregister">> void unregister(UpdateListener ul);
+    <<ref="unregister">> void unregister(MyConcreteObserver mco);
+    void notifyAll();
+  }
+
+  association Subject -> (observers) Observer [*] <<ordered>>;
+  association Subject -> (updateListeners) UpdateListener [*] <<ordered>>;
+  association Subject -> (myConcreteObservers) MyConcreteObserver [*] <<ordered>>;
+}

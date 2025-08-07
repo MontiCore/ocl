@@ -1,0 +1,50 @@
+ocl Observer {
+
+  // ########## Subject.register ##########
+
+  context void ObserverConc.Subject.register(ObserverConc.Observer o)
+    post: o isin observers;
+
+  context void ObserverConc.Subject.register(ObserverConc.UpdateListener ul)
+    post: ul isin updateListeners;
+
+  context void ObserverConc.Subject.register(ObserverConc.MyConcreteObserver mco)
+    post: mco isin myConcreteObservers;
+
+  // ########## Subject.unregister ##########
+
+  context void ObserverConc.Subject.unregister(ObserverConc.Observer o)
+      post: o notin observers;
+
+  context void ObserverConc.Subject.unregister(ObserverConc.UpdateListener ul)
+    post: ul notin updateListeners;
+
+  context void ObserverConc.Subject.unregister(ObserverConc.MyConcreteObserver mco)
+    post: mco notin myConcreteObservers;
+
+
+  // ########## Subject.notifyAll ##########
+
+  context void ObserverConc.Subject.notifyAll()
+    pre: forall o in observers:  o.__hasSent_update() == false;
+    post: forall o in observers: o.__hasSent_update();
+
+  context void ObserverConc.Subject.notifyAll()
+    pre: forall o in updateListeners:  o.__hasSent_onUpdate() == false;
+    post: forall o in updateListeners: o.__hasSent_onUpdate();
+
+  context void ObserverConc.Subject.notifyAll()
+    pre: forall o in myConcreteObservers:  o.__hasSent_onChange() == false;
+    post: forall o in myConcreteObservers: o.__hasSent_onChange();
+
+  // ########## Observer.update ##########
+
+  context void ObserverConc.Observer.update()
+    post: this.__hasSent_update() == true;
+
+  context void ObserverConc.UpdateListener.onUpdate()
+    post: this.__hasSent_onUpdate() == true;
+
+  context void ObserverConc.MyConcreteObserver.onChange()
+    post: this.__hasSent_onChange() == true;
+}
