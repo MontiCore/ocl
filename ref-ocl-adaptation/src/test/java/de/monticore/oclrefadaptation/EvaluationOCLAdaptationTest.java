@@ -13,6 +13,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.TypeCheck3;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -286,6 +287,32 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "observer/ObserverRef.cd",
               "observer/ObserverRef.ocl",
               "observer/singleInc/ObserverOut.ocl");
+    }
+
+    /**
+     * Adds an additional 'Event' parameter to the 'update' and 'publishEvent' methods.
+     */
+    @Disabled("Disabled because the additional parameter is not adapted correctly yet. See comments in model")
+    @Test
+    void additionalParam() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      confParameters.add(CDConfParameter.ALLOW_ADDITIONAL_PARAMETERS);
+      testAdaptedEqualsExpected(
+              "observer/additionalParam/AdditionalEventParam.cd",
+              "observer/ObserverRef.cd",
+              "observer/ObserverRef.ocl",
+              "observer/additionalParam/ObserverOut.ocl");
+    }
+
+    @Test
+    void additionalParamPartiallyWorking() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      confParameters.add(CDConfParameter.ALLOW_ADDITIONAL_PARAMETERS);
+      testAdaptedEqualsExpected(
+              "observer/additionalParam/partiallyWorking/AdditionalEventParam.cd",
+              "observer/ObserverRef.cd",
+              "observer/ObserverRef.ocl",
+              "observer/additionalParam/partiallyWorking/ObserverOut.ocl");
     }
   }
 

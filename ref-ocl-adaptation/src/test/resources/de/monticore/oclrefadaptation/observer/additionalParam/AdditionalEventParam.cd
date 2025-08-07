@@ -1,0 +1,22 @@
+import java.lang.String;
+
+classdiagram EventsConc {
+
+  class Event {
+    String name;
+    String description;
+  }
+
+  <<ref="Observer">> interface EventListener {
+    <<ref="update">> void onEvent(Event event);
+    <<ref="__hasSent_update">> boolean __hasSent_onEvent(Event event);
+  }
+
+  <<ref="Subject">> class EventManager {
+    <<ref="register">> void subscribe(EventListener listener);
+    <<ref="unregister">> void unsubscribe(EventListener listener);
+    <<ref="notifyAll">>  void publishEvent(Event event);
+  }
+
+  association EventManager -> (listeners) EventListener [*] <<ordered>>;
+}
