@@ -1,0 +1,50 @@
+ocl User {
+
+
+//a user cannot have two mutual excluding roles.
+context UserConc.Person u inv ConflictingRoles:
+  u.roles.roleId.contains("accounts payable manager") implies    !u.roles.roleId.contains( "purchasing manager");
+
+
+//conflicting user cannot be assigned to the same role  "purchase manager"
+context UserConc.Role r inv  ConflictingUser:
+   r.roleId == "purchase manager" implies
+   forall UserConc.Person a , UserConc.Person b :
+       a.name == "alpha" && b.name  =="beta" implies (a.roles.contains(r) implies !b.roles.contains(r));
+
+//conflicting permission cannot be assigned to the same role.
+context UserConc.Role r inv  ConflictingPermissions:
+  r.permissions.id.contains("prepare check") implies !r.permissions.id.contains("issue check");
+
+
+// a user can be assigned a role r if the user already have the role r2
+context UserConc.Person u inv IncludingRoles :
+ u.roles.roleId.contains("tester") implies u.roles.roleId.contains("project_team");
+
+
+ // a permission p can be assigned to a role only if the role already have the permission q
+ context UserConc.Permission p  inv IncludingPermission:
+    p.roles.roleId.contains("read file") implies p.roles.roleId.contains("read directory");
+
+
+ //some roles have exactly one user
+ context UserConc.Role r inv ExactlyOneChairman:
+  r.roleId == "chairman" implies
+  exists UserConc.Person u in r.persons: ( forall UserConc.Person u1 in r.persons: u == u1);
+
+   context UserConc.Person u inv SessionLimitation:
+    !(exists UserConc.Session s1, UserConc.Session s2, UserConc.Session s3 :  u.sessions.containsAll(Set{s1,s2,s3}) &&
+          s1 != s2 && s3 != s2 && s1 != s3) ;
+
+
+  //conflicting role cannot be activated in the same session
+    context UserConc.Session s inv ConflictingSessions:
+     s.person.roles.roleId.contains("purchase manager") implies !s.person.roles.roleId.contains("account payable manager");
+
+  //conflicting permission cannot be assigned to the same role
+  context UserConc.Role r1, UserConc.Role r2  inv RoleNameUnique:
+    (r1.roleId == r2.roleId) <=> (r1 == r2) ;
+
+  context UserConc.Permission p1, UserConc.Permission p2 inv PermissionNAmeUnique:
+    (p1.id == p2.id)  <=> (p1 == p2) ;
+}

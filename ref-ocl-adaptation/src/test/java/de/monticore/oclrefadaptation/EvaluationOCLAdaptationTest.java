@@ -1,9 +1,12 @@
 package de.monticore.oclrefadaptation;
 
+import de.monticore.cd4analysis.trafo.CDAssociationCreateFieldsFromAllRoles;
+import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdbasis._symboltable.ICDBasisScope;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.expressions.commonexpressions._ast.ASTEqualsExpression;
 import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
+import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
 import de.monticore.ocl.ocl._ast.ASTOCLOperationConstraint;
@@ -12,6 +15,9 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.TypeCheck3;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -254,6 +260,35 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "tasks/TaskManagementRef.cd",
               "tasks/AssocChainingWorkaroundRef.ocl",
               "tasks/singleInc/AssocChainingWorkaroundOut.ocl");
+    }
+  }
+
+  @Nested
+  class Evaluation3 {
+
+    /**
+     * Uses a concrete CD that matches exactly the reference CD, except for a different name.
+     * (The different name is required as we get name conflicts when resolving symbols during
+     * conformance checking.)
+     */
+    @Test
+    void noChanges() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "evaluation3/noChanges/UserConc.cd",
+              "evaluation3/UserRef.cd",
+              "evaluation3/InvariantsRef.ocl",
+              "evaluation3/noChanges/InvariantsOut.ocl");
+    }
+
+    @Test
+    void singleInc1() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "evaluation3/singleInc1/UserConc.cd",
+              "evaluation3/UserRef.cd",
+              "evaluation3/InvariantsRef.ocl",
+              "evaluation3/singleInc1/InvariantsOut.ocl");
     }
   }
 }
