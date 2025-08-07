@@ -325,6 +325,17 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "observer/ObserverRef.ocl",
               "observer/subjectMultiInc/ObserverOut.ocl");
     }
+
+    @Test
+    void observerMultiInc() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      confParameters.add(CDConfParameter.ALLOW_ADDITIONAL_PARAMETERS);
+      testAdaptedEqualsExpected(
+              "observer/observerMultiInc/ObserverConc.cd",
+              "observer/ObserverRef.cd",
+              "observer/ObserverRef.ocl",
+              "observer/observerMultiInc/ObserverOut.ocl");
+    }
   }
 
 
