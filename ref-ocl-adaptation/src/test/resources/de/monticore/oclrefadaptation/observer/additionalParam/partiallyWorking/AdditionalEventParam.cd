@@ -1,0 +1,27 @@
+import java.lang.String;
+
+classdiagram EventsConc {
+
+  class Event {
+    String name;
+    String description;
+  }
+
+  <<ref="Observer">> interface EventListener {
+    <<ref="update">> void onEvent(Event event);
+    /*
+     * NOTE: Actually, we should add an event parameter here as well. But this would cause
+     * an error in the adaptation result: See 'notWorking' work the full example which is not
+     * passing the test at the moment.
+     */
+    <<ref="__hasSent_update">> boolean __hasSent_onEvent();
+  }
+
+  <<ref="Subject">> class EventManager {
+    <<ref="register">>   void subscribe(EventListener listener);
+    <<ref="unregister">> void unsubscribe(EventListener listener);
+    <<ref="notifyAll">>  void publishEvent(Event event);
+  }
+
+  association EventManager -> (listeners) EventListener [*] <<ordered>>;
+}
