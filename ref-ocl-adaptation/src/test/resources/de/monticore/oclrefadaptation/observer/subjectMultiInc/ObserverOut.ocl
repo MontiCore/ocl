@@ -1,0 +1,46 @@
+ocl Observer {
+
+  // ########## Subject.register ##########
+
+  context void ObserverConc.EventManager.subscribe(ObserverConc.Observer o)
+    post: o isin observers;
+
+  context void ObserverConc.UIState.subscribe(ObserverConc.Observer o)
+      post: o isin observers;
+
+  context void ObserverConc.DeviceInputState.addObserver(ObserverConc.Observer o)
+      post: o isin observers;
+
+
+  // ########## Subject.unregister ##########
+
+  context void ObserverConc.EventManager.unsubscribe(ObserverConc.Observer o)
+    post: o notin observers;
+
+  context void ObserverConc.UIState.unsubscribe(ObserverConc.Observer o)
+    post: o notin observers;
+
+  context void ObserverConc.DeviceInputState.removeObserver(ObserverConc.Observer o)
+    post: o notin observers;
+
+
+  // ########## Subject.notifyAll ##########
+
+  context void ObserverConc.EventManager.notifyAll()
+    pre: forall o in observers:  o.__hasSent_update() == false;
+    post: forall o in observers: o.__hasSent_update();
+
+  context void ObserverConc.UIState.commitStateChange()
+    pre: forall o in observers:  o.__hasSent_update() == false;
+    post: forall o in observers: o.__hasSent_update();
+
+  context void ObserverConc.DeviceInputState.updateObservers()
+    pre: forall o in observers:  o.__hasSent_update() == false;
+    post: forall o in observers: o.__hasSent_update();
+
+
+  // ########## Observer.update ##########
+
+  context void ObserverConc.Observer.update()
+    post: this.__hasSent_update() == true;
+}
