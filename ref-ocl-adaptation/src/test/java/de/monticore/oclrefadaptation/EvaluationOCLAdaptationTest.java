@@ -264,6 +264,19 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
   }
 
   @Nested
+  class Singleton {
+    @Test
+    void multiInc() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "singleton/SingletonConc.cd",
+              "singleton/SingletonRef.cd",
+              "singleton/SingletonRef.ocl",
+              "singleton/SingletonOut.ocl");
+    }
+  }
+
+  @Nested
   class Evaluation3 {
 
     /**
