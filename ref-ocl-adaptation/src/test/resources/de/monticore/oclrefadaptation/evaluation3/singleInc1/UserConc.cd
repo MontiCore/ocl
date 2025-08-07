@@ -1,0 +1,28 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.String;
+classdiagram UserConc {
+
+ <<ref="User">> public class Person {
+    String name ;
+ }
+
+ public class Session {
+  String name ;
+ }
+
+ public class Role {
+    <<ref="name">> String roleId ;
+ }
+ public class Permission {
+    <<ref="name">> String id ;
+ }
+
+ public class UserRole extends Role ;
+ public class AdministrativeRole extends Role;
+ public class UserPermission extends Permission ;
+ public class AdministrativePermission extends Permission ;
+
+ association [1]  Person  -> (sessions)Session[1..*] ;
+ <<ref="userRoles">> association personRoles [*]  Person(persons)  -> (roles)Role[*];
+ association [*]  Permission(permissions)  <- (roles)Role[*];
+}
