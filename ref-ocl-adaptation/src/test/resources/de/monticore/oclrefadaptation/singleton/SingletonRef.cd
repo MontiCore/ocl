@@ -1,0 +1,5 @@
+classdiagram SingletonRef {
+  class Singleton {
+    public static Singleton getInstance();
+  }
+}

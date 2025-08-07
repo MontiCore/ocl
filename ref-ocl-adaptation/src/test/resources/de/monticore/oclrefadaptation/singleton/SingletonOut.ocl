@@ -1,0 +1,25 @@
+ocl Singleton {
+  inv SingletonOnlyOneInstance:
+    ExpressionsBasisMill.size() <= 1; // allows for lazy initialization
+
+  context MyApplicationModel.ExpressionsBasisMill MyApplicationModel.ExpressionsBasisMill.getMill()
+    post: result != null;
+
+  inv SingletonOnlyOneInstance:
+    CommonExpressionsMill.size() <= 1; // allows for lazy initialization
+
+  context MyApplicationModel.CommonExpressionsMill MyApplicationModel.CommonExpressionsMill.getMill()
+    post: result != null;
+
+  inv SingletonOnlyOneInstance:
+    OCLMill.size() <= 1; // allows for lazy initialization
+
+  context MyApplicationModel.OCLMill MyApplicationModel.OCLMill.getMill()
+    post: result != null;
+
+  inv SingletonOnlyOneInstance:
+    BasicSymbolsMill.size() <= 1; // allows for lazy initialization
+
+  context MyApplicationModel.BasicSymbolsMill MyApplicationModel.BasicSymbolsMill.getMill()
+    post: result != null;
+}

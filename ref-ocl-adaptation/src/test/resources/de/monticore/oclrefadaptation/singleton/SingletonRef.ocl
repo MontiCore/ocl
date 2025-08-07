@@ -1,0 +1,7 @@
+ocl Singleton {
+  inv SingletonOnlyOneInstance:
+    Singleton.size() <= 1; // allows for lazy initialization
+
+  context Singleton Singleton.getInstance()
+    post: result != null;
+}
