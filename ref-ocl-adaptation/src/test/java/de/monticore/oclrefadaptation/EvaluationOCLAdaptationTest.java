@@ -134,6 +134,22 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "banking/BankingRef.ocl",
               "banking/multiIncWithBind/BankingOut.ocl");
     }
+
+    /**
+     * Insight: Instead of letting the tool applying complicated adaptations because we have
+     * multiple incarnations of the 'Account' type, we can simply subclass 'Account'. This way
+     * out OCL constraint for the total balance only requires simple adaptation and the balance
+     * is still computed over all accounts (because of usual inheritance).
+     */
+    @Test
+    void accountSubclasses() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "banking/accountSubclasses/BankingConc.cd",
+              "banking/BankingRef.cd",
+              "banking/BankingRef.ocl",
+              "banking/accountSubclasses/BankingOut.ocl");
+    }
   }
 
   @Nested
