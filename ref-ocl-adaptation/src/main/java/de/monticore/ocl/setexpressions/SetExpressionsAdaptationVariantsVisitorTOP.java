@@ -8,7 +8,7 @@ import de.monticore.refadaptation.AbstractAdaptationHandler;
 
 // NOTE: Could be generated
 public class SetExpressionsAdaptationVariantsVisitorTOP
-        extends AbstractAdaptationHandler<SetExpressionsAdaptationContext, SetExpressionsAdaptationVariant>
+        extends AbstractAdaptationHandler<ISetExpressionsAdaptationContext, ISetExpressionsAdaptationVariant>
         implements SetExpressionsVisitor2, SetExpressionsHandler {
   private SetExpressionsTraverser traverser;
 

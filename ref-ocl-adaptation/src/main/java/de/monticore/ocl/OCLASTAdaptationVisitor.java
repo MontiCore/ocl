@@ -30,7 +30,7 @@ public class OCLASTAdaptationVisitor extends OCLASTAdaptationVisitorTOP {
   }
 
   @Override
-  protected ASTOCLArtifact adapt(ASTOCLArtifact original, OCLAdaptationVariant variant) {
+  protected ASTOCLArtifact adapt(ASTOCLArtifact original, IOCLAdaptationVariant variant) {
     ASTOCLArtifact adapted = super.adapt(original, variant);
     List<ASTOCLConstraint> allAdaptedConstraints = new ArrayList<>();
     for (ASTOCLConstraint refConstraint : original.getOCLConstraintList()) {
@@ -41,7 +41,7 @@ public class OCLASTAdaptationVisitor extends OCLASTAdaptationVisitorTOP {
        * to perform two different visitors runs: 1. one to find all variants 2. one to adapt the
        * AST (saving unnecessary deepClone calls)!
        */
-      List<OCLAdaptationVariant> constraintVariants = variant.getChildVariants(refConstraint);
+      List<IOCLAdaptationVariant> constraintVariants = variant.getChildVariants(refConstraint);
       List<ASTOCLConstraint> adaptedConstraints = constraintVariants.stream().map(v -> v.getAdaptedNode(refConstraint))
               .filter(Optional::isPresent)
               .map(Optional::get)
@@ -57,14 +57,14 @@ public class OCLASTAdaptationVisitor extends OCLASTAdaptationVisitorTOP {
   }
 
   @Override
-  protected ASTOCLInvariant adapt(ASTOCLInvariant original, OCLAdaptationVariant variant) {
+  protected ASTOCLInvariant adapt(ASTOCLInvariant original, IOCLAdaptationVariant variant) {
     // TODO 3. find a useful name for the refInvariant
     // TODO maybe something better than counting. We could use infix replacement & suffixes again...
     return super.adapt(original, variant);
   }
 
   @Override
-  protected ASTOCLMethodSignature adapt(ASTOCLMethodSignature original, OCLAdaptationVariant variant) {
+  protected ASTOCLMethodSignature adapt(ASTOCLMethodSignature original, IOCLAdaptationVariant variant) {
     MethodSymbol refMethodSymbol = OCLAdaptationUtils.resolveMethodSymbol(getAdaptationContext()
             .getOriginalOOSymbolsIncMapping().getReferenceScope(), original);
     // NOTE: we still reuse the generated "adapt" method instead of "deepClone". In case we have no

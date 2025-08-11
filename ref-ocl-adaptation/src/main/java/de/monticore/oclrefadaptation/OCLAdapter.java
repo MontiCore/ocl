@@ -9,7 +9,7 @@ import de.monticore.cdconformance.CDConformanceChecker;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.ocl.OCLReferenceArtifactAdapter;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.symbols.OOSymbolsIncMapping;
+import de.monticore.symbols.IOOSymbolsIncMapping;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.Validate;
 
@@ -62,7 +62,7 @@ public class OCLAdapter {
       String mapping,
       List<ASTOCLCompilationUnit> refOCLArtifacts) {
 
-    OOSymbolsIncMapping incMapping = new LegacyCDIncarnationMapping2OOSymbolsIncMapping(
+    IOOSymbolsIncMapping incMapping = new LegacyCDIncarnationMapping2OOSymbolsIncMapping(
             createIncarnationMapping(concreteCD, referenceCD), concreteCD, referenceCD);
 
     List<ASTOCLCompilationUnit> adaptedArtifacts = new ArrayList<>();

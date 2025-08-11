@@ -7,8 +7,8 @@ import de.monticore.ocl.ocl._visitor.OCLVisitor2;
 import de.monticore.refadaptation.AbstractAdaptationHandler;
 
 // NOTE: Can be generated.
-public class OCLBindingVariantsVisitorTOP
-        extends AbstractAdaptationHandler<OCLAdaptationContext, OCLAdaptationVariant>
+public class OCLAdaptationVariantsVisitorTOP
+        extends AbstractAdaptationHandler<IOCLAdaptationContext, IOCLAdaptationVariant>
         implements OCLVisitor2, OCLHandler {
 
   private OCLTraverser traverser;

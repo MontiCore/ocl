@@ -108,12 +108,12 @@ public class ExpressionsBasisAdaptationVariantsVisitor
    *
    * @throws BindingConflictException if the binding conflicts with existing bindings in the context
    */
-  protected ExpressionsBasisAdaptationVariant createVariantForVariableIncarnation(
+  protected IExpressionsBasisAdaptationVariant createVariantForVariableIncarnation(
           ASTNameExpression refExpr,
           VariableSymbol refVariableSymbol,
           VariableSymbol incarnation) throws BindingConflictException {
     // 1. Create a variant for the incarnation
-    ExpressionsBasisAdaptationVariant newVariant = getAdaptationContext()
+    IExpressionsBasisAdaptationVariant newVariant = getAdaptationContext()
             .createVariantForIncarnation(refVariableSymbol, incarnation,
                     refExpr.get_SourcePositionStart());
     // 2. Specify the AST Adaptation / transformation
@@ -135,12 +135,12 @@ public class ExpressionsBasisAdaptationVariantsVisitor
    *
    * @throws BindingConflictException if the binding conflicts with existing bindings in the context
    */
-  protected ExpressionsBasisAdaptationVariant createVariantForFunctionIncarnation(
+  protected IExpressionsBasisAdaptationVariant createVariantForFunctionIncarnation(
           ASTNameExpression refExpr,
           FunctionSymbol refFunctionSymbol,
           FunctionSymbol incarnation) throws BindingConflictException {
     // 1. Create a variant for the incarnation
-    ExpressionsBasisAdaptationVariant newVariant = getAdaptationContext()
+    IExpressionsBasisAdaptationVariant newVariant = getAdaptationContext()
             .createVariantForIncarnation(refFunctionSymbol, incarnation,
                     refExpr.get_SourcePositionStart());
     // 2. Specify the AST Adaptation / transformation

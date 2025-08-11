@@ -19,18 +19,18 @@ import java.util.Optional;
 import static de.monticore.refadaptation.RefAdaptationUtils.deepCloneComments;
 
 // NOTE: Could be generated
-public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<OCLAdaptationContext> implements OCLVisitor2 {
+public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<IOCLAdaptationContext> implements OCLVisitor2 {
 
   @Override
   public void endVisit(ASTOCLCompilationUnit refCompilationUnit) {
-    List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refCompilationUnit);
-    for (OCLAdaptationVariant variant : variants) {
+    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refCompilationUnit);
+    for (IOCLAdaptationVariant variant : variants) {
       ASTOCLCompilationUnit adaptedNode = adapt(refCompilationUnit, variant);
       variant.setAdaptedNode(refCompilationUnit, adaptedNode);
     }
   }
 
-  protected ASTOCLCompilationUnit adapt(ASTOCLCompilationUnit original, OCLAdaptationVariant variant) {
+  protected ASTOCLCompilationUnit adapt(ASTOCLCompilationUnit original, IOCLAdaptationVariant variant) {
     ASTOCLCompilationUnit adapted = OCLMill.oCLCompilationUnitBuilder().uncheckedBuild();
     for (int i=0; i<original.getPackageList().size(); i++) {
       adapted.addPackage(original.getPackage(i));
@@ -48,14 +48,14 @@ public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<OCLAda
 
   @Override
   public void endVisit(ASTOCLArtifact refArtifact) {
-    List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refArtifact);
-    for (OCLAdaptationVariant variant : variants) {
+    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refArtifact);
+    for (IOCLAdaptationVariant variant : variants) {
       ASTOCLArtifact adaptedNode = adapt(refArtifact, variant);
       variant.setAdaptedNode(refArtifact, adaptedNode);
     }
   }
 
-  protected ASTOCLArtifact adapt(ASTOCLArtifact original, OCLAdaptationVariant variant) {
+  protected ASTOCLArtifact adapt(ASTOCLArtifact original, IOCLAdaptationVariant variant) {
     ASTOCLArtifact adapted = OCLMill.oCLArtifactBuilder().uncheckedBuild();
     adapted.setName(original.getName());
     for (ASTOCLConstraint constraint : original.getOCLConstraintList()) {
@@ -74,14 +74,14 @@ public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<OCLAda
      * Each entry "AdaptationVariant" holds a consistent combination of all adapted
      * sub-nodes/expressions and the bindings that were used to adapt them.
      */
-    List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refInvariant);
-    for (OCLAdaptationVariant variant : variants) {
+    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refInvariant);
+    for (IOCLAdaptationVariant variant : variants) {
       ASTOCLInvariant adaptedNode = adapt(refInvariant, variant);
       variant.setAdaptedNode(refInvariant, adaptedNode);
     }
   }
 
-  protected ASTOCLInvariant adapt(ASTOCLInvariant original, OCLAdaptationVariant variant) {
+  protected ASTOCLInvariant adapt(ASTOCLInvariant original, IOCLAdaptationVariant variant) {
     ASTOCLInvariant adapted = OCLMill.oCLInvariantBuilder().uncheckedBuild();
 
     for (ASTStereotype stereotype : original.getStereotypeList()) {
@@ -112,14 +112,14 @@ public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<OCLAda
 
   @Override
   public void endVisit(ASTOCLContextDefinition node) {
-    List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
-    for (OCLAdaptationVariant variant : variants) {
+    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    for (IOCLAdaptationVariant variant : variants) {
       ASTOCLContextDefinition adaptedNode = adapt(node, variant);
       variant.setAdaptedNode(node, adaptedNode);
     }
   }
 
-  protected ASTOCLContextDefinition adapt(ASTOCLContextDefinition original, OCLAdaptationVariant variant) {
+  protected ASTOCLContextDefinition adapt(ASTOCLContextDefinition original, IOCLAdaptationVariant variant) {
     ASTOCLContextDefinition adapted = OCLMill.oCLContextDefinitionBuilder().uncheckedBuild();
 
     if (original.isPresentMCType()) {
@@ -147,14 +147,14 @@ public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<OCLAda
 
   @Override
   public void endVisit(ASTOCLOperationConstraint refConstraint) {
-    List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refConstraint);
-    for (OCLAdaptationVariant variant : variants) {
+    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refConstraint);
+    for (IOCLAdaptationVariant variant : variants) {
       ASTOCLOperationConstraint adaptedNode = adapt(refConstraint, variant);
       variant.setAdaptedNode(refConstraint, adaptedNode);
     }
   }
 
-  protected ASTOCLOperationConstraint adapt(ASTOCLOperationConstraint original, OCLAdaptationVariant variant) {
+  protected ASTOCLOperationConstraint adapt(ASTOCLOperationConstraint original, IOCLAdaptationVariant variant) {
     ASTOCLOperationConstraint adapted = OCLMill.oCLOperationConstraintBuilder().uncheckedBuild();
 
     for (ASTStereotype stereotype : original.getStereotypeList()) {
@@ -182,14 +182,14 @@ public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<OCLAda
 
   @Override
   public void endVisit(ASTOCLMethodSignature node) {
-    List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
-    for (OCLAdaptationVariant variant : variants) {
+    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    for (IOCLAdaptationVariant variant : variants) {
       ASTOCLMethodSignature adaptedNode = adapt(node, variant);
       variant.setAdaptedNode(node, adaptedNode);
     }
   }
 
-  protected ASTOCLMethodSignature adapt(ASTOCLMethodSignature original, OCLAdaptationVariant variant) {
+  protected ASTOCLMethodSignature adapt(ASTOCLMethodSignature original, IOCLAdaptationVariant variant) {
     ASTOCLMethodSignature adapted = OCLMill.oCLMethodSignatureBuilder().uncheckedBuild();
 
     if (original.isPresentMCReturnType()) {
@@ -215,14 +215,14 @@ public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<OCLAda
 
   @Override
   public void endVisit(ASTOCLParamDeclaration node) {
-    List<OCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
-    for (OCLAdaptationVariant variant : variants) {
+    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    for (IOCLAdaptationVariant variant : variants) {
       ASTOCLParamDeclaration adaptedNode = adapt(node, variant);
       variant.setAdaptedNode(node, adaptedNode);
     }
   }
 
-  protected ASTOCLParamDeclaration adapt(ASTOCLParamDeclaration original, OCLAdaptationVariant variant) {
+  protected ASTOCLParamDeclaration adapt(ASTOCLParamDeclaration original, IOCLAdaptationVariant variant) {
     ASTOCLParamDeclaration adapted = OCLMill.oCLParamDeclarationBuilder().uncheckedBuild();
 
     Optional<ASTMCType> adaptedMCType = variant.getAdaptedNode(original.getMCType());
