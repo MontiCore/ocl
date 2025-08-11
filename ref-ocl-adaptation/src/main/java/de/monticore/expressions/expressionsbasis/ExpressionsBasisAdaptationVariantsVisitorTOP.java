@@ -9,7 +9,7 @@ import de.monticore.refadaptation.AbstractAdaptationHandler;
 
 // NOTE: Can be generated.
 public class ExpressionsBasisAdaptationVariantsVisitorTOP
-        extends AbstractAdaptationHandler<ExpressionsBasisAdaptationContext, ExpressionsBasisAdaptationVariant>
+        extends AbstractAdaptationHandler<IExpressionsBasisAdaptationContext, IExpressionsBasisAdaptationVariant>
         implements ExpressionsBasisVisitor2, ExpressionsBasisHandler {
 
   private ExpressionsBasisTraverser traverser;

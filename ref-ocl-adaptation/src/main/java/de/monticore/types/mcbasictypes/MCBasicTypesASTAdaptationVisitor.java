@@ -16,20 +16,20 @@ import de.se_rwth.commons.logging.Log;
 import java.util.List;
 import java.util.Optional;
 
-public class MCBasicTypesAdaptationVisitor
-        extends AbstractAdaptationVisitor<MCBasicTypesAdaptationContext>
+public class MCBasicTypesASTAdaptationVisitor
+        extends AbstractAdaptationVisitor<IMCBasicTypesAdaptationContext>
         implements MCBasicTypesVisitor2 {
 
-  private static final String LOG_NAME = MCBasicTypesAdaptationVisitor.class.getName();
+  private static final String LOG_NAME = MCBasicTypesASTAdaptationVisitor.class.getName();
 
   @Override
   public void endVisit(ASTMCQualifiedType refType) {
-    List<MCBasicTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(refType);
+    List<IMCBasicTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(refType);
 
     SymTypeExpression symType = TypeCheck3.symTypeFromAST(refType);
 
     // 2. We can now create a new ASTEqualsExpression with the adapted left and right expressions.
-    for (MCBasicTypesAdaptationVariant variant : variants) {
+    for (IMCBasicTypesAdaptationVariant variant : variants) {
       // 3. create the adapted expression
       ASTMCQualifiedType adaptedType = refType.deepClone();
 
@@ -55,7 +55,7 @@ public class MCBasicTypesAdaptationVisitor
 
   @Override
   public void endVisit(ASTMCImportStatement refImport) {
-    List<MCBasicTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(refImport);
+    List<IMCBasicTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(refImport);
 
     IMCBasicTypesScope scope = refImport.getEnclosingScope();
     Optional<TypeSymbol> typeSymbol;
@@ -65,7 +65,7 @@ public class MCBasicTypesAdaptationVisitor
       typeSymbol = Optional.empty();
     }
 
-    for (MCBasicTypesAdaptationVariant variant : variants) {
+    for (IMCBasicTypesAdaptationVariant variant : variants) {
       ASTMCImportStatement adaptedImport = refImport.deepClone();
 
       if (typeSymbol.isPresent()) {

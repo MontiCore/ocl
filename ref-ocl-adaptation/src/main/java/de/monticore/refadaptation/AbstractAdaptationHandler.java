@@ -1,12 +1,9 @@
 package de.monticore.refadaptation;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationVariant;
-import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.visitor.ITraverser;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.function.FailableFunction;
-import org.apache.commons.lang3.function.FailableSupplier;
 
 import java.util.*;
 import java.util.function.Function;

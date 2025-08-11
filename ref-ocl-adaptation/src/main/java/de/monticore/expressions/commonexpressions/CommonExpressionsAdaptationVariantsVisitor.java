@@ -1,14 +1,11 @@
 package de.monticore.expressions.commonexpressions;
 
 import de.monticore.expressions.commonexpressions._ast.*;
-import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
-import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.types3.TypeCheck3;
-import de.se_rwth.commons.logging.Log;
 
 import java.util.*;
 
@@ -84,12 +81,12 @@ public class CommonExpressionsAdaptationVariantsVisitor
    *
    * @throws BindingConflictException if the binding conflicts with existing bindings in the context
    */
-  protected CommonExpressionsAdaptationVariant createVariantForVariableIncarnation(
+  protected ICommonExpressionsAdaptationVariant createVariantForVariableIncarnation(
           ASTFieldAccessExpression refExpr,
           VariableSymbol refVariableSymbol,
           VariableSymbol incarnation) throws BindingConflictException {
     // 1. Create a variant for the incarnation
-    CommonExpressionsAdaptationVariant newVariant = getAdaptationContext()
+    ICommonExpressionsAdaptationVariant newVariant = getAdaptationContext()
             .createVariantForIncarnation(refVariableSymbol, incarnation,
                     refExpr.get_SourcePositionStart());
     // 2. Specify the AST Adaptation / transformation
@@ -121,12 +118,12 @@ public class CommonExpressionsAdaptationVariantsVisitor
     });
   }
 
-  protected CommonExpressionsAdaptationVariant createVariantForFunctionIncarnation(
+  protected ICommonExpressionsAdaptationVariant createVariantForFunctionIncarnation(
           ASTFieldAccessExpression refExpr,
           FunctionSymbol refFunctionSymbol,
           FunctionSymbol incarnation) throws BindingConflictException {
     // 1. Create a variant for the incarnation
-    CommonExpressionsAdaptationVariant newVariant = getAdaptationContext()
+    ICommonExpressionsAdaptationVariant newVariant = getAdaptationContext()
             .createVariantForIncarnation(refFunctionSymbol, incarnation,
                     refExpr.get_SourcePositionStart());
     // 2. Specify the AST Adaptation / transformation

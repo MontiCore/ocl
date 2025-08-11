@@ -1,11 +1,11 @@
 package de.monticore.ocl;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.expressions.commonexpressions.CommonExpressionsAdaptationVariant;
+import de.monticore.expressions.commonexpressions.ICommonExpressionsAdaptationVariant;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
-import de.monticore.symbols.OOSymbolsBindings;
+import de.monticore.symbols.IOOSymbolsBindings;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.se_rwth.commons.logging.Log;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class OCLBindingVariantsVisitor extends OCLBindingVariantsVisitorTOP {
+public class OCLAdaptationVariantsVisitor extends OCLAdaptationVariantsVisitorTOP {
 
   @Override
   public void traverse(ASTOCLInvariant refInvariant) {
@@ -84,7 +84,7 @@ public class OCLBindingVariantsVisitor extends OCLBindingVariantsVisitorTOP {
           ASTOCLMethodSignature refMethodSignature,
           MethodSymbol refMethodSymbol,
           MethodSymbol methodIncarnation) {
-    CommonExpressionsAdaptationVariant newVariant = getAdaptationContext().createVariant();
+    ICommonExpressionsAdaptationVariant newVariant = getAdaptationContext().createVariant();
     // 1. Add strict binding for the selected method
     // (Implicitly adds type bindings for declaring type, return type and parameter types)
     try {
@@ -97,7 +97,7 @@ public class OCLBindingVariantsVisitor extends OCLBindingVariantsVisitorTOP {
       return;
     }
     // 2. Add bindings from the original model attached to the method
-    OOSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalOOSymbolsIncMapping().getScopedBindings(methodIncarnation);
+    IOOSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalOOSymbolsIncMapping().getScopedBindings(methodIncarnation);
     try {
       newVariant.getOOSymbolsBindings().addAll(bindingsFromModel);
     } catch (BindingConflictException e) {

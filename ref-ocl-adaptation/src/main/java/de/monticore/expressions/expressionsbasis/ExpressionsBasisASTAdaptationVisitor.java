@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Optional;
 
 public class ExpressionsBasisASTAdaptationVisitor
-        extends AbstractAdaptationVisitor<ExpressionsBasisAdaptationContext>
+        extends AbstractAdaptationVisitor<IExpressionsBasisAdaptationContext>
         implements ExpressionsBasisVisitor2 {
 
   @Override
   public void endVisit(ASTNameExpression expr) {
-    List<ExpressionsBasisAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
-    for (ExpressionsBasisAdaptationVariant variant : variants) {
+    List<IExpressionsBasisAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    for (IExpressionsBasisAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTNameExpression adaptedNode = adapt(expr, variant);
       // 2. Apply AST adaptations registered specifically for this variant
@@ -31,7 +31,7 @@ public class ExpressionsBasisASTAdaptationVisitor
     }
   }
 
-  protected ASTNameExpression adapt(ASTNameExpression original, ExpressionsBasisAdaptationVariant variant) {
+  protected ASTNameExpression adapt(ASTNameExpression original, IExpressionsBasisAdaptationVariant variant) {
     ASTNameExpression adapted = ExpressionsBasisMill.nameExpressionBuilder().uncheckedBuild();
 
     adapted.setName(original.getName());
@@ -42,8 +42,8 @@ public class ExpressionsBasisASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTArguments node) {
-    List<ExpressionsBasisAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
-    for (ExpressionsBasisAdaptationVariant variant : variants) {
+    List<IExpressionsBasisAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    for (IExpressionsBasisAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTArguments adaptedNode = adapt(node, variant);
       // 2. Apply AST adaptations registered specifically for this variant
@@ -54,7 +54,7 @@ public class ExpressionsBasisASTAdaptationVisitor
     }
   }
 
-  protected ASTArguments adapt(ASTArguments original, ExpressionsBasisAdaptationVariant variant) {
+  protected ASTArguments adapt(ASTArguments original, IExpressionsBasisAdaptationVariant variant) {
     ASTArguments adapted = ExpressionsBasisMill.argumentsBuilder().uncheckedBuild();
     for (ASTExpression expression : original.getExpressionList()) {
       Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(expression);
@@ -67,8 +67,8 @@ public class ExpressionsBasisASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTLiteralExpression node) {
-    List<ExpressionsBasisAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
-    for (ExpressionsBasisAdaptationVariant variant : variants) {
+    List<IExpressionsBasisAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    for (IExpressionsBasisAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTLiteralExpression adaptedNode = adapt(node, variant);
       // 2. Apply AST adaptations registered specifically for this variant
@@ -79,7 +79,7 @@ public class ExpressionsBasisASTAdaptationVisitor
     }
   }
 
-  protected ASTLiteralExpression adapt(ASTLiteralExpression original, ExpressionsBasisAdaptationVariant variant) {
+  protected ASTLiteralExpression adapt(ASTLiteralExpression original, IExpressionsBasisAdaptationVariant variant) {
     ASTLiteralExpression adapted = ExpressionsBasisMill.literalExpressionBuilder().uncheckedBuild();
 
     Optional<ASTLiteral> adaptedLiteral = variant.getAdaptedNode(original.getLiteral());

@@ -5,9 +5,9 @@ import de.monticore.cdbasis._ast.ASTCDAttributeTOP;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
-import de.monticore.symbols.OOSymbolsBindings;
-import de.monticore.symbols.OOSymbolsIncMapping;
-import de.monticore.symbols.OOSymbolsLocalIncMapping;
+import de.monticore.symbols.IOOSymbolsBindings;
+import de.monticore.symbols.IOOSymbolsIncMapping;
+import de.monticore.symbols.IOOSymbolsLocalIncMapping;
 import de.monticore.symbols.OOSymbolsRestrictedIncMapping;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 // TODO CDIncarnationMapping in cd4a should be a supertype of OOSymbolsIncMapping
 @Deprecated
-public class LegacyCDIncarnationMapping2OOSymbolsIncMapping implements OOSymbolsIncMapping {
+public class LegacyCDIncarnationMapping2OOSymbolsIncMapping implements IOOSymbolsIncMapping {
 
   private CDIncarnationMapping cdIncarnationMapping;
   private ASTCDCompilationUnit concreteCD;
@@ -62,27 +62,27 @@ public class LegacyCDIncarnationMapping2OOSymbolsIncMapping implements OOSymbols
   }
 
   @Override
-  public OOSymbolsLocalIncMapping getScopedMapping(ISymbol contextSymbol) {
+  public IOOSymbolsLocalIncMapping getScopedMapping(ISymbol contextSymbol) {
     return new OOSymbolsRestrictedIncMapping(this, getScopedBindings(contextSymbol));
   }
 
   @Override
-  public OOSymbolsLocalIncMapping getScopedMapping(IScope scope) {
+  public IOOSymbolsLocalIncMapping getScopedMapping(IScope scope) {
     return new OOSymbolsRestrictedIncMapping(this, getScopedBindings(scope));
   }
 
   @Override
-  public OOSymbolsBindings getScopedBindings(String contextSymbolKey) {
+  public IOOSymbolsBindings getScopedBindings(String contextSymbolKey) {
     return new LegacyCDIncarnationBindings2OOSymbolsBindings(cdIncarnationMapping, null, null, contextSymbolKey);
   }
 
   @Override
-  public OOSymbolsBindings getScopedBindings(ISymbol contextSymbol) {
+  public IOOSymbolsBindings getScopedBindings(ISymbol contextSymbol) {
     return new LegacyCDIncarnationBindings2OOSymbolsBindings(cdIncarnationMapping, contextSymbol, null, contextSymbol.getFullName());
   }
 
   @Override
-  public OOSymbolsBindings getScopedBindings(IScope scope) {
+  public IOOSymbolsBindings getScopedBindings(IScope scope) {
     return new LegacyCDIncarnationBindings2OOSymbolsBindings(cdIncarnationMapping, null, scope, null);
   }
 

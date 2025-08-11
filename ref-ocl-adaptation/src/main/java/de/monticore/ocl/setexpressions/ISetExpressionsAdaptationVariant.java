@@ -1,14 +1,14 @@
 package de.monticore.ocl.setexpressions;
 
-import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVariant;
+import de.monticore.expressions.expressionsbasis.IExpressionsBasisAdaptationVariant;
 import de.monticore.refadaptation.IAdaptationVariant;
 
-public interface SetExpressionsAdaptationVariant extends IAdaptationVariant,
-        ExpressionsBasisAdaptationVariant {
+public interface ISetExpressionsAdaptationVariant extends IAdaptationVariant,
+        IExpressionsBasisAdaptationVariant {
 
   // ==========================================================
   // Methods from IAdaptationVariant redefined for type safety
   // ===========================================================
 
-  SetExpressionsAdaptationVariant copy();
+  ISetExpressionsAdaptationVariant copy();
 }

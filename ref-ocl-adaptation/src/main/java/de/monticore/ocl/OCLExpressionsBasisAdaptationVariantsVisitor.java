@@ -1,12 +1,12 @@
 package de.monticore.ocl;
 
 import de.monticore.cdconcretization.util.SymbolUtil;
-import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVariant;
+import de.monticore.expressions.expressionsbasis.IExpressionsBasisAdaptationVariant;
 import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVariantsVisitor;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
-import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
+import de.monticore.symbols.basicsymbols.IBasicSymbolsBindings;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -66,7 +66,7 @@ public class OCLExpressionsBasisAdaptationVariantsVisitor extends ExpressionsBas
     } else {
       // we have the incarnations which are possible in this context
       for (TypeSymbol typeIncarnation : incarnations) {
-        ExpressionsBasisAdaptationVariant newVariant = getAdaptationContext().createVariant();
+        IExpressionsBasisAdaptationVariant newVariant = getAdaptationContext().createVariant();
         // 1. Add strict binding for the selected type
         try {
           newVariant.getBasicSymbolsBindings().addTypeBinding(Binding.createStrict(refType, typeIncarnation));
@@ -78,7 +78,7 @@ public class OCLExpressionsBasisAdaptationVariantsVisitor extends ExpressionsBas
           continue;
         }
         // 2. Add bindings from the original model attached to the type
-        BasicSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalBasicSymbolsIncMapping().getScopedBindings(typeIncarnation);
+        IBasicSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalBasicSymbolsIncMapping().getScopedBindings(typeIncarnation);
         try {
           newVariant.getBasicSymbolsBindings().addAll(bindingsFromModel);
         } catch (BindingConflictException e) {

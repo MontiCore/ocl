@@ -13,13 +13,13 @@ import java.util.Optional;
 
 // NOTE: Could be generated
 public class MCCollectionTypesASTAdaptationVisitor
-        extends AbstractAdaptationVisitor<MCCollectionTypesAdaptationContext>
+        extends AbstractAdaptationVisitor<IMCCollectionTypesAdaptationContext>
         implements MCCollectionTypesVisitor2 {
 
   @Override
   public void endVisit(ASTMCBasicTypeArgument node) {
-    List<MCCollectionTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
-    for (MCCollectionTypesAdaptationVariant variant : variants) {
+    List<IMCCollectionTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    for (IMCCollectionTypesAdaptationVariant variant : variants) {
       ASTMCBasicTypeArgument adaptedNode = adapt(node, variant);
       variant.setAdaptedNode(node, adaptedNode);
     }
@@ -35,8 +35,8 @@ public class MCCollectionTypesASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTMCPrimitiveTypeArgument node) {
-    List<MCCollectionTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
-    for (MCCollectionTypesAdaptationVariant variant : variants) {
+    List<IMCCollectionTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    for (IMCCollectionTypesAdaptationVariant variant : variants) {
       ASTMCPrimitiveTypeArgument adaptedNode = adapt(node, variant);
       variant.setAdaptedNode(node, adaptedNode);
     }
@@ -53,8 +53,8 @@ public class MCCollectionTypesASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTMCListType node) {
-    List<MCCollectionTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
-    for (MCCollectionTypesAdaptationVariant variant : variants) {
+    List<IMCCollectionTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    for (IMCCollectionTypesAdaptationVariant variant : variants) {
       ASTMCListType adaptedNode = adapt(node, variant);
       variant.setAdaptedNode(node, adaptedNode);
     }
@@ -71,8 +71,8 @@ public class MCCollectionTypesASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTMCSetType node) {
-    List<MCCollectionTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
-    for (MCCollectionTypesAdaptationVariant variant : variants) {
+    List<IMCCollectionTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    for (IMCCollectionTypesAdaptationVariant variant : variants) {
       ASTMCSetType adaptedNode = adapt(node, variant);
       variant.setAdaptedNode(node, adaptedNode);
     }
@@ -89,8 +89,8 @@ public class MCCollectionTypesASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTMCMapType node) {
-    List<MCCollectionTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
-    for (MCCollectionTypesAdaptationVariant variant : variants) {
+    List<IMCCollectionTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    for (IMCCollectionTypesAdaptationVariant variant : variants) {
       ASTMCMapType adaptedNode = adapt(node, variant);
       variant.setAdaptedNode(node, adaptedNode);
     }
@@ -109,8 +109,8 @@ public class MCCollectionTypesASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTMCOptionalType node) {
-    List<MCCollectionTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
-    for (MCCollectionTypesAdaptationVariant variant : variants) {
+    List<IMCCollectionTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    for (IMCCollectionTypesAdaptationVariant variant : variants) {
       ASTMCOptionalType adaptedNode = adapt(node, variant);
       variant.setAdaptedNode(node, adaptedNode);
     }

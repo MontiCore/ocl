@@ -7,7 +7,7 @@ import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisi
 import de.monticore.refadaptation.AbstractAdaptationHandler;
 
 public class CommonExpressionsAdaptationVariantsVisitorTOP
-        extends AbstractAdaptationHandler<CommonExpressionsAdaptationContext, CommonExpressionsAdaptationVariant>
+        extends AbstractAdaptationHandler<ICommonExpressionsAdaptationContext, ICommonExpressionsAdaptationVariant>
         implements CommonExpressionsVisitor2, CommonExpressionsHandler {
   private CommonExpressionsTraverser traverser;
 

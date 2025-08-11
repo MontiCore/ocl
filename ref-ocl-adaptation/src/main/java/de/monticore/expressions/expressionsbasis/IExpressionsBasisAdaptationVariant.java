@@ -1,20 +1,19 @@
-package de.monticore.expressions.commonexpressions;
+package de.monticore.expressions.expressionsbasis;
 
-import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVariant;
 import de.monticore.refadaptation.IAdaptationVariant;
-import de.monticore.symbols.OOSymbolsBindings;
+import de.monticore.symbols.basicsymbols.IBasicSymbolsBindings;
 
-public interface CommonExpressionsAdaptationVariant extends IAdaptationVariant, ExpressionsBasisAdaptationVariant {
+public interface IExpressionsBasisAdaptationVariant extends IAdaptationVariant {
 
   // ==========================================================
   // Methods from IAdaptationVariant redefined for type safety
   // ===========================================================
 
-  CommonExpressionsAdaptationVariant copy();
+  IExpressionsBasisAdaptationVariant copy();
 
   // ==============================================================
   // Language specific incarnation mappings required for adaptation
   // ==============================================================
 
-  OOSymbolsBindings getOOSymbolsBindings();
+  IBasicSymbolsBindings getBasicSymbolsBindings();
 }

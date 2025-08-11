@@ -1,50 +1,50 @@
 package de.monticore.expressions.commonexpressions;
 
-import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationContext;
+import de.monticore.expressions.expressionsbasis.IExpressionsBasisAdaptationContext;
 import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.refadaptation.IAdaptationContext;
-import de.monticore.symbols.OOSymbolsBindings;
-import de.monticore.symbols.OOSymbolsIncMapping;
-import de.monticore.symbols.OOSymbolsLocalIncMapping;
+import de.monticore.symbols.IOOSymbolsBindings;
+import de.monticore.symbols.IOOSymbolsIncMapping;
+import de.monticore.symbols.IOOSymbolsLocalIncMapping;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.SourcePosition;
 
-public interface CommonExpressionsAdaptationContext extends IAdaptationContext, ExpressionsBasisAdaptationContext {
+public interface ICommonExpressionsAdaptationContext extends IAdaptationContext, IExpressionsBasisAdaptationContext {
 
   // ==========================================================
   // Methods from IAdaptationContext redefined for type safety
   // ===========================================================
 
-  CommonExpressionsAdaptationVariant createVariant();
+  ICommonExpressionsAdaptationVariant createVariant();
 
-  CommonExpressionsAdaptationContext fork();
+  ICommonExpressionsAdaptationContext fork();
 
   // ==============================================================
   // Language specific incarnation mappings required for adaptation
   // ==============================================================
 
-  OOSymbolsBindings getOOSymbolsBindings();
+  IOOSymbolsBindings getOOSymbolsBindings();
 
-  OOSymbolsLocalIncMapping getOOSymbolsIncMapping();
+  IOOSymbolsLocalIncMapping getOOSymbolsIncMapping();
 
-  OOSymbolsIncMapping getOriginalOOSymbolsIncMapping();
+  IOOSymbolsIncMapping getOriginalOOSymbolsIncMapping();
 
   @Override
-  default CommonExpressionsAdaptationVariant createVariantForIncarnation(
+  default ICommonExpressionsAdaptationVariant createVariantForIncarnation(
           VariableSymbol referenceSymbol,
           VariableSymbol incarnation,
           SourcePosition sourcePosition) throws BindingConflictException {
-    return (CommonExpressionsAdaptationVariant) ExpressionsBasisAdaptationContext
+    return (ICommonExpressionsAdaptationVariant) IExpressionsBasisAdaptationContext
             .super.createVariantForIncarnation(referenceSymbol, incarnation, sourcePosition);
   }
 
   @Override
-  default CommonExpressionsAdaptationVariant createVariantForIncarnation(
+  default ICommonExpressionsAdaptationVariant createVariantForIncarnation(
           FunctionSymbol referenceSymbol,
           FunctionSymbol incarnation,
           SourcePosition sourcePosition) throws BindingConflictException {
-    return (CommonExpressionsAdaptationVariant) ExpressionsBasisAdaptationContext
+    return (ICommonExpressionsAdaptationVariant) IExpressionsBasisAdaptationContext
             .super.createVariantForIncarnation(referenceSymbol, incarnation, sourcePosition);
   }
 }

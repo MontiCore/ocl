@@ -3,33 +3,33 @@ package de.monticore.expressions.expressionsbasis;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.refadaptation.IAdaptationContext;
-import de.monticore.symbols.basicsymbols.BasicSymbolsBindings;
-import de.monticore.symbols.basicsymbols.BasicSymbolsIncMapping;
-import de.monticore.symbols.basicsymbols.BasicSymbolsLocalIncMapping;
+import de.monticore.symbols.basicsymbols.IBasicSymbolsBindings;
+import de.monticore.symbols.basicsymbols.IBasicSymbolsIncMapping;
+import de.monticore.symbols.basicsymbols.IBasicSymbolsLocalIncMapping;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.se_rwth.commons.SourcePosition;
 import de.se_rwth.commons.logging.Log;
 
-public interface ExpressionsBasisAdaptationContext extends IAdaptationContext {
+public interface IExpressionsBasisAdaptationContext extends IAdaptationContext {
 
   // ==========================================================
   // Methods from IAdaptationContext redefined for type safety
   // ===========================================================
 
-  ExpressionsBasisAdaptationVariant createVariant();
+  IExpressionsBasisAdaptationVariant createVariant();
 
-  ExpressionsBasisAdaptationContext fork();
+  IExpressionsBasisAdaptationContext fork();
 
   // ==============================================================
   // Language specific incarnation mappings required for adaptation
   // ==============================================================
 
-  BasicSymbolsBindings getBasicSymbolsBindings();
+  IBasicSymbolsBindings getBasicSymbolsBindings();
 
-  BasicSymbolsLocalIncMapping getBasicSymbolsIncMapping();
+  IBasicSymbolsLocalIncMapping getBasicSymbolsIncMapping();
 
-  BasicSymbolsIncMapping getOriginalBasicSymbolsIncMapping();
+  IBasicSymbolsIncMapping getOriginalBasicSymbolsIncMapping();
 
   // NOTE: This can be generated for any symbol in each incarnation mapping this language depends on
   /**
@@ -45,11 +45,11 @@ public interface ExpressionsBasisAdaptationContext extends IAdaptationContext {
    * @throws BindingConflictException if the binding conflicts with existing bindings in the context
    *      i.e. the variant cannot be created and higher level code should ignore this incarnation
    */
-  default ExpressionsBasisAdaptationVariant createVariantForIncarnation(
+  default IExpressionsBasisAdaptationVariant createVariantForIncarnation(
           VariableSymbol referenceSymbol,
           VariableSymbol incarnation,
           SourcePosition sourcePosition) throws BindingConflictException {
-    ExpressionsBasisAdaptationVariant newVariant = createVariant();
+    IExpressionsBasisAdaptationVariant newVariant = createVariant();
     // 1. Add strict binding for the selected variable
     // (Implicitly adds type bindings for variable type)
     try {
@@ -62,7 +62,7 @@ public interface ExpressionsBasisAdaptationContext extends IAdaptationContext {
       throw e;
     }
     // 2. Add bindings from the original model attached to the method
-    BasicSymbolsBindings bindingsFromModel = getOriginalBasicSymbolsIncMapping().getScopedBindings(incarnation);
+    IBasicSymbolsBindings bindingsFromModel = getOriginalBasicSymbolsIncMapping().getScopedBindings(incarnation);
     try {
       newVariant.getBasicSymbolsBindings().addAll(bindingsFromModel);
     } catch (BindingConflictException e) {
@@ -70,7 +70,7 @@ public interface ExpressionsBasisAdaptationContext extends IAdaptationContext {
       // with the existing bindings in the adaptation context.
       // We ignore this incarnation. Example: employee.firstName == employeeBuilder.lastName
       Log.debug("Ignoring incarnation due to binding conflict: " + incarnation.getFullName()
-              + " in " + sourcePosition, ExpressionsBasisAdaptationContext.class.getName());
+              + " in " + sourcePosition, IExpressionsBasisAdaptationContext.class.getName());
       throw e;
     }
     return newVariant;
@@ -90,11 +90,11 @@ public interface ExpressionsBasisAdaptationContext extends IAdaptationContext {
    * @throws BindingConflictException if the binding conflicts with existing bindings in the context
    *      i.e. the variant cannot be created and higher level code should ignore this incarnation
    */
-  default ExpressionsBasisAdaptationVariant createVariantForIncarnation(
+  default IExpressionsBasisAdaptationVariant createVariantForIncarnation(
           FunctionSymbol referenceSymbol,
           FunctionSymbol incarnation,
           SourcePosition sourcePosition) throws BindingConflictException {
-    ExpressionsBasisAdaptationVariant newVariant = createVariant();
+    IExpressionsBasisAdaptationVariant newVariant = createVariant();
     // 1. Add strict binding for the selected variable
     // (Implicitly adds type bindings for variable type)
     try {
@@ -107,7 +107,7 @@ public interface ExpressionsBasisAdaptationContext extends IAdaptationContext {
       throw e;
     }
     // 2. Add bindings from the original model attached to the method
-    BasicSymbolsBindings bindingsFromModel = getOriginalBasicSymbolsIncMapping().getScopedBindings(incarnation);
+    IBasicSymbolsBindings bindingsFromModel = getOriginalBasicSymbolsIncMapping().getScopedBindings(incarnation);
     try {
       newVariant.getBasicSymbolsBindings().addAll(bindingsFromModel);
     } catch (BindingConflictException e) {
@@ -115,7 +115,7 @@ public interface ExpressionsBasisAdaptationContext extends IAdaptationContext {
       // with the existing bindings in the adaptation context.
       // We ignore this incarnation. Example: employee.firstName == employeeBuilder.lastName
       Log.debug("Ignoring incarnation due to binding conflict: " + incarnation.getFullName()
-              + " in " + sourcePosition, ExpressionsBasisAdaptationContext.class.getName());
+              + " in " + sourcePosition, IExpressionsBasisAdaptationContext.class.getName());
       throw e;
     }
     return newVariant;

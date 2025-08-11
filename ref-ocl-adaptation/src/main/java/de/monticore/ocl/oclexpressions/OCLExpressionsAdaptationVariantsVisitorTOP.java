@@ -8,7 +8,7 @@ import de.monticore.refadaptation.AbstractAdaptationHandler;
 
 // NOTE: Could be generated
 public class OCLExpressionsAdaptationVariantsVisitorTOP
-        extends AbstractAdaptationHandler<OCLExpressionsAdaptationContext, OCLExpressionsAdaptationVariant>
+        extends AbstractAdaptationHandler<IOCLExpressionsAdaptationContext, IOCLExpressionsAdaptationVariant>
         implements OCLExpressionsVisitor2, OCLExpressionsHandler {
   private OCLExpressionsTraverser traverser;
 

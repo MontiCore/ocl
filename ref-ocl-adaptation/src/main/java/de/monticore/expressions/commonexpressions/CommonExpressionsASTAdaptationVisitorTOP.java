@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Optional;
 
 public class CommonExpressionsASTAdaptationVisitorTOP
-        extends AbstractAdaptationVisitor<CommonExpressionsAdaptationContext>
+        extends AbstractAdaptationVisitor<ICommonExpressionsAdaptationContext>
         implements CommonExpressionsVisitor2 {
 
   @Override
   public void endVisit(ASTEqualsExpression expr) {
-    List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
-    for (CommonExpressionsAdaptationVariant variant : variants) {
+    List<ICommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    for (ICommonExpressionsAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTEqualsExpression adaptedNode = adapt(expr, variant);
       // 2. Apply AST adaptations registered specifically for this variant
@@ -29,7 +29,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP
     }
   }
 
-  protected ASTEqualsExpression adapt(ASTEqualsExpression original, CommonExpressionsAdaptationVariant variant) {
+  protected ASTEqualsExpression adapt(ASTEqualsExpression original, ICommonExpressionsAdaptationVariant variant) {
     ASTEqualsExpression adapted = CommonExpressionsMill.equalsExpressionBuilder().uncheckedBuild();
     Optional<ASTExpression> adaptedLeft = variant.getAdaptedNode(original.getLeft());
     adapted.setLeft(adaptedLeft.orElseGet(() -> original.getLeft().deepClone()));
@@ -42,8 +42,8 @@ public class CommonExpressionsASTAdaptationVisitorTOP
 
   @Override
   public void endVisit(ASTBooleanNotExpression expr) {
-    List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
-    for (CommonExpressionsAdaptationVariant variant : variants) {
+    List<ICommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    for (ICommonExpressionsAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTBooleanNotExpression adaptedNode = adapt(expr, variant);
       // 2. Apply AST adaptations registered specifically for this variant
@@ -54,7 +54,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP
     }
   }
 
-  protected ASTBooleanNotExpression adapt(ASTBooleanNotExpression original, CommonExpressionsAdaptationVariant variant) {
+  protected ASTBooleanNotExpression adapt(ASTBooleanNotExpression original, ICommonExpressionsAdaptationVariant variant) {
     ASTBooleanNotExpression adapted = CommonExpressionsMill.booleanNotExpressionBuilder().uncheckedBuild();
     Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(original.getExpression());
     adapted.setExpression(adaptedExpression.orElseGet(() -> original.getExpression().deepClone()));
@@ -64,8 +64,8 @@ public class CommonExpressionsASTAdaptationVisitorTOP
 
   @Override
   public void endVisit(ASTLogicalNotExpression expr) {
-    List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
-    for (CommonExpressionsAdaptationVariant variant : variants) {
+    List<ICommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    for (ICommonExpressionsAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTLogicalNotExpression adaptedNode = adapt(expr, variant);
       // 2. Apply AST adaptations registered specifically for this variant
@@ -76,7 +76,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP
     }
   }
 
-  protected ASTLogicalNotExpression adapt(ASTLogicalNotExpression original, CommonExpressionsAdaptationVariant variant) {
+  protected ASTLogicalNotExpression adapt(ASTLogicalNotExpression original, ICommonExpressionsAdaptationVariant variant) {
     ASTLogicalNotExpression adapted = CommonExpressionsMill.logicalNotExpressionBuilder().uncheckedBuild();
     Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(original.getExpression());
     adapted.setExpression(adaptedExpression.orElseGet(() -> original.getExpression().deepClone()));
@@ -86,8 +86,8 @@ public class CommonExpressionsASTAdaptationVisitorTOP
 
   @Override
   public void endVisit(ASTBracketExpression expr) {
-    List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
-    for (CommonExpressionsAdaptationVariant variant : variants) {
+    List<ICommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    for (ICommonExpressionsAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTBracketExpression adaptedNode = adapt(expr, variant);
       // 2. Apply AST adaptations registered specifically for this variant
@@ -98,7 +98,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP
     }
   }
 
-  protected ASTBracketExpression adapt(ASTBracketExpression original, CommonExpressionsAdaptationVariant variant) {
+  protected ASTBracketExpression adapt(ASTBracketExpression original, ICommonExpressionsAdaptationVariant variant) {
     ASTBracketExpression adapted = CommonExpressionsMill.bracketExpressionBuilder().uncheckedBuild();
     Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(original.getExpression());
     adapted.setExpression(adaptedExpression.orElseGet(() -> original.getExpression().deepClone()));
@@ -114,8 +114,8 @@ public class CommonExpressionsASTAdaptationVisitorTOP
      * Each entry "AdaptationVariant" holds a consistent combination of all adapted
      * sub-nodes/expressions and the bindings that were used to adapt them.
      */
-    List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
-    for (CommonExpressionsAdaptationVariant variant : variants) {
+    List<ICommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    for (ICommonExpressionsAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTFieldAccessExpression adaptedNode = adapt(expr, variant);
       // 2. Apply AST adaptations registered specifically for this variant
@@ -126,7 +126,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP
     }
   }
 
-  protected ASTFieldAccessExpression adapt(ASTFieldAccessExpression original, CommonExpressionsAdaptationVariant variant) {
+  protected ASTFieldAccessExpression adapt(ASTFieldAccessExpression original, ICommonExpressionsAdaptationVariant variant) {
     ASTFieldAccessExpression adapted = CommonExpressionsMill.fieldAccessExpressionBuilder().uncheckedBuild();
     Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(original.getExpression());
     adapted.setExpression(adaptedExpression.orElseGet(() -> original.getExpression().deepClone()));
@@ -139,8 +139,8 @@ public class CommonExpressionsASTAdaptationVisitorTOP
 
   @Override
   public void endVisit(ASTCallExpression expr) {
-    List<CommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
-    for (CommonExpressionsAdaptationVariant variant : variants) {
+    List<ICommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    for (ICommonExpressionsAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTCallExpression adaptedNode = adapt(expr, variant);
       // 2. Apply AST adaptations registered specifically for this variant
@@ -151,7 +151,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP
     }
   }
 
-  protected ASTCallExpression adapt(ASTCallExpression original, CommonExpressionsAdaptationVariant variant) {
+  protected ASTCallExpression adapt(ASTCallExpression original, ICommonExpressionsAdaptationVariant variant) {
     ASTCallExpression adapted = CommonExpressionsMill.callExpressionBuilder().uncheckedBuild();
     Optional<ASTExpression> adaptedExpression = variant.getAdaptedNode(original.getExpression());
     adapted.setExpression(adaptedExpression.orElseGet(() -> original.getExpression().deepClone()));

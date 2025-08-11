@@ -1,7 +1,6 @@
 package de.monticore.types.mcbasictypes;
 
 import de.monticore.refadaptation.AbstractAdaptationHandler;
-import de.monticore.refadaptation.AbstractAdaptationVisitor;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
@@ -10,23 +9,21 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
-import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.types.mcbasictypes._symboltable.IMCBasicTypesScope;
 import de.monticore.types.mcbasictypes._visitor.MCBasicTypesHandler;
 import de.monticore.types.mcbasictypes._visitor.MCBasicTypesTraverser;
 import de.monticore.types.mcbasictypes._visitor.MCBasicTypesVisitor2;
 import de.monticore.types3.TypeCheck3;
-import de.monticore.visitor.ITraverser;
 import de.se_rwth.commons.logging.Log;
 
 import java.util.Optional;
 import java.util.Set;
 
-public class MCBasicTypesBindingVariantsVisitor
-        extends AbstractAdaptationHandler<MCBasicTypesAdaptationContext, MCBasicTypesAdaptationVariant>
+public class MCBasicTypesAdaptationVariantsVisitor
+        extends AbstractAdaptationHandler<IMCBasicTypesAdaptationContext, IMCBasicTypesAdaptationVariant>
         implements MCBasicTypesVisitor2, MCBasicTypesHandler {
 
-  private static final String LOG_NAME = MCBasicTypesBindingVariantsVisitor.class.getName();
+  private static final String LOG_NAME = MCBasicTypesAdaptationVariantsVisitor.class.getName();
 
   private MCBasicTypesTraverser traverser;
 
@@ -71,7 +68,7 @@ public class MCBasicTypesBindingVariantsVisitor
         return;
       }
       for (TypeSymbol typeSymbolInc : incarnations) {
-        MCBasicTypesAdaptationVariant adaptationVariant = getAdaptationContext().createVariant();
+        IMCBasicTypesAdaptationVariant adaptationVariant = getAdaptationContext().createVariant();
         try {
           adaptationVariant.getBasicSymbolsBindings().addTypeBinding(Binding.createStrict(typeSymbol, typeSymbolInc));
         } catch (BindingConflictException e) {
@@ -108,7 +105,7 @@ public class MCBasicTypesBindingVariantsVisitor
           return;
         }
         for (TypeSymbol typeSymbolInc : incarnations) {
-          MCBasicTypesAdaptationVariant adaptationVariant = getAdaptationContext().createVariant();
+          IMCBasicTypesAdaptationVariant adaptationVariant = getAdaptationContext().createVariant();
           try {
             adaptationVariant.getBasicSymbolsBindings().addTypeBinding(Binding.createStrict(typeSymbol.get(), typeSymbolInc));
           } catch (BindingConflictException e) {
