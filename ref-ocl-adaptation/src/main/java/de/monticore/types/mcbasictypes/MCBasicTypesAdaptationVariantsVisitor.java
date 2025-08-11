@@ -1,7 +1,6 @@
 package de.monticore.types.mcbasictypes;
 
 import de.monticore.refadaptation.AbstractAdaptationHandler;
-import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -68,17 +67,13 @@ public class MCBasicTypesAdaptationVariantsVisitor
         return;
       }
       for (TypeSymbol typeSymbolInc : incarnations) {
-        IMCBasicTypesAdaptationVariant adaptationVariant = getAdaptationContext().createVariant();
         try {
-          adaptationVariant.getBasicSymbolsBindings().addTypeBinding(Binding.createStrict(typeSymbol, typeSymbolInc));
+          IMCBasicTypesAdaptationVariant adaptationVariant = getAdaptationContext()
+                  .createVariantForIncarnation(typeSymbol, typeSymbolInc, refType.get_SourcePositionStart());
+          getAdaptations4Ast().addVariant(refType, adaptationVariant);
         } catch (BindingConflictException e) {
-          // This is unexpected as the current adaptation context should only return incarnations
-          // that are valid in the current context, i.e., no conflicts with existing bindings.
-          Log.warn("getIncarnations returned incarnation that conflicts with existing binding: "
-                  + typeSymbolInc.getFullName() + " in " + refType.get_SourcePositionStart(), e);
-          continue;
+          // add no variant for this incarnation.
         }
-        getAdaptations4Ast().addVariant(refType, adaptationVariant);
       }
     } else {
       Log.warn("Unexpected! ASTMCQualifiedType without type info: " + refType.getMCQualifiedName());
@@ -105,17 +100,13 @@ public class MCBasicTypesAdaptationVariantsVisitor
           return;
         }
         for (TypeSymbol typeSymbolInc : incarnations) {
-          IMCBasicTypesAdaptationVariant adaptationVariant = getAdaptationContext().createVariant();
           try {
-            adaptationVariant.getBasicSymbolsBindings().addTypeBinding(Binding.createStrict(typeSymbol.get(), typeSymbolInc));
+            IMCBasicTypesAdaptationVariant adaptationVariant = getAdaptationContext()
+                    .createVariantForIncarnation(typeSymbol.get(), typeSymbolInc, refImport.get_SourcePositionStart());
+            getAdaptations4Ast().addVariant(refImport, adaptationVariant);
           } catch (BindingConflictException e) {
-            // This is unexpected as the current adaptation context should only return incarnations
-            // that are valid in the current context, i.e., no conflicts with existing bindings.
-            Log.warn("getIncarnations returned incarnation that conflicts with existing binding: "
-                    + typeSymbolInc.getFullName() + " in " + refImport.get_SourcePositionStart(), e);
-            continue;
+            // add no variant for this incarnation.
           }
-          getAdaptations4Ast().addVariant(refImport, adaptationVariant);
         }
       } else {
         // this is not an error. e.g., package star imports have no specific type symbol

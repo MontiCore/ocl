@@ -1,11 +1,9 @@
 package de.monticore.ocl;
 
 import de.monticore.ast.ASTNode;
-import de.monticore.expressions.commonexpressions.ICommonExpressionsAdaptationVariant;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.refadaptation.Binding;
 import de.monticore.refadaptation.BindingConflictException;
-import de.monticore.symbols.IOOSymbolsBindings;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.se_rwth.commons.logging.Log;
@@ -73,40 +71,20 @@ public class OCLAdaptationVariantsVisitor extends OCLAdaptationVariantsVisitorTO
       // TODO I think returning no variant at all is the correct approach here
       getAdaptations4Ast().addVariant(refMethodSignature, getAdaptationContext().createVariant());
     } else {
-      // we have the incarnations which are possible in this context
-      for (MethodSymbol methodIncarnation : incarnations) {
-        addVariantForMethodIncarnation(refMethodSignature, refMethodSymbol, methodIncarnation);
-      }
+      getAdaptations4Ast().addVariants(refMethodSignature, tryCreateVariantsForIncarnations(
+              incarnations,
+              (incarnation) -> createVariantForMethodIncarnation(refMethodSignature, refMethodSymbol, incarnation)
+      ));
     }
   }
 
-  protected void addVariantForMethodIncarnation(
+  protected IOCLAdaptationVariant createVariantForMethodIncarnation(
           ASTOCLMethodSignature refMethodSignature,
           MethodSymbol refMethodSymbol,
-          MethodSymbol methodIncarnation) {
-    ICommonExpressionsAdaptationVariant newVariant = getAdaptationContext().createVariant();
-    // 1. Add strict binding for the selected method
-    // (Implicitly adds type bindings for declaring type, return type and parameter types)
-    try {
-      newVariant.getOOSymbolsBindings().addMethodBinding(Binding.createStrict(refMethodSymbol, methodIncarnation));
-    } catch (BindingConflictException e) {
-      // This is unexpected as the current adaptation context should only return incarnations
-      // that are valid in the current context, i.e., no conflicts with existing bindings.
-      Log.warn("getIncarnations returned incarnation that conflicts with existing binding: "
-              + methodIncarnation.getFullName() + " in " + refMethodSignature.get_SourcePositionStart(), e);
-      return;
-    }
-    // 2. Add bindings from the original model attached to the method
-    IOOSymbolsBindings bindingsFromModel = getAdaptationContext().getOriginalOOSymbolsIncMapping().getScopedBindings(methodIncarnation);
-    try {
-      newVariant.getOOSymbolsBindings().addAll(bindingsFromModel);
-    } catch (BindingConflictException e) {
-      // This is unexpected in context of OCL. There is no obvious reason why there could be
-      // bindings on this level of the AST that conflict with bindings of the method...
-      Log.warn("Ignoring incarnation due to binding conflict: "
-              + methodIncarnation.getFullName() + " in " + refMethodSignature.get_SourcePositionStart(), e);
-      return;
-    }
+          MethodSymbol methodIncarnation) throws BindingConflictException {
+    IOCLAdaptationVariant newVariant = getAdaptationContext()
+            .createVariantForIncarnation(refMethodSymbol, methodIncarnation,
+                    refMethodSignature.get_SourcePositionStart());
     // 3. Manually, add bindings for the VariableSymbols representing the method parameters so they can be adapted later on
     // TODO These bindings should be available frm the OOSymbolsBinding in the future since
     //  parameters are naturally VariableSymbols enclosed in the scope of the method
@@ -121,10 +99,10 @@ public class OCLAdaptationVariantsVisitor extends OCLAdaptationVariantsVisitorTO
         // bindings on this level of the AST that conflict with bindings of the method...
         Log.warn("Ignoring incarnation due to binding conflict caused by parameter VariableSymbol: "
                 + methodIncarnation.getFullName() + " in " + refMethodSignature.get_SourcePositionStart(), e);
-        return;
+        throw e;
       }
     }
-    getAdaptations4Ast().addVariant(refMethodSignature, newVariant);
+    return newVariant;
   }
 
   @Override
