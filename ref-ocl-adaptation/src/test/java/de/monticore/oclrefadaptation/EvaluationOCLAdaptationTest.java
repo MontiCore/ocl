@@ -209,7 +209,7 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "simple/typeMI/TypeMI.cd",
               "simple/SimpleRef.cd",
               "simple/SimpleRef.ocl",
-              "simple/typeMI/typeMIOut.ocl");
+              "simple/typeMI/TypeMIOut.ocl");
     }
   }
 
