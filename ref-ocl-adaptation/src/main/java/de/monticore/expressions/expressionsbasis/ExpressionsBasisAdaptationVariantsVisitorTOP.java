@@ -5,7 +5,7 @@ import de.monticore.expressions.expressionsbasis._ast.*;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisHandler;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisTraverser;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor2;
-import de.monticore.refadaptation.AbstractAdaptationHandler;
+import de.monticore.refadapt.AbstractAdaptationHandler;
 
 // NOTE: Can be generated.
 public class ExpressionsBasisAdaptationVariantsVisitorTOP

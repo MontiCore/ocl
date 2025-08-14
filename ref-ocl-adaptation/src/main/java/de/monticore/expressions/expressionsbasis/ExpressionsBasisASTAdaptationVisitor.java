@@ -6,9 +6,9 @@ import de.monticore.expressions.expressionsbasis._ast.ASTLiteralExpression;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor2;
 import de.monticore.literals.mcliteralsbasis._ast.ASTLiteral;
-import de.monticore.refadaptation.AbstractAdaptationVisitor;
-import de.monticore.refadaptation.IASTAdaptation;
-import de.monticore.refadaptation.RefAdaptationUtils;
+import de.monticore.refadapt.AbstractAdaptationVisitor;
+import de.monticore.refadapt.IASTAdaptation;
+import de.monticore.refadapt.RefAdaptationUtils;
 
 import java.util.List;
 import java.util.Optional;

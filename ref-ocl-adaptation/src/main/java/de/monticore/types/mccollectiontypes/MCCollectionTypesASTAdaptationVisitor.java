@@ -1,8 +1,8 @@
 package de.monticore.types.mccollectiontypes;
 
-import de.monticore.refadaptation.AbstractAdaptationVisitor;
-import de.monticore.refadaptation.IAdaptationVariant;
-import de.monticore.refadaptation.RefAdaptationUtils;
+import de.monticore.refadapt.AbstractAdaptationVisitor;
+import de.monticore.refadapt.IAdaptationVariant;
+import de.monticore.refadapt.RefAdaptationUtils;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mccollectiontypes._ast.*;

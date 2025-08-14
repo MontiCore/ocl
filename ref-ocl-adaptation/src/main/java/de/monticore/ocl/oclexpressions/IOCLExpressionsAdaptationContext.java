@@ -1,7 +1,7 @@
 package de.monticore.ocl.oclexpressions;
 
 import de.monticore.expressions.expressionsbasis.IExpressionsBasisAdaptationContext;
-import de.monticore.refadaptation.IAdaptationContext;
+import de.monticore.refadapt.IAdaptationContext;
 
 public interface IOCLExpressionsAdaptationContext extends IAdaptationContext,
         IExpressionsBasisAdaptationContext {

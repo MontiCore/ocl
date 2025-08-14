@@ -1,13 +1,12 @@
 package de.monticore.types.mcbasictypes;
 
 import de.monticore.expressions.expressionsbasis.IExpressionsBasisAdaptationContext;
-import de.monticore.expressions.expressionsbasis.IExpressionsBasisAdaptationVariant;
-import de.monticore.refadaptation.Binding;
-import de.monticore.refadaptation.BindingConflictException;
-import de.monticore.refadaptation.IAdaptationContext;
-import de.monticore.symbols.basicsymbols.IBasicSymbolsBindings;
-import de.monticore.symbols.basicsymbols.IBasicSymbolsIncMapping;
-import de.monticore.symbols.basicsymbols.IBasicSymbolsLocalIncMapping;
+import de.monticore.refmodel.Binding;
+import de.monticore.refmodel.BindingConflictException;
+import de.monticore.refadapt.IAdaptationContext;
+import de.monticore.symbols.basicsymbols.refmodel.IBasicSymbolsBindings;
+import de.monticore.symbols.basicsymbols.refmodel.IBasicSymbolsIncMapping;
+import de.monticore.symbols.basicsymbols.refmodel.IBasicSymbolsLocalIncMapping;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symboltable.ISymbol;
 import de.se_rwth.commons.SourcePosition;

@@ -4,7 +4,7 @@ import de.monticore.cdconcretization.util.SymbolUtil;
 import de.monticore.expressions.expressionsbasis.ExpressionsBasisAdaptationVariantsVisitor;
 import de.monticore.expressions.expressionsbasis.IExpressionsBasisAdaptationVariant;
 import de.monticore.expressions.expressionsbasis._ast.ASTNameExpression;
-import de.monticore.refadaptation.BindingConflictException;
+import de.monticore.refmodel.BindingConflictException;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;

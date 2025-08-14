@@ -4,7 +4,7 @@ import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsHandler;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
-import de.monticore.refadaptation.AbstractAdaptationHandler;
+import de.monticore.refadapt.AbstractAdaptationHandler;
 
 // NOTE: Could be generated
 public class SetExpressionsAdaptationVariantsVisitorTOP

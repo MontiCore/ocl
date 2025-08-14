@@ -1,7 +1,7 @@
 package de.monticore.expressions.commonexpressions;
 
 import de.monticore.expressions.commonexpressions._ast.*;
-import de.monticore.refadaptation.BindingConflictException;
+import de.monticore.refmodel.BindingConflictException;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symboltable.ISymbol;

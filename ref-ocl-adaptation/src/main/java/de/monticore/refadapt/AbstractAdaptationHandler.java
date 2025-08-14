@@ -1,6 +1,7 @@
-package de.monticore.refadaptation;
+package de.monticore.refadapt;
 
 import de.monticore.ast.ASTNode;
+import de.monticore.refmodel.BindingConflictException;
 import de.monticore.visitor.ITraverser;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.function.FailableFunction;

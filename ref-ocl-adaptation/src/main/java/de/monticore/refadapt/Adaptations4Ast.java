@@ -1,4 +1,4 @@
-package de.monticore.refadaptation;
+package de.monticore.refadapt;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;

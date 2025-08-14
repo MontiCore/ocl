@@ -3,13 +3,13 @@ package de.monticore.ocl.oclexpressions;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.ocl.oclexpressions._ast.*;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
-import de.monticore.refadaptation.AbstractAdaptationVisitor;
+import de.monticore.refadapt.AbstractAdaptationVisitor;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 
 import java.util.List;
 import java.util.Optional;
 
-import static de.monticore.refadaptation.RefAdaptationUtils.deepCloneComments;
+import static de.monticore.refadapt.RefAdaptationUtils.deepCloneComments;
 
 public class OCLExpressionsASTAdaptationVisitor
         extends AbstractAdaptationVisitor<IOCLExpressionsAdaptationContext>

@@ -6,7 +6,7 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
 import de.monticore.ocl.oclexpressions._ast.ASTOCLVariableDeclaration;
 import de.monticore.ocl.setexpressions._ast.ASTGeneratorDeclaration;
-import de.monticore.refadaptation.AbstractAdaptationVisitor;
+import de.monticore.refadapt.AbstractAdaptationVisitor;
 import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedName;
 import de.monticore.types.mcbasictypes._ast.ASTMCReturnType;
@@ -16,7 +16,7 @@ import de.monticore.umlstereotype._ast.ASTStereotype;
 import java.util.List;
 import java.util.Optional;
 
-import static de.monticore.refadaptation.RefAdaptationUtils.deepCloneComments;
+import static de.monticore.refadapt.RefAdaptationUtils.deepCloneComments;
 
 // NOTE: Could be generated
 public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<IOCLAdaptationContext> implements OCLVisitor2 {

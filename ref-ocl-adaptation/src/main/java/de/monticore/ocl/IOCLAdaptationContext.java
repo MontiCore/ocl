@@ -1,12 +1,10 @@
 package de.monticore.ocl;
 
 import de.monticore.expressions.commonexpressions.ICommonExpressionsAdaptationContext;
-import de.monticore.expressions.commonexpressions.ICommonExpressionsAdaptationVariant;
-import de.monticore.expressions.expressionsbasis.IExpressionsBasisAdaptationContext;
 import de.monticore.ocl.oclexpressions.IOCLExpressionsAdaptationContext;
 import de.monticore.ocl.setexpressions.ISetExpressionsAdaptationContext;
-import de.monticore.refadaptation.BindingConflictException;
-import de.monticore.refadaptation.IAdaptationContext;
+import de.monticore.refmodel.BindingConflictException;
+import de.monticore.refadapt.IAdaptationContext;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;

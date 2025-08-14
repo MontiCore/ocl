@@ -1,4 +1,4 @@
-package de.monticore.refadaptation;
+package de.monticore.refadapt;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.visitor.ITraverser;

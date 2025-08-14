@@ -1,14 +1,14 @@
 package de.monticore.ocl.setexpressions;
 
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
-import de.monticore.refadaptation.AbstractAdaptationVisitor;
+import de.monticore.refadapt.AbstractAdaptationVisitor;
 import de.monticore.ocl.setexpressions._ast.*;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import java.util.List;
 import java.util.Optional;
 
-import static de.monticore.refadaptation.RefAdaptationUtils.deepCloneComments;
+import static de.monticore.refadapt.RefAdaptationUtils.deepCloneComments;
 
 public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisitor<ISetExpressionsAdaptationContext>
         implements SetExpressionsVisitor2 {

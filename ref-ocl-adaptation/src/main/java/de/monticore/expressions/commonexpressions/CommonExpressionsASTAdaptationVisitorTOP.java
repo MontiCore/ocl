@@ -4,9 +4,9 @@ import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 import de.monticore.expressions.expressionsbasis._ast.ASTArguments;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
-import de.monticore.refadaptation.AbstractAdaptationVisitor;
-import de.monticore.refadaptation.IASTAdaptation;
-import de.monticore.refadaptation.RefAdaptationUtils;
+import de.monticore.refadapt.AbstractAdaptationVisitor;
+import de.monticore.refadapt.IASTAdaptation;
+import de.monticore.refadapt.RefAdaptationUtils;
 
 import java.util.List;
 import java.util.Optional;

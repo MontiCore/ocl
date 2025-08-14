@@ -7,7 +7,7 @@ import de.monticore.ocl.ocl._ast.ASTOCLArtifact;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._ast.ASTOCLMethodSignature;
-import de.monticore.refadaptation.Binding;
+import de.monticore.refmodel.Binding;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;

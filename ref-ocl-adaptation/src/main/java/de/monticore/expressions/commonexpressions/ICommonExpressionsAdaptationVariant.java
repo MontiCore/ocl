@@ -1,8 +1,8 @@
 package de.monticore.expressions.commonexpressions;
 
 import de.monticore.expressions.expressionsbasis.IExpressionsBasisAdaptationVariant;
-import de.monticore.refadaptation.IAdaptationVariant;
-import de.monticore.symbols.IOOSymbolsBindings;
+import de.monticore.refadapt.IAdaptationVariant;
+import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsBindings;
 
 public interface ICommonExpressionsAdaptationVariant extends IAdaptationVariant, IExpressionsBasisAdaptationVariant {
 

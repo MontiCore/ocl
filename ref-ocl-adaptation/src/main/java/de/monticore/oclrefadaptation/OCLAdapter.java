@@ -9,7 +9,7 @@ import de.monticore.cdconformance.CDConformanceChecker;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.ocl.OCLReferenceArtifactAdapter;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.symbols.IOOSymbolsIncMapping;
+import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsIncMapping;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.Validate;
 

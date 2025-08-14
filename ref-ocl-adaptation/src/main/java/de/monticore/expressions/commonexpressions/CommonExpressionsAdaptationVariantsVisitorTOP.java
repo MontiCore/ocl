@@ -4,7 +4,7 @@ import de.monticore.expressions.commonexpressions._ast.*;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsHandler;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTraverser;
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
-import de.monticore.refadaptation.AbstractAdaptationHandler;
+import de.monticore.refadapt.AbstractAdaptationHandler;
 
 public class CommonExpressionsAdaptationVariantsVisitorTOP
         extends AbstractAdaptationHandler<ICommonExpressionsAdaptationContext, ICommonExpressionsAdaptationVariant>

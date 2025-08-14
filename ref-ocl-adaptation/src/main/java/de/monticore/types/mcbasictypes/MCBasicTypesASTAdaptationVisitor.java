@@ -1,8 +1,8 @@
 package de.monticore.types.mcbasictypes;
 
 import de.monticore.cd.facade.MCQualifiedNameFacade;
-import de.monticore.refadaptation.AbstractAdaptationVisitor;
-import de.monticore.refadaptation.Binding;
+import de.monticore.refadapt.AbstractAdaptationVisitor;
+import de.monticore.refmodel.Binding;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;

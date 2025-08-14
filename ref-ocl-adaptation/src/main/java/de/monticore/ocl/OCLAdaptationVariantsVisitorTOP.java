@@ -4,7 +4,7 @@ import de.monticore.ocl.ocl._ast.*;
 import de.monticore.ocl.ocl._visitor.OCLHandler;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
-import de.monticore.refadaptation.AbstractAdaptationHandler;
+import de.monticore.refadapt.AbstractAdaptationHandler;
 
 // NOTE: Can be generated.
 public class OCLAdaptationVariantsVisitorTOP

@@ -2,8 +2,8 @@ package de.monticore.ocl;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.ocl.ocl._ast.*;
-import de.monticore.refadaptation.Binding;
-import de.monticore.refadaptation.BindingConflictException;
+import de.monticore.refmodel.Binding;
+import de.monticore.refmodel.BindingConflictException;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
 import de.monticore.symbols.oosymbols._symboltable.MethodSymbol;
 import de.se_rwth.commons.logging.Log;

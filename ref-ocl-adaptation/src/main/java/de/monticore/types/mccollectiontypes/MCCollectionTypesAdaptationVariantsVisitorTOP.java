@@ -1,6 +1,6 @@
 package de.monticore.types.mccollectiontypes;
 
-import de.monticore.refadaptation.AbstractAdaptationHandler;
+import de.monticore.refadapt.AbstractAdaptationHandler;
 import de.monticore.types.mccollectiontypes._ast.*;
 import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesHandler;
 import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesTraverser;

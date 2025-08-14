@@ -1,7 +1,8 @@
-package de.monticore.refadaptation;
+package de.monticore.refadapt;
 
 import com.google.common.collect.ListMultimap;
 import de.monticore.ast.ASTNode;
+import de.monticore.refmodel.BindingConflictException;
 
 import java.util.Collection;
 import java.util.List;

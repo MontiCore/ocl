@@ -2,12 +2,12 @@ package de.monticore.ocl;
 
 import com.google.common.collect.ListMultimap;
 import de.monticore.ast.ASTNode;
-import de.monticore.refadaptation.AbstractAdaptationVariant;
-import de.monticore.refadaptation.BindingConflictException;
-import de.monticore.refadaptation.IASTAdaptation;
-import de.monticore.refadaptation.IAdaptationVariant;
-import de.monticore.symbols.IOOSymbolsBindings;
-import de.monticore.symbols.basicsymbols.IBasicSymbolsBindings;
+import de.monticore.refadapt.AbstractAdaptationVariant;
+import de.monticore.refmodel.BindingConflictException;
+import de.monticore.refadapt.IASTAdaptation;
+import de.monticore.refadapt.IAdaptationVariant;
+import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsBindings;
+import de.monticore.symbols.basicsymbols.refmodel.IBasicSymbolsBindings;
 
 import java.util.Map;
 

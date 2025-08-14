@@ -1,7 +1,7 @@
 package de.monticore.types.mcbasictypes;
 
-import de.monticore.refadaptation.AbstractAdaptationHandler;
-import de.monticore.refadaptation.BindingConflictException;
+import de.monticore.refadapt.AbstractAdaptationHandler;
+import de.monticore.refmodel.BindingConflictException;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.types.check.SymTypeExpression;

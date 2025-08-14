@@ -1,11 +1,11 @@
 package de.monticore.ocl;
 
-import de.monticore.refadaptation.BindingConflictException;
-import de.monticore.refadaptation.IAdaptationVariant;
-import de.monticore.symbols.*;
-import de.monticore.symbols.basicsymbols.IBasicSymbolsBindings;
-import de.monticore.symbols.basicsymbols.IBasicSymbolsIncMapping;
-import de.monticore.symbols.basicsymbols.IBasicSymbolsLocalIncMapping;
+import de.monticore.refmodel.BindingConflictException;
+import de.monticore.refadapt.IAdaptationVariant;
+import de.monticore.symbols.basicsymbols.refmodel.IBasicSymbolsBindings;
+import de.monticore.symbols.basicsymbols.refmodel.IBasicSymbolsIncMapping;
+import de.monticore.symbols.basicsymbols.refmodel.IBasicSymbolsLocalIncMapping;
+import de.monticore.symbols.oosymbols.refmodel.*;
 
 /*
  * NOTE: Could be generated if we would declare the dependencies between the language and

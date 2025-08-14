@@ -1,4 +1,6 @@
-package de.monticore.refadaptation;
+package de.monticore.refadapt;
+
+import de.monticore.refmodel.BindingConflictException;
 
 /**
  * An adaptation context represents the constraints under which a certain AST or subtree of an AST
