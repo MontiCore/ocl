@@ -7,6 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
+import de.monticore.cdconformance.inc.LegacyCDIncarnationMapping2OOSymbolsIncMapping;
 import de.monticore.ocl.OCLReferenceArtifactAdapter;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsIncMapping;
