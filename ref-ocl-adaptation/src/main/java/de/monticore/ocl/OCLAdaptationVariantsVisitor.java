@@ -62,8 +62,6 @@ public class OCLAdaptationVariantsVisitor extends OCLAdaptationVariantsVisitorTO
   public void endVisit(ASTOCLMethodSignature refMethodSignature) {
     MethodSymbol refMethodSymbol = OCLAdaptationUtils.resolveMethodSymbol(getAdaptationContext()
             .getOriginalOOSymbolsIncMapping().getReferenceScope(), refMethodSignature);
-    System.out.println("Method Symbol: " + refMethodSymbol);
-    System.out.println("symbol full name: " + refMethodSymbol.getFullName());
     Set<MethodSymbol> incarnations = getAdaptationContext().getOOSymbolsIncMapping().getIncarnations(refMethodSymbol);
     if (incarnations.isEmpty()) {
       // no field symbol, use the constraints from the parent expression

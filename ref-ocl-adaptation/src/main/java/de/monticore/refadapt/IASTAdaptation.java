@@ -2,7 +2,6 @@ package de.monticore.refadapt;
 
 import de.monticore.ast.ASTNode;
 
-// TODO Naming? Maybe "AdaptationTransformation" ?
 /**
  * An AST adaptation is a function that adapts a given AST node of type T to apply some variant
  * specific changes to it.<br>

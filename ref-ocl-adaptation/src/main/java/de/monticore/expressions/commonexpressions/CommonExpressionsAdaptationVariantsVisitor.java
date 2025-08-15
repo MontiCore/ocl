@@ -21,16 +21,12 @@ import java.util.*;
 public class CommonExpressionsAdaptationVariantsVisitor
         extends CommonExpressionsAdaptationVariantsVisitorTOP {
 
-  private static final String LOG_NAME = CommonExpressionsAdaptationVariantsVisitor.class.getName();
-
   @Override
   public void endVisit(ASTFieldAccessExpression refExpr) {
     // 1. Get the source symbol for the field name
     Optional<ISymbol> sourceSymbolOpt = TypeCheck3.typeOf(refExpr).getSourceInfo().getSourceSymbol();
     if (sourceSymbolOpt.isPresent()) {
       ISymbol sourceSymbol = sourceSymbolOpt.get();
-      System.out.println("FieldAccessExpression Variable Source symbol: " + sourceSymbol);
-      System.out.println("symbol full name: " + sourceSymbol.getFullName());
       // 2. identify variants depending on the symbol kind
       if (sourceSymbol instanceof VariableSymbol) {
         addVariantsForEachVariableIncarnation(refExpr, (VariableSymbol) sourceSymbol);

@@ -28,8 +28,6 @@ import java.util.Set;
  */
 public class OCLExpressionsBasisAdaptationVariantsVisitor extends ExpressionsBasisAdaptationVariantsVisitor {
 
-  private static final String LOG_NAME = OCLExpressionsBasisAdaptationVariantsVisitor.class.getName();
-
   @Override
   public void endVisit(ASTNameExpression refExpr) {
     /*

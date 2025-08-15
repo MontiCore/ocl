@@ -78,12 +78,7 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
   @Override
   protected void initMills() {
     initOCLMill();
-    //OCLMill.reset();
-    //OCLMill.init();
-    //OCLMill.globalScope().clear();
-
     initCD4CodeMill();
-
     // init OCL TypeCheck again after other mills
     OCLTypeCheck3.init();
 

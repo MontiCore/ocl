@@ -25,8 +25,6 @@ import java.util.Set;
 public class ExpressionsBasisAdaptationVariantsVisitor
         extends ExpressionsBasisAdaptationVariantsVisitorTOP {
 
-  private static final String LOG_NAME = ExpressionsBasisAdaptationVariantsVisitor.class.getName();
-
   @Override
   public void traverse(ASTArguments arguments) {
     traverseForConsistentVariants(arguments, arguments.getExpressionList());
@@ -37,8 +35,6 @@ public class ExpressionsBasisAdaptationVariantsVisitor
     Optional<ISymbol> sourceSymbolOpt = TypeCheck3.typeOf(refExpr).getSourceInfo().getSourceSymbol();
     if (sourceSymbolOpt.isPresent()) {
       ISymbol sourceSymbol = sourceSymbolOpt.get();
-      System.out.println("NameExpression Variable Source symbol: " + sourceSymbol);
-      System.out.println("symbol full name: " + sourceSymbol.getFullName());
       addVariantsForSymbol(refExpr, sourceSymbol);
     } else {
       // make sure to create a default variant if we cannot adapt anything
