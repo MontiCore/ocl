@@ -59,19 +59,19 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
   }
 
   /**
-   * Traverses the given ASTNode for each variant in the sourceVariants list and returns a set
-   * of variants where each is a combination of the constraints of a source variant and all
+   * Traverses the given ASTNode for each variant in the inputVariants list and returns a set
+   * of variants where each is a combination of the constraints of an input variant and all
    * possible adaptations of the given ASTNode under these constraints.
    *
-   * @param sourceVariants the list of source variants to use as constraints
+   * @param inputVariants the list of variants to use as constraints
    * @param node the ASTNode to traverse and adapt
    * @return
    */
   // TODO formalize this more precise / mathematically (look at constraint propagation again)
   // TODO decide if this is meant as helper API for users or only as internal support method for traverseAndPropagateConstraints
   protected List<V> traverseForEachVariant(
-          List<V> sourceVariants, ASTNode node) {
-    return expandAndMergeVariants(sourceVariants, v -> {
+          List<V> inputVariants, ASTNode node) {
+    return expandAndMergeVariants(inputVariants, v -> {
       node.accept(getTraverser());
       // no need to copy the list here. getVariants creates a new list internally
       return getVariants4Ast().getVariants(node);
@@ -89,12 +89,12 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
    *                      child variant,
    */
   protected void expandChildVariants(ASTNode parentNode, ASTNode childNode, Function<V, List<V>> expandVariant) {
-    List<V> sourceVariants = getVariants4Ast().getVariants(childNode);
-    if (sourceVariants.isEmpty()) {
+    List<V> inputVariants = getVariants4Ast().getVariants(childNode);
+    if (inputVariants.isEmpty()) {
       Log.info("No variants found for child node " + childNode, LOG_NAME);
       // TODO Set error in Variants4Ast so no default variant is created?
     } else {
-      List<V> expandedVariants = expandAndMergeVariants(sourceVariants, expandVariant);
+      List<V> expandedVariants = expandAndMergeVariants(inputVariants, expandVariant);
       if (expandedVariants.isEmpty()) {
         Log.info("No expanded variants found for child node " + childNode, LOG_NAME);
         // TODO Set error in Variants4Ast so no default variant is created?
@@ -105,50 +105,50 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
   }
 
   /**
-   * Expands the given source variants and merges the results into a single list of variants.<br>
-   * More precisely, for each source variant:
+   * Expands the given variants and merges the results into a single list of variants.<br>
+   * More precisely, for each input variant:
    * <ol>
    *   <li>Forks the current adaptation context and adds the bindings of the variant.</li>
    *   <li>Switches the current adaptation context to the new one</li>
-   *   <li>Retrieves all variants for the given source variant using the provided function.</li>
-   *   <li>Merges each retrieved variant with the source variant and replaces the source variant
+   *   <li>Retrieves all variants for the given input variant using the provided function.</li>
+   *   <li>Merges each retrieved variant with the input variant and replaces the input variant
    *       with the list of merged variants in {@link Variants4Ast}.
    *   </li>
    * </ol>>
    *
-   * @param sourceVariants the list of source variants to expand and merge
-   * @param getVariants a function that retrieves all variants for a given source variant, e.g.
+   * @param inputVariants the list of input variants to expand and merge
+   * @param expandVariant a function that retrieves all variants for a given input variant, e.g.
    *                    by traversing an AST node or applying
    * @return
    */
   protected List<V> expandAndMergeVariants(
-          List<V> sourceVariants, Function<V, List<V>> getVariants) {
+          List<V> inputVariants, Function<V, List<V>> expandVariant) {
     C previousCtx = getAdaptationContext();
     List<V> resultVariants = new ArrayList<>();
-    for (V sourceVariant : sourceVariants) {
+    for (V inputVariant : inputVariants) {
       C localCtx = (C) previousCtx.fork(); // TODO avoid unchecked casts by better generics
 
       try {
-        localCtx.addBindings(sourceVariant);
+        localCtx.addBindings(inputVariant);
       } catch (BindingConflictException e) {
-        // unexpected. sourceVariants should be compatible with the current context
-        Log.warn("Unexpected binding conflict. sourceVariants are expected to be " +
+        // unexpected. inputVariants should be compatible with the current context
+        Log.warn("Unexpected binding conflict. inputVariants are expected to be " +
                 "compatible with the current context when calling 'traverseForEachVariant'");
       }
 
       setAdaptationContext(localCtx);
 
-      List<V> nodeVariants = getVariants.apply(sourceVariant);
+      List<V> expandedVariants = expandVariant.apply(inputVariant);
 
-      if (nodeVariants.isEmpty()) {
+      if (expandedVariants.isEmpty()) {
         // conflict with existing bindings -> drop current leftResult
-        getVariants4Ast().removeVariant(sourceVariant);
+        getVariants4Ast().removeVariant(inputVariant);
       } else {
         List<V> mergedVariants = new ArrayList<>();
-        for (V nodeVariant : nodeVariants) {
+        for (V nodeVariant : expandedVariants) {
           V mergedVariant;
           try {
-            mergedVariant = (V) sourceVariant.merge(nodeVariant);
+            mergedVariant = (V) inputVariant.merge(nodeVariant);
           } catch (BindingConflictException e) {
             // This can happen if some visitors return variants not compatible with the current context
             // However, it is better for performance to prune these variants EARLY. Otherwise, they are
@@ -160,8 +160,8 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
           getVariants4Ast().replaceVariant(nodeVariant, resultVariants); // can we improve here?
         }
         // TODO What if all variants had merge conflicts? -> mergedVariants is empty
-        //   -> replaceVariant actually causes removal of the sourceVariant
-        getVariants4Ast().replaceVariant(sourceVariant, mergedVariants);
+        //   -> replaceVariant actually causes removal of the inputVariant
+        getVariants4Ast().replaceVariant(inputVariant, mergedVariants);
       }
     }
     // IMPORTANT: reset the adaptation context to the previous one
