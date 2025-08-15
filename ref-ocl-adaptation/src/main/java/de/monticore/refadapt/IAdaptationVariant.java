@@ -122,6 +122,7 @@ public interface IAdaptationVariant {
 
   ListMultimap<ASTNode, IAdaptationVariant> getAllChildVariants();
 
+  void removeChildVariant(IAdaptationVariant variant);
 
   /**
    * Adds an {@link IASTAdaptation} for the given reference node.

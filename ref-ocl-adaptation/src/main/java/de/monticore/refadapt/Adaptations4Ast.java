@@ -40,7 +40,7 @@ public class Adaptations4Ast {
   }
 
   public <T extends IAdaptationVariant> List<T> getVariants(ASTNode refNode) {
-    // TODO Do we need to return read-only / copy here?
+    // return read-only / copy here so that the caller cannot modify the internal state
     return new ArrayList<T>((Collection<T>) variants.get(refNode));
   }
 
@@ -54,10 +54,17 @@ public class Adaptations4Ast {
    * @param variant the variant to remove
    */
   public void removeVariant(IAdaptationVariant variant) {
+    // 1. remove the variant itself
     variants.entries().removeIf(entry -> entry.getValue().equals(variant));
-    // TODO Should we also remove the variant from childVariants?
-    // TODO We have a reference counting / garbage collection issue here. Should we remove all child
-    //   variants from the variants map as well? -> Since variants are not referenced from multiple parent variants -> yes
+    // 2. remove the variant from all parent variants that reference it as a child variant
+    // (this is necessary to avoid dangling references)
+    for (IAdaptationVariant v : variants.values()) {
+      if (v.getAllChildVariants().containsValue(variant)) {
+        v.removeChildVariant(variant);
+      }
+    }
+    // 3. remove all children of the variant
+    // (child variants are not referenced from multiple parent variants)
     for (IAdaptationVariant childVariant : variant.getAllChildVariants().values()) {
       removeVariant(childVariant);
     }

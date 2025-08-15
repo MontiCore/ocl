@@ -101,6 +101,18 @@ public abstract class AbstractAdaptationVariant implements IAdaptationVariant {
   }
 
   @Override
+  public void removeChildVariant(IAdaptationVariant variant) {
+    for (ASTNode key : childVariants.keySet()) {
+      if (childVariants.get(key).contains(variant)) {
+        // copy list because Multimap returns view-only list when calling 'get'
+        List<IAdaptationVariant> variantList = new ArrayList<>(childVariants.get(key));
+        variantList.remove(variant);
+        childVariants.replaceValues(key, variantList);
+      }
+    }
+  }
+
+  @Override
   public <T extends ASTNode> void addASTAdaptation(T refNode, IASTAdaptation<T> adaptation) {
     Validate.notNull(refNode);
     Validate.notNull(adaptation);
