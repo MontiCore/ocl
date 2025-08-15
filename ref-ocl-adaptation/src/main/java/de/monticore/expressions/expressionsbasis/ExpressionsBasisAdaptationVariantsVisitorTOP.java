@@ -26,37 +26,37 @@ public class ExpressionsBasisAdaptationVariantsVisitorTOP
 
   @Override
   public void handle(ASTNameExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     ExpressionsBasisHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTArguments node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     ExpressionsBasisHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTLiteralExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     ExpressionsBasisHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     ExpressionsBasisHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTExpressionsBasisNode node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     ExpressionsBasisHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTNode node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     ExpressionsBasisHandler.super.handle(node);
   }
 }

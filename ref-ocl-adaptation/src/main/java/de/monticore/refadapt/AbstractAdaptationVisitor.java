@@ -13,13 +13,13 @@ public abstract class AbstractAdaptationVisitor<C extends IAdaptationContext> im
    * The map to be filled with adaptation variants.
    * Adapting classes should always use this method to get the map.
    */
-  protected Adaptations4Ast adaptations4Ast;
+  protected Variants4Ast variants4Ast;
 
   protected AdaptationContextHolder contextHolder;
 
-  public void setAdaptations4Ast(Adaptations4Ast adaptations4Ast) {
-    Preconditions.checkNotNull(adaptations4Ast);
-    this.adaptations4Ast = adaptations4Ast;
+  public void setVariants4Ast(Variants4Ast variants4Ast) {
+    Preconditions.checkNotNull(variants4Ast);
+    this.variants4Ast = variants4Ast;
   }
 
   public void setContextHolder(AdaptationContextHolder contextHolder) {
@@ -27,13 +27,13 @@ public abstract class AbstractAdaptationVisitor<C extends IAdaptationContext> im
     this.contextHolder = contextHolder;
   }
 
-  protected Adaptations4Ast getAdaptations4Ast() {
-    if (adaptations4Ast == null) {
-      Log.error("0xFD335 internal error: adaptations4Ast not set."
+  protected Variants4Ast getVariants4Ast() {
+    if (variants4Ast == null) {
+      Log.error("0xFD335 internal error: variants4Ast not set."
               + " Check the type traverser setup."
       );
     }
-    return adaptations4Ast;
+    return variants4Ast;
   }
 
   protected C getAdaptationContext() {
@@ -65,7 +65,7 @@ public abstract class AbstractAdaptationVisitor<C extends IAdaptationContext> im
    * @param child the child node whose constraints should be passed upwards
    */
   protected void passChildVariantsUpwards(ASTNode node, ASTNode child) {
-    getAdaptations4Ast().addVariants(node, getAdaptations4Ast().getVariants(child));
+    getVariants4Ast().addVariants(node, getVariants4Ast().getVariants(child));
   }
 
   /**
@@ -77,8 +77,8 @@ public abstract class AbstractAdaptationVisitor<C extends IAdaptationContext> im
   protected void aggregateChildVariants(ASTNode parent, List<? extends ASTNode> children) {
     IAdaptationVariant aggregateVariant = getAdaptationContext().createVariant();
     for (ASTNode child : children) {
-      aggregateVariant.addChildVariants(child, getAdaptations4Ast().getVariants(child));
+      aggregateVariant.addChildVariants(child, getVariants4Ast().getVariants(child));
     }
-    getAdaptations4Ast().addVariant(parent, aggregateVariant);
+    getVariants4Ast().addVariant(parent, aggregateVariant);
   }
 }

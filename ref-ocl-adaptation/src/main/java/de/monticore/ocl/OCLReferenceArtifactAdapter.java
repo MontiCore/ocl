@@ -10,7 +10,7 @@ import de.monticore.ocl.oclexpressions.OCLExpressionsAdaptationVariantsVisitor;
 import de.monticore.ocl.setexpressions.SetExpressionsASTAdaptationVisitor;
 import de.monticore.ocl.setexpressions.SetExpressionsAdaptationVariantsVisitor;
 import de.monticore.refadapt.AdaptationContextHolder;
-import de.monticore.refadapt.Adaptations4Ast;
+import de.monticore.refadapt.Variants4Ast;
 import de.monticore.refadapt.ReferenceArtifactAdapter;
 import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsIncMapping;
 import de.monticore.types.mcbasictypes.MCBasicTypesASTAdaptationVisitor;
@@ -39,7 +39,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<IOCLAd
     OCLTraverser bindingVariantsTraverser = OCLMill.inheritanceTraverser();
     OCLTraverser adaptationTraverser = OCLMill.inheritanceTraverser();
     AdaptationContextHolder contextHolder = new AdaptationContextHolder();
-    Adaptations4Ast adaptations4Ast = new Adaptations4Ast();
+    Variants4Ast variants4Ast = new Variants4Ast();
 
     MCTypeFactory mcTypeFactory = new OCLMCTypeFactory();
 
@@ -47,83 +47,83 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<IOCLAd
 
     OCLAdaptationVariantsVisitor oclBindingVis = new OCLAdaptationVariantsVisitor();
     oclBindingVis.setContextHolder(contextHolder);
-    oclBindingVis.setAdaptations4Ast(adaptations4Ast);
+    oclBindingVis.setVariants4Ast(variants4Ast);
     bindingVariantsTraverser.add4OCL(oclBindingVis);
     bindingVariantsTraverser.setOCLHandler(oclBindingVis);
 
     OCLASTAdaptationVisitor oclAdaptVis = new OCLASTAdaptationVisitor(mcTypeFactory);
     oclAdaptVis.setContextHolder(contextHolder);
-    oclAdaptVis.setAdaptations4Ast(adaptations4Ast);
+    oclAdaptVis.setVariants4Ast(variants4Ast);
     adaptationTraverser.add4OCL(oclAdaptVis);
 
     // Expressions
 
     OCLExpressionsAdaptationVariantsVisitor oclExpressionsBindingVis = new OCLExpressionsAdaptationVariantsVisitor();
     oclExpressionsBindingVis.setContextHolder(contextHolder);
-    oclExpressionsBindingVis.setAdaptations4Ast(adaptations4Ast);
+    oclExpressionsBindingVis.setVariants4Ast(variants4Ast);
     bindingVariantsTraverser.add4OCLExpressions(oclExpressionsBindingVis);
     bindingVariantsTraverser.setOCLExpressionsHandler(oclExpressionsBindingVis);
 
     OCLExpressionsASTAdaptationVisitor oclExpressionsAdaptVis = new OCLExpressionsASTAdaptationVisitor();
     oclExpressionsAdaptVis.setContextHolder(contextHolder);
-    oclExpressionsAdaptVis.setAdaptations4Ast(adaptations4Ast);
+    oclExpressionsAdaptVis.setVariants4Ast(variants4Ast);
     adaptationTraverser.add4OCLExpressions(oclExpressionsAdaptVis);
 
     SetExpressionsAdaptationVariantsVisitor setExpressionsBindingVis = new SetExpressionsAdaptationVariantsVisitor();
     setExpressionsBindingVis.setContextHolder(contextHolder);
-    setExpressionsBindingVis.setAdaptations4Ast(adaptations4Ast);
+    setExpressionsBindingVis.setVariants4Ast(variants4Ast);
     bindingVariantsTraverser.add4SetExpressions(setExpressionsBindingVis);
     bindingVariantsTraverser.setSetExpressionsHandler(setExpressionsBindingVis);
 
     SetExpressionsASTAdaptationVisitor setExpressionsAdaptVis = new SetExpressionsASTAdaptationVisitor();
     setExpressionsAdaptVis.setContextHolder(contextHolder);
-    setExpressionsAdaptVis.setAdaptations4Ast(adaptations4Ast);
+    setExpressionsAdaptVis.setVariants4Ast(variants4Ast);
     adaptationTraverser.add4SetExpressions(setExpressionsAdaptVis);
 
     OCLCommonExpressionsAdaptationVariantsVisitor commonExpressionsBindingVis = new OCLCommonExpressionsAdaptationVariantsVisitor();
     commonExpressionsBindingVis.setContextHolder(contextHolder);
-    commonExpressionsBindingVis.setAdaptations4Ast(adaptations4Ast);
+    commonExpressionsBindingVis.setVariants4Ast(variants4Ast);
     bindingVariantsTraverser.add4CommonExpressions(commonExpressionsBindingVis);
     bindingVariantsTraverser.setCommonExpressionsHandler(commonExpressionsBindingVis);
 
     CommonExpressionsASTAdaptationVisitor commonExpressionsAdaptVis = new CommonExpressionsASTAdaptationVisitor();
     commonExpressionsAdaptVis.setContextHolder(contextHolder);
-    commonExpressionsAdaptVis.setAdaptations4Ast(adaptations4Ast);
+    commonExpressionsAdaptVis.setVariants4Ast(variants4Ast);
     adaptationTraverser.add4CommonExpressions(commonExpressionsAdaptVis);
 
     OCLExpressionsBasisAdaptationVariantsVisitor expressionsBasisBindingVis = new OCLExpressionsBasisAdaptationVariantsVisitor();
     expressionsBasisBindingVis.setContextHolder(contextHolder);
-    expressionsBasisBindingVis.setAdaptations4Ast(adaptations4Ast);
+    expressionsBasisBindingVis.setVariants4Ast(variants4Ast);
     bindingVariantsTraverser.add4ExpressionsBasis(expressionsBasisBindingVis);
     bindingVariantsTraverser.setExpressionsBasisHandler(expressionsBasisBindingVis);
 
     ExpressionsBasisASTAdaptationVisitor expressionsBasisAdaptVis = new ExpressionsBasisASTAdaptationVisitor();
     expressionsBasisAdaptVis.setContextHolder(contextHolder);
-    expressionsBasisAdaptVis.setAdaptations4Ast(adaptations4Ast);
+    expressionsBasisAdaptVis.setVariants4Ast(variants4Ast);
     adaptationTraverser.add4ExpressionsBasis(expressionsBasisAdaptVis);
 
     // MCTypes
 
     MCBasicTypesAdaptationVariantsVisitor mcBasicTypesBindingVis = new MCBasicTypesAdaptationVariantsVisitor();
     mcBasicTypesBindingVis.setContextHolder(contextHolder);
-    mcBasicTypesBindingVis.setAdaptations4Ast(adaptations4Ast);
+    mcBasicTypesBindingVis.setVariants4Ast(variants4Ast);
     bindingVariantsTraverser.add4MCBasicTypes(mcBasicTypesBindingVis);
     bindingVariantsTraverser.setMCBasicTypesHandler(mcBasicTypesBindingVis);
 
     MCBasicTypesASTAdaptationVisitor mcBasicTypesAdaptVis = new MCBasicTypesASTAdaptationVisitor();
     mcBasicTypesAdaptVis.setContextHolder(contextHolder);
-    mcBasicTypesAdaptVis.setAdaptations4Ast(adaptations4Ast);
+    mcBasicTypesAdaptVis.setVariants4Ast(variants4Ast);
     adaptationTraverser.add4MCBasicTypes(mcBasicTypesAdaptVis);
 
     MCCollectionTypesAdaptationVariantsVisitor mcCollectionTypesBindingVis = new MCCollectionTypesAdaptationVariantsVisitor();
     mcCollectionTypesBindingVis.setContextHolder(contextHolder);
-    mcCollectionTypesBindingVis.setAdaptations4Ast(adaptations4Ast);
+    mcCollectionTypesBindingVis.setVariants4Ast(variants4Ast);
     bindingVariantsTraverser.add4MCCollectionTypes(mcCollectionTypesBindingVis);
     bindingVariantsTraverser.setMCCollectionTypesHandler(mcCollectionTypesBindingVis);
 
     MCCollectionTypesASTAdaptationVisitor mcCollectionTypesAdaptVis = new MCCollectionTypesASTAdaptationVisitor();
     mcCollectionTypesAdaptVis.setContextHolder(contextHolder);
-    mcCollectionTypesAdaptVis.setAdaptations4Ast(adaptations4Ast);
+    mcCollectionTypesAdaptVis.setVariants4Ast(variants4Ast);
     adaptationTraverser.add4MCCollectionTypes(mcCollectionTypesAdaptVis);
 
     // create instance
@@ -131,7 +131,7 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<IOCLAd
         bindingVariantsTraverser,
         adaptationTraverser,
         contextHolder,
-        adaptations4Ast
+            variants4Ast
     );
   }
 
@@ -139,8 +139,8 @@ public class OCLReferenceArtifactAdapter extends ReferenceArtifactAdapter<IOCLAd
           ITraverser bindingVariantsTraverser,
           ITraverser adaptationTraverser,
           AdaptationContextHolder contextHolder,
-          Adaptations4Ast adaptations4Ast) {
-    super(bindingVariantsTraverser, adaptationTraverser, contextHolder, adaptations4Ast);
+          Variants4Ast variants4Ast) {
+    super(bindingVariantsTraverser, adaptationTraverser, contextHolder, variants4Ast);
   }
 
   /**

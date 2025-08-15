@@ -38,7 +38,7 @@ public class ExpressionsBasisAdaptationVariantsVisitor
       addVariantsForSymbol(refExpr, sourceSymbol);
     } else {
       // make sure to create a default variant if we cannot adapt anything
-      getAdaptations4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
+      getVariants4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
     }
   }
 
@@ -50,7 +50,7 @@ public class ExpressionsBasisAdaptationVariantsVisitor
       addVariantsForFunctionSymbol(refExpr, (FunctionSymbol) refSymbol);
     } else {
       Log.warn("Unexpected symbol type: " + refSymbol.getClass().getSimpleName() + " for NameExpression: " + refExpr.get_SourcePositionStart());
-      getAdaptations4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
+      getVariants4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
     }
   }
 
@@ -68,10 +68,10 @@ public class ExpressionsBasisAdaptationVariantsVisitor
     if (incarnations.isEmpty()) {
       // TODO only pass variant upwards if the refSymbol is not defined in the inc mapping
       //  if it is defined, no incarnation is a sign that we should drop this variant
-      getAdaptations4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
+      getVariants4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
       return;
     }
-    getAdaptations4Ast().addVariants(refExpr, tryCreateVariantsForIncarnations(incarnations,
+    getVariants4Ast().addVariants(refExpr, tryCreateVariantsForIncarnations(incarnations,
             (incarnation) -> createVariantForVariableIncarnation(refExpr, refVarSymbol, incarnation)));
   }
 
@@ -86,10 +86,10 @@ public class ExpressionsBasisAdaptationVariantsVisitor
     if (incarnations.isEmpty()) {
       // TODO only pass variant upwards if the refSymbol is not defined in the inc mapping
       //  if it is defined, no incarnation is a sign that we should drop this variant
-      getAdaptations4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
+      getVariants4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
       return;
     }
-    getAdaptations4Ast().addVariants(refExpr, tryCreateVariantsForIncarnations(incarnations,
+    getVariants4Ast().addVariants(refExpr, tryCreateVariantsForIncarnations(incarnations,
             (incarnation) -> createVariantForFunctionIncarnation(refExpr, refFunctionSymbol, incarnation)));
   }
 
@@ -154,6 +154,6 @@ public class ExpressionsBasisAdaptationVariantsVisitor
     // OR
     // - we return an atomic "empty binding variant" and pass this upwards
     // TODO We need to decide in "traverse(AST...)" what we do if the list is empty -> default variant or is this a conflict?
-    getAdaptations4Ast().addVariant(node, getAdaptationContext().createVariant());
+    getVariants4Ast().addVariant(node, getAdaptationContext().createVariant());
   }
 }

@@ -24,103 +24,103 @@ public class SetExpressionsAdaptationVariantsVisitorTOP
 
   @Override
   public void handle(ASTSetInExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTSetNotInExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTUnionExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTIntersectionExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTSetMinusExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTSetUnionExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTSetIntersectionExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTSetAndExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTSetOrExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTSetVariableDeclaration node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTSetComprehension node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTSetComprehensionItem node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTGeneratorDeclaration node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTSetEnumeration node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTSetValueItem node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTSetValueRange node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTSetCollectionItem node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     SetExpressionsHandler.super.handle(node);
   }
 }

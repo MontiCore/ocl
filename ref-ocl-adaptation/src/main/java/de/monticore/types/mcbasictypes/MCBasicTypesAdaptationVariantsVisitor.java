@@ -38,19 +38,19 @@ public class MCBasicTypesAdaptationVariantsVisitor
 
   @Override
   public void handle(ASTMCQualifiedType node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     MCBasicTypesHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTMCPrimitiveType node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     MCBasicTypesHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTMCImportStatement node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     MCBasicTypesHandler.super.handle(node);
   }
 
@@ -70,7 +70,7 @@ public class MCBasicTypesAdaptationVariantsVisitor
         try {
           IMCBasicTypesAdaptationVariant adaptationVariant = getAdaptationContext()
                   .createVariantForIncarnation(typeSymbol, typeSymbolInc, refType.get_SourcePositionStart());
-          getAdaptations4Ast().addVariant(refType, adaptationVariant);
+          getVariants4Ast().addVariant(refType, adaptationVariant);
         } catch (BindingConflictException e) {
           // add no variant for this incarnation.
         }
@@ -83,7 +83,7 @@ public class MCBasicTypesAdaptationVariantsVisitor
   @Override
   public void endVisit(ASTMCPrimitiveType node) {
     // keep primitives as is
-    getAdaptations4Ast().addVariant(node, getAdaptationContext().createVariant());
+    getVariants4Ast().addVariant(node, getAdaptationContext().createVariant());
   }
 
   @Override
@@ -103,7 +103,7 @@ public class MCBasicTypesAdaptationVariantsVisitor
           try {
             IMCBasicTypesAdaptationVariant adaptationVariant = getAdaptationContext()
                     .createVariantForIncarnation(typeSymbol.get(), typeSymbolInc, refImport.get_SourcePositionStart());
-            getAdaptations4Ast().addVariant(refImport, adaptationVariant);
+            getVariants4Ast().addVariant(refImport, adaptationVariant);
           } catch (BindingConflictException e) {
             // add no variant for this incarnation.
           }

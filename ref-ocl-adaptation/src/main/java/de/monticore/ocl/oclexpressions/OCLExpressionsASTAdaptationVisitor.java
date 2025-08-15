@@ -17,7 +17,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTAnyExpression refAnyExpression) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refAnyExpression);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refAnyExpression);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTAnyExpression adaptedNode = adapt(refAnyExpression, variant);
       variant.setAdaptedNode(refAnyExpression, adaptedNode);
@@ -36,7 +36,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTInDeclaration refInDeclaration) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refInDeclaration);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refInDeclaration);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTInDeclaration adaptedNode = adapt(refInDeclaration, variant);
       variant.setAdaptedNode(refInDeclaration, adaptedNode);
@@ -71,7 +71,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTLetinExpression refLetinExpression) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refLetinExpression);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refLetinExpression);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTLetinExpression adaptedNode = adapt(refLetinExpression, variant);
       variant.setAdaptedNode(refLetinExpression, adaptedNode);
@@ -95,7 +95,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTExistsExpression refExistsExpression) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refExistsExpression);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refExistsExpression);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTExistsExpression adaptedNode = adapt(refExistsExpression, variant);
       variant.setAdaptedNode(refExistsExpression, adaptedNode);
@@ -119,7 +119,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTForallExpression refForallExpression) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refForallExpression);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refForallExpression);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTForallExpression adaptedNode = adapt(refForallExpression, variant);
       variant.setAdaptedNode(refForallExpression, adaptedNode);
@@ -143,7 +143,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTTypeIfExpression refTypeIfExpression) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refTypeIfExpression);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refTypeIfExpression);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTTypeIfExpression adaptedNode = adapt(refTypeIfExpression, variant);
       variant.setAdaptedNode(refTypeIfExpression, adaptedNode);
@@ -170,7 +170,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTImpliesExpression refImpliesExpression) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refImpliesExpression);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refImpliesExpression);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTImpliesExpression adaptedNode = adapt(refImpliesExpression, variant);
       variant.setAdaptedNode(refImpliesExpression, adaptedNode);
@@ -192,7 +192,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTIterateExpression refIterateExpression) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refIterateExpression);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refIterateExpression);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTIterateExpression adaptedNode = adapt(refIterateExpression, variant);
       variant.setAdaptedNode(refIterateExpression, adaptedNode);
@@ -219,7 +219,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTEquivalentExpression refEquivalentExpression) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refEquivalentExpression);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refEquivalentExpression);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTEquivalentExpression adaptedNode = adapt(refEquivalentExpression, variant);
       variant.setAdaptedNode(refEquivalentExpression, adaptedNode);
@@ -243,7 +243,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTIfThenElseExpression refIfThenElseExpression) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refIfThenElseExpression);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refIfThenElseExpression);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTIfThenElseExpression adaptedNode = adapt(refIfThenElseExpression, variant);
       variant.setAdaptedNode(refIfThenElseExpression, adaptedNode);
@@ -268,7 +268,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTTypeIfThenExpression refTypeIfThenExpression) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refTypeIfThenExpression);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refTypeIfThenExpression);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTTypeIfThenExpression adaptedNode = adapt(refTypeIfThenExpression, variant);
       variant.setAdaptedNode(refTypeIfThenExpression, adaptedNode);
@@ -287,7 +287,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTInDeclarationVariable refInDeclarationVariable) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refInDeclarationVariable);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refInDeclarationVariable);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTInDeclarationVariable adaptedNode = adapt(refInDeclarationVariable, variant);
       variant.setAdaptedNode(refInDeclarationVariable, adaptedNode);
@@ -305,7 +305,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTOCLAtPreQualification refOCLAtPreQualification) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refOCLAtPreQualification);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refOCLAtPreQualification);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTOCLAtPreQualification adaptedNode = adapt(refOCLAtPreQualification, variant);
       variant.setAdaptedNode(refOCLAtPreQualification, adaptedNode);
@@ -326,7 +326,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTOCLVariableDeclaration refOCLVariableDeclaration) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refOCLVariableDeclaration);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refOCLVariableDeclaration);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTOCLVariableDeclaration adaptedNode = adapt(refOCLVariableDeclaration, variant);
       variant.setAdaptedNode(refOCLVariableDeclaration, adaptedNode);
@@ -362,7 +362,7 @@ public class OCLExpressionsASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTOCLTransitiveQualification refOCLTransitiveQualification) {
-    List<IOCLExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refOCLTransitiveQualification);
+    List<IOCLExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refOCLTransitiveQualification);
     for (IOCLExpressionsAdaptationVariant variant : variants) {
       ASTOCLTransitiveQualification adaptedNode = adapt(refOCLTransitiveQualification, variant);
       variant.setAdaptedNode(refOCLTransitiveQualification, adaptedNode);

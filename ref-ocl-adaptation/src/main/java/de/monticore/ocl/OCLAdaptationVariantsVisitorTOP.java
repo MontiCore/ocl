@@ -25,43 +25,43 @@ public class OCLAdaptationVariantsVisitorTOP
 
   @Override
   public void handle(ASTOCLCompilationUnit node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTOCLArtifact node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTOCLInvariant node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTOCLOperationConstraint node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTOCLMethodSignature node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTOCLContextDefinition node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTOCLParamDeclaration node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLHandler.super.handle(node);
   }
 }

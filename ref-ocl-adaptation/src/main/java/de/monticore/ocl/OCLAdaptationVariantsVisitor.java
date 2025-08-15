@@ -67,9 +67,9 @@ public class OCLAdaptationVariantsVisitor extends OCLAdaptationVariantsVisitorTO
       // no field symbol, use the constraints from the parent expression
       // TODO Should we handle this as an error? the reference method could be optional and really have no incarnation -> so just ignore the constraint?
       // TODO I think returning no variant at all is the correct approach here
-      getAdaptations4Ast().addVariant(refMethodSignature, getAdaptationContext().createVariant());
+      getVariants4Ast().addVariant(refMethodSignature, getAdaptationContext().createVariant());
     } else {
-      getAdaptations4Ast().addVariants(refMethodSignature, tryCreateVariantsForIncarnations(
+      getVariants4Ast().addVariants(refMethodSignature, tryCreateVariantsForIncarnations(
               incarnations,
               (incarnation) -> createVariantForMethodIncarnation(refMethodSignature, refMethodSymbol, incarnation)
       ));

@@ -24,7 +24,7 @@ public class MCBasicTypesASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTMCQualifiedType refType) {
-    List<IMCBasicTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(refType);
+    List<IMCBasicTypesAdaptationVariant> variants = getVariants4Ast().getVariants(refType);
 
     SymTypeExpression symType = TypeCheck3.symTypeFromAST(refType);
 
@@ -55,7 +55,7 @@ public class MCBasicTypesASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTMCImportStatement refImport) {
-    List<IMCBasicTypesAdaptationVariant> variants = getAdaptations4Ast().getVariants(refImport);
+    List<IMCBasicTypesAdaptationVariant> variants = getVariants4Ast().getVariants(refImport);
 
     IMCBasicTypesScope scope = refImport.getEnclosingScope();
     Optional<TypeSymbol> typeSymbol;

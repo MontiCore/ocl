@@ -17,7 +17,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP
 
   @Override
   public void endVisit(ASTEqualsExpression expr) {
-    List<ICommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    List<ICommonExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(expr);
     for (ICommonExpressionsAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTEqualsExpression adaptedNode = adapt(expr, variant);
@@ -42,7 +42,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP
 
   @Override
   public void endVisit(ASTBooleanNotExpression expr) {
-    List<ICommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    List<ICommonExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(expr);
     for (ICommonExpressionsAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTBooleanNotExpression adaptedNode = adapt(expr, variant);
@@ -64,7 +64,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP
 
   @Override
   public void endVisit(ASTLogicalNotExpression expr) {
-    List<ICommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    List<ICommonExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(expr);
     for (ICommonExpressionsAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTLogicalNotExpression adaptedNode = adapt(expr, variant);
@@ -86,7 +86,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP
 
   @Override
   public void endVisit(ASTBracketExpression expr) {
-    List<ICommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    List<ICommonExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(expr);
     for (ICommonExpressionsAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTBracketExpression adaptedNode = adapt(expr, variant);
@@ -114,7 +114,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP
      * Each entry "AdaptationVariant" holds a consistent combination of all adapted
      * sub-nodes/expressions and the bindings that were used to adapt them.
      */
-    List<ICommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    List<ICommonExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(expr);
     for (ICommonExpressionsAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTFieldAccessExpression adaptedNode = adapt(expr, variant);
@@ -139,7 +139,7 @@ public class CommonExpressionsASTAdaptationVisitorTOP
 
   @Override
   public void endVisit(ASTCallExpression expr) {
-    List<ICommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    List<ICommonExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(expr);
     for (ICommonExpressionsAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTCallExpression adaptedNode = adapt(expr, variant);

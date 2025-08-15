@@ -15,7 +15,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTSetInExpression refSetInExpression) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refSetInExpression);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refSetInExpression);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTSetInExpression adaptedNode = adapt(refSetInExpression, variant);
       variant.setAdaptedNode(refSetInExpression, adaptedNode);
@@ -39,7 +39,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTSetNotInExpression refSetNotInExpression) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refSetNotInExpression);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refSetNotInExpression);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTSetNotInExpression adaptedNode = adapt(refSetNotInExpression, variant);
       variant.setAdaptedNode(refSetNotInExpression, adaptedNode);
@@ -63,7 +63,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTUnionExpression refUnionExpression) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refUnionExpression);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refUnionExpression);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTUnionExpression adaptedNode = adapt(refUnionExpression, variant);
       variant.setAdaptedNode(refUnionExpression, adaptedNode);
@@ -87,7 +87,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTIntersectionExpression refIntersectionExpression) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refIntersectionExpression);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refIntersectionExpression);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTIntersectionExpression adaptedNode = adapt(refIntersectionExpression, variant);
       variant.setAdaptedNode(refIntersectionExpression, adaptedNode);
@@ -111,7 +111,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTSetMinusExpression refSetMinusExpression) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refSetMinusExpression);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refSetMinusExpression);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTSetMinusExpression adaptedNode = adapt(refSetMinusExpression, variant);
       variant.setAdaptedNode(refSetMinusExpression, adaptedNode);
@@ -135,7 +135,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTSetUnionExpression refSetUnionExpression) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refSetUnionExpression);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refSetUnionExpression);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTSetUnionExpression adaptedNode = adapt(refSetUnionExpression, variant);
       variant.setAdaptedNode(refSetUnionExpression, adaptedNode);
@@ -154,7 +154,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTSetIntersectionExpression refSetIntersectionExpression) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refSetIntersectionExpression);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refSetIntersectionExpression);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTSetIntersectionExpression adaptedNode = adapt(refSetIntersectionExpression, variant);
       variant.setAdaptedNode(refSetIntersectionExpression, adaptedNode);
@@ -173,7 +173,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTSetAndExpression refSetAndExpression) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refSetAndExpression);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refSetAndExpression);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTSetAndExpression adaptedNode = adapt(refSetAndExpression, variant);
       variant.setAdaptedNode(refSetAndExpression, adaptedNode);
@@ -192,7 +192,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTSetOrExpression refSetOrExpression) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refSetOrExpression);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refSetOrExpression);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTSetOrExpression adaptedNode = adapt(refSetOrExpression, variant);
       variant.setAdaptedNode(refSetOrExpression, adaptedNode);
@@ -211,7 +211,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTSetVariableDeclaration refSetVariableDeclaration) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refSetVariableDeclaration);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refSetVariableDeclaration);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTSetVariableDeclaration adaptedNode = adapt(refSetVariableDeclaration, variant);
       variant.setAdaptedNode(refSetVariableDeclaration, adaptedNode);
@@ -247,7 +247,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTSetComprehension refSetComprehension) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refSetComprehension);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refSetComprehension);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTSetComprehension adaptedNode = adapt(refSetComprehension, variant);
       variant.setAdaptedNode(refSetComprehension, adaptedNode);
@@ -286,7 +286,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTSetComprehensionItem refSetComprehensionItem) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refSetComprehensionItem);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refSetComprehensionItem);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTSetComprehensionItem adaptedNode = adapt(refSetComprehensionItem, variant);
       variant.setAdaptedNode(refSetComprehensionItem, adaptedNode);
@@ -323,7 +323,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTGeneratorDeclaration refGeneratorDeclaration) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refGeneratorDeclaration);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refGeneratorDeclaration);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTGeneratorDeclaration adaptedNode = adapt(refGeneratorDeclaration, variant);
       variant.setAdaptedNode(refGeneratorDeclaration, adaptedNode);
@@ -351,7 +351,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTSetEnumeration refSetEnumeration) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refSetEnumeration);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refSetEnumeration);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTSetEnumeration adaptedNode = adapt(refSetEnumeration, variant);
       variant.setAdaptedNode(refSetEnumeration, adaptedNode);
@@ -383,7 +383,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTSetValueItem refSetValueItem) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refSetValueItem);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refSetValueItem);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTSetValueItem adaptedNode = adapt(refSetValueItem, variant);
       variant.setAdaptedNode(refSetValueItem, adaptedNode);
@@ -402,7 +402,7 @@ public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisito
 
   @Override
   public void endVisit(ASTSetValueRange refSetValueRange) {
-    List<ISetExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(refSetValueRange);
+    List<ISetExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(refSetValueRange);
     for (ISetExpressionsAdaptationVariant variant : variants) {
       ASTSetValueRange adaptedNode = adapt(refSetValueRange, variant);
       variant.setAdaptedNode(refSetValueRange, adaptedNode);

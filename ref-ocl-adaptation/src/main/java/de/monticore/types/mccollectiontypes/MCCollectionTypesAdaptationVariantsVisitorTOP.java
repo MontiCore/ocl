@@ -25,55 +25,55 @@ public class MCCollectionTypesAdaptationVariantsVisitorTOP
 
   @Override
   public void handle(ASTMCListType node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     MCCollectionTypesHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTMCOptionalType node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     MCCollectionTypesHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTMCMapType node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     MCCollectionTypesHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTMCSetType node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     MCCollectionTypesHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTMCBasicTypeArgument node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     MCCollectionTypesHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTMCPrimitiveTypeArgument node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     MCCollectionTypesHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTMCGenericType node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     MCCollectionTypesHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTMCTypeArgument node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     MCCollectionTypesHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTMCCollectionTypesNode node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     MCCollectionTypesHandler.super.handle(node);
   }
 

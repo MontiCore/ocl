@@ -58,10 +58,10 @@ public class OCLExpressionsBasisAdaptationVariantsVisitor extends ExpressionsBas
     if (incarnations.isEmpty()) {
       // TODO only pass variant upwards if the refSymbol is not defined in the inc mapping
       //  if it is defined, no incarnation is a sign that we should drop this variant
-      getAdaptations4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
+      getVariants4Ast().addVariant(refExpr, getAdaptationContext().createVariant());
     } else {
       // we have the incarnations which are possible in this context
-      getAdaptations4Ast().addVariants(refExpr, tryCreateVariantsForIncarnations(incarnations,
+      getVariants4Ast().addVariants(refExpr, tryCreateVariantsForIncarnations(incarnations,
               (incarnation) -> createVariantForTypeIncarnation(refExpr, refType, incarnation)));
     }
   }

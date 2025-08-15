@@ -32,6 +32,6 @@ public class MCCollectionTypesAdaptationVariantsVisitor
 
   @Override
   public void traverse(ASTMCMapType node) {
-    getAdaptations4Ast().addVariants(node, traverseAndPropagateConstraints(node.getKey(), node.getValue()));
+    getVariants4Ast().addVariants(node, traverseAndPropagateConstraints(node.getKey(), node.getValue()));
   }
 }

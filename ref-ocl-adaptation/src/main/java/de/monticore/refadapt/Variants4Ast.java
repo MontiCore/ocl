@@ -14,9 +14,9 @@ import java.util.List;
  * <br>
  * An instance of this class is always accessible during the adaptation process to add, replace,
  * retrieve, and remove variants.
- * It is usually accessed via {@link AbstractAdaptationVisitor#getAdaptations4Ast()}.
+ * It is usually accessed via {@link AbstractAdaptationVisitor#getVariants4Ast()}.
  */
-public class Adaptations4Ast {
+public class Variants4Ast {
 
   /**
    * Stores all variants for each reference AST node.

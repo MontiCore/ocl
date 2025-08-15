@@ -20,7 +20,7 @@ public class CommonExpressionsASTAdaptationVisitor
      * Each entry "AdaptationVariant" holds a consistent combination of all adapted
      * sub-nodes/expressions and the bindings that were used to adapt them.
      */
-    List<ICommonExpressionsAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    List<ICommonExpressionsAdaptationVariant> variants = getVariants4Ast().getVariants(expr);
 
     // Create a new ASTInfixExpression for each variant with the adapted left and right expressions.
     for (ICommonExpressionsAdaptationVariant variant : variants) {

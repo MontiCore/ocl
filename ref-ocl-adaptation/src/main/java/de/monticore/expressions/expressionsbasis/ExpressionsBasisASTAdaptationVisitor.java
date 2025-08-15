@@ -19,7 +19,7 @@ public class ExpressionsBasisASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTNameExpression expr) {
-    List<IExpressionsBasisAdaptationVariant> variants = getAdaptations4Ast().getVariants(expr);
+    List<IExpressionsBasisAdaptationVariant> variants = getVariants4Ast().getVariants(expr);
     for (IExpressionsBasisAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTNameExpression adaptedNode = adapt(expr, variant);
@@ -42,7 +42,7 @@ public class ExpressionsBasisASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTArguments node) {
-    List<IExpressionsBasisAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    List<IExpressionsBasisAdaptationVariant> variants = getVariants4Ast().getVariants(node);
     for (IExpressionsBasisAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTArguments adaptedNode = adapt(node, variant);
@@ -67,7 +67,7 @@ public class ExpressionsBasisASTAdaptationVisitor
 
   @Override
   public void endVisit(ASTLiteralExpression node) {
-    List<IExpressionsBasisAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    List<IExpressionsBasisAdaptationVariant> variants = getVariants4Ast().getVariants(node);
     for (IExpressionsBasisAdaptationVariant variant : variants) {
       // 1. Default adaptation (links to adapted child nodes)
       ASTLiteralExpression adaptedNode = adapt(node, variant);

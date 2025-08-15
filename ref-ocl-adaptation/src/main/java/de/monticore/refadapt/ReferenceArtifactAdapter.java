@@ -44,18 +44,18 @@ public abstract class ReferenceArtifactAdapter<C extends IAdaptationContext> {
    * Step 1 adds the variants in the first place, while step 2 enriches each variant with the
    * adapted AST nodes.
    */
-  protected Adaptations4Ast adaptations4Ast;
+  protected Variants4Ast variants4Ast;
 
   protected ReferenceArtifactAdapter(
           ITraverser bindingVariantsTraverser,
           ITraverser adaptationTraverser,
           AdaptationContextHolder contextHolder,
-          Adaptations4Ast adaptations4Ast
+          Variants4Ast variants4Ast
   ) {
     this.bindingVariantsTraverser = Log.errorIfNull(bindingVariantsTraverser);
     this.adaptationTraverser = Log.errorIfNull(adaptationTraverser);
     this.contextHolder = Log.errorIfNull(contextHolder);
-    this.adaptations4Ast = Log.errorIfNull(adaptations4Ast);
+    this.variants4Ast = Log.errorIfNull(variants4Ast);
   }
 
   public ITraverser getBindingVariantsTraverser() {
@@ -70,8 +70,8 @@ public abstract class ReferenceArtifactAdapter<C extends IAdaptationContext> {
     return contextHolder;
   }
 
-  public Adaptations4Ast getAdaptations4Ast() {
-    return adaptations4Ast;
+  public Variants4Ast getVariants4Ast() {
+    return variants4Ast;
   }
 
   /**
@@ -90,7 +90,7 @@ public abstract class ReferenceArtifactAdapter<C extends IAdaptationContext> {
    *   </li>
    * </ol>
    * If you want detailed insights into the variants and the identified bindings, you can use
-   * {@link #getAdaptations4Ast()} to access the variants for each reference AST node.
+   * {@link #getVariants4Ast()} to access the variants for each reference AST node.
    *
    * @param refNode the reference AST node to adapt
    * @param context the adaptation context to use for the adaptation
@@ -100,7 +100,7 @@ public abstract class ReferenceArtifactAdapter<C extends IAdaptationContext> {
    */
   public <T extends ASTNode> List<T> adapt(T refNode, C context) {
     // 1. reset
-    getAdaptations4Ast().reset();
+    getVariants4Ast().reset();
     // 2. init context
     getContextHolder().setContext(context);
     // 3. find all valid binding variants
@@ -108,7 +108,7 @@ public abstract class ReferenceArtifactAdapter<C extends IAdaptationContext> {
     // 4. adapt the reference node according to the binding variants
     refNode.accept(getAdaptationTraverser());
     // 5. collect all adaptations of the reference node from the variants
-    return adaptations4Ast.getVariants(refNode).stream()
+    return variants4Ast.getVariants(refNode).stream()
             .map(variant -> {
               Optional<T> adaptedNode = variant.getAdaptedNode(refNode);
               if (adaptedNode.isEmpty()) {

@@ -23,7 +23,7 @@ public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<IOCLAd
 
   @Override
   public void endVisit(ASTOCLCompilationUnit refCompilationUnit) {
-    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refCompilationUnit);
+    List<IOCLAdaptationVariant> variants = getVariants4Ast().getVariants(refCompilationUnit);
     for (IOCLAdaptationVariant variant : variants) {
       ASTOCLCompilationUnit adaptedNode = adapt(refCompilationUnit, variant);
       variant.setAdaptedNode(refCompilationUnit, adaptedNode);
@@ -48,7 +48,7 @@ public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<IOCLAd
 
   @Override
   public void endVisit(ASTOCLArtifact refArtifact) {
-    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refArtifact);
+    List<IOCLAdaptationVariant> variants = getVariants4Ast().getVariants(refArtifact);
     for (IOCLAdaptationVariant variant : variants) {
       ASTOCLArtifact adaptedNode = adapt(refArtifact, variant);
       variant.setAdaptedNode(refArtifact, adaptedNode);
@@ -74,7 +74,7 @@ public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<IOCLAd
      * Each entry "AdaptationVariant" holds a consistent combination of all adapted
      * sub-nodes/expressions and the bindings that were used to adapt them.
      */
-    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refInvariant);
+    List<IOCLAdaptationVariant> variants = getVariants4Ast().getVariants(refInvariant);
     for (IOCLAdaptationVariant variant : variants) {
       ASTOCLInvariant adaptedNode = adapt(refInvariant, variant);
       variant.setAdaptedNode(refInvariant, adaptedNode);
@@ -112,7 +112,7 @@ public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<IOCLAd
 
   @Override
   public void endVisit(ASTOCLContextDefinition node) {
-    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    List<IOCLAdaptationVariant> variants = getVariants4Ast().getVariants(node);
     for (IOCLAdaptationVariant variant : variants) {
       ASTOCLContextDefinition adaptedNode = adapt(node, variant);
       variant.setAdaptedNode(node, adaptedNode);
@@ -147,7 +147,7 @@ public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<IOCLAd
 
   @Override
   public void endVisit(ASTOCLOperationConstraint refConstraint) {
-    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(refConstraint);
+    List<IOCLAdaptationVariant> variants = getVariants4Ast().getVariants(refConstraint);
     for (IOCLAdaptationVariant variant : variants) {
       ASTOCLOperationConstraint adaptedNode = adapt(refConstraint, variant);
       variant.setAdaptedNode(refConstraint, adaptedNode);
@@ -182,7 +182,7 @@ public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<IOCLAd
 
   @Override
   public void endVisit(ASTOCLMethodSignature node) {
-    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    List<IOCLAdaptationVariant> variants = getVariants4Ast().getVariants(node);
     for (IOCLAdaptationVariant variant : variants) {
       ASTOCLMethodSignature adaptedNode = adapt(node, variant);
       variant.setAdaptedNode(node, adaptedNode);
@@ -215,7 +215,7 @@ public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<IOCLAd
 
   @Override
   public void endVisit(ASTOCLParamDeclaration node) {
-    List<IOCLAdaptationVariant> variants = getAdaptations4Ast().getVariants(node);
+    List<IOCLAdaptationVariant> variants = getVariants4Ast().getVariants(node);
     for (IOCLAdaptationVariant variant : variants) {
       ASTOCLParamDeclaration adaptedNode = adapt(node, variant);
       variant.setAdaptedNode(node, adaptedNode);

@@ -24,91 +24,91 @@ public class OCLExpressionsAdaptationVariantsVisitorTOP
 
   @Override
   public void handle(ASTAnyExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTInDeclaration node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTLetinExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTExistsExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTForallExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTTypeIfExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTImpliesExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTIterateExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTEquivalentExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTIfThenElseExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTTypeIfThenExpression node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTInDeclarationVariable node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTOCLAtPreQualification node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTOCLVariableDeclaration node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 
   @Override
   public void handle(ASTOCLTransitiveQualification node) {
-    getAdaptations4Ast().clearVariants(node);
+    getVariants4Ast().clearVariants(node);
     OCLExpressionsHandler.super.handle(node);
   }
 }

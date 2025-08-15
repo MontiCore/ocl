@@ -112,7 +112,7 @@ public class OCLExpressionsAdaptationVariantsVisitor
 
   @Override
   public void endVisit(ASTInDeclarationVariable node) {
-    getAdaptations4Ast().addVariant(node, getAdaptationContext().createVariant());
+    getVariants4Ast().addVariant(node, getAdaptationContext().createVariant());
   }
 
   @Override

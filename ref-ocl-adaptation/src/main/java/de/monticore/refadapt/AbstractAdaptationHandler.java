@@ -18,12 +18,12 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
 
   protected void traverseForConsistentVariants(ASTNode parentNode, ASTNode... children) {
     List<V> variants = traverseAndPropagateConstraints(children);
-    getAdaptations4Ast().addVariants(parentNode, variants);
+    getVariants4Ast().addVariants(parentNode, variants);
   }
 
   protected void traverseForConsistentVariants(ASTNode parentNode, List<? extends ASTNode> children) {
     List<V> variants = traverseAndPropagateConstraints(children);
-    getAdaptations4Ast().addVariants(parentNode, variants);
+    getVariants4Ast().addVariants(parentNode, variants);
   }
 
   protected List<V> traverseAndPropagateConstraints(ASTNode... nodes) {
@@ -47,7 +47,7 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
     Iterator<? extends ASTNode> iterator = children.iterator();
     ASTNode firstChild = iterator.next();
     firstChild.accept(getTraverser());
-    List<V> variants = getAdaptations4Ast().getVariants(firstChild);
+    List<V> variants = getVariants4Ast().getVariants(firstChild);
     // TODO report error if we get zero variants ? -> or default to empty variant?
     // 2. get variants for each subsequent child under constraints from all previous children
     while (iterator.hasNext()) {
@@ -74,7 +74,7 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
     return expandAndMergeVariants(sourceVariants, v -> {
       node.accept(getTraverser());
       // no need to copy the list here. getVariants creates a new list internally
-      return getAdaptations4Ast().getVariants(node);
+      return getVariants4Ast().getVariants(node);
     });
   }
 
@@ -89,17 +89,17 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
    *                      child variant,
    */
   protected void expandChildVariants(ASTNode parentNode, ASTNode childNode, Function<V, List<V>> expandVariant) {
-    List<V> sourceVariants = getAdaptations4Ast().getVariants(childNode);
+    List<V> sourceVariants = getVariants4Ast().getVariants(childNode);
     if (sourceVariants.isEmpty()) {
       Log.info("No variants found for child node " + childNode, LOG_NAME);
-      // TODO Set error in Adaptations4Ast so no default variant is created?
+      // TODO Set error in Variants4Ast so no default variant is created?
     } else {
       List<V> expandedVariants = expandAndMergeVariants(sourceVariants, expandVariant);
       if (expandedVariants.isEmpty()) {
         Log.info("No expanded variants found for child node " + childNode, LOG_NAME);
-        // TODO Set error in Adaptations4Ast so no default variant is created?
+        // TODO Set error in Variants4Ast so no default variant is created?
       } else {
-        getAdaptations4Ast().addVariants(parentNode, expandedVariants);
+        getVariants4Ast().addVariants(parentNode, expandedVariants);
       }
     }
   }
@@ -112,7 +112,7 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
    *   <li>Switches the current adaptation context to the new one</li>
    *   <li>Retrieves all variants for the given source variant using the provided function.</li>
    *   <li>Merges each retrieved variant with the source variant and replaces the source variant
-   *       with the list of merged variants in {@link Adaptations4Ast}.
+   *       with the list of merged variants in {@link Variants4Ast}.
    *   </li>
    * </ol>>
    *
@@ -142,7 +142,7 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
 
       if (nodeVariants.isEmpty()) {
         // conflict with existing bindings -> drop current leftResult
-        getAdaptations4Ast().removeVariant(sourceVariant);
+        getVariants4Ast().removeVariant(sourceVariant);
       } else {
         List<V> mergedVariants = new ArrayList<>();
         for (V nodeVariant : nodeVariants) {
@@ -157,11 +157,11 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
           }
           mergedVariants.add(mergedVariant);
           resultVariants.add(mergedVariant);
-          getAdaptations4Ast().replaceVariant(nodeVariant, resultVariants); // can we improve here?
+          getVariants4Ast().replaceVariant(nodeVariant, resultVariants); // can we improve here?
         }
         // TODO What if all variants had merge conflicts? -> mergedVariants is empty
         //   -> replaceVariant actually causes removal of the sourceVariant
-        getAdaptations4Ast().replaceVariant(sourceVariant, mergedVariants);
+        getVariants4Ast().replaceVariant(sourceVariant, mergedVariants);
       }
     }
     // IMPORTANT: reset the adaptation context to the previous one
