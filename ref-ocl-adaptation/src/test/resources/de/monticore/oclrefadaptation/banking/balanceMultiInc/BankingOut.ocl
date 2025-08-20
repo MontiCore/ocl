@@ -8,6 +8,15 @@ ocl TransactionChecks {
        // actually, we would also like to have the following here:
        // this.balance == this@pre.balance - amount;
 
+  context void Banking.BankAccount.transfer(Banking.BankAccount targetAccount, double amount)
+    pre: this.availableFunds >= amount;
+    post: this.availableFunds == this@pre.availableFunds - amount
+       && targetAccount.availableFunds == targetAccount@pre.availableFunds + amount
+       && (exists Banking.Transaction t in this.transaction:
+            t.sourceAccount == this && t.targetAccount == targetAccount && t.transferValue == amount)
+       && (exists Banking.Transaction t in targetAccount.transaction:
+            t.sourceAccount == this && t.targetAccount == targetAccount && t.transferValue == amount);
+
   context Banking.SEPABank b inv OverallBalanceCorrectShorter:
       b.overallBalance == iterate { balance in b.bankAccount.balance;
                   double accumulated = 0.0 :

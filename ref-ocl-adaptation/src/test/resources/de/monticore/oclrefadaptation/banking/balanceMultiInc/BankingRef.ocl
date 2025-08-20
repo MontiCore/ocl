@@ -3,8 +3,17 @@
 ocl TransactionChecks {
 
   context void Account.withdraw(double amount)
-     pre: this.balance >= amount;
-     post: this.balance == this@pre.balance - amount;
+    pre: this.balance >= amount;
+    post: this.balance == this@pre.balance - amount;
+
+  context void Account.transfer(Account targetAccount, double amount)
+    pre: this.balance >= amount;
+    post: this.balance == this@pre.balance - amount
+       && targetAccount.balance == targetAccount@pre.balance + amount
+       && (exists Transaction t in this.transaction:
+            t.sourceAccount == this && t.targetAccount == targetAccount && t.amount == amount)
+       && (exists Transaction t in targetAccount.transaction:
+            t.sourceAccount == this && t.targetAccount == targetAccount && t.amount == amount);
 
   context Bank b inv OverallBalanceCorrectShorter:
       b.overallBalance == iterate { balance in b.account.balance;

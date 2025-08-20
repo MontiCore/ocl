@@ -22,7 +22,7 @@ classdiagram Banking {
   class Transaction {
     BankAccount sourceAccount;
     BankAccount targetAccount;
-    double amount;
+    <<ref="amount">> double transferValue;
   }
 
   association SEPABank -> BankAccount [*];
