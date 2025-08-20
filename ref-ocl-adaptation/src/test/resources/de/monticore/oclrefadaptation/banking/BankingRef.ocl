@@ -21,4 +21,8 @@ ocl bankingChecks {
     b.overallBalance == iterate { balance in b.account.balance;
                           double accumulated = 0.0 :
                           accumulated = accumulated + balance };
+
+  context Account inv UniqueAccountId:
+    forall a1 in Account, a2 in Account:
+      a1.id == a2.id implies a1 == a2;
 }
