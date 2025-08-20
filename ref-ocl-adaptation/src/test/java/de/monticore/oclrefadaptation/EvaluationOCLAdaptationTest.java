@@ -101,6 +101,16 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "banking/BankingRef.ocl",
               "banking/accountSubclasses/BankingOut.ocl");
     }
+
+    @Test
+    void balanceMultiInc() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "banking/balanceMultiInc/BankingConc.cd",
+              "banking/balanceMultiInc/BankingRef.cd",
+              "banking/balanceMultiInc/BankingRef.ocl",
+              "banking/balanceMultiInc/BankingOut.ocl");
+    }
   }
 
   @Nested

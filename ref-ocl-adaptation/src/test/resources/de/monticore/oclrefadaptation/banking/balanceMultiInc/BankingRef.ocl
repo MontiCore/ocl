@@ -1,0 +1,13 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+ocl TransactionChecks {
+
+  context void Account.withdraw(double amount)
+     pre: this.balance >= amount;
+     post: this.balance == this@pre.balance - amount;
+
+  context Bank b inv OverallBalanceCorrectShorter:
+      b.overallBalance == iterate { balance in b.account.balance;
+                  double accumulated = 0.0 :
+                  accumulated = accumulated + balance };
+}
