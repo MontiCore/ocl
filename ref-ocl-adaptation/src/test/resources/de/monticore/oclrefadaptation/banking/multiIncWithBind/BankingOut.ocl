@@ -19,4 +19,14 @@ ocl bankingChecks {
                                     accumulated = accumulated + balance }
     in
       b.businessAccountsOverallBalance == calculatedBalance;
+
+  context Banking.SEPABank b inv OverallBalanceCorrectShorter:
+    b.privateAccountsOverallBalance == iterate { balance in b.privateAccount.balance;
+                      double accumulated = 0.0 :
+                      accumulated = accumulated + balance };
+
+  context Banking.SEPABank b inv OverallBalanceCorrectShorter:
+    b.businessAccountsOverallBalance == iterate { balance in b.businessAccount.balance;
+                      double accumulated = 0.0 :
+                      accumulated = accumulated + balance };
 }

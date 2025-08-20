@@ -9,4 +9,9 @@ ocl bankingChecks {
                                   accumulated = accumulated + balance }
   in
     b.totalMoney == calculatedBalance;
+
+  context Banking.SEPABank b inv OverallBalanceCorrectShorter:
+      b.totalMoney == iterate { balance in b.bankAccount.balance;
+                            double accumulated = 0.0 :
+                            accumulated = accumulated + balance };
 }
