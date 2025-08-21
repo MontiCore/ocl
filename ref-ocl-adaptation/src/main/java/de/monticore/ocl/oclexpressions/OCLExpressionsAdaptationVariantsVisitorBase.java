@@ -6,8 +6,13 @@ import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsTraverser;
 import de.monticore.ocl.oclexpressions._visitor.OCLExpressionsVisitor2;
 import de.monticore.refadapt.AbstractAdaptationHandler;
 
-// NOTE: Could be generated
-public class OCLExpressionsAdaptationVariantsVisitorTOP
+/**
+ * Basic implementation of a variants visitor for the <i>OCLExpressions</i> language<br>
+ * <br>
+ * <b>NOTE:</b> This class is intended to be GENERATED in the future! Therefore, only apply changes
+ * which are systematic and can be automatically derived from the language grammar/AST.<br>
+ */
+public class OCLExpressionsAdaptationVariantsVisitorBase
         extends AbstractAdaptationHandler<IOCLExpressionsAdaptationContext, IOCLExpressionsAdaptationVariant>
         implements OCLExpressionsVisitor2, OCLExpressionsHandler {
   private OCLExpressionsTraverser traverser;

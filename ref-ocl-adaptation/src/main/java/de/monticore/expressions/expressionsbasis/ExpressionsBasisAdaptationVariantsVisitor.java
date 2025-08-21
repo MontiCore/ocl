@@ -23,7 +23,7 @@ import java.util.Set;
  * </ul>
  */
 public class ExpressionsBasisAdaptationVariantsVisitor
-        extends ExpressionsBasisAdaptationVariantsVisitorTOP {
+        extends ExpressionsBasisAdaptationVariantsVisitorBase {
 
   @Override
   public void traverse(ASTArguments arguments) {

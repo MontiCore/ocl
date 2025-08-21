@@ -6,8 +6,13 @@ import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.ocl._visitor.OCLVisitor2;
 import de.monticore.refadapt.AbstractAdaptationHandler;
 
-// NOTE: Can be generated.
-public class OCLAdaptationVariantsVisitorTOP
+/**
+ * Basic implementation of a variants visitor for the <i>OCL</i> language<br>
+ * <br>
+ * <b>NOTE:</b> This class is intended to be GENERATED in the future! Therefore, only apply changes
+ * which are systematic and can be automatically derived from the language grammar/AST.<br>
+ */
+public class OCLAdaptationVariantsVisitorBase
         extends AbstractAdaptationHandler<IOCLAdaptationContext, IOCLAdaptationVariant>
         implements OCLVisitor2, OCLHandler {
 

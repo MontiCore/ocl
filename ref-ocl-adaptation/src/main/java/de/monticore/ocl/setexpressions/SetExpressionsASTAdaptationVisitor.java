@@ -10,6 +10,12 @@ import java.util.Optional;
 
 import static de.monticore.refadapt.RefAdaptationUtils.deepCloneComments;
 
+/**
+ * Basic implementation of the AST adaptation visitor for the <i>SetExpressions</i> language<br>
+ * <br>
+ * <b>NOTE:</b> This class is intended to be GENERATED in the future! Therefore, only apply changes
+ * which are systematic and can be automatically derived from the language grammar/AST.<br>
+ */
 public class SetExpressionsASTAdaptationVisitor extends AbstractAdaptationVisitor<ISetExpressionsAdaptationContext>
         implements SetExpressionsVisitor2 {
 

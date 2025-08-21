@@ -6,8 +6,13 @@ import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesHandler;
 import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesTraverser;
 import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesVisitor2;
 
-// NOTE: Could be generated
-public class MCCollectionTypesAdaptationVariantsVisitorTOP
+/**
+ * Basic implementation of a variants visitor for the <i>MCCollectionTypes</i> language<br>
+ * <br>
+ * <b>NOTE:</b> This class is intended to be GENERATED in the future! Therefore, only apply changes
+ * which are systematic and can be automatically derived from the language grammar/AST.<br>
+ */
+public class MCCollectionTypesAdaptationVariantsVisitorBase
         extends AbstractAdaptationHandler<IMCCollectionTypesAdaptationContext, IMCCollectionTypesAdaptationVariant>
         implements MCCollectionTypesVisitor2, MCCollectionTypesHandler {
 

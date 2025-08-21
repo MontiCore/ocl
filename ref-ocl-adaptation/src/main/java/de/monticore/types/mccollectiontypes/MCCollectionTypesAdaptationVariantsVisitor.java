@@ -3,7 +3,7 @@ package de.monticore.types.mccollectiontypes;
 import de.monticore.types.mccollectiontypes._ast.*;
 
 public class MCCollectionTypesAdaptationVariantsVisitor
-        extends MCCollectionTypesAdaptationVariantsVisitorTOP {
+        extends MCCollectionTypesAdaptationVariantsVisitorBase {
 
   @Override
   public void endVisit(ASTMCListType node) {

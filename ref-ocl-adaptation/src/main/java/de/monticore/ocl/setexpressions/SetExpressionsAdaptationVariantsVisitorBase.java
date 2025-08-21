@@ -6,8 +6,13 @@ import de.monticore.ocl.setexpressions._visitor.SetExpressionsTraverser;
 import de.monticore.ocl.setexpressions._visitor.SetExpressionsVisitor2;
 import de.monticore.refadapt.AbstractAdaptationHandler;
 
-// NOTE: Could be generated
-public class SetExpressionsAdaptationVariantsVisitorTOP
+/**
+ * Basic implementation of a variants visitor for the <i>SetExpressions</i> language<br>
+ * <br>
+ * <b>NOTE:</b> This class is intended to be GENERATED in the future! Therefore, only apply changes
+ * which are systematic and can be automatically derived from the language grammar/AST.<br>
+ */
+public class SetExpressionsAdaptationVariantsVisitorBase
         extends AbstractAdaptationHandler<ISetExpressionsAdaptationContext, ISetExpressionsAdaptationVariant>
         implements SetExpressionsVisitor2, SetExpressionsHandler {
   private SetExpressionsTraverser traverser;

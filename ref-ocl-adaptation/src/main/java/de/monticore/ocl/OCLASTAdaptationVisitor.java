@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class OCLASTAdaptationVisitor extends OCLASTAdaptationVisitorTOP {
+public class OCLASTAdaptationVisitor extends OCLASTAdaptationVisitorBase {
 
   private static final String LOG_NAME = OCLASTAdaptationVisitor.class.getName();
 

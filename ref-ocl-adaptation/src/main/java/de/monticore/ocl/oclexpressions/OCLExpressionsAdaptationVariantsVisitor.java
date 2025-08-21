@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OCLExpressionsAdaptationVariantsVisitor
-        extends OCLExpressionsAdaptationVariantsVisitorTOP {
+        extends OCLExpressionsAdaptationVariantsVisitorBase {
 
   // =========================================================
   // Traversal definition

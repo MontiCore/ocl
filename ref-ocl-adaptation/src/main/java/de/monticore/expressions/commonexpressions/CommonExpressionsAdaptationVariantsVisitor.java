@@ -19,7 +19,7 @@ import java.util.*;
  * </ul>
  */
 public class CommonExpressionsAdaptationVariantsVisitor
-        extends CommonExpressionsAdaptationVariantsVisitorTOP {
+        extends CommonExpressionsAdaptationVariantsVisitorBase {
 
   @Override
   public void endVisit(ASTFieldAccessExpression refExpr) {

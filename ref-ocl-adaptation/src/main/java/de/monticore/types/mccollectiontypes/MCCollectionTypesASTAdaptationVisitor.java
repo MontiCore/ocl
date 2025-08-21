@@ -11,7 +11,12 @@ import de.monticore.types.mccollectiontypes._visitor.MCCollectionTypesVisitor2;
 import java.util.List;
 import java.util.Optional;
 
-// NOTE: Could be generated
+/**
+ * Basic implementation of the AST adaptation visitor for the <i>CommonExpressions</i> language<br>
+ * <br>
+ * <b>NOTE:</b> This class is intended to be GENERATED in the future! Therefore, only apply changes
+ * which are systematic and can be automatically derived from the language grammar/AST.<br>
+ */
 public class MCCollectionTypesASTAdaptationVisitor
         extends AbstractAdaptationVisitor<IMCCollectionTypesAdaptationContext>
         implements MCCollectionTypesVisitor2 {

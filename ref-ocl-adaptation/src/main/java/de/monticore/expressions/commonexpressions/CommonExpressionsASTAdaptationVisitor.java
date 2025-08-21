@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class CommonExpressionsASTAdaptationVisitor
-        extends CommonExpressionsASTAdaptationVisitorTOP {
+        extends CommonExpressionsASTAdaptationVisitorBase {
 
   @Override
   public void endVisit(ASTInfixExpression expr) {

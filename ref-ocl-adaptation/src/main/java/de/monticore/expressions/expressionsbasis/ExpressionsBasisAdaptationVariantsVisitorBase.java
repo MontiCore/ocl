@@ -7,8 +7,13 @@ import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisTraver
 import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisitor2;
 import de.monticore.refadapt.AbstractAdaptationHandler;
 
-// NOTE: Can be generated.
-public class ExpressionsBasisAdaptationVariantsVisitorTOP
+/**
+ * Basic implementation of a variants visitor for the <i>ExpressionsBasis</i> language<br>
+ * <br>
+ * <b>NOTE:</b> This class is intended to be GENERATED in the future! Therefore, only apply changes
+ * which are systematic and can be automatically derived from the language grammar/AST.<br>
+ */
+public class ExpressionsBasisAdaptationVariantsVisitorBase
         extends AbstractAdaptationHandler<IExpressionsBasisAdaptationContext, IExpressionsBasisAdaptationVariant>
         implements ExpressionsBasisVisitor2, ExpressionsBasisHandler {
 

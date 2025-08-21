@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class OCLAdaptationVariantsVisitor extends OCLAdaptationVariantsVisitorTOP {
+public class OCLAdaptationVariantsVisitor extends OCLAdaptationVariantsVisitorBase {
 
   @Override
   public void traverse(ASTOCLInvariant refInvariant) {

@@ -18,8 +18,14 @@ import java.util.Optional;
 
 import static de.monticore.refadapt.RefAdaptationUtils.deepCloneComments;
 
-// NOTE: Could be generated
-public class OCLASTAdaptationVisitorTOP extends AbstractAdaptationVisitor<IOCLAdaptationContext> implements OCLVisitor2 {
+/**
+ * Basic implementation of the AST adaptation visitor for the <i>OCL</i> language<br>
+ * <br>
+ * <b>NOTE:</b> This class is intended to be GENERATED in the future! Therefore, only apply changes
+ * which are systematic and can be automatically derived from the language grammar/AST.<br>
+ */
+public class OCLASTAdaptationVisitorBase extends AbstractAdaptationVisitor<IOCLAdaptationContext>
+        implements OCLVisitor2 {
 
   @Override
   public void endVisit(ASTOCLCompilationUnit refCompilationUnit) {

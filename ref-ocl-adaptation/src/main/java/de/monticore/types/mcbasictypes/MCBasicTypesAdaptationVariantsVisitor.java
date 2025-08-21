@@ -1,6 +1,5 @@
 package de.monticore.types.mcbasictypes;
 
-import de.monticore.refadapt.AbstractAdaptationHandler;
 import de.monticore.refmodel.BindingConflictException;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -9,9 +8,6 @@ import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.monticore.types.mcbasictypes._ast.ASTMCPrimitiveType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._symboltable.IMCBasicTypesScope;
-import de.monticore.types.mcbasictypes._visitor.MCBasicTypesHandler;
-import de.monticore.types.mcbasictypes._visitor.MCBasicTypesTraverser;
-import de.monticore.types.mcbasictypes._visitor.MCBasicTypesVisitor2;
 import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 
@@ -19,40 +15,9 @@ import java.util.Optional;
 import java.util.Set;
 
 public class MCBasicTypesAdaptationVariantsVisitor
-        extends AbstractAdaptationHandler<IMCBasicTypesAdaptationContext, IMCBasicTypesAdaptationVariant>
-        implements MCBasicTypesVisitor2, MCBasicTypesHandler {
+        extends MCBasicTypesAdaptationVariantsVisitorBase {
 
   private static final String LOG_NAME = MCBasicTypesAdaptationVariantsVisitor.class.getName();
-
-  private MCBasicTypesTraverser traverser;
-
-  @Override
-  public void setTraverser(MCBasicTypesTraverser traverser) {
-    this.traverser = traverser;
-  }
-
-  @Override
-  public MCBasicTypesTraverser getTraverser() {
-    return traverser;
-  }
-
-  @Override
-  public void handle(ASTMCQualifiedType node) {
-    getVariants4Ast().clearVariants(node);
-    MCBasicTypesHandler.super.handle(node);
-  }
-
-  @Override
-  public void handle(ASTMCPrimitiveType node) {
-    getVariants4Ast().clearVariants(node);
-    MCBasicTypesHandler.super.handle(node);
-  }
-
-  @Override
-  public void handle(ASTMCImportStatement node) {
-    getVariants4Ast().clearVariants(node);
-    MCBasicTypesHandler.super.handle(node);
-  }
 
   @Override
   public void endVisit(ASTMCQualifiedType refType) {

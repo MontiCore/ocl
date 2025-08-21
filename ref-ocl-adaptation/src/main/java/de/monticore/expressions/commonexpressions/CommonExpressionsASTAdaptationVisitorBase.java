@@ -11,7 +11,13 @@ import de.monticore.refadapt.RefAdaptationUtils;
 import java.util.List;
 import java.util.Optional;
 
-public class CommonExpressionsASTAdaptationVisitorTOP
+/**
+ * Basic implementation of the AST adaptation visitor for the <i>CommonExpressions</i> language<br>
+ * <br>
+ * <b>NOTE:</b> This class is intended to be GENERATED in the future! Therefore, only apply changes
+ * which are systematic and can be automatically derived from the language grammar/AST.<br>
+ */
+public class CommonExpressionsASTAdaptationVisitorBase
         extends AbstractAdaptationVisitor<ICommonExpressionsAdaptationContext>
         implements CommonExpressionsVisitor2 {
 

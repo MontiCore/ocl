@@ -6,7 +6,13 @@ import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsTrav
 import de.monticore.expressions.commonexpressions._visitor.CommonExpressionsVisitor2;
 import de.monticore.refadapt.AbstractAdaptationHandler;
 
-public class CommonExpressionsAdaptationVariantsVisitorTOP
+/**
+ * Basic implementation of a variants visitor for the <i>CommonExpressions</i> language<br>
+ * <br>
+ * <b>NOTE:</b> This class is intended to be GENERATED in the future! Therefore, only apply changes
+ * which are systematic and can be automatically derived from the language grammar/AST.<br>
+ */
+public class CommonExpressionsAdaptationVariantsVisitorBase
         extends AbstractAdaptationHandler<ICommonExpressionsAdaptationContext, ICommonExpressionsAdaptationVariant>
         implements CommonExpressionsVisitor2, CommonExpressionsHandler {
   private CommonExpressionsTraverser traverser;

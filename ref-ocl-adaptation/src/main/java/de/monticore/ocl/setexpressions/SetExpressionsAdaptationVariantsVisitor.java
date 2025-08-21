@@ -2,13 +2,12 @@ package de.monticore.ocl.setexpressions;
 
 import de.monticore.ast.ASTNode;
 import de.monticore.ocl.setexpressions._ast.*;
-import de.monticore.symboltable.IScope;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SetExpressionsAdaptationVariantsVisitor
-        extends SetExpressionsAdaptationVariantsVisitorTOP {
+        extends SetExpressionsAdaptationVariantsVisitorBase {
 
   @Override
   public void traverse(ASTSetInExpression node) {
