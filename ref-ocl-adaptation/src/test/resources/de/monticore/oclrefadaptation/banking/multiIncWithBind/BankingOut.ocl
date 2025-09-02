@@ -30,11 +30,11 @@ ocl bankingChecks {
                       double accumulated = 0.0 :
                       accumulated = accumulated + balance };
 
-  context Banking.PrivateAccount inv UniqueAccountId:
+  inv UniqueAccountId:
     forall a1 in PrivateAccount, a2 in PrivateAccount:
       a1.iban == a2.iban implies a1 == a2;
 
-  context Banking.BusinessAccount inv UniqueAccountId:
+  inv UniqueAccountId:
     forall a1 in BusinessAccount, a2 in BusinessAccount:
       a1.iban == a2.iban implies a1 == a2;
 }

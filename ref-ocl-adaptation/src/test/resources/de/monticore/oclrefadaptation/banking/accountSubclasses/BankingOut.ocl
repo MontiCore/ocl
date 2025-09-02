@@ -16,7 +16,7 @@ ocl bankingChecks {
                           double accumulated = 0.0 :
                           accumulated = accumulated + balance };
 
-  context Banking.BankAccount inv UniqueAccountId:
+  inv UniqueAccountId:
     forall a1 in BankAccount, a2 in BankAccount:
       a1.iban == a2.iban implies a1 == a2;
 }
