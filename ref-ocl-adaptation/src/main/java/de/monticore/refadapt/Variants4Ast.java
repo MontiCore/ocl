@@ -3,6 +3,7 @@ package de.monticore.refadapt;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import de.monticore.ast.ASTNode;
+import org.apache.commons.lang3.Validate;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +32,9 @@ public class Variants4Ast {
    * @param variant the variant to be added
    */
   public void addVariant(ASTNode refNode, IAdaptationVariant variant) {
+    Validate.notNull(refNode);
+    Validate.notNull(variant);
+    variant.addCoveredRefNode(refNode);
     variants.put(refNode, variant);
   }
 
@@ -41,7 +45,29 @@ public class Variants4Ast {
    * @param newVariants the collection of variants to be added
    */
   public void addVariants(ASTNode refNode, Collection<? extends IAdaptationVariant> newVariants) {
-    variants.putAll(refNode, newVariants);
+    for (IAdaptationVariant v : newVariants) {
+      addVariant(refNode, v);
+    }
+  }
+
+  /**
+   * Inserts the given list of variants into the internal mapping, linking each variant to all
+   * its covered reference AST nodes.<br>
+   *
+   * @param newVariants the variants to insert
+   *
+   * @see IAdaptationVariant#getCoveredRefNodes()
+   */
+  public <V extends IAdaptationVariant> void insertVariants(List<V> newVariants) {
+    for (IAdaptationVariant v : newVariants) {
+      for (ASTNode coveredNode : v.getCoveredRefNodes()) {
+        // TODO This check vs. implement everything based on SetMultimap instead which would be a larger refactoring
+        if (!this.variants.containsEntry(coveredNode, v)) {
+          // only add if variant is not already linked to the node
+          this.variants.put(coveredNode, v);
+        }
+      }
+    }
   }
 
   /**
@@ -77,7 +103,26 @@ public class Variants4Ast {
         variants.replaceValues(key, variantList);
       }
     }
-    // TODO replace all occurrences of oldVariant in childVariants as well!
+    // replace all occurrences of oldVariant in childVariants as well
+    for (IAdaptationVariant v : variants.values()) {
+      for (ASTNode key : v.getAllChildVariants().keySet()) {
+        if (v.getChildVariants(key).contains(oldVariant)) {
+          v.removeChildVariant(oldVariant);
+          v.addChildVariants(key, newVariants);
+        }
+      }
+    }
+    // link all child variants of the new variants to their ref AST nodes as well
+    for (IAdaptationVariant v : newVariants) {
+      for (IAdaptationVariant childVariant : v.getAllChildVariants().values()) {
+        for (ASTNode coveredNode : childVariant.getCoveredRefNodes()) {
+          if (!this.variants.containsEntry(coveredNode, childVariant)) {
+            // only add if variant is not already linked to the node
+            this.variants.put(coveredNode, childVariant);
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -91,6 +136,7 @@ public class Variants4Ast {
    */
   public <T extends IAdaptationVariant> List<T> getVariants(ASTNode refNode) {
     // return read-only / copy here so that the caller cannot modify the internal state
+    // TODo if we keep SetMultimap internally then return set here as well!
     return new ArrayList<T>((Collection<T>) variants.get(refNode));
   }
 

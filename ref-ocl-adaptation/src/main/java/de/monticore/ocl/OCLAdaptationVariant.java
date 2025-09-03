@@ -10,6 +10,7 @@ import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsBindings;
 import de.monticore.symbols.basicsymbols.refmodel.IBasicSymbolsBindings;
 
 import java.util.Map;
+import java.util.Set;
 
 public class OCLAdaptationVariant extends AbstractAdaptationVariant implements IOCLAdaptationVariant {
 
@@ -37,10 +38,11 @@ public class OCLAdaptationVariant extends AbstractAdaptationVariant implements I
    */
   protected OCLAdaptationVariant(
           IOOSymbolsBindings ooSymbolsBindings,
+          Set<ASTNode> coveredRefNodes,
           Map<ASTNode, ASTNode> adaptedNodes,
           ListMultimap<ASTNode, IASTAdaptation<? extends ASTNode>> astAdaptations,
           ListMultimap<ASTNode, IAdaptationVariant> childVariants) {
-    super(adaptedNodes, astAdaptations, childVariants);
+    super(coveredRefNodes, adaptedNodes, astAdaptations, childVariants);
     this.ooSymbolsBindings = ooSymbolsBindings.copy();
   }
 
@@ -48,6 +50,7 @@ public class OCLAdaptationVariant extends AbstractAdaptationVariant implements I
   public IOCLAdaptationVariant copy() {
     return new OCLAdaptationVariant(
             ooSymbolsBindings,
+            coveredRefNodes,
             adaptedNodes,
             astAdaptations,
             childVariants);
@@ -67,6 +70,7 @@ public class OCLAdaptationVariant extends AbstractAdaptationVariant implements I
     }
 
     IOCLAdaptationVariant merged = copy();
+    merged.addAllCoveredRefNodes(otherOCLVariant.getCoveredRefNodes()); // TODO check for conflicts!
     merged.addAllChildVariants(otherVariant); // TODO check for conflicts!
     merged.addAdaptedNodes(otherVariant.getAdaptedNodes());
     merged.addAllASTAdaptations(otherVariant);

@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractAdaptationVariant implements IAdaptationVariant {
 
+  protected final Set<ASTNode> coveredRefNodes;
+
   /**
    * The map of adapted AST nodes.<br>
    * The keys are the reference AST nodes, the values are the adapted AST nodes for this variant.
@@ -29,6 +31,7 @@ public abstract class AbstractAdaptationVariant implements IAdaptationVariant {
 
 
   protected AbstractAdaptationVariant() {
+    this.coveredRefNodes = new HashSet<>();
     this.adaptedNodes = new HashMap<>();
     this.astAdaptations = ArrayListMultimap.create();
     this.childVariants = ArrayListMultimap.create();
@@ -43,12 +46,31 @@ public abstract class AbstractAdaptationVariant implements IAdaptationVariant {
    * @param childVariants
    */
   protected AbstractAdaptationVariant(
+          Set<ASTNode> coveredRefNodes,
           Map<ASTNode, ASTNode> adaptedNodes,
           ListMultimap<ASTNode, IASTAdaptation<? extends ASTNode>> astAdaptations,
           ListMultimap<ASTNode, IAdaptationVariant> childVariants) {
+    this.coveredRefNodes = new HashSet<>(coveredRefNodes);
     this.adaptedNodes = new HashMap<>(adaptedNodes);
     this.astAdaptations = ArrayListMultimap.create(astAdaptations);
     this.childVariants = ArrayListMultimap.create(childVariants);
+  }
+
+  @Override
+  public Set<ASTNode> getCoveredRefNodes() {
+    return Collections.unmodifiableSet(coveredRefNodes);
+  }
+
+  @Override
+  public void addCoveredRefNode(ASTNode refNode) {
+    Validate.notNull(refNode);
+    this.coveredRefNodes.add(refNode);
+  }
+
+  @Override
+  public void addAllCoveredRefNodes(Collection<? extends ASTNode> refNodes) {
+    Validate.notNull(refNodes);
+    this.coveredRefNodes.addAll(refNodes);
   }
 
   @Override

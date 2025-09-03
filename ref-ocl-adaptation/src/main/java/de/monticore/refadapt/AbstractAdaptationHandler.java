@@ -55,6 +55,10 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
       variants = traverseForEachVariant(variants, nextChild);
     }
     // now, variants contains all variants where each child  is adapted under the same constraints
+    // TODO add test case for this instead of assertion
+    for (ASTNode child : children) {
+      assert(getVariants4Ast().getVariants(child).equals(variants));
+    }
     return variants;
   }
 
@@ -153,17 +157,28 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
             // This can happen if some visitors return variants not compatible with the current context
             // However, it is better for performance to prune these variants EARLY. Otherwise, they are
             // propagated up in the tree and cause variant explosion and are then dropped anyway
+            Log.warn("Variant " + nodeVariant + " is not compatible with the current " +
+                            "context! Avoid returning incompatible variants from visitors as " +
+                            "they can cause variant blowup which drains performance! ", e);
             continue;
           }
           mergedVariants.add(mergedVariant);
-          resultVariants.add(mergedVariant);
-          getVariants4Ast().replaceVariant(nodeVariant, resultVariants); // can we improve here?
         }
-        // TODO What if all variants had merge conflicts? -> mergedVariants is empty
-        //   -> replaceVariant actually causes removal of the inputVariant
+        resultVariants.addAll(mergedVariants);
+        // If all variants had merge conflicts, mergedVariants is empty and replaceVariant causes
+        // removal of the inputVariant.
         getVariants4Ast().replaceVariant(inputVariant, mergedVariants);
+        // cleanup expanded variants from last iteration so they do not mix with the actual result
+        // variants
+        expandedVariants.forEach(getVariants4Ast()::removeVariant);
       }
     }
+    /*
+     * Finally, update the Variants4Ast data structure with all merged result variants.
+     * After this whole method, the expected outcome is that all merged variants are properly
+     * linked to their covered reference AST nodes so we have a "clean" Variants4Ast state again.
+     */
+    getVariants4Ast().insertVariants(resultVariants);
     // IMPORTANT: reset the adaptation context to the previous one
     setAdaptationContext(previousCtx);
     return resultVariants;

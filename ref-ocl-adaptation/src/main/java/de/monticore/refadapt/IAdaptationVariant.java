@@ -3,11 +3,9 @@ package de.monticore.refadapt;
 import com.google.common.collect.ListMultimap;
 import de.monticore.ast.ASTNode;
 import de.monticore.refmodel.BindingConflictException;
+import groovyjarjarantlr.collections.AST;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * TODO add extensive docs to this central interface
@@ -28,6 +26,29 @@ import java.util.Optional;
  *
  */
 public interface IAdaptationVariant {
+
+  /**
+   * Returns all reference nodes covered by this variant.
+   * This set does not include nodes that are only covered by child variants!<br>
+   * <br>
+   * This is important when merging variants, as we need to know for which nodes to insert
+   * the variant again into the {@link Variants4Ast} data structure.
+   */
+  Set<ASTNode> getCoveredRefNodes();
+
+  /**
+   * Adds a reference node to the set of covered nodes of this variant.
+   *
+   * @param refNode the reference AST node to be added
+   */
+  void addCoveredRefNode(ASTNode refNode);
+
+  /**
+   * Adds a collection of reference nodes to the set of covered nodes of this variant.
+   *
+   * @param refNodes the collection of reference AST nodes to be added
+   */
+  void addAllCoveredRefNodes(Collection<? extends ASTNode> refNodes);
 
   /**
    * Returns the adapted AST node for the given reference node.<br>
