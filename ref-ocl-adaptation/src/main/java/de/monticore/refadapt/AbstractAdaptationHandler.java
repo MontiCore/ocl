@@ -89,8 +89,8 @@ public abstract class AbstractAdaptationHandler<C extends IAdaptationContext, V 
    *
    * @param parentNode the parent node to which the variants will be added
    * @param childNode the child node whose variants will be expanded
-   * @param expandVariant a function that retrieves all variants of the parent node for a given
-   *                      child variant,
+   * @param expandVariant a function that returns a list of variants to which the given variant
+   *                      should be expanded
    */
   protected void expandChildVariants(ASTNode parentNode, ASTNode childNode, Function<V, List<V>> expandVariant) {
     List<V> inputVariants = getVariants4Ast().getVariants(childNode);

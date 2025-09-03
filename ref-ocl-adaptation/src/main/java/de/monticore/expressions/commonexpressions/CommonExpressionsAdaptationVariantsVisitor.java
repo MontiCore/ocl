@@ -59,7 +59,7 @@ public class CommonExpressionsAdaptationVariantsVisitor
         // no field symbol, use the constraints from the child expression
         // TODO only pass variant upwards if the refSymbol is not defined in the inc mapping
         //  if it is defined, no incarnation is a sign that we should drop this variant
-        return List.of(childVariant);
+        return List.of(getAdaptationContext().createVariant());
       }
       return tryCreateVariantsForIncarnations(incarnations, (incarnation)
               -> createVariantForVariableIncarnation(refExpr, refVariableSymbol, incarnation));
@@ -107,7 +107,7 @@ public class CommonExpressionsAdaptationVariantsVisitor
         // no field symbol, use the constraints from the child expression
         // TODO only pass variant upwards if the refSymbol is not defined in the inc mapping
         //  if it is defined, no incarnation is a sign that we should drop this variant
-        return List.of(childVariant);
+        return List.of(getAdaptationContext().createVariant());
       }
       return tryCreateVariantsForIncarnations(incarnations, (incarnation)
               -> createVariantForFunctionIncarnation(refExpr, refFunctionSymbol, incarnation));

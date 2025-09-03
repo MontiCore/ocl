@@ -101,24 +101,6 @@ public interface IAdaptationVariant {
   // TODO The conflict is not limited to bindings -> should we introduce another exception type?
   IAdaptationVariant merge(IAdaptationVariant otherVariant) throws BindingConflictException;
 
-  /**
-   * Checks if this variant is conflicting with another variant.<br>
-   * Conflicting means:
-   * <ul>
-   *   <li>It has conflicting bindings with the other variant.</li>
-   *   <li>It has child variants that conflict with the other variant's child variants.</li>
-   *   <li>It has AST adaptations for an AST node for which the other variant defined an AST
-   *        adaptation as well. This is not a required condition, but we check it because it is an
-   *        indication that something is wrong in the adaptation code. Two variants that are being
-   *        merged are usually results of different subtrees in the AST.
-   *   </li>
-   * </ul>
-   * @param otherVariant the other variant to check for conflicts with this one
-   * @return true if this variant is conflicting with the other variant, false otherwise
-   * @see IAdaptationVariant#merge(IAdaptationVariant)
-   */
-  boolean isConflicting(IAdaptationVariant otherVariant);
-
   /*
    * TODO Make implementations for copy & merge more hierarchical, i.e. add
    *  variation copy(IAdaptationVariant copy) / similar to deepClone so subclasses can sue that

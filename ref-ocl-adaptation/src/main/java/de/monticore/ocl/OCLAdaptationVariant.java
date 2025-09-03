@@ -47,7 +47,7 @@ public class OCLAdaptationVariant extends AbstractAdaptationVariant implements I
   }
 
   @Override
-  public IOCLAdaptationVariant copy() {
+  public OCLAdaptationVariant copy() {
     return new OCLAdaptationVariant(
             ooSymbolsBindings,
             coveredRefNodes,
@@ -57,37 +57,42 @@ public class OCLAdaptationVariant extends AbstractAdaptationVariant implements I
   }
 
   @Override
-  public IAdaptationVariant merge(IAdaptationVariant otherVariant) throws BindingConflictException {
+  public OCLAdaptationVariant merge(IAdaptationVariant otherVariant) throws BindingConflictException {
+    // 1. ensure type is correct
+    // TODO improve generic types so we know it is an OCLAdaptationVariant we merge with!
     if (!(otherVariant instanceof IOCLAdaptationVariant)) {
       throw new IllegalArgumentException("Cannot merge with " + otherVariant.getClass().getSimpleName() +
               ". Expected an instance of OCLAdaptationContext.");
     }
     IOCLAdaptationVariant otherOCLVariant = (IOCLAdaptationVariant) otherVariant;
 
-    if (isConflicting(otherOCLVariant)) {
-      // TODO dedicated exception? -> conflict is not only a binding conflict
+    // 2. check general merge conditions
+    checkMergeConflicts(otherVariant);
+    // 3. check binding conflicts
+    if (hasConflictingBindings(otherOCLVariant)) {
       throw new BindingConflictException();
     }
 
-    IOCLAdaptationVariant merged = copy();
-    merged.addAllCoveredRefNodes(otherOCLVariant.getCoveredRefNodes()); // TODO check for conflicts!
-    merged.addAllChildVariants(otherVariant); // TODO check for conflicts!
+    OCLAdaptationVariant merged = copy();
+    merged.addAllCoveredRefNodes(otherOCLVariant.getCoveredRefNodes());
+    merged.addAllChildVariants(otherVariant);
     merged.addAdaptedNodes(otherVariant.getAdaptedNodes());
     merged.addAllASTAdaptations(otherVariant);
-    // TODO remove? since OOSymbols extends BasicSymbols the basic symbols are added by OOSymbolBindings as well
-    //merged.getBasicSymbolsBindings().addAll(otherOCLVariant.getBasicSymbolsBindings());
+    // since OOSymbols extends BasicSymbols the basic symbols are added by OOSymbolBindings as well
     merged.getOOSymbolsBindings().addAll(otherOCLVariant.getOOSymbolsBindings());
     return merged;
   }
 
-  @Override
-  public boolean isConflicting(IAdaptationVariant otherVariant) {
-    // TODO improve generic types so we know it is an OCLAdaptationVariant we merge with!
-    if (!(otherVariant instanceof IOCLAdaptationVariant)) {
-      throw new IllegalArgumentException("Cannot merge with " + otherVariant.getClass().getSimpleName() +
-              ". Expected an instance of OCLAdaptationContext.");
-    }
-    return getOOSymbolsBindings().isConflicting(((IOCLAdaptationVariant) otherVariant).getOOSymbolsBindings());
+  /**
+   * Checks whether this variant has conflicting bindings with the given other variant.
+   *
+   * @param otherVariant the other variant to check for conflicting bindings
+   * @return true if there are conflicting bindings, false otherwise
+   */
+  protected boolean hasConflictingBindings(IOCLAdaptationVariant otherVariant) {
+    // NOTE: if the language would use symbols form other languages these bindings would need
+    // to be checked as well
+    return getOOSymbolsBindings().isConflicting(otherVariant.getOOSymbolsBindings());
   }
 
   @Override

@@ -3,7 +3,9 @@ package de.monticore.refadapt;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Sets;
 import de.monticore.ast.ASTNode;
+import de.monticore.refmodel.BindingConflictException;
 import org.apache.commons.lang3.Validate;
 
 import java.util.*;
@@ -160,6 +162,41 @@ public abstract class AbstractAdaptationVariant implements IAdaptationVariant {
       for (IASTAdaptation<? extends ASTNode> adaptation : entry.getValue()) {
         addASTAdaptation(entry.getKey(), (IASTAdaptation<? super ASTNode>) adaptation);
       }
+    }
+  }
+
+  /**
+   * Checks if this variant can be merged with another variant.<br>
+   * It cannot be merged if any of the following conditions apply:
+   * <ul>
+   *   <li>It has conflicting bindings with the other variant.</li>
+   *   <li>It (partially) covers the same reference nodes. Only variants covering different parts
+   *       of the AST can be merged!</li>
+   *   <li>It has child variants that conflict with the other variant's child variants.</li>
+   *   <li>It has AST adaptations for an AST node for which the other variant defined an AST
+   *        adaptation as well. This is not a required condition, but we check it because it is an
+   *        indication that something is wrong in the adaptation code. Two variants that are being
+   *        merged are usually results of different subtrees in the AST.
+   *   </li>
+   * </ul>
+   * @param otherVariant the other variant to check for conflicts with this one
+   *
+   * @see IAdaptationVariant#merge(IAdaptationVariant)
+   *
+   * @throws BindingConflictException if the other variant has conflicting bindings with this variant.
+   * @throws IllegalArgumentException if the other variant cannot be merged with this one because
+   *   some rules were violated (see above). This is likely the reason if an developer fault
+   *   in the adaptation process.
+   */
+  protected void checkMergeConflicts(IAdaptationVariant otherVariant) throws  BindingConflictException, IllegalArgumentException {
+    if (!Sets.intersection(coveredRefNodes, otherVariant.getCoveredRefNodes()).isEmpty()) {
+      throw new IllegalArgumentException("Cannot merge variants that cover the same reference AST nodes.");
+    }
+    if (!Sets.intersection(childVariants.keySet(), otherVariant.getAllChildVariants().keySet()).isEmpty()) {
+      throw new IllegalArgumentException("Cannot merge variants with child variants covering the same AST nodes.");
+    }
+    if (!Sets.intersection(astAdaptations.keySet(), otherVariant.getAllASTAdaptations().keySet()).isEmpty()) {
+      throw new IllegalArgumentException("Cannot merge variants with AST adaptations for the same AST nodes.");
     }
   }
 }
