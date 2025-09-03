@@ -70,7 +70,7 @@ public class OCLAdapter {
     for (ASTOCLCompilationUnit refOCL : refOCLArtifacts) {
       List<ASTOCLCompilationUnit> adaptedOCL = oclRefAdapter.adapt(refOCL, incMapping);
       if (adaptedOCL.isEmpty()) {
-        Log.warn("0xA1234 No OCL artifacts adapted for the given reference artifact. ");
+        Log.warn("No OCL artifacts adapted for the given reference artifact. ");
       }
       adaptedArtifacts.addAll(adaptedOCL);
     }

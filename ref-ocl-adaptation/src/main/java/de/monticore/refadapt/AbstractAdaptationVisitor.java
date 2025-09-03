@@ -29,16 +29,14 @@ public abstract class AbstractAdaptationVisitor<C extends IAdaptationContext> im
 
   protected Variants4Ast getVariants4Ast() {
     if (variants4Ast == null) {
-      Log.error("0xFD335 internal error: variants4Ast not set."
-              + " Check the type traverser setup."
-      );
+      Log.error("internal error: variants4Ast not set. Check the type traverser setup.");
     }
     return variants4Ast;
   }
 
   protected C getAdaptationContext() {
     if (contextHolder == null) {
-      Log.error("0xFD335 internal error: contextHolder not set."
+      Log.error("internal error: contextHolder not set."
               + " Make sure a context is set before using the traverser."
       );
       return null;
@@ -50,7 +48,7 @@ public abstract class AbstractAdaptationVisitor<C extends IAdaptationContext> im
 
   protected void setAdaptationContext(C context) {
     if (contextHolder == null) {
-      Log.error("0xFD335 internal error: contextHolder not set."
+      Log.error("internal error: contextHolder not set."
               + " Make sure a context is set before using the traverser."
       );
     } else {

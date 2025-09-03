@@ -30,7 +30,7 @@ public class AdaptationContextHolder {
 
   public IAdaptationContext getContext() {
     if (context == null) {
-      Log.error("0xFD335 internal error: adaptationContext not set."
+      Log.error("internal error: adaptationContext not set."
               + " Make sure a context is set before using the traverser."
       );
     }

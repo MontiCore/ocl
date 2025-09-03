@@ -112,8 +112,7 @@ public abstract class ReferenceArtifactAdapter<C extends IAdaptationContext> {
             .map(variant -> {
               Optional<T> adaptedNode = variant.getAdaptedNode(refNode);
               if (adaptedNode.isEmpty()) {
-                Log.warn("0xAD001 "
-                        + "no adapted node for original input node in variant: " + variant);
+                Log.warn("no adapted node for original input node in variant: " + variant);
                 return adaptedNode;
               }
               return adaptedNode;
