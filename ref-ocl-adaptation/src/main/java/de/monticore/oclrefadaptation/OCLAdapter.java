@@ -7,7 +7,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
-import de.monticore.cdconformance.inc.LegacyCDIncarnationMapping2OOSymbolsIncMapping;
+import de.monticore.cdconformance.inc.CDIncarnationMapping2OOSymbolsIncMapping;
 import de.monticore.ocl.OCLReferenceArtifactAdapter;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsIncMapping;
@@ -63,7 +63,7 @@ public class OCLAdapter {
       String mapping,
       List<ASTOCLCompilationUnit> refOCLArtifacts) {
 
-    IOOSymbolsIncMapping incMapping = new LegacyCDIncarnationMapping2OOSymbolsIncMapping(
+    IOOSymbolsIncMapping incMapping = new CDIncarnationMapping2OOSymbolsIncMapping(
             createIncarnationMapping(concreteCD, referenceCD), concreteCD, referenceCD);
 
     List<ASTOCLCompilationUnit> adaptedArtifacts = new ArrayList<>();
