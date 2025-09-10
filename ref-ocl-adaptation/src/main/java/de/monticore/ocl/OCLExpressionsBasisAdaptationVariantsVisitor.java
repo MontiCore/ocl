@@ -53,7 +53,6 @@ public class OCLExpressionsBasisAdaptationVariantsVisitor extends ExpressionsBas
   }
 
   protected void addVariantsForTypeIncarnations(ASTNameExpression refExpr, TypeSymbol refType) {
-    // TODO check if typeSymbol is present in incarnation mapping
     Set<TypeSymbol> incarnations = getAdaptationContext().getBasicSymbolsIncMapping().getIncarnations(refType);
     if (incarnations.isEmpty()) {
       // TODO only pass variant upwards if the refSymbol is not defined in the inc mapping

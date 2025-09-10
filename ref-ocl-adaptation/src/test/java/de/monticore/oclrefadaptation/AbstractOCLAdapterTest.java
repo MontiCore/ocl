@@ -110,7 +110,7 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
   protected ASTOCLCompilationUnit testAdaptedEqualsExpected(
       String conCDFile, String refCDFile, String refOCLFile, String expectedOCLFile) {
     parseModels(conCDFile, refCDFile, refOCLFile, expectedOCLFile);
-    List<ASTOCLCompilationUnit> adaptedOCLList = oclAdapter.adapt(conCD, refCD, "ref", List.of(refOCL));
+    List<ASTOCLCompilationUnit> adaptedOCLList = oclAdapter.adapt(conCD, refCD, List.of(refOCL));
     assertEquals(1, adaptedOCLList.size(),
         "Expected exactly one adapted OCL artifact for a single reference artifact");
     ASTOCLCompilationUnit adaptedOCL = adaptedOCLList.get(0);

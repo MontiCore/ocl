@@ -7,7 +7,6 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconformance.CDConfParameter;
 import de.monticore.cdconformance.CDConformanceChecker;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
-import de.monticore.cdconformance.inc.CDIncarnationMapping2OOSymbolsIncMapping;
 import de.monticore.ocl.OCLReferenceArtifactAdapter;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.symbols.oosymbols.refmodel.IOOSymbolsIncMapping;
@@ -38,7 +37,6 @@ public class OCLAdapter {
   public void adapt(
           File concreteCD,
           File refCD,
-          String mapping,
           Path refHwcPath,
           Path outputPath) {
     // TODO implement later
@@ -47,9 +45,8 @@ public class OCLAdapter {
   public ASTOCLCompilationUnit adapt(
           ASTCDCompilationUnit concreteCD,
           ASTCDCompilationUnit referenceCD,
-          String mapping,
           ASTOCLCompilationUnit refOCL) {
-    List<ASTOCLCompilationUnit> adaptedOCL = adapt(concreteCD, referenceCD, mapping, List.of(refOCL));
+    List<ASTOCLCompilationUnit> adaptedOCL = adapt(concreteCD, referenceCD, List.of(refOCL));
     if (adaptedOCL.isEmpty()) {
       throw new IllegalStateException("Unexpected result: No adapted OCL artifacts as result for a " +
               "single reference artifact");
@@ -60,11 +57,10 @@ public class OCLAdapter {
   public List<ASTOCLCompilationUnit> adapt(
       ASTCDCompilationUnit concreteCD,
       ASTCDCompilationUnit referenceCD,
-      String mapping,
       List<ASTOCLCompilationUnit> refOCLArtifacts) {
 
-    IOOSymbolsIncMapping incMapping = new CDIncarnationMapping2OOSymbolsIncMapping(
-            createIncarnationMapping(concreteCD, referenceCD), concreteCD, referenceCD);
+    IOOSymbolsIncMapping incMapping = new CD4CAdaptedOOSymbolsMapping(
+            createIncarnationMapping(concreteCD, referenceCD).asOOSymbolsIncMapping());
 
     List<ASTOCLCompilationUnit> adaptedArtifacts = new ArrayList<>();
     for (ASTOCLCompilationUnit refOCL : refOCLArtifacts) {
