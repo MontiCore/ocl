@@ -1,0 +1,18 @@
+/* (c) https://github.com/MontiCore/monticore */
+ocl quantifiers2 {
+  /*
+   * Interesting test case! We require that the tool MUST NOT output nonsense. In this case it is
+   * even more critical. The adapted OCL constraint would not pass CoCos if we would generate all
+   * combinations here!
+   * The TypeCheck realizes that 'p' is of type 'BidMessage' and therefore the check
+   * 'p in a.chatMessage' is not valid as 'chatMessage' is of type 'Set<ChatMessage>'.
+   */
+  inv Nachrichten1():forall a in PrivateAuction,p in User,m in a.bidMessage:p isin a.vipBidder implies m isin p.bidMessage;
+  inv Nachrichten1():forall a in PrivateAuction,p in User,m in a.bidMessage:p isin a.normalBidder implies m isin p.bidMessage;
+  inv Nachrichten1():forall a in PrivateAuction,p in User,m in a.chatMessage:p isin a.vipBidder implies m isin p.chatMessage;
+  inv Nachrichten1():forall a in PrivateAuction,p in User,m in a.chatMessage:p isin a.normalBidder implies m isin p.chatMessage;
+  inv Nachrichten1():forall a in PublicAuction,p in User,m in a.bidMessage:p isin a.normalBidder implies m isin p.bidMessage;
+  inv Nachrichten1():forall a in PublicAuction,p in User,m in a.bidMessage:p isin a.vipBidder implies m isin p.bidMessage;
+  inv Nachrichten1():forall a in PublicAuction,p in User,m in a.chatMessage:p isin a.normalBidder implies m isin p.chatMessage;
+  inv Nachrichten1():forall a in PublicAuction,p in User,m in a.chatMessage:p isin a.vipBidder implies m isin p.chatMessage;
+}

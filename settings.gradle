@@ -18,3 +18,4 @@ rootProject.name = 'ocl'
 
 include':ocl2smt'
 include ':tool'
+include ':ref-ocl-adaptation'

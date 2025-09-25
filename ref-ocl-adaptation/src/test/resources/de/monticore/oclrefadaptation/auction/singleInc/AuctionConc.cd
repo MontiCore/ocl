@@ -1,0 +1,74 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+classdiagram AuctionCD {
+
+  class Date;
+  class Time {
+      static Time now();
+      boolean lessThan(Time that);
+  }
+
+  public class AllData {
+    Message welcomeMsg;
+    java.util.List<PublicAuction> auction;
+  }
+
+  public class Name {}
+
+  public class Company {
+    java.lang.String name;
+  }
+
+  <<ref="Auction">> public class PublicAuction {
+    int numberOfBids;
+    int auctionIdent;
+    AuctionStatus status;
+    Time startTime;
+    Time closingTime;
+    Time finishTime;
+  }
+
+  public class BidMessage extends Message {
+
+  }
+
+  public enum AuctionStatus {
+    INITIAL,
+    RUNNING,
+    FINISHED;
+  }
+
+  public class Message {
+    Time time;
+  }
+
+  public class Policy;
+
+  <<ref="Person">> public class User {
+    boolean isActive;
+    void setActive(boolean active);
+    boolean getActive();
+  }
+
+  public class Student extends User {
+    void demandForDiscount();
+  }
+
+  public class Betreuer extends User{
+  }
+
+  public class Building {
+    double height();
+    double width();
+    double length();
+  }
+
+
+  association AllData <-> User [*] <<ordered>>;
+  association participants [*] PublicAuction (auctions) <-> (bidder) User [*] <<ordered>>;
+  association [*] User <-> Company [1];
+  association User (bidder) <-> Message [*] <<ordered>>;
+  association PublicAuction <-> Message [*] <<ordered>>;
+  association PublicAuction -> Policy [1];
+
+}

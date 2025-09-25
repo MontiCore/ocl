@@ -1,0 +1,11 @@
+import java.lang.String;
+
+classdiagram SimpleConc {
+  <<ref="Person">> class User {
+    String name;
+    int age;
+
+    <<ref="isLegallyAdult">> boolean hasReachedAgeOfMajority();
+    <<ref="getAge">> int getAgeInYears();
+  }
+}

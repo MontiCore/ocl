@@ -1,0 +1,9 @@
+ocl QueryMethodInNameExprRef {
+
+  // using this method as context is just a workaround so we get access to the methods of
+  // Person in the scope of the expressions. This way we can reference the method 'getAge()'
+  // without having to use a FieldAccessExpression and can test teh adaptation of NameExpressions
+  // for FunctionSymbols.
+  context boolean SimpleConc.User.hasReachedAgeOfMajority()
+    pre: getAgeInYears() >= 0;
+}

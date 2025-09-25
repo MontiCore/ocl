@@ -1,0 +1,17 @@
+classdiagram MyApplicationModel {
+   <<ref="Singleton">> class ExpressionsBasisMill {
+     <<ref="getInstance">> public static ExpressionsBasisMill getMill();
+   }
+
+   <<ref="Singleton">> class CommonExpressionsMill {
+     <<ref="getInstance">> public static CommonExpressionsMill getMill();
+   }
+
+   <<ref="Singleton">> class OCLMill {
+     <<ref="getInstance">> public static OCLMill getMill();
+   }
+
+   <<ref="Singleton">> class BasicSymbolsMill {
+     <<ref="getInstance">> public static BasicSymbolsMill getMill();
+   }
+}

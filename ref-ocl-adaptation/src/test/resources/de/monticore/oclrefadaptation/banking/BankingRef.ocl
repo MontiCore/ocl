@@ -1,0 +1,28 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+ocl bankingChecks {
+  context Bank b inv OverallBalanceCorrect:
+  let
+    // TODO not use Set here! there can be multiple accounts with the same balance!
+    // TODO Change to 'Collection' once we support adaptation for MCSimpleGenericTypes
+    Set<double> balances = { acc.balance | Account acc in b.account };
+    /*
+     * WARN: We cannot use "sum" as variable name here because there is a function symbol "sum"
+     * which causes type check to fail.
+     */
+    double calculatedBalance = iterate { balance in balances;
+                                  double accumulated = 0.0 :
+                                  accumulated = accumulated + balance }
+  in
+    b.overallBalance == calculatedBalance;
+
+
+  context Bank b inv OverallBalanceCorrectShorter:
+    b.overallBalance == iterate { balance in b.account.balance;
+                          double accumulated = 0.0 :
+                          accumulated = accumulated + balance };
+
+  inv UniqueAccountId:
+    forall a1 in Account, a2 in Account:
+      a1.id == a2.id implies a1 == a2;
+}

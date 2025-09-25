@@ -1,0 +1,22 @@
+ocl Observer {
+
+  context Subject.register(Observer o)
+    post: o isin observers;
+
+  context Subject.unregister(Observer o)
+    post: o notin observers;
+
+  context void Subject.notifyAll()
+    pre: forall o in observers:
+            o.__hasSent_update() == false;
+    post: forall o in observers:
+            // Unfortunately we do not support the 'hasSent' operator in MontiCore OCL yet.
+            // Using this operator we could specify that the observer has been notified.
+            // For demonstration purposes we use a method call here.
+            // o^update(); // TODO Change to this line once we support the 'hasSent' operator.
+            o.__hasSent_update();
+
+  // NOTE: This is also part of the workaround for the missing 'hasSent' operator.
+  context void Observer.update()
+    post: this.__hasSent_update() == true;
+}

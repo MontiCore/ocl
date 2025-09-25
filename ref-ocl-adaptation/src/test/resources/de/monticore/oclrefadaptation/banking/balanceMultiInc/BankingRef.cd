@@ -1,0 +1,28 @@
+/* (c) https://github.com/MontiCore/monticore */
+import java.lang.String;
+
+classdiagram Banking {
+
+  class Bank {
+    String id;
+    double overallBalance; // money of all accounts together
+  }
+
+  class Account {
+    String id;
+    double balance; // money in the account
+    void withdraw(double amount);
+    void deposit(double amount);
+    void transfer(Account targetAccount, double amount);
+  }
+
+  // sends money from sourceAccount to targetAccount
+  class Transaction {
+    Account sourceAccount;
+    Account targetAccount;
+    double amount;
+  }
+
+  association Bank -> Account [*];
+  association Account -> Transaction [*] <<ordered>>;
+}

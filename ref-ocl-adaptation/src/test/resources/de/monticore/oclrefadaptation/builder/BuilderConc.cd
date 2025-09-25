@@ -1,0 +1,37 @@
+import java.lang.String;
+
+classdiagram BuilderConc {
+  <<ref="DataClass">> class Employee {
+    <<ref="attribute">> String firstName;
+    <<ref="attribute">> String lastName;
+    <<ref="attribute">> int number;
+    <<ref="attribute">> int salary;
+  }
+
+  <<ref="DataClass">> class Department {
+    <<ref="attribute">> String managerName;
+    <<ref="attribute">> int depId;
+  }
+
+  <<ref="BuilderRef.DataClassBuilder">>
+  class EmployeeBuilder {
+    <<ref="BuilderRef.DataClassBuilder.mAttribute">> String mFirstName;
+    <<ref="BuilderRef.DataClassBuilder.mAttribute">> String mLastName;
+    <<ref="BuilderRef.DataClassBuilder.mAttribute">> int mNumber;
+    <<ref="BuilderRef.DataClassBuilder.mAttribute">> int mSalary;
+    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder firstName(String pFirstName);
+    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder lastName(String pLastName);
+    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder number(int pNumber);
+    <<ref="BuilderRef.DataClassBuilder.attribute">> EmployeeBuilder salary(int pSalary);
+    Employee build();
+  }
+
+  <<ref="BuilderRef.DataClassBuilder">>
+  class DepartmentBuilder {
+    <<ref="BuilderRef.DataClassBuilder.mAttribute">> String mManagerName;
+    <<ref="BuilderRef.DataClassBuilder.mAttribute">> int mDepId;
+    <<ref="BuilderRef.DataClassBuilder.attribute">> DepartmentBuilder managerName(String pManagerName);
+    <<ref="BuilderRef.DataClassBuilder.attribute">> DepartmentBuilder depId(int pDepId);
+    Department build();
+  }
+}

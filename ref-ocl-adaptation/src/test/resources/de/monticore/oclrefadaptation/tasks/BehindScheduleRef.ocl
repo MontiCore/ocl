@@ -1,0 +1,14 @@
+ocl BehindSchedule {
+  context boolean Employee.isBehindSchedule(int deadline)
+    post:
+      let
+       Set<int> workloads = { task.workload | Task task in this.assignedTasks, task.completed == false };
+       int totalWorkload = iterate { w in workloads;
+                                         int accumulated = 0 :
+                                         accumulated = accumulated + w }
+      in
+        totalWorkload > deadline;
+
+  context boolean Company.isTeamBehindSchedule(int deadline)
+    post: exists e in this.employee: e.isBehindSchedule(deadline);
+}

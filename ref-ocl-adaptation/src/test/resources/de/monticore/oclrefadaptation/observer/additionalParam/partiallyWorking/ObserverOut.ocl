@@ -1,0 +1,22 @@
+ocl Observer {
+
+  context void EventsConc.EventManager.subscribe(EventsConc.EventListener listener)
+    post: listener isin listeners;
+
+  context void EventsConc.EventManager.unsubscribe(EventsConc.EventListener listener)
+    post: listener notin listeners;
+
+  context void EventsConc.EventManager.publishEvent(EventsConc.Event event)
+    pre: forall o in listeners:
+            o.__hasSent_onEvent() == false;
+    post: forall o in listeners:
+            // Unfortunately we do not support the 'hasSent' operator in MontiCore OCL yet.
+            // Using this operator we could specify that the observer has been notified.
+            // For demonstration purposes we use a method call here.
+            // o^onEvent(); // TODO Change to this line once we support the 'hasSent' operator.
+            o.__hasSent_onEvent();
+
+  // NOTE: This is also part of the workaround for the missing 'hasSent' operator.
+  context void EventsConc.EventListener.onEvent(EventsConc.Event event)
+    post: this.__hasSent_onEvent() == true;
+}

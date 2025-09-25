@@ -1,0 +1,25 @@
+/* (c) https://github.com/MontiCore/monticore */
+ocl MethodCallChangesBuildResult {
+
+  // ----- Employee -----
+
+  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.firstName(java.lang.String pFirstName)
+    post: this.build().firstName == pFirstName;
+
+  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.lastName(java.lang.String pLastName)
+    post: this.build().lastName == pLastName;
+
+  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.number(int pNumber)
+    post: this.build().number == pNumber;
+
+  context BuilderConc.EmployeeBuilder BuilderConc.EmployeeBuilder.salary(int pSalary)
+    post: this.build().salary == pSalary;
+
+  // ----- Department -----
+
+  context BuilderConc.DepartmentBuilder BuilderConc.DepartmentBuilder.managerName(java.lang.String pManagerName)
+    post: this.build().managerName == pManagerName;
+
+  context BuilderConc.DepartmentBuilder BuilderConc.DepartmentBuilder.depId(int pDepId)
+    post: this.build().depId == pDepId;
+}

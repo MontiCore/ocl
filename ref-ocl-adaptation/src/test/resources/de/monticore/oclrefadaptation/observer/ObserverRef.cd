@@ -1,0 +1,18 @@
+classdiagram ObserverRef{
+
+  interface Observer {
+    void update();
+
+    // workaround because we do not support the 'hasSent' operator in MontiCore OCL yet
+    // see comment in ObserverRef.ocl
+    boolean __hasSent_update();
+  }
+
+  class Subject {
+    void register(Observer o);
+    void unregister(Observer o);
+    void notifyAll();
+  }
+
+  association Subject -> (observers) Observer [*] <<ordered>>;
+}

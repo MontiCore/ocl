@@ -1,0 +1,7 @@
+ocl QueryMethod1 {
+  context Person p inv AdultIf18:
+    p.isLegallyAdult() <=> p.age >= 18;
+
+  context boolean Person.isLegallyAdult()
+    post: result == true <=> this.age >= 18;
+}
