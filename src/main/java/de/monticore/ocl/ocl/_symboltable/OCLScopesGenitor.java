@@ -3,6 +3,7 @@ package de.monticore.ocl.ocl._symboltable;
 
 import static de.monticore.ocl.ocl._symboltable.OCLSymbolTableHelper.getImportStatements;
 
+import com.google.common.base.Preconditions;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
@@ -19,7 +20,7 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
 
   @Override
   public IOCLArtifactScope createFromAST(ASTOCLCompilationUnit node) {
-    Log.errorIfNull(
+    Preconditions.checkNotNull(
         node,
         "0xAE884 Error by creating of the OCLScopesGenitor symbol table: top ast node is null");
     IOCLArtifactScope artifactScope = OCLMill.artifactScope();

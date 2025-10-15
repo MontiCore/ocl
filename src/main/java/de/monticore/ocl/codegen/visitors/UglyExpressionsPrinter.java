@@ -1,6 +1,7 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl.codegen.visitors;
 
+import com.google.common.base.Preconditions;
 import de.monticore.expressions.expressionsbasis._ast.ASTExpression;
 import de.monticore.expressions.uglyexpressions._ast.ASTArrayCreator;
 import de.monticore.expressions.uglyexpressions._ast.ASTArrayDimensionByExpression;
@@ -28,10 +29,10 @@ public class UglyExpressionsPrinter extends AbstractPrinter
 
   public UglyExpressionsPrinter(
       IndentPrinter printer, VariableNaming naming, IDerive deriver, ISynthesize synthesizer) {
-    this.printer = Log.errorIfNull(printer);
-    this.naming = Log.errorIfNull(naming);
-    this.deriver = Log.errorIfNull(deriver);
-    this.syntheziser = Log.errorIfNull(synthesizer);
+    this.printer = Preconditions.checkNotNull(printer);
+    this.naming = Preconditions.checkNotNull(naming);
+    this.deriver = Preconditions.checkNotNull(deriver);
+    this.syntheziser = Preconditions.checkNotNull(synthesizer);
   }
 
   @Override
@@ -41,7 +42,7 @@ public class UglyExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void setTraverser(UglyExpressionsTraverser traverser) {
-    Log.errorIfNull(traverser);
+    Preconditions.checkNotNull(traverser);
     this.traverser = traverser;
   }
 

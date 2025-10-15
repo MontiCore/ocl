@@ -174,7 +174,7 @@ public class CommonExpressionsPrinter extends AbstractPrinter
 
   @Override
   public void handle(ASTArrayAccessExpression node) {
-    Log.errorIfNull(node);
+    Preconditions.checkNotNull(node);
     SymTypeExpression exprType = TypeCheck3.typeOf(node.getExpression());
     if (exprType.isObscureType()) {
       // error should be logged already
