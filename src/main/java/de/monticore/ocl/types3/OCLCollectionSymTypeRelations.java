@@ -1,6 +1,7 @@
 // (c) https://github.com/MontiCore/monticore
 package de.monticore.ocl.types3;
 
+import com.google.common.base.Preconditions;
 import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.monticore.symbols.basicsymbols._symboltable.IBasicSymbolsGlobalScope;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
@@ -105,7 +106,7 @@ public class OCLCollectionSymTypeRelations extends MCCollectionSymTypeRelations 
   }
 
   protected static void setDelegate(OCLCollectionSymTypeRelations newDelegate) {
-    OCLCollectionSymTypeRelations.delegate = Log.errorIfNull(newDelegate);
+    OCLCollectionSymTypeRelations.delegate = Preconditions.checkNotNull(newDelegate);
     MCCollectionSymTypeRelations.setDelegate(newDelegate);
   }
 

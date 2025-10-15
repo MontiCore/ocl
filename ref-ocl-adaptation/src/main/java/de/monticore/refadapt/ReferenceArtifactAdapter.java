@@ -1,5 +1,6 @@
 package de.monticore.refadapt;
 
+import com.google.common.base.Preconditions;
 import de.monticore.ast.ASTNode;
 import de.monticore.visitor.ITraverser;
 import de.se_rwth.commons.logging.Log;
@@ -52,10 +53,10 @@ public abstract class ReferenceArtifactAdapter<C extends IAdaptationContext> {
           AdaptationContextHolder contextHolder,
           Variants4Ast variants4Ast
   ) {
-    this.bindingVariantsTraverser = Log.errorIfNull(bindingVariantsTraverser);
-    this.adaptationTraverser = Log.errorIfNull(adaptationTraverser);
-    this.contextHolder = Log.errorIfNull(contextHolder);
-    this.variants4Ast = Log.errorIfNull(variants4Ast);
+    this.bindingVariantsTraverser = Preconditions.checkNotNull(bindingVariantsTraverser);
+    this.adaptationTraverser = Preconditions.checkNotNull(adaptationTraverser);
+    this.contextHolder = Preconditions.checkNotNull(contextHolder);
+    this.variants4Ast = Preconditions.checkNotNull(variants4Ast);
   }
 
   public ITraverser getBindingVariantsTraverser() {
