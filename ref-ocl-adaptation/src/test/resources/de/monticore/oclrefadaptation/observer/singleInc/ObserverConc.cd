@@ -11,5 +11,5 @@ classdiagram EventsConc {
     void notifyAll();
   }
 
-  association EventManager -> (listeners) EventListener [*] <<ordered>>;
+  <<ref="observers">> association EventManager -> (listeners) EventListener [*] <<ordered>>;
 }

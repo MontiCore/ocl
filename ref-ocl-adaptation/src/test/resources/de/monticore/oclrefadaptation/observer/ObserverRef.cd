@@ -14,5 +14,5 @@ classdiagram ObserverRef{
     void notifyAll();
   }
 
-  association Subject -> (observers) Observer [*] <<ordered>>;
+  association observers Subject -> (observers) Observer [*] <<ordered>>;
 }

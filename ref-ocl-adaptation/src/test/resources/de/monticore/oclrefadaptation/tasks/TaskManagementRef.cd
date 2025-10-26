@@ -17,5 +17,5 @@ classdiagram TaskManagementRef {
   }
 
   association Company -> Employee [*];
-  association Employee -> (assignedTasks) Task [*];
+  association employeeTasks Employee -> (assignedTasks) Task [*];
 }
