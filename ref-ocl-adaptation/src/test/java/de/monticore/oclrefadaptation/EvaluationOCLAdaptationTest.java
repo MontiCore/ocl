@@ -295,7 +295,6 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
     @Test
     void subjectMultiInc() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
-      confParameters.add(CDConfParameter.ALLOW_ADDITIONAL_PARAMETERS);
       testAdaptedEqualsExpected(
               "observer/subjectMultiInc/ObserverConc.cd",
               "observer/ObserverRef.cd",
@@ -306,12 +305,40 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
     @Test
     void observerMultiInc() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
-      confParameters.add(CDConfParameter.ALLOW_ADDITIONAL_PARAMETERS);
       testAdaptedEqualsExpected(
               "observer/observerMultiInc/ObserverConc.cd",
               "observer/ObserverRef.cd",
               "observer/ObserverRef.ocl",
               "observer/observerMultiInc/ObserverOut.ocl");
+    }
+
+
+    /**
+     * Demonstrates adaptation of multiple 'register' method and 'observers' associations can lead
+     * to undesired combinations. e.g., using 'normalListeners' assoc with 'registerHighPrio' method.
+     */
+    @Test
+    void registerMethodAndAssocMultiInc() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "observer/registerAndAssocMultiInc/ObserverConc.cd",
+              "observer/ObserverRef.cd",
+              "observer/ObserverRef.ocl",
+              "observer/registerAndAssocMultiInc/ObserverOut.ocl");
+    }
+
+    /**
+     * Same as {@link #registerMethodAndAssocMultiInc()} but with manual binding via stereotypes so
+     * only the desired association is used together with norma/HighPrio register methods.
+     */
+    @Test
+    void registerMethodAndAssocMultiIncManualMethodBind() {
+      confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
+      testAdaptedEqualsExpected(
+              "observer/registerAndAssocMultiIncManualBind/ObserverMethodBindingConc.cd",
+              "observer/ObserverRef.cd",
+              "observer/ObserverRef.ocl",
+              "observer/registerAndAssocMultiIncManualBind/ObserverMethodBindingOut.ocl");
     }
   }
 

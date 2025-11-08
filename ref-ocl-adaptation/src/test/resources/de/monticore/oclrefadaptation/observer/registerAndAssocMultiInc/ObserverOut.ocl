@@ -1,0 +1,36 @@
+ocl Observer {
+
+  context void EventsConc.EventManager.registerNormal(EventsConc.EventListener listener)
+    post: listener isin normalListeners;
+
+  context void EventsConc.EventManager.registerNormal(EventsConc.EventListener listener)
+    post: listener isin highPriorityListeners;
+
+  context void EventsConc.EventManager.registerHighPrio(EventsConc.EventListener listener)
+    post: listener isin normalListeners;
+
+  context void EventsConc.EventManager.registerHighPrio(EventsConc.EventListener listener)
+      post: listener isin highPriorityListeners;
+
+  context void EventsConc.EventManager.unregister(EventsConc.EventListener listener)
+    post: listener notin normalListeners;
+
+  context void EventsConc.EventManager.unregister(EventsConc.EventListener listener)
+      post: listener notin highPriorityListeners;
+
+  context void EventsConc.EventManager.notifyAll()
+    pre: forall o in normalListeners:
+            o.__hasSent_onEvent() == false;
+    post: forall o in normalListeners:
+            o.__hasSent_onEvent();
+
+  context void EventsConc.EventManager.notifyAll()
+    pre: forall o in highPriorityListeners:
+            o.__hasSent_onEvent() == false;
+    post: forall o in highPriorityListeners:
+            o.__hasSent_onEvent();
+
+  // NOTE: This is also part of the workaround for the missing 'hasSent' operator.
+  context void EventsConc.EventListener.onEvent()
+    post: this.__hasSent_onEvent() == true;
+}
