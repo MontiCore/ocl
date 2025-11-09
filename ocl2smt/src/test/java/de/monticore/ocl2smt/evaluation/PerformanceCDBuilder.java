@@ -15,7 +15,11 @@ public class PerformanceCDBuilder {
     CD4CodeMill.globalScope().clear();
     try {
       Optional<ASTCDCompilationUnit> cd = CD4CodeMill.parser()
-          .parse_String(String.format("classdiagram CDStar%sChain%s{ }", starSize, chainSize));
+          .parse_String(
+              String.format("import java.lang.String;"
+                      + System.lineSeparator()
+                      + "classdiagram CDStar%sChain%s{}"
+                  , starSize, chainSize));
 
       if (cd.isEmpty()) {
         Log.error("Error while parsing the test model.");
@@ -25,19 +29,18 @@ public class PerformanceCDBuilder {
       for (int i = 0; i < chainSize; i++) {
         Optional<ASTCDClass> core = CD4CodeMill.parser()
             .parse_StringCDClass(String.format("  class Star%sCore{"
+                + System.lineSeparator()
+                + "    int num;"
+                + System.lineSeparator()
+                + "    String text;"
                 +System.lineSeparator()
-                +"    int num;"
-                +System.lineSeparator()
-                +"    String text",i));
-        if (core.isPresent()) {
-          cd.get().getCDDefinition().addCDElement(core.get());
-        }
+                + "  }",i));
+        core.ifPresent(astcdClass -> cd.get().getCDDefinition().addCDElement(astcdClass));
         if (i > 1) {
           Optional<ASTCDAssociation> chainAssoc = CD4CodeMill.parser()
               .parse_StringCDAssociation(String.format("  association Star%sCore -- Star%sCore;",i,i-1));
-          if (chainAssoc.isPresent()) {
-            cd.get().getCDDefinition().addCDElement(chainAssoc.get());
-          }
+          chainAssoc.ifPresent(
+              astcdAssociation -> cd.get().getCDDefinition().addCDElement(astcdAssociation));
         }
         for (int j = 0; j < starSize; j++) {
           Optional<ASTCDClass> star = CD4CodeMill.parser()
@@ -45,15 +48,14 @@ public class PerformanceCDBuilder {
                   +System.lineSeparator()
                   +"    int num;"
                   +System.lineSeparator()
-                  +"    String text",i,j));
-          if (star.isPresent()) {
-            cd.get().getCDDefinition().addCDElement(star.get());
-          }
+                  +"    String text;"
+                  +System.lineSeparator()
+                  + "  }",i,j));
+          star.ifPresent(astcdClass -> cd.get().getCDDefinition().addCDElement(astcdClass));
           Optional<ASTCDAssociation> starAssoc =  CD4CodeMill.parser()
               .parse_StringCDAssociation(String.format("  association Star%sCore -- Star%sLeaf%s;",i,i,j));
-          if (starAssoc.isPresent()) {
-            cd.get().getCDDefinition().addCDElement(starAssoc.get());
-          }
+          starAssoc.ifPresent(
+              astcdAssociation -> cd.get().getCDDefinition().addCDElement(astcdAssociation));
         }
       }
       return cd;
