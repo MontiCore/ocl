@@ -12,7 +12,7 @@ import de.monticore.ocl2smt.ocldiff.operationDiff.OCLOPWitness;
 import de.monticore.odbasis._ast.ASTODNamedObject;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
@@ -41,7 +41,7 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
   @Test
   public void testOPConstraintWitness() throws IOException {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/PrePost.cd");
-    Set<ASTOCLCompilationUnit> posOCl = new HashSet<>();
+    Set<ASTOCLCompilationUnit> posOCl = new LinkedHashSet<>();
     posOCl.add(parseOCl("/post-pre-conditions/PrePost.cd", "/post-pre-conditions/Witness.ocl"));
 
     Set<OCLOPWitness> witnessList = OCLDiffGenerator.oclOPWitness(ast, posOCl, false);
@@ -80,10 +80,10 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
   public void testOpConstraintDiff() throws IOException {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/PrePost.cd");
 
-    Set<ASTOCLCompilationUnit> newOCL = new HashSet<>();
+    Set<ASTOCLCompilationUnit> newOCL = new LinkedHashSet<>();
     newOCL.add(parseOCl("/post-pre-conditions/PrePost.cd", "/post-pre-conditions/New.ocl"));
 
-    Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
+    Set<ASTOCLCompilationUnit> oldOCL = new LinkedHashSet<>();
     oldOCL.add(parseOCl("/post-pre-conditions/PrePost.cd", "/post-pre-conditions/Old.ocl"));
 
     ASTOCLMethodSignature method = IOHelper.getMethodSignature(newOCL, "Person.increaseSalary");

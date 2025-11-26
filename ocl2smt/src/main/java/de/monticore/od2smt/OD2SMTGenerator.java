@@ -42,9 +42,9 @@ public class OD2SMTGenerator implements IOD2SMTGenerator {
   protected Context ctx;
   protected OCLExprConverter<Z3ExprAdapter> exprConv;
 
-  protected Map<ASTODObject, Expr<?>> objectsMap = new HashMap<>();
-  protected Map<ASTODObject, Set<IdentifiableBoolExpr>> objectConstraint = new HashMap<>();
-  protected Map<ASTODLink, IdentifiableBoolExpr> linksConstraints = new HashMap<>();
+  protected Map<ASTODObject, Expr<?>> objectsMap = new LinkedHashMap<>();
+  protected Map<ASTODObject, Set<IdentifiableBoolExpr>> objectConstraint = new LinkedHashMap<>();
+  protected Map<ASTODLink, IdentifiableBoolExpr> linksConstraints = new LinkedHashMap<>();
 
   public void od2smt(ASTODArtifact od, ASTCDCompilationUnit cd, Context ctx) {
     if (!match(od, cd)) {
@@ -103,7 +103,7 @@ public class OD2SMTGenerator implements IOD2SMTGenerator {
   }
 
   private void convert(ASTODObject node) {
-    Set<IdentifiableBoolExpr> objectConstr = new HashSet<>();
+    Set<IdentifiableBoolExpr> objectConstr = new LinkedHashSet<>();
     String objectName = "object_" + count_object;
     count_object++;
 

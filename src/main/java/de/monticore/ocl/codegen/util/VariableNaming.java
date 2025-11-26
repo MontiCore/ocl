@@ -3,15 +3,15 @@ package de.monticore.ocl.codegen.util;
 
 import com.google.common.base.Preconditions;
 import de.monticore.ast.ASTNode;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class VariableNaming {
 
   // Map that keeps track of the number of variables that have already been generated of this type
-  protected HashMap<Class<?>, Integer> counter = new HashMap<Class<?>, Integer>();
+  protected LinkedHashMap<Class<?>, Integer> counter = new LinkedHashMap<Class<?>, Integer>();
 
   // Maps each type to its number
-  protected HashMap<Integer, Integer> instances = new HashMap<Integer, Integer>();
+  protected LinkedHashMap<Integer, Integer> instances = new LinkedHashMap<Integer, Integer>();
 
   public void reset() {
     counter.clear();

@@ -27,7 +27,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedType;
 import de.monticore.types.mcbasictypes._ast.ASTMCQualifiedTypeBuilder;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.se_rwth.commons.logging.Log;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -208,7 +208,7 @@ public class DeriveSymTypeOfSetExpressions extends AbstractDeriveFromExpression
     }
 
     SymTypeExpression leftType = null;
-    Set<String> varNames = new HashSet<>();
+    Set<String> varNames = new LinkedHashSet<>();
     if (node.getLeft().isPresentExpression()) {
       SetExpressionsTraverser traverser = SetExpressionsMill.inheritanceTraverser();
       NameExpressionsFromExpressionVisitor nameVisitor = new NameExpressionsFromExpressionVisitor();

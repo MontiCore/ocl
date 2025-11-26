@@ -18,7 +18,7 @@ import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import de.monticore.odbasis._ast.ASTODArtifact;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -67,7 +67,7 @@ public class OCLInvariantDiff implements OCLInvDiffStrategy {
       return computeDiff(ocl2SMTGenerator, newConstraints, negConstraints, timeout, partial);
     }
 
-    return new OCLInvDiffResult(null, new HashSet<>());
+    return new OCLInvDiffResult(null, new LinkedHashSet<>());
   }
 
   public OCLInvDiffResult CDOCLDiff(
@@ -105,7 +105,7 @@ public class OCLInvariantDiff implements OCLInvDiffStrategy {
             1,
             CDSemantics.SIMPLE_CLOSED_WORLD);
     if (!res.isEmpty()) {
-      return new OCLInvDiffResult(null, new HashSet<>(res));
+      return new OCLInvDiffResult(null, new LinkedHashSet<>(res));
     }
 
     // build positive constraint List

@@ -14,7 +14,7 @@ import de.monticore.prettyprint.IndentPrinter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.gradle.api.DefaultTask;
@@ -51,7 +51,7 @@ public abstract class OCLSemDiffTask extends DefaultTask {
   public abstract RegularFileProperty getTraceOD();
 
   protected Set<ASTOCLCompilationUnit> loadOCL(File cdFile, Set<File> oclFiles) throws IOException {
-    Set<ASTOCLCompilationUnit> result = new HashSet<>();
+    Set<ASTOCLCompilationUnit> result = new LinkedHashSet<>();
     for (File f : oclFiles) {
       result.add(OCL_Loader.loadAndCheckOCL(f, cdFile));
     }
@@ -78,14 +78,14 @@ public abstract class OCLSemDiffTask extends DefaultTask {
     ASTODArtifact trace;
     // Compute Diff
     if (negativeOCL.isEmpty()) {
-      witnesses = new HashSet<>();
+      witnesses = new LinkedHashSet<>();
       witnesses.add(
-          OCLDiffGenerator.oclWitness(cd, positiveOCL, new HashSet<>(), new HashSet<>(), false));
+          OCLDiffGenerator.oclWitness(cd, positiveOCL, new LinkedHashSet<>(), new LinkedHashSet<>(), false));
     } else {
 
       diff =
           OCLDiffGenerator.oclDiff(
-              cd, positiveOCL, negativeOCL, new HashSet<>(), new HashSet<>(), false);
+              cd, positiveOCL, negativeOCL, new LinkedHashSet<>(), new LinkedHashSet<>(), false);
       witnesses = diff.getDiffWitness();
       if (getTraceOD().isPresent()) {
         trace = diff.getUnSatCore();

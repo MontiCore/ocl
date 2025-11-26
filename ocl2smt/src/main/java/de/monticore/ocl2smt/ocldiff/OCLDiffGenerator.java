@@ -504,7 +504,7 @@ public class OCLDiffGenerator {
 
   private static Set<IdentifiableBoolExpr> od2constraints(
       Set<ASTODArtifact> ods, ASTCDCompilationUnit cd, Context ctx) {
-    Set<IdentifiableBoolExpr> constraint = new HashSet<>();
+    Set<IdentifiableBoolExpr> constraint = new LinkedHashSet<>();
     for (ASTODArtifact od : ods) {
       OD2SMTGenerator od2SMTGenerator = new OD2SMTGenerator();
       od2SMTGenerator.od2smt(od, cd, ctx);
@@ -522,7 +522,7 @@ public class OCLDiffGenerator {
 
   private static Set<IdentifiableBoolExpr> negativOd2smt(
       Set<ASTODArtifact> ods, ASTCDCompilationUnit cd, Context ctx) {
-    Set<IdentifiableBoolExpr> res = new HashSet<>();
+    Set<IdentifiableBoolExpr> res = new LinkedHashSet<>();
     for (ASTODArtifact od : ods) {
       OD2SMTGenerator od2SMTGenerator = new OD2SMTGenerator();
       od2SMTGenerator.od2smt(od, cd, ctx);
@@ -558,7 +558,7 @@ public class OCLDiffGenerator {
   }
 
   private static Context buildContext() {
-    Map<String, String> cfg = new HashMap<>();
+    Map<String, String> cfg = new LinkedHashMap<>();
     cfg.put("model", "true");
     return new Context(cfg);
   }

@@ -13,7 +13,7 @@ import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl.types3.OCLTypeCheck3;
 import de.se_rwth.commons.logging.LogStub;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
@@ -59,7 +59,7 @@ public abstract class OCL2SMTAbstractTest {
   }
 
   public Context buildContext() {
-    Map<String, String> cfg = new HashMap<>();
+    Map<String, String> cfg = new LinkedHashMap<>();
     cfg.put("model", "true");
     return new Context(cfg);
   }

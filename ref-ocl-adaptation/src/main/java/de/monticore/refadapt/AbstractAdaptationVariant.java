@@ -33,8 +33,8 @@ public abstract class AbstractAdaptationVariant implements IAdaptationVariant {
 
 
   protected AbstractAdaptationVariant() {
-    this.coveredRefNodes = new HashSet<>();
-    this.adaptedNodes = new HashMap<>();
+    this.coveredRefNodes = new LinkedHashSet<>();
+    this.adaptedNodes = new LinkedHashMap<>();
     this.astAdaptations = ArrayListMultimap.create();
     this.childVariants = ArrayListMultimap.create();
   }
@@ -52,8 +52,8 @@ public abstract class AbstractAdaptationVariant implements IAdaptationVariant {
           Map<ASTNode, ASTNode> adaptedNodes,
           ListMultimap<ASTNode, IASTAdaptation<? extends ASTNode>> astAdaptations,
           ListMultimap<ASTNode, IAdaptationVariant> childVariants) {
-    this.coveredRefNodes = new HashSet<>(coveredRefNodes);
-    this.adaptedNodes = new HashMap<>(adaptedNodes);
+    this.coveredRefNodes = new LinkedHashSet<>(coveredRefNodes);
+    this.adaptedNodes = new LinkedHashMap<>(adaptedNodes);
     this.astAdaptations = ArrayListMultimap.create(astAdaptations);
     this.childVariants = ArrayListMultimap.create(childVariants);
   }

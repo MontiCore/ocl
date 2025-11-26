@@ -12,7 +12,7 @@ import de.monticore.types.mcbasictypes._ast.ASTMCImportStatement;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -56,7 +56,7 @@ public class CompleterUtil {
   public static void visit(
       FunctionSymbol function, List<ASTMCImportStatement> imports, String packageDeclaration) {
     String typeName = function.getType().getTypeInfo().getName();
-    Set<TypeSymbol> typeSymbols = new HashSet<>();
+    Set<TypeSymbol> typeSymbols = new LinkedHashSet<>();
     for (String fqNameCandidate : calcFQNameCandidates(imports, packageDeclaration, typeName)) {
       OCLScope scope = (OCLScope) function.getEnclosingScope();
       typeSymbols.addAll(scope.resolveTypeMany(fqNameCandidate));
@@ -81,7 +81,7 @@ public class CompleterUtil {
       TypeSymbol type, List<ASTMCImportStatement> imports, String packageDeclaration) {
     for (SymTypeExpression sym : type.getSuperTypesList()) {
       String typeName = sym.getTypeInfo().getName();
-      Set<TypeSymbol> typeSymbols = new HashSet<>();
+      Set<TypeSymbol> typeSymbols = new LinkedHashSet<>();
       for (String fqNameCandidate : calcFQNameCandidates(imports, packageDeclaration, typeName)) {
         OCLScope scope = (OCLScope) type.getEnclosingScope();
         typeSymbols.addAll(scope.resolveTypeMany(fqNameCandidate));
@@ -108,7 +108,7 @@ public class CompleterUtil {
   public static void visit(
       VariableSymbol var, List<ASTMCImportStatement> imports, String packageDeclaration) {
     String typeName = var.getType().getTypeInfo().getName();
-    Set<TypeSymbol> typeSymbols = new HashSet<>();
+    Set<TypeSymbol> typeSymbols = new LinkedHashSet<>();
     for (String fqNameCandidate : calcFQNameCandidates(imports, packageDeclaration, typeName)) {
       OCLScope scope = (OCLScope) var.getEnclosingScope();
       typeSymbols.addAll(scope.resolveTypeMany(fqNameCandidate));

@@ -19,7 +19,7 @@ import de.monticore.umlstereotype._ast.ASTStereotype;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -72,22 +72,22 @@ public abstract class OCLDiffAbstractTest extends OCL2SMTAbstractTest {
       String oldCDn, String newCDn, String oldOCLn, String newOCLn) throws IOException {
     ASTCDCompilationUnit oldCD = parseCD(oldCDn);
     ASTCDCompilationUnit newCD = parseCD(newCDn);
-    Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
-    Set<ASTOCLCompilationUnit> newOCL = new HashSet<>();
+    Set<ASTOCLCompilationUnit> oldOCL = new LinkedHashSet<>();
+    Set<ASTOCLCompilationUnit> newOCL = new LinkedHashSet<>();
     oldOCL.add(parseOCl(oldCDn, oldOCLn));
     newOCL.add(parseOCl(newCDn, newOCLn));
     return OCLDiffGenerator.oclDiff(
-        oldCD, newCD, oldOCL, newOCL, new HashSet<>(), new HashSet<>(), false);
+        oldCD, newCD, oldOCL, newOCL, new LinkedHashSet<>(), new LinkedHashSet<>(), false);
   }
 
   public OCLInvDiffResult computeDiffOneCDFinite(
       String cdName, String oldOCLName, String newOCLName, long max) throws IOException {
     return OCLDiffGenerator.oclDiffComp(
         parseCD(cdName),
-        new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
-        new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
-        new HashSet<>(),
-        new HashSet<>(),
+        new LinkedHashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
+        new LinkedHashSet<>(Set.of(parseOCl(cdName, newOCLName))),
+        new LinkedHashSet<>(),
+        new LinkedHashSet<>(),
         max,
         false);
   }
@@ -96,10 +96,10 @@ public abstract class OCLDiffAbstractTest extends OCL2SMTAbstractTest {
       throws IOException {
     return OCLDiffGenerator.oclDiff(
         parseCD(cdName),
-        new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
-        new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
-        new HashSet<>(),
-        new HashSet<>(),
+        new LinkedHashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
+        new LinkedHashSet<>(Set.of(parseOCl(cdName, newOCLName))),
+        new LinkedHashSet<>(),
+        new LinkedHashSet<>(),
         false);
   }
 
@@ -109,18 +109,18 @@ public abstract class OCLDiffAbstractTest extends OCL2SMTAbstractTest {
 
     return OCLDiffGenerator.oclDiff(
         parseCD(cdName),
-        new HashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
-        new HashSet<>(Set.of(parseOCl(cdName, newOCLName))),
-        new HashSet<>(Set.of(parseOD(posODName))),
-        new HashSet<>(Set.of(parseOD(negODName))),
+        new LinkedHashSet<>(Set.of(parseOCl(cdName, oldOCLName))),
+        new LinkedHashSet<>(Set.of(parseOCl(cdName, newOCLName))),
+        new LinkedHashSet<>(Set.of(parseOD(posODName))),
+        new LinkedHashSet<>(Set.of(parseOD(negODName))),
         false);
   }
 
   public ASTODArtifact computeWitness(String cdName, String oldOCLName) throws IOException {
     ASTCDCompilationUnit cd = parseCD(cdName);
-    Set<ASTOCLCompilationUnit> oldOCL = new HashSet<>();
+    Set<ASTOCLCompilationUnit> oldOCL = new LinkedHashSet<>();
     oldOCL.add(parseOCl(cdName, oldOCLName));
-    return OCLDiffGenerator.oclWitness(cd, oldOCL, new HashSet<>(), new HashSet<>(), false);
+    return OCLDiffGenerator.oclWitness(cd, oldOCL, new LinkedHashSet<>(), new LinkedHashSet<>(), false);
   }
 
   public boolean containsAttribute(ASTCDClass c, String attribute) {
