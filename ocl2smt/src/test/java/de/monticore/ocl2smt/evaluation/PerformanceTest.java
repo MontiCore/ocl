@@ -14,10 +14,9 @@ import de.monticore.ocl2smt.ocldiff.OCLDiffGenerator;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.util.OCL_Loader;
 import de.se_rwth.commons.logging.Log;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
@@ -34,12 +33,13 @@ public class PerformanceTest extends OCLDiffAbstractTest {
     super.initMills();
   }
 
+  @Tag("slow")
   @Test
   public void testPerformance() {
     PerformanceCDBuilder cdBuilder = new PerformanceCDBuilder();
     PerformanceOCLBuilder oclBuilder = new PerformanceOCLBuilder();
 
-    final int starSize = 5;
+    final int starSize = 10;
     final int chainSize = 5;
 
     Optional<ASTCDCompilationUnit> cd = cdBuilder.buildCD(starSize,chainSize);
@@ -98,6 +98,42 @@ public class PerformanceTest extends OCLDiffAbstractTest {
         res, Path.of(TARGET_DIR + "diff_star" + starSize + "_chain" + chainSize));
     double duration = (double) (System.currentTimeMillis() - start) / 1000;
     Log.info("| duration: " + duration, "Diff( " + starSize + "," + chainSize + ")");
+
+  }
+
+  @Test
+  public void testMotivatingExample(){
+
+    try {
+      ASTCDCompilationUnit cd = parseCD("motivatingExample/BankManagementSystem.cd");
+      ASTOCLCompilationUnit oldOCL = parseOCl("motivatingExample/BankManagementSystem.cd",
+          "/motivatingExample/old.ocl");
+      ASTOCLCompilationUnit newOCL = parseOCl("motivatingExample/BankManagementSystem.cd",
+          "/motivatingExample/new.ocl");
+
+
+    OCLInvDiffResult res;
+
+    long start = System.currentTimeMillis();
+    CD2SMTMill.init(
+        ClassStrategy.Strategy.SS,
+        InheritanceData.Strategy.SE,
+        AssociationStrategy.Strategy.ONE2ONE);
+
+    res =
+        OCLDiffGenerator.oclDiffComp(
+            cd, Set.of(oldOCL), Set.of(newOCL) , new HashSet<>(), new HashSet<>(),
+            1000,
+            false);
+
+      IOHelper.printInvDiffResult(
+          res, Path.of(TARGET_DIR + "motivating"));
+
+    } catch (IOException e){
+      Log.error("Unable to parse models");
+      Assertions.fail();
+    }
+
 
   }
 
