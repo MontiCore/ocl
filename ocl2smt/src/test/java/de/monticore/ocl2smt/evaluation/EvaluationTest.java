@@ -11,7 +11,7 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.*;
@@ -61,8 +61,8 @@ public class EvaluationTest extends OCLDiffAbstractTest {
                   ast.get(j),
                   Set.of(ocl.get(i)),
                   Set.of(ocl.get(j)),
-                  new HashSet<>(),
-                  new HashSet<>(),
+                  new LinkedHashSet<>(),
+                  new LinkedHashSet<>(),
                   false);
 
           // print the results
@@ -102,8 +102,8 @@ public class EvaluationTest extends OCLDiffAbstractTest {
                   ast.get(j),
                   Set.of(ocl.get(i)),
                   Set.of(ocl.get(j)),
-                  new HashSet<>(),
-                  new HashSet<>(),
+                  new LinkedHashSet<>(),
+                  new LinkedHashSet<>(),
                   false);
 
           // print the results

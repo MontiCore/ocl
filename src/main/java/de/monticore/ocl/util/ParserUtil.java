@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -51,7 +51,7 @@ public class ParserUtil {
               + ", there was an I/O exception: "
               + e.getMessage());
     }
-    return new HashSet<>();
+    return new LinkedHashSet<>();
   }
 
   public static Collection<? extends ASTNode> parseModels(

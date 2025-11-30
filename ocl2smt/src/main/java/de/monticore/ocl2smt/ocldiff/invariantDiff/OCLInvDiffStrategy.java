@@ -75,13 +75,13 @@ public interface OCLInvDiffStrategy {
     List<ASTOCLInvariant> invariantList = OCLHelper.collectInv(oldOcl);
 
     // compute diff witness for each invariant
-    Set<OCLInvDiffResult> diffs = new HashSet<>();
+    Set<OCLInvDiffResult> diffs = new LinkedHashSet<>();
     invariantList.forEach(
         inv -> diffs.add(oclInvDiff(cd, newOcl, inv, addConstr, ctx, timeout, partial)));
 
     // merge different diff
     List<ASTODLink> traces = new ArrayList<>();
-    Set<ASTODArtifact> witnesses = new HashSet<>();
+    Set<ASTODArtifact> witnesses = new LinkedHashSet<>();
     ASTODArtifact unSatCore = null;
 
     for (OCLInvDiffResult diff : diffs) {
@@ -155,7 +155,7 @@ public interface OCLInvDiffStrategy {
       int timeout,
       boolean partial) {
 
-    Set<ASTODArtifact> satOdList = new HashSet<>();
+    Set<ASTODArtifact> satOdList = new LinkedHashSet<>();
     List<ASTODLink> traceUnSat = new ArrayList<>();
 
     // add one by one all Constraints to the Solver and check if it can always produce a Model
@@ -175,7 +175,7 @@ public interface OCLInvDiffStrategy {
         assert witness.isPresent();
         satOdList.add(witness.get());
       } else if (status == Status.UNKNOWN) {
-        return new OCLInvDiffResult(null, new HashSet<>());
+        return new OCLInvDiffResult(null, new LinkedHashSet<>());
       } else {
         OD4ReportMill.init();
         Log.info("[UNSAT]The invariant is refined by the new model", this.getClass().getName());

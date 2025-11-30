@@ -15,7 +15,7 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.*;
 
@@ -38,7 +38,7 @@ public class Evaluation3Test extends OCL2SMTAbstractTest {
   public void testWitness() {
     loadModels("v0", "v0");
     Log.info("Testing Consistency of the first model", this.getClass().getName());
-    OCLDiffGenerator.oclWitness(newAst, oldOCl, new HashSet<>(), new HashSet<>(), false);
+    OCLDiffGenerator.oclWitness(newAst, oldOCl, new LinkedHashSet<>(), new LinkedHashSet<>(), false);
   }
 
   @Test
@@ -96,7 +96,7 @@ public class Evaluation3Test extends OCL2SMTAbstractTest {
 
     res =
         OCLDiffGenerator.oclDiffComp(
-            newAst, oldOCl, newOcl, new HashSet<>(), new HashSet<>(), 1000, false);
+            newAst, oldOCl, newOcl, new LinkedHashSet<>(), new LinkedHashSet<>(), 1000, false);
 
     // print the results
     IOHelper.printInvDiffResult(
@@ -106,8 +106,8 @@ public class Evaluation3Test extends OCL2SMTAbstractTest {
   }
 
   private void loadModels(String prevVersion, String currVersion) {
-    oldOCl = new HashSet<>();
-    newOcl = new HashSet<>();
+    oldOCl = new LinkedHashSet<>();
+    newOcl = new LinkedHashSet<>();
     newAst = parseCD("/User.cd");
     oldOCl.add(parseOCl("User.cd", "/" + prevVersion + "/Invariants.ocl"));
     newOcl.add(parseOCl("/User.cd", "/" + currVersion + "/Invariants.ocl"));

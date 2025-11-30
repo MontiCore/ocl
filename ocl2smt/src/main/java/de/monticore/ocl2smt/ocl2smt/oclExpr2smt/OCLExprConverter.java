@@ -36,7 +36,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?>> {
   public OCLExprConverter(CDExprFactory<EXPR> eFactory, TypeFactory typeFactory) {
     this.tFactory = typeFactory;
     this.eFactory = eFactory;
-    varNames = new HashMap<>();
+    varNames = new LinkedHashMap<>();
   }
 
   public EXPR convertExpr(ASTExpression node) {
@@ -335,7 +335,7 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?>> {
       mkConst(gen.getName(), type);
     }
 
-    Set<String> setCompScopeVar = new HashSet<>(varCollector.getAllVariableNames());
+    Set<String> setCompScopeVar = new LinkedHashSet<>(varCollector.getAllVariableNames());
     setCompScopeVar.addAll(generatorCollector.getAllVariableNames());
 
     return setCompScopeVar;

@@ -152,7 +152,7 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
           SymbolTableUtil.addCd4cSymbols();
         }
 
-        Set<String> cocoOptionValues = new HashSet<>();
+        Set<String> cocoOptionValues = new LinkedHashSet<>();
         if (cmd.hasOption("c") && cmd.getOptionValues("c") != null) {
           cocoOptionValues.addAll(Arrays.asList(cmd.getOptionValues("c")));
         }
@@ -271,10 +271,10 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
         // declared artifacts
         File cd = new File(cmd.getOptionValue("cd"));
         File newCd;
-        Set<File> oclFiles = new HashSet<>();
-        Set<File> newOClFiles = new HashSet<>();
-        Set<File> posOdExamples = new HashSet<>();
-        Set<File> negOdExample = new HashSet<>();
+        Set<File> oclFiles = new LinkedHashSet<>();
+        Set<File> newOClFiles = new LinkedHashSet<>();
+        Set<File> posOdExamples = new LinkedHashSet<>();
+        Set<File> negOdExample = new LinkedHashSet<>();
         String methodName;
 
         // get ocl files

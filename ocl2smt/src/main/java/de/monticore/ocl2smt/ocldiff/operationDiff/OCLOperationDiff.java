@@ -38,7 +38,7 @@ public class OCLOperationDiff {
     ctx = buildContext();
     OCLHelper.buildPreCD(ast);
     FullOCL2SMTGenerator fullOCL2SMTGenerator = new FullOCL2SMTGenerator(ast, ctx);
-    Set<OCLOPWitness> res = new HashSet<>();
+    Set<OCLOPWitness> res = new LinkedHashSet<>();
 
     for (ASTOCLMethodSignature method : getMethodList(ocl)) {
       res.addAll(oclWitnessHelper(ocl, fullOCL2SMTGenerator, method, partial));
@@ -64,7 +64,7 @@ public class OCLOperationDiff {
     // add invariants
     solverConstraints.addAll(invConstraints);
 
-    Set<OCLOPWitness> res = new HashSet<>();
+    Set<OCLOPWitness> res = new LinkedHashSet<>();
     Solver solver;
 
     for (OPConstraint constraint : opConstraints) {
@@ -110,7 +110,7 @@ public class OCLOperationDiff {
 
     // setup
     ctx = buildContext();
-    Set<OCLOPWitness> opDiffWitness = new HashSet<>();
+    Set<OCLOPWitness> opDiffWitness = new LinkedHashSet<>();
     List<ASTODLink> trace = new ArrayList<>();
     OCLHelper.buildPreCD(ast);
     FullOCL2SMTGenerator fullOcl2smt = new FullOCL2SMTGenerator(ast, ctx);
@@ -186,7 +186,7 @@ public class OCLOperationDiff {
   private Map<ASTOCLMethodSignature, List<ASTOCLOperationConstraint>> sortOPConstraint(
       Set<ASTOCLCompilationUnit> oclSet) {
 
-    Map<ASTOCLMethodSignature, List<ASTOCLOperationConstraint>> res = new HashMap<>();
+    Map<ASTOCLMethodSignature, List<ASTOCLOperationConstraint>> res = new LinkedHashMap<>();
     for (ASTOCLOperationConstraint opConstraint : getOperationsConstraints(oclSet)) {
 
       ASTOCLOperationSignature opSignature = opConstraint.getOCLOperationSignature();
@@ -270,7 +270,7 @@ public class OCLOperationDiff {
   }
 
   public Context buildContext() {
-    Map<String, String> cfg = new HashMap<>();
+    Map<String, String> cfg = new LinkedHashMap<>();
     cfg.put("model", "true");
     return new Context(cfg);
   }

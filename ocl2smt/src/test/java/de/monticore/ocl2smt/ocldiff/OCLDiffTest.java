@@ -20,7 +20,7 @@ import de.monticore.odbasis._ast.ASTODElement;
 import de.monticore.odbasis._ast.ASTODNamedObject;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -138,11 +138,11 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
       throws IOException {
     CD2SMTMill.init(cs, is, as);
     ASTCDCompilationUnit cdAST = parseCD("Partial/Partial.cd");
-    Set<ASTOCLCompilationUnit> oclSet = new HashSet<>();
+    Set<ASTOCLCompilationUnit> oclSet = new LinkedHashSet<>();
     oclSet.add(parseOCl("Partial/Partial.cd", "Partial/partial.ocl"));
 
     ASTODArtifact od =
-        OCLDiffGenerator.oclWitness(cdAST, oclSet, new HashSet<>(), new HashSet<>(), true);
+        OCLDiffGenerator.oclWitness(cdAST, oclSet, new LinkedHashSet<>(), new LinkedHashSet<>(), true);
     IOHelper.printOD(od, Path.of(TARGET_DIR + "OCLDiffPartial"));
 
     for (ASTODElement element : od.getObjectDiagram().getODElementList()) {

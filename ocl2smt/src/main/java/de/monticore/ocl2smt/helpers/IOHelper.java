@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.apache.commons.io.FileUtils;
 
 public class IOHelper {
   public static Set<ASTOCLCompilationUnit> parseOCl(File cdFile, Set<File> oclFiles) {
-    Set<ASTOCLCompilationUnit> res = new HashSet<>();
+    Set<ASTOCLCompilationUnit> res = new LinkedHashSet<>();
     for (File oclFile : oclFiles) {
 
       try {

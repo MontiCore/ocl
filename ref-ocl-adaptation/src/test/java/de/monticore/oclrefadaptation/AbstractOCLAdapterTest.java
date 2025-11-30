@@ -30,7 +30,7 @@ import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -71,7 +71,7 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
   public void setupEach() {
     Log.clearFindings();
     initMills();
-    confParameters = new HashSet<>(DEFAULT_CONFORMANCE_PARAMS);
+    confParameters = new LinkedHashSet<>(DEFAULT_CONFORMANCE_PARAMS);
     oclAdapter = new OCLAdapter(confParameters);
   }
 

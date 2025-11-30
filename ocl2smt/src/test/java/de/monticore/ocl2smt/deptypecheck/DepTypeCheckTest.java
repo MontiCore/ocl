@@ -18,7 +18,7 @@ import de.monticore.ocl2smt.visitors.NameExpressionCollector;
 import de.monticore.types.mcbasictypes._ast.ASTMCType;
 import de.monticore.umlmodifier._ast.ASTModifierBuilder;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -39,7 +39,7 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
     // map from Variable Name to the Condition that must hold over this Variable
     Function<ASTNameExpression, ASTExpression> getCond;
     {
-      Map<String, ASTExpression> condMap = new HashMap<>();
+      Map<String, ASTExpression> condMap = new LinkedHashMap<>();
       condMap.put("x", OCLMill.parser().parse_StringExpression("x>5").get());
       condMap.put("y", OCLMill.parser().parse_StringExpression("y>1").get());
       getCond = z -> condMap.get(z.getName());
@@ -91,7 +91,7 @@ public class DepTypeCheckTest extends ExpressionAbstractTest {
     // map from Variable Name to the Condition that must hold over this Variable
     Function<ASTNameExpression, ASTExpression> getCond;
     {
-      Map<String, ASTExpression> condMap = new HashMap<>();
+      Map<String, ASTExpression> condMap = new LinkedHashMap<>();
       condMap.put("x", OCLMill.parser().parse_StringExpression("x.startsWith(\"moin\")").get());
       condMap.put("y", OCLMill.parser().parse_StringExpression("true").get());
       getCond = z -> condMap.get(z.getName());

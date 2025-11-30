@@ -16,7 +16,7 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.*;
 
@@ -42,7 +42,7 @@ public class Evaluation2Test extends OCL2SMTAbstractTest {
 
     ASTODArtifact witness =
         OCLDiffGenerator.oclWitnessComp(
-            oldAst, oldOCl, new HashSet<>(), new HashSet<>(), 100, false);
+            oldAst, oldOCl, new LinkedHashSet<>(), new LinkedHashSet<>(), 100, false);
 
     Assertions.assertNotNull(witness);
     IOHelper.printOD(witness, Path.of(TARGET_DIR + "/witness/old"));
@@ -54,7 +54,7 @@ public class Evaluation2Test extends OCL2SMTAbstractTest {
 
     ASTODArtifact witness =
         OCLDiffGenerator.oclWitnessComp(
-            newAst, newOcl, new HashSet<>(), new HashSet<>(), 100, false);
+            newAst, newOcl, new LinkedHashSet<>(), new LinkedHashSet<>(), 100, false);
 
     Assertions.assertNotNull(witness);
     IOHelper.printOD(witness, Path.of(TARGET_DIR + "/witness/new"));
@@ -70,7 +70,7 @@ public class Evaluation2Test extends OCL2SMTAbstractTest {
         AssociationStrategy.Strategy.DEFAULT);
     long start = System.currentTimeMillis();
 
-    res = OCLDiffGenerator.oclDiff(newAst, oldOCl, newOcl, new HashSet<>(), new HashSet<>(), false);
+    res = OCLDiffGenerator.oclDiff(newAst, oldOCl, newOcl, new LinkedHashSet<>(), new LinkedHashSet<>(), false);
 
     // print the results
     IOHelper.printInvDiffResult(res, Path.of(TARGET_DIR + "diff_V01"));
@@ -79,8 +79,8 @@ public class Evaluation2Test extends OCL2SMTAbstractTest {
   }
 
   private void loadModels() {
-    oldOCl = new HashSet<>();
-    newOcl = new HashSet<>();
+    oldOCl = new LinkedHashSet<>();
+    newOcl = new LinkedHashSet<>();
     oldAst = parseCD("/v0/JavaProjectV0.cd");
     newAst = parseCD("/v1/JavaProjectV1.cd");
     oldOCl.add(parseOCl("/v0/JavaProjectV0.cd", "/v0/JavaProjectV0.ocl"));
