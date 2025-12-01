@@ -15,6 +15,8 @@ import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import de.monticore.ocl2smt.util.OCL_Loader;
 import de.se_rwth.commons.logging.Log;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -22,6 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class PerformanceTest extends OCLDiffAbstractTest {
   private List<ASTCDCompilationUnit> ast;
@@ -34,14 +38,15 @@ public class PerformanceTest extends OCLDiffAbstractTest {
   }
 
   @Tag("slow")
-  @Test
-  public void testPerformance() {
+  @ParameterizedTest
+  @MethodSource("sizes")
+  public void testPerformance(int chainSize) {
     PerformanceCDBuilder cdBuilder = new PerformanceCDBuilder();
     PerformanceOCLBuilder oclBuilder = new PerformanceOCLBuilder();
 
     final int starSize = 10;
-    final int chainSize = 5;
 
+    // build the CD
     Optional<ASTCDCompilationUnit> cd = cdBuilder.buildCD(starSize,chainSize);
     Assertions.assertTrue(cd.isPresent());
 
@@ -53,8 +58,7 @@ public class PerformanceTest extends OCLDiffAbstractTest {
     }
     Assertions.assertFalse(cd.get().getCDDefinition().getCDClassesList().isEmpty());
 
-    System.out.println(CD4CodeMill.prettyPrint(cd.get(),false));
-
+    // build the first OCL model
     Optional<ASTOCLCompilationUnit> ocl = oclBuilder.buildOCL(starSize,chainSize,false);
     Assertions.assertTrue(ocl.isPresent());
 
@@ -65,8 +69,7 @@ public class PerformanceTest extends OCLDiffAbstractTest {
       Assertions.fail();
     }
 
-    System.out.println(OCLMill.prettyPrint(ocl.get(),false));
-
+    // build the second OCL model
     Optional<ASTOCLCompilationUnit> ocl2 = oclBuilder.buildOCL(starSize,chainSize,true);
     Assertions.assertTrue(ocl2.isPresent());
 
@@ -77,8 +80,7 @@ public class PerformanceTest extends OCLDiffAbstractTest {
       Assertions.fail();
     }
 
-    System.out.println(OCLMill.prettyPrint(ocl2.get(),false));
-
+    // compute SemDiff and measure the runtime
     OCLInvDiffResult res;
 
     long start = System.currentTimeMillis();
@@ -133,8 +135,10 @@ public class PerformanceTest extends OCLDiffAbstractTest {
       Log.error("Unable to parse models");
       Assertions.fail();
     }
+  }
 
-
+  static Stream<Integer> sizes() {
+    return IntStream.rangeClosed(1, 5).boxed();
   }
 
 }
