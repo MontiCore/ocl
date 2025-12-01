@@ -17,5 +17,5 @@ classdiagram TaskManagementConc {
   }
 
   association Company -> TeamMember [*];
-  association TeamMember -> (assignedNormalTasks) NormalTask [*];
+  <<ref="employeeTasks">> association TeamMember -> (assignedNormalTasks) NormalTask [*];
 }
