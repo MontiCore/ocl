@@ -1,0 +1,17 @@
+classdiagram EventsConc {
+
+  <<ref="Observer">> interface EventListener {
+    <<ref="update">> void onEvent();
+    <<ref="__hasSent_update">> boolean __hasSent_onEvent();
+  }
+
+  <<ref="Subject">> class EventManager {
+    <<ref="register">> void registerNormal(EventListener listener);
+    <<ref="register">> void registerHighPrio(EventListener listener);
+    void unregister(EventListener listener);
+    void notifyAll();
+  }
+
+  <<ref="observers", bind="Subject.register=EventManager.registerNormal">> association normalListeners EventManager -> (normalListeners) EventListener [*] <<ordered>>;
+  <<ref="observers", bind="Subject.register=EventManager.registerHighPrio">> association highPriorityListeners EventManager -> (highPriorityListeners) EventListener [*] <<ordered>>;
+}

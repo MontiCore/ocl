@@ -25,7 +25,7 @@ classdiagram ObserverConc {
     void notifyAll();
   }
 
-  association Subject -> (observers) Observer [*] <<ordered>>;
-  association Subject -> (updateListeners) UpdateListener [*] <<ordered>>;
-  association Subject -> (myConcreteObservers) MyConcreteObserver [*] <<ordered>>;
+  <<ref="observers">> association Subject -> (observers) Observer [*] <<ordered>>;
+  <<ref="observers">> association Subject -> (updateListeners) UpdateListener [*] <<ordered>>;
+  <<ref="observers">> association Subject -> (myConcreteObservers) MyConcreteObserver [*] <<ordered>>;
 }

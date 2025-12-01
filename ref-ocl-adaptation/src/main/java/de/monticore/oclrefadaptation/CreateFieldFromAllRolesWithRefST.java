@@ -10,6 +10,7 @@ import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
 import de.monticore.cdconcretization.stereotype.StereotypeUtil;
 import de.monticore.cdconformance.inc.CDIncarnationMapping;
 import de.monticore.symbols.oosymbols._symboltable.FieldSymbol;
+import de.monticore.umlstereotype._ast.ASTStereotype;
 import de.se_rwth.commons.logging.Log;
 import org.apache.commons.lang3.Validate;
 
@@ -66,7 +67,7 @@ public class CreateFieldFromAllRolesWithRefST extends CDAssociationCreateFieldsF
       CDRoleSymbol role = fieldToRoles.get(createdField);
       Optional<ASTCDAssociation> assoc = findAssociation(concreteCD, role.getAssocSide());
       if (assoc.isPresent()) {
-        addStereotypeToField(createdField, role, assoc.get());
+        addStereotypesToField(createdField, role, assoc.get());
       } else {
         Log.error("Could not find association for role " + role.getFullName() +
                 " in concrete CD " + CD4CodeMill.prettyPrint(concreteCD, false));
@@ -81,7 +82,7 @@ public class CreateFieldFromAllRolesWithRefST extends CDAssociationCreateFieldsF
    * @param conField the concrete field symbol that was created for the role
    * @param conRole the concrete role symbol
    */
-  protected void addStereotypeToField(FieldSymbol conField, CDRoleSymbol conRole, ASTCDAssociation conAssoc) {
+  protected void addStereotypesToField(FieldSymbol conField, CDRoleSymbol conRole, ASTCDAssociation conAssoc) {
     Validate.notNull(conField);
     Validate.notNull(conRole);
     Validate.isTrue(conField.isPresentAstNode(), "Concrete field symbol must have an AST" +
@@ -91,12 +92,25 @@ public class CreateFieldFromAllRolesWithRefST extends CDAssociationCreateFieldsF
     Optional<CDRoleSymbol> refRoleOpt = getReferenceRole(conRole, conAssoc);
     if (refRoleOpt.isPresent()) {
       CDRoleSymbol refRole = refRoleOpt.get();
+      // 1. add mapping stereotype if required
       // Normally, we only add the stereotype if the name differs form the ref name
       if (alwaysAddStereotype || !refRole.getName().equals(conRole.getName())) {
         // Reference field name is the name of the reference role
         StereotypeUtil.addStereotype(conAttribute.getModifier(), mapping, refRole.getName());
         Log.info("Added stereotype " + mapping + " with value " + refRole.getName() +
                 " to field " + conField.getName(), LOG_NAME);
+      }
+
+      // 2. transfer bind stereotype from concrete assoc and assoc side to concrete field
+      if (conAssoc.getModifier().isPresentStereotype() && conAssoc.getModifier().getStereotype().contains(StereotypeUtil.BIND_STEREOTYPE)) {
+        StereotypeUtil.addStereotype(conAttribute.getModifier(), StereotypeUtil.BIND_STEREOTYPE, conAssoc.getModifier().getStereotype().getValue(StereotypeUtil.BIND_STEREOTYPE));
+        Log.info("Added bind stereotype fom association to field " + conField.getName()
+                + " from association " + conAssoc.getName(), LOG_NAME);
+      }
+      if (conRole.getAssocSide().getModifier().isPresentStereotype() && conRole.getAssocSide().getModifier().getStereotype().contains(StereotypeUtil.BIND_STEREOTYPE)) {
+        StereotypeUtil.addStereotype(conAttribute.getModifier(), StereotypeUtil.BIND_STEREOTYPE, conRole.getAssocSide().getModifier().getStereotype().getValue(StereotypeUtil.BIND_STEREOTYPE));
+        Log.info("Added bind stereotype from association side to field " + conField.getName()
+                + " from association " + conAssoc.getName(), LOG_NAME);
       }
     } else {
       Log.error("Could not find reference role for concrete role " + conRole.getFullName());
