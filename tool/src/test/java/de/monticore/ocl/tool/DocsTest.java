@@ -24,7 +24,7 @@ public class DocsTest extends AbstractTest {
 
   @ParameterizedTest
   @CsvSource({
-    "src/test/resources/docs/Bookshop/Bookshop.ocl, src/test/resources/docs/Bookshop/Bookshop.sym",
+    "src/test/resources/docs/Bookshop/Bookshop.ocl, src/test/resources/docs/Bookshop/Bookshop.cdsym",
     "src/test/resources/docs/Banking/Banking.ocl, src/test/resources/docs/Banking/Banking.cdsym",
   })
   public void shouldProcessExampleFromDocs(final String oclFile, final String cdFile) {

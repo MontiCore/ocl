@@ -40,6 +40,12 @@ public class OCL_Loader {
     assert cdFile.getName().endsWith(".cd");
     ASTCDCompilationUnit cdAST = parseCDModel(cdFile.getAbsolutePath());
 
+    loadAndCheckCD(cdAST);
+
+    return cdAST;
+  }
+
+  public static ASTCDCompilationUnit loadAndCheckCD(ASTCDCompilationUnit cdAST) throws IOException {
     // apply role name trafo
     CD4CodeTraverser t = CD4CodeMill.inheritanceTraverser();
     t.add4CDAssociation(new CDAssociationRoleNameTrafo());
@@ -86,6 +92,20 @@ public class OCL_Loader {
 
     createCDSymTab(cdAST);
     loadCDModel(oclAST, cdAST);
+    // TODO: 17.08.2023   activate cocos when fixed
+    checkOCLCoCos(oclAST);
+    return oclAST;
+  }
+
+  public static ASTOCLCompilationUnit loadAndCheckOCL(ASTOCLCompilationUnit oclAST,
+      ASTCDCompilationUnit cdAST )
+      throws IOException {
+    // clone to prevent side effects to the original CD-AST
+    ASTCDCompilationUnit clone = loadAndCheckCD(cdAST.deepClone());
+    transformAllRoles(clone);
+    oclAST.setEnclosingScope(createOCLSymTab(oclAST));
+    createCDSymTab(clone);
+    loadCDModel(oclAST, clone);
     // TODO: 17.08.2023   activate cocos when fixed
     checkOCLCoCos(oclAST);
     return oclAST;

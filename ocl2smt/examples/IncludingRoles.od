@@ -1,0 +1,35 @@
+objectdiagram IncludingRoles { 
+  userRole_0:UserRole { 
+    String name="tester";
+
+  } 
+  ;
+  administrativePermission_0:AdministrativePermission { 
+    String name="";
+
+  } 
+  ;
+  userPermission_0:UserPermission { 
+    String name="A";
+
+  } 
+  ;
+  user_0:User { 
+    String name="!2!";
+
+  } 
+  ;
+  administrativeRole_0:AdministrativeRole { 
+    String name="";
+
+  } 
+  ;
+  session_0:Session { 
+    String name="";
+
+  } 
+  ;
+  link user_0(users)--(roles)userRole_0;
+  link user_0(user)--(sessions)session_0;
+
+} 
