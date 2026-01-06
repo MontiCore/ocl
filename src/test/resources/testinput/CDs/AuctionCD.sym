@@ -5,7 +5,7 @@
     {
       "kind":"de.monticore.cdassociation._symboltable.CDAssociationSymbol",
       "name":"participants",
-      "association":820878444
+      "association":288615534
     },
     {
       "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
@@ -118,7 +118,7 @@
             "packageName":"AuctionCD",
             "isDefinitiveNavigable":true,
             "cardinality":"[*]",
-            "association":2113243119,
+            "association":1427775702,
             "type":{
               "kind":"de.monticore.types.check.SymTypeOfObject",
               "objName":"AuctionCD.Person"
@@ -221,11 +221,24 @@
             "packageName":"AuctionCD",
             "isDefinitiveNavigable":true,
             "cardinality":"[*]",
-            "association":1972326147,
+            "association":669053685,
             "isLeft":true,
             "type":{
               "kind":"de.monticore.types.check.SymTypeOfObject",
               "objName":"AuctionCD.Person"
+            }
+          },
+          {
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"hiwis",
+            "fullName":"AuctionCD.Company.hiwis",
+            "packageName":"AuctionCD",
+            "isDefinitiveNavigable":true,
+            "cardinality":"[*]",
+            "association":896852376,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Student"
             }
           },
           {
@@ -250,6 +263,22 @@
                 {
                   "kind":"de.monticore.types.check.SymTypeOfObject",
                   "objName":"AuctionCD.Person"
+                }
+              ]
+            }
+          },
+          {
+            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
+            "name":"hiwis",
+            "fullName":"AuctionCD.Company.hiwis",
+            "packageName":"AuctionCD",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfGenerics",
+              "typeConstructorFullName":"java.util.Set",
+              "arguments":[
+                {
+                  "kind":"de.monticore.types.check.SymTypeOfObject",
+                  "objName":"AuctionCD.Student"
                 }
               ]
             }
@@ -285,7 +314,7 @@
             "packageName":"AuctionCD",
             "isDefinitiveNavigable":true,
             "cardinality":"[*]",
-            "association":820878444,
+            "association":288615534,
             "type":{
               "kind":"de.monticore.types.check.SymTypeOfObject",
               "objName":"AuctionCD.Person"
@@ -298,7 +327,7 @@
             "packageName":"AuctionCD",
             "isDefinitiveNavigable":true,
             "cardinality":"[*]",
-            "association":1764291958,
+            "association":229919394,
             "type":{
               "kind":"de.monticore.types.check.SymTypeOfObject",
               "objName":"AuctionCD.Message"
@@ -311,7 +340,7 @@
             "packageName":"AuctionCD",
             "isDefinitiveNavigable":true,
             "cardinality":"[1]",
-            "association":1712230656,
+            "association":769877691,
             "type":{
               "kind":"de.monticore.types.check.SymTypeOfObject",
               "objName":"AuctionCD.Policy"
@@ -533,7 +562,7 @@
             "fullName":"AuctionCD.Message.bidder",
             "packageName":"AuctionCD",
             "isDefinitiveNavigable":true,
-            "association":896852376,
+            "association":1324262781,
             "isLeft":true,
             "type":{
               "kind":"de.monticore.types.check.SymTypeOfObject",
@@ -546,7 +575,7 @@
             "fullName":"AuctionCD.Message.auction",
             "packageName":"AuctionCD",
             "isDefinitiveNavigable":true,
-            "association":1764291958,
+            "association":229919394,
             "isLeft":true,
             "type":{
               "kind":"de.monticore.types.check.SymTypeOfObject",
@@ -612,18 +641,8 @@
             "name":"auction",
             "fullName":"AuctionCD.Policy.auction",
             "packageName":"AuctionCD",
-            "association":1712230656,
+            "association":769877691,
             "isLeft":true,
-            "type":{
-              "kind":"de.monticore.types.check.SymTypeOfObject",
-              "objName":"AuctionCD.Auction"
-            }
-          },
-          {
-            "kind":"de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
-            "name":"auction",
-            "fullName":"AuctionCD.Policy.auction",
-            "packageName":"AuctionCD",
             "type":{
               "kind":"de.monticore.types.check.SymTypeOfObject",
               "objName":"AuctionCD.Auction"
@@ -692,7 +711,7 @@
             "fullName":"AuctionCD.Person.allData",
             "packageName":"AuctionCD",
             "isDefinitiveNavigable":true,
-            "association":2113243119,
+            "association":1427775702,
             "isLeft":true,
             "type":{
               "kind":"de.monticore.types.check.SymTypeOfObject",
@@ -706,7 +725,7 @@
             "packageName":"AuctionCD",
             "isDefinitiveNavigable":true,
             "cardinality":"[*]",
-            "association":820878444,
+            "association":288615534,
             "isLeft":true,
             "type":{
               "kind":"de.monticore.types.check.SymTypeOfObject",
@@ -720,7 +739,7 @@
             "packageName":"AuctionCD",
             "isDefinitiveNavigable":true,
             "cardinality":"[1]",
-            "association":1972326147,
+            "association":669053685,
             "type":{
               "kind":"de.monticore.types.check.SymTypeOfObject",
               "objName":"AuctionCD.Company"
@@ -733,7 +752,7 @@
             "packageName":"AuctionCD",
             "isDefinitiveNavigable":true,
             "cardinality":"[*]",
-            "association":896852376,
+            "association":1324262781,
             "type":{
               "kind":"de.monticore.types.check.SymTypeOfObject",
               "objName":"AuctionCD.Message"
@@ -838,6 +857,18 @@
             "isConstructor":true,
             "isPublic":true,
             "isStatic":true
+          },
+          {
+            "kind":"de.monticore.cdassociation._symboltable.CDRoleSymbol",
+            "name":"company",
+            "fullName":"AuctionCD.Student.company",
+            "packageName":"AuctionCD",
+            "association":896852376,
+            "isLeft":true,
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.Company"
+            }
           }
         ]
       }
@@ -936,15 +967,23 @@
     }
   ],
   "furtherObjects":{
-    "820878444":{
+    "1324262781":{
       "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
       "isAssociation":true
     },
-    "2113243119":{
+    "669053685":{
       "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
       "isAssociation":true
     },
-    "1972326147":{
+    "229919394":{
+      "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation":true
+    },
+    "769877691":{
+      "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
+      "isAssociation":true
+    },
+    "1427775702":{
       "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
       "isAssociation":true
     },
@@ -952,11 +991,7 @@
       "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
       "isAssociation":true
     },
-    "1764291958":{
-      "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
-      "isAssociation":true
-    },
-    "1712230656":{
+    "288615534":{
       "kind":"de.monticore.cdassociation._symboltable.SymAssociation",
       "isAssociation":true
     }
