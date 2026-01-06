@@ -1,0 +1,10 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import example.CDs.AuctionCD.*;
+
+ocl typeif2 {
+  context Auction a inv:
+    typeif a instanceof Auction
+    then a.numberOfBids >= 0
+    else a.numberOfBids >= 0;
+}
