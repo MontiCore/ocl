@@ -72,5 +72,6 @@ classdiagram AuctionCD {
   association Person (bidder) <-> Message [*] <<ordered>>;
   association Auction <-> Message [*] <<ordered>>;
   association Auction -> Policy [1];
+  association Company -> (hiwis) Student [*] <<ordered>>;
 
 }

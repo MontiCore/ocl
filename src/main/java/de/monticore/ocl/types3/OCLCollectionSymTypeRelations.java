@@ -56,7 +56,7 @@ public class OCLCollectionSymTypeRelations extends MCCollectionSymTypeRelations 
     // if we cannot flatten, this is id
     else {
       Log.info(
-          "called flatten on type " + toFlatten.printFullName() + " which cannot be flattenend",
+          "called flatten on type " + toFlatten.printFullName() + " which cannot be flattened",
           LOG_NAME);
       flattened = toFlatten;
     }
