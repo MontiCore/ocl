@@ -35,7 +35,7 @@ public class OCLToolTest {
   public void testPrettyPrint() throws IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     System.setOut(new PrintStream(out));
-    OCLTool.main(new String[] {"-i", oclv1, "-pp"});
+    new OCLTool().run(new String[] {"-i", oclv1, "-pp"});
     String printed = out.toString().trim();
     assertNotNull(printed);
     Optional<ASTOCLCompilationUnit> astOpt = OCLMill.parser().parse_String(printed);
