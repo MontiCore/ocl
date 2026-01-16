@@ -14,12 +14,16 @@ plugins {
   id 'java'
 
   id 'de.monticore.generator' version "$mc_version"
-  id 'com.github.johnrengelman.shadow' version "$shadow_plugin_version"
+  id 'com.gradleup.shadow' version "$shadow_plugin_version"
   id "io.github.themrmilchmann.ecj" version "0.2.0"
   id 'jacoco'
   id 'com.adarshr.test-logger' version '2.1.1'
   id 'maven-publish'
   id "com.github.sherter.google-java-format" version "0.9"    // Task "verifyGoogleJavaFormat" and "googleJavaFormat"
+}
+
+ecj {
+  compilerVersion = "3.43.0"
 }
 
 /* ============================================================ */
@@ -135,8 +139,8 @@ tasks.withType(Test).configureEach {
 }
 
 tasks.withType(JavaCompile).configureEach {
-  sourceCompatibility = JavaVersion.VERSION_11
-  targetCompatibility = JavaVersion.VERSION_11
+  sourceCompatibility = JavaVersion.VERSION_21
+  targetCompatibility = JavaVersion.VERSION_21
   options.encoding = 'UTF-8'
   options.headerOutputDirectory.convention(null)
   options.deprecation = false

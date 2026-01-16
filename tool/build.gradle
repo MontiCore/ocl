@@ -1,6 +1,6 @@
 plugins {
   id 'java'
-  id 'com.github.johnrengelman.shadow'
+  id 'com.gradleup.shadow'
   id 'maven-publish'
 }
 
@@ -42,7 +42,7 @@ group = 'de.monticore.lang.ocl'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(11)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 
