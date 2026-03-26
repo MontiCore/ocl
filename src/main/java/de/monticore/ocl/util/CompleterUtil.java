@@ -2,7 +2,7 @@
 package de.monticore.ocl.util;
 
 import com.google.common.collect.Iterables;
-import de.monticore.ocl.ocl._symboltable.OCLScope;
+import de.monticore.ocl.ocl._symboltable.IOCLScope;
 import de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.TypeSymbol;
 import de.monticore.symbols.basicsymbols._symboltable.VariableSymbol;
@@ -58,7 +58,7 @@ public class CompleterUtil {
     String typeName = function.getType().getTypeInfo().getName();
     Set<TypeSymbol> typeSymbols = new LinkedHashSet<>();
     for (String fqNameCandidate : calcFQNameCandidates(imports, packageDeclaration, typeName)) {
-      OCLScope scope = (OCLScope) function.getEnclosingScope();
+      IOCLScope scope = (IOCLScope) function.getEnclosingScope();
       typeSymbols.addAll(scope.resolveTypeMany(fqNameCandidate));
       // typeSymbols.addAll(scope.resolveOOTypeMany(fqNameCandidate));
     }
@@ -83,7 +83,7 @@ public class CompleterUtil {
       String typeName = sym.getTypeInfo().getName();
       Set<TypeSymbol> typeSymbols = new LinkedHashSet<>();
       for (String fqNameCandidate : calcFQNameCandidates(imports, packageDeclaration, typeName)) {
-        OCLScope scope = (OCLScope) type.getEnclosingScope();
+        IOCLScope scope = (IOCLScope) type.getEnclosingScope();
         typeSymbols.addAll(scope.resolveTypeMany(fqNameCandidate));
         // typeSymbols.addAll(scope.resolveOOTypeMany(fqNameCandidate));
       }
@@ -110,7 +110,7 @@ public class CompleterUtil {
     String typeName = var.getType().getTypeInfo().getName();
     Set<TypeSymbol> typeSymbols = new LinkedHashSet<>();
     for (String fqNameCandidate : calcFQNameCandidates(imports, packageDeclaration, typeName)) {
-      OCLScope scope = (OCLScope) var.getEnclosingScope();
+      IOCLScope scope = (IOCLScope) var.getEnclosingScope();
       typeSymbols.addAll(scope.resolveTypeMany(fqNameCandidate));
       // typeSymbols.addAll(scope.resolveOOTypeMany(fqNameCandidate));
     }

@@ -214,7 +214,7 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
               ASTOCLCompilationUnit ocl = inputOCLs.get(i);
               OCLSymbols2Json symbols2Json = new OCLSymbols2Json();
               String serialized =
-                  symbols2Json.serialize((OCLArtifactScope) ocl.getEnclosingScope());
+                  symbols2Json.serialize((IOCLArtifactScope) ocl.getEnclosingScope());
 
               String fileName = cmd.getOptionValues("i")[i];
               String symbolFile = FilenameUtils.getName(fileName) + "sym";
@@ -386,7 +386,7 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
    */
   public void storeSymbols(ASTOCLCompilationUnit ast, String filename) {
     OCLSymbols2Json symbols2Json = new OCLSymbols2Json();
-    String serialized = symbols2Json.serialize((OCLArtifactScope) ast.getEnclosingScope());
+    String serialized = symbols2Json.serialize((IOCLArtifactScope) ast.getEnclosingScope());
     FileReaderWriter.storeInFile(Paths.get(filename), serialized);
   }
 

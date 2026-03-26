@@ -11,16 +11,16 @@ import java.util.stream.Collectors;
  * @since 27.01.21
  */
 public class IOCLGlobalScopeHelper {
-  public static List<OCLArtifactScope> getArtifactScopes(IOCLGlobalScope globalScope) {
+  public static List<IOCLArtifactScope> getArtifactScopes(IOCLGlobalScope globalScope) {
     return globalScope.getSubScopes().stream()
         .filter(s -> s instanceof OCLArtifactScope)
-        .map(s -> (OCLArtifactScope) s)
+        .map(s -> (IOCLArtifactScope) s)
         .collect(Collectors.toList());
   }
 
   public static List<ASTOCLCompilationUnit> getCompilationUnits(IOCLGlobalScope globalScope) {
     return getArtifactScopes(globalScope).stream()
-        .map(OCLScope::getAstNode)
+        .map(IOCLScope::getAstNode)
         .map(s -> (ASTOCLCompilationUnit) s)
         .collect(Collectors.toList());
   }

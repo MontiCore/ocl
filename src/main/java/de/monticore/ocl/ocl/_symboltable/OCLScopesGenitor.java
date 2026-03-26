@@ -52,7 +52,7 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
 
     getCurrentScope().get().setAstNode(compilationUnit);
 
-    final OCLArtifactScope enclosingScope = (OCLArtifactScope) compilationUnit.getEnclosingScope();
+    final IOCLArtifactScope enclosingScope = (IOCLArtifactScope) compilationUnit.getEnclosingScope();
     enclosingScope.setImportsList(imports);
     enclosingScope.setPackageName(compilationUnitPackage);
   }
