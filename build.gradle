@@ -31,15 +31,15 @@ ecj {
 /* ============================================================ */
 
 group = 'de.monticore.lang'
-buildDir = "$projectDir/target"
+layout.buildDirectory = layout.projectDirectory.dir("target")
 
 /* ============================================================ */
 /* ======================== Constants ========================= */
 /* ============================================================ */
 
-def grammarDir = "$projectDir/src/main/grammars"
-def reportsDir = "$buildDir/generated-sources/monticore/sourcecode/reports"
-def symbolsDir = "$projectDir/src/main/resources"
+def grammarDir = layout.buildDirectory.dir("src/main/grammars")
+def reportsDir = layout.buildDirectory.dir("generated-sources/monticore/sourcecode/reports")
+def symbolsDir = layout.projectDirectory.dir("src/main/resources")
 
 /* ============================================================ */
 /* ======================= Configuration ====================== */
@@ -48,13 +48,13 @@ def symbolsDir = "$projectDir/src/main/resources"
 sourceSets {
   symbols {
     resources {
-      srcDirs(symbolsDir)
+      srcDirs = [symbolsDir]
       include "**/*.sym"
     }
   }
   grammarsForVariant {
     resources {
-      srcDirs(grammarDir, reportsDir)
+      srcDirs = [grammarDir, reportsDir]
       include("**/*.mc4", "**/*.cd")
     }
   }
@@ -66,15 +66,15 @@ repositories {
   }
 
   maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    url sePublicRepo
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
+    url = sePublicRepo
   }
 
   maven {
-    credentials.username mavenUser
-    credentials.password mavenPassword
-    url sePrivateRepo
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
+    url = sePrivateRepo
   }
 
   mavenCentral()
@@ -91,15 +91,15 @@ googleJavaFormat {
 }
 
 verifyGoogleJavaFormat{
-  ignoreFailures true
+  ignoreFailures = true
   exclude "**"
 }  // do not check format in "build"
 
-task checkfmt(type: com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat) {
+tasks.register('checkfmt', com.github.sherter.googlejavaformatgradleplugin.VerifyGoogleJavaFormat) {
   dependsOn tasks.generateMCGrammars
 }
 
-task fmt {
+tasks.register('fmt') {
   dependsOn tasks.named("googleJavaFormat")
 }
 
@@ -170,10 +170,10 @@ grammarsForVariantJar {
 tasks.processGrammarsForVariantResources.dependsOn(tasks.generateMCGrammars)
 
 // generated java doc contains errors, disable for now
-javadoc.failOnError(false)
+javadoc.failOnError = false
 
 
-task symbolJar(type: Jar) {
+tasks.register('symbolJar', Jar) {
   from sourceSets.symbols.output
   includeEmptyDirs = false
   archiveBaseName = "ocl-library-symbols"
@@ -193,8 +193,8 @@ publishing {
   }
   repositories.maven {
     name = "$SE_Nexus_ID"
-    credentials.username mavenUser
-    credentials.password mavenPassword
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
     url = version.endsWith('SNAPSHOT') ? "$snapshotsRepoUrl" : "$releasesRepoUrl"
   }
 }

@@ -14,7 +14,7 @@ repositories {
   }
 
   maven {
-    url sePublicRepo
+    url = sePublicRepo
   }
 
   mavenCentral()
@@ -75,8 +75,8 @@ gradlePlugin {
 publishing {
   repositories.maven {
     name = "$SE_Nexus_ID"
-    credentials.username mavenUser
-    credentials.password mavenPassword
+    credentials.username = mavenUser
+    credentials.password = mavenPassword
     url = version.endsWith('SNAPSHOT') ? "$snapshotsRepoUrl" : "$releasesRepoUrl"
   }
 }
