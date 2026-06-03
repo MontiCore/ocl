@@ -49,6 +49,13 @@ java {
   }
 }
 
+tasks.withType(JavaCompile).configureEach {
+  options.encoding = 'UTF-8'
+  options.headerOutputDirectory.convention(null)
+  options.deprecation = false
+  options.warnings = false
+}
+
 tasks.test {
 
   // todo: https://git.rwth-aachen.de/monticore/monticore/-/issues/4216
