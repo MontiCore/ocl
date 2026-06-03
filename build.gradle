@@ -6,7 +6,7 @@
 
 buildscript {
   dependencies {
-    classpath 'org.fusesource.jansi:jansi:2.3.2'
+    classpath "org.jline:jansi:$jansi_version"
   }
 }
 
@@ -17,7 +17,7 @@ plugins {
   id 'com.gradleup.shadow' version "$shadow_plugin_version"
   id "io.github.themrmilchmann.ecj" version "0.2.0"
   id 'jacoco'
-  id 'com.adarshr.test-logger' version '2.1.1'
+  id 'com.adarshr.test-logger' version "$test_logger_verion"
   id 'maven-publish'
   id "com.github.sherter.google-java-format" version "0.9"    // Task "verifyGoogleJavaFormat" and "googleJavaFormat"
 }
