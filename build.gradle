@@ -191,8 +191,11 @@ tasks.register('testSourcesJar', Jar) {
 }
 
 artifacts {
-  archives symbolJar
   testSources testSourcesJar
+}
+
+tasks.named("assemble") {
+  dependsOn(symbolJar)
 }
 
 jar.dependsOn(symbolJar)
