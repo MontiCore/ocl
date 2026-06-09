@@ -57,8 +57,8 @@ public abstract class OCLDiffAbstractTest extends OCL2SMTAbstractTest {
     return links.stream()
         .anyMatch(
             x ->
-                x.getLeftReferenceNames().get(0).contains(left)
-                    && x.getRightReferenceNames().get(0).contains(right));
+                x.getLeftReferenceNames().getFirst().contains(left)
+                    && x.getRightReferenceNames().getFirst().contains(right));
   }
 
   protected int countLinks(ASTODArtifact od) {

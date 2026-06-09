@@ -5,10 +5,12 @@ import com.microsoft.z3.Params;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTGenerator;
 import java.io.IOException;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ControlExpressionTest extends CleanExpr2SMTTest {
 
@@ -31,13 +33,13 @@ public class ControlExpressionTest extends CleanExpr2SMTTest {
   @ValueSource(strings = {"ITE_UNSAT1", "ITE_UNSAT2", "Cond_UNSAT"})
   public void testControlExprUNSAT(String value) {
     addConstraint(value);
-    Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
+    assertEquals(Status.UNSATISFIABLE, solver.check());
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"ITE_SAT", "Cond_SAT"})
   public void testControlExprSAT(String value) {
     addConstraint(value);
-    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
+    assertEquals(Status.SATISFIABLE, solver.check());
   }
 }

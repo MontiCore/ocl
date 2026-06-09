@@ -20,6 +20,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import org.junit.jupiter.api.*;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class Evaluation2Test extends OCL2SMTAbstractTest {
 
   private final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt/evaluation2";
@@ -44,7 +46,7 @@ public class Evaluation2Test extends OCL2SMTAbstractTest {
         OCLDiffGenerator.oclWitnessComp(
             oldAst, oldOCl, new LinkedHashSet<>(), new LinkedHashSet<>(), 100, false);
 
-    Assertions.assertNotNull(witness);
+    assertNotNull(witness);
     IOHelper.printOD(witness, Path.of(TARGET_DIR + "/witness/old"));
   }
 
@@ -56,7 +58,7 @@ public class Evaluation2Test extends OCL2SMTAbstractTest {
         OCLDiffGenerator.oclWitnessComp(
             newAst, newOcl, new LinkedHashSet<>(), new LinkedHashSet<>(), 100, false);
 
-    Assertions.assertNotNull(witness);
+    assertNotNull(witness);
     IOHelper.printOD(witness, Path.of(TARGET_DIR + "/witness/new"));
   }
 

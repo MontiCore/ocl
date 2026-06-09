@@ -19,6 +19,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
   @BeforeEach
   public void setUp() {
@@ -31,9 +33,9 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     ASTCDCompilationUnit ast = parseCD("/post-pre-conditions/PrePost.cd");
     OCLHelper.buildPreCD(ast);
     ASTCDClass company = (ASTCDClass) CDHelper.getASTCDType("Company", ast.getCDDefinition());
-    Assertions.assertTrue(containsAttribute(company, OCLHelper.mkPre("name")));
-    Assertions.assertTrue(containsAttribute(company, OCLHelper.mkPre("employees")));
-    Assertions.assertTrue(
+    assertTrue(containsAttribute(company, OCLHelper.mkPre("name")));
+    assertTrue(containsAttribute(company, OCLHelper.mkPre("employees")));
+    assertTrue(
         containsAssoc(
             ast, "Person", OCLHelper.mkPre("person"), "Company", OCLHelper.mkPre("company")));
   }
@@ -45,31 +47,31 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
     posOCl.add(parseOCl("/post-pre-conditions/PrePost.cd", "/post-pre-conditions/Witness.ocl"));
 
     Set<OCLOPWitness> witnessList = OCLDiffGenerator.oclOPWitness(ast, posOCl, false);
-    Assertions.assertEquals(witnessList.size(), 1);
+    assertEquals(1, witnessList.size());
     OCLOPWitness witness = witnessList.iterator().next();
 
     // check preCD
     ASTODNamedObject preObj = getThisObj(witness.getPreOD());
     List<ASTODNamedObject> preLinks = getLinkedObjects(preObj, witness.getPreOD());
 
-    Assertions.assertEquals(1, preLinks.size());
-    Assertions.assertEquals("\"oldCompany\"", getAttribute(preLinks.get(0), "name"));
-    Assertions.assertEquals("4", getAttribute(preLinks.get(0), "employees"));
+    assertEquals(1, preLinks.size());
+    assertEquals("\"oldCompany\"", getAttribute(preLinks.get(0), "name"));
+    assertEquals("4", getAttribute(preLinks.get(0), "employees"));
     // int preAge = Integer.parseInt(getAttribute(preObj, "age"));
-    // Assertions.assertTrue(preAge >= 18);
+    // assertTrue(preAge >= 18);
 
     // CheckPostCD
     ASTODNamedObject postObj = getThisObj(witness.getPostOD());
     List<ASTODNamedObject> postLinks = getLinkedObjects(postObj, witness.getPostOD());
 
-    Assertions.assertEquals(1, postLinks.size());
-    Assertions.assertEquals("\"newCompany\"", getAttribute(postLinks.get(0), "name"));
-    Assertions.assertEquals("1", getAttribute(postLinks.get(0), "employees"));
+    assertEquals(1, postLinks.size());
+    assertEquals("\"newCompany\"", getAttribute(postLinks.get(0), "name"));
+    assertEquals("1", getAttribute(postLinks.get(0), "employees"));
     // int postAge = Integer.parseInt(getAttribute(preObj, "age"));
-    // Assertions.assertTrue(postAge >= 18);
+    // assertTrue(postAge >= 18);
 
     // checkDiff
-    Assertions.assertEquals(
+    assertEquals(
         "3", getAttribute(getObject(witness.getPostOD(), preLinks.get(0).getName()), "employees"));
     Path of = Path.of(TARGET_DIR + "OPConstraintWitness");
     IOHelper.printOD(witness.getPostOD(), of);
@@ -90,18 +92,18 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
 
     OCLOPDiffResult diff = OCLDiffGenerator.oclOPDiffV1(ast, oldOCL, newOCL, method, false);
 
-    Assertions.assertNotNull(diff);
+    assertNotNull(diff);
     ASTODNamedObject preThisObj = getThisObj(diff.getDiffWitness().iterator().next().getPreOD());
     ASTODNamedObject postThisObj = getThisObj(diff.getDiffWitness().iterator().next().getPostOD());
 
     // check if the post-condition holds
     double preSalary = Integer.parseInt(getAttribute(preThisObj, "salary"));
     double postSalary = Integer.parseInt(getAttribute(postThisObj, "salary"));
-    Assertions.assertEquals(preSalary + 100, postSalary);
+    assertEquals(preSalary + 100, postSalary);
 
     // check if the invariant hold
     // double postAge = Integer.parseInt(getAttribute(postThisObj, "age"));
-    // Assertions.assertTrue(postAge >= 18);
+    // assertTrue(postAge >= 18);
     // check if the diff is correct (result = false)
     String result =
         diff.getDiffWitness()
@@ -112,7 +114,7 @@ public class OCLDIffOPConstraintTest extends OCLDiffAbstractTest {
             .getStereotype()
             .getValue("result");
 
-    Assertions.assertEquals(result, "false");
+    assertEquals(result, "false");
 
     IOHelper.printOPDiff(diff, Path.of(TARGET_DIR + "/OpConstraintDiff"));
   }

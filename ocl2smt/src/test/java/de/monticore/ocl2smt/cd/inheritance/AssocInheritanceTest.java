@@ -7,11 +7,13 @@ import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceStrategy;
 import de.monticore.ocl2smt.ocl2smt.CleanExpr2SMTTest;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import java.io.IOException;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AssocInheritanceTest extends CleanExpr2SMTTest {
 
@@ -36,7 +38,7 @@ public class AssocInheritanceTest extends CleanExpr2SMTTest {
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
 
     String outDir = "/inheritance/associations";
-    // Assertions.assertTrue(testInv("Assoc1",outDir));
-    Assertions.assertTrue(testInv("Assoc2", outDir));
+    // assertTrue(testInv("Assoc1",outDir));
+    assertTrue(testInv("Assoc2", outDir));
   }
 }

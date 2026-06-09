@@ -4,10 +4,12 @@ package de.monticore.ocl2smt.ocl2smt;
 import com.microsoft.z3.Status;
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import java.io.IOException;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class QuantifiedExpressionTest extends CleanExpr2SMTTest {
 
@@ -27,7 +29,7 @@ public class QuantifiedExpressionTest extends CleanExpr2SMTTest {
       })
   public void TestQuantifiedExpressionsSat(String value) {
     addConstraint(value);
-    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
+    assertEquals(Status.SATISFIABLE, solver.check());
   }
 
   @ParameterizedTest
@@ -44,6 +46,6 @@ public class QuantifiedExpressionTest extends CleanExpr2SMTTest {
       })
   public void TestQuantifiedExpressionsUNSAT(String value) {
     addConstraint(value);
-    Assertions.assertEquals(solver.check(), Status.UNSATISFIABLE);
+    assertEquals(Status.UNSATISFIABLE, solver.check());
   }
 }

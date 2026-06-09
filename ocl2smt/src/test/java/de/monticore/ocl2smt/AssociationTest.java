@@ -3,6 +3,7 @@ package de.monticore.ocl2smt;
 import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.*;
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.ME;
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.SE;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
@@ -12,7 +13,7 @@ import de.monticore.ocl2smt.ocl2smt.ExpressionAbstractTest;
 import de.monticore.ocl2smt.ocl2smt.OCL2SMTGenerator;
 import java.io.IOException;
 import java.util.Set;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,17 +40,17 @@ public class AssociationTest extends ExpressionAbstractTest {
 
     String outDir = "association/sat" + cs.name() + "_" + is.name() + "_" + as.name();
 
-    Assertions.assertTrue(testInv("Assoc1", outDir));
-    Assertions.assertTrue(testInv("Assoc2", outDir));
-    Assertions.assertTrue(testInv("Assoc3", outDir));
-    Assertions.assertTrue(testInv("Assoc4", outDir));
-    Assertions.assertTrue(testInv("Assoc5", outDir));
-    Assertions.assertTrue(testInv("Assoc6", outDir));
-    Assertions.assertTrue(testInv("Assoc7", outDir));
-    Assertions.assertTrue(testInv("Assoc8", outDir));
-    Assertions.assertTrue(testInv("Assoc11", outDir));
-    Assertions.assertTrue(testInv("Assoc13", outDir));
-    Assertions.assertTrue(testInv("Assoc20", outDir));
+    assertTrue(testInv("Assoc1", outDir));
+    assertTrue(testInv("Assoc2", outDir));
+    assertTrue(testInv("Assoc3", outDir));
+    assertTrue(testInv("Assoc4", outDir));
+    assertTrue(testInv("Assoc5", outDir));
+    assertTrue(testInv("Assoc6", outDir));
+    assertTrue(testInv("Assoc7", outDir));
+    assertTrue(testInv("Assoc8", outDir));
+    assertTrue(testInv("Assoc11", outDir));
+    assertTrue(testInv("Assoc13", outDir));
+    assertTrue(testInv("Assoc20", outDir));
   }
 
   @ParameterizedTest
@@ -63,15 +64,15 @@ public class AssociationTest extends ExpressionAbstractTest {
 
     String outDir = "association/unsat" + cs.name() + "_" + is.name() + "_" + as.name();
 
-    // Assertions.assertTrue(testUnsatInv(Set.of("Assoc9"), outDir)); todo  is true/false
+    // assertTrue(testUnsatInv(Set.of("Assoc9"), outDir)); todo  is true/false
     // depending// on the strategy.
-    Assertions.assertTrue(testUnsatInv(Set.of("Assoc12"), outDir));
-    Assertions.assertTrue(testUnsatInv(Set.of("Assoc14"), outDir));
-    Assertions.assertTrue(testUnsatInv(Set.of("Assoc15"), outDir));
-    Assertions.assertTrue(testUnsatInv(Set.of("Assoc17"), outDir));
-    Assertions.assertTrue(testUnsatInv(Set.of("Assoc18"), outDir));
-    Assertions.assertTrue(testUnsatInv(Set.of("Assoc19"), outDir));
+    assertTrue(testUnsatInv(Set.of("Assoc12"), outDir));
+    assertTrue(testUnsatInv(Set.of("Assoc14"), outDir));
+    assertTrue(testUnsatInv(Set.of("Assoc15"), outDir));
+    assertTrue(testUnsatInv(Set.of("Assoc17"), outDir));
+    assertTrue(testUnsatInv(Set.of("Assoc18"), outDir));
+    assertTrue(testUnsatInv(Set.of("Assoc19"), outDir));
     // disabled, as expression is not supported
-    // Assertions.assertTrue(testUnsatInv(Set.of("Assoc22"), outDir));
+    // assertTrue(testUnsatInv(Set.of("Assoc22"), outDir));
   }
 }

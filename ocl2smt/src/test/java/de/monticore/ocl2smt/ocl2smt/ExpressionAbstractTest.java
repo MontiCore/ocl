@@ -20,6 +20,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public abstract class ExpressionAbstractTest extends OCL2SMTAbstractTest {
   protected static final String RELATIVE_MODEL_PATH = "src/test/resources/de/monticore/ocl2smt";
   protected static final String RELATIVE_TARGET_PATH =
@@ -67,7 +69,7 @@ public abstract class ExpressionAbstractTest extends OCL2SMTAbstractTest {
 
     Optional<ASTODArtifact> od =
         ocl2SMTGenerator.getCD2SMTGenerator().smt2od(solver.getModel(), false, invName);
-    org.junit.jupiter.api.Assertions.assertTrue(od.isPresent());
+    assertTrue(od.isPresent());
     IOHelper.printOD(od.get(), Path.of(RELATIVE_TARGET_PATH + directory));
     return res == Status.SATISFIABLE;
   }

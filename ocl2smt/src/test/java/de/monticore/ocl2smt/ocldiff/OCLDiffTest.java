@@ -1,10 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 package de.monticore.ocl2smt.ocldiff;
 
-import static org.gradle.internal.impldep.org.testng.Assert.assertEquals;
-import static org.gradle.internal.impldep.org.testng.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
@@ -26,6 +22,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class OCLDiffTest extends OCLDiffAbstractTest {
   private final String TARGET_DIR = "target/generated-test/oclDiff/";
@@ -69,8 +67,8 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
             "difWithOds/NegExample.od");
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiffOneCDWithODs"));
     assertEquals(1, diff.getDiffWitness().size());
-    assertEquals(
-        diff.getDiffWitness().iterator().next().getObjectDiagram().getName(), "EndAfterStart");
+    assertEquals("EndAfterStart",
+        diff.getDiffWitness().iterator().next().getObjectDiagram().getName());
     assertTrue(checkLink("obj_object_", "obj_Names_", diff.getUnSatCore()));
   }
 
@@ -88,7 +86,7 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
             "2CDDiff/nodiff/New.ocl");
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiff2CD_NoDiff"));
     assertTrue(diff.getDiffWitness().isEmpty());
-    assertEquals(countLinks(diff.getUnSatCore()), 3);
+    assertEquals(3, countLinks(diff.getUnSatCore()));
     assertTrue(checkLink("obj_Pos1", "obj_Cardinality_right", diff.getUnSatCore()));
     assertTrue(checkLink("obj_Pos2", "obj_Cardinality_right", diff.getUnSatCore()));
     assertTrue(checkLink("obj_Pos3", "obj_Cardinality_left", diff.getUnSatCore()));
@@ -107,10 +105,10 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
             "2CDDiff/diff/Old.ocl",
             "2CDDiff/diff/New.ocl");
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiff2CD_diff"));
-    assertEquals(diff.getDiffWitness().size(), 1);
-    assertEquals(
-        diff.getDiffWitness().iterator().next().getObjectDiagram().getName(), "Cardinality_right");
-    assertEquals(countLinks(diff.getUnSatCore()), 1);
+    assertEquals(1, diff.getDiffWitness().size());
+    assertEquals("Cardinality_right",
+        diff.getDiffWitness().iterator().next().getObjectDiagram().getName());
+    assertEquals(1, countLinks(diff.getUnSatCore()));
     assertTrue(checkLink("obj_Pos1", "obj_Cardinality_left", diff.getUnSatCore()));
   }
 
@@ -127,8 +125,8 @@ public class OCLDiffTest extends OCLDiffAbstractTest {
             "2CDDiff/cddiff/Old.ocl",
             "2CDDiff/cddiff/New.ocl");
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "OclDiff2CD_CDDiff"));
-    assertTrue(diff.getUnSatCore() == null);
-    assertTrue(diff.getDiffWitness().size() >= 1);
+    assertNull(diff.getUnSatCore());
+    assertFalse(diff.getDiffWitness().isEmpty());
   }
 
   @ParameterizedTest

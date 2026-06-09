@@ -4,9 +4,7 @@ import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy;
 import de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData;
-import de.monticore.cd4code.CD4CodeMill;
 import de.monticore.cdbasis._ast.ASTCDCompilationUnit;
-import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.ocldiff.OCLDiffAbstractTest;
@@ -26,6 +24,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PerformanceTest extends OCLDiffAbstractTest {
   private List<ASTCDCompilationUnit> ast;
@@ -48,7 +49,7 @@ public class PerformanceTest extends OCLDiffAbstractTest {
 
     // build the CD
     Optional<ASTCDCompilationUnit> cd = cdBuilder.buildCD(starSize,chainSize);
-    Assertions.assertTrue(cd.isPresent());
+    assertTrue(cd.isPresent());
 
     try {
       OCL_Loader.loadAndCheckCD(cd.get());
@@ -56,11 +57,11 @@ public class PerformanceTest extends OCLDiffAbstractTest {
       Log.error("Unable to parse CD");
       Assertions.fail();
     }
-    Assertions.assertFalse(cd.get().getCDDefinition().getCDClassesList().isEmpty());
+    assertFalse(cd.get().getCDDefinition().getCDClassesList().isEmpty());
 
     // build the first OCL model
     Optional<ASTOCLCompilationUnit> ocl = oclBuilder.buildOCL(starSize,chainSize,false);
-    Assertions.assertTrue(ocl.isPresent());
+    assertTrue(ocl.isPresent());
 
     try {
       OCL_Loader.loadAndCheckOCL(ocl.get(),cd.get());
@@ -71,7 +72,7 @@ public class PerformanceTest extends OCLDiffAbstractTest {
 
     // build the second OCL model
     Optional<ASTOCLCompilationUnit> ocl2 = oclBuilder.buildOCL(starSize,chainSize,true);
-    Assertions.assertTrue(ocl2.isPresent());
+    assertTrue(ocl2.isPresent());
 
     try {
       OCL_Loader.loadAndCheckOCL(ocl2.get(),cd.get());
