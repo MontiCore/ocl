@@ -25,8 +25,8 @@ dependencies {
 
   implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
   implementation "de.monticore:monticore-grammar:$mc_version"
-  implementation group: 'de.monticore', name: 'monticore-runtime', version: mc_version
-  implementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
+  implementation "de.monticore:monticore-runtime:$mc_version"
+  implementation "de.monticore.lang:cd4analysis:$mc_version"
   implementation "de.monticore.lang:cd4analysis:$mc_version:cd2smt"
   implementation "de.monticore.lang:cd4analysis:$mc_version:cddiff"
   implementation "de.monticore.lang:od:$mc_version"

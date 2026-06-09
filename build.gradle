@@ -83,6 +83,10 @@ repositories {
 
 configurations {
     grammar
+    testSources {
+      canBeConsumed = true
+      canBeResolved = false
+    }
 }
 
 
@@ -179,11 +183,20 @@ tasks.register('symbolJar', Jar) {
   archiveBaseName = "ocl-library-symbols"
 }
 
+tasks.register('testSourcesJar', Jar) {
+  from sourceSets.test.output + sourceSets.test.allSource + sourceSets.main.allSource
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+  includeEmptyDirs = false
+  archiveBaseName ="ocl-test-sources"
+}
+
 artifacts {
   archives symbolJar
+  testSources testSourcesJar
 }
 
 jar.dependsOn(symbolJar)
+test.finalizedBy(testSourcesJar)
 
 publishing {
   publications {
