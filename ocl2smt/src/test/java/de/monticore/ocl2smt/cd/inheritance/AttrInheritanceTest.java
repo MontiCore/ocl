@@ -2,6 +2,7 @@ package de.monticore.ocl2smt.cd.inheritance;
 
 import static de.monticore.cd2smt.cd2smtGenerator.classStrategies.ClassStrategy.Strategy.SS;
 import static de.monticore.cd2smt.cd2smtGenerator.inhrStrategies.InheritanceData.Strategy.ME;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import de.monticore.cd2smt.cd2smtGenerator.CD2SMTMill;
 import de.monticore.cd2smt.cd2smtGenerator.assocStrategies.AssociationStrategy;
@@ -27,7 +28,7 @@ public class AttrInheritanceTest extends ExpressionAbstractTest {
   @MethodSource("cd2smtStrategies")
   public void testAttributeInherAllHierarchies(
       ClassStrategy.Strategy cs, InheritanceStrategy.Strategy is, AssociationStrategy.Strategy as) {
-    Assumptions.assumeFalse(cs == SS && is == ME);
+    assumeFalse(cs == SS && is == ME);
     CD2SMTMill.init(cs, is, as);
     ocl2SMTGenerator = new OCL2SMTGenerator(cdAST, buildContext());
     testInv("ALL", "/inheritance/attributes");

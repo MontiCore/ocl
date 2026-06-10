@@ -5,9 +5,11 @@ import com.microsoft.z3.BoolExpr;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CommonExpressionTest extends ExpressionAbstractTest {
   protected static List<BoolExpr> res = new ArrayList<>();
@@ -23,34 +25,34 @@ public class CommonExpressionTest extends ExpressionAbstractTest {
 
   @Test
   public void testComparisonConverter() {
-    Assertions.assertEquals(res.get(12).getSExpr(), "false");
-    Assertions.assertEquals(res.get(13).getSExpr(), "true");
-    Assertions.assertEquals(res.get(14).getSExpr(), "false");
-    Assertions.assertEquals(res.get(15).getSExpr(), "true");
-    Assertions.assertEquals(res.get(16).getSExpr(), "false");
-    Assertions.assertEquals(res.get(17).getSExpr(), "true");
+    assertEquals("false", res.get(12).getSExpr());
+    assertEquals("true", res.get(13).getSExpr());
+    assertEquals("false", res.get(14).getSExpr());
+    assertEquals("true", res.get(15).getSExpr());
+    assertEquals("false", res.get(16).getSExpr());
+    assertEquals("true", res.get(17).getSExpr());
   }
 
   @Test
   public void testArithmeticExpressionConverter() {
-    Assertions.assertEquals(res.get(8).getSExpr(), "true");
-    Assertions.assertEquals(res.get(9).getSExpr(), "true");
-    Assertions.assertEquals(res.get(10).getSExpr(), "true");
-    Assertions.assertEquals(res.get(11).getSExpr(), "true");
-    Assertions.assertEquals(res.get(18).getSExpr(), "true");
+    assertEquals("true", res.get(8).getSExpr());
+    assertEquals("true", res.get(9).getSExpr());
+    assertEquals("true", res.get(10).getSExpr());
+    assertEquals("true", res.get(11).getSExpr());
+    assertEquals("true", res.get(18).getSExpr());
   }
 
   @Test
   public void testLogicExpressionConverter() {
-    Assertions.assertEquals(
+    assertEquals(
         res.get(0), ocl2SMTGenerator.getCD2SMTGenerator().getContext().mkBool(true));
-    Assertions.assertEquals(
+    assertEquals(
         res.get(1), ocl2SMTGenerator.getCD2SMTGenerator().getContext().mkFalse());
-    Assertions.assertEquals(res.get(2).getSExpr(), "false");
-    Assertions.assertEquals(res.get(3).getSExpr(), "true");
-    Assertions.assertEquals(res.get(4).getSExpr(), "false");
-    Assertions.assertEquals(res.get(5).getSExpr(), "false");
-    Assertions.assertEquals(res.get(6).getSExpr(), "true");
-    Assertions.assertEquals(res.get(7).getSExpr(), "true");
+    assertEquals("false", res.get(2).getSExpr());
+    assertEquals("true", res.get(3).getSExpr());
+    assertEquals("false", res.get(4).getSExpr());
+    assertEquals("false", res.get(5).getSExpr());
+    assertEquals("true", res.get(6).getSExpr());
+    assertEquals("true", res.get(7).getSExpr());
   }
 }

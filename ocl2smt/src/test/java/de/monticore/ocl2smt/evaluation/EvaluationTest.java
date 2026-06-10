@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.*;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 public class EvaluationTest extends OCLDiffAbstractTest {
   private List<ASTCDCompilationUnit> ast;
   private List<ASTOCLCompilationUnit> ocl;
@@ -134,7 +136,7 @@ public class EvaluationTest extends OCLDiffAbstractTest {
 
     long start = System.currentTimeMillis();
 
-    Assertions.assertNotNull(
+    assertNotNull(
         IOHelper.getMethodSignature(Set.of(ocl.get(6)), "JavaSourceFile.compile"));
 
     res =
@@ -152,7 +154,7 @@ public class EvaluationTest extends OCLDiffAbstractTest {
         "| duration: " + (double) (System.currentTimeMillis() - start) / 1000,
         "Diff( V" + 5 + " ,V" + (6) + ")");
 
-    Assertions.assertNotNull(
+    assertNotNull(
         IOHelper.getMethodSignature(Set.of(ocl.get(5)), "JavaSourceFile.compile"));
 
     res =

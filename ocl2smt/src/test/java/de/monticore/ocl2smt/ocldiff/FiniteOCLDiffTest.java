@@ -9,10 +9,11 @@ import de.monticore.ocl2smt.helpers.IOHelper;
 import de.monticore.ocl2smt.ocldiff.invariantDiff.OCLInvDiffResult;
 import java.io.IOException;
 import java.nio.file.Path;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FiniteOCLDiffTest extends OCLDiffAbstractTest {
   private final String TARGET_DIR = "target/generated-test/oclDiff/";
@@ -32,6 +33,6 @@ public class FiniteOCLDiffTest extends OCLDiffAbstractTest {
         AssociationStrategy.Strategy.DEFAULT);
     OCLInvDiffResult diff = computeDiffOneCDFinite("MinAuction.cd", "Old.ocl", "new.ocl", 10);
     IOHelper.printInvDiffResult(diff, Path.of(TARGET_DIR + "finite/diffOneCD"));
-    Assertions.assertEquals(4, diff.getDiffWitness().size());
+    assertEquals(4, diff.getDiffWitness().size());
   }
 }

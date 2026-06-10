@@ -20,9 +20,10 @@ import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TypeIfMcExprConverterTest extends ExpressionAbstractTest {
   TypeIfMcExprConverter exprConverter;
@@ -42,21 +43,21 @@ public class TypeIfMcExprConverterTest extends ExpressionAbstractTest {
   @Test
   public void testTypeIfExpressionSat1() {
     Optional<Model> model = checkExpr(1, "Auto", Status.SATISFIABLE);
-    Assertions.assertTrue(model.isPresent());
+    assertTrue(model.isPresent());
     buildAndPrintOD(exprConverter, model.get(), "OD1");
   }
 
   @Test
   public void testTypeIfExpressionSat2() {
     Optional<Model> model = checkExpr(2, "Auto", Status.SATISFIABLE);
-    Assertions.assertTrue(model.isPresent());
+    assertTrue(model.isPresent());
     buildAndPrintOD(exprConverter, model.get(), "OD2");
   }
 
   @Test
   public void testTypeIfExpressionUnsat() {
     Optional<Model> model = checkExpr(3, "Auto", Status.UNSATISFIABLE);
-    Assertions.assertFalse(model.isPresent());
+    assertFalse(model.isPresent());
   }
 
   private Optional<Model> checkExpr(int invPos, String varType, Status result) {
@@ -69,7 +70,7 @@ public class TypeIfMcExprConverterTest extends ExpressionAbstractTest {
     Z3ExprAdapter expr =
         exprConverter.convertExpr(getExpression(invPos), z -> this.buildMCType(varType));
 
-    Assertions.assertTrue(expr.isBoolExpr()); // a.speed > a.speed ;
+    assertTrue(expr.isBoolExpr()); // a.speed > a.speed ;
     Log.println(expr.toString());
     solver = ctx.mkSolver();
     if (CD2SMTGenerator.isSeedEnabled()) {
@@ -82,7 +83,7 @@ public class TypeIfMcExprConverterTest extends ExpressionAbstractTest {
     expr.getGenConstraint().forEach(c -> solver.add((BoolExpr) c.getExpr()));
 
     Status solverResult = solver.check();
-    Assertions.assertEquals(solverResult, result);
+    assertEquals(solverResult, result);
 
     return Optional.ofNullable(solverResult == Status.SATISFIABLE ? solver.getModel() : null);
   }
@@ -90,7 +91,7 @@ public class TypeIfMcExprConverterTest extends ExpressionAbstractTest {
   private void buildAndPrintOD(TypeIfMcExprConverter exprConverter, Model model, String odName) {
 
     Optional<ASTODArtifact> od = exprConverter.buildOD(model, odName);
-    Assertions.assertTrue(od.isPresent());
+    assertTrue(od.isPresent());
     IOHelper.printOD(od.get(), Path.of("target/mc2smt/"));
   }
 

@@ -1,7 +1,6 @@
 /* (c) https://github.com/MontiCore/monticore */
 plugins {
     id 'java-library'
-    id 'java-gradle-plugin'
     id 'jacoco'
     id 'maven-publish'
 }
@@ -21,31 +20,36 @@ repositories {
 }
 
 dependencies {
-    api(project(':'))
+  api(project(':'))
 
-    implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
-    implementation "de.monticore:monticore-grammar:$mc_version"
-    implementation group: 'de.monticore', name: 'monticore-runtime', version: mc_version
-    implementation group: 'de.monticore.lang', name: 'cd4analysis', version: mc_version
-    implementation "de.monticore.lang:cd4analysis:$mc_version:cddiff"
+  implementation "de.se_rwth.commons:se-commons-logging:$se_commons_version"
+  implementation "de.monticore:monticore-grammar:$mc_version"
+  implementation "de.monticore:monticore-runtime:$mc_version"
+  implementation "de.monticore.lang:cd4analysis:$mc_version"
+  implementation "de.monticore.lang:cd4analysis:$mc_version:cddiff"
 
-    implementation "org.apache.commons:commons-lang3:$commons_lang3_version"
+  implementation "org.apache.commons:commons-lang3:$commons_lang3_version"
 
-    testImplementation "org.assertj:assertj-core:$assertj_version"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
-    testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_jupiter_version"
+  testImplementation "org.assertj:assertj-core:$assertj_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
+  testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
+  testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version"
+  testRuntimeOnly "org.junit.platform:junit-platform-launcher:$junit_jupiter_version"
 
-    testImplementation(project(':').sourceSets.test.output)
-    testImplementation project(path: ':')
+  testImplementation project(path: ':', configuration: "testSources")
 }
-
 
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.headerOutputDirectory.convention(null)
+    options.deprecation = false
+    options.warnings = false
 }
 
 tasks.test {

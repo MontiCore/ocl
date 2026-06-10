@@ -1,6 +1,8 @@
 package de.monticore.od2smt;
 
 import static de.monticore.od2smt.OD2SMTUtils.getAttributeValue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.microsoft.z3.*;
 import de.monticore.cd2smt.Helper.IdentifiableBoolExpr;
@@ -25,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -51,11 +52,11 @@ class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
     computeWitness();
     ASTODNamedObject person_0 = (ASTODNamedObject) convertObject("person_0", "Person");
 
-    Assertions.assertEquals("10", getAttributeValue(person_0, "age"));
-    Assertions.assertEquals("\"Naruto\"", getAttributeValue(person_0, "name"));
-    Assertions.assertEquals("true", getAttributeValue(person_0, "isAdult"));
-    Assertions.assertEquals("\"2023-01-05 15:30:00\"", getAttributeValue(person_0, "birthDate"));
-    Assertions.assertEquals("DE", getAttributeValue(person_0, "country"));
+    assertEquals("10", getAttributeValue(person_0, "age"));
+    assertEquals("\"Naruto\"", getAttributeValue(person_0, "name"));
+    assertEquals("true", getAttributeValue(person_0, "isAdult"));
+    assertEquals("\"2023-01-05 15:30:00\"", getAttributeValue(person_0, "birthDate"));
+    assertEquals("DE", getAttributeValue(person_0, "country"));
   }
 
   @ParameterizedTest
@@ -66,7 +67,7 @@ class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
     computeWitness();
     ASTODNamedObject person_0 = (ASTODNamedObject) convertObject("person_0", "Person");
     ASTODNamedObject auction_0 = (ASTODNamedObject) convertObject("auction_0", "Auction");
-    Assertions.assertTrue(checkLink(auction_0.getName(), person_0.getName(), witness));
+    assertTrue(checkLink(auction_0.getName(), person_0.getName(), witness));
   }
 
   public void computeWitness() {
@@ -89,12 +90,12 @@ class OD2SMTGeneratorTest extends OCLDiffAbstractTest {
 
     // check Sat
     Solver solver = od2SMTGenerator.cd2SMTGenerator.makeSolver(solverConstraints);
-    Assertions.assertEquals(solver.check(), Status.SATISFIABLE);
+    assertEquals(Status.SATISFIABLE, solver.check());
     model = solver.getModel();
 
     // build od
     Optional<ASTODArtifact> newOd = od2SMTGenerator.cd2SMTGenerator.smt2od(model, false, "Auction");
-    Assertions.assertTrue(newOd.isPresent());
+    assertTrue(newOd.isPresent());
     witness = newOd.get();
 
     // print result
