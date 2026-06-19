@@ -66,6 +66,8 @@ public class OCL2JavaGeneratorTest extends AbstractTest {
             .toFile();
     ASTOCLCompilationUnit ast = loadASTWithSymbols(input);
 
+    DomainTypeUtil.getInstance().init(List.of());
+    
     // When
     OCL2JavaGenerator.generate(ast, target.toString());
 
