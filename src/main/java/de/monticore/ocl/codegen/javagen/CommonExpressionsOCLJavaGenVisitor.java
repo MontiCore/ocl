@@ -283,7 +283,7 @@ public class CommonExpressionsOCLJavaGenVisitor extends CommonExpressionsJavaGen
       if (BasicSymbolsMill.typeDispatcher().isBasicSymbolsVariable(sourceSymbol)) {
         VariableSymbol varSymbol = BasicSymbolsMill.typeDispatcher().asBasicSymbolsVariable(sourceSymbol);
         varType = varSymbol.getType();
-        isCollectionType = MCCollectionSymTypeRelations.isMCCollection(varType);
+        isCollectionType = MCCollectionSymTypeRelations.isMCCollection(varType) && !MCCollectionSymTypeRelations.isOptional(varType);
         isDomainType = DomainTypeUtil.getInstance().isDomainType(varType);
         isBoolean = SymTypeRelations.isBoolean(varType);
       }

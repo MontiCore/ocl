@@ -27,6 +27,7 @@ public class FieldAccessInfo {
 
     boolean isCollection =
         MCCollectionSymTypeRelations.isMCCollection(ownerType)
+            && !MCCollectionSymTypeRelations.isOptional(ownerType)
             && ownerType.isGenericType()
             && !ownerType.asGenericType().getArgumentList().isEmpty();
 

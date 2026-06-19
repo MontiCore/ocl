@@ -45,6 +45,6 @@ public class OCL2JavaEqualityOperationHandler extends JavaEqualityOperationHandl
   }
 
   protected boolean isGenericButNotCollection(SymTypeExpression t){
-    return t.isGenericType() && !MCCollectionSymTypeRelations.isMCCollection(t);
+    return t.isGenericType() && !(MCCollectionSymTypeRelations.isMCCollection(t) && !MCCollectionSymTypeRelations.isOptional(t));
   }
 }
