@@ -23,10 +23,12 @@ public class ASTOCLConstructorSignature extends ASTOCLConstructorSignatureTOP {
     if (returnType.isEmpty()) {
       Log.error("0x0C199 constructor name '" + this.getName()
           + "' has to reference a type, but could not be found.");
+      return new OCLOperationData(SymTypeExpressionFactory.createObscureType(), fqn, params);
+      
     }
     else {
       fqn = returnType.get().getTypeInfo().getFullName();
     }
-    return new OCLOperationData(SymTypeExpressionFactory.createObscureType(), fqn, params);
+    return new OCLOperationData(returnType.get(), fqn, params);
   }
 }
