@@ -1,3 +1,5 @@
+// (c) https://github.com/MontiCore/monticore
+
 package de.monticore.ocl.ocl._symboltable;
 
 import de.monticore.types.check.SymTypeExpression;
