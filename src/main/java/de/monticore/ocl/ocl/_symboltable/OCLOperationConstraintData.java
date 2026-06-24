@@ -4,7 +4,7 @@ import de.monticore.types.check.SymTypeExpression;
 
 import java.util.List;
 
-public class OCLOperationData {
+public class OCLOperationConstraintData {
   
   protected SymTypeExpression returnType;
   protected String fullyQualifiedName;
@@ -12,7 +12,7 @@ public class OCLOperationData {
   protected boolean hasPre;
   protected boolean hasPost;
   
-  public OCLOperationData(SymTypeExpression returnType, String fullyQualifiedName,
+  public OCLOperationConstraintData(SymTypeExpression returnType, String fullyQualifiedName,
       List<SymTypeExpression> parameters) {
     this.returnType = returnType;
     this.fullyQualifiedName = fullyQualifiedName;

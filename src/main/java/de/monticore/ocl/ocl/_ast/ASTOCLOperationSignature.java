@@ -1,8 +1,8 @@
 package de.monticore.ocl.ocl._ast;
 
-import de.monticore.ocl.ocl._symboltable.OCLOperationData;
+import de.monticore.ocl.ocl._symboltable.OCLOperationConstraintData;
 
 public interface ASTOCLOperationSignature extends ASTOCLOperationSignatureTOP {
   
-  OCLOperationData getOperationData();
+  OCLOperationConstraintData getOperationData();
 }

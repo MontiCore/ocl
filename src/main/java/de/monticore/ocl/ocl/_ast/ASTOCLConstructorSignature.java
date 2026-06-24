@@ -1,6 +1,6 @@
 package de.monticore.ocl.ocl._ast;
 
-import de.monticore.ocl.ocl._symboltable.OCLOperationData;
+import de.monticore.ocl.ocl._symboltable.OCLOperationConstraintData;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeExpressionFactory;
 import de.monticore.types3.TypeCheck3;
@@ -13,7 +13,7 @@ import java.util.Optional;
 public class ASTOCLConstructorSignature extends ASTOCLConstructorSignatureTOP {
   
   @Override
-  public OCLOperationData getOperationData() {
+  public OCLOperationConstraintData getOperationData() {
     List<SymTypeExpression> params =
         this.oCLParamDeclarations.stream().map(x -> TypeCheck3.symTypeFromAST(x.getMCType()))
             .toList();
@@ -23,12 +23,12 @@ public class ASTOCLConstructorSignature extends ASTOCLConstructorSignatureTOP {
     if (returnType.isEmpty()) {
       Log.error("0x0C199 constructor name '" + this.getName()
           + "' has to reference a type, but could not be found.");
-      return new OCLOperationData(SymTypeExpressionFactory.createObscureType(), fqn, params);
+      return new OCLOperationConstraintData(SymTypeExpressionFactory.createObscureType(), fqn, params);
       
     }
     else {
       fqn = returnType.get().getTypeInfo().getFullName();
     }
-    return new OCLOperationData(returnType.get(), fqn, params);
+    return new OCLOperationConstraintData(returnType.get(), fqn, params);
   }
 }

@@ -46,7 +46,7 @@ grammar OCL extends UMLStereotype,
   ;
 
   symbolrule OCLArtifact =
-    operations: OCLOperationData*
+    operations: OCLOperationConstraintData*
   ;
 
   /**

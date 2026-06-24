@@ -1,6 +1,6 @@
 package de.monticore.ocl.ocl._ast;
 
-import de.monticore.ocl.ocl._symboltable.OCLOperationData;
+import de.monticore.ocl.ocl._symboltable.OCLOperationConstraintData;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.TypeCheck3;
 import de.monticore.types3.util.WithinScopeBasicSymbolsResolver;
@@ -12,7 +12,7 @@ import java.util.Optional;
 public class ASTOCLMethodSignature extends ASTOCLMethodSignatureTOP {
   
   @Override
-  public OCLOperationData getOperationData() {
+  public OCLOperationConstraintData getOperationData() {
     List<SymTypeExpression> params =
         this.oCLParamDeclarations.stream().map(x -> TypeCheck3.symTypeFromAST(x.getMCType()))
             .toList();
@@ -24,8 +24,8 @@ public class ASTOCLMethodSignature extends ASTOCLMethodSignatureTOP {
         WithinScopeBasicSymbolsResolver.resolveType(this.getEnclosingScope(), qualifier);
     if (resolvedClass.isPresent()) {
       String fqn = resolvedClass.get().getTypeInfo().getFullName() + "." + methodName;
-      return new OCLOperationData(returnType, fqn, params);
+      return new OCLOperationConstraintData(returnType, fqn, params);
     }
-    return new OCLOperationData(returnType, this.getMethodName().getQName(), params);
+    return new OCLOperationConstraintData(returnType, this.getMethodName().getQName(), params);
   }
 }

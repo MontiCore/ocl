@@ -7,7 +7,6 @@ import com.google.common.base.Preconditions;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.*;
 import de.monticore.symboltable.ImportStatement;
-import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
@@ -112,7 +111,7 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
     if (node.getEnclosingScope() instanceof IOCLArtifactScope artifactScope) {
       if (!artifactScope.getLocalOCLArtifactSymbols().isEmpty()) {
         OCLArtifactSymbol artifactSymbol = artifactScope.getLocalOCLArtifactSymbols().get(0);
-        OCLOperationData operationData = node.getOCLOperationSignature().getOperationData();
+        OCLOperationConstraintData operationData = node.getOCLOperationSignature().getOperationData();
         operationData.setHasPre(!node.isEmptyPreCondition());
         operationData.setHasPost(!node.isEmptyPostCondition());
         artifactSymbol.addOperations(node.getOCLOperationSignature().getOperationData());
