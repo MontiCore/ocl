@@ -1,6 +1,5 @@
 package de.monticore.ocl.ocl._symboltable;
 
-import de.monticore.symboltable.serialization.JsonDeSers;
 import de.monticore.symboltable.serialization.JsonPrinter;
 import de.monticore.symboltable.serialization.json.JsonObject;
 import de.monticore.types.check.SymTypeExpressionDeSer;
@@ -12,10 +11,7 @@ public class OCLArtifactSymbolDeSer extends OCLArtifactSymbolDeSerTOP {
   @Override
   protected void serializeOperations(List<OCLOperationData> operations, OCLSymbols2Json s2j) {
     JsonPrinter p = s2j.getJsonPrinter();
-    p.beginObject();
-    p.member(JsonDeSers.KIND, getSerializedKind());
     p.array("operationData", operations, this::serializeOCLOperationData);
-    p.endObject();
   }
   
   protected String serializeOCLOperationData(OCLOperationData operation) {
