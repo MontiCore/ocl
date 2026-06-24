@@ -125,10 +125,6 @@ grammar OCL extends UMLStereotype,
     Expression ";"
   ;
 
-  symbolrule OCLInvariant =
-    context: de.monticore.types.check.SymTypeExpression*
-  ;
-
   /**
    * ASTOCLContextDefinition can be of the following type.
    *   Auction | Auction a | a in (...) | Auction a in (...)

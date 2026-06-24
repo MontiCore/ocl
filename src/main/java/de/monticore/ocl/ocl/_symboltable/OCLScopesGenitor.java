@@ -103,12 +103,6 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
     removeCurrentScope();
     initScopeHP2(inv.getSpannedScope());
     if (inv.isPresentSymbol()) {
-      if (inv.isContext()) {
-        inv.getOCLContextDefinitionList().stream().filter(ASTOCLContextDefinition::isPresentMCType)
-            .map(x -> TypeCheck3.symTypeFromAST(x.getMCType()))
-            .forEach(inv.getSymbol()::addContext);
-      }
-      
       initOCLInvariantHP2(inv.getSymbol());
     }
   }
