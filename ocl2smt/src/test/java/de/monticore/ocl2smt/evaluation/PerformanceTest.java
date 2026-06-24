@@ -119,9 +119,9 @@ public class PerformanceTest extends OCLDiffAbstractTest {
 
     long start = System.currentTimeMillis();
     CD2SMTMill.init(
-        ClassStrategy.Strategy.SS,
-        InheritanceData.Strategy.SE,
-        AssociationStrategy.Strategy.ONE2ONE);
+        ClassStrategy.Strategy.DS,
+        InheritanceData.Strategy.ME,
+        AssociationStrategy.Strategy.DEFAULT);
 
     res =
         OCLDiffGenerator.oclDiffComp(
