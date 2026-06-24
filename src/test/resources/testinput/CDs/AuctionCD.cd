@@ -20,6 +20,8 @@ classdiagram AuctionCD {
     java.lang.String name;
   }
 
+  public class auction {}
+
   public class Auction {
     int numberOfBids;
     int auctionIdent;

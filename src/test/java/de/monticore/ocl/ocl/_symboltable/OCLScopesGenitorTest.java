@@ -9,6 +9,8 @@ import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.ocl._ast.ASTOCLConstraint;
 import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
+import de.monticore.ocl.util.SymbolTableUtil;
+import de.monticore.symbols.basicsymbols.BasicSymbolsMill;
 import de.se_rwth.commons.logging.Log;
 import java.io.IOException;
 import java.util.Optional;
@@ -41,6 +43,8 @@ public class OCLScopesGenitorTest extends AbstractTest {
   public void setUp() {
     super.initLogger();
     super.initMills();
+    BasicSymbolsMill.initializePrimitives();
+    BasicSymbolsMill.initializeString();
   }
 
   @ParameterizedTest
@@ -90,6 +94,12 @@ public class OCLScopesGenitorTest extends AbstractTest {
             || filename.endsWith("comparisons.ocl"));
     // Given
     Optional<ASTOCLCompilationUnit> ast = OCLMill.parser().parse(filename);
+    
+    SymbolTableUtil.prepareMill();
+    SymbolTableUtil.addCd4cSymbols();
+    SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/AuctionCD.sym");
+    SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/DefaultTypes.sym");
+    
     OCLScopesGenitorDelegator genitor = OCLMill.scopesGenitorDelegator();
 
     assertTrue(

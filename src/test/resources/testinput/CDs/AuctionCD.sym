@@ -195,6 +195,30 @@
     },
     {
       "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
+      "name":"auction",
+      "fullName":"AuctionCD.auction",
+      "packageName":"AuctionCD",
+      "isClass":true,
+      "isPublic":true,
+      "spannedScope":{
+        "symbols":[
+          {
+            "kind":"de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name":"auction",
+            "fullName":"auction",
+            "type":{
+              "kind":"de.monticore.types.check.SymTypeOfObject",
+              "objName":"AuctionCD.auction"
+            },
+            "isConstructor":true,
+            "isPublic":true,
+            "isStatic":true
+          }
+        ]
+      }
+    },
+    {
+      "kind":"de.monticore.cdbasis._symboltable.CDTypeSymbol",
       "name":"Company",
       "fullName":"AuctionCD.Company",
       "packageName":"AuctionCD",

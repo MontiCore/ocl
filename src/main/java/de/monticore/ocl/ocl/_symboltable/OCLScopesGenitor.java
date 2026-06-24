@@ -5,9 +5,9 @@ import static de.monticore.ocl.ocl._symboltable.OCLSymbolTableHelper.getImportSt
 
 import com.google.common.base.Preconditions;
 import de.monticore.ocl.ocl.OCLMill;
-import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
-import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
+import de.monticore.ocl.ocl._ast.*;
 import de.monticore.symboltable.ImportStatement;
+import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.Names;
 import de.se_rwth.commons.logging.Log;
 import java.util.List;
@@ -41,7 +41,7 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
     final String oclFile = OCLSymbolTableHelper.getNameOfModel(compilationUnit);
     Log.debug("Building Symboltable for OCL: " + oclFile, OCLScopesGenitor.class.getSimpleName());
 
-    final String compilationUnitPackage = Names.getQualifiedName(compilationUnit.getPackageList());
+    final String compilationUnitPackage = Names.constructQualifiedName(compilationUnit.getPackageList());
 
     // imports
     final List<ImportStatement> imports =
@@ -65,7 +65,7 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
 
   @Override
   public void visit(final ASTOCLInvariant node) {
-    if (!getCurrentScope().isPresent()) {
+    if (getCurrentScope().isEmpty()) {
       Log.debug(
           String.format(
               "%s: Visiting %s, missing scope on scope stack.",
@@ -103,7 +103,26 @@ public class OCLScopesGenitor extends OCLScopesGenitorTOP {
     removeCurrentScope();
     initScopeHP2(inv.getSpannedScope());
     if (inv.isPresentSymbol()) {
+      if (inv.isContext()) {
+        inv.getOCLContextDefinitionList().stream().filter(ASTOCLContextDefinition::isPresentMCType)
+            .map(x -> TypeCheck3.symTypeFromAST(x.getMCType()))
+            .forEach(inv.getSymbol()::addContext);
+      }
+      
       initOCLInvariantHP2(inv.getSymbol());
+    }
+  }
+  
+  @Override
+  public void endVisit(ASTOCLOperationConstraint node) {
+    if (node.getEnclosingScope() instanceof IOCLArtifactScope artifactScope) {
+      if (!artifactScope.getLocalOCLArtifactSymbols().isEmpty()) {
+        OCLArtifactSymbol artifactSymbol = artifactScope.getLocalOCLArtifactSymbols().get(0);
+        OCLOperationData operationData = node.getOCLOperationSignature().getOperationData();
+        operationData.setHasPre(!node.isEmptyPreCondition());
+        operationData.setHasPost(!node.isEmptyPostCondition());
+        artifactSymbol.addOperations(node.getOCLOperationSignature().getOperationData());
+      }
     }
   }
 }

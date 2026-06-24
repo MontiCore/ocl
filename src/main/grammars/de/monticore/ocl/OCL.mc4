@@ -39,10 +39,14 @@ grammar OCL extends UMLStereotype,
    *   @attribute OCLConstraint
    *              List of OCL-constraints.
    */
-  OCLArtifact implements Diagram =
+  symbol OCLArtifact implements Diagram =
     "ocl" Name "{"
       OCLConstraint*
     "}"
+  ;
+
+  symbolrule OCLArtifact =
+    operations: OCLOperationData*
   ;
 
   /**
@@ -119,6 +123,10 @@ grammar OCL extends UMLStereotype,
 
     // expression: we can chain multiple expressions using &&
     Expression ";"
+  ;
+
+  symbolrule OCLInvariant =
+    context: de.monticore.types.check.SymTypeExpression*
   ;
 
   /**

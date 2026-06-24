@@ -1,4 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
+
 import example.CDs.AuctionCD.*;
 
 ocl validConstructorName {
