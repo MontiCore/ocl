@@ -142,12 +142,6 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
           }
         }
 
-        if (cmd.hasOption("is")) {
-          for (String symbol : cmd.getOptionValues("is")) {
-            SymbolTableUtil.ignoreSymbolKind(symbol);
-          }
-        }
-
         if (cmd.hasOption("cd4c")) {
           SymbolTableUtil.addCd4cSymbols();
         }
@@ -588,20 +582,6 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
                     + "should be separated by spaces.")
             .build();
     options.addOption(funcSymbols);
-
-    // accept FunctionSymbols
-    Option ignoreSymbols =
-        Option.builder("is")
-            .longOpt("ignoreSymKind")
-            .optionalArg(true)
-            .argName("fqns")
-            .hasArgs()
-            .desc(
-                "Takes the fully qualified name of one or more symbol kind(s) for which no warnings "
-                    + "about not being able to deserialize them shall be printed. Allows cleaner outputs. "
-                    + "Multiple symbol kinds should be separated by spaces. ")
-            .build();
-    options.addOption(ignoreSymbols);
 
     // developer level logging
     Option cd4c =
