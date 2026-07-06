@@ -154,21 +154,46 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
     initCD4CodeMill();
 
     // 4. Load the reference OCL artifact
+    createCDSymTab(refCD);
+    String refSerialized =
+        new CD4CodeSymbols2Json().serialize((ICD4CodeScope) refCD.getEnclosingScope());
+    createCDSymTab(conCD);
+    String conSerialized =
+        new CD4CodeSymbols2Json().serialize((ICD4CodeScope) conCD.getEnclosingScope());
+
+    // 5. Switch to OCL context
+    initOCLMill();
+    OCLMill.globalScope().addSubScope(new OCLSymbols2Json().deserialize(refSerialized));
     refOCL = parseOCL(refOCLFile);
     refOCL.setEnclosingScope(createOCLSymTab(refOCL));
-    createCDSymTab(refCD);
-    loadCDModel(refOCL, refCD);
+    SymbolTableUtil.runSymTabGenitor(refOCL);
+    SymbolTableUtil.runSymTabCompleter(refOCL);
     checkOCLCoCos(refOCL);
     assertNoFindings();
 
-    // 5. Load the expected adapted OCL artifact
+    initCD4CodeMill();
+    initOCLMill();
+    OCLMill.globalScope().addSubScope(new OCLSymbols2Json().deserialize(conSerialized));
     expectedAdaptedOCL = parseOCL(expectedOCLFile);
     expectedAdaptedOCL.setEnclosingScope(createOCLSymTab(expectedAdaptedOCL));
-    createCDSymTab(conCD);
-    loadCDModel(expectedAdaptedOCL, conCD);
+    SymbolTableUtil.runSymTabGenitor(expectedAdaptedOCL);
+    SymbolTableUtil.runSymTabCompleter(expectedAdaptedOCL);
     checkOCLCoCos(expectedAdaptedOCL);
-
     assertNoFindings();
+
+
+    //loadCDModel(refOCL, refCD);
+    //checkOCLCoCos(refOCL);
+
+
+    // 5. Load the expected adapted OCL artifact
+    //createCDSymTab(conCD);
+
+
+    //loadCDModel(expectedAdaptedOCL, conCD);
+    //checkOCLCoCos(expectedAdaptedOCL);
+
+    //assertNoFindings();
   }
 
   protected void loadCDModel(ASTOCLCompilationUnit oclAST, ASTCDCompilationUnit cdAST) {
@@ -181,6 +206,7 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
     initOCLMill();
 
     OCLMill.globalScope().addSubScope(new OCLSymbols2Json().deserialize(serialized));
+    oclAST.setEnclosingScope(createOCLSymTab(oclAST));
     SymbolTableUtil.runSymTabGenitor(oclAST);
     SymbolTableUtil.runSymTabCompleter(oclAST);
   }
