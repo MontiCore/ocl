@@ -1,129 +1,105 @@
 {
   "generated-using": "www.MontiCore.de technology",
   "name": "Banking",
+  "package": "docs.Banking",
   "symbols": [
     {
       "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
       "name": "Bank",
+      "fullName": "docs.Banking.Banking.Bank",
+      "packageName": "docs.Banking.Banking",
       "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": false,
-      "isStatic": false,
-      "isFinal": false,
       "spannedScope": {
-        "isShadowingScope": false,
         "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "Bank",
+            "fullName": "Bank",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "docs.Banking.Banking.Bank"
+            },
+            "isConstructor": true,
+            "isPublic": true,
+            "isStatic": true
+          },
           {
             "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
             "name": "account",
+            "fullName": "docs.Banking.Banking.Bank.account",
+            "packageName": "docs.Banking.Banking",
             "isDefinitiveNavigable": true,
             "cardinality": "[*]",
-            "field": "Bank.account",
-            "association": 252738640,
-            "isOrdered": false,
-            "isLeft": false,
+            "association": 917568725,
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Account"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
+              "objName": "docs.Banking.Banking.Account"
+            }
           },
           {
             "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
             "name": "customer",
+            "fullName": "docs.Banking.Banking.Bank.customer",
+            "packageName": "docs.Banking.Banking",
             "isDefinitiveNavigable": true,
             "cardinality": "[*]",
-            "field": "Bank.customer",
-            "association": 1360215046,
-            "isOrdered": false,
-            "isLeft": false,
+            "association": 1336775847,
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Customer"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
+              "objName": "docs.Banking.Banking.Customer"
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "bic",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Bank.bic",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
               "objName": "java.lang.String"
-            },
-            "isReadOnly": false
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "overallBalance",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Bank.overallBalance",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypePrimitive",
               "primitiveName": "double"
-            },
-            "isReadOnly": false
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "account",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Bank.account",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfGenerics",
               "typeConstructorFullName": "java.util.Set",
               "arguments": [
                 {
                   "kind": "de.monticore.types.check.SymTypeOfObject",
-                  "objName": "Account"
+                  "objName": "docs.Banking.Banking.Account"
                 }
               ]
-            },
-            "isReadOnly": false
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "customer",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Bank.customer",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfGenerics",
               "typeConstructorFullName": "java.util.Set",
               "arguments": [
                 {
                   "kind": "de.monticore.types.check.SymTypeOfObject",
-                  "objName": "Customer"
+                  "objName": "docs.Banking.Banking.Customer"
                 }
               ]
-            },
-            "isReadOnly": false
+            }
           }
         ]
       }
@@ -131,143 +107,112 @@
     {
       "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
       "name": "Account",
+      "fullName": "docs.Banking.Banking.Account",
+      "packageName": "docs.Banking.Banking",
       "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": false,
-      "isStatic": false,
-      "isFinal": false,
       "spannedScope": {
-        "isShadowingScope": false,
         "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "Account",
+            "fullName": "Account",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "docs.Banking.Banking.Account"
+            },
+            "isConstructor": true,
+            "isPublic": true,
+            "isStatic": true
+          },
           {
             "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
             "name": "bank",
-            "isDefinitiveNavigable": false,
-            "association": 252738640,
-            "isOrdered": false,
+            "fullName": "docs.Banking.Banking.Account.bank",
+            "packageName": "docs.Banking.Banking",
+            "association": 917568725,
             "isLeft": true,
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Bank"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
+              "objName": "docs.Banking.Banking.Bank"
+            }
           },
           {
             "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
             "name": "customer",
+            "fullName": "docs.Banking.Banking.Account.customer",
+            "packageName": "docs.Banking.Banking",
             "isDefinitiveNavigable": true,
             "cardinality": "[*]",
-            "field": "Account.customer",
-            "association": 945834881,
-            "isOrdered": false,
-            "isLeft": false,
+            "association": 375097969,
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Customer"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
+              "objName": "docs.Banking.Banking.Customer"
+            }
           },
           {
             "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
             "name": "transaction",
+            "fullName": "docs.Banking.Banking.Account.transaction",
+            "packageName": "docs.Banking.Banking",
             "isDefinitiveNavigable": true,
             "cardinality": "[*]",
-            "field": "Account.transaction",
-            "association": 507819576,
-            "isOrdered": false,
-            "isLeft": false,
+            "association": 1635082651,
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Transaction"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
+              "objName": "docs.Banking.Banking.Transaction"
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "iban",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Account.iban",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
               "objName": "java.lang.String"
-            },
-            "isReadOnly": false
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "balance",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Account.balance",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypePrimitive",
               "primitiveName": "double"
-            },
-            "isReadOnly": false
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "customer",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Account.customer",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfGenerics",
               "typeConstructorFullName": "java.util.Set",
               "arguments": [
                 {
                   "kind": "de.monticore.types.check.SymTypeOfObject",
-                  "objName": "Customer"
+                  "objName": "docs.Banking.Banking.Customer"
                 }
               ]
-            },
-            "isReadOnly": false
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "transaction",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Account.transaction",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfGenerics",
               "typeConstructorFullName": "java.util.Set",
               "arguments": [
                 {
                   "kind": "de.monticore.types.check.SymTypeOfObject",
-                  "objName": "Transaction"
+                  "objName": "docs.Banking.Banking.Transaction"
                 }
               ]
-            },
-            "isReadOnly": false
+            }
           }
         ]
       }
@@ -275,117 +220,94 @@
     {
       "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
       "name": "Customer",
+      "fullName": "docs.Banking.Banking.Customer",
+      "packageName": "docs.Banking.Banking",
       "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": false,
-      "isStatic": false,
-      "isFinal": false,
       "spannedScope": {
-        "isShadowingScope": false,
         "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "Customer",
+            "fullName": "Customer",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "docs.Banking.Banking.Customer"
+            },
+            "isConstructor": true,
+            "isPublic": true,
+            "isStatic": true
+          },
           {
             "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
             "name": "bank",
-            "isDefinitiveNavigable": false,
-            "association": 1360215046,
-            "isOrdered": false,
+            "fullName": "docs.Banking.Banking.Customer.bank",
+            "packageName": "docs.Banking.Banking",
+            "association": 1336775847,
             "isLeft": true,
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Bank"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
+              "objName": "docs.Banking.Banking.Bank"
+            }
           },
           {
             "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
             "name": "account",
+            "fullName": "docs.Banking.Banking.Customer.account",
+            "packageName": "docs.Banking.Banking",
             "isDefinitiveNavigable": true,
             "cardinality": "[*]",
-            "field": "Customer.account",
-            "association": 945834881,
-            "isOrdered": false,
+            "association": 375097969,
             "isLeft": true,
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Account"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
+              "objName": "docs.Banking.Banking.Account"
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "name",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Customer.name",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
               "objName": "java.lang.String"
-            },
-            "isReadOnly": false
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "address",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Customer.address",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
               "objName": "java.lang.String"
-            },
-            "isReadOnly": false
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "phoneNumber",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Customer.phoneNumber",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
               "objName": "java.lang.String"
-            },
-            "isReadOnly": false
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "account",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Customer.account",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfGenerics",
               "typeConstructorFullName": "java.util.Set",
               "arguments": [
                 {
                   "kind": "de.monticore.types.check.SymTypeOfObject",
-                  "objName": "Account"
+                  "objName": "docs.Banking.Banking.Account"
                 }
               ]
-            },
-            "isReadOnly": false
+            }
           }
         ]
       }
@@ -393,106 +315,99 @@
     {
       "kind": "de.monticore.cdbasis._symboltable.CDTypeSymbol",
       "name": "Transaction",
+      "fullName": "docs.Banking.Banking.Transaction",
+      "packageName": "docs.Banking.Banking",
       "isClass": true,
-      "isInterface": false,
-      "isEnum": false,
-      "isAbstract": false,
-      "isPrivate": false,
-      "isProtected": false,
-      "isPublic": false,
-      "isStatic": false,
-      "isFinal": false,
       "spannedScope": {
-        "isShadowingScope": false,
         "symbols": [
+          {
+            "kind": "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol",
+            "name": "Transaction",
+            "fullName": "Transaction",
+            "type": {
+              "kind": "de.monticore.types.check.SymTypeOfObject",
+              "objName": "docs.Banking.Banking.Transaction"
+            },
+            "isConstructor": true,
+            "isPublic": true,
+            "isStatic": true
+          },
           {
             "kind": "de.monticore.cdassociation._symboltable.CDRoleSymbol",
             "name": "account",
-            "isDefinitiveNavigable": false,
-            "association": 507819576,
-            "isOrdered": false,
+            "fullName": "docs.Banking.Banking.Transaction.account",
+            "packageName": "docs.Banking.Banking",
+            "association": 1635082651,
             "isLeft": true,
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Account"
-            },
-            "isReadOnly": false,
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false
+              "objName": "docs.Banking.Banking.Account"
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "sourceAccount",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Transaction.sourceAccount",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Account"
-            },
-            "isReadOnly": false
+              "objName": "docs.Banking.Banking.Account"
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "targetAccount",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Transaction.targetAccount",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypeOfObject",
-              "objName": "Account"
-            },
-            "isReadOnly": false
+              "objName": "docs.Banking.Banking.Account"
+            }
           },
           {
             "kind": "de.monticore.symbols.oosymbols._symboltable.FieldSymbol",
             "name": "amount",
-            "isPrivate": false,
-            "isProtected": false,
-            "isPublic": false,
-            "isStatic": false,
-            "isFinal": false,
+            "fullName": "docs.Banking.Banking.Transaction.amount",
+            "packageName": "docs.Banking.Banking",
             "type": {
               "kind": "de.monticore.types.check.SymTypePrimitive",
               "primitiveName": "double"
-            },
-            "isReadOnly": false
+            }
           }
         ]
       }
     },
     {
       "kind": "de.monticore.symbols.basicsymbols._symboltable.DiagramSymbol",
-      "name": "Banking"
+      "name": "Banking",
+      "fullName": "docs.Banking.Banking",
+      "packageName": "docs.Banking"
     }
   ],
   "furtherObjects": {
-    "252738640": {
+    "917568725": {
       "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
-      "isAssociation": true,
-      "isComposition": false
+      "isAssociation": true
     },
-    "945834881": {
+    "1336775847": {
       "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
-      "isAssociation": true,
-      "isComposition": false
+      "isAssociation": true
     },
-    "1360215046": {
+    "375097969": {
       "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
-      "isAssociation": true,
-      "isComposition": false
+      "isAssociation": true
     },
-    "507819576": {
+    "1635082651": {
       "kind": "de.monticore.cdassociation._symboltable.SymAssociation",
-      "isAssociation": true,
-      "isComposition": false
+      "isAssociation": true
     }
+  },
+  "symbolHierarchy": {
+    "de.monticore.cdbasis._symboltable.CDTypeSymbol": "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol",
+    "de.monticore.symbols.oosymbols._symboltable.MethodSymbol": "de.monticore.symbols.basicsymbols._symboltable.FunctionSymbol",
+    "de.monticore.symbols.oosymbols._symboltable.OOTypeSymbol": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+    "de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol": "de.monticore.symbols.oosymbols._symboltable.MethodSymbol",
+    "de.monticore.symbols.basicsymbols._symboltable.TypeVarSymbol": "de.monticore.symbols.basicsymbols._symboltable.TypeSymbol",
+    "de.monticore.symbols.oosymbols._symboltable.FieldSymbol": "de.monticore.symbols.basicsymbols._symboltable.VariableSymbol"
   }
 }
