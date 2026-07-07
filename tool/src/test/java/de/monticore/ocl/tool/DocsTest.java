@@ -39,7 +39,6 @@ public class DocsTest extends AbstractTest {
 
     // when (create symbol table)
     SymbolTableUtil.prepareMill();
-    SymbolTableUtil.addCd4cSymbols();
     SymbolTableUtil.loadSymbolFile(cdFile);
     SymbolTableUtil.runSymTabGenitor(ast.get());
     SymbolTableUtil.runSymTabCompleter(ast.get());

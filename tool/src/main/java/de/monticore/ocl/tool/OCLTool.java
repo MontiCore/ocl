@@ -142,10 +142,6 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
           }
         }
 
-        if (cmd.hasOption("cd4c")) {
-          SymbolTableUtil.addCd4cSymbols();
-        }
-
         Set<String> cocoOptionValues = new LinkedHashSet<>();
         if (cmd.hasOption("c") && cmd.getOptionValues("c") != null) {
           cocoOptionValues.addAll(Arrays.asList(cmd.getOptionValues("c")));
@@ -582,17 +578,6 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
                     + "should be separated by spaces.")
             .build();
     options.addOption(funcSymbols);
-
-    // developer level logging
-    Option cd4c =
-        new Option(
-            "cd4c",
-            "Load symbol kinds from CD4C. Shortcut for loading CDTypeSymbol as TypeSymbol, "
-                + "CDMethodSignatureSymbol as FunctionSymbol, and FieldSymbol as VariableSymbol. "
-                + "Furthermore, warnings about not deserializing CDAssociationSymbol and CDRoleSymbol "
-                + "will be ignored.");
-    cd4c.setLongOpt("cd4code");
-    options.addOption(cd4c);
 
     // check CoCos
     Option cocos =

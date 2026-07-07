@@ -8,7 +8,9 @@ import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.se_rwth.commons.logging.Log;
+
 import java.util.Optional;
+
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,12 +22,14 @@ public class OCLSymbolTableTest extends AbstractTest {
   public void setUp() {
     super.initLogger();
     super.initMills();
+    Log.clearFindings();
   }
 
   // for parsable models with a symbol table.
   @ParameterizedTest
   @MethodSource("getSymbolTableModels")
   public void shouldCreateSymTabForValidModels(String filename) {
+    Log.enableFailQuick(true);
     // todo https://git.rwth-aachen.de/monticore/monticore/-/issues/4509
     Assumptions.assumeFalse(
         filename.endsWith("Test06.ocl")
@@ -75,7 +79,6 @@ public class OCLSymbolTableTest extends AbstractTest {
     assertThat(ast).isPresent();
 
     SymbolTableUtil.prepareMill();
-    SymbolTableUtil.addCd4cSymbols();
     SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/AuctionCD.sym");
     SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/DefaultTypes.sym");
 
@@ -97,7 +100,6 @@ public class OCLSymbolTableTest extends AbstractTest {
     assertThat(ast).isPresent();
 
     SymbolTableUtil.prepareMill();
-    SymbolTableUtil.addCd4cSymbols();
     SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/AuctionCD.sym");
     SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/DefaultTypes.sym");
 

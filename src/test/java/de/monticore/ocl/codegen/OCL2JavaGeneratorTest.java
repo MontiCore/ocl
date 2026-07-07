@@ -47,7 +47,6 @@ public class OCL2JavaGeneratorTest extends AbstractTest {
 
   protected void setup() {
     SymbolTableUtil.prepareMill();
-    SymbolTableUtil.addCd4cSymbols();
   }
 
   @ParameterizedTest

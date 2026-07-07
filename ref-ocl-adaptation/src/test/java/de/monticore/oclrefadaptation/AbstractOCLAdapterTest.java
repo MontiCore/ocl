@@ -94,7 +94,6 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
 
   protected void initOCLMill() {
     SymbolTableUtil.prepareMill();
-    SymbolTableUtil.addCd4cSymbols();
     UnderspecifiedPlaceholderType.addPlaceholderType(OCLMill.globalScope(), OCLAdapter.DEFAULT_UNDERSPECIFIED_TYPE_NAME);
   }
 

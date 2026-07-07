@@ -111,12 +111,6 @@ public class SymbolTableUtil {
     OCLMill.globalScope().putSymbolDeSer(symbolFqn, new VariableSymbolDeSer());
   }
 
-  public static void addCd4cSymbols() {
-    addTypeSymbol("de.monticore.cdbasis._symboltable.CDTypeSymbol");
-    addFunctionSymbol("de.monticore.cd4codebasis._symboltable.CDMethodSignatureSymbol");
-    addVariableSymbol("de.monticore.symbols.oosymbols._symboltable.FieldSymbol");
-  }
-
   public static void loadSymbolFile(String filePath) {
     Log.debug("Read symbol file \"" + filePath + "\"", "SymbolTableUtil");
     OCLSymbols2Json deSer = new OCLSymbols2Json();

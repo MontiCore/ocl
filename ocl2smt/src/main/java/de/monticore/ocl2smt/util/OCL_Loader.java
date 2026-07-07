@@ -166,7 +166,6 @@ public class OCL_Loader {
     //  serialized = serialized.replaceAll("Optional", "java.util.Optional");
     Log.trace(serialized, OCL_Loader.class.getName());
     SymbolTableUtil.prepareMill();
-    SymbolTableUtil.addCd4cSymbols();
     OCLMill.globalScope().addSubScope(new OCLSymbols2Json().deserialize(serialized));
     SymbolTableUtil.runSymTabGenitor(oclAST);
     SymbolTableUtil.runSymTabCompleter(oclAST);
