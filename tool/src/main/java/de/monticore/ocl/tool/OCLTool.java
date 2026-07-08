@@ -142,16 +142,6 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
           }
         }
 
-        if (cmd.hasOption("is")) {
-          for (String symbol : cmd.getOptionValues("is")) {
-            SymbolTableUtil.ignoreSymbolKind(symbol);
-          }
-        }
-
-        if (cmd.hasOption("cd4c")) {
-          SymbolTableUtil.addCd4cSymbols();
-        }
-
         Set<String> cocoOptionValues = new LinkedHashSet<>();
         if (cmd.hasOption("c") && cmd.getOptionValues("c") != null) {
           cocoOptionValues.addAll(Arrays.asList(cmd.getOptionValues("c")));
@@ -588,31 +578,6 @@ public class OCLTool extends de.monticore.ocl.ocl.OCLTool {
                     + "should be separated by spaces.")
             .build();
     options.addOption(funcSymbols);
-
-    // accept FunctionSymbols
-    Option ignoreSymbols =
-        Option.builder("is")
-            .longOpt("ignoreSymKind")
-            .optionalArg(true)
-            .argName("fqns")
-            .hasArgs()
-            .desc(
-                "Takes the fully qualified name of one or more symbol kind(s) for which no warnings "
-                    + "about not being able to deserialize them shall be printed. Allows cleaner outputs. "
-                    + "Multiple symbol kinds should be separated by spaces. ")
-            .build();
-    options.addOption(ignoreSymbols);
-
-    // developer level logging
-    Option cd4c =
-        new Option(
-            "cd4c",
-            "Load symbol kinds from CD4C. Shortcut for loading CDTypeSymbol as TypeSymbol, "
-                + "CDMethodSignatureSymbol as FunctionSymbol, and FieldSymbol as VariableSymbol. "
-                + "Furthermore, warnings about not deserializing CDAssociationSymbol and CDRoleSymbol "
-                + "will be ignored.");
-    cd4c.setLongOpt("cd4code");
-    options.addOption(cd4c);
 
     // check CoCos
     Option cocos =

@@ -37,7 +37,6 @@ public class OCLWithinTypeBasicSymbolsResolverTest extends AbstractTest {
     final ASTOCLCompilationUnit ast = optAST.get();
 
     SymbolTableUtil.prepareMill();
-    SymbolTableUtil.addCd4cSymbols();
     SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/AuctionCD.sym");
     SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/DefaultTypes.sym");
 

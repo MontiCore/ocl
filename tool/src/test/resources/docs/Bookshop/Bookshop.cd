@@ -1,5 +1,5 @@
 /* (c) https://github.com/MontiCore/monticore */
-package docs;
+package docs.Bookshop;
 
 classdiagram Bookshop {
   class Shop;
