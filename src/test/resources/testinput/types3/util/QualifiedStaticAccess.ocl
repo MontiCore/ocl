@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import AuctionCD.*;
+
+ocl QualifiedStaticAccess {
+  inv:
+    !Time.now().lessThan(Time.now());
+}
