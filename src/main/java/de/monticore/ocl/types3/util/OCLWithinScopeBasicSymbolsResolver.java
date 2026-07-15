@@ -22,14 +22,28 @@ public class OCLWithinScopeBasicSymbolsResolver extends OOWithinScopeBasicSymbol
    */
   @Override
   public Optional<SymTypeExpression> _resolveNameAsExpr(
-      IBasicSymbolsScope enclosingScope, String name) {
+      IBasicSymbolsScope enclosingScope,
+      String name) {
+    return _resolveNameAsExpr(enclosingScope, name, false);
+  }
+
+  @Override
+  public Optional<SymTypeExpression> _resolveNameAsExpr(
+      IBasicSymbolsScope enclosingScope,
+      String name,
+      boolean resultsAreOptional) {
     // case "normal" expression
     Optional<SymTypeExpression> type = super._resolveNameAsExpr(enclosingScope, name);
-    // case type id -> create Set of the same type
+    // case type id: keep it as a type while probing a qualified name,
+    // otherwise use the OCL shorthand for all instances of that type
     if (type.isEmpty()) {
       Optional<SymTypeExpression> typeId = resolveType(enclosingScope, name);
       if (typeId.isPresent()) {
-        type = Optional.of(MCCollectionSymTypeFactory.createSet(typeId.get().deepClone()));
+        if (resultsAreOptional) {
+          type = typeId;
+        } else {
+          type = Optional.of(MCCollectionSymTypeFactory.createSet(typeId.get().deepClone()));
+        }
       }
     }
     return type;
