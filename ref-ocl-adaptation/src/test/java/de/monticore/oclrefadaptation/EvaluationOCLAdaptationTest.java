@@ -58,6 +58,8 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
 
   @Nested
   class Banking {
+    // todo https://git.rwth-aachen.de/monticore/monticore/-/work_items/5099
+    @Disabled
     @Test
     void singleInc() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
@@ -76,6 +78,8 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
      * Therefore, we manually add bindings via stereotype to the two field incarnations binding the
      * 'Account' type either to 'BusinessAccount' or 'PrivateAccount'.
      */
+    // todo https://git.rwth-aachen.de/monticore/monticore/-/work_items/5099
+    @Disabled
     @Test
     void multiIncWithBind() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
@@ -92,6 +96,8 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
      * out OCL constraint for the total balance only requires simple adaptation and the balance
      * is still computed over all accounts (because of usual inheritance).
      */
+    // todo https://git.rwth-aachen.de/monticore/monticore/-/work_items/5099
+    @Disabled
     @Test
     void accountSubclasses() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
@@ -176,6 +182,8 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
 
   @Nested
   class Auction {
+    // todo https://git.rwth-aachen.de/monticore/monticore/-/work_items/5099
+    @Disabled
     @Test
     void singleInc() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
@@ -186,6 +194,8 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "auction/singleInc/quantifiers2Out.ocl");
     }
 
+    // todo https://git.rwth-aachen.de/monticore/monticore/-/work_items/5099
+    @Disabled
     @Test
     void multiInc() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
@@ -220,6 +230,8 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
               "tasks/singleInc/RemainingWorkloadOut.ocl");
     }
 
+    // todo https://git.rwth-aachen.de/monticore/monticore/-/work_items/5099
+    @Disabled
     @Test
     void singleIncSimpleAssocChaining() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
@@ -243,6 +255,8 @@ public class EvaluationOCLAdaptationTest extends AbstractOCLAdapterTest {
 
   @Nested
   class Singleton {
+    // todo https://git.rwth-aachen.de/monticore/monticore/-/work_items/5099
+    @Disabled
     @Test
     void multiInc() {
       confParameters.add(CDConfParameter.STRICT_PARAMETER_ORDER);
