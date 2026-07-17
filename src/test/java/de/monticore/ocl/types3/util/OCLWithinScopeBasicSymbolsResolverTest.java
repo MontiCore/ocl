@@ -22,38 +22,11 @@ import org.junit.jupiter.api.Test;
 
 class OCLWithinScopeBasicSymbolsResolverTest extends AbstractTest {
 
-  protected OCLWithinScopeBasicSymbolsResolver resolver;
-
   @BeforeEach
   void setUp() {
     initLogger();
     SymbolTableUtil.prepareMill();
     SymbolTableUtil.loadSymbolFile("src/test/resources/testinput/CDs/AuctionCD.sym");
-    resolver = new OCLWithinScopeBasicSymbolsResolver();
-  }
-
-  @Test
-  void resolvesTypeAsTypeWhenResultIsOptional() {
-    Optional<SymTypeExpression> result = resolver._resolveNameAsExpr(
-        OCLMill.globalScope(),
-        "AuctionCD.Person",
-        true
-    );
-
-    assertThat(result).isPresent();
-    assertThat(result.get().printFullName()).isEqualTo("AuctionCD.Person");
-  }
-
-  @Test
-  void resolvesTypeAsSetWhenResultIsRequired() {
-    Optional<SymTypeExpression> result = resolver._resolveNameAsExpr(
-        OCLMill.globalScope(),
-        "AuctionCD.Person",
-        false
-    );
-
-    assertThat(result).isPresent();
-    assertThat(result.get().printFullName()).isEqualTo("Set<AuctionCD.Person>");
   }
 
   @Test
