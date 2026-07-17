@@ -41,6 +41,9 @@ public class OCLExpressionsBasisAdaptationVariantsVisitor extends ExpressionsBas
      *   - And if the name of the NameExpression is exactly the (simple) type name, e.g. 'MyClass'
      * Then we can create variants for all incarnations of 'MyClass'.
      */
+    // Bug: in a chain of names (aka. FieldAccessExpressions),
+    // accessing the TypeSystem for the inner names
+    // is only allowed under some circumstances.
     SymTypeExpression symTypeExpression = TypeCheck3.typeOf(refExpr);
     if (isSetType(symTypeExpression) && symTypeExpression.getSourceInfo().getSourceSymbol().isEmpty()) {
       TypeSymbol typeSymbol = symTypeExpression.asGenericType().getArgument(0).getTypeInfo();
