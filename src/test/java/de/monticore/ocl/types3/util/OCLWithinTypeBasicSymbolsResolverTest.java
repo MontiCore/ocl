@@ -8,14 +8,17 @@ import de.monticore.expressions.expressionsbasis._visitor.ExpressionsBasisVisito
 import de.monticore.ocl.ocl.AbstractTest;
 import de.monticore.ocl.ocl.OCLMill;
 import de.monticore.ocl.ocl._ast.ASTOCLCompilationUnit;
+import de.monticore.ocl.ocl._ast.ASTOCLInvariant;
 import de.monticore.ocl.ocl._visitor.OCLTraverser;
 import de.monticore.ocl.util.SymbolTableUtil;
 import de.monticore.symboltable.ISymbol;
 import de.monticore.types.check.SymTypeExpression;
+import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.TypeCheck3;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,6 +50,31 @@ public class OCLWithinTypeBasicSymbolsResolverTest extends AbstractTest {
             "message",
             "AuctionCD.Person.message"
     ).traverseAndCheck(ast);
+    assertNoFindings();
+  }
+
+  @Test
+  void typeChecksStaticMethodQualifierAfterParentExpression() {
+    final Optional<ASTOCLCompilationUnit> optAST = parse(RELATIVE_MODEL_PATH
+        + "/testinput/types3/util/ExplicitTypeImportStaticAccess.ocl", false);
+    assertTrue(optAST.isPresent());
+    final ASTOCLCompilationUnit ast = optAST.get();
+
+    SymbolTableUtil.prepareMill();
+    OCLMill.globalScope().getSymbolPath().addEntry(Paths.get("target/classes/java/test"));
+
+    SymbolTableUtil.runSymTabGenitor(ast);
+    SymbolTableUtil.runSymTabCompleter(ast);
+
+    ASTExpression expression = ((ASTOCLInvariant) ast
+        .getOCLArtifact()
+        .getOCLConstraint(0))
+        .getExpression();
+    SymTypeExpression type = TypeCheck3.typeOf(expression);
+
+    assertTrue(SymTypeRelations.isBoolean(type));
+    new AssertSourceSymbolPresentVisitor("MyFunctionalModule", "class2mc_examples.MyFunctionalModule")
+        .traverseAndCheck(ast);
     assertNoFindings();
   }
 

@@ -1,0 +1,8 @@
+/* (c) https://github.com/MontiCore/monticore */
+
+import class2mc_examples.MyFunctionalModule;
+
+ocl ExplicitTypeImportStaticAccess {
+  inv:
+    MyFunctionalModule.someFunction({1l, 2l}) == 3l;
+}
