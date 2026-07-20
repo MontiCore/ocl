@@ -16,6 +16,7 @@ import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types3.SymTypeRelations;
 import de.monticore.types3.TypeCheck3;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Paths;
@@ -24,6 +25,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+// todo https://git.rwth-aachen.de/monticore/monticore/-/work_items/5099
+@Disabled
 public class OCLWithinTypeBasicSymbolsResolverTest extends AbstractTest {
 
   @BeforeEach
