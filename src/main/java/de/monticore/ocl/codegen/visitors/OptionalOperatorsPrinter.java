@@ -14,6 +14,11 @@ import de.monticore.types.check.ISynthesize;
 import de.monticore.types3.TypeCheck3;
 import de.se_rwth.commons.logging.Log;
 
+/**
+ * @deprecated use the new Java Generator instead:
+ * @see <a href="https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/java/de/monticore/codegen/javagen/JavaCodeGenerator.md">JavaCodeGenerator.md</a>
+ */
+@Deprecated(forRemoval = true)
 public class OptionalOperatorsPrinter extends AbstractPrinter
     implements OptionalOperatorsHandler, OptionalOperatorsVisitor2 {
 

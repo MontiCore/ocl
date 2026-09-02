@@ -11,7 +11,10 @@ import de.monticore.prettyprint.IndentPrinter;
 /**
  * As the AST structure does not always resemble the Structure of the printed code, we sometimes
  * need to have another printing run, only for missing brackets
+ * @deprecated use the new Java Generator instead:
+ * @see <a href="https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/java/de/monticore/codegen/javagen/JavaCodeGenerator.md">JavaCodeGenerator.md</a>
  */
+@Deprecated(forRemoval = true)
 public class EndingBracketPrinter implements OCLExpressionsHandler {
 
   protected OCLExpressionsTraverser traverser;

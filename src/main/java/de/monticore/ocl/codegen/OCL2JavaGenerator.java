@@ -25,6 +25,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+/**
+ * @deprecated use the new Java Generator instead (combined into one for OCL):
+ * @see <a href="https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/java/de/monticore/codegen/javagen/JavaCodeGenerator.md">JavaCodeGenerator.md</a>
+ * <p>
+ * Note: This class could partially be reused, but would need to be moved into codegen/javagen
+ */
+@Deprecated(forRemoval = true)
 public class OCL2JavaGenerator {
 
   public static void generate(ASTOCLCompilationUnit ast, String outputFile) throws IOException {
