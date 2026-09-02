@@ -23,6 +23,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * @deprecated use the new Java Generator instead:
+ * @see <a href="https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/java/de/monticore/codegen/javagen/JavaCodeGenerator.md">JavaCodeGenerator.md</a>
+ */
+@Deprecated(forRemoval = true)
 public class OCLPrinter extends AbstractPrinter implements OCLHandler, OCLVisitor2 {
 
   protected OCLTraverser traverser;

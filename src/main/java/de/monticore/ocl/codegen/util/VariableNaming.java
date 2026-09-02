@@ -5,6 +5,11 @@ import com.google.common.base.Preconditions;
 import de.monticore.ast.ASTNode;
 import java.util.LinkedHashMap;
 
+/**
+ * @deprecated is now part of MontiCore
+ * @see <a href="https://github.com/MontiCore/monticore/blob/dev/monticore-grammar/src/main/java/de/monticore/codegen/javagen/JavaCodeGenerator.md">JavaCodeGenerator.md</a>
+ */
+@Deprecated(forRemoval = true)
 public class VariableNaming {
 
   // Map that keeps track of the number of variables that have already been generated of this type
