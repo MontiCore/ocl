@@ -69,5 +69,5 @@ jobs:
     needs: [ deploy ]
     uses: MontiCore/monticore/.github/workflows/call_trigger_downstream.yml@dev
     with:
-      projects: "['MontiCore/sequence-diagram','MontiCore/sysmlv2']"
+      projects: "['MontiCore/sequence-diagram','MontiCore/sysmlv2', 'MontiCore/montifun']"
     secrets: inherit
