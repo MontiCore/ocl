@@ -24,14 +24,7 @@ public class ParserUtil {
 
   public static Optional<? extends ASTNode> parse(String filename, MCConcreteParser p) {
     Preconditions.checkArgument(filename != null);
-    Optional<? extends ASTNode> cd;
-    try {
-      cd = p.parse(filename);
-      return cd;
-    } catch (IOException e) {
-      Log.error("Could not access " + filename + ", there was an I/O exception: " + e.getMessage());
-    }
-    return Optional.empty();
+    return p.parse(filename);
   }
 
   public static Collection<? extends ASTNode> parse(

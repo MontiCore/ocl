@@ -119,11 +119,7 @@ public abstract class AbstractTest {
       String relativeFilePath, boolean expParserErrors) {
     OCLParser parser = new OCLParser();
     Optional<ASTOCLCompilationUnit> optAst;
-    try {
-      optAst = parser.parse(relativeFilePath);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    optAst = parser.parse(relativeFilePath);
     if (expParserErrors) {
       assertThat(parser.hasErrors()).isTrue();
       assertThat(optAst).isNotPresent();

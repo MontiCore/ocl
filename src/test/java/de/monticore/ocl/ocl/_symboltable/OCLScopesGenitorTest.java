@@ -250,13 +250,7 @@ public class OCLScopesGenitorTest extends AbstractTest {
    */
   protected ASTOCLInvariant parseInvariant(String inv) {
     Optional<ASTOCLInvariant> ast;
-    try {
-      ast = OCLMill.parser().parse_StringOCLInvariant(inv);
-    } catch (IOException e) {
-      Log.debug("An I/O Exception occurred parsing the invariant `%s`. ", DEBUG_LOG_NAME);
-      Log.debug("Error thrown: " + e, DEBUG_LOG_NAME);
-      throw new IllegalStateException(" An internal error occurred. See the debug log.");
-    }
+    ast = OCLMill.parser().parse_StringOCLInvariant(inv);
     Preconditions.checkState(
         !OCLMill.parser().hasErrors(),
         String.format(
