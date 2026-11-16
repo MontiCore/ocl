@@ -173,6 +173,10 @@ public abstract class AbstractOCLAdapterTest extends AbstractTest {
   protected void loadCDModel(ASTOCLCompilationUnit oclAST, ASTCDCompilationUnit cdAST) {
     String serialized =
             new CD4CodeSymbols2Json().serialize((ICD4CodeScope) cdAST.getEnclosingScope());
+    // Ignore warning 0xCD002 (unnamed associations may be serialized non-deterministically):
+    // the serialized symbol table is only used in-memory here and never compared or stored.
+    // Remove when monticore/monticore#5282 is solved
+    Log.getFindings().removeIf(f -> f.isWarning() && f.getMsg().startsWith("0xCD002"));
     /*
      TODO is there a cleaner way to load the models ?
      * We need to reset the Mill here to avoid that symbols form CD4A are resolved form the global scope
