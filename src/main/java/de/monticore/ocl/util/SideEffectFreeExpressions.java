@@ -121,6 +121,12 @@ public class SideEffectFreeExpressions {
     if (e instanceof ASTNameExpression) {
       return true;
     }
+    if (e instanceof ASTQualifiedNameExpression) {
+      return true;
+    }
+    if (e instanceof ASTStaticFieldAccessExpression) {
+      return true;
+    }
     if (e instanceof ASTCallExpression) {
       return true;
     }

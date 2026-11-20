@@ -70,6 +70,7 @@ public class OCLTraverserProvider {
     traverser.add4CommonExpressions(derCommonExpressions);
     traverser.setCommonExpressionsHandler(derCommonExpressions);
     traverser.add4ExpressionsBasis(derExpressionBasis);
+    traverser.setExpressionsBasisHandler(derExpressionBasis);
     traverser.add4MCCommonLiterals(derOfMCCommonLiterals);
 
     // MCTypes
