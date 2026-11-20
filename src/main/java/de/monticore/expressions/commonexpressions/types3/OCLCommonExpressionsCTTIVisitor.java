@@ -1,60 +1,15 @@
 package de.monticore.expressions.commonexpressions.types3;
 
 import de.monticore.expressions.commonexpressions._ast.ASTArrayAccessExpression;
-import de.monticore.expressions.commonexpressions._ast.ASTFieldAccessExpression;
 import de.monticore.ocl.types3.OCLCollectionSymTypeRelations;
-import de.monticore.symboltable.modifiers.AccessModifier;
 import de.monticore.types.check.SymTypeExpression;
 import de.monticore.types.check.SymTypeOfGenerics;
 import de.monticore.types3.SymTypeRelations;
-import de.monticore.types3.util.TypeContextCalculator;
 import de.se_rwth.commons.logging.Log;
 
-import java.util.Optional;
-
 import static de.monticore.types.check.SymTypeExpressionFactory.createObscureType;
-import static de.monticore.types.mccollectiontypes.types3.util.MCCollectionSymTypeFactory.createSet;
 
 public class OCLCommonExpressionsCTTIVisitor extends CommonExpressionsCTTIVisitor {
-
-  @Override
-  protected Optional<SymTypeExpression> calculateTypeIdFieldAccess(
-      ASTFieldAccessExpression expr,
-      boolean resultsAreOptional
-  ) {
-    Optional<SymTypeExpression> type =
-        super.calculateTypeIdFieldAccess(expr, resultsAreOptional);
-    if (type.isEmpty() && !resultsAreOptional) {
-      // todo technically incorrect,
-      //  as this does not store the inner type as the set it is,
-      //  but doing it here would not be proper either.
-      //  This requires a OCL specific rewrite for FieldAccessExpressions.
-      SymTypeExpression innerAsTypeIdType =
-          getType4Ast().getPartialTypeOfTypeIdForName(expr.getExpression());
-      SymTypeOfGenerics innerAsSetOfInstances = createSet(innerAsTypeIdType);
-      // hacky, will break in some cases:
-      innerAsSetOfInstances.getSourceInfo().setSourceSymbol(innerAsTypeIdType.getTypeInfo());
-      AccessModifier accessModifier = TypeContextCalculator.getAccessModifier(
-          innerAsSetOfInstances.getTypeInfo(), expr.getEnclosingScope()
-      );
-      type = resolveVariablesAndFunctionsWithinType(
-          innerAsSetOfInstances,
-          expr.getName(),
-          accessModifier,
-          v -> true,
-          f -> true
-      );
-      if (type.isPresent()) {
-        getType4Ast().internal_setTypeOfTypeIdentifier2(
-            expr.getExpression(), null
-        );
-        getType4Ast().setTypeOfExpression(
-            expr.getExpression(), innerAsSetOfInstances
-        );
-      }
-    }
-    return type;
-  }
 
   @Override
   protected SymTypeExpression calculateArrayAccess(

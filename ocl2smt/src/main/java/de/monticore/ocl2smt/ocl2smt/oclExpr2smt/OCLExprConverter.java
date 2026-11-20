@@ -122,6 +122,8 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?>> {
       result = convert((ASTNameExpression) node);
     } else if (node instanceof ASTFieldAccessExpression) {
       result = convert((ASTFieldAccessExpression) node);
+    } else if (node instanceof ASTQualifiedNameExpression) {
+      result = convertExpr(toNameChain(node));
     } else if (node instanceof ASTIfThenElseExpression) {
       EXPR cond = convertExpr(((ASTIfThenElseExpression) node).getCondition());
       EXPR expr1 = convertExpr(((ASTIfThenElseExpression) node).getThenExpression());
@@ -186,9 +188,10 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?>> {
 
   protected EXPR convertMethodCall(ASTCallExpression node) {
 
-    if (node.getExpression() instanceof ASTFieldAccessExpression) {
-      ASTExpression caller = ((ASTFieldAccessExpression) node.getExpression()).getExpression();
-      String methodName = ((ASTFieldAccessExpression) node.getExpression()).getName();
+    ASTExpression callee = toNameChain(node.getExpression());
+    if (callee instanceof ASTFieldAccessExpression) {
+      ASTExpression caller = ((ASTFieldAccessExpression) callee).getExpression();
+      String methodName = ((ASTFieldAccessExpression) callee).getName();
       ASTArguments args = node.getArguments();
 
       EXPR callerExpr = convertExpr(caller);
@@ -292,6 +295,25 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?>> {
   protected EXPR convert(ASTFieldAccessExpression node) {
     EXPR obj = convertExpr(node.getExpression());
     return eFactory.getLink(obj, node.getName());
+  }
+
+  /**
+   * qualified names are converted as the chain of names they consist of,
+   * e.g., a.b.c as field accesses .c and .b on the name a
+   */
+  protected ASTExpression toNameChain(ASTExpression node) {
+    if (!(node instanceof ASTQualifiedNameExpression)) {
+      return node;
+    }
+    ASTQualifiedNameExpression qName = (ASTQualifiedNameExpression) node;
+    List<String> parts = qName.getMCQualifiedName().getPartsList();
+    ASTExpression result = OCLMill.nameExpressionBuilder().setName(parts.get(0)).build();
+    result.setEnclosingScope(qName.getEnclosingScope());
+    for (String part : parts.subList(1, parts.size())) {
+      result = OCLMill.fieldAccessExpressionBuilder().setExpression(result).setName(part).build();
+      result.setEnclosingScope(qName.getEnclosingScope());
+    }
+    return result;
   }
 
   protected EXPR convertSetComp(ASTSetComprehension node) {
@@ -450,8 +472,8 @@ public class OCLExprConverter<EXPR extends ExprAdapter<?>> {
   protected EXPR convertTransClo(ASTOCLTransitiveQualification node) {
 
     ASTFieldAccessExpression fieldAcc;
-    if (node.getExpression() instanceof ASTFieldAccessExpression) {
-      fieldAcc = (ASTFieldAccessExpression) node.getExpression();
+    if (toNameChain(node.getExpression()) instanceof ASTFieldAccessExpression) {
+      fieldAcc = (ASTFieldAccessExpression) toNameChain(node.getExpression());
     } else {
       Log.error("conversion of transitive closure not completed yet");
       assert false;
