@@ -31,6 +31,7 @@ dependencies {
   testImplementation ("de.monticore:monticore-grammar:$mc_version") {
     capabilities {requireCapability("de.monticore:monticore-grammar-tests") }
   }
+  testImplementation testFixtures("de.monticore:monticore-grammar:$mc_version")
   testImplementation "org.assertj:assertj-core:$assertj_version"
   testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
   testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
